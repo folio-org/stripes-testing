@@ -5,7 +5,7 @@ import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-requests: Sort requests', () => {
+describe('Requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];

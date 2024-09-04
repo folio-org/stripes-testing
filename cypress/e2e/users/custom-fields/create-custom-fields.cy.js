@@ -10,135 +10,137 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
-describe('Custom Fields', () => {
-  before('login', () => {
-    cy.getAdminToken();
-    cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUserEdit.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password);
+describe('Users', () => {
+  describe('Custom Fields (Users)', () => {
+    before('login', () => {
+      cy.getAdminToken();
+      cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password);
+        },
+      );
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C15693 Create a text field custom field (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        const fieldData = {
+          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+          helpText: `autotestHelpText_${getRandomPostfix()}`,
+        };
+
+        cy.visit(TopMenu.customFieldsPath);
+        CustomFields.addCustomTextField(fieldData);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByKeywords(user.username);
+        UserEdit.openEdit();
+        UserEdit.verifyTextFieldPresented(fieldData);
+
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.deleteCustomField(fieldData.fieldLabel);
+      },
+    );
+
+    it(
+      'C15694 Create a text area custom field and add help text (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        const fieldData = {
+          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+          helpText: `autotestHelpText_${getRandomPostfix()}`,
+        };
+
+        cy.visit(TopMenu.customFieldsPath);
+        CustomFields.addCustomTextArea(fieldData);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByKeywords(user.username);
+        UserEdit.openEdit();
+        UserEdit.verifyAreaFieldPresented(fieldData);
+
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.deleteCustomField(fieldData.fieldLabel);
+      },
+    );
+
+    it(
+      'C15695 Create a checkbox custom field (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        const checkboxData = {
+          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+          helpText: `autotestHelpText_${getRandomPostfix()}`,
+        };
+        cy.visit(TopMenu.customFieldsPath);
+        CustomFields.addCustomCheckBox(checkboxData);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByKeywords(user.username);
+        UserEdit.openEdit();
+        UserEdit.verifyCheckboxPresented(checkboxData);
+
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.deleteCustomField(checkboxData.fieldLabel);
+      },
+    );
+
+    it(
+      'C15696 Create a radio button custom field (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        const radioButtonData = {
+          data: {
+            fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+            helpText: `autotestHelpText_${getRandomPostfix()}`,
+            label1: `autotestRadio1_${getRandomPostfix()}`,
+            label2: `autotestRadio2_${getRandomPostfix()}`,
+          },
+        };
+
+        cy.visit(TopMenu.customFieldsPath);
+        CustomFields.addCustomRadioButton(radioButtonData);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByKeywords(user.username);
+        UserEdit.openEdit();
+        UserEdit.verifyRadioButtonPresented(radioButtonData);
+
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.deleteCustomField(radioButtonData.data.fieldLabel);
+      },
+    );
+
+    it(
+      'C15697 Create a single select custom field (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        const singleSelectData = {
+          data: {
+            fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+            helpText: `autotestHelpText_${getRandomPostfix()}`,
+            firstLabel: `autotestFirstLabel_${getRandomPostfix()}`,
+            secondLabel: `autotestSecondLabel_${getRandomPostfix()}`,
+          },
+        };
+
+        cy.visit(TopMenu.customFieldsPath);
+        CustomFields.addCustomSingleSelect(singleSelectData);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByKeywords(user.username);
+        UserEdit.openEdit();
+        UserEdit.verifySingleSelectPresented(singleSelectData);
+        UserEdit.selectSingleSelectValue(singleSelectData);
+        UserEdit.saveAndClose();
+        UsersCard.openCustomFieldsSection();
+        UsersCard.verifySingleSelectValue(singleSelectData);
+
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.deleteCustomField(singleSelectData.data.fieldLabel);
       },
     );
   });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C15693 Create a text field custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
-    () => {
-      const fieldData = {
-        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-        helpText: `autotestHelpText_${getRandomPostfix()}`,
-      };
-
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomTextField(fieldData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(user.username);
-      UserEdit.openEdit();
-      UserEdit.verifyTextFieldPresented(fieldData);
-
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.deleteCustomField(fieldData.fieldLabel);
-    },
-  );
-
-  it(
-    'C15694 Create a text area custom field and add help text (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
-    () => {
-      const fieldData = {
-        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-        helpText: `autotestHelpText_${getRandomPostfix()}`,
-      };
-
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomTextArea(fieldData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(user.username);
-      UserEdit.openEdit();
-      UserEdit.verifyAreaFieldPresented(fieldData);
-
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.deleteCustomField(fieldData.fieldLabel);
-    },
-  );
-
-  it(
-    'C15695 Create a checkbox custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
-    () => {
-      const checkboxData = {
-        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-        helpText: `autotestHelpText_${getRandomPostfix()}`,
-      };
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomCheckBox(checkboxData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(user.username);
-      UserEdit.openEdit();
-      UserEdit.verifyCheckboxPresented(checkboxData);
-
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.deleteCustomField(checkboxData.fieldLabel);
-    },
-  );
-
-  it(
-    'C15696 Create a radio button custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
-    () => {
-      const radioButtonData = {
-        data: {
-          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-          helpText: `autotestHelpText_${getRandomPostfix()}`,
-          label1: `autotestRadio1_${getRandomPostfix()}`,
-          label2: `autotestRadio2_${getRandomPostfix()}`,
-        },
-      };
-
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomRadioButton(radioButtonData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(user.username);
-      UserEdit.openEdit();
-      UserEdit.verifyRadioButtonPresented(radioButtonData);
-
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.deleteCustomField(radioButtonData.data.fieldLabel);
-    },
-  );
-
-  it(
-    'C15697 Create a single select custom field (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
-    () => {
-      const singleSelectData = {
-        data: {
-          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-          helpText: `autotestHelpText_${getRandomPostfix()}`,
-          firstLabel: `autotestFirstLabel_${getRandomPostfix()}`,
-          secondLabel: `autotestSecondLabel_${getRandomPostfix()}`,
-        },
-      };
-
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomSingleSelect(singleSelectData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords(user.username);
-      UserEdit.openEdit();
-      UserEdit.verifySingleSelectPresented(singleSelectData);
-      UserEdit.selectSingleSelectValue(singleSelectData);
-      UserEdit.saveAndClose();
-      UsersCard.openCustomFieldsSection();
-      UsersCard.verifySingleSelectValue(singleSelectData);
-
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.deleteCustomField(singleSelectData.data.fieldLabel);
-    },
-  );
 });

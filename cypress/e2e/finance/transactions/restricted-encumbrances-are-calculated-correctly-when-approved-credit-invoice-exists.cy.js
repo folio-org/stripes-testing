@@ -277,14 +277,14 @@ describe('Finance: Transactions', () => {
           { key: 'Net transfers', value: '$10.00' },
           { key: 'Total funding', value: '$110.00' },
           { key: 'Encumbered', value: '$115.00' },
-          { key: 'Awaiting payment', value: '-$15.00' },
+          { key: 'Awaiting payment', value: '($15.00)' },
           { key: 'Expended', value: '$20.00' },
           { key: 'Credited', value: '$0.00' },
           { key: 'Unavailable', value: '$120.00' },
           { key: 'Over encumbrance', value: '$10.00' },
           { key: 'Over expended', value: '$0.00' },
         ],
-        balance: { cash: '$90.00', available: '-$10.00' },
+        balance: { cash: '$90.00', available: '($10.00)' },
       });
     },
   );

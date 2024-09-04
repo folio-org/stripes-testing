@@ -22,7 +22,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Check In - Actions', () => {
+describe('Staff slips', () => {
   const userData = {};
   const requestUserData = {};
   const patronGroup = {

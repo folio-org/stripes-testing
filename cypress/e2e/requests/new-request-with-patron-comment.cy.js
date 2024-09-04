@@ -11,7 +11,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('ui-requests: Request: Create a New Request with Patron Comment.', () => {
+describe('Requests', () => {
   const folioInstances = InventoryInstances.generateFolioInstances();
   const user = {};
   const testData = {

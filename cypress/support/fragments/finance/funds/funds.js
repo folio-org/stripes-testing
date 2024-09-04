@@ -879,6 +879,7 @@ export default {
   },
 
   selectBudgetDetails(rowNumber = 0) {
+    cy.wait(4000);
     cy.do(currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click());
     cy.expect(budgetPane.exists());
   },

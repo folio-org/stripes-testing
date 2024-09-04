@@ -45,6 +45,7 @@ export default {
     this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileForm(profile);
     NewMatchProfile.saveAndClose();
+    cy.wait(1500);
     waitCreatingMatchProfile();
   },
 
