@@ -40,6 +40,7 @@ describe('Users', () => {
       });
     });
 
+    // https://folio-org.atlassian.net/browse/UIU-3189
     it('C514932 Create patron group (volaris)', { tags: ['smoke', 'volaris'] }, () => {
       UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       cy.visit(SettingsMenu.patronGroups);
