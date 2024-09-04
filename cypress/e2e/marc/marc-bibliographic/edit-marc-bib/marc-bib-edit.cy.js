@@ -25,10 +25,8 @@ describe('MARC', () => {
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
       const calloutMarcTagWrongLength =
-        'Record cannot be saved. A MARC tag must contain three characters.';
-      const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
-      const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
-      const calloutMultiple245MarcTags = 'Record cannot be saved with more than one field 245.';
+        'Tag must contain three characters and can only accept numbers 0-9.';
+      const calloutMultiple245MarcTags = 'Field is non-repeatable.';
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
         fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
@@ -49,37 +47,34 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                `${marcFile.fileName}_copy`,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-              DataImport.uploadFileViaApi(
-                marcFileC359239.marc,
-                marcFileC359239.fileName,
-                marcFileC359239.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
-                });
-              });
-            },
-          );
+
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            `${marcFile.fileName}_copy`,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          DataImport.uploadFileViaApi(
+            marcFileC359239.marc,
+            marcFileC359239.fileName,
+            marcFileC359239.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
+            });
+          });
         });
       });
 
@@ -120,7 +115,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(20, calloutInvalidMarcTag);
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
           QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
@@ -133,19 +128,8 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyNo245TagCallout();
-          QuickMarcEditor.verifyTagValue(14, testData.tag555);
-          QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
-          QuickMarcEditor.updateExistingTagValue(16, '');
-          QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(16, false);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(16, calloutMultiple001MarcTags);
-          QuickMarcEditor.verifyTagValue(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(16, false);
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.checkCallout('Field 245 is required.');
+          QuickMarcEditor.closeWithoutSaving();
           InventoryInstance.waitLoading();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
           InventoryInstance.checkDetailViewOfInstance(

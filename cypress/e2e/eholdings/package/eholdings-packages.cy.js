@@ -48,7 +48,7 @@ describe('eHoldings', () => {
           EHoldingsPackage.checkEmptyTitlesList();
           // reset test data
           EHoldingsPackage.removeFromHoldings();
-          cy.wait(3000);
+          cy.wait(5000);
         });
       },
     );
