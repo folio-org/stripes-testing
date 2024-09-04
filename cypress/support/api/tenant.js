@@ -22,11 +22,23 @@ Cypress.Commands.add('updateConfigForTenantById', (configId, body) => {
   });
 });
 
-Cypress.Commands.add('getApplicationIdsForTenantApi', (tenantName) => {
+Cypress.Commands.add('getApplicationsForTenantApi', (tenantName, idOnly = true) => {
   cy.okapiRequest({
     path: `entitlements/${tenantName}/applications`,
     isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    return body.applicationDescriptors.map((descriptor) => descriptor.id);
+  }).then((response) => {
+    if (idOnly) return response.body.applicationDescriptors.map((descriptor) => descriptor.id);
+    else return response;
   });
 });
+
+Cypress.Commands.add(
+  'getInterfacesForTenantProxyApi',
+  (tenantName, { isFull, type } = { isFull: true }) => {
+    const params = type ? `?full=${isFull}&type=${type}` : `?full=${isFull}`;
+    return cy.okapiRequest({
+      path: `_/proxy/tenants/${tenantName}/interfaces${params}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+);
