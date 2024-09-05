@@ -355,14 +355,14 @@ export default {
     Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Call numbers (item)'))
+          .find(OptionGroup('Call numbers'))
           .has({ text: including(value) }),
       );
     });
     Object.values(BROWSE_CLASSIFICATION_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Classification (instance)'))
+          .find(OptionGroup('Classification'))
           .has({ text: including(value) }),
       );
     });
@@ -879,7 +879,7 @@ export default {
   },
 
   selectBrowseOptionFromCallNumbersGroup(option) {
-    cy.get('optgroup[label="Call numbers (item)"]')
+    cy.get('optgroup[label="Call numbers"]')
       .contains('option', option)
       .then((optionToSelect) => {
         cy.get('select').select(optionToSelect.val());

@@ -88,10 +88,6 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       const fileName = `C17039 autotestFile${getRandomPostfix()}.mrc`;
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then((response) => {
-        instanceHridForReimport = response[0].instance.hrid;
-      });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -102,6 +98,12 @@ describe('Data Import', () => {
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHridForReimport = response[0].instance.hrid;
+          },
+        );
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,

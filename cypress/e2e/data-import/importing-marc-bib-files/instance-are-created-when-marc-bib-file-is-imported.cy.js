@@ -18,17 +18,18 @@ describe('Data Import', () => {
     const filePathToUpload = 'oneMarcBib.mrc';
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+            instanceId = response[0].instance.id;
+          },
+        );
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,

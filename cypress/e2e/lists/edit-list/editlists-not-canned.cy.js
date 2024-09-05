@@ -84,7 +84,7 @@ describe('lists', () => {
         cy.wait(10000);
         cy.contains('View updated list').click();
         Lists.actionButton();
-        cy.contains('Export list').click();
+        cy.contains('Export all columns (CSV)').click();
         cy.wait(1000);
         Lists.actionButton();
         cy.contains('Edit list').should('be.disabled');

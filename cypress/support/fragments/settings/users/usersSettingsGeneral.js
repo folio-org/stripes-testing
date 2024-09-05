@@ -42,7 +42,7 @@ export default {
   },
 
   checkUserSectionOptionExists: (option) => {
-    cy.expect(usersPane.find(NavListItem({ label: option })).exists());
+    cy.expect(usersPane.find(NavListItem({ content: option })).exists());
   },
 
   checkUserSectionOptionAbsent: (option) => {

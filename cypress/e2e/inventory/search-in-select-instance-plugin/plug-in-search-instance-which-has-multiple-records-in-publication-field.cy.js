@@ -14,7 +14,7 @@ import Organizations from '../../../support/fragments/organizations/organization
 import SelectInstanceModal from '../../../support/fragments/orders/modals/selectInstanceModal';
 
 describe('Inventory', () => {
-  describe('Search in Inventory', () => {
+  describe('Search in "Select instance" plugin', () => {
     const testData = {
       searchOption: ['Place of publication', 'All', 'Query search'],
       searchValue: ['Petrozavodsk', 'Петрозаводск'],

@@ -10,6 +10,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import { Approvals } from '../../support/fragments/settings/invoices';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -51,7 +52,8 @@ describe('Invoices', () => {
       Approvals.setApprovePayValue(false);
       Invoices.approveInvoice();
       // check transactions after approve
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.openAppFromDropdown('Finance');
+      Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);
       Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
@@ -62,17 +64,13 @@ describe('Invoices', () => {
         transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''),
       );
       // pay invoice
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Approvals.setApprovePayValue(false);
       Invoices.payInvoice();
       // check transactions after payment
-      cy.visit(TopMenu.fundPath);
-      Helper.searchByName(fund.name);
-      Funds.selectFund(fund.name);
-      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
-      Funds.openTransactions();
+      TopMenuNavigation.openAppFromDropdown('Finance');
       Funds.checkTransaction(
         1,
         transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''),
