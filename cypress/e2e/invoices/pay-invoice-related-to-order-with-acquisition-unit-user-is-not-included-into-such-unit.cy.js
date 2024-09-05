@@ -20,7 +20,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
-  const fiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const fiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const ledger = { ...Ledgers.defaultUiLedger };
   const fund = { ...Funds.defaultUiFund };
   const budget = {
@@ -49,8 +49,13 @@ describe('Invoices', () => {
     cy.getAdminToken();
     AcquisitionUnits.createAcquisitionUnitViaApi(testData.acqUnit).then(() => {
       cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((user) => {
-        testData.admin = user;
-        AcquisitionUnits.assigneAcquisitionUnitUsersViaApi(user[0].id, testData.acqUnit.id);
+        testData.adminId = user[0].id;
+
+        AcquisitionUnits.assigneAcquisitionUnitUsersViaApi(user[0].id, testData.acqUnit.id).then(
+          (id) => {
+            testData.membershipAdminId = id;
+          },
+        );
       });
     });
     Organizations.createOrganizationViaApi(organization).then((organizationResp) => {
@@ -68,9 +73,6 @@ describe('Invoices', () => {
           Funds.createViaApi(fund).then((fundResp) => {
             fund.id = fundResp.fund.id;
             budget.fundId = fundResp.fund.id;
-
-            console.log('fund', fund);
-            cy.pause();
 
             Budgets.createViaApi(budget);
 
@@ -122,9 +124,9 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(testData.user.userId);
-    AcquisitionUnits.unAssigneAcquisitionUnitUsersViaApi(testData.admin.userId);
+    AcquisitionUnits.unAssigneAcquisitionUnitUsersViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(

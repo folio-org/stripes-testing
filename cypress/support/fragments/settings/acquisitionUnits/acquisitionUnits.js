@@ -175,23 +175,29 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `acquisitions-units/units/${acqUnitId}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
   assigneAcquisitionUnitUsersViaApi(userId, acquisitionsUnitId) {
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'acquisitions-units/memberships',
-      body: {
-        acquisitionsUnitId,
-        userId,
-      },
-      isDefaultSearchParamsRequired: false,
-    });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'acquisitions-units/memberships',
+        body: {
+          acquisitionsUnitId,
+          userId,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.id;
+      });
   },
   unAssigneAcquisitionUnitUsersViaApi(userId) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `acquisitions-units/memberships/${userId}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 };
