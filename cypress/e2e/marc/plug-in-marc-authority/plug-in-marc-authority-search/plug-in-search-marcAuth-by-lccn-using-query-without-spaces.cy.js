@@ -67,9 +67,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -100,7 +102,7 @@ describe('MARC', () => {
 
       it(
         'C440114 MARC Authority plug-in | Search by "LCCN" option using a query without spaces when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

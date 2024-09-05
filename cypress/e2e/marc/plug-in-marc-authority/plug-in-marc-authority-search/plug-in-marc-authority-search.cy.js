@@ -37,11 +37,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380565*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380565*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -49,9 +47,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -141,11 +141,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C359206*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C359206*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -153,9 +151,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -255,11 +255,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['UXPROD-4394C380567*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['UXPROD-4394C380567*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -267,9 +265,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -388,11 +388,9 @@ describe('MARC', () => {
       before('Creating user', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
-        ['C380568'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380568'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -400,9 +398,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -504,11 +504,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380569*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380569*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -516,9 +514,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFileForC380569.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -610,11 +610,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['UXPROD-4394C380566*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['UXPROD-4394C380566*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -622,9 +620,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -728,11 +728,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380570*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380570*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -740,9 +738,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

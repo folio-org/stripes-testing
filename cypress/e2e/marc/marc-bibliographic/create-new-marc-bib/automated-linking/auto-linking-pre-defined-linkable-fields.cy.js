@@ -201,10 +201,20 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
             cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
+            nonLinkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, false);
+            });
+
+            cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -215,14 +225,6 @@ describe('MARC', () => {
                   createdAuthorityIDs.push(record.authority.id);
                 });
               });
-            });
-
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-
-            nonLinkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, false);
             });
 
             cy.login(userData.username, userData.password, {
