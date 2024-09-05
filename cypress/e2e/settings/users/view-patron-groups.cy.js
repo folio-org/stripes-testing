@@ -50,7 +50,6 @@ describe('Users', () => {
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsSortingOrder();
       PatronGroups.verifyPatronGroupsPane(testData.isNewButtonDisabled);
-      cy.pause();
       PatronGroups.verifyActionsCells();
     });
   });
