@@ -167,6 +167,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

@@ -57,9 +57,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

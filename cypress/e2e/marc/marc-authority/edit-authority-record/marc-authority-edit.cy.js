@@ -333,29 +333,26 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  createdAuthorityID.push(record[propertyName].id);
+                });
+              },
+            );
+          });
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
-
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            cy.getAdminToken();
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-                (response) => {
-                  response.forEach((record) => {
-                    createdAuthorityID.push(record[propertyName].id);
-                  });
-                },
-              );
-            });
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
-          },
-        );
       });
 
       after('delete test data', () => {
