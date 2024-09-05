@@ -34,7 +34,7 @@ describe('MARC', () => {
             user.userProperties = createdUserProperties;
           })
           .then(() => {
-            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+            cy.getUserToken(user.userProperties.username, user.userProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,

@@ -147,7 +147,7 @@ describe('Data Import', () => {
               actionProfile.id,
             );
           });
-        
+
         cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(

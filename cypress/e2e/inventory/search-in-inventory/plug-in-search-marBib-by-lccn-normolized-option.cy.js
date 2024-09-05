@@ -73,7 +73,7 @@ describe('Inventory', () => {
         orderID = response.body.id;
       });
       cy.createTempUser([
-        permissions.inventoryAll.gui, 
+        permissions.inventoryAll.gui,
         permissions.uiOrdersCreate.gui,
         permissions.moduleDataImportEnabled.gui,
       ]).then(
