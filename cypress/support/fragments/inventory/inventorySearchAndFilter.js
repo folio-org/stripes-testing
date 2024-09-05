@@ -879,7 +879,7 @@ export default {
   },
 
   selectBrowseOptionFromCallNumbersGroup(option) {
-    cy.get('optgroup[label="Call numbers (item)"]')
+    cy.get('optgroup[label="Call numbers"]')
       .contains('option', option)
       .then((optionToSelect) => {
         cy.get('select').select(optionToSelect.val());
