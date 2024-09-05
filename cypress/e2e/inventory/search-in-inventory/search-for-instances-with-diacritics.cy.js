@@ -206,7 +206,7 @@ describe('Inventory', () => {
 
     it(
       'C466290 Search for Instance using query with diacritics should return same results as query without diacritics (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         testData.searchQueriesC466290.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(undefined, query);
