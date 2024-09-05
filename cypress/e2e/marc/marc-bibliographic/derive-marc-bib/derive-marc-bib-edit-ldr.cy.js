@@ -63,10 +63,11 @@ describe('MARC', () => {
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
