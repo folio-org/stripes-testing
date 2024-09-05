@@ -96,6 +96,8 @@ describe('MARC', () => {
           });
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
           MarcAuthority.getId().then((id) => {

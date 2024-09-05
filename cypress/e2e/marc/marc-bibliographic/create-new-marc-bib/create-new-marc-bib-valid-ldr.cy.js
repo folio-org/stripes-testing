@@ -107,7 +107,8 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.verifyValueInElvlBoxInLDRField(elvlBoxValues[i % elvlBoxValues.length]);
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
