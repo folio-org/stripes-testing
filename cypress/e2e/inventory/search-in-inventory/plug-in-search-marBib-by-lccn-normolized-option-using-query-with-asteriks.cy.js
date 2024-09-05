@@ -25,6 +25,7 @@ describe('Inventory', () => {
     };
     let orderNumber;
     let user;
+    let preconditionUserId;
     let orderID;
     const lccnOption = 'LCCN, normalized';
 
@@ -52,29 +53,34 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
+      cy.getAdminToken().then(() => {
+        Organizations.createOrganizationViaApi(organization).then((response) => {
+          organization.id = response;
+          order.vendor = response;
+        });
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+          orderID = response.body.id;
+        });
+      });
 
-      Organizations.createOrganizationViaApi(organization).then((response) => {
-        organization.id = response;
-        order.vendor = response;
+      cy.createTempUser([permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
       });
-      cy.createOrderApi(order).then((response) => {
-        orderNumber = response.body.poNumber;
-        orderID = response.body.id;
-      });
+
       cy.createTempUser([permissions.inventoryAll.gui, permissions.uiOrdersCreate.gui]).then(
         (userProperties) => {
           user = userProperties;
-
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
-          });
 
           cy.login(user.username, user.password, {
             path: TopMenu.ordersPath,
@@ -86,12 +92,13 @@ describe('Inventory', () => {
 
     after(() => {
       cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(preconditionUserId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       Orders.deleteOrderViaApi(orderID);
       Organizations.deleteOrganizationViaApi(organization.id);
-      Users.deleteViaApi(user.userId);
     });
 
     it(
