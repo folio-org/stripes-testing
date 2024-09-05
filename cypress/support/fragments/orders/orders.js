@@ -925,4 +925,9 @@ export default {
     cy.wait(4000);
     cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
   },
+
+  selectOrdersNavigation: () => {
+    cy.wait(4000);
+    cy.get('[data-test-orders-navigation="true"]').click();
+  },
 };
