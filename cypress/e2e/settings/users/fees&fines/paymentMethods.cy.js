@@ -1,8 +1,8 @@
 import uuid from 'uuid';
-import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import PaymentMethods from '../../../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
