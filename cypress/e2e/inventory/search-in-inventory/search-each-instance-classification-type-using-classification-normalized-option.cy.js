@@ -91,10 +91,14 @@ describe('Inventory', () => {
 
     before('Create user, test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
 
+          cy.getUserToken(user.username, user.password);
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,

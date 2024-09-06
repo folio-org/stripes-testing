@@ -1,7 +1,7 @@
-import settingsMenu from '../../../../support/fragments/settingsMenu';
-import TransferFeeFine from '../../../../support/fragments/users/transferFeeFine';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 
-describe('Settings (Users): verifying time picker', () => {
+describe('Export Manager', () => {
   before(() => {
     cy.loginAsAdmin({
       path: settingsMenu.usersTransferCriteria,
