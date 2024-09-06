@@ -178,7 +178,7 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
-  assigneAcquisitionUnitUsersViaApi(userId, acquisitionsUnitId) {
+  assignAcquisitionUnitUsersViaApi(userId, acquisitionsUnitId) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -193,7 +193,7 @@ export default {
         return response.body.id;
       });
   },
-  unAssigneAcquisitionUnitUsersViaApi(userId) {
+  unAssignAcquisitionUnitUsersViaApi(userId) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `acquisitions-units/memberships/${userId}`,
