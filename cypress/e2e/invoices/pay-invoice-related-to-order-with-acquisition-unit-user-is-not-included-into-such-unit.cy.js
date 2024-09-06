@@ -51,11 +51,9 @@ describe('Invoices', () => {
       cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then((user) => {
         testData.adminId = user[0].id;
 
-        AcquisitionUnits.assignAcquisitionUnitUsersViaApi(user[0].id, testData.acqUnit.id).then(
-          (id) => {
-            testData.membershipAdminId = id;
-          },
-        );
+        AcquisitionUnits.assignUserViaApi(user[0].id, testData.acqUnit.id).then((id) => {
+          testData.membershipAdminId = id;
+        });
       });
     });
     Organizations.createOrganizationViaApi(organization).then((organizationResp) => {
@@ -109,7 +107,7 @@ describe('Invoices', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
 
-      AcquisitionUnits.assignAcquisitionUnitUsersViaApi(userProperties.userId, testData.acqUnit.id);
+      AcquisitionUnits.assignUserViaApi(userProperties.userId, testData.acqUnit.id);
 
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
@@ -121,7 +119,7 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    AcquisitionUnits.unAssignAcquisitionUnitUsersViaApi(testData.membershipAdminId);
+    AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
     Users.deleteViaApi(testData.user.userId);
   });
