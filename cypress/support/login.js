@@ -18,14 +18,12 @@ Cypress.Commands.add(
     if (Cypress.env('eureka')) {
       cy.logoutViaApi();
       cy.clearCookies({ domain: null }).then(() => {
-        cy.visit('/');
+        cy.visit(visitPath.path);
         cy.do([
           TextInput('Username').fillIn(username),
           TextInput('Password').fillIn(password),
           Button({ name: 'login' }).click(),
         ]);
-        cy.expect(Heading(including('Welcome')).exists());
-        cy.visit(visitPath.path);
         visitPath.waiter();
       });
     } else {

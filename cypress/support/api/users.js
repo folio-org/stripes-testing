@@ -150,7 +150,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName, userT
                 // eslint-disable-next-line no-prototype-builtins
                 if (permissionsList.hasOwnProperty(permissionObject)) {
                   const { gui, internal } = permissionsList[permissionObject];
-                  if (gui.includes(permission)) {
+                  if (gui.toLowerCase().trim() === permission.toLowerCase().trim()) {
                     permissionNames.push(internal);
                     break;
                   }
