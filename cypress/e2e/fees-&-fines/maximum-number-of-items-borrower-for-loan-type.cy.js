@@ -1,21 +1,21 @@
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import permissions from '../../../../support/dictionary/permissions';
-import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
-import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
-import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
-import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
-import Helper from '../../../../support/fragments/finance/financeHelper';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
-import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import TopMenu from '../../../../support/fragments/topMenu';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import LimitCheckOut from '../../support/fragments/checkout/modals/limitCheckOut';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import Helper from '../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Fees&Fines', () => {
   describe('Item Blocks', () => {

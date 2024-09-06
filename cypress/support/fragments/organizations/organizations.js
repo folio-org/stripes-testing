@@ -105,8 +105,9 @@ export default {
 
   createOrganizationViaUi: (organization) => {
     cy.expect(buttonNew.exists());
+    cy.do(buttonNew.click());
+    cy.wait(4000);
     cy.do([
-      buttonNew.click(),
       organizationStatus.choose(organization.status),
       organizationNameField.fillIn(organization.name),
       organizationCodeField.fillIn(organization.code),

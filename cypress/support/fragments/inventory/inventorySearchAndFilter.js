@@ -355,14 +355,14 @@ export default {
     Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Call numbers'))
+          .find(OptionGroup('Call numbers (item)'))
           .has({ text: including(value) }),
       );
     });
     Object.values(BROWSE_CLASSIFICATION_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Classification'))
+          .find(OptionGroup('Classification (instance)'))
           .has({ text: including(value) }),
       );
     });

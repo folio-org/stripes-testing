@@ -30,11 +30,11 @@ describe('MARC', () => {
         permissions.inventoryAll.gui,
         permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
         permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-      });
 
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
           (response) => {
             response.forEach((record) => {
@@ -79,7 +79,7 @@ describe('MARC', () => {
 
     it(
       'C345390 Add a field to a record using quickMARC (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
       () => {
         QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
         QuickMarcEditor.checkInitialContent(

@@ -72,16 +72,22 @@ describe('Inventory', () => {
         orderNumber = response.body.poNumber;
         orderID = response.body.id;
       });
-      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-        (response) => {
-          response.forEach((record) => {
-            createdRecordIDs.push(record[marcFile.propertyName].id);
-          });
-        },
-      );
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.uiOrdersCreate.gui]).then(
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
+      ]).then(
         (userProperties) => {
           user = userProperties;
+
+          cy.getUserToken(user.username, user.password);
+          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
+            (response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
+            },
+          );
 
           cy.login(user.username, user.password, {
             path: TopMenu.ordersPath,
