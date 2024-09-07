@@ -479,18 +479,18 @@ export default {
     });
   },
 
-  doesTransactionWithAmountExist: (transactionType, amount) => {
-    let transactionExists = false;
-    cy.get('div[class*=mclRow-]').each(($row) => {
-      const transactionTypeCell = $row.find(`div[class*=mclCell-]:contains("${transactionType}")`);
+  verifyTransactionWithAmountExist: (transactionType, amount) => {
+    cy.get('div[class*=mclRow-]').then(($rows) => {
+      const matchFound = Array.from($rows).some((row) => {
+        const transactionTypeCell = Cypress.$(row).find(
+          `div[class*=mclCell-]:contains("${transactionType}")`,
+        );
+        const amountCell = Cypress.$(row).find(`div[class*=mclCell-]:contains("${amount}")`);
+        return transactionTypeCell.length > 0 && amountCell.length > 0;
+      });
 
-      const amountCell = $row.find(`div[class*=mclCell-]:contains("${amount}")`);
-
-      if (transactionTypeCell.length > 0 && amountCell.length > 0) {
-        transactionExists = true;
-      }
+      cy.wrap(matchFound).should('be.true');
     });
-    return transactionExists;
   },
 
   checkNoTransactionOfType: (transactionType) => {
