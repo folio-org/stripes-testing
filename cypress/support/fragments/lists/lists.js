@@ -408,7 +408,6 @@ export default {
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {

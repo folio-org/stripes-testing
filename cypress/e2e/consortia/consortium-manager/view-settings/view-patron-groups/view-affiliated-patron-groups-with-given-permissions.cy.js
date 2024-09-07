@@ -61,7 +61,7 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user753.userId, [
             permissions.uiUsersViewPatronGroups.gui,
           ]);
-          cy.createTempUser([permissions.uiUsersCreatePatronGroups.gui])
+          cy.createTempUser([permissions.uiUsersCreateEditRemovePatronGroups.gui])
             .then((user) => {
               // User for test C407754
               testData.user754 = user;
@@ -82,7 +82,7 @@ describe('Consortium manager', () => {
               cy.assignAffiliationToUser(Affiliations.University, testData.user754.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(testData.user753.userId, [
-                permissions.uiUsersCreatePatronGroups.gui,
+                permissions.uiUsersCreateEditRemovePatronGroups.gui,
               ]);
               cy.assignPermissionsToExistingUser(testData.user754.userId, [
                 permissions.uiUsersViewPatronGroups.gui,

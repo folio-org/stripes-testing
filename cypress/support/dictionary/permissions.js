@@ -462,7 +462,7 @@ export default {
     internal: 'ui-users.settings.usergroups.view',
     gui: 'Settings (Users): Can view patron groups',
   },
-  uiUsersCreatePatronGroups: {
+  uiUsersCreateEditRemovePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
