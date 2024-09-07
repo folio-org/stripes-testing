@@ -12,12 +12,12 @@ describe('Users', () => {
     const testData = {
       user: {},
       patronGroup: {
-        name: `group name ${getRandomPostfix()}`,
+        name: `group name${getRandomPostfix()}`,
       },
       isButtonDisabled: false,
       errorMessage: 'Please fill this in to continue',
       newPatronGroup: {
-        name: `group name ${getRandomPostfix()}`,
+        name: `group name${getRandomPostfix()}`,
         description: `description ${getRandomPostfix()}`,
         expirationDateOffset: '4',
         currentDate: moment(new Date()).format('M/D/YYYY'),
