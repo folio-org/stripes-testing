@@ -25,8 +25,10 @@ describe('MARC', () => {
         fieldContents: {
           tag245Content: 'New title',
         },
-        error06and07Filed: 'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
-        error07Filed: 'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+        error06and07Filed:
+          'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+        error07Filed:
+          'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
         errorMultipleTags: 'Field is non-repeatable.',
       };
       const field008DropdownsOptionsSets = [

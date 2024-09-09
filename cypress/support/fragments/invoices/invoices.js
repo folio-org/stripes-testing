@@ -983,6 +983,16 @@ export default {
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
+  selectInvoiceByIndex: (invoiceNumber, indexNumber) => {
+    cy.wait(4000);
+    cy.do(
+      invoiceResultsPane
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(Link(invoiceNumber))
+        .click(),
+    );
+  },
+
   checkVendorCodeInInvoicePane: (vendorCode) => {
     cy.wait(4000);
     cy.expect(Pane({ subtitle: vendorCode }).exists());

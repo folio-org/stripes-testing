@@ -125,6 +125,7 @@ export default {
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
       body: order,
+      isDefaultSearchParamsRequired: false,
     });
   },
 
@@ -924,5 +925,10 @@ export default {
   checkExistingPOInOrdersList: (POL) => {
     cy.wait(4000);
     cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
+
+  selectOrdersNavigation: () => {
+    cy.wait(4000);
+    cy.get('[data-test-orders-navigation="true"]').click();
   },
 };
