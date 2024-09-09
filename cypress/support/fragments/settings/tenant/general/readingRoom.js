@@ -41,12 +41,12 @@ export default {
     cy.get(editRoomButtonCss).should('not.exist');
     cy.get(deleteRoomCss).should('not.exist');
   },
-  createReadingRoomViaApi(servicePointId, readingRoomId) {
+  createReadingRoomViaApi(servicePointId, readingRoomId, publicState = true) {
     return cy.okapiRequest({
       method: 'POST',
       path: 'reading-room',
       body: {
-        isPublic: true,
+        isPublic: publicState,
         name: `${readingRoomName}`,
         servicePoints: [
           {
