@@ -351,6 +351,7 @@ export default {
   },
 
   searchByTitle(title, result = true) {
+    cy.wait(2000);
     cy.do([
       filterSection.find(inventorySearchInput).fillIn(title),
       filterSection.find(searchButton).click(),

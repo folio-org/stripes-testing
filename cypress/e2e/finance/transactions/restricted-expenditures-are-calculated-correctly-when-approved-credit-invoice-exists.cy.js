@@ -263,7 +263,7 @@ describe('Finance: Transactions', () => {
       InvoiceLineDetails.openFundDetailsPane(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.doesTransactionWithAmountExist('Pending payment', '$15.00');
+      Funds.verifyTransactionWithAmountExist('Pending payment', '$15.00');
       Funds.closeMenu();
       BudgetDetails.checkBudgetDetails({
         summary: [

@@ -22,16 +22,16 @@ const team = {
   Corsair: 19,
 };
 
-const selectedStatus = [status.Failed];
-const selectedTeams = [team.Thunderjet, team.Folijet];
+const selectedStatus = [status.Failed, status.Retest];
+const selectedTeams = [team.Firebird];
 
 const testUsername = '';
 const testPassword = '';
-const runId = 2581;
+const runId = 2108;
 
 const ids = [];
 const arrayOfFiles = [];
-const filteredFiles = [];
+let filteredFiles = [];
 
 function getTest(offsetToPass) {
   return axios({
@@ -80,7 +80,7 @@ function titleContainsId(title, testCaseIds) {
 function parseCommand() {
   getTests()
     .then((tests) => {
-      console.log(`Number of all tests in the #${runId} run: ${tests.length}\n`);
+      console.log(`\nNumber of all tests in the #${runId} run: ${tests.length}\n`);
       tests.forEach((test) => {
         if (
           selectedStatus.includes(test.status_id) &&
@@ -109,10 +109,12 @@ function parseCommand() {
               }
             });
           });
+          console.log(`Number of filtered tests with duplicates: ${filteredFiles.length}\n`);
+          filteredFiles = Array.from(new Set(filteredFiles));
           filteredFiles.sort();
+          console.log(`Number of filtered tests without duplicates: ${filteredFiles.length}\n`);
         })
         .then(() => {
-          console.log(`Number of filtered tests: ${filteredFiles.length}\n`);
           const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
           console.log(parsedCommand);
         });

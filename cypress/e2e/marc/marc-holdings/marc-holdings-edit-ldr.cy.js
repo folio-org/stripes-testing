@@ -56,21 +56,23 @@ describe('MARC', () => {
         Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            recordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
+
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                recordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
-
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(recordIDs[0]);
               InventoryInstances.selectInstance();

@@ -45,10 +45,13 @@ describe('Inventory', () => {
     const createdAuthorityIDs = [];
 
     before('Creating data', () => {
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
