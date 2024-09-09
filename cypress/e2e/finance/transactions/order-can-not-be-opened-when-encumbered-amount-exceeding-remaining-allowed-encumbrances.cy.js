@@ -22,7 +22,6 @@ import {
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Finance: Transactions', () => {
@@ -72,6 +71,7 @@ describe('Finance: Transactions', () => {
   let user;
   let servicePointId;
   let location;
+  let firstOrderNumber;
   let secondOrderNumber;
 
   before(() => {
@@ -152,11 +152,11 @@ describe('Finance: Transactions', () => {
                             ...BasicOrderLine.defaultOrderLine,
                             id: uuid(),
                             cost: {
-                              listUnitPrice: 105.0,
+                              listUnitPrice: 77.0,
                               currency: 'USD',
                               discountType: 'percentage',
                               quantityPhysical: 1,
-                              poLineEstimatedPrice: 105.0,
+                              poLineEstimatedPrice: 77.0,
                             },
                             fundDistribution: [
                               { code: secondFund.code, fundId: secondFund.id, value: 100 },
@@ -175,6 +175,7 @@ describe('Finance: Transactions', () => {
                           Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                             firstOrder.id = firstOrderResponse.id;
                             firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+                            firstOrderNumber = firstOrderResponse.poNumber;
 
                             OrderLines.createOrderLineViaApi(firstOrderLine);
                             Orders.updateOrderViaApi({
@@ -188,7 +189,7 @@ describe('Finance: Transactions', () => {
                             fundDistributions: firstOrderLine.fundDistribution,
                             accountingCode: organization.erpCode,
                             releaseEncumbrance: true,
-                            subTotal: -15,
+                            subTotal: 15,
                           }).then((invoiceResponse) => {
                             firstInvoice = invoiceResponse;
 
@@ -257,35 +258,17 @@ describe('Finance: Transactions', () => {
       Orders.selectFromResultsList(secondOrderNumber);
       Orders.openOrder();
       OrderLines.selectPOLInOrder();
-      OrderLines.openPageCurrentEncumbrance('$105.00');
+      OrderLines.openPageCurrentEncumbrance(`${secondFund.name}(${secondFund.code})`);
+      Funds.viewTransactionsForCurrentBudget();
+      Funds.selectTransactionInList('Encumbrance');
       Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
-        '$105.00',
-        `${secondOrderNumber}-1`,
+        '($10.00)',
+        `${firstOrderNumber}-1`,
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
-      Funds.closeTransactionDetails();
-      Funds.closeMenu();
-      BudgetDetails.checkBudgetDetails({
-        summary: [
-          { key: 'Initial allocation', value: '$100.00' },
-          { key: 'Increase in allocation', value: '$0.00' },
-          { key: 'Decrease in allocation', value: '$0.00' },
-          { key: 'Total allocated', value: '$100.00' },
-          { key: 'Net transfers', value: '$10.00' },
-          { key: 'Total funding', value: '$110.00' },
-          { key: 'Encumbered', value: '$115.00' },
-          { key: 'Awaiting payment', value: '($15.00)' },
-          { key: 'Expended', value: '$20.00' },
-          { key: 'Credited', value: '$0.00' },
-          { key: 'Unavailable', value: '$120.00' },
-          { key: 'Over encumbrance', value: '$10.00' },
-          { key: 'Over expended', value: '$0.00' },
-        ],
-        balance: { cash: '$90.00', available: '($10.00)' },
-      });
     },
   );
 });

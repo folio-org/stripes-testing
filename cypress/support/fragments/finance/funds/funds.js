@@ -372,6 +372,10 @@ export default {
     cy.do(Link('View transactions').click());
   },
 
+  viewTransactionsForCurrentBudget: () => {
+    cy.do([actionsButton.click(), Button('View transactions for current budget').click()]);
+  },
+
   checkTransactionList: (fundCode) => {
     cy.expect([
       transactionList
