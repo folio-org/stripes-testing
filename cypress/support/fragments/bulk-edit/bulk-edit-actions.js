@@ -159,6 +159,10 @@ export default {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
 
+  deleteRowBySelectedOption(option) {
+    cy.do(RepeatableFieldItem({ singleValue: option }).find(deleteBtn).click());
+  },
+
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
