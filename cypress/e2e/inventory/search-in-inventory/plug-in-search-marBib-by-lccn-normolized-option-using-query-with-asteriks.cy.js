@@ -53,20 +53,24 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken().then(() => {
-        Organizations.createOrganizationViaApi(organization).then((response) => {
-          organization.id = response;
-          order.vendor = response;
-        });
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-          orderID = response.body.id;
-        });
+      cy.getAdminToken();
+
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+        order.vendor = response;
       });
+      cy.createOrderApi(order).then((response) => {
+        orderNumber = response.body.poNumber;
+        orderID = response.body.id;
+      });
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-      cy.createTempUser([permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-        preconditionUserId = userProperties.userId;
-
+        cy.getUserToken(user.username, user.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -76,18 +80,12 @@ describe('Inventory', () => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
-
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.uiOrdersCreate.gui]).then(
-        (userProperties) => {
-          user = userProperties;
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        },
-      );
     });
 
     after(() => {

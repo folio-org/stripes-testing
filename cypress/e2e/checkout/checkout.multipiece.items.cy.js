@@ -13,7 +13,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Check Out', () => {
+describe('Check out', () => {
   let user = {};
   let userBarcode;
   let servicePoint;

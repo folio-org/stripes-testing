@@ -10,7 +10,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 
-describe('Export Loans ', () => {
+describe('Loans', () => {
   const testData = {};
   const userData = {};
   const itemsData = {

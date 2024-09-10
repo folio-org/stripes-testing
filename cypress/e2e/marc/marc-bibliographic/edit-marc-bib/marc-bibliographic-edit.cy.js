@@ -178,7 +178,7 @@ describe('MARC', () => {
 
       it(
         'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           InventoryInstance.deriveNewMarcBib();
           tagArray.forEach((tag) => {

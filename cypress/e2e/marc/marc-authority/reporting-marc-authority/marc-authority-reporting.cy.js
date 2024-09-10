@@ -55,11 +55,12 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.exportManagerAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
         });
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -90,7 +91,7 @@ describe('MARC', () => {
 
       it(
         'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           const dataForC375231 = [
             {

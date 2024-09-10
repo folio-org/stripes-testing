@@ -12,7 +12,7 @@ import Users from '../../support/fragments/users/users';
 import usersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
-describe('Check out - Notes', () => {
+describe('Check out', () => {
   let testData;
   const instanceData = {
     folioInstances: InventoryInstances.generateFolioInstances(),

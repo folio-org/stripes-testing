@@ -183,7 +183,8 @@ describe('MARC', () => {
               `${newFields[1].boxSixth}`,
               `${newFields[1].boxSeventh}`,
             );
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

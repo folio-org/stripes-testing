@@ -28,14 +28,13 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ])
           .then((createdUserProperties) => {
             user.userProperties = createdUserProperties;
           })
           .then(() => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-          })
-          .then(() => {
+            cy.getUserToken(user.userProperties.username, user.userProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,

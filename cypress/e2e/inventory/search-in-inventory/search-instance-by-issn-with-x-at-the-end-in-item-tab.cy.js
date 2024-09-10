@@ -26,10 +26,13 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         mrkFiles.forEach((mrkFile) => {
           InventoryInstances.createMarcBibliographicRecordViaApiByReadingFromMrkFile(mrkFile).then(
             (createdMarcBibliographicId) => {
