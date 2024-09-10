@@ -69,6 +69,28 @@ function fillExpirationDateOffset(value) {
   cy.do(expirationOffsetInDaysTextField.fillIn(value));
 }
 
+function getMultiColumnListCellsValues() {
+  const cells = [];
+  // get MultiColumnList rows and loop over
+  return cy
+    .get('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+function validateNumsAscendingOrder(prev) {
+  const itemsClone = [...prev];
+  itemsClone.sort((a, b) => a - b);
+  cy.expect(itemsClone).to.deep.equal(prev);
+}
+
 export default {
   clickNewButton,
   clickCancelButton,
@@ -254,8 +276,8 @@ export default {
       saveButton.has({ disabled: true }),
     ]);
   },
-  verifyPatronGroupsPane() {
-    cy.expect(newButton.has({ disabled: false }));
+  verifyPatronGroupsPane(isDisabled = false) {
+    cy.expect(newButton.has({ disabled: isDisabled }));
     tableColumnHeaderNames.forEach((name) => {
       cy.expect(MultiColumnListHeader(name).exists());
     });
@@ -272,5 +294,23 @@ export default {
         saveButton.has({ disabled: false }),
       ]);
     }
+  },
+  verifyPatronGroupsSortingOrder() {
+    getMultiColumnListCellsValues().then((cells) => {
+      validateNumsAscendingOrder(cells);
+    });
+  },
+  verifyActionsCells() {
+    cy.get('#editList-patrongroups')
+      .find('[class^=editListRow-]')
+      .each(($row) => {
+        cy.wrap($row)
+          .children()
+          .eq(4)
+          .invoke('text')
+          .then((text) => {
+            expect(text).to.equal('');
+          });
+      });
   },
 };

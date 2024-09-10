@@ -739,6 +739,10 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
+  selectFoundItemFromBrowse(value) {
+    cy.do(Button(including(value)).click());
+  },
+
   verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
     if (byInnerText) {
       cy.expect(MultiColumnListCell({ innerText: instanceTitle }).exists());
@@ -752,6 +756,13 @@ export default {
       expect(elem.text()).to.include('Effective call number (item), shelving order');
     });
     cy.expect(inventorySearchAndFilter.has({ value: val }));
+  },
+
+  verifySearchOptionAndQuery(searchOption, queryValue) {
+    cy.get('#input-inventory-search-qindex').then((elem) => {
+      expect(elem.text()).to.include(searchOption);
+    });
+    cy.expect(inventorySearchAndFilter.has({ value: queryValue }));
   },
 
   verifyPanesExist() {

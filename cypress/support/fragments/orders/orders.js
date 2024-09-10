@@ -125,6 +125,7 @@ export default {
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
       body: order,
+      isDefaultSearchParamsRequired: false,
     });
   },
 

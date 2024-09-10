@@ -1,13 +1,13 @@
 import uuid from 'uuid';
-import { REQUEST_TYPES } from '../../../support/constants';
-import Permissions from '../../../support/dictionary/permissions';
-import RequestPolicy from '../../../support/fragments/circulation/request-policy';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { REQUEST_TYPES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Edit request policy', () => {
+describe('Requests', () => {
   const userData = {};
   const description = `hold_description${getRandomPostfix()}`;
   const requestPolicyBody = {
