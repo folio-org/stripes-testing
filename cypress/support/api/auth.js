@@ -53,7 +53,12 @@ Cypress.Commands.add('setUserPassword', (userCredentials) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'authn/credentials',
-    body: userCredentials,
+    body: {
+      username: userCredentials.username,
+      userId: userCredentials.userId,
+      password: userCredentials.password,
+    },
+    isDefaultSearchParamsRequired: false,
   });
 });
 
