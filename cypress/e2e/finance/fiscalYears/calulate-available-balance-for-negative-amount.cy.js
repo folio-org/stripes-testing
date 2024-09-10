@@ -78,7 +78,6 @@ describe('Finance', () => {
               OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
                 (orderLines) => {
                   testData.orderLine = orderLines[0];
-                  console.log(orderLines);
                   Invoices.createInvoiceWithInvoiceLineViaApi({
                     vendorId: testData.organization.id,
                     fiscalYearId: testData.fiscalYear.id,
