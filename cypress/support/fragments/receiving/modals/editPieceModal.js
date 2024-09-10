@@ -2,7 +2,7 @@ import {
   Button,
   KeyValue,
   Label,
-  Modal,
+  Pane,
   Select,
   Selection,
   TextArea,
@@ -14,7 +14,7 @@ import ReceivingStates from '../receivingStates';
 import SelectLocationModal from '../../orders/modals/selectLocationModal';
 import DeletePieceModal from './deletePieceModal';
 
-const editPieceModal = Modal({ id: 'add-piece-modal' });
+const editPieceModal = Pane({ id: 'pane-title-form' });
 const createNewHoldingForLocationButton = editPieceModal.find(
   Button('Create new holdings for location'),
 );
