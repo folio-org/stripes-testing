@@ -13,6 +13,7 @@ import {
   HTML,
   including,
   or,
+  NavListItem,
 } from '../../../../interactors';
 import deleteModal from './tenant/modals/deleteModal';
 
@@ -160,5 +161,10 @@ export default {
 
   checkRecordIsAbsent: (record) => {
     cy.expect(MultiColumnListCell(record).absent());
+  },
+
+  checkOptionInSecondPaneExists: (optionName, isExisting = true) => {
+    if (isExisting) cy.expect(NavListItem(optionName).exists());
+    else cy.expect(NavListItem(optionName).absent());
   },
 };
