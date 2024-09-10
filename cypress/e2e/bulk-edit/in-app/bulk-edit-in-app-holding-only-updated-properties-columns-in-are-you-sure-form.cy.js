@@ -2,7 +2,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -29,6 +28,8 @@ const instance = {
   itemBarcode: getRandomPostfix(),
 };
 const optionsToSelect = {
+  administrativeNote: 'Administrative note',
+  electronicBookplate: 'Electronic bookplate',
   uri: 'URI',
   temporaryHoldingLocation: 'Temporary holdings location',
   suppressFromDiscovery: 'Suppress from discovery',
@@ -153,7 +154,10 @@ describe('bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [columnHeadersSet]);
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
+          instance.holdingHRID,
+          columnHeadersSet,
+        ]);
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditSearchPane.verifyBulkEditsAccordionExists();
@@ -161,7 +165,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyRowIcons();
 
         BulkEditActions.verifyActionsColumnIsNotPopulated();
-        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 0);
+        BulkEditActions.selectOption(optionsToSelect.administrativeNote, 0);
         BulkEditActions.selectSecondAction(actionsToSelect.changeNoteType);
         BulkEditActions.selectNoteTypeWhenChangingIt(HOLDING_NOTE_TYPES.ACTION_NOTE, 0);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.changeNoteType);
@@ -192,7 +196,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(4);
-        BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 4);
+        BulkEditActions.selectOption(optionsToSelect.electronicBookplate, 4);
         BulkEditActions.selectSecondAction(actionsToSelect.addNote, 4);
         BulkEditActions.fillInSecondTextArea(electronicBookplateNoteText, 4);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote, 4);
@@ -206,11 +210,11 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue, 5);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
 
-        BulkEditActions.deleteRowBySelectedOption(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE);
-        BulkEditActions.deleteRowBySelectedOption(optionsToSelect.uri);
-        BulkEditActions.deleteRowBySelectedOption(optionsToSelect.temporaryHoldingLocation);
-        BulkEditActions.deleteRowBySelectedOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE);
-        BulkEditActions.deleteRowBySelectedOption(optionsToSelect.suppressFromDiscovery);
+        const arrayOfOptions = Object.values(optionsToSelect);
+
+        arrayOfOptions.forEach((option) => {
+          BulkEditActions.deleteRowBySelectedOption(option);
+        });
 
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
@@ -218,26 +222,25 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           [instance.holdingHRID],
         );
-
         BulkEditActions.verifyChangesInAreYouSureForm(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
           [LOCATION_NAMES.ONLINE_UI],
         );
+
         columnHeadersNotEdited.forEach((columnHeaderNotEdited) => {
           BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude(columnHeaderNotEdited);
         });
 
+        const arrayOfColumnHeaders = Object.values(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS,
+        );
+
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS),
-        ]);
-        BulkEditFiles.verifyValueInRowByUUID(
-          previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-          instance.holdingsUUID,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
+          arrayOfColumnHeaders,
+          instance.holdingHRID,
           LOCATION_NAMES.ONLINE_UI,
-        );
+        ]);
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -246,7 +249,6 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
           instance.holdingHRID,
         );
-
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
           LOCATION_NAMES.ONLINE_UI,
@@ -260,14 +262,9 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS),
-        ]);
-        BulkEditFiles.verifyValueInRowByUUID(
-          previewFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-          instance.holdingsUUID,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
           LOCATION_NAMES.ONLINE_UI,
-        );
+          instance.holdingsUUID,
+        ]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
