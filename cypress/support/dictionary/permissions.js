@@ -126,6 +126,10 @@ export default {
     internal: 'ui-marc-authorities.authority-record.create',
     gui: 'MARC Authority: Create new MARC authority record',
   },
+  marcRecordsEditorAll: {
+    internal: 'marc-records-editor.all',
+    gui: 'All marc-records-editor permissions',
+  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
