@@ -20,7 +20,7 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 
-describe('Orders > Receiving and Check-in ', () => {
+describe('Receiving', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };

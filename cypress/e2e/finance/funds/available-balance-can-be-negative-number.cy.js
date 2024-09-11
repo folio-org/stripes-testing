@@ -102,7 +102,7 @@ describe('Finance: Funds', () => {
         OrderLines.selectPOLInOrder(0);
         OrderLines.selectFund(`${defaultFund.name}(${defaultFund.code})`);
         Funds.selectBudgetDetails();
-        Funds.checkBudgetQuantity1(`$${defaultBudget.allocated}`, '-$10.00');
+        Funds.checkBudgetQuantity1(`$${defaultBudget.allocated}`, '($10.00)');
       });
     },
   );

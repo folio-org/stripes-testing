@@ -16,6 +16,7 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Browse - Authority records', () => {
       let userData = {};
+      let preconditionUserId;
 
       const testData = {
         personalNameSearchOption: 'Personal name',
@@ -126,14 +127,8 @@ describe('MARC', () => {
       const authorityIDs = [];
 
       before(() => {
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          userData = createdUserProperties;
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          preconditionUserId = userProperties.userId;
 
           testData.searchAuthorityQueries.forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
@@ -148,7 +143,6 @@ describe('MARC', () => {
             });
           });
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -165,36 +159,47 @@ describe('MARC', () => {
                 }
               });
             });
+            cy.wait(5000);
           });
+        });
 
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath).then(() => {
-            instanceIDs.forEach((instanceRecord, index) => {
-              InventoryInstances.searchByTitle(instanceRecord);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              linkingData[index].forEach((record) => {
-                InventoryInstance.verifyAndClickLinkIconByIndex(record.instanseFieldRowIndex);
-                InventoryInstance.verifySelectMarcAuthorityModal();
-                MarcAuthorities.switchToSearch();
-                InventoryInstance.searchResults(record.authorityTitle);
-                MarcAuthorities.checkFieldAndContentExistence(
-                  record.authorityFieldTag,
-                  record.authorityFieldValue,
-                );
-                InventoryInstance.clickLinkButton();
-                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                  record.instanseFieldTag,
-                  record.instanseFieldRowIndex,
-                );
-                QuickMarcEditor.closeCallout();
-              });
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.inventoryPath).then(() => {
+          instanceIDs.forEach((instanceRecord, index) => {
+            InventoryInstances.searchByTitle(instanceRecord);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            linkingData[index].forEach((record) => {
+              InventoryInstance.verifyAndClickLinkIconByIndex(record.instanseFieldRowIndex);
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.searchResults(record.authorityTitle);
+              MarcAuthorities.checkFieldAndContentExistence(
+                record.authorityFieldTag,
+                record.authorityFieldValue,
+              );
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+                record.instanseFieldTag,
+                record.instanseFieldRowIndex,
+              );
+              QuickMarcEditor.closeCallout();
             });
-            cy.wait(1000);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
           });
+          cy.wait(1000);
+        });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((createdUserProperties) => {
+          userData = createdUserProperties;
 
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,
@@ -207,6 +212,7 @@ describe('MARC', () => {
       after('Deleting created users, Instances', () => {
         cy.getAdminToken();
         Users.deleteViaApi(userData.userId);
+        Users.deleteViaApi(preconditionUserId);
         instanceIDs.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
