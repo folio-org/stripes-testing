@@ -471,6 +471,14 @@ export default {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(HTML(option)).absent());
   },
 
+  verifyRowWithOptionAbsent(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).absent());
+  },
+
+  verifyRowWithOptionExists(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).exists());
+  },
+
   verifyNewBulkEditRow(rowIndex = 1) {
     cy.expect([
       RepeatableFieldItem({ index: rowIndex - 1 })

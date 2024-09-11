@@ -158,19 +158,16 @@ describe('bulk-edit', () => {
           instance.holdingHRID,
           columnHeadersSet,
         ]);
-
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditSearchPane.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
-
         BulkEditActions.verifyActionsColumnIsNotPopulated();
         BulkEditActions.selectOption(optionsToSelect.administrativeNote, 0);
         BulkEditActions.selectSecondAction(actionsToSelect.changeNoteType);
         BulkEditActions.selectNoteTypeWhenChangingIt(HOLDING_NOTE_TYPES.ACTION_NOTE, 0);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.changeNoteType);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
-
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(optionsToSelect.uri, 1);
@@ -179,21 +176,18 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.replaceWith, 1);
         BulkEditActions.verifyValueInSecondTextArea(newURI, 1);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
-
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.ONLINE_UI, 'holdings', 2);
         BulkEditActions.verifyActionsSelectDropdownDisabled(2);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.replaceWith, 2);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
-
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(3);
         BulkEditActions.selectOption(optionsToSelect.temporaryHoldingLocation, 3);
         BulkEditActions.selectSecondAction(actionsToSelect.clearField, 3);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.clearField, 3);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
-
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(4);
         BulkEditActions.selectOption(optionsToSelect.electronicBookplate, 4);
@@ -202,7 +196,6 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote, 4);
         BulkEditActions.verifyValueInSecondTextArea(electronicBookplateNoteText, 4);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
-
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(5);
         BulkEditActions.selectOption(optionsToSelect.suppressFromDiscovery, 5);
@@ -216,6 +209,11 @@ describe('bulk-edit', () => {
           BulkEditActions.deleteRowBySelectedOption(option);
         });
 
+        arrayOfOptions.forEach((option) => {
+          BulkEditActions.verifyRowWithOptionAbsent(option);
+        });
+
+        BulkEditActions.verifyRowWithOptionExists('Permanent holdings location');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(
@@ -241,7 +239,6 @@ describe('bulk-edit', () => {
           instance.holdingHRID,
           LOCATION_NAMES.ONLINE_UI,
         ]);
-
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
@@ -261,7 +258,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS),
+          arrayOfColumnHeaders,
           LOCATION_NAMES.ONLINE_UI,
           instance.holdingsUUID,
         ]);
