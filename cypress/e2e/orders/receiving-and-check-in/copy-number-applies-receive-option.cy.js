@@ -68,11 +68,11 @@ describe('orders: Receiving and Check-in', () => {
               '1',
             );
             OrderLines.backToEditingOrder();
-            OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
-              (orderLines) => {
-                orderLineTitleName = orderLines[0];
-              },
-            );
+            OrderLines.getOrderLineViaApi({
+              query: `poLineNumber=="*${response.body.poNumber}*"`,
+            }).then((orderLines) => {
+              orderLineTitleName = orderLines[0];
+            });
             Orders.openOrder();
           });
         },
@@ -102,7 +102,7 @@ describe('orders: Receiving and Check-in', () => {
       Orders.receiveOrderViaActions();
       Receiving.selectLinkFromResultsList();
       Receiving.receivePieceWithOnlyCopyNumber(0, copyNumber);
-      Receiving.selectInstanceInReceive(orderLineTitleName);
+      Receiving.selectInstanceInReceive(orderLineTitleName.titleOrPackage);
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemRecordView.verifyEffectiveLocation(location.name);

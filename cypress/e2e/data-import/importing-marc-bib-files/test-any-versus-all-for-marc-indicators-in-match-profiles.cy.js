@@ -360,7 +360,7 @@ describe('Data Import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
-        ItemRecordView.verifyItemIdentifier('-');
+        ItemRecordView.verifyItemIdentifier('No value set-');
 
         // upload a marc file for updating
         cy.visit(TopMenu.dataImportPath);

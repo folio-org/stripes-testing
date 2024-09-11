@@ -66,7 +66,7 @@ describe('Consortium manager', () => {
           cy.assignAffiliationToUser(Affiliations.College, testData.user400669.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user400669.userId, [
-            permissions.uiUsersCreatePatronGroups.gui,
+            permissions.uiUsersCreateEditRemovePatronGroups.gui,
             permissions.departmentsAll.gui,
           ]);
           Departments.createViaApi(testData.collegeLocalDepartment);
@@ -78,7 +78,7 @@ describe('Consortium manager', () => {
           cy.assignAffiliationToUser(Affiliations.University, testData.user400669.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.user400669.userId, [
-            permissions.uiUsersCreatePatronGroups.gui,
+            permissions.uiUsersCreateEditRemovePatronGroups.gui,
             permissions.departmentsAll.gui,
           ]);
           Departments.createViaApi(testData.universityLocalDepartment);
