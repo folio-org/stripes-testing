@@ -29,24 +29,21 @@ describe('MARC', () => {
       const calloutMultiple245MarcTags = 'Field is non-repeatable.';
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
-        fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
+        fileName: `C360098 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
       const marcFileC359239 = {
         marc: 'marcBibFileC359239.mrc',
-        fileName: `testMarcFileC359239.${getRandomPostfix()}.mrc`,
+        fileName: `C359239 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
       const createdInstanceIDs = [];
 
       before(() => {
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
 
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -76,11 +73,19 @@ describe('MARC', () => {
             });
           });
         });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
+        });
       });
 
       after('Deleting created users, Instances', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.userProperties.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
           InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
         });
