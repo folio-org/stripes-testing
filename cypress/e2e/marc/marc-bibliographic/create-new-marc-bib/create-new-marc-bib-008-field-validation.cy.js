@@ -45,6 +45,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 1);
           QuickMarcEditor.updateExistingTagName('008', '00');
           QuickMarcEditor.checkEmptyContent('00');
           QuickMarcEditor.deleteFieldByTagAndCheck('00');

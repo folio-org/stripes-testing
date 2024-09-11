@@ -46,6 +46,8 @@ describe('MARC', () => {
 
           // Fill "$a" value in "245" field
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 1);
 
           // Replace blank values in LDR positions 06, 07 with valid values
           QuickMarcEditor.updateLDR06And07Positions();
