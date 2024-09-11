@@ -24,12 +24,14 @@ describe('Users', () => {
     };
 
     before('Create user and login', () => {
-      cy.createTempUser([Permissions.uiUsersCreatePatronGroups.gui]).then((userProperties) => {
-        testData.user = userProperties;
+      cy.createTempUser([Permissions.uiUsersCreateEditRemovePatronGroups.gui]).then(
+        (userProperties) => {
+          testData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(SettingsMenu.usersPath);
-      });
+          cy.login(userProperties.username, userProperties.password);
+          cy.visit(SettingsMenu.usersPath);
+        },
+      );
     });
 
     after('Delete test data', () => {
