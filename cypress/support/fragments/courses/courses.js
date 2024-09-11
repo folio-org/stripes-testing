@@ -5,6 +5,7 @@ import {
   or,
   MultiColumnListRow,
   MultiColumnListCell,
+  Button,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -34,7 +35,9 @@ export default {
     cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).click());
   },
   openCourseWithExpectedName(courseName) {
-    cy.do(MultiColumnListCell(courseName).click());
+    cy.wait(500);
+    cy.do(Button(courseName).click());
+    // cy.do(MultiColumnListCell(courseName).click());
   },
 
   geCourseId: () => {
