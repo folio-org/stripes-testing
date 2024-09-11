@@ -54,9 +54,9 @@ describe('MARC', () => {
       };
 
       before('Creating user, importing and linking records', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
-        cy.getAdminToken().then(() => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+          // make sure there are no duplicate authority records in the system
           MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374143"' }).then(
             (records) => {
               records.forEach((record) => {
@@ -66,17 +66,18 @@ describe('MARC', () => {
               });
             },
           );
-        });
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -118,6 +119,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           testData.createdRecordIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);

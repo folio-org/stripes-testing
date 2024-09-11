@@ -25,6 +25,7 @@ describe('Inventory', () => {
     };
     let orderNumber;
     let user;
+    let preconditionUserId;
     let orderID;
     const lccnOption = 'LCCN, normalized';
 
@@ -89,12 +90,13 @@ describe('Inventory', () => {
 
     after(() => {
       cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(preconditionUserId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       Orders.deleteOrderViaApi(orderID);
       Organizations.deleteOrganizationViaApi(organization.id);
-      Users.deleteViaApi(user.userId);
     });
 
     it(

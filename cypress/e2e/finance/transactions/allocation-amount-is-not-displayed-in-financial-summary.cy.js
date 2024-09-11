@@ -163,7 +163,7 @@ describe('Finance', () => {
         BudgetDetails.closeBudgetDetails();
 
         // Click "Ledger" toggle on "Search & filter" pane
-        FinanceHelper.switchSearchType({ type: 'Ledger' });
+        FinanceHelper.selectLedgersNavigation();
 
         // Search for the ledger from Preconditions item #2 and click on it
         FinanceHelper.searchByName(ledger.name);

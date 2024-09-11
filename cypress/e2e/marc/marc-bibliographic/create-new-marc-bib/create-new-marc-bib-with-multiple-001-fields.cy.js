@@ -52,6 +52,8 @@ describe('MARC', () => {
             testData.tags.tag245,
             testData.fieldContents.tag245Content,
           );
+          QuickMarcEditor.updateIndicatorValue(testData.tags.tag245, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.tags.tag245, '1', 1);
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
 
           QuickMarcEditor.deleteValuesIn008Boxes();

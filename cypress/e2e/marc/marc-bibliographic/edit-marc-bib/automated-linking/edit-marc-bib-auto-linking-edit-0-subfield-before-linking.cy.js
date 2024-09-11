@@ -18,8 +18,7 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         let userData;
         const linkableFields = [
-          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
         const createdRecordIDs = [];
         const naturalIds = ['n2008052404', 'sh96007532', 'sh99014708', 'sh85009933'];
