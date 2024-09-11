@@ -1,6 +1,5 @@
 import permissions from '../../support/dictionary/permissions';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
@@ -57,19 +56,20 @@ describe('ui-organizations: Organizations', () => {
       // Need to wait,while data is load
       cy.wait(2000);
       AcquisitionUnits.assignUser(user.username);
-
+      cy.logout();
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
         waiter: Organizations.waitLoading,
       });
       Organizations.createOrganizationWithAU(organization, defaultAcquisitionUnit.name);
       Organizations.checkOrganizationInfo(organization);
+      cy.logout();
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
-      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,
@@ -77,6 +77,7 @@ describe('ui-organizations: Organizations', () => {
       });
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkZeroSearchResultsHeader();
+      cy.logout();
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
@@ -84,6 +85,7 @@ describe('ui-organizations: Organizations', () => {
       });
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.selectViewCheckbox();
+      cy.logout();
 
       cy.login(user.username, user.password, {
         path: TopMenu.organizationsPath,

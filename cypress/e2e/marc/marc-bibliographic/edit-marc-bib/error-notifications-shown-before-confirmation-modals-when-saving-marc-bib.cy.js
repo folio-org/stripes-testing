@@ -19,7 +19,8 @@ describe('MARC', () => {
         tag300content: 'TEST',
         tagLDR: 'LDR',
         errorMessage: 'Tag must contain three characters and can only accept numbers 0-9.',
-        errorMarcTagWrongLength: 'Record cannot be saved. A MARC tag must contain three characters.',
+        errorMarcTagWrongLength:
+          'Record cannot be saved. A MARC tag must contain three characters.',
       };
       const marcFile = {
         marc: 'marcBibFileForC375176.mrc',
@@ -70,20 +71,12 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag0);
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '');
           QuickMarcEditor.deleteTag(13);
           QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '\\',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
