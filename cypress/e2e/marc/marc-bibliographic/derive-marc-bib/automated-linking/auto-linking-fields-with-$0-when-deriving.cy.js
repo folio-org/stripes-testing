@@ -50,7 +50,7 @@ describe('MARC', () => {
           field650: {
             tag650: '650',
             rowIndex: 40,
-            content: '$a Man-woman relationships $v Drama. $0 sh85095299',
+            content: '$a Man-woman relationships $v Drama. $0 sh85095291',
           },
           field711: {
             tag711: '711',
