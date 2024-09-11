@@ -334,7 +334,9 @@ export default {
   },
 
   selectInstanceInReceive: (instanceName) => {
-    cy.do(Section({ id: 'pane-title-details' }).find(Link(instanceName)).click());
+    cy.get('#pane-title-details a:contains(' + instanceName + ')')
+      .first()
+      .click();
   },
 
   selectInstanceLinkInReceive: () => {
@@ -428,7 +430,8 @@ export default {
   },
 
   fillInCopyNumberInAddPieceModal: (copynumber) => {
-    cy.do(addPieceModal.find(TextField({ name: 'copyNumber' })).fillIn(copynumber));
+    cy.wait(4000);
+    cy.do(TextField({ name: 'copyNumber' })).fillIn(copynumber);
   },
 
   receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {
