@@ -17,22 +17,21 @@ describe('Inventory', () => {
         before('Create user, login', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          cy.createTempUser([
-            Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
-            Permissions.crudClassificationIdentifierTypes.gui,
-          ]).then((userProperties) => {
-            user = userProperties;
-            cy.assignAffiliationToUser(Affiliations.College, user.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(user.userId, [
-              Permissions.crudClassificationIdentifierTypes.gui,
-            ]);
+          cy.createTempUser([Permissions.crudClassificationIdentifierTypes.gui]).then(
+            (userProperties) => {
+              user = userProperties;
+              cy.assignAffiliationToUser(Affiliations.College, user.userId);
+              cy.setTenant(Affiliations.College);
+              cy.assignPermissionsToExistingUser(user.userId, [
+                Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
+                Permissions.crudClassificationIdentifierTypes.gui,
+              ]);
 
-            cy.login(user.username, user.password);
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
-          });
+              cy.login(user.username, user.password);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
+            },
+          );
         });
 
         after('Delete user', () => {
@@ -48,7 +47,7 @@ describe('Inventory', () => {
             SettingsPane.checkOptionInSecondPaneExists(identifierTypesSectionName);
             SettingsPane.checkOptionInSecondPaneExists(classificationBrowseSectionName, false);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             SettingsPane.waitLoading();
             SettingsPane.checkOptionInSecondPaneExists(identifierTypesSectionName);
             SettingsPane.checkOptionInSecondPaneExists(classificationBrowseSectionName, false);
