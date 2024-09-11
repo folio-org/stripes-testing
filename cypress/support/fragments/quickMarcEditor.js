@@ -1761,7 +1761,9 @@ export default {
   checkErrorMessage(rowIndex, errorMessage) {
     cy.wait(1000);
     cy.expect(
-      QuickMarcEditorRow({ index: rowIndex, error: including(`Fail: ${errorMessage}`) }).exists(),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(HTML(including(`Fail: ${errorMessage}`)))
+        .exists(),
     );
   },
 
