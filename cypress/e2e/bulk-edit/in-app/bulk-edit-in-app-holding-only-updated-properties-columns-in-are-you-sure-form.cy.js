@@ -207,9 +207,6 @@ describe('bulk-edit', () => {
 
         arrayOfOptions.forEach((option) => {
           BulkEditActions.deleteRowBySelectedOption(option);
-        });
-
-        arrayOfOptions.forEach((option) => {
           BulkEditActions.verifyRowWithOptionAbsent(option);
         });
 
