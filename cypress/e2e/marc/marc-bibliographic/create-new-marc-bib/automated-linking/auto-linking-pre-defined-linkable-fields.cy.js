@@ -42,9 +42,7 @@ describe('MARC', () => {
         let createdInstanceID;
         const queries = ['naturalId="*C389489"', 'keyword="C389489"'];
 
-        const linkableFields = [
-          100, 240, 630, 700, 710, 711, 730, 800, 810, 811, 830,
-        ];
+        const linkableFields = [100, 240, 630, 700, 710, 711, 730, 800, 810, 811, 830];
         const nonLinkableFields = [600, 610, 611, 650, 651, 655];
 
         const field600 = {
