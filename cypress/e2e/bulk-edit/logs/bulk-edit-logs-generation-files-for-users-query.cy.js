@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
 
-        const fieldToBuildQuery = 'User — User UUID';
+        const fieldToBuildQuery = 'Users — User — User UUID';
 
         QueryModal.selectField(fieldToBuildQuery);
         QueryModal.verifySelectedField(fieldToBuildQuery);
