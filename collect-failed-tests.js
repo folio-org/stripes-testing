@@ -23,7 +23,7 @@ const team = {
 };
 
 const selectedStatus = [status.Failed, status.Retest];
-const selectedTeams = [team.Firebird];
+const selectedTeams = [team.Firebird, team.Folijet, team.Spitfire, team.Thunderjet, team.Vega, team.Volaris, team.Corsair];
 
 const testUsername = '';
 const testPassword = '';
@@ -110,6 +110,7 @@ function parseCommand() {
             });
           });
           console.log(`Number of filtered tests with duplicates: ${filteredFiles.length}\n`);
+          // remove duplicates
           filteredFiles = Array.from(new Set(filteredFiles));
           filteredFiles.sort();
           console.log(`Number of filtered tests without duplicates: ${filteredFiles.length}\n`);

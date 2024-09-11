@@ -23,7 +23,7 @@ describe('Fees&Fines', () => {
         permissions.uiUsersView.gui,
         permissions.uiUsersPatronBlocks.gui,
         permissions.uiUsersCreatePatronConditions.gui,
-        permissions.uiUsersCreatePatronGroups.gui,
+        permissions.uiUsersCreateEditRemovePatronGroups.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.uiUsersCreatePatronTamplate.gui,
       ]).then((userProperties) => {

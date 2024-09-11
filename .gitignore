@@ -15,3 +15,5 @@ allure-results
 
 videos
 .vs
+
+/collect-failed-tests.js
