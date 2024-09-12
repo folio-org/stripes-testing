@@ -37,7 +37,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 85,
+            rowIndex: 82,
             value: 'C388534 Lee, Stan, 1922-2018,',
             tag: 700,
             boxFourth: '$a C388534 Lee, Stan, $d 1922-2018',
@@ -46,7 +46,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 87,
+            rowIndex: 84,
             value: 'C388534 Robinson & Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388534 Robinson & Associates, Inc.',
@@ -55,7 +55,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 88,
+            rowIndex: 85,
             value:
               'C388534 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
@@ -66,7 +66,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 89,
+            rowIndex: 86,
             value: 'C388534 Gone with the wind (Motion picture : 1939)',
             tag: 730,
             boxFourth: '$a C388534 Gone with the wind $f 1939) $g (Motion picture :',
@@ -84,76 +84,61 @@ describe('MARC', () => {
           },
           {
             rowIndex: 33,
-            tag: '110',
-            naturalId: 'no2006108277C388534',
-          },
-          {
-            rowIndex: 34,
-            tag: '111',
-            naturalId: 'no2009176429C388534',
-          },
-          {
-            rowIndex: 35,
-            tag: '130',
-            naturalId: 'n80026980C388534',
-          },
-          {
-            rowIndex: 36,
             tag: '240',
             naturalId: 'no2020024230C388534',
           },
           {
-            rowIndex: 64,
+            rowIndex: 61,
             tag: '600',
             naturalId: 'n2016004081C388534',
           },
           {
-            rowIndex: 59,
+            rowIndex: 56,
             tag: '610',
             naturalId: 'nb2009024488C388534',
           },
           {
-            rowIndex: 60,
+            rowIndex: 57,
             tag: '611',
             naturalId: 'n82216757C388534',
           },
           {
-            rowIndex: 61,
+            rowIndex: 58,
             tag: '630',
             naturalId: 'no2023006889C388534',
           },
           {
-            rowIndex: 66,
+            rowIndex: 63,
             tag: '650',
             naturalId: 'sh2009125989C388534',
           },
           {
-            rowIndex: 70,
+            rowIndex: 67,
             tag: '651',
             naturalId: 'sh85001531C388534',
           },
           {
-            rowIndex: 72,
+            rowIndex: 69,
             tag: '655',
             naturalId: 'gf2014026266C388534',
           },
           {
-            rowIndex: 90,
+            rowIndex: 87,
             tag: '800',
             naturalId: 'n79023811C388534',
           },
           {
-            rowIndex: 91,
+            rowIndex: 88,
             tag: '810',
             naturalId: 'n80095585C388534',
           },
           {
-            rowIndex: 92,
+            rowIndex: 89,
             tag: '811',
             naturalId: 'no2018125587C388534',
           },
           {
-            rowIndex: 93,
+            rowIndex: 90,
             tag: '830',
             naturalId: 'no2018018754C388534',
           },
@@ -162,8 +147,7 @@ describe('MARC', () => {
         const createdRecordsIDs = [];
 
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
 
         before('Creating user and data', () => {
@@ -206,6 +190,8 @@ describe('MARC', () => {
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -263,7 +249,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
-              'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+              'Field 100, 240, 600, 610, 611, 630, 650, 651, 655, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
             );
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             linkingTagAndValues.forEach((field) => {
@@ -279,6 +265,8 @@ describe('MARC', () => {
               );
             });
             cy.wait(1000);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 

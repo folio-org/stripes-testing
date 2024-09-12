@@ -126,6 +126,10 @@ export default {
     internal: 'ui-marc-authorities.authority-record.create',
     gui: 'MARC Authority: Create new MARC authority record',
   },
+  marcRecordsEditorAll: {
+    internal: 'marc-records-editor.all',
+    gui: 'All marc-records-editor permissions',
+  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
@@ -462,7 +466,7 @@ export default {
     internal: 'ui-users.settings.usergroups.view',
     gui: 'Settings (Users): Can view patron groups',
   },
-  uiUsersCreatePatronGroups: {
+  uiUsersCreateEditRemovePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
@@ -907,6 +911,10 @@ export default {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
   },
+  uiSettingsAcquisitionUnitsManageAcqUnitUserAssignments: {
+    internal: 'ui-acquisition-units.settings.userAssignments',
+    gui: 'Settings (acquisition units): Manage acquisition unit user assignments',
+  },
   uiInventorySettingsFastAdd: {
     internal: 'ui-inventory.settings.fast-add',
     gui: 'Settings (Inventory): Edit fast add settings',
@@ -1130,6 +1138,11 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  listsEdit: {
+    internal: 'module.lists.refresh',
+    gui: 'Lists (Edit): Can create, edit, and refresh lists',
   },
 
   // Licenses

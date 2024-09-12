@@ -120,14 +120,24 @@ describe('MARC', () => {
               '$9 test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(5, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              5,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.fillEmptyTextAreaOfField(
               5,
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(5, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              5,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.fillEmptyTextAreaOfField(
               5,
               'records[5].subfieldGroups.uncontrolledAlpha',
@@ -137,14 +147,24 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(6, '$9 test');
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(6, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              6,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.updateExistingFieldContent(
               6,
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(6, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              6,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.updateExistingFieldContent(6, 'test');
             cy.wait(500);
 
@@ -154,6 +174,8 @@ describe('MARC', () => {
             cy.wait(500);
             MarcAuthority.addNewField(8, '588', '$9 test $9 TEST');
             cy.wait(500);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

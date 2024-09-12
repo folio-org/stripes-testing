@@ -23,7 +23,12 @@ describe('Finance', () => {
 
   const createTestFunds = ({ secondBudget = 100 } = {}) => {
     fiscalYear = FiscalYears.getDefaultFiscalYear();
-    ledger = { ...Ledgers.getDefaultLedger(), fiscalYearOneId: fiscalYear.id };
+    ledger = {
+      ...Ledgers.getDefaultLedger(),
+      fiscalYearOneId: fiscalYear.id,
+      restrictEncumbrance: false,
+      restrictExpenditures: false,
+    };
     funds = {
       first: { ...Funds.getDefaultFund(), ledgerId: ledger.id },
       second: { ...Funds.getDefaultFund(), ledgerId: ledger.id },

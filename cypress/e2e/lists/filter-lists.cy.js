@@ -123,10 +123,7 @@ describe('lists', () => {
       cy.getAdminToken();
       cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
-        Lists.getViaApi().then((response) => {
-          const filteredItem = response.body.content.find((item) => item.name === list.name);
-          Lists.deleteViaApi(filteredItem.id);
-        });
+        Lists.deleteListByNameViaApi(list.name);
       });
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);

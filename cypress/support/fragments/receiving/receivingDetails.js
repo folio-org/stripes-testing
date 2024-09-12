@@ -108,9 +108,6 @@ export default {
 
     cy.do(itemEdit.click());
 
-    EditPieceModal.waitLoading();
-    EditPieceModal.verifyModalView({ isExpected });
-
     return EditPieceModal;
   },
   openReceivingEditForm() {

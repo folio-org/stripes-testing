@@ -66,22 +66,28 @@ describe('Inventory', () => {
       });
       InventoryInstances.deleteInstanceByTitleViaApi(testData.expectedSecondSearchResultC414977);
 
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+        });
+
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             cy.getAdminToken();
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdRecordIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-            });
             cy.visit(TopMenu.inventoryPath).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[3]);
               InventoryInstances.selectInstance();
@@ -102,13 +108,6 @@ describe('Inventory', () => {
       });
     });
 
-    beforeEach('Logging in', () => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-    });
-
     after('Deleting data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
@@ -122,6 +121,10 @@ describe('Inventory', () => {
       'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.checkAdvSearchInstancesModalFields(0);
         InventoryInstances.checkAdvSearchInstancesModalFields(1);
@@ -167,6 +170,10 @@ describe('Inventory', () => {
       'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -234,6 +241,10 @@ describe('Inventory', () => {
       'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,

@@ -185,6 +185,8 @@ describe('MARC', () => {
             );
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(testData.successMessage);
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.getId().then((id) => {

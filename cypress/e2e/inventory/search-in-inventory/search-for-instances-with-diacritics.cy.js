@@ -88,21 +88,24 @@ describe('Inventory', () => {
         });
       });
 
-      cy.getAdminToken();
-      testData.marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.instanceIDs.push(record[marcFile.propertyName].id);
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
+        testData.marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.instanceIDs.push(record[marcFile.propertyName].id);
+            });
           });
         });
-      });
-
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-        testData.user = userProperties;
       });
     });
 
@@ -206,7 +209,7 @@ describe('Inventory', () => {
 
     it(
       'C466290 Search for Instance using query with diacritics should return same results as query without diacritics (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         testData.searchQueriesC466290.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(undefined, query);

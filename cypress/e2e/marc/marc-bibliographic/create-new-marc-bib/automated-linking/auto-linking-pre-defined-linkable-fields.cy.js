@@ -42,9 +42,7 @@ describe('MARC', () => {
         let createdInstanceID;
         const queries = ['naturalId="*C389489"', 'keyword="C389489"'];
 
-        const linkableFields = [
-          100, 110, 111, 130, 240, 630, 700, 710, 711, 730, 800, 810, 811, 830,
-        ];
+        const linkableFields = [100, 240, 630, 700, 710, 711, 730, 800, 810, 811, 830];
         const nonLinkableFields = [600, 610, 611, 650, 651, 655];
 
         const field600 = {
@@ -69,112 +67,94 @@ describe('MARC', () => {
           },
           {
             rowIndex: 7,
-            tag: '110',
-            content: '$aBlack Panther (MG) $0 no2006108277C389489',
-            isLinked: true,
-          },
-          {
-            rowIndex: 8,
-            tag: '111',
-            content: '$aPimedate Ööde Filmifestival $0 no2009176429C389489',
-            isLinked: true,
-          },
-          {
-            rowIndex: 9,
-            tag: '130',
-            content: '$a Marvel comics $0 n80026980C389489',
-            isLinked: true,
-          },
-          {
-            rowIndex: 10,
             tag: '240',
             content: '$a Black Panther $0 no2020024230C389489',
             isLinked: true,
           },
           {
-            rowIndex: 11,
+            rowIndex: 8,
             tag: '610',
             content: '$a Black Panther $0 nb2009024488C389489',
             isLinked: false,
           },
           {
-            rowIndex: 12,
+            rowIndex: 9,
             tag: '611',
             content: '$aPanther Photographic $0n 82216757C389489',
             isLinked: false,
           },
           {
-            rowIndex: 13,
+            rowIndex: 10,
             tag: '630',
             content: '$a Black Panther (test: will not be linked) $0 no2023006999C389489',
             isLinked: false,
           },
           {
-            rowIndex: 14,
+            rowIndex: 11,
             tag: '650',
             content: '$aGood and evil.$2fast $0 sh2009125989C389489',
             isLinked: false,
           },
           {
-            rowIndex: 15,
+            rowIndex: 12,
             tag: '651',
             content: '$aAfrica.$2fast $0 sh 85001531C389489',
             isLinked: false,
           },
           {
-            rowIndex: 16,
+            rowIndex: 13,
             tag: '655',
             content: '$aComics (Graphic works)$2fast $0 gf2014026266C389489',
             isLinked: false,
           },
           {
-            rowIndex: 17,
+            rowIndex: 14,
             tag: '700',
             content:
               '$aLee, Stan,$d1922-2018,$ecreator.$0 http://id.loc.gov/authorities/names/n83169267C389489',
             isLinked: true,
           },
           {
-            rowIndex: 18,
+            rowIndex: 15,
             tag: '700',
             content:
               '$a Stelfreeze, Brian, $e artist. $c test: will not be linked $0 tst0013C389489',
             isLinked: false,
           },
           {
-            rowIndex: 19,
+            rowIndex: 16,
             tag: '710',
             content: '$a Harry (test: will not be linked) $0 tst0014C389489',
             isLinked: false,
           },
           {
-            rowIndex: 20,
+            rowIndex: 17,
             tag: '710',
             content: '$aRobinson $0 no2008081921C389489',
             isLinked: true,
           },
-          { rowIndex: 21, tag: '711', content: '$a Delaware $0 n84745425C389489', isLinked: true },
-          { rowIndex: 22, tag: '730', content: '$a Gone T $0 n79066095C389489', isLinked: true },
+          { rowIndex: 18, tag: '711', content: '$a Delaware $0 n84745425C389489', isLinked: true },
+          { rowIndex: 19, tag: '730', content: '$a Gone T $0 n79066095C389489', isLinked: true },
           {
-            rowIndex: 23,
+            rowIndex: 20,
             tag: '800',
             content: '$a Neilson, Donald $0 n79023811C389489',
             isLinked: true,
           },
           {
-            rowIndex: 24,
+            rowIndex: 21,
             tag: '810',
             content: '$a Black Panther Party $0 n80095585C389489',
             isLinked: true,
           },
           {
-            rowIndex: 25,
+            rowIndex: 22,
             tag: '811',
             content: '$aStockholm International Film Festival $0 no2018125587C389489',
             isLinked: true,
           },
           {
-            rowIndex: 26,
+            rowIndex: 23,
             tag: '830',
             content: '$aBlack Panther $0 no2018018754C389489',
             isLinked: true,
@@ -201,10 +181,20 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
             cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
+            nonLinkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, false);
+            });
+
+            cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -215,14 +205,6 @@ describe('MARC', () => {
                   createdAuthorityIDs.push(record.authority.id);
                 });
               });
-            });
-
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-
-            nonLinkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, false);
             });
 
             cy.login(userData.username, userData.password, {
@@ -275,7 +257,7 @@ describe('MARC', () => {
             // 8 Click on the "Link headings" button.
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
-              'Field 100, 110, 111, 130, 240, 630, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+              'Field 100, 240, 630, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
             );
             newFields.forEach((field) => {
               if (field.isLinked) {

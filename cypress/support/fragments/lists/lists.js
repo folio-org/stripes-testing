@@ -217,6 +217,14 @@ export default {
     });
   },
 
+  // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
+  deleteListByNameViaApi(listName) {
+    this.getViaApi().then((response) => {
+      const filteredItem = response.body.content.find((item) => item.name === listName);
+      this.deleteViaApi(filteredItem.id);
+    });
+  },
+
   getViaApi() {
     return cy.okapiRequest({
       method: 'GET',
@@ -408,7 +416,6 @@ export default {
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {

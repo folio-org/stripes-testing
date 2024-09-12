@@ -18,7 +18,8 @@ describe('MARC', () => {
         tag300Value: '$av.$b25 cm.',
       };
 
-      const calloutTagMessage = 'Tag must contain three characters and can only accept numbers 0-9.';
+      const calloutTagMessage =
+        'Tag must contain three characters and can only accept numbers 0-9.';
 
       const marcFile = {
         marc: 'marcBibForC375177.mrc',
@@ -79,11 +80,7 @@ describe('MARC', () => {
           InventoryInstance.deriveNewMarcBib();
 
           // #4 Delete the last character from "LDR" field.
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '');
           // #5 Input "0" in tag box (first box) for any field.
           QuickMarcEditor.updateExistingTagName(testData.tag022, '0');
 
@@ -98,11 +95,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(5, calloutTagMessage);
 
           // #9 Input deleted value in "LDR" field.
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '\\',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
 
           // #10 Click "Save & close" button.
           QuickMarcEditor.pressSaveAndClose();
