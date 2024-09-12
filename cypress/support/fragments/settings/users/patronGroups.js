@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import {
   Button,
   EditableListRow,
@@ -108,6 +107,7 @@ export default {
   clickEditButtonForGroup(name) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+
     cy.do(
       row
         .find(actionsCell)
@@ -130,8 +130,9 @@ export default {
       path: 'groups',
       isDefaultSearchParamsRequired: false,
       body: {
-        id: uuid(),
         group: patronGroup,
+        desc: `Patron_group_description${getRandomPostfix()}`,
+        expirationOffsetInDays: '10',
       },
     })
     .then((response) => response.body.id),
@@ -153,6 +154,43 @@ export default {
       .then((response) => {
         return response.body.usergroups[0].id;
       });
+  },
+  getGroupViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'groups',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.usergroups[0];
+      });
+  },
+  clearField(fieldName, patronGroup) {
+    if (fieldName === 'Patron group') {
+      cy.get(`input[value="${patronGroup.name}"]`)
+        .should('be.visible')
+        .focus()
+        .parent()
+        .find('button[icon="times-circle-solid"]')
+        .click();
+    }
+    if (fieldName === 'Description') {
+      cy.get(`input[value="${patronGroup.desc}"]`)
+        .should('be.visible')
+        .focus()
+        .parent()
+        .find('button[icon="times-circle-solid"]')
+        .click();
+    }
+    if (fieldName === 'Expiration date offset') {
+      cy.get(`input[value="${patronGroup.expirationOffsetInDays}"]`)
+        .should('be.visible')
+        .focus()
+        .parent()
+        .find('button[icon="times-circle-solid"]')
+        .click();
+    }
   },
 
   verifyGroupInTheList({ name, description = '', actions = [] }) {
@@ -198,6 +236,30 @@ export default {
       cy.expect(buttonSelector.exists());
     });
   },
+  verifyEditedGroupInTheList(patronGroup) {
+    cy.get(`input[value="${patronGroup.name}"]`).then(($input) => {
+      const rowElement = $input.closest('[data-row-index]');
+      const row = rowElement.attr('data-row-index');
+
+      cy.get(`[data-row-index="${row}"]`)
+        .find(`input[value="${patronGroup.name}"]`)
+        .should('be.focused');
+      cy.get(`[data-row-index="${row}"]`).find('input[placeholder="desc"]').should('be.enabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find('input[placeholder="expirationOffsetInDays"]')
+        .should('be.enabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find(`input[value="${including(`${patronGroup.date} by ${patronGroup.userName}`)}"]`)
+        .should('be.disabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find('[id*="clickable-cancel-patrongroups"]')
+        .should('be.enabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find('[id*="clickable-save-patrongroups"]')
+        .should('be.disabled');
+    });
+  },
+
   verifyGroupAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ content: including(name) });
     cy.expect(row.absent());

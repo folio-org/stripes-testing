@@ -35,18 +35,23 @@ describe('MARC', () => {
         testData.user = userProperties;
 
         cy.getUserToken(testData.user.username, testData.user.password);
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
-          (response) => {
-            response.forEach((record) => {
-              instanceID = record[propertyName].id;
-            });
-          },
-        );
-        Logs.waitFileIsImported(fileName);
-        Logs.checkJobStatus(fileName, 'Completed');
-        Logs.openFileDetails(fileName);
-        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
-        InventorySteps.addMarcHoldingRecord();
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        }).then(() => {
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.forEach((record) => {
+                instanceID = record[propertyName].id;
+              });
+            },
+          );
+          Logs.waitFileIsImported(fileName);
+          Logs.checkJobStatus(fileName, 'Completed');
+          Logs.openFileDetails(fileName);
+          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
+          InventorySteps.addMarcHoldingRecord();
+        });
       });
     });
 

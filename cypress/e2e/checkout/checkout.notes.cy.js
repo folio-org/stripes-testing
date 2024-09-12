@@ -1,15 +1,15 @@
 import { HTML, including } from '@interactors/html';
-
 import { Permissions } from '../../support/dictionary';
 import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import usersCard from '../../support/fragments/users/usersCard';
+import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Check out', () => {
@@ -25,10 +25,11 @@ describe('Check out', () => {
   before('Creating data', () => {
     cy.createTempUser([
       Permissions.checkoutAll.gui,
+      Permissions.uiNotesAssignUnassign.gui,
       Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
       Permissions.uiNotesItemDelete.gui,
+      Permissions.uiNotesItemEdit.gui,
+      Permissions.uiNotesItemView.gui,
       Permissions.uiUsersView.gui,
     ]).then((createdUserProperties) => {
       testData = createdUserProperties;
@@ -55,15 +56,16 @@ describe('Check out', () => {
     UsersSearchPane.searchByUsername(testData.username);
     UsersSearchPane.waitLoading();
     // Scroll down to "Notes" accordion button and click on it.
-    usersCard.openNotesSection();
+    UsersCard.openNotesSection();
     // Create Note 1
     AgreementsDetails.createNote({ ...note1, checkoutApp: true });
     // Scroll down to "Notes" accordion button and click on it.
-    usersCard.openNotesSection();
+    UsersCard.openNotesSection();
     // Create Note 2
     AgreementsDetails.createNote({ ...note2, checkoutApp: true });
     // Navigate to "Check out" app
     cy.visit(TopMenu.checkOutPath);
+    Checkout.waitLoading();
   });
 
   after('Deleting created entities', () => {
@@ -80,7 +82,7 @@ describe('Check out', () => {
 
   // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
-    'C356781: Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
+    'C356781 Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
@@ -99,7 +101,7 @@ describe('Check out', () => {
       UsersSearchPane.searchByUsername(testData.username);
       UsersSearchPane.waitLoading();
       // Scroll down to "Notes" accordion button and click on it.
-      usersCard.openNotesSection();
+      UsersCard.openNotesSection();
       // "Notes" accordion button expanded and the message "No notes found" displayed.
       cy.expect(HTML(including('No notes found')).exists());
     },
@@ -107,7 +109,7 @@ describe('Check out', () => {
 
   // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
-    'C380512: Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
+    'C380512 Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       const itemBarcode = instanceData.folioInstances[0].barcodes[0];

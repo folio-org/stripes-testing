@@ -32,17 +32,17 @@ describe('MARC', () => {
           valueC: 'C422166 Stone, Robert B (not from pre-defined list)',
         },
       };
-      const marcFiles = [
-        {
-          marc: 'marcBibFileForC422166.mrc',
-          fileName: `marcFileOneBib.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          numOfRecords: 1,
-          propertyName: 'instance',
-        },
+      const marcBibFile = {
+        marc: 'marcBibFileForC422166.mrc',
+        fileName: `C422166 marcFileOneBib.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        numOfRecords: 1,
+        propertyName: 'instance',
+      };
+      const marcAuthFiles = [
         {
           marc: 'marcFileForC422166.mrc',
-          fileName: `marcFileGenre.${getRandomPostfix()}.mrc`,
+          fileName: `C422166 marcFileGenre.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 13,
           propertyName: 'authority',
@@ -51,9 +51,31 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422166*');
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422166*');
+          DataImport.uploadFileViaApi(
+            marcBibFile.marc,
+            marcBibFile.fileName,
+            marcBibFile.jobProfileToRun,
+          ).then((response) => {
+            testData.createdInstanceId = response[0].instance.id;
+          });
+          marcAuthFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
+            });
+            cy.wait(2000);
+          });
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -65,38 +87,24 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record[marcFile.propertyName].id);
-              });
-            });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
+          InventoryInstances.searchByTitle(testData.createdInstanceId);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          InventoryInstance.verifyAndClickLinkIcon('700');
+          MarcAuthorities.switchToSearch();
         });
-      });
-
-      beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon('700');
-        MarcAuthorities.switchToSearch();
       });
 
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
-        InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-        for (let i = 1; i < 14; i++) {
+        Users.deleteViaApi(testData.preconditionUserId);
+        InventoryInstance.deleteInstanceViaApi(testData.createdInstanceId);
+        for (let i = 0; i < 13; i++) {
           MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
         }
       });
@@ -142,7 +150,8 @@ describe('MARC', () => {
           // #11 Delete the selected at step 6 "Authority source" facet option from multiselect box by clicking on the "X" icon placed in the tag.
           MarcAuthorities.removeAuthoritySourceOption(testData.facetOptions.optionA);
           cy.wait(1000);
-
+          // #12 Click on any "Heading/Reference" value from the search result pane.
+          MarcAuthorities.selectTitle(testData.facetValues.valueB);
           // #13 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
           MarcAuthority.contains(testData.prefixValues.prefixValB);
 
