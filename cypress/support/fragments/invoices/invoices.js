@@ -1000,6 +1000,7 @@ export default {
 
   closeInvoiceDetailsPane: () => {
     cy.do(invoiceDetailsPane.find(Button({ icon: 'times' })).click());
+    cy.wait(2000);
   },
 
   resetFilters: () => {

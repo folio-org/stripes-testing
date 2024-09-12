@@ -203,7 +203,7 @@ describe('Invoices', () => {
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
       });
-      cy.wait(2000);
+      Invoices.closeInvoiceDetailsPane();
       Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 1);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
