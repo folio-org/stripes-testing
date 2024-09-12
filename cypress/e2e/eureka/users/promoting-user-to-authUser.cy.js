@@ -90,6 +90,7 @@ describe('Eureka', () => {
           });
           cy.setUserPassword({
             username: userA.username,
+            userId: testData.userAId,
             password: testData.password,
           });
           cy.login(userA.username, testData.password);

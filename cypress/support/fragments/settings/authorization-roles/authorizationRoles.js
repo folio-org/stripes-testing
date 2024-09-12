@@ -424,7 +424,7 @@ export default {
         .find(MultiColumnList({ columns: assignModalResultColumns }))
         .exists(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
   },
 
   clickSaveInAssignModal: () => {

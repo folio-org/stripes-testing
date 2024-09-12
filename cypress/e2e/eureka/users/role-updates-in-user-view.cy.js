@@ -83,7 +83,6 @@ describe('Eureka', () => {
       'C464315 User detailed view updated when changing role assignments for a user (eureka)',
       { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
       () => {
-        cy.reload();
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleAName);
         AuthorizationRoles.clickOnRoleName(testData.roleAName);

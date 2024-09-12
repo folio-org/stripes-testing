@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 import permissionsList from '../dictionary/permissions';
-import { FULFILMENT_PREFERENCES } from '../constants';
+import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
@@ -56,7 +56,7 @@ Cypress.Commands.add('overrideLocalSettings', (userId) => {
     module: '@folio/stripes-core',
     configName: 'localeSettings',
     enabled: true,
-    value: '{"locale":"en-US","timezone":"UTC","currency":"USD"}',
+    value: DEFAULT_LOCALE_STRING,
     userId,
   };
 
@@ -122,6 +122,7 @@ Cypress.Commands.add(
               id: uuid(),
               userId: newUserProperties.id,
             });
+            cy.wait(10000);
             cy.setUserPassword(userProperties);
             if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
               cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
