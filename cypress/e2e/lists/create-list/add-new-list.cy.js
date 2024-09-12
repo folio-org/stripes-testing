@@ -30,6 +30,10 @@ describe('lists', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Lists.deleteListByNameViaApi(listData.name);
+<<<<<<< HEAD
+=======
+      cy.getAdminToken();
+>>>>>>> 7dd7368b6d318049b4130f87624b4921cf1181a4
       Users.deleteViaApi(userData.userId);
     });
 

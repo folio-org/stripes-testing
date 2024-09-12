@@ -53,6 +53,7 @@ describe('Inventory', () => {
               createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
+          cy.wait(5000);
         });
 
         cy.loginAsAdmin({
