@@ -1136,6 +1136,11 @@ export default {
     gui: 'Lists (Admin): All permissions',
   },
 
+  listsEdit: {
+    internal: 'module.lists.refresh',
+    gui: 'Lists (Edit): Can create, edit, and refresh lists',
+  },
+
   // Licenses
   licensesSearchAndView: {
     internal: 'ui-licenses.licenses.view',
