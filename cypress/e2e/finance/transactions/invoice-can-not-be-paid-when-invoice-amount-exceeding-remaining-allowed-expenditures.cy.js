@@ -3,7 +3,7 @@ import permissions from '../../../support/dictionary/permissions';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices/invoices';
+import Invoices from '../../../support/fragments/invoices';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
@@ -23,13 +23,14 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import Approvals from '../../../support/fragments/settings/invoices/approvals';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const firstLedger = {
     ...Ledgers.defaultUiLedger,
-    restrictEncumbrance: true,
-    restrictExpenditures: false,
+    restrictEncumbrance: false,
+    restrictExpenditures: true,
   };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -66,12 +67,14 @@ describe('Finance: Transactions', () => {
     allowableExpenditure: 110,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  const isApprovePayEnabled = true;
+  const isApprovePayDisabled = false;
   let firstInvoice;
   let secondInvoice;
+  let thirdInvoice;
   let user;
   let servicePointId;
   let location;
-  let firstOrderNumber;
   let secondOrderNumber;
 
   before(() => {
@@ -152,11 +155,11 @@ describe('Finance: Transactions', () => {
                             ...BasicOrderLine.defaultOrderLine,
                             id: uuid(),
                             cost: {
-                              listUnitPrice: 77.0,
+                              listUnitPrice: 87.0,
                               currency: 'USD',
                               discountType: 'percentage',
                               quantityPhysical: 1,
-                              poLineEstimatedPrice: 77.0,
+                              poLineEstimatedPrice: 87.0,
                             },
                             fundDistribution: [
                               { code: secondFund.code, fundId: secondFund.id, value: 100 },
@@ -175,7 +178,6 @@ describe('Finance: Transactions', () => {
                           Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                             firstOrder.id = firstOrderResponse.id;
                             firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                            firstOrderNumber = firstOrderResponse.poNumber;
 
                             OrderLines.createOrderLineViaApi(firstOrderLine);
                             Orders.updateOrderViaApi({
@@ -220,6 +222,23 @@ describe('Finance: Transactions', () => {
                             secondOrderNumber = secondOrderResponse.poNumber;
 
                             OrderLines.createOrderLineViaApi(secondOrderLine);
+                            Orders.updateOrderViaApi({
+                              ...secondOrderResponse,
+                              workflowStatus: ORDER_STATUSES.OPEN,
+                            });
+                            cy.wait(10000);
+                            Invoices.createInvoiceWithInvoiceLineViaApi({
+                              vendorId: organization.id,
+                              fiscalYearId: defaultFiscalYear.id,
+                              poLineId: secondOrderLine.id,
+                              fundDistributions: secondOrderLine.fundDistribution,
+                              accountingCode: organization.erpCode,
+                              releaseEncumbrance: true,
+                              subTotal: 87,
+                            }).then((thirdInvoiceResponse) => {
+                              thirdInvoice = thirdInvoiceResponse;
+                              Approvals.setApprovePayValue(isApprovePayEnabled);
+                            });
                           });
                         },
                       );
@@ -235,18 +254,21 @@ describe('Finance: Transactions', () => {
 
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiOrdersEdit.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.uiInvoicesPayInvoices.gui,
+      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
       });
     });
   });
 
   after(() => {
     cy.getAdminToken();
+    Approvals.setApprovePayValue(isApprovePayDisabled);
     Users.deleteViaApi(user.userId);
   });
 
@@ -254,17 +276,17 @@ describe('Finance: Transactions', () => {
     'C449368 Invoice can NOT be paid when invoice amount exceeding remaining allowed expenditures (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
-      Orders.searchByParameter('PO number', secondOrderNumber);
-      Orders.selectFromResultsList(secondOrderNumber);
-      Orders.openOrder();
-      OrderLines.selectPOLInOrder();
-      OrderLines.openPageCurrentEncumbrance(`${secondFund.name}(${secondFund.code})`);
-      Funds.viewTransactionsForCurrentBudget();
-      Funds.selectTransactionInList('Encumbrance');
+      Invoices.searchByNumber(thirdInvoice.vendorInvoiceNo);
+      Invoices.selectInvoice(thirdInvoice.vendorInvoiceNo);
+      Invoices.canNotApproveAndPayInvoice(
+        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${secondFund.code}].`,
+      );
+      Invoices.selectInvoiceLine();
+      Invoices.openPageCurrentEncumbrance('$87.00');
       Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
-        '($10.00)',
-        `${firstOrderNumber}-1`,
+        '($87.00)',
+        `${secondOrderNumber}-1`,
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
