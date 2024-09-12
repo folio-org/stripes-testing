@@ -75,7 +75,7 @@ describe('lists', () => {
       Lists.waitLoading();
       Lists.selectSharedLists();
       Lists.selectList(listData.name);
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Private');
       Lists.saveList();
@@ -111,7 +111,7 @@ describe('lists', () => {
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       cy.contains(listData.name).click();
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Shared');
       Lists.saveList();
