@@ -68,7 +68,6 @@ describe('lists', () => {
         Lists.selectSharedLists();
         Lists.selectRecordTypeFilter(listData.recordType);
         Lists.resetAllFilters();
-        Lists.waitForSpinnerToDisappear();
 
         Lists.openList(listData.name);
         Lists.openActions();
