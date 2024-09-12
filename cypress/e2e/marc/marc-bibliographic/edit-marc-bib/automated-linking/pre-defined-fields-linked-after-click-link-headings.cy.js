@@ -151,9 +151,7 @@ describe('MARC', () => {
 
         const createdRecordsIDs = [];
 
-        const autoLinkingEnabledFields = [
-          100, 240, 700, 710, 711, 730, 800, 810, 811, 830,
-        ];
+        const autoLinkingEnabledFields = [100, 240, 700, 710, 711, 730, 800, 810, 811, 830];
         const autoLinkingDisabledFields = [600, 610, 611, 630, 650, 651, 655];
         const rowIndexOfLinkedFields = [32, 33, 82, 84, 85, 86, 87, 88, 89, 90];
 

@@ -226,7 +226,6 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
-        cy.pause();
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHrId);
         InventorySearchAndFilter.selectResultCheckboxes(1);
