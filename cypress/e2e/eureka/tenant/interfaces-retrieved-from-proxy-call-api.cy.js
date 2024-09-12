@@ -42,7 +42,7 @@ describe('Eureka', () => {
 
           testData.interfaceTypes.forEach((interfaceType, index) => {
             cy.getInterfacesForTenantProxyApi(testData.tenant, {
-              isFull: true,
+              full: true,
               type: interfaceType,
             }).then((response) => {
               expect(response.status).to.eq(200);
@@ -79,7 +79,7 @@ describe('Eureka', () => {
           });
 
           cy.getInterfacesForTenantProxyApi(testData.tenant, {
-            isFull: true,
+            full: true,
           }).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedInterfaces = response.body;
@@ -116,7 +116,7 @@ describe('Eureka', () => {
 
           testData.interfaceTypes.forEach((interfaceType, index) => {
             cy.getInterfacesForTenantProxyApi(testData.tenant, {
-              isFull: false,
+              full: false,
               type: interfaceType,
             }).then((response) => {
               expect(response.status).to.eq(200);
@@ -152,7 +152,7 @@ describe('Eureka', () => {
           });
 
           cy.getInterfacesForTenantProxyApi(testData.tenant, {
-            isFull: false,
+            full: false,
           }).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedInterfaces = response.body;
