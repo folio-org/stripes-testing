@@ -34,7 +34,7 @@ describe('lists', () => {
       Lists.waitLoading();
       Lists.resetAllFilters();
       Lists.expiredPatronLoan();
-      Lists.actionButton();
+      Lists.openActions();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find(
           (item) => item.name === 'Inactive patrons with open loans',
@@ -48,7 +48,7 @@ describe('lists', () => {
         cy.contains(`Refresh complete with ${totalRecords} records: View updated list`).should(
           'be.visible',
         );
-        cy.contains('View updated list').click();
+        Lists.viewUpdatedList();
         cy.contains(`${totalRecords} records found`).should('be.visible');
       });
     });
