@@ -21,7 +21,7 @@ describe('Eureka', () => {
     const userB = { ...testData.userBody };
     const userC = { ...testData.userBody };
     userA.username = `userac451626${getRandomPostfix()}`;
-    userC.username = `userbc451626${getRandomPostfix()}`;
+    userC.username = `usercc451626${getRandomPostfix()}`;
 
     before('Create data', () => {
       cy.getAdminToken();
