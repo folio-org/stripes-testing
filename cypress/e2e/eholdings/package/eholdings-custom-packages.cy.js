@@ -42,6 +42,7 @@ describe('eHoldings', () => {
         EHoldingsPackageView.waitLoading();
         EHoldingsPackageView.verifyPackageName(testData.customPackageName);
         EHoldingsPackageView.verifyPackageType('Custom');
+        cy.getAdminToken();
         EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
         EHoldingsPackageView.close();
         EHoldingSearch.switchToPackages();

@@ -49,16 +49,13 @@ Cypress.Commands.add('getToken', (username, password, isCentral = false) => {
   }
 });
 
-Cypress.Commands.add('setUserPassword', (userCredentials) => {
+Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'authn/credentials',
-    body: {
-      username: userCredentials.username,
-      userId: userCredentials.userId,
-      password: userCredentials.password,
-    },
+    body: userCredentials,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
