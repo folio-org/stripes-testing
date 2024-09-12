@@ -451,6 +451,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                     const sourceRecords = resp3.body.entries;
                     const infos = [];
 
+                    cy.wait(2000);
                     // Use Promise.all to wait for all asynchronous operations to complete
                     return Promise.all(
                       sourceRecords.map((record) => {

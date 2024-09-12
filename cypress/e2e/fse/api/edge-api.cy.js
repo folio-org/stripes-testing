@@ -1,14 +1,14 @@
 describe('fse-edge', () => {
   // all test steps are hidden from report in order to hide sensitive edge related data (api key). TODO: update to hide only api key
 
-  it('TC195410 - edge-erm verification', { tags: ['fse', 'api', 'edge'] }, () => {
+  it('TC195410 - edge-erm verification', { tags: ['fse', 'api', 'edge-erm'] }, () => {
     cy.allure().logCommandSteps(false);
     cy.postEdgeErm().then((response) => {
       cy.expect(response.status).to.eq(200);
     });
   });
 
-  it('TC195411 - edge-ncip verification', { tags: ['fse', 'api', 'edge'] }, () => {
+  it('TC195411 - edge-ncip verification', { tags: ['fse', 'api', 'edge-ncip'] }, () => {
     // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
     // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
 
@@ -40,21 +40,21 @@ describe('fse-edge', () => {
     });
   });
 
-  it('TC195412 - edge-oai-pmh verification', { tags: ['fse', 'api', 'edge'] }, () => {
+  it('TC195412 - edge-oai-pmh verification', { tags: ['fse', 'api', 'edge-oai'] }, () => {
     cy.allure().logCommandSteps(false);
     cy.getEdgeOai().then((response) => {
       cy.expect(response.status).to.eq(200);
     });
   });
 
-  it('TC195413 - edge-patron verification', { tags: ['fse', 'api', 'edge'] }, () => {
+  it('TC195413 - edge-patron verification', { tags: ['fse', 'api', 'edge-patron'] }, () => {
     cy.allure().logCommandSteps(false);
     cy.getEdgePatron().then((response) => {
       cy.expect(response.status).to.eq(200);
     });
   });
 
-  it('TC195414 - edge-orders verification', { tags: ['fse', 'api', 'edge'] }, () => {
+  it('TC195414 - edge-orders verification', { tags: ['fse', 'api', 'edge-orders'] }, () => {
     cy.allure().logCommandSteps(false);
     cy.postEdgeOrders().then((response) => {
       cy.expect(response.status).to.eq(200);
@@ -63,7 +63,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge'] },
+    { tags: ['fse', 'api', 'edge-rtac'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));

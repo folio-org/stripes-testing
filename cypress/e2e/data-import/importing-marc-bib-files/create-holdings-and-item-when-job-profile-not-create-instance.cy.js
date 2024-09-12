@@ -87,16 +87,6 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      // create Instance with source = MARC
-      DataImport.uploadFileViaApi(
-        'oneMarcBib.mrc',
-        fileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -105,6 +95,15 @@ describe('Data Import', () => {
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        // create Instance with source = MARC
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          fileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+        });
 
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,

@@ -57,41 +57,35 @@ describe('MARC', () => {
       };
 
       before('Creating user and data', () => {
-        cy.getAdminToken().then(() => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C422062"' }).then(
-            (records) => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
+
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: 'keyword="C422062"',
+            }).then((records) => {
               records.forEach((record) => {
                 if (record.authRefType === 'Authorized') {
                   MarcAuthority.deleteViaAPI(record.id);
                 }
               });
-            },
-          );
-        });
-
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
             });
-          });
-        });
 
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
-
-          cy.loginAsAdmin().then(() => {
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
+              });
+            });
+          })
+          .then(() => {
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -112,6 +106,15 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -122,6 +125,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
           MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
         });

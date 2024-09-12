@@ -20,6 +20,7 @@ import MaterialTypes from '../../support/fragments/settings/inventory/materialTy
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -183,19 +184,19 @@ describe('ui-orders: Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.editFundInPOL(secondFund, '70', '100');
       OrderLines.checkFundInPOL(secondFund);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.checkOrderInTransactionList(`${secondFund.code}`, '($20.00)');
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
       cy.reload();
       Invoices.checkFundInInvoiceLine(firstFund);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();

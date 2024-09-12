@@ -52,27 +52,35 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      InventoryInstances.getInstancesViaApi({
-        limit: 100,
-        query: 'title="fight club"',
-      }).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
-      DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        testData.marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.forEach((record) => {
-          testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        InventoryInstances.getInstancesViaApi({
+          limit: 100,
+          query: 'title="fight club"',
+        }).then((instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
         });
       });
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
+        DataImport.uploadFileViaApi(
+          testData.marcFile.marc,
+          testData.marcFile.fileName,
+          testData.marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
+          });
+        });
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,

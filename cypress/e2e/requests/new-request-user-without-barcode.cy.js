@@ -14,7 +14,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Choose requester without a barcode', () => {
-  const userData = {};
+  let userData = {};
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
@@ -68,12 +68,7 @@ describe('Choose requester without a barcode', () => {
       .then(() => {
         cy.createTempUser([Permissions.uiRequestsAll.gui], null, 'staff', false)
           .then((userProperties) => {
-            userData.username = userProperties.username;
-            userData.password = userProperties.password;
-            userData.userId = userProperties.userId;
-            userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData = userProperties;
           })
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);

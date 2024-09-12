@@ -32,10 +32,7 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
@@ -84,7 +81,7 @@ describe('lists', () => {
         cy.wait(10000);
         cy.contains('View updated list').click();
         Lists.actionButton();
-        cy.contains('Export list').click();
+        cy.contains('Export all columns (CSV)').click();
         cy.wait(1000);
         Lists.actionButton();
         cy.contains('Edit list').should('be.disabled');

@@ -27,7 +27,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   const userData = {};
   const requestUserData = {};
   const patronGroup = {

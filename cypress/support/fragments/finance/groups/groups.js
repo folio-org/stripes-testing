@@ -187,6 +187,7 @@ export default {
   }),
 
   selectGroup: (GroupName) => {
+    cy.wait(4000);
     cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
   },
 

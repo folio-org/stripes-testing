@@ -173,11 +173,18 @@ export default {
         .fillIn(subfield),
     ]);
   },
-  fillInTransformationsFirstRowMarcTextField(textfield1, rowIndex = 0) {
+  typeInTransformationsMarcTextField(textfield1, rowIndex = 0) {
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`,
+    ).type(textfield1);
+  },
+  removeValueFromTransformationsMarcTextField(rowIndex = 0) {
     cy.do(
       ModalTransformation.find(
         TextField({ name: `transformations[${rowIndex}].rawTransformation.marcField` }),
-      ).fillIn(textfield1),
+      )
+        .find(Button({ ariaLabel: 'Clear this field' }))
+        .click(),
     );
   },
   clickTransformationsSaveAndCloseButton() {
@@ -225,5 +232,16 @@ export default {
         TextField({ name: 'transformations[0].rawTransformation.subfield' }),
       ).has({ value: textfield4 }),
     ]);
+  },
+  verifyModalTransformationExists(isExist = true) {
+    if (isExist) cy.expect(ModalTransformation.exists());
+    cy.expect(ModalTransformation.absent());
+  },
+  verifyFieldSelectedForTransformationByName(fieldName, rowIndex = 0) {
+    cy.expect(
+      ModalTransformation.find(MultiColumnListRow({ ariaLabel: fieldName }))
+        .find(Checkbox({ name: `transformations[${rowIndex}].isSelected` }))
+        .has({ checked: true }),
+    );
   },
 };

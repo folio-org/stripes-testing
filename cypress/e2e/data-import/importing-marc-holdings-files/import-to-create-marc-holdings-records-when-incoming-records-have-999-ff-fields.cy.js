@@ -24,13 +24,7 @@ describe('Data Import', () => {
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
-      });
-
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -39,6 +33,13 @@ describe('Data Import', () => {
         Permissions.settingsTenantViewLocation.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+            instanceId = response[0].instance.id;
+          },
+        );
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,

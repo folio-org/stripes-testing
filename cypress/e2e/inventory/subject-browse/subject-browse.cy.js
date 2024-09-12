@@ -1,5 +1,5 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -14,25 +14,27 @@ describe('Inventory', () => {
       testValue: 'Physics projects.',
     };
 
-    const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C350387 testMarcFile.${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const propertyName = 'instance';
 
     const createdInstanceIDs = [];
 
     before('Creating user and instance', () => {
-      cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
-        testData.user = userProperties;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
 
-        cy.getAdminToken().then(() => {
-          DataImport.uploadFileViaApi('marcFileForC350387.mrc', fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdInstanceIDs.push(record[propertyName].id);
-              });
-            },
-          );
-        });
+        DataImport.uploadFileViaApi('marcFileForC350387.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[propertyName].id);
+            });
+          },
+        );
+      });
+
+      cy.createTempUser([Permissions.uiSubjectBrowse.gui]).then((userProperties) => {
+        testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
@@ -47,6 +49,7 @@ describe('Inventory', () => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       Users.deleteViaApi(testData.user.userId);
+      Users.deleteViaApi(testData.preconditionUserId);
     });
 
     it(

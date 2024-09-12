@@ -25,6 +25,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     ariaRowIndex: (el) => +el.getAttribute('aria-rowindex'),
     checkboxCount: (el) => [...el.querySelectorAll('input[type=checkbox]')].length,
     innerHTML: (el) => el.innerHTML,
+    ariaLabel: (el) => el.getAttribute('aria-label'),
   });
 
 export const ListRow = HTML.extend('list row')

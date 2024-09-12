@@ -80,111 +80,119 @@ const loanPolicies = [
   },
 ];
 
-describe('circulation-log loan period', () => {
-  before('create inventory instance', () => {
-    cy.createTempUser([
-      Permissions.circulationLogAll.gui,
-      Permissions.checkoutAll.gui,
-      Permissions.checkinAll.gui,
-    ]).then((userProperties) => {
-      userData = userProperties;
-      InventoryInstances.getMaterialTypes({ limit: 3 })
-        .then((materialTypesRes) => {
-          materialTypes = materialTypesRes;
-          testData = {
-            folioInstances: InventoryInstances.generateFolioInstances({
-              count: 3,
-              itemsProperties: materialTypes.map(({ id }) => ({ materialType: { id } })),
-            }),
-            servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-            requestsId: '',
-          };
-          ServicePoints.createViaApi(testData.servicePoint);
-          testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-          Locations.createViaApi(testData.defaultLocation).then((location) => {
-            InventoryInstances.createFolioInstancesViaApi({
-              folioInstances: testData.folioInstances,
-              location,
+describe('Circulation log', () => {
+  describe('Loan Policies', () => {
+    before('create inventory instance', () => {
+      cy.createTempUser([
+        Permissions.circulationLogAll.gui,
+        Permissions.checkoutAll.gui,
+        Permissions.checkinAll.gui,
+      ]).then((userProperties) => {
+        userData = userProperties;
+        InventoryInstances.getMaterialTypes({ limit: 3 })
+          .then((materialTypesRes) => {
+            materialTypes = materialTypesRes;
+            testData = {
+              folioInstances: InventoryInstances.generateFolioInstances({
+                count: 3,
+                itemsProperties: materialTypes.map(({ id }) => ({ materialType: { id } })),
+              }),
+              servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+              requestsId: '',
+            };
+            ServicePoints.createViaApi(testData.servicePoint);
+            testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+            Locations.createViaApi(testData.defaultLocation).then((location) => {
+              InventoryInstances.createFolioInstancesViaApi({
+                folioInstances: testData.folioInstances,
+                location,
+              });
             });
-          });
-        })
-        .then(() => {
-          UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
-        })
-        .then(() => {
-          testData.addedRules = [];
-          loanPolicies.forEach((policy) => LoanPolicy.createViaApi(policy));
-          materialTypes.forEach((materialType, index) => {
-            CirculationRules.addRuleViaApi(
-              { m: materialType.id },
-              { l: loanPolicies[index].id },
-            ).then((newRule) => {
-              testData.addedRules.push(newRule);
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+          })
+          .then(() => {
+            testData.addedRules = [];
+            loanPolicies.forEach((policy) => LoanPolicy.createViaApi(policy));
+            materialTypes.forEach((materialType, index) => {
+              CirculationRules.addRuleViaApi(
+                { m: materialType.id },
+                { l: loanPolicies[index].id },
+              ).then((newRule) => {
+                testData.addedRules.push(newRule);
+              });
             });
+            cy.login(userData.username, userData.password);
           });
-          cy.login(userData.username, userData.password);
+      });
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken();
+      cy.wrap(testData.addedRules).each((rule) => {
+        CirculationRules.deleteRuleViaApi(rule);
+      });
+      testData.folioInstances.forEach((instance) => {
+        CheckInActions.checkinItemViaApi({
+          itemBarcode: instance.barcodes[0],
+          servicePointId: testData.servicePoint.id,
+          checkInDate: new Date().toISOString(),
         });
-    });
-  });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    cy.wrap(testData.addedRules).each((rule) => {
-      CirculationRules.deleteRuleViaApi(rule);
-    });
-    testData.folioInstances.forEach((instance) => {
-      CheckInActions.checkinItemViaApi({
-        itemBarcode: instance.barcodes[0],
-        servicePointId: testData.servicePoint.id,
-        checkInDate: new Date().toISOString(),
       });
-    });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    loanPolicies.forEach((policy) => {
-      LoanPolicy.deleteApi(policy.id);
-    });
-    testData.folioInstances.forEach((item) => {
-      InventoryInstances.deleteInstanceViaApi({
-        instance: item,
-        servicePoint: testData.servicePoint,
-        shouldCheckIn: true,
+      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+      ServicePoints.deleteViaApi(testData.servicePoint.id);
+      loanPolicies.forEach((policy) => {
+        LoanPolicy.deleteApi(policy.id);
       });
+      testData.folioInstances.forEach((item) => {
+        InventoryInstances.deleteInstanceViaApi({
+          instance: item,
+          servicePoint: testData.servicePoint,
+          shouldCheckIn: true,
+        });
+      });
+      Locations.deleteViaApi(testData.defaultLocation);
+      Users.deleteViaApi(userData.userId);
     });
-    Locations.deleteViaApi(testData.defaultLocation);
-    Users.deleteViaApi(userData.userId);
-  });
 
-  it('C645: Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
-    const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
-    // Navigate to checkout page
-    cy.visit(TopMenu.checkOutPath);
-    // Enter patron and item that meet the criteria of the circulation rule
-    CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
-    const itemDueDate = new Date(DateTools.getTomorrowDay());
-    // Check due date/time
-    CheckOutActions.checkItemDueDate(DateTools.getFormattedDateWithSlashes({ date: itemDueDate }));
-  });
+    it('C645: Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+      const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
+      // Navigate to checkout page
+      cy.visit(TopMenu.checkOutPath);
+      // Enter patron and item that meet the criteria of the circulation rule
+      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+      const itemDueDate = new Date(DateTools.getTomorrowDay());
+      // Check due date/time
+      CheckOutActions.checkItemDueDate(
+        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+      );
+    });
 
-  it('C646: Test "Weeks" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
-    // Navigate to checkout page
-    cy.visit(TopMenu.checkOutPath);
-    // Enter patron and item that meet the criteria of the circulation rule
-    CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
-    const itemDueDate = new Date(DateTools.getFutureWeekDateObj());
-    // Check due date/time
-    CheckOutActions.checkItemDueDate(DateTools.getFormattedDateWithSlashes({ date: itemDueDate }));
-  });
+    it('C646: Test "Weeks" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+      const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
+      // Navigate to checkout page
+      cy.visit(TopMenu.checkOutPath);
+      // Enter patron and item that meet the criteria of the circulation rule
+      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+      const itemDueDate = new Date(DateTools.getFutureWeekDateObj());
+      // Check due date/time
+      CheckOutActions.checkItemDueDate(
+        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+      );
+    });
 
-  it('C647: Test "Months" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
-    // Navigate to checkout page
-    cy.visit(TopMenu.checkOutPath);
-    // Enter patron and item that meet the criteria of the circulation rule
-    CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
-    const itemDueDate = new Date(DateTools.getAfterThreeMonthsDateObj());
-    // Check due date/time
-    CheckOutActions.checkItemDueDate(DateTools.getFormattedDateWithSlashes({ date: itemDueDate }));
+    it('C647: Test "Months" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+      const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
+      // Navigate to checkout page
+      cy.visit(TopMenu.checkOutPath);
+      // Enter patron and item that meet the criteria of the circulation rule
+      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+      const itemDueDate = new Date(DateTools.getAfterThreeMonthsDateObj());
+      // Check due date/time
+      CheckOutActions.checkItemDueDate(
+        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+      );
+    });
   });
 });

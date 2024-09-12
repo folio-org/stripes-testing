@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

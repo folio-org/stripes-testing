@@ -11,16 +11,23 @@ import {
   TextField,
   including,
   matching,
+  or,
 } from '../../../../../interactors';
-import { DEFAULT_FOLIO_AUTHORITY_FILES, AUTHORITY_FILE_TEXT_FIELD_NAMES } from '../../../constants';
+import {
+  DEFAULT_FOLIO_AUTHORITY_FILES,
+  AUTHORITY_FILE_TEXT_FIELD_NAMES,
+  AUTHORITY_FILE_SOURCES,
+} from '../../../constants';
 
 const manageAuthorityFilesPane = Pane('Manage authority files');
 const newButton = manageAuthorityFilesPane.find(Button({ id: 'clickable-add-authorityfiles' }));
 const firstRow = manageAuthorityFilesPane.find(MultiColumnListRow({ ariaRowIndex: 2 }));
-const nameTextField = TextField({ placeholder: 'Name' });
-const prefixTextField = TextField({ placeholder: 'Prefix' });
-const hridStartsWithTextField = TextField({ placeholder: 'HRID starts with' });
-const baseUrlTextField = TextField({ placeholder: 'Base URL' });
+const nameTextField = TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME });
+const prefixTextField = TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX });
+const hridStartsWithTextField = TextField({
+  placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,
+});
+const baseUrlTextField = TextField({ placeholder: AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL });
 const activeCheckbox = Checkbox({ ariaLabel: including('Active') });
 const sourceCell = MultiColumnListCell({ columnIndex: 5 });
 const lastUpdatedCell = MultiColumnListCell({ columnIndex: 6 });
@@ -28,10 +35,10 @@ const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
 const confirmDeletionButton = Button('Yes, delete');
 const tableHeaderTexts = [
-  'Name*',
-  'Prefix*',
-  'HRID starts with*',
-  'Base URL',
+  `${AUTHORITY_FILE_TEXT_FIELD_NAMES.NAME}*`,
+  `${AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX}*`,
+  `${AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH}*`,
+  AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,
   'Active',
   'Source',
   'Last updated by',
@@ -39,6 +46,7 @@ const tableHeaderTexts = [
 ];
 const editButton = Button({ icon: 'edit' });
 const deleteButton = Button({ icon: 'trash' });
+const tooltipButton = Button({ icon: 'info' });
 const successSaveCalloutText = (authorityFileName) => {
   return `The authority file ${authorityFileName} has been successfully created.`;
 };
@@ -83,7 +91,7 @@ const verifyEditableRowAdded = () => {
   cy.expect(firstRow.find(hridStartsWithTextField).has({ value: '' }));
   cy.expect(firstRow.find(baseUrlTextField).has({ value: '' }));
   cy.expect(firstRow.find(activeCheckbox).has({ checked: false }));
-  cy.expect(firstRow.find(sourceCell).has({ content: 'Local' }));
+  cy.expect(firstRow.find(sourceCell).has({ content: AUTHORITY_FILE_SOURCES.LOCAL }));
   cy.expect(firstRow.find(lastUpdatedCell).has({ content: 'No value set-' }));
   cy.expect(firstRow.find(cancelButton).has({ disabled: false }));
   cy.expect(firstRow.find(saveButton).has({ disabled: false }));
@@ -165,7 +173,7 @@ const getTargetRowWithFile = (authorityFileName) => {
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: 'aatg,aat',
+    prefix: or('aatg,aat', 'aat,aatg'),
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
@@ -458,7 +466,7 @@ export default {
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.startsWith)).exists(),
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.baseUrl)).exists(),
-        targetRow.find(sourceCell).has({ content: 'FOLIO' }),
+        targetRow.find(sourceCell).has({ content: AUTHORITY_FILE_SOURCES.FOLIO }),
         targetRow
           .find(MultiColumnListCell({ content: matching(/\d{1,2}\/\d{1,2}\/\d{4} by */) }))
           .exists(),
@@ -512,5 +520,22 @@ export default {
         cy.deleteAuthoritySourceFileViaAPI(body.id, true);
       }
     });
+  },
+
+  checkAuthorityFilesTableNotEditable() {
+    cy.wait(2000);
+    cy.expect([
+      Form(including('Authority files')).find(editButton).absent(),
+      Form(including('Authority files')).find(deleteButton).absent(),
+    ]);
+  },
+
+  waitContentLoading() {
+    cy.expect([firstRow.exists(), newButton.has({ disabled: or(true, false) })]);
+    cy.wait(3000);
+  },
+
+  checkActiveTooltipButtonShown() {
+    cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
   },
 };

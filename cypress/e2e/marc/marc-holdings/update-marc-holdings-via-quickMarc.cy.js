@@ -25,30 +25,6 @@ describe('MARC', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        testData.filePath,
-        testData.fileNameForCreateInstance,
-        testData.jobProfileForCreateInstance,
-      ).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        testData.instanceId = response[0].instance.id;
-
-        DataImport.editMarcFile(
-          'marcBibFileForC359241.mrc',
-          testData.editedFile,
-          ['in11887186'],
-          [instanceHrid],
-        );
-      });
-      DataImport.uploadFileViaApi(
-        testData.editedFile,
-        testData.fileNameForCreateHoldings,
-        testData.jobProfileForCreateHoldings,
-      ).then((response) => {
-        testData.holdingsId = response[0].holding.id;
-      });
-
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -56,6 +32,29 @@ describe('MARC', () => {
         Permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        DataImport.uploadFileViaApi(
+          testData.filePath,
+          testData.fileNameForCreateInstance,
+          testData.jobProfileForCreateInstance,
+        ).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+          testData.instanceId = response[0].instance.id;
+
+          DataImport.editMarcFile(
+            'marcBibFileForC359241.mrc',
+            testData.editedFile,
+            ['in11887186'],
+            [instanceHrid],
+          );
+        });
+        DataImport.uploadFileViaApi(
+          testData.editedFile,
+          testData.fileNameForCreateHoldings,
+          testData.jobProfileForCreateHoldings,
+        ).then((response) => {
+          testData.holdingsId = response[0].holding.id;
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

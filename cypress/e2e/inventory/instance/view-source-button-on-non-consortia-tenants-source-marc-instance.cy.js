@@ -18,13 +18,16 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        testData.filePath,
-        testData.marcFileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        testData.instanceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(
+          testData.filePath,
+          testData.marcFileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
+        });
       });
 
       cy.createTempUser([
@@ -42,6 +45,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
+      Users.deleteViaApi(testData.preconditionUserId);
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });

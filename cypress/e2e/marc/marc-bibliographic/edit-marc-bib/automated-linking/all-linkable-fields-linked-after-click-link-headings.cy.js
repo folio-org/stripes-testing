@@ -18,9 +18,9 @@ describe('MARC', () => {
         const testData = {
           marcAuthIcon: 'Linked to MARC authority',
           successCalloutAfterLinking:
-            'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+            'Field 100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
           errorCalloutAfterLinking:
-            'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 must be set manually by selecting the link icon.',
+            'Field 100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 must be set manually by selecting the link icon.',
         };
 
         const marcFiles = [
@@ -50,8 +50,7 @@ describe('MARC', () => {
         const createdRecordsIDs = [];
 
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
 
         const fields = [
@@ -64,97 +63,76 @@ describe('MARC', () => {
           },
           {
             rowIndex: 33,
-            tag: '110',
-            naturalId: 'no2006108277C387538',
-            value: 'C387538 Black Panther Fugitives (Musical group)',
-            type: 'Contributor',
-          },
-          {
-            rowIndex: 34,
-            tag: '111',
-            naturalId: 'no2009176429C387538',
-            value: 'C387538 Pimedate Ööde Filmifestival',
-            type: 'Contributor',
-          },
-          {
-            rowIndex: 35,
-            tag: '130',
-            naturalId: 'n80026980C387538',
-            value: 'C387538 Marvel comics',
-            type: 'Title data',
-          },
-          {
-            rowIndex: 36,
             tag: '240',
             naturalId: 'no2020024230C387538',
             value: 'C387538 Black Panther',
             type: 'Title data',
           },
           {
-            rowIndex: 64,
+            rowIndex: 61,
             tag: '600',
             naturalId: 'n2016004081C387538',
             value: 'C387538 Black Panther (Fictitious character)',
             type: 'Subject',
           },
           {
-            rowIndex: 59,
+            rowIndex: 56,
             tag: '610',
             naturalId: 'nb2009024488C387538',
             value: 'C387538 Black Panther Movement',
             type: 'Subject',
           },
           {
-            rowIndex: 60,
+            rowIndex: 57,
             tag: '611',
             naturalId: 'n82216757C387538',
             value: 'C387538 Panther Photographic International',
             type: 'Subject',
           },
           {
-            rowIndex: 61,
+            rowIndex: 58,
             tag: '630',
             naturalId: 'no2023006889C387538',
             value: 'C387538 Black Panther, Wakanda forever (Motion picture)',
             type: 'Subject',
           },
           {
-            rowIndex: 66,
+            rowIndex: 63,
             tag: '650',
             naturalId: 'sh2009125989C387538',
             value: 'C387538 Good and evil',
             type: 'Subject',
           },
           {
-            rowIndex: 70,
+            rowIndex: 67,
             tag: '651',
             naturalId: 'sh85001531C387538',
             value: 'C387538 Africa',
             type: 'Subject',
           },
           {
-            rowIndex: 72,
+            rowIndex: 69,
             tag: '655',
             naturalId: 'gf2014026266C387538',
             value: 'C387538 Comics (Graphic works)',
             type: 'Subject',
           },
           {
-            rowIndex: 85,
+            rowIndex: 82,
             tag: '700',
             naturalId: 'n83169267C387538',
             value: 'C387538 Lee, Stan, 1922-2018',
             type: 'Contributor',
           },
           {
-            rowIndex: 87,
+            rowIndex: 84,
             tag: '710',
             naturalId: 'no2008081921C387538',
             value: 'C387538 Robinson & Associates, Inc',
             type: 'Contributor',
           },
           {
-            rowIndex: 88,
+            rowIndex: 85,
             tag: '711',
             naturalId: 'n84745425C387538',
             value:
@@ -162,35 +140,35 @@ describe('MARC', () => {
             type: 'Contributor',
           },
           {
-            rowIndex: 89,
+            rowIndex: 86,
             tag: '730',
             naturalId: 'n79066095C387538',
             value: 'C387538 Lee, Stan, 1922-2018',
             type: 'Contributor',
           },
           {
-            rowIndex: 90,
+            rowIndex: 87,
             tag: '800',
             naturalId: 'n79023811C387538',
             value: 'C387538 Neilson, Donald, 1936-2011',
             type: 'Title data',
           },
           {
-            rowIndex: 91,
+            rowIndex: 88,
             tag: '810',
             naturalId: 'n80095585C387538',
             value: 'C387538 Black Panther Party',
             type: 'Title data',
           },
           {
-            rowIndex: 92,
+            rowIndex: 89,
             tag: '811',
             naturalId: 'no2018125587C387538',
             value: 'C387538 Stockholm International Film Festival',
             type: 'Title data',
           },
           {
-            rowIndex: 93,
+            rowIndex: 90,
             tag: '830',
             naturalId: 'no2018018754C387538',
             value: 'C387538 Black Panther (Motion picture : 2018)',

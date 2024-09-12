@@ -13,6 +13,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -80,6 +81,7 @@ describe('Invoices', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
         });
         secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
         cy.getAdminToken();
@@ -87,7 +89,7 @@ describe('Invoices', () => {
           secondFiscalYear.id = secondFiscalYearResponse.id;
         });
 
-        cy.visit(TopMenu.ledgerPath);
+        FinanceHelp.selectLedgersNavigation();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -95,7 +97,7 @@ describe('Invoices', () => {
       });
     });
 
-    cy.visit(TopMenu.fiscalYearPath);
+    FinanceHelp.selectFiscalYearsNavigation();
     FinanceHelp.searchByName(firstFiscalYear.name);
     FiscalYears.selectFY(firstFiscalYear.name);
     FiscalYears.editFiscalYearDetails();
@@ -168,7 +170,7 @@ describe('Invoices', () => {
       Invoices.createInvoiceFromOrder(invoice, firstFiscalYear.code);
       Invoices.approveInvoice();
       Invoices.payInvoice();
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectPreviousBudgetDetails();
@@ -178,12 +180,11 @@ describe('Invoices', () => {
         firstFiscalYear.code,
         '($10.00)',
         invoice.invoiceNumber,
-        'Encumbrance',
+        'Payment',
         `${defaultFund.name} (${defaultFund.code})`,
       );
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
+      Funds.closeTransactionApp(defaultFund, firstFiscalYear);
+      Funds.closeBudgetDetails();
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');

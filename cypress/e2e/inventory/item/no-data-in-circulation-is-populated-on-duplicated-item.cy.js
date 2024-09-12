@@ -143,7 +143,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(newItemBarcode);
-        ItemRecordView.checkItemCirculationHistory('-', '-', '-');
+        ItemRecordView.checkItemCirculationHistory('-', 'No value set-', '-');
       },
     );
   });
