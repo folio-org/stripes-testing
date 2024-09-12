@@ -7,12 +7,13 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 describe('lists', () => {
   describe('Add new list', () => {
     const userData = {};
-    const listData = {
-      name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
-    };
+    let listData = {};
 
     beforeEach('Create a user', () => {
+      listData = {
+        name: getTestEntityValue('test_list'),
+        recordType: 'Loans',
+      };
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsAll.gui,
@@ -30,10 +31,7 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });

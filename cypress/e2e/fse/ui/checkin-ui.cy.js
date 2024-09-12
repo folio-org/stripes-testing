@@ -11,7 +11,7 @@ describe('fse-checkin - UI', () => {
 
   it(
     `TC195282 - verify that checkin module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'checkin'] },
+    { tags: ['fse', 'ui', 'checkin'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       Checkin.waitLoading();

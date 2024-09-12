@@ -159,6 +159,10 @@ export default {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
 
+  deleteRowBySelectedOption(option) {
+    cy.do(RepeatableFieldItem({ singleValue: option }).find(deleteBtn).click());
+  },
+
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
@@ -465,6 +469,14 @@ export default {
 
   verifyOptionAbsentInNewRow(option, rowIndex = 1) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(HTML(option)).absent());
+  },
+
+  verifyRowWithOptionAbsent(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).absent());
+  },
+
+  verifyRowWithOptionExists(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).exists());
   },
 
   verifyNewBulkEditRow(rowIndex = 1) {
