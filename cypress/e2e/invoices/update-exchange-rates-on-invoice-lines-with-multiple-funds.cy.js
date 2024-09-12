@@ -16,6 +16,8 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -40,11 +42,18 @@ describe('Invoices', () => {
     approved: true,
     reEncumber: true,
   };
-  const allocatedQuantity = '100';
   defaultFiscalYear.code = defaultFiscalYear.code.slice(0, -1) + '1';
   const item = {
     instanceName: `testBulkEdit_${getRandomPostfix()}`,
     itemBarcode: getRandomPostfix(),
+  };
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
+  const secondBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
   };
   let location;
   let servicePointId;
@@ -56,6 +65,9 @@ describe('Invoices', () => {
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
+      secondBudget.fiscalYearId = firstFiscalYearResponse.id;
+
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
@@ -63,23 +75,16 @@ describe('Invoices', () => {
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.closeBudgetDetails();
-          Funds.closeFundDetails();
-          Funds.resetFundFilters();
+          firstBudget.fundId = fundResponse.fund.id;
+          cy.wait(2000);
+          Budgets.createViaApi(firstBudget);
         });
         cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantity);
+          secondBudget.fundId = secondFundResponse.fund.id;
+          cy.wait(2000);
+          Budgets.createViaApi(secondBudget);
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         ServicePoints.getViaApi().then((servicePoint) => {
@@ -98,7 +103,7 @@ describe('Invoices', () => {
 
         defaultOrder.vendor = organization.name;
 
-        cy.visit(TopMenu.ordersPath);
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
@@ -119,7 +124,7 @@ describe('Invoices', () => {
             OrderLines.backToEditingOrder();
             Orders.openOrder();
             cy.wait(4000);
-            cy.visit(TopMenu.invoicesPath);
+            TopMenuNavigation.openAppFromDropdown('Invoices');
             Invoices.createRolloverInvoice(invoice, organization.name);
             Invoices.createInvoiceLineFromPol(firstOrderNumber);
             cy.wait(4000);

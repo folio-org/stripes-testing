@@ -207,7 +207,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(
             9,
-            'Record cannot be saved. A MARC tag must contain three characters.',
+            'Tag must contain three characters and can only accept numbers 0-9.',
           );
         },
       );

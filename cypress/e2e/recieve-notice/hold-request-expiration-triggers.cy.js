@@ -28,242 +28,244 @@ import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/aw
 import Requests from '../../support/fragments/requests/requests';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
-describe('Hold request expiration triggers', () => {
-  const testData = {
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    adminSourceRecord: {},
-    ruleProps: {},
-    checkOutUser: {},
-    requestUser: {},
-  };
-  const patronGroup = {
-    name: getTestEntityValue('groupToTestNotices'),
-  };
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: `Instance ${getRandomPostfix()}`,
-  };
-  const noticeTemplates = [
-    createNoticeTemplate({
-      category: NOTICE_CATEGORIES.request,
-      name: 'Hold_request_template',
-      noticeOptions: {
-        action: 'Hold request',
-      },
-    }),
-    createNoticeTemplate({
-      category: NOTICE_CATEGORIES.request,
-      name: 'Request_expiration_before_once_template',
-      noticeOptions: {
-        action: 'Request expiration',
-        send: 'Before',
-        sendBy: {
-          duration: '2',
-          interval: 'Hour(s)',
+describe('Patron notices', () => {
+  describe('Request notice triggers', () => {
+    const testData = {
+      servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+      adminSourceRecord: {},
+      ruleProps: {},
+      checkOutUser: {},
+      requestUser: {},
+    };
+    const patronGroup = {
+      name: getTestEntityValue('groupToTestNotices'),
+    };
+    const itemData = {
+      barcode: generateItemBarcode(),
+      title: `Instance ${getRandomPostfix()}`,
+    };
+    const noticeTemplates = [
+      createNoticeTemplate({
+        category: NOTICE_CATEGORIES.request,
+        name: 'Hold_request_template',
+        noticeOptions: {
+          action: 'Hold request',
         },
-        frequency: 'One Time',
-      },
-    }),
-    createNoticeTemplate({
-      category: NOTICE_CATEGORIES.request,
-      name: 'Request_expiration_before_recurring_template',
-      noticeOptions: {
-        action: 'Request expiration',
-        send: 'Before',
-        sendBy: {
-          duration: '2',
-          interval: 'Hour(s)',
-        },
-        frequency: 'Recurring',
-        sendEvery: {
-          duration: '30',
-          interval: 'Minute(s)',
-        },
-      },
-    }),
-    createNoticeTemplate({
-      category: NOTICE_CATEGORIES.request,
-      name: 'Request_expiration_upon_at_template',
-      noticeOptions: {
-        action: 'Request expiration',
-        send: 'Upon/At',
-      },
-    }),
-  ];
-  const noticePolicy = {
-    name: getTestEntityValue('HoldRequest_RequestExpiration'),
-    description: 'Created by autotest team',
-  };
-  const requestPolicyBody = {
-    requestTypes: [REQUEST_TYPES.HOLD],
-    name: getTestEntityValue('hold'),
-    id: uuid(),
-  };
-
-  before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getAdminSourceRecord().then((record) => {
-          testData.adminSourceRecord = record;
-        });
-        ServicePoints.createViaApi(testData.servicePoint);
-        testData.defaultLocation = Locations.getDefaultLocation({
-          servicePointId: testData.servicePoint.id,
-        }).location;
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ query: 'name="book"' }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: itemData.title,
+      }),
+      createNoticeTemplate({
+        category: NOTICE_CATEGORIES.request,
+        name: 'Request_expiration_before_once_template',
+        noticeOptions: {
+          action: 'Request expiration',
+          send: 'Before',
+          sendBy: {
+            duration: '2',
+            interval: 'Hour(s)',
           },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          itemData.instanceId = specialInstanceIds.instanceId;
-          itemData.holdingId = specialInstanceIds.holdingIds[0].id;
-          itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-        });
-      });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    PatronGroups.createViaApi(patronGroup.name).then((res) => {
-      patronGroup.id = res;
-      cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name)
-        .then((userProperties) => {
-          testData.requestUser.userId = userProperties.userId;
-          testData.requestUser.barcode = userProperties.barcode;
+          frequency: 'One Time',
+        },
+      }),
+      createNoticeTemplate({
+        category: NOTICE_CATEGORIES.request,
+        name: 'Request_expiration_before_recurring_template',
+        noticeOptions: {
+          action: 'Request expiration',
+          send: 'Before',
+          sendBy: {
+            duration: '2',
+            interval: 'Hour(s)',
+          },
+          frequency: 'Recurring',
+          sendEvery: {
+            duration: '30',
+            interval: 'Minute(s)',
+          },
+        },
+      }),
+      createNoticeTemplate({
+        category: NOTICE_CATEGORIES.request,
+        name: 'Request_expiration_upon_at_template',
+        noticeOptions: {
+          action: 'Request expiration',
+          send: 'Upon/At',
+        },
+      }),
+    ];
+    const noticePolicy = {
+      name: getTestEntityValue('HoldRequest_RequestExpiration'),
+      description: 'Created by autotest team',
+    };
+    const requestPolicyBody = {
+      requestTypes: [REQUEST_TYPES.HOLD],
+      name: getTestEntityValue('hold'),
+      id: uuid(),
+    };
+
+    before('Preconditions', () => {
+      cy.getAdminToken()
+        .then(() => {
+          cy.getAdminSourceRecord().then((record) => {
+            testData.adminSourceRecord = record;
+          });
+          ServicePoints.createViaApi(testData.servicePoint);
+          testData.defaultLocation = Locations.getDefaultLocation({
+            servicePointId: testData.servicePoint.id,
+          }).location;
+          Location.createViaApi(testData.defaultLocation);
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            testData.instanceTypeId = instanceTypes[0].id;
+          });
+          cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
+            testData.holdingTypeId = holdingTypes[0].id;
+          });
+          cy.createLoanType({
+            name: `type_${getRandomPostfix()}`,
+          }).then((loanType) => {
+            testData.loanTypeId = loanType.id;
+          });
+          cy.getMaterialTypes({ query: 'name="book"' }).then((materialTypes) => {
+            testData.materialTypeId = materialTypes.id;
+          });
         })
         .then(() => {
-          UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.requestUser.userId);
-        });
-      cy.createTempUser(
-        [
-          Permissions.uiRequestsAll.gui,
-          Permissions.circulationLogAll.gui,
-          Permissions.uiCirculationSettingsNoticeTemplates.gui,
-          Permissions.uiCirculationSettingsNoticePolicies.gui,
-          Permissions.checkoutAll.gui,
-          Permissions.checkinAll.gui,
-        ],
-        patronGroup.name,
-      )
-        .then((userProperties) => {
-          testData.checkOutUser = userProperties;
-        })
-        .then(() => {
-          UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.checkOutUser.userId);
-          cy.login(testData.checkOutUser.username, testData.checkOutUser.password, {
-            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-            waiter: NewNoticePolicyTemplate.waitLoading,
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: itemData.title,
+            },
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: testData.defaultLocation.id,
+              },
+            ],
+            items: [
+              {
+                barcode: itemData.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
+            itemData.instanceId = specialInstanceIds.instanceId;
+            itemData.holdingId = specialInstanceIds.holdingIds[0].id;
+            itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
           });
         });
-    });
-  });
-
-  after('Deleting created entities', () => {
-    cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(testData.addedRule);
-    Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
-      (requestResponse) => {
-        Requests.deleteRequestViaApi(requestResponse[0].id);
-      },
-    );
-    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
-    UserEdit.changeServicePointPreferenceViaApi(testData.checkOutUser.userId, [
-      testData.servicePoint.id,
-    ]);
-    UserEdit.changeServicePointPreferenceViaApi(testData.requestUser.userId, [
-      testData.servicePoint.id,
-    ]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    Users.deleteViaApi(testData.checkOutUser.userId);
-    Users.deleteViaApi(testData.requestUser.userId);
-    PatronGroups.deleteViaApi(patronGroup.id);
-    RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    noticeTemplates.forEach((template) => {
-      NoticePolicyTemplateApi.getViaApi({ query: `name=${template.name}` }).then((templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      RequestPolicy.createViaApi(requestPolicyBody);
+      PatronGroups.createViaApi(patronGroup.name).then((res) => {
+        patronGroup.id = res;
+        cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name)
+          .then((userProperties) => {
+            testData.requestUser.userId = userProperties.userId;
+            testData.requestUser.barcode = userProperties.barcode;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.requestUser.userId);
+          });
+        cy.createTempUser(
+          [
+            Permissions.uiRequestsAll.gui,
+            Permissions.circulationLogAll.gui,
+            Permissions.uiCirculationSettingsNoticeTemplates.gui,
+            Permissions.uiCirculationSettingsNoticePolicies.gui,
+            Permissions.checkoutAll.gui,
+            Permissions.checkinAll.gui,
+          ],
+          patronGroup.name,
+        )
+          .then((userProperties) => {
+            testData.checkOutUser = userProperties;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.checkOutUser.userId);
+            cy.login(testData.checkOutUser.username, testData.checkOutUser.password, {
+              path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+              waiter: NewNoticePolicyTemplate.waitLoading,
+            });
+          });
       });
     });
-    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(itemData.instanceId);
-    Locations.deleteViaApi(testData.defaultLocation);
-  });
 
-  it(
-    'C347873 Hold request + Request expiration triggers (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
-    () => {
-      noticeTemplates.forEach((template, index) => {
-        NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
-        NewNoticePolicyTemplate.checkAfterSaving(template);
-      });
-
-      cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-      NewNoticePolicy.waitLoading();
-
-      NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
-      NewNoticePolicy.checkPolicyName(noticePolicy);
-      cy.wait(5000);
+    after('Deleting created entities', () => {
       cy.getAdminToken();
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.noticePolicyId = noticePolicyRes[0].id;
-        CirculationRules.addRuleViaApi(
-          { m: testData.materialTypeId },
-          { n: testData.noticePolicyId, r: requestPolicyBody.id },
-        ).then((newRule) => {
-          testData.addedRule = newRule;
+      CirculationRules.deleteRuleViaApi(testData.addedRule);
+      Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
+        (requestResponse) => {
+          Requests.deleteRequestViaApi(requestResponse[0].id);
+        },
+      );
+      NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
+      UserEdit.changeServicePointPreferenceViaApi(testData.checkOutUser.userId, [
+        testData.servicePoint.id,
+      ]);
+      UserEdit.changeServicePointPreferenceViaApi(testData.requestUser.userId, [
+        testData.servicePoint.id,
+      ]);
+      ServicePoints.deleteViaApi(testData.servicePoint.id);
+      Users.deleteViaApi(testData.checkOutUser.userId);
+      Users.deleteViaApi(testData.requestUser.userId);
+      PatronGroups.deleteViaApi(patronGroup.id);
+      RequestPolicy.deleteViaApi(requestPolicyBody.id);
+      noticeTemplates.forEach((template) => {
+        NoticePolicyTemplateApi.getViaApi({ query: `name=${template.name}` }).then((templateId) => {
+          NoticePolicyTemplateApi.deleteViaApi(templateId);
         });
       });
-      cy.visit(TopMenu.checkOutPath);
-      CheckOutActions.checkOutUser(testData.checkOutUser.barcode);
-      CheckOutActions.checkOutItem(itemData.barcode);
-      Checkout.verifyResultsInTheRow([itemData.barcode]);
-      CheckOutActions.endCheckOutSession();
-      cy.wait(5000);
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(itemData.instanceId);
+      Locations.deleteViaApi(testData.defaultLocation);
+    });
 
-      cy.visit(TopMenu.requestsPath);
-      NewRequest.createNewRequest({
-        itemBarcode: itemData.barcode,
-        itemTitle: itemData.title,
-        requesterBarcode: testData.requestUser.barcode,
-        pickupServicePoint: testData.servicePoint.name,
-        requestType: REQUEST_TYPES.HOLD,
-      });
-      NewRequest.waitLoading();
+    it(
+      'C347873 Hold request + Request expiration triggers (volaris)',
+      { tags: ['criticalPath', 'volaris'] },
+      () => {
+        noticeTemplates.forEach((template, index) => {
+          NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
+          NewNoticePolicyTemplate.checkAfterSaving(template);
+        });
 
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemModified(itemData.barcode);
-      AwaitingPickupForARequest.unselectCheckboxPrintSlipModified();
-      AwaitingPickupForARequest.closeModalModified();
-      CheckInActions.verifyLastCheckInItem(itemData.barcode);
-      CheckInActions.endCheckInSession();
-    },
-  );
+        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        NewNoticePolicy.waitLoading();
+
+        NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
+        NewNoticePolicy.checkPolicyName(noticePolicy);
+        cy.wait(5000);
+        cy.getAdminToken();
+        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+          testData.noticePolicyId = noticePolicyRes[0].id;
+          CirculationRules.addRuleViaApi(
+            { m: testData.materialTypeId },
+            { n: testData.noticePolicyId, r: requestPolicyBody.id },
+          ).then((newRule) => {
+            testData.addedRule = newRule;
+          });
+        });
+        cy.visit(TopMenu.checkOutPath);
+        CheckOutActions.checkOutUser(testData.checkOutUser.barcode);
+        CheckOutActions.checkOutItem(itemData.barcode);
+        Checkout.verifyResultsInTheRow([itemData.barcode]);
+        CheckOutActions.endCheckOutSession();
+        cy.wait(5000);
+
+        cy.visit(TopMenu.requestsPath);
+        NewRequest.createNewRequest({
+          itemBarcode: itemData.barcode,
+          itemTitle: itemData.title,
+          requesterBarcode: testData.requestUser.barcode,
+          pickupServicePoint: testData.servicePoint.name,
+          requestType: REQUEST_TYPES.HOLD,
+        });
+        NewRequest.waitLoading();
+
+        cy.visit(TopMenu.checkInPath);
+        CheckInActions.checkInItemModified(itemData.barcode);
+        AwaitingPickupForARequest.unselectCheckboxPrintSlipModified();
+        AwaitingPickupForARequest.closeModalModified();
+        CheckInActions.verifyLastCheckInItem(itemData.barcode);
+        CheckInActions.endCheckInSession();
+      },
+    );
+  });
 });

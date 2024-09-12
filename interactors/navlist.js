@@ -19,4 +19,5 @@ export const NavListItem = HTML.extend('Nav List Item')
   .filters({
     label,
     href: (el) => el.getAttribute('href'),
+    content: (el) => el.textContent,
   });

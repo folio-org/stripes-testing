@@ -7,7 +7,7 @@ import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Permissions Tags', () => {
+describe('Users', () => {
   let userData;
   let servicePointId;
   const patronGroup = {

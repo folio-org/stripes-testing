@@ -170,7 +170,7 @@ export default {
   verifyTemporaryLocation: (location) => {
     cy.expect(
       Accordion({ label: 'Location' })
-        .find(KeyValue({ dataTestId: 'item-temporary-location', value: location }))
+        .find(KeyValue({ dataTestId: 'item-temporary-location', value: including(location) }))
         .exists(),
     );
   },

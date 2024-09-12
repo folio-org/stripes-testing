@@ -282,7 +282,6 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.enableStaffSuppressFacet.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -372,7 +371,6 @@ describe('Data Import', () => {
 
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchByParameter('Subject', subject);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.saveUUIDs();

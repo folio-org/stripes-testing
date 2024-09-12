@@ -28,13 +28,13 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 111 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         cannotSaveCalloutMessage: 'Record cannot be saved without 1XX field.',
         cannotRemoveCalloutMessage:
-          'Cannot remove $t from the $111 field because it controls a bibliographic field(s) that requires  this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
+          'Cannot remove $t from the $111 field because it controls a bibliographic field(s) that requires this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
       };
 
       const marcFiles = [
         {
           marc: 'marcBibFileForC374142.mrc',
-          fileName: `testMarcFileC374142.${getRandomPostfix()}.mrc`,
+          fileName: `C374142 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
@@ -51,11 +51,20 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        }).then(() => {
-          cy.getAdminToken();
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="374142" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id);
+              });
+            }
+          });
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -67,9 +76,11 @@ describe('MARC', () => {
                 createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
+            cy.wait(2000);
           });
         });
 
+        cy.loginAsAdmin();
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -108,6 +119,7 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       });
@@ -143,8 +155,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(previousTagValue, testData.tag129);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotSaveCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(10, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag129, testData.tag111);
           QuickMarcEditor.checkButtonsDisabled();

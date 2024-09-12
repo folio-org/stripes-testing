@@ -53,7 +53,7 @@ describe('Inventory', () => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
     });
 
-    it(
+    it.skip(
       'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
       () => {

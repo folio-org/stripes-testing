@@ -37,6 +37,7 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         user.userAProperties = createdUserProperties;
 
+        cy.getUserToken(user.userAProperties.username, user.userAProperties.password);
         cy.login(user.userAProperties.username, user.userAProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,

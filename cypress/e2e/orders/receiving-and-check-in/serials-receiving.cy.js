@@ -14,106 +14,108 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Orders: Receiving and Check-in', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-  };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
+describe('Orders', () => {
+  describe('Receiving and Check-in', () => {
+    const order = {
+      ...NewOrder.defaultOneTimeOrder,
+      approved: true,
+    };
+    const organization = {
+      ...NewOrganization.defaultUiOrganizations,
+      accounts: [
+        {
+          accountNo: getRandomPostfix(),
+          accountStatus: 'Active',
+          acqUnitIds: [],
+          appSystemNo: '',
+          description: 'Main library account',
+          libraryCode: 'COB',
+          libraryEdiCode: getRandomPostfix(),
+          name: 'TestAccout1',
+          notes: '',
+          paymentMethod: 'Cash',
+        },
+      ],
+    };
+    const firstPiece = {
+      copyNumber: Helper.getRandomBarcode(),
+      enumeration: Helper.getRandomBarcode(),
+      chronology: Helper.getRandomBarcode(),
+      displaySummary: `AQA-${Helper.getRandomBarcode()}`,
+    };
+
+    let orderNumber;
+    let user;
+    let effectiveLocationServicePoint;
+    let location;
+
+    before(() => {
+      cy.getAdminToken();
+
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+        ).then((locationResponse) => {
+          location = locationResponse;
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
+          });
+          cy.createOrderApi(order).then((response) => {
+            orderNumber = response.body.poNumber;
+          });
+        });
+      });
+
+      cy.createTempUser([
+        permissions.uiInventoryViewInstances.gui,
+        permissions.uiOrdersEdit.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.uiOrdersView.gui,
+        permissions.uiReceivingViewEditCreate.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      () => {
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+        OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+          'Purchase',
+          location.name,
+          '2',
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        OrderLines.selectPOLInOrder(0);
+        OrderLines.receiveOrderLineViaActions();
+        Receiving.selectLinkFromResultsList();
+        Receiving.addPiece(
+          firstPiece.displaySummary,
+          firstPiece.copyNumber,
+          firstPiece.enumeration,
+          firstPiece.chronology,
+        );
+        Receiving.selectPiece(firstPiece.displaySummary);
+        Receiving.selectConnectedInEditPiece();
+        ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.ON_ORDER);
       },
-    ],
-  };
-  const firstPiece = {
-    copyNumber: Helper.getRandomBarcode(),
-    enumeration: Helper.getRandomBarcode(),
-    chronology: Helper.getRandomBarcode(),
-    displaySummary: `AQA-${Helper.getRandomBarcode()}`,
-  };
-
-  let orderNumber;
-  let user;
-  let effectiveLocationServicePoint;
-  let location;
-
-  before(() => {
-    cy.getAdminToken();
-
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-        });
-      });
-    });
-
-    cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersView.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
+    );
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-        'Purchase',
-        location.name,
-        '2',
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.receiveOrderLineViaActions();
-      Receiving.selectLinkFromResultsList();
-      Receiving.addPiece(
-        firstPiece.displaySummary,
-        firstPiece.copyNumber,
-        firstPiece.enumeration,
-        firstPiece.chronology,
-      );
-      Receiving.selectPiece(firstPiece.displaySummary);
-      Receiving.selectConnectedInEditPiece();
-      ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.ON_ORDER);
-    },
-  );
 });

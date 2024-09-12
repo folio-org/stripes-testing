@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('ui-requests: Make sure that request type filters are working properly', () => {
+describe('Requests', () => {
   const requests = [];
   const instances = [];
   const userIds = [];

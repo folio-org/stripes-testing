@@ -35,7 +35,7 @@ describe('Data Import', () => {
       name: `C358534 job profile ${getRandomPostfix()}`,
     };
 
-    before('create user and login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       NewFieldMappingProfile.createInstanceMappingProfileViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
@@ -51,13 +51,13 @@ describe('Data Import', () => {
         },
       );
 
-      // upload a marc file for creating of the new instance
-      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.name).then((response) => {
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
+
+        // upload a marc file for creating of the new instance
+        DataImport.uploadFileViaApi(filePath, fileName, jobProfile.name).then((response) => {
+          instanceId = response[0].instance.id;
+        });
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
@@ -82,6 +82,7 @@ describe('Data Import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.filterJobsByJobProfile(jobProfile.name);
+        cy.wait(1500);
         LogsViewAll.checkByJobProfileName(jobProfile.name);
         DataImport.selectAllLogs();
         DataImport.openDeleteImportLogsModal();

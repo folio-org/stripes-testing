@@ -127,8 +127,7 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      cy.loginAsAdmin()
+      cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
@@ -301,6 +300,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         InventorySearchAndFilter.saveUUIDs();
         // need to create a new file with instance UUID because tests are runing in multiple threads
         cy.intercept('/search/instances/ids**').as('getIds');

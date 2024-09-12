@@ -74,7 +74,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             cy.getAdminToken();
             DataImport.uploadFileViaApi(

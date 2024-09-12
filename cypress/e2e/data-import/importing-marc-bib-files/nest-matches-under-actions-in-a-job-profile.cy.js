@@ -39,6 +39,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let preconditionUserId = null;
     let user = null;
     let holdingsHrId = null;
     let instanceHrid = null;
@@ -55,7 +56,7 @@ describe('Data Import', () => {
     };
     const holdingsMappingProfileForCreate = {
       name: `C347894 autotest holdings mapping profile for create.${getRandomPostfix()}`,
-      permanentLocation: 'Main Library (KU/CC/DI/M)',
+      permanentLocation: 'Online',
     };
     const actionProfilesForCreate = [
       {
@@ -127,44 +128,50 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
-        instanceMappingProfileForCreate,
-      ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
 
-        NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[0].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
-        });
-      });
-      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(holdingsMappingProfileForCreate)
-        .then((mappingProfileResponse) => {
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          instanceMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[1].actionProfile,
+            actionProfilesForCreate[0].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
           });
-        })
-        .then(() => {
-          NewJobProfile.createJobProfileWithLinkedTwoActionProfilesViaApi(
-            jobProfileForCreate,
-            actionProfileIds[0],
-            actionProfileIds[1],
-          );
         });
-      // upload a marc file for creating of the new instance, holding
-      DataImport.uploadFileViaApi(
-        filePathToUpload,
-        marcFileNameForCreate,
-        jobProfileForCreate.name,
-      ).then((response) => {
-        holdingsHrId = response[0].holding.hrid;
+        NewFieldMappingProfile.createHoldingsMappingProfileViaApi(holdingsMappingProfileForCreate)
+          .then((mappingProfileResponse) => {
+            mappingProfileIds.push(mappingProfileResponse.body.id);
+
+            NewActionProfile.createActionProfileViaApi(
+              actionProfilesForCreate[1].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              actionProfileIds.push(actionProfileResponse.body.id);
+            });
+          })
+          .then(() => {
+            NewJobProfile.createJobProfileWithLinkedTwoActionProfilesViaApi(
+              jobProfileForCreate,
+              actionProfileIds[0],
+              actionProfileIds[1],
+            );
+          });
+        // upload a marc file for creating of the new instance, holding
+        DataImport.uploadFileViaApi(
+          filePathToUpload,
+          marcFileNameForCreate,
+          jobProfileForCreate.name,
+        ).then((response) => {
+          holdingsHrId = response[0].holding.hrid;
+        });
       });
 
       cy.createTempUser([
@@ -203,6 +210,7 @@ describe('Data Import', () => {
         mappingProfileIds.forEach((id) => {
           SettingsFieldMappingProfiles.deleteMappingProfileViaApi(id);
         });
+        Users.deleteViaApi(preconditionUserId);
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
@@ -221,6 +229,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHrId);
         InventorySearchAndFilter.selectResultCheckboxes(1);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         InventorySearchAndFilter.exportInstanceAsMarc();
         cy.intercept('/data-export/quick-export').as('getHrid');
         cy.wait('@getHrid', getLongDelay()).then((req) => {

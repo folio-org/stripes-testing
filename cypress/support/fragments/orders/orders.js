@@ -126,6 +126,7 @@ export default {
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
       body: order,
+      isDefaultSearchParamsRequired: false,
     });
   },
 
@@ -929,5 +930,10 @@ export default {
 
   waitOrdersListLoading: () => {
     cy.expect([ordersResultsPane.find(Spinner()).absent(), ordersList.exists()]);
+  },
+
+  selectOrdersNavigation: () => {
+    cy.wait(4000);
+    cy.get('[data-test-orders-navigation="true"]').click();
   },
 };

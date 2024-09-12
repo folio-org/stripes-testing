@@ -5,9 +5,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../../support/dictionary';
+import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
+    let preconditionUserId;
     let id;
     let instanceId;
     const filePath = 'oneMarcBib.mrc';
@@ -16,14 +19,18 @@ describe('Data Import', () => {
     const uniqueFileNameForSearch = `C11112 autotestFileName${uniquePartOfFileName}_1.mrc`;
 
     before('create test data', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        filePath,
-        uniqueFileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        instanceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(
+          filePath,
+          uniqueFileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          instanceId = response[0].instance.id;
+        });
       });
+
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       Logs.openViewAllLogs();
       LogsViewAll.selectOption(LogsViewAll.options[0]);
@@ -37,6 +44,7 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
+      Users.deleteViaApi(preconditionUserId);
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 

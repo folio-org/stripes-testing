@@ -84,20 +84,19 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before(() => {
-        cy.getAdminToken();
-        DataImport.uploadFileViaApi(
-          testData.marcFile.marc,
-          testData.marcFile.fileName,
-          testData.marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            createdAuthorityIDs.push(record.authority.id);
-          });
-        });
-
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             testData.user = userProperties;
+
+            DataImport.uploadFileViaApi(
+              testData.marcFile.marc,
+              testData.marcFile.fileName,
+              testData.marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record.authority.id);
+              });
+            });
 
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.marcAuthorities,

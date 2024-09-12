@@ -33,14 +33,6 @@ describe('Data Import', () => {
     const fileName = `C358968 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
-        (response) => {
-          instanceHrid = response[0].instance.hrid;
-          instanceid = response[0].instance.id;
-        },
-      );
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -54,6 +46,13 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+            instanceid = response[0].instance.id;
+          },
+        );
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,

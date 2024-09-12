@@ -2,6 +2,7 @@ import { HTML, including } from '@interactors/html';
 import { not } from 'bigtest';
 import FileManager from '../../utils/fileManager';
 import {
+  Accordion,
   Modal,
   SelectionOption,
   Button,
@@ -22,6 +23,7 @@ import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
 
 const actionsBtn = Button('Actions');
+const bulkEditsAccordion = Accordion('Bulk edits');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
@@ -120,12 +122,14 @@ export default {
   isSelectActionAbsent(rowIndex = 0) {
     cy.expect(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).absent());
   },
+
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
     this.verifyRowIcons();
   },
+
   verifyRowIcons() {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
@@ -150,9 +154,15 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
     BulkEditSearchPane.isConfirmButtonDisabled(true);
   },
+
   deleteRow(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
+
+  deleteRowBySelectedOption(option) {
+    cy.do(RepeatableFieldItem({ singleValue: option }).find(deleteBtn).click());
+  },
+
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
@@ -459,6 +469,14 @@ export default {
 
   verifyOptionAbsentInNewRow(option, rowIndex = 1) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(HTML(option)).absent());
+  },
+
+  verifyRowWithOptionAbsent(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).absent());
+  },
+
+  verifyRowWithOptionExists(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).exists());
   },
 
   verifyNewBulkEditRow(rowIndex = 1) {
@@ -1229,6 +1247,18 @@ export default {
       areYouSureForm.find(MessageBanner()).has({
         textContent: `${numberOfRecords} records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.`,
       }),
+    );
+  },
+
+  verifyActionsColumnIsNotPopulated() {
+    cy.expect(bulkEditsAccordion.find(Select({ dataTestID: 'select-actions-1' })).absent());
+  },
+
+  verifyActionsSelectDropdownDisabled(rowIndex = 0, isDisabled = true) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select('Actions select'))
+        .has({ disabled: isDisabled }),
     );
   },
 };

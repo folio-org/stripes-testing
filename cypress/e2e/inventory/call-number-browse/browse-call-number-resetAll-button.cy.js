@@ -1,4 +1,4 @@
-import { CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -53,7 +53,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkEffectiveLocationAccordionInputInFocus();
         resetAllAndCheckBrowseSearchInputFieldInFocus();
 
-        Object.values(CALL_NUMBER_TYPE_NAMES).forEach((type) => {
+        Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((type) => {
           InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(type);
           InventorySearchAndFilter.checkBrowseOptionSelected(type);
           searchBrowseRecordAndCheckBrowseInventoryResultPaneInFocus();

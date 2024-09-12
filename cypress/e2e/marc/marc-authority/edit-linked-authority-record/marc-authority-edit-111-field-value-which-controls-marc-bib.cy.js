@@ -36,13 +36,13 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileC374141.mrc',
-          fileName: `testMarcFileC374141${getRandomPostfix()}.mrc`,
+          fileName: `C374141 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC374141.mrc',
-          fileName: `testMarcFileC374141${getRandomPostfix()}.mrc`,
+          fileName: `C374141 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
         },
@@ -54,9 +54,10 @@ describe('MARC', () => {
       };
 
       before('Creating user, importing and linking records', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
-        cy.getAdminToken().then(() => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          // make sure there are no duplicate authority records in the system
           MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374141"' }).then(
             (records) => {
               records.forEach((record) => {
@@ -66,17 +67,18 @@ describe('MARC', () => {
               });
             },
           );
-        });
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -120,6 +122,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         testData.createdRecordIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id);
           // else InventoryInstance.deleteInstanceViaApi(id);
@@ -162,8 +165,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag109);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterSaving);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(8, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag109, testData.tag111);
           QuickMarcEditor.checkButtonsDisabled();

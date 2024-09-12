@@ -8,6 +8,7 @@ import {
   Modal,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
   Pane,
   RadioButton,
   TextArea,
@@ -29,7 +30,7 @@ const keepEditingButton = closeModal.find(Button('Keep editing'));
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
 const editList = Button('Edit list');
-const exportList = Button('Export list (CSV)');
+const exportList = Button('Export all columns (CSV)');
 const testQuery = Button('Test query');
 const runQuery = Button('Run query & save');
 const filterPane = Pane('Filter');
@@ -216,6 +217,14 @@ export default {
     });
   },
 
+  // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
+  deleteListByNameViaApi(listName) {
+    this.getViaApi().then((response) => {
+      const filteredItem = response.body.content.find((item) => item.name === listName);
+      this.deleteViaApi(filteredItem.id);
+    });
+  },
+
   getViaApi() {
     return cy.okapiRequest({
       method: 'GET',
@@ -241,7 +250,7 @@ export default {
 
   createViaApi(newList) {
     this.getTypesViaApi().then((response) => {
-      newList.entityTypeId = response.body.find(
+      newList.entityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === newList.recordType,
       ).id;
       delete newList.recordType;
@@ -316,6 +325,11 @@ export default {
 
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
+  },
+
+  selectRecordTypeFilter(type) {
+    cy.do(MultiSelect().choose(type));
+    cy.wait(1000);
   },
 
   verifyCheckboxChecked(name) {
@@ -402,7 +416,6 @@ export default {
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {
@@ -410,22 +423,16 @@ export default {
       });
   },
 
-  verifyListsFilteredByRecordType: (filters) => {
+  verifyListsFilteredByRecordType: (filter) => {
     cy.wait(500);
-    const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
         cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
           .invoke('text')
           .then((cellValue) => {
-            cells.push(cellValue);
+            cy.expect(cellValue).to.equal(filter);
           });
-      })
-      .then(() => {
-        cells.forEach((cell) => {
-          cy.expect(cell).to.be.oneOf(filters);
-        });
       });
   },
 

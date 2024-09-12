@@ -75,13 +75,14 @@ describe('ui-finance: Groups', () => {
   });
 
   after(() => {
+    cy.logout();
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     cy.getAdminToken();
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
-    cy.visit(TopMenu.fundPath);
+    Funds.closeFundDetails();
     FinanceHelp.searchByName(secondFund.name);
     Funds.selectFund(secondFund.name);
     Funds.selectBudgetDetails();
