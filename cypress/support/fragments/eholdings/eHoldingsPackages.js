@@ -244,6 +244,49 @@ export default {
     });
   },
 
+  unassignPackageViaAPI(packageName) {
+    cy.okapiRequest({
+      path: 'eholdings/packages',
+      searchParams: { q: packageName },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body: { data } }) => {
+      const packageData = data[0];
+      const { attributes } = packageData;
+      attributes.isSelected = false;
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `eholdings/packages/${packageData.id}`,
+        contentTypeHeader: 'application/vnd.api+json',
+        body: {
+          data: {
+            id: packageData.id,
+            type: packageData.type,
+            attributes: {
+              name: attributes.name,
+              isSelected: attributes.isSelected,
+              allowKbToAddTitles: false,
+              contentType: attributes.contentType,
+              customCoverage: {},
+              visibilityData: {
+                isHidden: false,
+                reason: '',
+              },
+              isCustom: attributes.isCustom,
+              proxy: {
+                id: 'ezproxy',
+                inherited: true,
+              },
+              packageToken: {},
+              isFullPackage: false,
+              accessTypeId: null,
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    });
+  },
+
   createPackageViaAPI(packageBody = defaultPackage) {
     return cy
       .okapiRequest({
