@@ -73,6 +73,7 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyRefreshListButtonIsActive();
         Lists.verifyEditListButtonIsActive();
+        Lists.verifyDuplicateListButtonIsActive();
         Lists.verifyDeleteListButtonIsActive();
         Lists.verifyExportListButtonIsActive();
 
