@@ -77,8 +77,8 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyPermanentLocation('-');
-        ItemRecordView.verifyTemporaryLocation('-');
+        ItemRecordView.verifyPermanentLocation('No value set-');
+        ItemRecordView.verifyTemporaryLocation('No value set-');
       },
     );
   });
