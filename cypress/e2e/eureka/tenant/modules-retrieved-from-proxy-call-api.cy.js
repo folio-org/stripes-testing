@@ -22,6 +22,70 @@ describe('Eureka', () => {
     const modulesRequiringIds = [];
     let moduleId;
 
+    function getDataFromAppDescriptor(appDescriptor) {
+      [...appDescriptor.moduleDescriptors, ...appDescriptor.uiModuleDescriptors].forEach(
+        (moduleDescriptor) => {
+          if (
+            Object.prototype.hasOwnProperty.call(moduleDescriptor, testData.properties.provides) &&
+            moduleDescriptor.provides.some(
+              (iface) => iface.id === testData.providedInterface1Id ||
+                iface.id === testData.providedInterface2Id,
+            )
+          ) modulesProvidingIds.push(moduleDescriptor.id);
+          if (
+            Object.prototype.hasOwnProperty.call(moduleDescriptor, testData.properties.requires) &&
+            moduleDescriptor.requires.some((iface) => iface.id === testData.requiredInterfaceId)
+          ) modulesRequiringIds.push(moduleDescriptor.id);
+          if (
+            Object.prototype.hasOwnProperty.call(moduleDescriptor, testData.properties.optional) &&
+            moduleDescriptor.optional.some((iface) => iface.id === testData.requiredInterfaceId)
+          ) modulesRequiringIds.push(moduleDescriptor.id);
+        },
+      );
+    }
+
+    function checkModulesHaveOnlyIds(retrievedModules) {
+      expect(
+        retrievedModules.every((retrievedModule) => {
+          return (
+            Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
+            Object.keys(retrievedModule).length === 1
+          );
+        }),
+      ).to.eq(true);
+    }
+
+    function checkAllModulesHaveIds(retrievedModules) {
+      expect(
+        retrievedModules.every((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id)),
+      ).to.eq(true);
+    }
+
+    function checkModulesMayHaveAllFields(retrievedModules) {
+      checkAllModulesHaveIds(retrievedModules);
+      Object.entries(testData.properties).forEach((property, index) => {
+        if (index) {
+          expect(
+            retrievedModules.some((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, property[0])),
+          ).to.eq(true);
+        }
+      });
+    }
+
+    function checkOnlyExpectedModulesFound(expectedModules, retrievedModules) {
+      expect(retrievedModules).to.have.lengthOf(expectedModules.length);
+      expectedModules.forEach((id) => {
+        expect(retrievedModules.filter((module) => module.id === id)).to.have.lengthOf(1);
+      });
+    }
+
+    function checkSomeModulesHaveMoreThanIds(retrievedModules) {
+      checkAllModulesHaveIds(retrievedModules);
+      expect(
+        retrievedModules.some((retrievedModule) => Object.keys(retrievedModule).length > 1),
+      ).to.eq(true);
+    }
+
     it(
       'C553008 Modules for a tenant can be retrieved from /_/proxy/tenants/<tenant>/modules (eureka)',
       { tags: ['criticalPath', 'eureka'] },
@@ -31,84 +95,28 @@ describe('Eureka', () => {
           expect(appsResponse.status).to.eq(200);
           appsResponse.body.applicationDescriptors.forEach((appDescriptor) => {
             totalModuleCount += appDescriptor.modules.length + appDescriptor.uiModules.length;
-
-            [...appDescriptor.moduleDescriptors, ...appDescriptor.uiModuleDescriptors].forEach(
-              (moduleDescriptor) => {
-                if (
-                  Object.prototype.hasOwnProperty.call(
-                    moduleDescriptor,
-                    testData.properties.provides,
-                  ) &&
-                  moduleDescriptor.provides.some(
-                    (iface) => iface.id === testData.providedInterface1Id ||
-                      iface.id === testData.providedInterface2Id,
-                  )
-                ) modulesProvidingIds.push(moduleDescriptor.id);
-                if (
-                  Object.prototype.hasOwnProperty.call(
-                    moduleDescriptor,
-                    testData.properties.requires,
-                  ) &&
-                  moduleDescriptor.requires.some(
-                    (iface) => iface.id === testData.requiredInterfaceId,
-                  )
-                ) modulesRequiringIds.push(moduleDescriptor.id);
-                if (
-                  Object.prototype.hasOwnProperty.call(
-                    moduleDescriptor,
-                    testData.properties.optional,
-                  ) &&
-                  moduleDescriptor.optional.some(
-                    (iface) => iface.id === testData.requiredInterfaceId,
-                  )
-                ) modulesRequiringIds.push(moduleDescriptor.id);
-              },
-            );
-
+            getDataFromAppDescriptor(appDescriptor);
             moduleId = modulesRequiringIds[0];
           });
 
           cy.getModulesForTenantProxyApi(testData.tenant).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedModules = response.body;
-            expect(
-              retrievedModules.every((retrievedModule) => {
-                return (
-                  Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
-                  Object.keys(retrievedModule).length === 1
-                );
-              }),
-            ).to.eq(true);
+            checkModulesHaveOnlyIds(retrievedModules);
             expect(retrievedModules).to.have.lengthOf(totalModuleCount);
           });
 
           cy.getModulesForTenantProxyApi(testData.tenant, { full: false }).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedModules = response.body;
-            expect(
-              retrievedModules.every((retrievedModule) => {
-                return (
-                  Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
-                  Object.keys(retrievedModule).length === 1
-                );
-              }),
-            ).to.eq(true);
+            checkModulesHaveOnlyIds(retrievedModules);
             expect(retrievedModules).to.have.lengthOf(totalModuleCount);
           });
 
           cy.getModulesForTenantProxyApi(testData.tenant, { full: true }).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedModules = response.body;
-            expect(
-              retrievedModules.every((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id)),
-            ).to.eq(true);
-            Object.entries(testData.properties).forEach((property, index) => {
-              if (index) {
-                expect(
-                  retrievedModules.some((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, property[0])),
-                ).to.eq(true);
-              }
-            });
+            checkModulesMayHaveAllFields(retrievedModules);
           });
 
           cy.getModulesForTenantProxyApi(testData.tenant, { full: false, filter: moduleId }).then(
@@ -126,16 +134,8 @@ describe('Eureka', () => {
           }).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedModules = response.body;
-            expect(
-              retrievedModules.every((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id)),
-            ).to.eq(true);
-            expect(
-              retrievedModules.some((retrievedModule) => Object.keys(retrievedModule).length > 1),
-            ).to.eq(true);
-            expect(retrievedModules).to.have.lengthOf(modulesProvidingIds.length);
-            modulesProvidingIds.forEach((id) => {
-              expect(retrievedModules.filter((module) => module.id === id)).to.have.lengthOf(1);
-            });
+            checkSomeModulesHaveMoreThanIds(retrievedModules);
+            checkOnlyExpectedModulesFound(modulesProvidingIds, retrievedModules);
           });
 
           cy.getModulesForTenantProxyApi(testData.tenant, {
@@ -144,18 +144,8 @@ describe('Eureka', () => {
           }).then((response) => {
             expect(response.status).to.eq(200);
             const retrievedModules = response.body;
-            expect(
-              retrievedModules.every((retrievedModule) => {
-                return (
-                  Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
-                  Object.keys(retrievedModule).length === 1
-                );
-              }),
-            ).to.eq(true);
-            expect(retrievedModules).to.have.lengthOf(modulesRequiringIds.length);
-            modulesRequiringIds.forEach((id) => {
-              expect(retrievedModules.filter((module) => module.id === id)).to.have.lengthOf(1);
-            });
+            checkModulesHaveOnlyIds(retrievedModules);
+            checkOnlyExpectedModulesFound(modulesRequiringIds, retrievedModules);
           });
 
           cy.getModulesForTenantProxyApi(testData.tenant, { full: false, preRelease: false }).then(
