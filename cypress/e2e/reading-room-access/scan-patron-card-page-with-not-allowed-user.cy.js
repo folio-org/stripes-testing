@@ -66,9 +66,21 @@ describe('Reading Room Access', () => {
     'C494088 Validate Functionality of scan patron card page with not allowed user (volaris)',
     { tags: ['smoke', 'volaris'] },
     () => {
+      const userInfo = {
+        firstName: userNotAllowedInReadingRoom.user.firstName,
+        lastName: userNotAllowedInReadingRoom.user.lastName,
+        patronGroup: userNotAllowedInReadingRoom.user.userGroup.group,
+        userType: userNotAllowedInReadingRoom.user.userGroup.group,
+        barcode: userNotAllowedInReadingRoom.user.barcode,
+        expirationDate: 'No value set-',
+      };
+
       cy.visit(TopMenu.readingRoom);
       ReadingRoom.waitLoading();
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
+      ReadingRoom.verifyUserInformation(userInfo);
+      ReadingRoom.verifyUserIsScanned(userInfo.firstName);
+      ReadingRoom.verifyUserInformation(userInfo);
     },
   );
 });
