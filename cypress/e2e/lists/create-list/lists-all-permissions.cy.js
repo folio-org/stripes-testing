@@ -54,7 +54,7 @@ describe('lists', () => {
     });
 
     it(
-      '411694 C411693 Lists (Admin): All permissions (corsair)',
+      'C423598 C411694 C411693 Lists (Admin): All permissions (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
         cy.login(userData.username, userData.password);
@@ -73,6 +73,7 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyRefreshListButtonIsActive();
         Lists.verifyEditListButtonIsActive();
+        Lists.verifyDuplicateListButtonIsActive();
         Lists.verifyDeleteListButtonIsActive();
         Lists.verifyExportListButtonIsActive();
 
