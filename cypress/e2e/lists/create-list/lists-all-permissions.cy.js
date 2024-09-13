@@ -54,7 +54,7 @@ describe('lists', () => {
     });
 
     it(
-      'C423598 C411694 C411693 Lists (Admin): All permissions (corsair)',
+      '411694 C411693 Lists (Admin): All permissions (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
         cy.login(userData.username, userData.password);
