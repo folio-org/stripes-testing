@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -19,7 +20,8 @@ describe('MARC', () => {
         tag240: '240',
         authority100FieldValue: 'C375100 Beethoven, Ludwig van',
         searchOption: 'Keyword',
-        searchValue: 'Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
+        searchValue:
+          'C375100 Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
         fieldForAdding: { tag: '010', content: '$a n 94000339' },
         errorMultiple010MarcTags: 'Field is non-repeatable.',
       };
@@ -29,14 +31,14 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC375100.mrc',
-          fileName: `testMarcFileC375100.${getRandomPostfix()}.mrc`,
+          fileName: `C375100 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC375100.mrc',
-          fileName: `testMarcFileC375100.${getRandomPostfix()}.mrc`,
+          fileName: `C375100 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'Variations / Ludwig Van Beethoven.',
           numOfRecords: 1,
@@ -45,53 +47,58 @@ describe('MARC', () => {
       ];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
-          });
-        });
-
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          InventoryInstance.verifySearchOptions();
-          InventoryInstance.searchResults(testData.authority100FieldValue);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag100,
-            `$a ${testData.authority100FieldValue}`,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-
-          cy.createTempUser([
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          ]).then((createdUserProperties) => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+
+            // make sure there are no duplicate records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375100*');
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
+              });
+              cy.wait(2000);
             });
+          })
+          .then(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(testData.authority100FieldValue);
+            MarcAuthoritiesSearch.selectExcludeReferencesFilter();
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag100,
+              `$a ${testData.authority100FieldValue}`,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+          });
+
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
           });
         });
       });
