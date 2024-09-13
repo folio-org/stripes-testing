@@ -34,12 +34,12 @@ describe('lists', () => {
       Lists.waitLoading();
       Lists.resetAllFilters();
       Lists.expiredPatronLoan();
-      Lists.actionButton();
-      cy.contains('Edit list').should('be.disabled');
+      Lists.openActions();
+      Lists.verifyEditListButtonIsDisabled();
       Lists.closeListDetailsPane();
       cy.wait(2000);
       Lists.missingItems();
-      cy.contains('Edit list').should('be.disabled');
+      Lists.verifyEditListButtonIsDisabled();
     });
   });
 });
