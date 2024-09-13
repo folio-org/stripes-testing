@@ -49,7 +49,7 @@ describe('MARC', () => {
       before('Create test data', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((createdUserProperties) => {
-            testData.userProperties = createdUserProperties;
+            testData.preconditionUserId = createdUserProperties.userId;
 
             // make sure there are no duplicate records in the system
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375100*');
@@ -106,6 +106,7 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       });

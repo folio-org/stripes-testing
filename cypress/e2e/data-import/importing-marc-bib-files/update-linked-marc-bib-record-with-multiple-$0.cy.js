@@ -146,7 +146,7 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
       ])
         .then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+          testData.preconditionUserId = createdUserProperties.userId;
 
           // make sure there are no duplicate records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377006*');
@@ -236,6 +236,7 @@ describe('Data Import', () => {
     after('Delete user and test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
+      Users.deleteViaApi(testData.preconditionUserId);
       if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
         if (index) MarcAuthority.deleteViaAPI(id);
