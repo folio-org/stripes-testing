@@ -1,0 +1,180 @@
+describe('Eureka', () => {
+  describe('Tenants', () => {
+    const testData = {
+      tenant: Cypress.env('OKAPI_TENANT'),
+      properties: {
+        id: 'id',
+        replaces: 'replaces',
+        requires: 'requires',
+        provides: 'provides',
+        optional: 'optional',
+        permissionSets: 'permissionSets',
+        launchDescriptor: 'launchDescriptor',
+        name: 'name',
+      },
+      providedInterface1Id: 'login',
+      providedInterface2Id: 'roles',
+      requiredInterfaceId: 'configuration',
+    };
+
+    let totalModuleCount = 0;
+    const modulesProvidingIds = [];
+    const modulesRequiringIds = [];
+    let moduleId;
+
+    it(
+      'C553008 Modules for a tenant can be retrieved from /_/proxy/tenants/<tenant>/modules (eureka)',
+      { tags: ['criticalPath', 'eureka'] },
+      () => {
+        cy.getAdminToken();
+        cy.getApplicationsForTenantApi(testData.tenant, false).then((appsResponse) => {
+          expect(appsResponse.status).to.eq(200);
+          appsResponse.body.applicationDescriptors.forEach((appDescriptor) => {
+            totalModuleCount += appDescriptor.modules.length + appDescriptor.uiModules.length;
+
+            [...appDescriptor.moduleDescriptors, ...appDescriptor.uiModuleDescriptors].forEach(
+              (moduleDescriptor) => {
+                if (
+                  Object.prototype.hasOwnProperty.call(
+                    moduleDescriptor,
+                    testData.properties.provides,
+                  ) &&
+                  moduleDescriptor.provides.some(
+                    (iface) => iface.id === testData.providedInterface1Id ||
+                      iface.id === testData.providedInterface2Id,
+                  )
+                ) modulesProvidingIds.push(moduleDescriptor.id);
+                if (
+                  Object.prototype.hasOwnProperty.call(
+                    moduleDescriptor,
+                    testData.properties.requires,
+                  ) &&
+                  moduleDescriptor.requires.some(
+                    (iface) => iface.id === testData.requiredInterfaceId,
+                  )
+                ) modulesRequiringIds.push(moduleDescriptor.id);
+                if (
+                  Object.prototype.hasOwnProperty.call(
+                    moduleDescriptor,
+                    testData.properties.optional,
+                  ) &&
+                  moduleDescriptor.optional.some(
+                    (iface) => iface.id === testData.requiredInterfaceId,
+                  )
+                ) modulesRequiringIds.push(moduleDescriptor.id);
+              },
+            );
+
+            moduleId = modulesRequiringIds[0];
+          });
+
+          cy.getModulesForTenantProxyApi(testData.tenant).then((response) => {
+            expect(response.status).to.eq(200);
+            const retrievedModules = response.body;
+            expect(
+              retrievedModules.every((retrievedModule) => {
+                return (
+                  Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
+                  Object.keys(retrievedModule).length === 1
+                );
+              }),
+            ).to.eq(true);
+            expect(retrievedModules).to.have.lengthOf(totalModuleCount);
+          });
+
+          cy.getModulesForTenantProxyApi(testData.tenant, { full: false }).then((response) => {
+            expect(response.status).to.eq(200);
+            const retrievedModules = response.body;
+            expect(
+              retrievedModules.every((retrievedModule) => {
+                return (
+                  Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
+                  Object.keys(retrievedModule).length === 1
+                );
+              }),
+            ).to.eq(true);
+            expect(retrievedModules).to.have.lengthOf(totalModuleCount);
+          });
+
+          cy.getModulesForTenantProxyApi(testData.tenant, { full: true }).then((response) => {
+            expect(response.status).to.eq(200);
+            const retrievedModules = response.body;
+            expect(
+              retrievedModules.every((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id)),
+            ).to.eq(true);
+            Object.entries(testData.properties).forEach((property, index) => {
+              if (index) {
+                expect(
+                  retrievedModules.some((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, property[0])),
+                ).to.eq(true);
+              }
+            });
+          });
+
+          cy.getModulesForTenantProxyApi(testData.tenant, { full: false, filter: moduleId }).then(
+            (response) => {
+              expect(response.status).to.eq(200);
+              const retrievedModules = response.body;
+              expect(retrievedModules).to.have.lengthOf(1);
+              expect(retrievedModules[0].id).to.eq(moduleId);
+            },
+          );
+
+          cy.getModulesForTenantProxyApi(testData.tenant, {
+            full: true,
+            provide: `${testData.providedInterface1Id},${testData.providedInterface2Id}`,
+          }).then((response) => {
+            expect(response.status).to.eq(200);
+            const retrievedModules = response.body;
+            expect(
+              retrievedModules.every((retrievedModule) => Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id)),
+            ).to.eq(true);
+            expect(
+              retrievedModules.some((retrievedModule) => Object.keys(retrievedModule).length > 1),
+            ).to.eq(true);
+            expect(retrievedModules).to.have.lengthOf(modulesProvidingIds.length);
+            modulesProvidingIds.forEach((id) => {
+              expect(retrievedModules.filter((module) => module.id === id)).to.have.lengthOf(1);
+            });
+          });
+
+          cy.getModulesForTenantProxyApi(testData.tenant, {
+            full: false,
+            require: testData.requiredInterfaceId,
+          }).then((response) => {
+            expect(response.status).to.eq(200);
+            const retrievedModules = response.body;
+            expect(
+              retrievedModules.every((retrievedModule) => {
+                return (
+                  Object.prototype.hasOwnProperty.call(retrievedModule, testData.properties.id) &&
+                  Object.keys(retrievedModule).length === 1
+                );
+              }),
+            ).to.eq(true);
+            expect(retrievedModules).to.have.lengthOf(modulesRequiringIds.length);
+            modulesRequiringIds.forEach((id) => {
+              expect(retrievedModules.filter((module) => module.id === id)).to.have.lengthOf(1);
+            });
+          });
+
+          cy.getModulesForTenantProxyApi(testData.tenant, { full: false, preRelease: false }).then(
+            (response) => {
+              expect(response.status).to.eq(200);
+              const retrievedModules = response.body;
+              expect(retrievedModules).to.have.length.of.at.most(totalModuleCount);
+            },
+          );
+
+          cy.getModulesForTenantProxyApi(testData.tenant, { full: false, npmSnapshot: false }).then(
+            (response) => {
+              expect(response.status).to.eq(200);
+              const retrievedModules = response.body;
+              expect(retrievedModules).to.have.length.of.at.most(totalModuleCount);
+            },
+          );
+        });
+      },
+    );
+  });
+});

@@ -34,11 +34,19 @@ Cypress.Commands.add('getApplicationsForTenantApi', (tenantName, idOnly = true) 
 
 Cypress.Commands.add(
   'getInterfacesForTenantProxyApi',
-  (tenantName, { isFull, type } = { isFull: true }) => {
-    const params = type ? `?full=${isFull}&type=${type}` : `?full=${isFull}`;
+  (tenantName, { full, type } = { full: true }) => {
+    const params = type ? `?full=${full}&type=${type}` : `?full=${full}`;
     return cy.okapiRequest({
       path: `_/proxy/tenants/${tenantName}/interfaces${params}`,
       isDefaultSearchParamsRequired: false,
     });
   },
 );
+
+Cypress.Commands.add('getModulesForTenantProxyApi', (tenantName, params = null) => {
+  return cy.okapiRequest({
+    path: `_/proxy/tenants/${tenantName}/modules`,
+    isDefaultSearchParamsRequired: false,
+    searchParams: params,
+  });
+});
