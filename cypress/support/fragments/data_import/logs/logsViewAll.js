@@ -409,7 +409,7 @@ export default {
       .get('#list-data-import')
       .find('div[data-row-inner="0"]')
       .find('div[role=gridcell]')
-      .eq(9)
+      .eq(8)
       .invoke('text')
       .then((text) => {
         return text;

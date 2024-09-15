@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
 
         // try to upload empty file
         BulkEditSearchPane.uploadFile('empty.csv');
-        InteractorsTools.checkCalloutMessage('Fail to upload file', calloutTypes.error);
+        InteractorsTools.checkCalloutMessage('The uploaded file is empty.', calloutTypes.error);
         InteractorsTools.closeCalloutMessage();
 
         const invalidFileWarning = 'Invalid file';
