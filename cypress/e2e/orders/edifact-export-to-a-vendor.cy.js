@@ -12,151 +12,155 @@ import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('orders: export', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-  };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout2',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-    ],
-  };
-  const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
-  const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
-  const integartionDescription1 = 'Test Integation descripton1';
-  const integartionDescription2 = 'Test Integation descripton2';
-  const vendorEDICodeFor1Integration = getRandomPostfix();
-  const libraryEDICodeFor1Integration = getRandomPostfix();
-  const vendorEDICodeFor2Integration = getRandomPostfix();
-  const libraryEDICodeFor2Integration = getRandomPostfix();
-  let user;
-  let location;
-  let servicePointId;
-  let orderNumber;
-  const UTCTime = DateTools.getUTCDateForScheduling();
+describe('Export Manager', () => {
+  describe('Export Orders in EDIFACT format', () => {
+    describe('Orders Export to a Vendor', () => {
+      const order = {
+        ...NewOrder.defaultOneTimeOrder,
+        orderType: 'Ongoing',
+        ongoing: { isSubscription: false, manualRenewal: false },
+        approved: true,
+      };
+      const organization = {
+        ...NewOrganization.defaultUiOrganizations,
+        accounts: [
+          {
+            accountNo: getRandomPostfix(),
+            accountStatus: 'Active',
+            acqUnitIds: [],
+            appSystemNo: '',
+            description: 'Main library account',
+            libraryCode: 'COB',
+            libraryEdiCode: getRandomPostfix(),
+            name: 'TestAccout1',
+            notes: '',
+            paymentMethod: 'Cash',
+          },
+          {
+            accountNo: getRandomPostfix(),
+            accountStatus: 'Active',
+            acqUnitIds: [],
+            appSystemNo: '',
+            description: 'Main library account',
+            libraryCode: 'COB',
+            libraryEdiCode: getRandomPostfix(),
+            name: 'TestAccout2',
+            notes: '',
+            paymentMethod: 'Cash',
+          },
+        ],
+      };
+      const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
+      const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
+      const integartionDescription1 = 'Test Integation descripton1';
+      const integartionDescription2 = 'Test Integation descripton2';
+      const vendorEDICodeFor1Integration = getRandomPostfix();
+      const libraryEDICodeFor1Integration = getRandomPostfix();
+      const vendorEDICodeFor2Integration = getRandomPostfix();
+      const libraryEDICodeFor2Integration = getRandomPostfix();
+      let user;
+      let location;
+      let servicePointId;
+      let orderNumber;
+      const UTCTime = DateTools.getUTCDateForScheduling();
 
-  before(() => {
-    cy.getAdminToken();
+      before(() => {
+        cy.getAdminToken();
 
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
+        ServicePoints.getViaApi().then((servicePoint) => {
+          servicePointId = servicePoint[0].id;
+          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+            location = res;
+          });
+        });
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
+        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.checkSearchResults(organization);
+        Organizations.selectOrganization(organization.name);
+        Organizations.addIntegration();
+        Organizations.fillIntegrationInformation(
+          integrationName1,
+          integartionDescription1,
+          vendorEDICodeFor1Integration,
+          libraryEDICodeFor1Integration,
+          organization.accounts[0].accountNo,
+          'Purchase',
+          UTCTime,
+        );
+        Organizations.addIntegration();
+        cy.wait(2000);
+        Organizations.fillIntegrationInformation(
+          integrationName2,
+          integartionDescription2,
+          vendorEDICodeFor2Integration,
+          libraryEDICodeFor2Integration,
+          organization.accounts[1].accountNo,
+          'Purchase At Vendor System',
+          UTCTime,
+        );
+
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+        });
+        // Need to wait while first job will be runing
+        cy.wait(70000);
+        cy.createTempUser([
+          permissions.uiOrdersView.gui,
+          permissions.uiOrdersCreate.gui,
+          permissions.uiOrdersEdit.gui,
+          permissions.uiOrdersApprovePurchaseOrders.gui,
+          permissions.uiOrganizationsViewEditCreate.gui,
+          permissions.uiOrganizationsView.gui,
+          permissions.uiExportOrders.gui,
+          permissions.exportManagerAll.gui,
+          permissions.exportManagerDownloadAndResendFiles.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
+        });
       });
-    });
-    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-      organization.id = organizationsResponse;
-      order.vendor = organizationsResponse;
-    });
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(
-      integrationName1,
-      integartionDescription1,
-      vendorEDICodeFor1Integration,
-      libraryEDICodeFor1Integration,
-      organization.accounts[0].accountNo,
-      'Purchase',
-      UTCTime,
-    );
-    Organizations.addIntegration();
-    cy.wait(2000);
-    Organizations.fillIntegrationInformation(
-      integrationName2,
-      integartionDescription2,
-      vendorEDICodeFor2Integration,
-      libraryEDICodeFor2Integration,
-      organization.accounts[1].accountNo,
-      'Purchase At Vendor System',
-      UTCTime,
-    );
 
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-    });
-    // Need to wait while first job will be runing
-    cy.wait(70000);
-    cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrganizationsViewEditCreate.gui,
-      permissions.uiOrganizationsView.gui,
-      permissions.uiExportOrders.gui,
-      permissions.exportManagerAll.gui,
-      permissions.exportManagerDownloadAndResendFiles.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      after(() => {
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
       });
+
+      it(
+        'C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)',
+        { tags: ['smoke', 'thunderjet'] },
+        () => {
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.createPOLineViaActions();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+          cy.visit(TopMenu.exportManagerOrganizationsPath);
+          ExportManagerSearchPane.selectOrganizationsSearch();
+          ExportManagerSearchPane.selectExportMethod(integrationName1);
+          ExportManagerSearchPane.selectJobByIntegrationInList(integrationName1);
+          ExportManagerSearchPane.rerunJob();
+          cy.reload();
+          ExportManagerSearchPane.verifyResult('Successful');
+          ExportManagerSearchPane.selectJob('Successful');
+          ExportManagerSearchPane.downloadJob();
+          ExportManagerSearchPane.resetAll();
+          ExportManagerSearchPane.selectOrganizationsSearch();
+          ExportManagerSearchPane.selectExportMethod(integrationName2);
+          ExportManagerSearchPane.selectJobByIntegrationInList(integrationName2);
+          ExportManagerSearchPane.rerunJob();
+          cy.reload();
+          ExportManagerSearchPane.verifyResult('Failed');
+        },
+      );
     });
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
-    () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      cy.visit(TopMenu.exportManagerOrganizationsPath);
-      ExportManagerSearchPane.selectOrganizationsSearch();
-      ExportManagerSearchPane.selectExportMethod(integrationName1);
-      ExportManagerSearchPane.selectJobByIntegrationInList(integrationName1);
-      ExportManagerSearchPane.rerunJob();
-      cy.reload();
-      ExportManagerSearchPane.verifyResult('Successful');
-      ExportManagerSearchPane.selectJob('Successful');
-      ExportManagerSearchPane.downloadJob();
-      ExportManagerSearchPane.resetAll();
-      ExportManagerSearchPane.selectOrganizationsSearch();
-      ExportManagerSearchPane.selectExportMethod(integrationName2);
-      ExportManagerSearchPane.selectJobByIntegrationInList(integrationName2);
-      ExportManagerSearchPane.rerunJob();
-      cy.reload();
-      ExportManagerSearchPane.verifyResult('Failed');
-    },
-  );
 });

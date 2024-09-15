@@ -38,38 +38,59 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const instanceHrids = [];
+    let instanceHrid;
     const checked = true;
     const instanceTitle =
       "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.";
     const filePathToUpload = 'marcBibFileForC11087.mrc';
     const mappingProfile = {
-      name: `autotestMappingProfile_${getRandomPostfix()}`,
+      name: `C11088 autotestMappingProfile_${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       suppressFromDiscavery: 'Mark for all affected records',
       staffSuppress: 'Unmark for all affected records',
       previouslyHeld: 'Keep the existing value for all affected records',
     };
     const actionProfile = {
-      name: `autotestActionProfile_${getRandomPostfix()}`,
+      name: `C11088 autotestActionProfile_${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const jobProfile = {
-      profileName: `autotestJobProfile_${getRandomPostfix()}`,
+      profileName: `C11088 autotestJobProfile_${getRandomPostfix()}`,
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+    };
+    const marcFileName = `C11088 autotestFile${getRandomPostfix()}.mrc`;
+    const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
+    const mappingProfileUpdate = {
+      name: `C11088 autotest update MappingProf${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      suppressFromDiscavery: 'Unmark for all affected records',
+      staffSuppress: 'Keep the existing value for all affected records',
+      previouslyHeld: 'Mark for all affected records',
+    };
+
+    const actionProfileUpdate = {
+      name: `C11088 autotest update ActionProf${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+    };
+
+    const matchProfile = {
+      profileName: `C11088 autotest MatchProf${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '001',
+      },
+      matchCriterion: 'Exactly matches',
+      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
+    };
+
+    const jobProfileUpdate = {
+      profileName: `C11088 autotest update JobProf${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('Create test data', () => {
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.enableStaffSuppressFacet.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-      });
-
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -93,105 +114,45 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-    });
 
-    beforeEach('Login', () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.wrap(instanceHrids).each((hrid) => {
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-            (instance) => {
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
-        });
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileUpdate.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
     });
-
-    it(
-      'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
-      () => {
-        const marcFileName = `C11087 autotestFile${getRandomPostfix()}.mrc`;
-
-        // upload a marc file
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathToUpload, marcFileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFileName);
-        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened(marcFileName);
-        FileDetails.openJsonScreen(instanceTitle);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.openMarcSrsTab();
-        JsonScreenView.getInstanceHrid().then((initialInstanceHrId) => {
-          const instanceHrid = initialInstanceHrId;
-          instanceHrids.push(instanceHrid);
-
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
-          InstanceRecordView.verifyNotMarkAsStaffSuppressed();
-          InstanceRecordView.verifyNotMarkAsPreviouslyHeld();
-          InstanceRecordView.edit();
-          InstanceRecordEdit.waitLoading();
-          InstanceRecordEdit.verifyDiscoverySuppressCheckbox(checked);
-          InstanceRecordEdit.verifyStaffSuppressCheckbox();
-          InstanceRecordEdit.verifyPreviouslyHeldCheckbox();
-        });
-      },
-    );
 
     it(
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const marcFileName = `C11088 autotestFile${getRandomPostfix()}.mrc`;
-        const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;
-        const fileNameForUpdate = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
-        const mappingProfileUpdate = {
-          name: `C11088 autotest update MappingProf${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          suppressFromDiscavery: 'Unmark for all affected records',
-          staffSuppress: 'Keep the existing value for all affected records',
-          previouslyHeld: 'Mark for all affected records',
-        };
-
-        const actionProfileUpdate = {
-          name: `C11088 autotest update ActionProf${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
-        };
-
-        const matchProfile = {
-          profileName: `C11088 autotest MatchProf${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '001',
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid,
-        };
-
-        const jobProfileUpdate = {
-          profileName: `C11088 autotest update JobProf${getRandomPostfix()}`,
-          acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-        };
-
         // upload a marc file
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, marcFileName);
@@ -204,8 +165,7 @@ describe('Data Import', () => {
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyInstancePaneExists();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          const instanceHrid = initialInstanceHrId;
-          instanceHrids.push(instanceHrid);
+          instanceHrid = initialInstanceHrId;
 
           DataImport.editMarcFile(filePathToUpload, editedFileName, ['303845'], [instanceHrid]);
           InstanceRecordView.edit();
@@ -257,9 +217,9 @@ describe('Data Import', () => {
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openMarcSrsTab();
-        JsonScreenView.getInstanceHrid().then((instanceHrid) => {
-          const hrid = instanceHrid;
 
+        JsonScreenView.getInstanceHrid().then((initialHrid) => {
+          const hrid = initialHrid;
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(hrid);
@@ -272,13 +232,6 @@ describe('Data Import', () => {
           InstanceRecordEdit.verifyStaffSuppressCheckbox(checked);
           InstanceRecordEdit.verifyPreviouslyHeldCheckbox(checked);
         });
-
-        // delete profiles
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileUpdate.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileUpdate.name);
-        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileUpdate.name);
-        FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       },
     );
   });
