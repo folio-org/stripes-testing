@@ -64,4 +64,8 @@ export default {
         : InvoiceStates.invoiceApprovedMessage,
     );
   },
+  clickOnlySubmitButton() {
+    cy.do(submitButton.click());
+    cy.expect(approveInvoiceConfirmationModal.absent());
+  },
 };
