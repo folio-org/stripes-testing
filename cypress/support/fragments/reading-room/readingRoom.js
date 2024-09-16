@@ -20,6 +20,10 @@ export default {
     fillInPatronCard(userBarcode);
     clickenterButton();
   },
+  clickNotAllowedButton() {
+    cy.wait(1500);
+    cy.do(Button({ id: 'deny-access' }).click());
+  },
 
   verifyUserIsScanned(userfirstName) {
     cy.get('[class^="borrowerDetails-"]').contains(userfirstName).should('be.visible');
@@ -30,9 +34,20 @@ export default {
       rootSection.find(KeyValue('Last name')).has({ value: userInfo.lastName }),
       rootSection.find(KeyValue('Patron group')).has({ value: userInfo.patronGroup }),
       rootSection.find(KeyValue('User type')).has({ value: userInfo.userType }),
-      rootSection.find(KeyValue('Barcode:')).has({ value: userInfo.barcode }),
-      rootSection.find(KeyValue('User expiration:')).has({ value: userInfo.expirationDate }),
+      rootSection.find(KeyValue('Barcode')).has({ value: userInfo.barcode }),
+      rootSection.find(KeyValue('User expiration')).has({ value: userInfo.expirationDate }),
     ]);
   },
-  verifyWarningMessage() {},
+  verifyWarningMessage(message) {
+    cy.get('[class^="notAllowed-"]').contains(`Autotest_Room: ${message}`).should('be.visible');
+  },
+  verifyButtonsEnabled() {
+    cy.do(Button({ id: 'allow-access' }).has({ disabled: true }));
+    cy.expect([Button({ id: 'deny-access' }).exists(), Button({ id: 'cancel' }).exists()]);
+  },
+
+  verifyInformationAfterAction() {
+    cy.expect(TextField({ id: 'patronBarcode' }).has({ value: '' }));
+    cy.get('[class^="borrowerDetails-"]').should('not.exist');
+  },
 };

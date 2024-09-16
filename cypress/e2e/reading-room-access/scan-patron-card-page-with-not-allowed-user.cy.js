@@ -1,11 +1,12 @@
 import uuid from 'uuid';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
+import ReadingRoom from '../../support/fragments/reading-room/readingRoom';
+import SettingsReadingRoom from '../../support/fragments/settings/tenant/general/readingRoom';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
-// import Users from '../../support/fragments/users/users';
-import ReadingRoom from '../../support/fragments/reading-room/readingRoom';
-import SettingsReadingRoom from '../../support/fragments/settings/tenant/general/readingRoom';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Reading Room Access', () => {
   const readingRoomId = uuid();
@@ -42,7 +43,7 @@ describe('Reading Room Access', () => {
       );
     });
 
-    cy.createTempUser([permissions.uiReadingRoomAll.gui], 'staff').then((userProperties) => {
+    cy.createTempUser([Permissions.uiReadingRoomAll.gui]).then((userProperties) => {
       userAllowedInReadingRoom.user = userProperties;
 
       UserEdit.addServicePointViaApi(
@@ -55,12 +56,12 @@ describe('Reading Room Access', () => {
     });
   });
 
-  // after('Deleting created entities', () => {
-  //   cy.getAdminToken();
-  //   Users.deleteViaApi(userData.userId);
-  //   PatronGroups.deleteViaApi(patronGroup.id);
-  //   ReadingRoom.deleteReadingRoomViaApi(readingRoomId);
-  // });
+  after('Deleting created entities', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(userNotAllowedInReadingRoom.user.userId);
+    Users.deleteViaApi(userAllowedInReadingRoom.user.userId);
+    SettingsReadingRoom.deleteReadingRoomViaApi(readingRoomId);
+  });
 
   it(
     'C494088 Validate Functionality of scan patron card page with not allowed user (volaris)',
@@ -78,9 +79,13 @@ describe('Reading Room Access', () => {
       cy.visit(TopMenu.readingRoom);
       ReadingRoom.waitLoading();
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
-      ReadingRoom.verifyUserInformation(userInfo);
       ReadingRoom.verifyUserIsScanned(userInfo.firstName);
       ReadingRoom.verifyUserInformation(userInfo);
+      ReadingRoom.verifyWarningMessage('Not allowed');
+      ReadingRoom.verifyButtonsEnabled();
+      ReadingRoom.clickNotAllowedButton();
+      InteractorsTools.checkCalloutMessage('Action was successfully saved');
+      ReadingRoom.verifyInformationAfterAction();
     },
   );
 });
