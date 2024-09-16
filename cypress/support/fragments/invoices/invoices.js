@@ -254,6 +254,40 @@ export default {
     });
     return cy.get('@invoice');
   },
+
+  createInvoiceWithInvoiceLineWithoutOrderViaApi({
+    vendorId,
+    fiscalYearId,
+    batchGroupId,
+    invoiceStatus,
+    fundDistributions,
+    accountingCode,
+    subTotal,
+    releaseEncumbrance,
+    exportToAccounting,
+  }) {
+    this.createInvoiceViaApi({
+      vendorId,
+      accountingCode,
+      fiscalYearId,
+      batchGroupId,
+      invoiceStatus,
+      exportToAccounting,
+    }).then((resp) => {
+      cy.wrap(resp).as('invoice');
+      const { id: invoiceId, status: invoiceLineStatus } = resp;
+      const invoiceLine = getDefaultInvoiceLine({
+        invoiceId,
+        invoiceLineStatus,
+        fundDistributions,
+        subTotal,
+        accountingCode,
+        releaseEncumbrance,
+      });
+      this.createInvoiceLineViaApi(invoiceLine);
+    });
+    return cy.get('@invoice');
+  },
   selectFolio() {
     cy.do([
       Button({ id: 'accordion-toggle-button-status' }).click(),
