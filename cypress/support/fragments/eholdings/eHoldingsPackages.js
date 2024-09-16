@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   HTML,
@@ -244,6 +245,15 @@ export default {
     });
   },
 
+  getPackageViaApi: (packageName) => {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'eholdings/packages',
+      searchParams: { q: packageName },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   unassignPackageViaAPI(packageName) {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -296,7 +306,18 @@ export default {
         body: packageBody,
         isDefaultSearchParamsRequired: false,
       })
-      .then((response) => response.body);
+      .then((response) => {
+        return recurse(
+          () => this.getPackageViaApi(packageBody.data.attributes.name),
+          (getPackageResponse) => getPackageResponse.body.data.length > 0,
+          {
+            timeout: 60_000,
+            delay: 1_000,
+          },
+        ).then(() => {
+          return response.body;
+        });
+      });
   },
 
   updateProxy() {
