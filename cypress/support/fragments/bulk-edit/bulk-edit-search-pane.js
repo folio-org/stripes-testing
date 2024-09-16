@@ -490,6 +490,28 @@ export default {
     });
   },
 
+  verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
+    cy.then(() => resultsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        resultsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(identifier, columnName, value) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        changesAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -738,6 +760,14 @@ export default {
 
   verifyPaneRecordsCount(value) {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyPaneRecordsChangedCount(value) {
+    cy.expect(bulkEditPane.find(HTML(`${value} records changed`)).exists());
+  },
+
+  verifyFileNameHeadLine(fileName) {
+    cy.expect(bulkEditPane.find(HTML(`Filename: ${fileName}`)).exists());
   },
 
   verifyPaneTitleFileName(fileName) {
