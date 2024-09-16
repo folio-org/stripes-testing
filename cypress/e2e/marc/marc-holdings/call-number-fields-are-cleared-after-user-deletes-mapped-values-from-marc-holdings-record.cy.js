@@ -120,8 +120,8 @@ describe('MARC', () => {
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.itemBarcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyShelvingOrder('-');
-        ItemRecordView.verifyCallNumber('-');
+        ItemRecordView.verifyShelvingOrder('No value set-');
+        ItemRecordView.verifyCallNumber('No value set-');
         ItemRecordView.closeDetailView();
         InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.selectBrowseCallNumbers();

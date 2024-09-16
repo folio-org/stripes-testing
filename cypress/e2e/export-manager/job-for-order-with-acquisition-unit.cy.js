@@ -13,113 +13,117 @@ import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('orders: export', () => {
-  const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-  };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-    ],
-  };
-  const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
-  const integartionDescription = 'Test Integation descripton1';
-  const vendorEDICodeFor1Integration = getRandomPostfix();
-  const libraryEDICodeFor1Integration = getRandomPostfix();
-  let user;
-  let location;
-  let servicePointId;
-  let orderNumber;
-  const UTCTime = DateTools.getUTCDateForScheduling();
+describe('Export Manager', () => {
+  describe('Export Orders in EDIFACT format', () => {
+    describe('Orders Export to a Vendor', () => {
+      const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
+      const order = {
+        ...NewOrder.defaultOneTimeOrder,
+        approved: true,
+      };
+      const organization = {
+        ...NewOrganization.defaultUiOrganizations,
+        accounts: [
+          {
+            accountNo: getRandomPostfix(),
+            accountStatus: 'Active',
+            acqUnitIds: [],
+            appSystemNo: '',
+            description: 'Main library account',
+            libraryCode: 'COB',
+            libraryEdiCode: getRandomPostfix(),
+            name: 'TestAccout1',
+            notes: '',
+            paymentMethod: 'Cash',
+          },
+        ],
+      };
+      const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
+      const integartionDescription = 'Test Integation descripton1';
+      const vendorEDICodeFor1Integration = getRandomPostfix();
+      const libraryEDICodeFor1Integration = getRandomPostfix();
+      let user;
+      let location;
+      let servicePointId;
+      let orderNumber;
+      const UTCTime = DateTools.getUTCDateForScheduling();
 
-  before(() => {
-    cy.getAdminToken();
-    cy.createTempUser([
-      permissions.exportManagerAll.gui,
-      permissions.uiOrdersView.gui,
-      permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
-      permissions.uiOrganizationsViewEdit.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.loginAsAdmin({
-        path: SettingsMenu.acquisitionUnitsPath,
-        waiter: AcquisitionUnits.waitLoading,
-      });
-      AcquisitionUnits.newAcquisitionUnit();
-      AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
-      AcquisitionUnits.assignAdmin();
-      AcquisitionUnits.assignUser(user.username);
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-      organization.id = organizationsResponse;
-      order.vendor = organizationsResponse;
-    });
-    cy.visit(TopMenu.organizationsPath);
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(
-      integrationName,
-      integartionDescription,
-      vendorEDICodeFor1Integration,
-      libraryEDICodeFor1Integration,
-      organization.accounts[0].accountNo,
-      'Purchase',
-      UTCTime,
-    );
+      before(() => {
+        cy.getAdminToken();
+        cy.createTempUser([
+          permissions.exportManagerAll.gui,
+          permissions.uiOrdersView.gui,
+          permissions.uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit.gui,
+          permissions.uiOrganizationsViewEdit.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.loginAsAdmin({
+            path: SettingsMenu.acquisitionUnitsPath,
+            waiter: AcquisitionUnits.waitLoading,
+          });
+          AcquisitionUnits.newAcquisitionUnit();
+          AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
+          AcquisitionUnits.assignAdmin();
+          AcquisitionUnits.assignUser(user.username);
+        });
+        ServicePoints.getViaApi().then((servicePoint) => {
+          servicePointId = servicePoint[0].id;
+          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+            location = res;
+          });
+        });
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
+        cy.visit(TopMenu.organizationsPath);
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.checkSearchResults(organization);
+        Organizations.selectOrganization(organization.name);
+        Organizations.addIntegration();
+        Organizations.fillIntegrationInformation(
+          integrationName,
+          integartionDescription,
+          vendorEDICodeFor1Integration,
+          libraryEDICodeFor1Integration,
+          organization.accounts[0].accountNo,
+          'Purchase',
+          UTCTime,
+        );
 
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+          cy.visit(TopMenu.ordersPath);
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.createPOLineViaActions();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+        });
+      });
+
+      it(
+        'C380640: Schedule export job for order with Acquisition unit (thunderjet) (TaaS)',
+        { tags: ['extendedPath', 'thunderjet'] },
+        () => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.exportManagerOrganizationsPath,
+            waiter: ExportManagerSearchPane.waitLoading,
+          });
+          ExportManagerSearchPane.selectOrganizationsSearch();
+          ExportManagerSearchPane.selectExportMethod(integrationName);
+          ExportManagerSearchPane.selectJobByIntegrationInList(integrationName);
+          ExportManagerSearchPane.rerunJob();
+          cy.reload();
+          ExportManagerSearchPane.verifyResult('Successful');
+          ExportManagerSearchPane.selectJob('Successful');
+          ExportManagerSearchPane.verifyJobStatusInDetailView('Successful');
+          ExportManagerSearchPane.verifyJobOrganizationInDetailView(organization);
+          ExportManagerSearchPane.verifyJobExportMethodInDetailView(integrationName);
+        },
+      );
     });
   });
-
-  it(
-    'C380640: Schedule export job for order with Acquisition unit (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
-    () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.exportManagerOrganizationsPath,
-        waiter: ExportManagerSearchPane.waitLoading,
-      });
-      ExportManagerSearchPane.selectOrganizationsSearch();
-      ExportManagerSearchPane.selectExportMethod(integrationName);
-      ExportManagerSearchPane.selectJobByIntegrationInList(integrationName);
-      ExportManagerSearchPane.rerunJob();
-      cy.reload();
-      ExportManagerSearchPane.verifyResult('Successful');
-      ExportManagerSearchPane.selectJob('Successful');
-      ExportManagerSearchPane.verifyJobStatusInDetailView('Successful');
-      ExportManagerSearchPane.verifyJobOrganizationInDetailView(organization);
-      ExportManagerSearchPane.verifyJobExportMethodInDetailView(integrationName);
-    },
-  );
 });

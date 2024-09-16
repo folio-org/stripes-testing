@@ -492,7 +492,7 @@ export default {
   editInstance: () => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
-    InstanceRecordEdit.waitLoading();
+    cy.expect(Pane({ id: 'instance-form' }).exists());
 
     return InstanceRecordEdit;
   },

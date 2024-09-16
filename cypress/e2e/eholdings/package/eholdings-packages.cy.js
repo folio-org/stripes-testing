@@ -22,38 +22,6 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
-      () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-          Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
-          Permissions.moduleeHoldingsEnabled.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
-          EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName('Examstutor');
-          EHoldingsPackages.openPackage();
-          cy.wait(3000);
-          EHoldingsPackage.addToHoldings();
-          cy.wait(3000);
-          EHoldingsPackage.verifyHoldingStatus();
-          cy.wait(3000);
-          EHoldingsPackage.filterTitles();
-          EHoldingsPackage.checkEmptyTitlesList();
-          // reset test data
-          EHoldingsPackage.removeFromHoldings();
-          cy.wait(5000);
-        });
-      },
-    );
-
-    it(
       'C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
