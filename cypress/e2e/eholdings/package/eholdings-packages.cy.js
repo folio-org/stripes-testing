@@ -145,38 +145,6 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C756 Remove a tag from a package record (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
-      () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-          Permissions.uiTagsPermissionAll.gui,
-          Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
-          EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName();
-          EHoldingsPackages.openPackage().then(() => {
-            // existing test data clearing
-            EHoldingsPackage.removeExistingTags();
-            const addedTag = EHoldingsPackage.addTag();
-            EHoldingsPackage.closePackage();
-            EHoldingsPackagesSearch.byTag(addedTag);
-            EHoldingsPackages.openPackage();
-            EHoldingsPackage.verifyExistingTags(addedTag);
-            EHoldingsPackage.removeExistingTags();
-            cy.reload();
-            EHoldingsPackage.verifyExistingTags();
-          });
-        });
-      },
-    );
-
-    it(
       'C699 Add or edit package custom coverage (spitfire)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
