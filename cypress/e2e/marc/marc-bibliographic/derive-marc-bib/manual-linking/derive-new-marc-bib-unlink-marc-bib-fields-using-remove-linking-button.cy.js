@@ -68,37 +68,26 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115*');
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((createdUserProperties) => {
+            testData.preconditionUserId = createdUserProperties.userId;
+            // make sure there are no duplicate authority records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115*');
 
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.user = createdUserProperties;
-
-          marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
-              },
-            );
-          });
-
-          cy.visit(TopMenu.inventoryPath).then(() => {
+              });
+            });
+          })
+          .then(() => {
+            cy.visit(TopMenu.inventoryPath);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -112,8 +101,20 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((createdUserProperties) => {
+          testData.user = createdUserProperties;
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
@@ -125,6 +126,7 @@ describe('MARC', () => {
       after('Deleting created user and data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         createdRecordIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id);
@@ -147,6 +149,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[0].rowIndex);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.secondTag700Values);
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[1].rowIndex);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.verifyContributor(2, 1, linkingTagAndValues[0].value);

@@ -37,11 +37,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380565*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380565*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -143,11 +141,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C359206*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C359206*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -259,11 +255,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['UXPROD-4394C380567*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['UXPROD-4394C380567*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -394,11 +388,9 @@ describe('MARC', () => {
       before('Creating user', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
-        ['C380568'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380568'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -512,11 +504,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380569*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380569*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -620,11 +610,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['UXPROD-4394C380566*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['UXPROD-4394C380566*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -740,11 +728,9 @@ describe('MARC', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
 
-        ['C380570*'].forEach(
-          (title) => {
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-          },
-        );
+        ['C380570*'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,

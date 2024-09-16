@@ -411,7 +411,7 @@ const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library
 const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
-const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
+const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save & close'));
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
@@ -1761,7 +1761,9 @@ export default {
   checkErrorMessage(rowIndex, errorMessage) {
     cy.wait(1000);
     cy.expect(
-      QuickMarcEditorRow({ index: rowIndex, error: including(`Fail: ${errorMessage}`) }).exists(),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(HTML(including(errorMessage)))
+        .exists(),
     );
   },
 

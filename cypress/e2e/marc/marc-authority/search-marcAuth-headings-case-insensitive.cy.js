@@ -45,22 +45,20 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.moduleDataImportEnabled.gui,
-      ]).then(
-        (userProperties) => {
-          testData.user = userProperties;
+      ]).then((userProperties) => {
+        testData.user = userProperties;
 
-          cy.getUserToken(testData.user.username, testData.user.password);
-          DataImport.uploadFileViaApi(
-            testData.marcFile.marc,
-            testData.marcFile.fileName,
-            testData.marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.authorityIDs.push(record[testData.marcFile.propertyName].id);
-            });
+        cy.getUserToken(testData.user.username, testData.user.password);
+        DataImport.uploadFileViaApi(
+          testData.marcFile.marc,
+          testData.marcFile.fileName,
+          testData.marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.authorityIDs.push(record[testData.marcFile.propertyName].id);
           });
-        },
-      );
+        });
+      });
     });
 
     beforeEach('Login', () => {

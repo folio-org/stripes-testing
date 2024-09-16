@@ -25,6 +25,7 @@ describe('Inventory', () => {
     };
     let orderNumber;
     let user;
+    let preconditionUserId;
     let orderID;
     const lccnOption = 'LCCN, normalized';
 
@@ -66,35 +67,36 @@ describe('Inventory', () => {
         permissions.inventoryAll.gui,
         permissions.uiOrdersCreate.gui,
         permissions.moduleDataImportEnabled.gui,
-      ]).then(
-        (userProperties) => {
-          user = userProperties;
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.getUserToken(user.username, user.password);
-          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
-              });
-            },
-          );
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
+        cy.getUserToken(user.username, user.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
           });
-        },
-      );
+        });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
 
     after(() => {
       cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(preconditionUserId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       Orders.deleteOrderViaApi(orderID);
       Organizations.deleteOrganizationViaApi(organization.id);
-      Users.deleteViaApi(user.userId);
     });
 
     it(

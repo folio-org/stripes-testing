@@ -7,7 +7,7 @@ import newOrganization from '../../support/fragments/organizations/newOrganizati
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
 
-describe('orders: create an order', () => {
+describe('Orders', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
