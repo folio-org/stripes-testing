@@ -12,7 +12,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
@@ -21,6 +21,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
+import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -85,6 +86,9 @@ describe('Finance: Transactions', () => {
                       (responseOrganizations) => {
                         organization.id = responseOrganizations;
                         firstOrder.vendor = organization.id;
+                        cy.getBatchGroups().then((batchGroup) => {
+                          invoice.batchGroup = batchGroup.name;
+                        });
                         cy.loginAsAdmin({
                           path: SettingsMenu.ordersPurchaseOrderLinesLimit,
                           waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
@@ -167,15 +171,23 @@ describe('Finance: Transactions', () => {
                           secondOrderLine.purchaseOrderId = firstOrderResponse.id;
                           thirdOrderLine.purchaseOrderId = firstOrderResponse.id;
                           firstOrderNumber = firstOrderResponse.poNumber;
-
                           OrderLines.createOrderLineViaApi(firstOrderLine);
                           OrderLines.createOrderLineViaApi(secondOrderLine);
                           OrderLines.createOrderLineViaApi(thirdOrderLine);
-                          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+
+                          Orders.updateOrderViaApi({
+                            ...firstOrderResponse,
+                            workflowStatus: ORDER_STATUSES.OPEN,
+                          });
+                          cy.visit(TopMenu.ordersPath);
                           Orders.searchByParameter('PO number', firstOrderNumber);
                           Orders.selectFromResultsList(firstOrderNumber);
                           Orders.newInvoiceFromOrder();
-                          Invoices.createInvoiceFromOrder(invoice, defaultFiscalYear.code);
+                          Invoices.createInvoiceFromOrderWithMultiLines(
+                            invoice,
+                            defaultFiscalYear.code,
+                          );
+                          Invoices.closeInvoiceDetailsPane();
                           Approvals.setApprovePayValue(isApprovePayEnabled);
                         });
                       },
@@ -191,12 +203,14 @@ describe('Finance: Transactions', () => {
 
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiOrdersEdit.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
       });
     });
   });
@@ -217,6 +231,22 @@ describe('Finance: Transactions', () => {
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.canNotApproveAndPayInvoice(
+        `One or more Fund distributions on this invoice can not be paid, because there is not enough money in [${firstFund.code}].`,
+      );
+      Invoices.selectInvoiceLineByNumber('$95.00');
+      Invoices.verifyCurrentEncumbrance('$95.00');
+      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.selectInvoiceLineByNumber('$10.00');
+      Invoices.verifyCurrentEncumbrance('$10.00');
+      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.selectInvoiceLineByNumber('$5.00');
+      Invoices.verifyCurrentEncumbrance('$5.00');
+      InvoiceLineDetails.openFundDetailsPane(firstFund.name);
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.checkAbsentTransaction('Pending payment');
+      Funds.checkAbsentTransaction('Payment');
     },
   );
 });
