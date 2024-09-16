@@ -41,7 +41,7 @@ const marcAuthorityUpdateMappingProfile = {
   deletedRelations: [],
 };
 const openNewMappingProfileForm = () => {
-  cy.wait(1000);
+  cy.wait(2000);
   cy.do([actionsButton.click(), Button('New field mapping profile').click()]);
 };
 const mappingProfileForDuplicate = {
