@@ -31,6 +31,7 @@ const keepEditingButton = closeModal.find(Button('Keep editing'));
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
 const editList = Button('Edit list');
+const duplicateList = Button('Duplicate list');
 const deleteList = Button('Delete list');
 const exportList = Button('Export all columns (CSV)');
 const testQuery = Button('Test query');
@@ -56,6 +57,19 @@ export default {
 
   waitForSpinnerToDisappear() {
     cy.get('[class^="spinner"]').should('not.exist');
+  },
+
+  waitForCompilingToComplete() {
+    cy.wait(1000);
+    cy.get('[class^=compilerWrapper]').should('not.exist');
+    cy.wait(1000);
+    cy.get('body').then(($body) => {
+      if ($body.find('div[data-test-message-banner]').length > 0) {
+        this.viewUpdatedList();
+      } else {
+        cy.log('"View updated list" didn\'t appear');
+      }
+    });
   },
 
   queryBuilderActions() {
@@ -90,11 +104,11 @@ export default {
   },
 
   verifyRefreshListButtonIsDisabled() {
-    cy.contains('Refresh list').should('be.disabled');
+    cy.expect(refreshList.has({ disabled: true }));
   },
 
   verifyRefreshListButtonDoesNotExist() {
-    cy.contains('Refresh list').should('not.exist');
+    cy.expect(refreshList.absent());
   },
 
   confirmDelete() {
@@ -122,9 +136,32 @@ export default {
     cy.wait(2000);
   },
 
+  duplicateList() {
+    cy.do(duplicateList.click());
+    cy.wait(1000);
+  },
+
+  verifyDuplicateListButtonIsActive() {
+    cy.expect(duplicateList.exists());
+    cy.expect(duplicateList.has({ disabled: false }));
+  },
+
+  verifyDuplicateListButtonIsDisabled() {
+    cy.expect(duplicateList.has({ disabled: true }));
+  },
+
   deleteList() {
     cy.do(deleteList.click());
     cy.wait(1000);
+  },
+
+  verifyDeleteListButtonIsActive() {
+    cy.expect(deleteList.exists());
+    cy.expect(deleteList.has({ disabled: false }));
+  },
+
+  verifyDeleteListButtonIsDisabled() {
+    cy.expect(deleteList.has({ disabled: true }));
   },
 
   verifyEditListButtonIsDisabled() {
@@ -247,6 +284,8 @@ export default {
         .find(Button(listName))
         .click(),
     );
+    cy.wait(1000);
+    this.waitForCompilingToComplete();
   },
 
   verifyListsPaneIsEmpty() {
@@ -406,15 +445,6 @@ export default {
 
   verifyListIsSaved(listName) {
     cy.contains(`List ${listName} saved.`);
-  },
-
-  verifyDeleteListButtonIsActive() {
-    cy.expect(deleteList.exists());
-    cy.expect(deleteList.has({ disabled: false }));
-  },
-
-  verifyDeleteListButtonIsDisabled() {
-    cy.expect(deleteList.has({ disabled: true }));
   },
 
   viewUpdatedList() {
