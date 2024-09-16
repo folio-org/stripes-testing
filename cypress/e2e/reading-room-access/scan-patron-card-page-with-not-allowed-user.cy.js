@@ -60,6 +60,8 @@ describe('Reading Room Access', () => {
     cy.getAdminToken();
     Users.deleteViaApi(userNotAllowedInReadingRoom.user.userId);
     Users.deleteViaApi(userAllowedInReadingRoom.user.userId);
+    ServicePoints.deleteViaApi(userNotAllowedInReadingRoom.servicePoint.id);
+    ServicePoints.deleteViaApi(userAllowedInReadingRoom.servicePoint.id);
     SettingsReadingRoom.deleteReadingRoomViaApi(readingRoomId);
   });
 
