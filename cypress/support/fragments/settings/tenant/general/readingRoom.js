@@ -9,7 +9,7 @@ const newRoomButtoncss = 'button[id^="clickable-add-reading-room"]';
 const editRoomButtonCss = 'button[id^="clickable-edit-reading-room"]';
 const deleteRoomCss = 'button[id^="clickable-delete-reading-room"]';
 
-const servicePoint = 'Circ Desk 1';
+// const servicePoint = 'Circ Desk 1';
 const readingRoomName = `Autotest_Reading_Room${getRandomPostfix()}`;
 const recordLoadRetries = 10;
 const recordLoadWait = 15000;
@@ -43,7 +43,7 @@ export default {
     cy.get(editRoomButtonCss).should('not.exist');
     cy.get(deleteRoomCss).should('not.exist');
   },
-  createReadingRoomViaApi(servicePointId, readingRoomId, publicState = true) {
+  createReadingRoomViaApi(servicePointId, servicePointName, readingRoomId, publicState = true) {
     return cy.okapiRequest({
       method: 'POST',
       path: 'reading-room',
@@ -53,7 +53,7 @@ export default {
         servicePoints: [
           {
             value: servicePointId,
-            label: `${servicePoint}`,
+            label: servicePointName,
           },
         ],
         id: readingRoomId,
