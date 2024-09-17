@@ -24,9 +24,11 @@ describe('Eureka', () => {
         cy.getAdminToken();
         // set default locale settings for tenant (with UTC)
         cy.getConfigForTenantByName(testData.localeConfigName).then((config) => {
-          const updatedConfig = { ...config };
-          updatedConfig.value = DEFAULT_LOCALE_STRING;
-          cy.updateConfigForTenantById(config.id, updatedConfig);
+          if (config) {
+            const updatedConfig = { ...config };
+            updatedConfig.value = DEFAULT_LOCALE_STRING;
+            cy.updateConfigForTenantById(config.id, updatedConfig);
+          }
         });
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;

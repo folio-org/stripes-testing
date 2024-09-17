@@ -33,7 +33,6 @@ describe('Eureka', () => {
                 testData.userB = createdUserBProperties;
                 cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
                   testData.roleId = role.id;
-                  // TO DO: rewrite when users will not have admin role assigned upon creation
                   if (Cypress.env('runAsAdmin')) {
                     cy.updateRolesForUserApi(testData.userA.userId, [testData.roleId]);
                     cy.updateRolesForUserApi(testData.userB.userId, [testData.roleId]);

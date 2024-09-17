@@ -169,7 +169,7 @@ describe('Eureka', () => {
 
       it(
         'C430262 Selecting/deselecting applications when editing authorization role',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS'] },
         () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);

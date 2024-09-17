@@ -13,13 +13,13 @@ describe('Eureka', () => {
         updatedRoleDescription: `Description C424001 ${getRandomPostfix()} UPD`,
         originalCapabilitySets: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'UI-Notes Settings',
             action: 'View',
@@ -27,37 +27,37 @@ describe('Eureka', () => {
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Item LinkedAgreements',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Item',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Note Types Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Note Types Item',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Notes Enabled',
             action: 'View',
@@ -65,39 +65,39 @@ describe('Eureka', () => {
         ],
         originalCapabilities: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Erm Agreements Item',
             action: 'Create',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Erm Agreements Item',
             action: 'Delete',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Login Password',
             action: 'Execute',
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-complete',
+          application: 'app-platform-full',
           table: 'Procedural',
           resource: 'UI-Users Loans Renew',
           action: 'Execute',
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Inventory-Storage Location-Units Libraries Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Circulation Renew-By-Barcode',
             action: 'Execute',
@@ -105,7 +105,7 @@ describe('Eureka', () => {
         ],
         newCapabilities: [
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Developer Enabled',
             action: 'View',

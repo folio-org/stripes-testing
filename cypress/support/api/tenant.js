@@ -8,7 +8,9 @@ Cypress.Commands.add('getConfigForTenantByName', (configName) => {
     failOnStatusCode: true,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    return body.configs[0];
+    let result = null;
+    if (body.configs.length) result = body.configs[0];
+    return result;
   });
 });
 

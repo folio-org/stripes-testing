@@ -13,19 +13,19 @@ describe('Eureka', () => {
         updatedRoleDescription: `Description C424003 ${getRandomPostfix()} UPD`,
         capabilities: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Data-Export Mapping-Profiles Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'UI-Notes Settings',
             action: 'Edit',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Roles Collection',
             action: 'Execute',

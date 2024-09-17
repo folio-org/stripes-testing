@@ -561,8 +561,8 @@ export default {
 
   checkCapabilitySpinnersShown() {
     cy.expect([
-      capabilitiesAccordion.find(Spinner()).exists(),
       capabilitySetsAccordion.find(Spinner()).exists(),
+      capabilitiesAccordion.find(Spinner()).exists(),
     ]);
   },
 

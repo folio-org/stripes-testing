@@ -11,7 +11,7 @@ describe('Eureka', () => {
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C431152 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        application: 'app-platform-minimal',
+        application: 'app-platform-full',
         originalCapabilities: [
           {
             table: 'Data',

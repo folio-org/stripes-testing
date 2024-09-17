@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        applicationName: 'app-platform-minimal',
+        applicationName: 'app-platform-full',
         firstSelectedCapabilitySet: {
           table: 'Data',
           resource: 'Configuration',
@@ -133,7 +133,8 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName);
           AuthorizationRoles.clickSaveInModal();
-          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
+          // TO DO: uncomment when apps will be split (action takes too much resources with all lines in one app)
+          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.firstSelectedCapabilitySet);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.secondSelectedCapabilitySet);
           testData.capabilitiesInSelectedSets.forEach((capability) => {
