@@ -4,7 +4,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('orders: create an order', () => {
+describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
 

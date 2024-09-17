@@ -52,8 +52,8 @@ describe('lists', () => {
       Lists.selectStatus('Inactive');
       Lists.buildQuery();
       Lists.queryBuilderActions();
-      Lists.actionButton();
-      cy.contains('Refresh list').should('be.disabled');
+      Lists.openActions();
+      Lists.verifyRefreshListButtonIsDisabled();
     });
 
     it(
@@ -67,8 +67,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus('Inactive');
         Lists.saveList();
-        Lists.actionButton();
-        cy.contains('Refresh list').should('be.disabled');
+        Lists.openActions();
+        Lists.verifyRefreshListButtonIsDisabled();
       },
     );
 
@@ -83,10 +83,10 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus('Active');
         Lists.saveList();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.editList();
-        Lists.actionButton();
-        cy.contains('Refresh list').should('not.exist');
+        Lists.openActions();
+        Lists.verifyRefreshListButtonDoesNotExist();
       },
     );
 
@@ -102,12 +102,11 @@ describe('lists', () => {
         Lists.selectStatus('Active');
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(17000);
-        cy.contains('View updated list').click();
-        Lists.actionButton();
-        cy.contains('Export all columns (CSV)').click();
-        Lists.actionButton();
-        cy.contains('Refresh list').should('be.disabled');
+        Lists.viewUpdatedList();
+        Lists.openActions();
+        Lists.exportList();
+        Lists.openActions();
+        Lists.verifyRefreshListButtonIsDisabled();
       },
     );
 
@@ -123,7 +122,7 @@ describe('lists', () => {
         Lists.selectStatus('Active');
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.cancelRefresh();
         cy.contains(`The refresh for ${listData.name} was successfully cancelled.`);
       },
@@ -141,14 +140,14 @@ describe('lists', () => {
         Lists.selectStatus('Active');
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('User - Active').click();
+        cy.contains('Users — User — Active').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="data-input-select-boolType"]').select('False');
         cy.get('button:contains("Test query")').click();
         cy.wait(7000);
         cy.get('button:contains("Run query & save")').click();
         cy.wait(9000);
-        Lists.actionButton();
+        Lists.openActions();
         Lists.cancelRefresh();
         cy.contains(
           `Error: the refresh for ${listData.name} was not cancelled. Verify a refresh is in progress and try again`,

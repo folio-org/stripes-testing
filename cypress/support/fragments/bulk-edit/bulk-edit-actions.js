@@ -168,7 +168,7 @@ export default {
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewBtn).exists(),
-      areYouSureForm.find(Button('Commit changes')).exists(),
+      areYouSureForm.find(commitChanges).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
   },
@@ -985,7 +985,7 @@ export default {
 
   commitChanges() {
     cy.wait(2000);
-    cy.do([Modal().find(Button('Commit changes')).click()]);
+    cy.do([Modal().find(commitChanges).click()]);
   },
 
   clickNext() {

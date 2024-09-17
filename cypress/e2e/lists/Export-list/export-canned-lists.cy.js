@@ -37,7 +37,7 @@ describe('lists', () => {
         Lists.waitLoading();
         Lists.resetAllFilters();
         Lists.expiredPatronLoan();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.exportList();
         cy.contains(
           'Export of Inactive patrons with open loans is being generated. This may take some time for larger lists.',

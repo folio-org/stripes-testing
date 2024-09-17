@@ -52,10 +52,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(1000);
-        Lists.actionButton();
+        Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
-        cy.wait(7000);
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
         cy.reload();
@@ -80,11 +78,10 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(10000);
         Lists.viewUpdatedList();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.exportList();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
         cy.reload();

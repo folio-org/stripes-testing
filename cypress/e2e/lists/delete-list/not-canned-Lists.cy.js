@@ -39,9 +39,9 @@ describe('lists', () => {
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility(listData.visibility);
       Lists.saveList();
-      Lists.actionButton();
-      cy.contains('Delete list').click();
-      Lists.DeleteListModal();
+      Lists.openActions();
+      Lists.deleteList();
+      Lists.confirmDelete();
       cy.contains(`List ${listData.name} deleted.`);
     });
 
@@ -59,11 +59,11 @@ describe('lists', () => {
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.saveList();
-        Lists.actionButton();
-        cy.contains('Edit list').click();
-        Lists.actionButton();
-        cy.contains('Delete list').click();
-        Lists.DeleteListModal();
+        Lists.openActions();
+        Lists.editList();
+        Lists.openActions();
+        Lists.deleteList();
+        Lists.confirmDelete();
         cy.contains(`List ${listData.name} deleted.`);
       },
     );

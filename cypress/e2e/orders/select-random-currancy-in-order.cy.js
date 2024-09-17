@@ -15,7 +15,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('orders: create an order', () => {
+describe('Orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultFund = { ...Funds.defaultUiFund };

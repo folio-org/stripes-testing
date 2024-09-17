@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   HTML,
@@ -248,6 +249,58 @@ export default {
     });
   },
 
+  getPackageViaApi: (packageName) => {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'eholdings/packages',
+      searchParams: { q: packageName },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  unassignPackageViaAPI(packageName) {
+    cy.okapiRequest({
+      path: 'eholdings/packages',
+      searchParams: { q: packageName },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body: { data } }) => {
+      const packageData = data[0];
+      const { attributes } = packageData;
+      attributes.isSelected = false;
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `eholdings/packages/${packageData.id}`,
+        contentTypeHeader: 'application/vnd.api+json',
+        body: {
+          data: {
+            id: packageData.id,
+            type: packageData.type,
+            attributes: {
+              name: attributes.name,
+              isSelected: attributes.isSelected,
+              allowKbToAddTitles: false,
+              contentType: attributes.contentType,
+              customCoverage: {},
+              visibilityData: {
+                isHidden: false,
+                reason: '',
+              },
+              isCustom: attributes.isCustom,
+              proxy: {
+                id: 'ezproxy',
+                inherited: true,
+              },
+              packageToken: {},
+              isFullPackage: false,
+              accessTypeId: null,
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    });
+  },
+
   createPackageViaAPI(packageBody = defaultPackage) {
     return cy
       .okapiRequest({
@@ -257,7 +310,18 @@ export default {
         body: packageBody,
         isDefaultSearchParamsRequired: false,
       })
-      .then((response) => response.body);
+      .then((response) => {
+        return recurse(
+          () => this.getPackageViaApi(packageBody.data.attributes.name),
+          (getPackageResponse) => getPackageResponse.body.data.length > 0,
+          {
+            timeout: 60_000,
+            delay: 1_000,
+          },
+        ).then(() => {
+          return response.body;
+        });
+      });
   },
 
   updateProxy() {

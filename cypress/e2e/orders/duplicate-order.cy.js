@@ -11,7 +11,7 @@ import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('orders: duplicate', () => {
+describe('Orders', () => {
   const order = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',

@@ -13,114 +13,118 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: export', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-    ],
-  };
-  const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
-  const integartionDescription = 'Test Integation descripton1';
-  const vendorEDICodeFor1Integration = getRandomPostfix();
-  const libraryEDICodeFor1Integration = getRandomPostfix();
-  let user;
-  let orderNumber = null;
+describe('Export Manager', () => {
+  describe('Export Orders in EDIFACT format', () => {
+    describe('Orders Export to a Vendor', () => {
+      const order = { ...NewOrder.defaultOneTimeOrder };
+      const organization = {
+        ...NewOrganization.defaultUiOrganizations,
+        accounts: [
+          {
+            accountNo: getRandomPostfix(),
+            accountStatus: 'Active',
+            acqUnitIds: [],
+            appSystemNo: '',
+            description: 'Main library account',
+            libraryCode: 'COB',
+            libraryEdiCode: getRandomPostfix(),
+            name: 'TestAccout1',
+            notes: '',
+            paymentMethod: 'Cash',
+          },
+        ],
+      };
+      const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
+      const integartionDescription = 'Test Integation descripton1';
+      const vendorEDICodeFor1Integration = getRandomPostfix();
+      const libraryEDICodeFor1Integration = getRandomPostfix();
+      let user;
+      let orderNumber = null;
 
-  before(() => {
-    cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
-      organization.id = organizationResponse;
-      order.vendor = organization.name;
-      order.orderType = 'One-time';
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', organization.name);
-      Organizations.checkSearchResults(organization);
-      Organizations.selectOrganization(organization.name);
-      Organizations.addIntegration();
-      Organizations.fillIntegrationInformationWithoutScheduling(
-        integrationName,
-        integartionDescription,
-        vendorEDICodeFor1Integration,
-        libraryEDICodeFor1Integration,
-        organization.accounts[0].accountNo,
-        'Purchase',
-      );
-      InteractorsTools.checkCalloutMessage('Integration was saved');
-      cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-      SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
-      SettingsOrders.setPurchaseOrderLinesLimit(3);
-      cy.visit(TopMenu.ordersPath);
-      order.orderType = 'Ongoing';
-      Orders.createOrder(order, true, false).then((orderId) => {
-        order.id = orderId;
-        Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport('Purchase');
-        OrderLines.backToEditingOrder();
-        Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
-        OrderLines.backToEditingOrder();
-        Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport('Depository');
-        Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
-          orderNumber = response[0].poNumber;
+      before(() => {
+        cy.getAdminToken();
+        Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
+          organization.id = organizationResponse;
+          order.vendor = organization.name;
+          order.orderType = 'One-time';
+          cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+          Organizations.searchByParameters('Name', organization.name);
+          Organizations.checkSearchResults(organization);
+          Organizations.selectOrganization(organization.name);
+          Organizations.addIntegration();
+          Organizations.fillIntegrationInformationWithoutScheduling(
+            integrationName,
+            integartionDescription,
+            vendorEDICodeFor1Integration,
+            libraryEDICodeFor1Integration,
+            organization.accounts[0].accountNo,
+            'Purchase',
+          );
+          InteractorsTools.checkCalloutMessage('Integration was saved');
+          cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+          SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
+          SettingsOrders.setPurchaseOrderLinesLimit(3);
+          cy.visit(TopMenu.ordersPath);
+          order.orderType = 'Ongoing';
+          Orders.createOrder(order, true, false).then((orderId) => {
+            order.id = orderId;
+            Orders.createPOLineViaActions();
+            OrderLines.fillInPOLineInfoForExport('Purchase');
+            OrderLines.backToEditingOrder();
+            Orders.createPOLineViaActions();
+            OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
+            OrderLines.backToEditingOrder();
+            Orders.createPOLineViaActions();
+            OrderLines.fillInPOLineInfoForExport('Depository');
+            Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
+              orderNumber = response[0].poNumber;
+            });
+          });
+        });
+
+        cy.createTempUser([
+          permissions.uiOrdersView.gui,
+          permissions.uiOrdersCreate.gui,
+          permissions.uiOrdersEdit.gui,
+          permissions.uiOrdersApprovePurchaseOrders.gui,
+          permissions.uiOrganizationsViewEditCreate.gui,
+          permissions.uiOrganizationsView.gui,
+          permissions.uiExportOrders.gui,
+          permissions.exportManagerAll.gui,
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
         });
       });
-    });
 
-    cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrganizationsViewEditCreate.gui,
-      permissions.uiOrganizationsView.gui,
-      permissions.uiExportOrders.gui,
-      permissions.exportManagerAll.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+      after(() => {
+        cy.loginAsAdmin();
+        cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+        SettingsOrders.setPurchaseOrderLinesLimit(1);
+        Orders.deleteOrderViaApi(order.id);
+        Organizations.deleteOrganizationViaApi(organization.id);
+        Users.deleteViaApi(user.userId);
       });
+
+      it(
+        'C350603: Searching POL by specifying acquisition method (thunderjet)',
+        { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+        () => {
+          Orders.selectOrderLines();
+          Orders.selectFilterAcquisitionMethod('Purchase');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
+          Orders.resetFilters();
+          Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
+          Orders.resetFilters();
+          Orders.selectFilterAcquisitionMethod('Depository');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
+          Orders.resetFilters();
+        },
+      );
     });
   });
-
-  after(() => {
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C350603: Searching POL by specifying acquisition method (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      Orders.selectOrderLines();
-      Orders.selectFilterAcquisitionMethod('Purchase');
-      Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
-      Orders.resetFilters();
-      Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
-      Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
-      Orders.resetFilters();
-      Orders.selectFilterAcquisitionMethod('Depository');
-      Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
-      Orders.resetFilters();
-    },
-  );
 });
