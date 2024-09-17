@@ -1,4 +1,5 @@
-import { Spinner, Pane } from '../../../../../../interactors';
+import { Pane, Spinner } from '../../../../../../interactors';
+import getRandomPostfix from '../../../../utils/stringTools';
 
 const readingRoomRecordCss = 'div[id=editList-reading-room-access-settings]';
 const settingsHeaderIconCss = 'a[id=ModuleMainHeading]';
@@ -9,7 +10,7 @@ const editRoomButtonCss = 'button[id^="clickable-edit-reading-room"]';
 const deleteRoomCss = 'button[id^="clickable-delete-reading-room"]';
 
 const servicePoint = 'Circ Desk 1';
-const readingRoomName = 'Autotest_Room';
+const readingRoomName = `Autotest_Reading_Room${getRandomPostfix()}`;
 const recordLoadRetries = 10;
 const recordLoadWait = 15000;
 
