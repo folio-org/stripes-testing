@@ -877,6 +877,13 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     RECEIPT_STATUS: 'Receipt status',
     TAGS: 'Tags',
   },
+  INVENTORY_INSTANCES: {
+    INSTANCE_UUID: 'Instance UUID',
+    INSTANCE_HRID: 'Instance HRID',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    STAFF_SUPPRESS: 'Staff suppress',
+    RESOURCE_TITLE: 'Resource title',
+  },
 };
 
 export const HOLDING_NOTE_TYPES = {
