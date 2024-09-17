@@ -70,6 +70,7 @@ describe('bulk-edit', () => {
       InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
         newNoteTypeId = noteId;
       });
+      cy.wait(3000);
 
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
