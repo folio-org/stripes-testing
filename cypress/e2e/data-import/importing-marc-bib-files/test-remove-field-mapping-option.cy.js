@@ -465,9 +465,9 @@ describe('Data Import', () => {
                 .permanentLocationInHoldingsAccordion,
             );
             InventoryInstance.openItemByBarcode(itemBarcode);
-            ItemRecordView.checkAccessionNumber('-');
-            ItemRecordView.verifyNumberOfPieces('-');
-            ItemRecordView.verifyTemporaryLoanType('-');
+            ItemRecordView.checkAccessionNumber('No value set-');
+            ItemRecordView.verifyNumberOfPieces('No value set-');
+            ItemRecordView.verifyTemporaryLoanType('No value set-');
           });
         });
       },
