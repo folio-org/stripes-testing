@@ -8,8 +8,8 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C496128 ${getRandomPostfix()}`,
-        originalApplication: 'app-platform-minimal',
-        newApplication: 'app-platform-complete',
+        originalApplication: 'app-platform-full',
+        newApplication: 'app-consortia',
         originalCapabilitySets: [
           {
             table: 'Settings',
@@ -43,41 +43,26 @@ describe('Eureka', () => {
         ],
         newCapabilitySet: {
           table: 'Settings',
-          resource: 'UI-Users Settings Waives',
+          resource: 'UI-Consortia-Settings Settings Membership',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            table: 'Data',
-            resource: 'Waives Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Waives Item',
-            action: 'View',
-          },
-          {
             table: 'Settings',
-            resource: 'Settings Users Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Settings Enabled',
+            resource: 'Settings Consortia-Settings Enabled',
             action: 'View',
           },
         ],
         newCapabilities: [
           {
             table: 'Data',
-            resource: 'Accounts Collection',
-            action: 'View',
+            resource: 'Consortia Consortium Item',
+            action: 'Edit',
           },
           {
             table: 'Data',
-            resource: 'Accounts Item',
-            action: 'View',
+            resource: 'Consortia Sharing-Roles Item',
+            action: 'Create',
           },
         ],
         expectedRowCounts: {
@@ -85,7 +70,7 @@ describe('Eureka', () => {
             Settings: 3,
           },
           capabilities: {
-            Data: 4,
+            Data: 2,
             Settings: 2,
             Procedural: 2,
           },
@@ -150,7 +135,8 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.originalApplication);
           AuthorizationRoles.clickSaveInModal();
-          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.originalApplication]);
+          // TO DO: uncomment when "full" application will be split in multiple apps
+          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.originalApplication]);
           testData.originalCapabilitySets.forEach((capabilitySet) => {
             AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySet);
           });

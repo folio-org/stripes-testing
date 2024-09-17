@@ -10,71 +10,71 @@ describe('Eureka', () => {
         roleName: `Auto Role C430262 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
         // TO DO: rewrite using >1 original apps when more apps will be consistently available
-        originalApplications: ['app-platform-complete'],
-        newApplication: 'app-platform-minimal',
+        originalApplications: ['app-consortia'],
+        newApplication: 'app-platform-full',
         originalCapabilitySets: [
           {
-            application: 'app-platform-complete',
-            table: 'Data',
-            resource: 'Calendar',
-            action: 'View',
+            application: 'app-consortia',
+            table: 'Procedural',
+            resource: 'Consortia Inventory Share Local Instance',
+            action: 'Execute',
           },
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-platform-complete',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Calendar Endpoint Calendars',
+            resource: 'Consortia Sharing-Instances Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Calendar Endpoint Calendars CalendarId',
+            resource: 'Consortia Sharing-Instances Item',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Calendar Endpoint Dates',
-            action: 'View',
+            resource: 'Consortia Sharing-Instances Item',
+            action: 'Create',
           },
         ],
         originalCapabilities: [
           {
-            application: 'app-platform-complete',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Owners Item',
-            action: 'Create',
+            resource: 'Consortia Consortium Item',
+            action: 'Edit',
           },
           {
-            application: 'app-platform-complete',
-            table: 'Procedural',
-            resource: 'Orders Item Approve',
-            action: 'Execute',
+            application: 'app-consortia',
+            table: 'Data',
+            resource: 'Consortia Sharing-Roles Item',
+            action: 'Create',
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-minimal',
+          application: 'app-platform-full',
           table: 'Settings',
           resource: 'UI-Tags Settings',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Enabled',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Tags Enabled',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Configuration Entries Collection',
             action: 'View',
@@ -82,19 +82,19 @@ describe('Eureka', () => {
         ],
         newCapabilities: [
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Login Password',
             action: 'Execute',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'UI-Tags',
             action: 'Edit',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'UI-Tags',
             action: 'Manage',
@@ -194,7 +194,8 @@ describe('Eureka', () => {
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
           cy.wait(2000);
-          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
+          // TO DO: uncomment when "full" app will be split in multiple apps
+          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.newCapabilitySet);
           testData.newCapabilities.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);

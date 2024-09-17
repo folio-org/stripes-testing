@@ -11,124 +11,100 @@ describe('Eureka', () => {
         roleDescription: `Description C436929 ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C436929 ${getRandomPostfix()} UPD`,
         updatedRoleDescription: `Description C436929 ${getRandomPostfix()} UPD`,
-        originalApplications: ['app-platform-minimal', 'app-platform-complete'],
+        originalApplications: ['app-platform-full', 'app-consortia'],
         originalCapabilitySets: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-consortia',
             table: 'Procedural',
-            resource: 'UI-Notes Item Assign-Unassign',
+            resource: 'Consortia Inventory Share Local Instance',
             action: 'Execute',
           },
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar Endpoint Calendars',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar Endpoint Calendars CalendarId',
             action: 'View',
           },
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar Endpoint Dates',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Note Links Collection',
-            action: 'Edit',
-          },
-          {
-            application: 'app-platform-minimal',
-            table: 'Data',
-            resource: 'Note Types Collection',
+            resource: 'Consortia Sharing-Instances Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Note Types Item',
+            resource: 'Consortia Sharing-Instances Item',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-consortia',
             table: 'Data',
-            resource: 'Notes Collection',
-            action: 'View',
+            resource: 'Consortia Sharing-Instances Item',
+            action: 'Create',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
-            resource: 'Notes Domain',
-            action: 'Manage',
-          },
-          {
-            application: 'app-platform-minimal',
-            table: 'Data',
-            resource: 'Notes Item',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-minimal',
-            table: 'Data',
-            resource: 'UI-Notes Item',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-minimal',
-            table: 'Settings',
-            resource: 'Module Notes Enabled',
+            resource: 'Inventory-Storage Authorities Collection',
             action: 'View',
           },
         ],
         originalCapabilities: [
           {
-            application: 'app-platform-complete',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Owners Item',
             action: 'Create',
           },
           {
-            application: 'app-platform-minimal',
-            table: 'Procedural',
-            resource: 'Roles Collection',
-            action: 'Execute',
+            application: 'app-consortia',
+            table: 'Settings',
+            resource: 'Module Consortia-Settings Enabled',
+            action: 'View',
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-minimal',
+          application: 'app-platform-full',
           table: 'Settings',
           resource: 'UI-Tags Settings',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Tags Enabled',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Configuration Entries Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-minimal',
+            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Tags Enabled',
             action: 'View',
@@ -253,7 +229,7 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('13');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('9');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);

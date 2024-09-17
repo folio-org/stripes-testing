@@ -9,8 +9,8 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C496128 ${getRandomPostfix()}`,
         // TO DO: rewrite using >1 original apps when more apps will be consistently available
-        originalApplications: ['app-platform-minimal'],
-        newApplication: 'app-platform-complete',
+        originalApplications: ['app-platform-full'],
+        newApplication: 'app-consortia',
         originalCapabilitySets: [
           {
             table: 'Settings',
@@ -19,14 +19,24 @@ describe('Eureka', () => {
           },
           {
             table: 'Settings',
-            resource: 'Settings Authorization-Roles Enabled',
+            resource: 'UI-Notes Settings',
             action: 'View',
           },
         ],
         originalCapabilitiesInSets: [
           {
+            table: 'Data',
+            resource: 'Note Types Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
+            action: 'View',
+          },
+          {
             table: 'Settings',
-            resource: 'Settings Enabled',
+            resource: 'Settings Notes Enabled',
             action: 'View',
           },
         ],
@@ -43,46 +53,40 @@ describe('Eureka', () => {
           },
         ],
         newCapabilitySet: {
-          table: 'Data',
-          resource: 'Licenses Contacts',
+          table: 'Settings',
+          resource: 'UI-Consortia-Settings Settings Membership',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            table: 'Data',
-            resource: 'Licenses Contacts Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Licenses Contacts Item',
+            table: 'Settings',
+            resource: 'Settings Consortia-Settings Enabled',
             action: 'View',
           },
         ],
         newCapabilities: [
           {
-            table: 'Procedural',
-            resource: 'UI-Users Override Item Block',
-            action: 'Execute',
+            table: 'Data',
+            resource: 'Consortia Consortium Item',
+            action: 'Edit',
           },
           {
-            table: 'Procedural',
-            resource: 'UI-Users Override Patron Block',
-            action: 'Execute',
+            table: 'Data',
+            resource: 'Consortia Sharing-Roles Item',
+            action: 'Create',
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Data: 1,
-            Settings: 2,
+            Settings: 3,
           },
           capabilities: {
-            Data: 2,
-            Settings: 1,
-            Procedural: 4,
+            Data: 4,
+            Settings: 3,
+            Procedural: 2,
           },
         },
-        absentCapabilitySetTable: 'Procedural',
+        absentCapabilitySetTables: ['Data', 'Procedural'],
         capabSetIds: [],
         capabIds: [],
       };
@@ -217,7 +221,9 @@ describe('Eureka', () => {
           Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {
             AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
-          AuthorizationRoles.verifyCapabilitySetTableAbsent(testData.absentCapabilitySetTable);
+          testData.absentCapabilitySetTables.forEach((table) => {
+            AuthorizationRoles.verifyCapabilitySetTableAbsent(table);
+          });
           Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
             AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
