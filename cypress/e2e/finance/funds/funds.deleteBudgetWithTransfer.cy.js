@@ -19,7 +19,7 @@ describe('ui-finance: Funds', () => {
       const budgetCanNotBeDeletedMessage = 'Budget can not be deleted, because it has transactions';
       Funds.createFundViaUI(fundFrom);
       // create second fund
-      fundTo.name = 'to_' + fundTo.name;
+      // fundTo.name = 'to_' + fundTo.name;
       fundTo.code = 'to_' + fundTo.code;
       fundTo.externalAccount = 'to_' + fundTo.externalAccount;
       Funds.createFundViaUI(fundTo);
