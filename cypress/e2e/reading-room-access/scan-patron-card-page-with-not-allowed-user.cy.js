@@ -26,6 +26,7 @@ describe('Reading Room Access', () => {
         })
         .then(() => SettingsReadingRoom.createReadingRoomViaApi(
           userAllowedInReadingRoom.servicePoint.id,
+          userAllowedInReadingRoom.servicePoint.name,
           readingRoomId,
           false,
         ));

@@ -14,6 +14,7 @@ import { getTestEntityValue } from '../../support/utils/stringTools';
 describe('Reading Room Access', () => {
   let userData;
   let servicePointId;
+  const servicePoint = ServicePoints.getDefaultServicePoint();
   const readingRoomId = uuid();
   const patronGroup = {
     name: getTestEntityValue('groupPermissions'),
@@ -21,11 +22,11 @@ describe('Reading Room Access', () => {
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(ServicePoints.getDefaultServicePoint())
-        .then((servicePoint) => {
-          servicePointId = servicePoint.body.id;
+      ServicePoints.createViaApi(servicePoint)
+        .then((response) => {
+          servicePointId = response.body.id;
         })
-        .then(() => ReadingRoom.createReadingRoomViaApi(servicePointId, readingRoomId));
+        .then(() => ReadingRoom.createReadingRoomViaApi(servicePointId, servicePoint.name, readingRoomId));
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });

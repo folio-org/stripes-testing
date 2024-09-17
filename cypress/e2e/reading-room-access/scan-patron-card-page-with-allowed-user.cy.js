@@ -23,6 +23,7 @@ describe('Reading Room Access', () => {
         })
         .then(() => SettingsReadingRoom.createReadingRoomViaApi(
           testData.servicePointId,
+          testData.servicePoint.name,
           testData.readingRoomId,
         ));
     });
