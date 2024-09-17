@@ -14,6 +14,7 @@ const recordLoadRetries = 10;
 const recordLoadWait = 15000;
 
 export default {
+  readingRoomName,
   loadReadingRoomRecord() {
     let retries = 0;
 

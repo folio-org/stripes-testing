@@ -10,6 +10,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Reading Room Access', () => {
   const readingRoomId = uuid();
+  const allowedButtonState = false;
   const userAllowedInReadingRoom = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
   };
@@ -82,9 +83,9 @@ describe('Reading Room Access', () => {
       ReadingRoom.waitLoading();
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
       ReadingRoom.verifyUserIsScanned(userInfo.firstName);
-      ReadingRoom.verifyUserInformation(userInfo);
+      ReadingRoom.verifyUserInformation(userInfo, false);
       ReadingRoom.verifyWarningMessage('Not allowed');
-      ReadingRoom.verifyButtonsEnabled();
+      ReadingRoom.verifyButtonsEnabled(allowedButtonState);
       ReadingRoom.clickNotAllowedButton();
       InteractorsTools.checkCalloutMessage('Action was successfully saved');
       ReadingRoom.verifyInformationAfterAction();
