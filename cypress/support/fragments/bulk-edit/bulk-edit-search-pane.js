@@ -41,6 +41,8 @@ const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 const areYouSureForm = Modal('Are you sure?');
+const previousPaginationButton = Button('Previous');
+const nextPaginationButton = Button('Next');
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -300,6 +302,7 @@ export default {
 
   selectRecordIdentifier(value) {
     cy.do(recordIdentifierDropdown.choose(value));
+    cy.wait(1000);
   },
 
   clickToBulkEditMainButton() {
@@ -584,6 +587,10 @@ export default {
     } else {
       cy.expect(Button('Start bulk edit').exists());
     }
+  },
+
+  verifySearchColumnNameTextFieldExists() {
+    cy.expect(DropdownMenu().find(searchColumnNameTextfield).exists());
   },
 
   verifyUsersActionShowColumns() {
@@ -887,5 +894,13 @@ export default {
 
   verifyBulkEditsAccordionExists() {
     cy.expect(bulkEditsAccordion.exists());
+  },
+
+  verifyPreviousPaginationButtonDisabled(isDisabled = true) {
+    cy.expect(previousPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonDisabled(isDisabled = true) {
+    cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
   },
 };
