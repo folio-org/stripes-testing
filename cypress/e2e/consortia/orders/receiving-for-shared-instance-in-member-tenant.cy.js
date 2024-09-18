@@ -16,8 +16,8 @@ import Receiving from '../../../support/fragments/receiving/receiving';
 describe('Orders', () => {
   describe('Consortium (Orders)', () => {
     const randomPostfix = getRandomPostfix();
-    const instancePrefix = `C411683-B Instance ${randomPostfix}`;
-    const subjectPrefix = `C411683-B Subject ${randomPostfix}`;
+    const instancePrefix = `C411742-B Instance ${randomPostfix}`;
+    const subjectPrefix = `C411742-B Subject ${randomPostfix}`;
     const testData = {
       collegeHoldings: [],
       universityHoldings: [],
@@ -79,7 +79,7 @@ describe('Orders', () => {
               Orders.selectFromResultsList(testData.order.poNumber);
               OrderLines.addPOLine();
               OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-              OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+              OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
               OrderLines.backToEditingOrder();
               Orders.openOrder();
             });
@@ -107,9 +107,14 @@ describe('Orders', () => {
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
-      cy.resetTenant();
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.id);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"id"=="${testData.sharedInstance.id}"`,
+      }).then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
     });
 
     it(

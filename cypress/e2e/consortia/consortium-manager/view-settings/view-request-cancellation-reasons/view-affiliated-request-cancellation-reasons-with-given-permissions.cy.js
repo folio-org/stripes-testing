@@ -43,7 +43,7 @@ describe('Consortium manager', () => {
             testData.centralSharedReason = newReason;
           },
         );
-        cy.addCancellationReasonApi(testData.centralLocalReason);
+        cy.addCancellationReasonViaApi(testData.centralLocalReason);
 
         cy.createTempUser([
           permissions.consortiaSettingsConsortiumManagerView.gui,
@@ -65,7 +65,7 @@ describe('Consortium manager', () => {
               testData.user837 = user;
             })
             .then(() => {
-              cy.addCancellationReasonApi(testData.collegeLocalReason);
+              cy.addCancellationReasonViaApi(testData.collegeLocalReason);
               cy.resetTenant();
               cy.getAdminToken();
               cy.assignPermissionsToExistingUser(testData.user837.userId, [
@@ -84,7 +84,7 @@ describe('Consortium manager', () => {
               cy.assignPermissionsToExistingUser(testData.user837.userId, [
                 permissions.settingsCircView.gui,
               ]);
-              cy.addCancellationReasonApi(testData.universityLocalReason);
+              cy.addCancellationReasonViaApi(testData.universityLocalReason);
             });
         });
       });

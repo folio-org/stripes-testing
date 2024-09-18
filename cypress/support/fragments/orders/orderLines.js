@@ -556,8 +556,9 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
-      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.TEXT),
       addLocationButton.click(),
+      createNewLocationButton.click(),
       createNewLocationButton.click(),
     ]);
     cy.do([

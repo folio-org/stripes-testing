@@ -97,6 +97,8 @@ describe('Data Import', () => {
       expenseClass: '981$c',
       value: '100',
       type: '%',
+      locationName: 'Main Library (KU/CC/DI/M)',
+      locationQuantityPhysical: '1',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -166,7 +168,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(firstMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(firstMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check Fund and Expense class populated in the first POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
@@ -203,7 +205,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(secondMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.checkJobStatus(secondMarcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
@@ -238,7 +240,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(thirdMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(thirdMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.CREATED,
@@ -284,7 +286,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(forthMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(forthMarcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.CREATED,

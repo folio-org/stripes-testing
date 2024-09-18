@@ -3,9 +3,13 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Organizations', () => {
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const organization = {
+    ...NewOrganization.defaultUiOrganizations,
+    name: `1_autotest_name_${getRandomPostfix()}`,
+  };
   let user;
 
   before(() => {

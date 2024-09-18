@@ -33,7 +33,6 @@ describe('Consortium manager', () => {
     describe('Manage local Modes of issuance', () => {
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.resetTenant();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
           Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
@@ -58,19 +57,19 @@ describe('Consortium manager', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenant(
+        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenantViaApi(
           testData.newIssuanceMode.name,
           Affiliations.Consortia,
         );
-        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenant(
+        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenantViaApi(
           testData.editIssuanceMode.name,
           Affiliations.University,
         );
-        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenant(
+        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenantViaApi(
           testData.newIssuanceMode.name,
           Affiliations.College,
         );
-        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenant(
+        ModesOfIssuanceConsortiumManager.deleteIssuanceModeByNameAndTenantViaApi(
           testData.newIssuanceMode.name,
           Affiliations.University,
         );
@@ -180,20 +179,20 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.patronGroups);
+          cy.visit(SettingsMenu.modesOfIssuancePath);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newIssuanceMode.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.formats);
+          cy.visit(SettingsMenu.modesOfIssuancePath);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newIssuanceMode.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.formats);
+          cy.visit(SettingsMenu.modesOfIssuancePath);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editIssuanceMode.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
