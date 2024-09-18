@@ -553,7 +553,7 @@ export default {
     cy.expect(userInformationSection.exists());
   },
 
-  verifyPictureIsSet(url) {
+  verifyProfilePictureIsPresent(url) {
     cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
   },
 

@@ -61,9 +61,11 @@ const cancelButton = Button('Cancel');
 const userSearch = TextField('User search');
 const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
 let totalRows;
-const localFileButton = Button({ dataTestID: 'localFile' });
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
+const areYouSureForm = Modal('Are you sure?');
+const keepEditingBtn = Button('Keep editing');
+const closeWithoutSavingButton = Button('Close without saving');
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -457,6 +459,11 @@ export default {
     cy.do(Button('Update').click());
   },
 
+  clickCloseWithoutSavingButton() {
+    cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+    cy.expect(rootPane.absent());
+  },
+
   // checking
   verifyPermissionDoesNotExist(permission) {
     cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
@@ -595,10 +602,6 @@ export default {
     cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
   },
 
-  verifyLocalUploadButtonIsPresent() {
-    cy.expect(localFileButton.exists());
-  },
-
   verifyPictureIsRemoved(url) {
     cy.expect(profilePictureCard.has({ src: not(including(url)) }));
   },
@@ -612,5 +615,17 @@ export default {
           .exists(),
       );
     });
+  },
+
+  verifyAreYouSureForm(isOpen = false) {
+    if (isOpen) {
+      cy.expect([
+        areYouSureForm.find(HTML(including('There are unsaved changes'))).exists(),
+        areYouSureForm.find(keepEditingBtn).exists(),
+        areYouSureForm.find(closeWithoutSavingButton).exists(),
+      ]);
+    } else {
+      cy.expect(areYouSureForm.absent());
+    }
   },
 };
