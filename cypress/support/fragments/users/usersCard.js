@@ -19,6 +19,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  ProfilePictureCard,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -549,5 +550,19 @@ export default {
 
   verifyUserInformationPresence() {
     cy.expect(userInformationSection.exists());
+  },
+
+  verifyPictureIsSet(url) {
+    cy.expect(
+      rootSection.find(ProfilePictureCard({ alt: 'Profile picture' })).has({ src: including(url) }),
+    );
+  },
+
+  verifyProfilePictureRemoved() {
+    cy.expect(
+      ProfilePictureCard({ alt: 'Profile picture' }).has({
+        src: including('/./img/placeholderThumbnail'),
+      }),
+    );
   },
 };

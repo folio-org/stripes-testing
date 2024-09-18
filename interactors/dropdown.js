@@ -9,6 +9,7 @@ export const DropdownMenu = HTML.extend('dropdown menu')
   .selector('div[class*=overlay] div[class*=DropdownMenu]')
   .filters({
     buttons: (el) => el.querySelectorAll('button'),
+    ariaLabel: (el) => el.ariaLabel,
   });
 
 const label = (el) => {
