@@ -57,6 +57,7 @@ describe('Users', () => {
       { tags: ['smoke', 'volaris'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
+        cy.wait(2000);
         UsersCard.waitLoading();
         UserEdit.openEdit();
         UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
