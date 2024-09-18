@@ -15,6 +15,7 @@ import {
   TextField,
   Image,
   MultiColumnListRow,
+  Headline,
 } from '../../../../interactors';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
@@ -580,8 +581,8 @@ export default {
     }
     if (instance) {
       cy.expect([
-        Button('Start bulk edit - Instance fields').exists(),
-        Button('Start bulk edit - MARC fields').exists(),
+        DropdownMenu().find(Headline('Start bulk edit')).exists(),
+        Button('Instances and Administrative data').exists(),
       ]);
     } else {
       cy.expect(Button('Start bulk edit').exists());
