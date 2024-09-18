@@ -23,6 +23,7 @@ describe('Users', () => {
       // create user B
       cy.createTempUser().then((userProperties) => {
         testData.userB = userProperties;
+        UserEdit.addProfilePictureViaApi(testData.userB.userId, testData.externalPictureUrl);
       });
 
       // create user A
@@ -45,20 +46,20 @@ describe('Users', () => {
     });
 
     it(
-      'C446093 Update profile picture via local storage (volaris)',
+      'C446009 Verify no changes upon canceling an edit with profile picture deletion (volaris)',
       { tags: ['smoke', 'volaris'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
         UserEdit.openEdit();
-        UserEdit.verifyPlaceholderProfilePictureIsPresent();
-        UserEdit.verifyButtonsStateForProfilePicture([{ value: 'Local file' }]);
-        // steps 10-11 we can't automate
-        UserEdit.setPictureFromExternalUrl(testData.externalPictureUrl);
-        cy.wait(3000);
-        UserEdit.saveAndClose();
-        UsersCard.waitLoading();
-        UsersCard.verifyProfilePictureIsPresent(testData.externalPictureUrl);
+        UserEdit.verifyProfileCardIsPresent();
+        UserEdit.verifyButtonsStateForProfilePicture([{ value: 'Delete' }]);
+        UserEdit.deleteProfilePicture(testData.userB);
+        UserEdit.verifyPictureIsRemoved(testData.externalPictureUrl);
+        UserEdit.cancelEdit();
+        UserEdit.verifyAreYouSureForm(true);
+        UserEdit.clickCloseWithoutSavingButton();
+        UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
       },
     );
   });

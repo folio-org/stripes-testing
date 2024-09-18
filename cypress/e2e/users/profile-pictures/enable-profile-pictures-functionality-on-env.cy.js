@@ -19,7 +19,7 @@ describe('Users', () => {
     });
 
     it(
-      'C442795 Verify that profile picture and associated update options display appropriately with Users: Can view, edit, and delete profile pictures (volaris)',
+      'C514930 Enable profile pictures functionality on environment (volaris)',
       { tags: ['smoke', 'volaris'] },
       () => {
         cy.getAdminToken();
