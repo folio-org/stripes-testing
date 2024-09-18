@@ -9,6 +9,7 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
+        // comment
         roleAName: `Auto Role A C553051 ${randomPostfix}`,
         roleBName: `Auto Role B C553051 ${randomPostfix}`,
         roleCName: `Auto Role C C553051 ${randomPostfix}`,
