@@ -36,7 +36,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
-const startBulkEditInstanceButton = Button('Start bulk edit - Instance fields');
+const startBulkEditInstanceButton = Button('Instances and Administrative data');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -74,6 +74,9 @@ export default {
   },
   startBulkEditLocalAbsent() {
     cy.expect(startBulkEditLocalButton.absent());
+  },
+  startBulkEditInstanceAbsent() {
+    cy.expect(startBulkEditInstanceButton.absent());
   },
   closeBulkEditInAppForm() {
     cy.do(cancelBtn.click());
@@ -168,7 +171,7 @@ export default {
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewBtn).exists(),
-      areYouSureForm.find(Button('Commit changes')).exists(),
+      areYouSureForm.find(commitChanges).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
   },
@@ -985,7 +988,7 @@ export default {
 
   commitChanges() {
     cy.wait(2000);
-    cy.do([Modal().find(Button('Commit changes')).click()]);
+    cy.do([Modal().find(commitChanges).click()]);
   },
 
   clickNext() {
