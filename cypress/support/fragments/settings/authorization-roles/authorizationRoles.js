@@ -81,6 +81,7 @@ const generalInformationAccordion = Accordion('General Information');
 const recordLastUpdatedHeader = generalInformationAccordion.find(
   Button(including('Record last updated:')),
 );
+const unassignAllCapabilitiesButton = Button('Unassign all capabilities/sets');
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -116,6 +117,7 @@ export default {
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
+      unassignAllCapabilitiesButton.exists(),
     ]);
     cy.wait(1000);
   },
@@ -314,6 +316,7 @@ export default {
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.exists(),
+      unassignAllCapabilitiesButton.exists(),
     ]);
   },
 
@@ -583,5 +586,10 @@ export default {
   closeRoleEditView: () => {
     cy.do(editRolePane.find(Button({ icon: 'times' })).click());
     cy.expect(editRolePane.absent());
+  },
+
+  clickUnassignAllCapabilitiesButton: () => {
+    cy.do(unassignAllCapabilitiesButton.click());
+    cy.wait(3000);
   },
 };
