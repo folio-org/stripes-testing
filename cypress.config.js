@@ -8,7 +8,7 @@ const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
-const webpackPreprocessor = require('@cypress/webpack-preprocessor');
+const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
