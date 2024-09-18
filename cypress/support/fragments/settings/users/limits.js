@@ -52,6 +52,7 @@ export default {
     this.getLimitIdViaApi(limitName).then((limitId) => {
       cy.do([TextField({ name: limitId }).fillIn(number), saveButton.click()]);
     });
+    cy.wait(2000);
   },
 
   verifySuccessfullyUpdated(groupName) {

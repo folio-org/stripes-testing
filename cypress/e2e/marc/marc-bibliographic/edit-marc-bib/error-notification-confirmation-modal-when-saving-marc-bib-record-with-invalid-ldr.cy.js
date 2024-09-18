@@ -69,12 +69,17 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(0, testData.error);
-          QuickMarcEditor.fillInElvlBoxInLDRField('\\');
-          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
-          QuickMarcEditor.checkButtonsDisabled();
+          QuickMarcEditor.checkDeleteModalClosed();
+          QuickMarcEditor.checkContent('$a The Journal of ecclesiastical history', 13);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
         },
       );
     });

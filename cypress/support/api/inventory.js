@@ -398,7 +398,29 @@ Cypress.Commands.add(
         marcFormat: 'HOLDINGS',
         suppressDiscovery: false,
       },
-    }).then(({ body }) => cy.expect(body.status === 'IN_PROGRESS'));
+    }).then(({ body }) => {
+      cy.expect(body.status === 'IN_PROGRESS');
+
+      recurse(
+        () => {
+          return cy.okapiRequest({
+            method: 'GET',
+            path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+            isDefaultSearchParamsRequired: false,
+          });
+        },
+        (response) => response.body.status === 'CREATED',
+        {
+          limit: 10,
+          timeout: 80000,
+          delay: 5000,
+        },
+      ).then((response) => {
+        cy.wrap(response.body.externalId).as('createdMarcHoldingId');
+
+        return cy.get('@createdMarcHoldingId');
+      });
+    });
   },
 );
 
@@ -451,7 +473,7 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
   return cy
     .okapiRequest({
       method: 'GET',
-      path: `holdings-note-types?query=(name="${holdingNoteTypeName}")`,
+      path: `holdings-note-types?query=(name=="${holdingNoteTypeName}")`,
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body.holdingsNoteTypes[0].id);

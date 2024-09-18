@@ -8,7 +8,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('orders: create an order', () => {
+describe('Orders', () => {
   const order = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',

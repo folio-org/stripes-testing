@@ -46,6 +46,9 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Drama C374159');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

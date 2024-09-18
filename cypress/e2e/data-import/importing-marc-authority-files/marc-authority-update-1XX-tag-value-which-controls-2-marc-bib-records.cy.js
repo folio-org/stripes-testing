@@ -156,53 +156,54 @@ describe('Data Import', () => {
           );
         });
 
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-          });
-        });
-      });
-
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      }).then(() => {
-        twoMarcBibsToLink.forEach((marcBib) => {
-          InventoryInstances.searchByTitle(marcBib.marcBibRecord);
-          cy.wait(1500);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          marcBib.linkingFields.forEach((linking) => {
-            QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(linking.value);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-          });
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
-        });
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+        });
+
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          twoMarcBibsToLink.forEach((marcBib) => {
+            InventoryInstances.searchByTitle(marcBib.marcBibRecord);
+            cy.wait(1500);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            marcBib.linkingFields.forEach((linking) => {
+              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+            });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.marcAuthorities,

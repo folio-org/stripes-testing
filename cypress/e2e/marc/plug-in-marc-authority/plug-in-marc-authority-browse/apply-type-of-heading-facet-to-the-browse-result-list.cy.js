@@ -28,28 +28,28 @@ describe('MARC', () => {
         marcFiles: [
           {
             marc: 'marcBibC359184.mrc',
-            fileName: `testMarcFileBibC359184.${getRandomPostfix()}.mrc`,
+            fileName: `C359184 testMarcFileBib.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numberOfRecords: 1,
             propertyName: 'instance',
           },
           {
             marc: 'marcAuthC359184_1.mrc',
-            fileName: `testMarcFileAuthC359184_1.${randomFourDigitNumber()}.mrc`,
+            fileName: `C359184 testMarcFileAuth_1.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numberOfRecords: 2,
             propertyName: 'authority',
           },
           {
             marc: 'marcAuthC359184_2.mrc',
-            fileName: `testMarcFileAuthC359184_2.${randomFourDigitNumber()}.mrc`,
+            fileName: `C359184 testMarcFileAuth_2.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numberOfRecords: 3,
             propertyName: 'authority',
           },
           {
             marc: 'marcAuthC359184_3.mrc',
-            fileName: `testMarcFileAuthC359184_2.${randomFourDigitNumber()}.mrc`,
+            fileName: `C359184 testMarcFileAuth_3.${randomFourDigitNumber()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numberOfRecords: 1,
             propertyName: 'authority',
@@ -58,14 +58,9 @@ describe('MARC', () => {
       };
 
       before('Creating user', () => {
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
           InventoryInstances.getInstancesViaApi({
             limit: 100,
             query: `title="${testData.instanceTitle}"`,
@@ -76,45 +71,52 @@ describe('MARC', () => {
               });
             }
           });
-        });
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
-          .then(() => {
-            testData.marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  if (
-                    marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                  ) {
-                    testData.instanceIDs.push(record[marcFile.propertyName].id);
-                  } else {
-                    testData.authorityIDs.push(record[marcFile.propertyName].id);
-                  }
-                });
+          testData.marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                if (
+                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                ) {
+                  testData.instanceIDs.push(record[marcFile.propertyName].id);
+                } else {
+                  testData.authorityIDs.push(record[marcFile.propertyName].id);
+                }
               });
             });
-          })
-          .then(() => {
-            cy.logout();
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventoryInstances.searchByTitle(testData.instanceTitle);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
+            cy.wait(2000);
           });
+        });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstances.searchByTitle(testData.instanceTitle);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.verifySelectMarcAuthorityModal();
+        });
       });
 
       after('Deleting created user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         testData.instanceIDs.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
         });

@@ -243,7 +243,7 @@ describe('Finance: Transactions', () => {
       InvoiceLineDetails.openFundDetailsPane(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.doesTransactionWithAmountExist('Pending payment', '$126.00');
+      Funds.verifyTransactionWithAmountExist('Pending payment', '$126.00');
       Funds.closeMenu();
       BudgetDetails.checkBudgetDetails({
         summary: [
@@ -261,7 +261,7 @@ describe('Finance: Transactions', () => {
           { key: 'Over encumbrance', value: '$10.00' },
           { key: 'Over expended', value: '$11.00' },
         ],
-        balance: { cash: '$130.00', available: '-$21.00' },
+        balance: { cash: '$130.00', available: '($21.00)' },
       });
     },
   );

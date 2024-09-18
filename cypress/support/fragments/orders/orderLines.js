@@ -885,6 +885,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -929,6 +932,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -954,9 +960,11 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
-      TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
+    cy.do(TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage));
+    cy.wait(4000);
+    cy.do(saveAndCloseButton.click());
     cy.wait(4000);
     submitOrderLine();
   },
@@ -1079,7 +1087,7 @@ export default {
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
@@ -1142,7 +1150,7 @@ export default {
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
@@ -1766,6 +1774,7 @@ export default {
   },
 
   saveOrderLine() {
+    cy.wait(4000);
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
     this.submitOrderLine();

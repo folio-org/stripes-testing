@@ -136,8 +136,8 @@ describe('Finance: Ledgers', () => {
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(firstFiscalYear.code, 'None', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFile(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileForNone(`${fileName}.csv`);
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileForNone(
         `${fileName}.csv`,
         1,
         defaultFund,

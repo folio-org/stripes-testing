@@ -56,10 +56,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -72,6 +73,7 @@ describe('MARC', () => {
             });
           });
 
+          cy.getAdminToken();
           cy.loginAsAdmin({
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,

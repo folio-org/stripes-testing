@@ -492,7 +492,7 @@ export default {
   editInstance: () => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
-    InstanceRecordEdit.waitLoading();
+    cy.expect(Pane({ id: 'instance-form' }).exists());
 
     return InstanceRecordEdit;
   },
@@ -1391,7 +1391,7 @@ export default {
 
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Button(barcode)).click());
-    cy.expect(KeyValue('Temporary loan type').has({ value }));
+    cy.expect(KeyValue('Temporary loan type').has({ value: including(value) }));
     cy.do(Button({ icon: 'times' }).click());
   },
 

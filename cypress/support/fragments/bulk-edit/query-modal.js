@@ -21,31 +21,32 @@ const runQueryButton = Button('Run query');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
+const selectFieldButton = Button(including('Select field'));
 
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holding — Instance UUID',
+  instanceUuid: 'Holdings — Holding — Instance UUID',
 };
 export const instanceFieldValues = {
-  instanceHrid: 'Instance — Instance HRID',
-  instanceResourceTitle: 'Instance — Title',
+  instanceHrid: 'Instances — Instance — Instance HRID',
+  instanceResourceTitle: 'Instances — Instance — Title',
 };
 export const itemFieldValues = {
-  instanceId: 'Instances — Instance UUID',
-  itemStatus: 'Items — Status',
-  itemUuid: 'Items — Item UUID',
-  holdingsId: 'Holdings — UUID',
-  temporaryLocation: 'Temporary location — Name',
+  instanceId: 'Items — Instances — Instance UUID',
+  itemStatus: 'Items — Items — Status',
+  itemUuid: 'Items — Items — Item UUID',
+  holdingsId: 'Items — Holdings — UUID',
+  temporaryLocation: 'Items — Temporary location — Name',
 };
 export const usersFieldValues = {
-  expirationDate: 'User — Expiration date',
-  firstName: 'User — First name',
-  lastName: 'User — Last name',
-  patronGroup: 'Group — Group',
-  preferredContactType: 'User — Preferred contact type',
-  userActive: 'User — Active',
-  userBarcode: 'User — Barcode',
+  expirationDate: 'Users — User — Expiration date',
+  firstName: 'Users — User — First name',
+  lastName: 'Users — User — Last name',
+  patronGroup: 'Users — Group — Group',
+  preferredContactType: 'Users — User — Preferred contact type',
+  userActive: 'Users — User — Active',
+  userBarcode: 'Users — User — Barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -145,6 +146,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
+    cy.do(selectFieldButton.click());
     cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -155,6 +157,7 @@ export default {
   },
 
   selectField(selection, row = 0) {
+    cy.do(selectFieldButton.click());
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
   },
 
@@ -233,7 +236,6 @@ export default {
         .find(MultiSelectOption(including(text)))
         .click(),
     ]);
-    cy.focused().type('{selectAll}{backspace}');
     cy.do(buildQueryModal.click());
   },
 

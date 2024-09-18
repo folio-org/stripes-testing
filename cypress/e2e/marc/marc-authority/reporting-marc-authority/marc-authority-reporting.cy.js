@@ -55,22 +55,25 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.exportManagerAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-        });
-
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityID.push(record[marcFile.propertyName].id);
+          Permissions.moduleDataImportEnabled.gui,
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+          })
+          .then(() => {
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityID.push(record[marcFile.propertyName].id);
+                });
+              });
             });
           });
-        });
       });
 
       beforeEach('Login to the application', () => {

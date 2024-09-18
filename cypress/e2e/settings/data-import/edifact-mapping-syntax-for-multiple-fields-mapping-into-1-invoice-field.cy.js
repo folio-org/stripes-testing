@@ -20,7 +20,6 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -116,6 +115,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
         collectionOfProfiles.forEach((profile) => {
           SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.jobProfile.profileName);
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
@@ -139,7 +139,6 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[0].mappingProfile.name,
         );
-        FieldMappingProfileView.closeViewMode(collectionOfProfiles[0].mappingProfile.name);
 
         FieldMappingProfiles.createInvoiceMappingProfile(
           collectionOfProfiles[1].mappingProfile,
@@ -210,9 +209,6 @@ describe('Data Import', () => {
         InvoiceView.selectInvoiceLine();
         InvoiceView.verifyInvoiceLineSubscription(invoiceData[1].subscriptionInfo);
         InvoiceView.verifyInvoiceLineComment(invoiceData[1].comment);
-
-        cy.getAdminToken();
-        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
       },
     );
   });

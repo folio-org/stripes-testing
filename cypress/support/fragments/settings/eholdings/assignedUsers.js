@@ -23,7 +23,7 @@ export default {
       this.assignUserViaApi({ userId, credentialsId: credentials[0].id });
     });
   },
-  unassignUserViaApi({ userId, credentialsId }) {
+  unAssignUserViaApi({ userId, credentialsId }) {
     return cy
       .okapiRequest({
         method: 'DELETE',
@@ -35,7 +35,7 @@ export default {
   },
   unassignUserFromDefaultCredentialsViaApi({ userId }) {
     Credentials.getCredentialsViaApi().then((credentials) => {
-      this.unassignUserViaApi({ userId, credentialsId: credentials[0].id });
+      this.unAssignUserViaApi({ userId, credentialsId: credentials[0].id });
     });
   },
 };

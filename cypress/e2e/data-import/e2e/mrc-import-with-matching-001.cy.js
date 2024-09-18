@@ -74,7 +74,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.dataExportEnableModule.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -100,7 +100,7 @@ describe('Data Import', () => {
     });
 
     it(
-      'C17044: MARC-MARC matching for 001 field (folijet)',
+      'C17044 MARC-MARC matching for 001 field (folijet)',
       { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         DataImport.verifyUploadState();

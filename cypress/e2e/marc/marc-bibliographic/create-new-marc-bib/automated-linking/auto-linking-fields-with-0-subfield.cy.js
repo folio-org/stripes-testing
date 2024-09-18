@@ -202,7 +202,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField('610', '$0 n93094742');
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
 
             QuickMarcEditor.checkAfterSaveAndClose();

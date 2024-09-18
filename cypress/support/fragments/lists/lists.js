@@ -2,25 +2,30 @@ import {
   Accordion,
   Button,
   Callout,
+  calloutTypes,
   Checkbox,
   HTML,
+  including,
+  KeyValue,
   Link,
+  ListRow,
   Modal,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
   Pane,
   RadioButton,
   TextArea,
   TextField,
-  calloutTypes,
-  including,
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 
+const listNameTextField = TextField({ name: 'listName' });
+const listDescriptionTextArea = TextArea({ name: 'description' });
 const closeModal = Modal();
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
-const DeleteButton = Button('Delete');
+const deleteButton = Button('Delete');
 const cancelRefresh = Button('Cancel refresh');
 const buildQueryButton = Button('Build query');
 const closeWithoutSavingButton = Button('Close without saving');
@@ -29,15 +34,19 @@ const keepEditingButton = closeModal.find(Button('Keep editing'));
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
 const editList = Button('Edit list');
-const exportList = Button('Export list (CSV)');
+const duplicateList = Button('Duplicate list');
+const deleteList = Button('Delete list');
+const exportList = Button('Export all columns (CSV)');
 const testQuery = Button('Test query');
 const runQuery = Button('Run query & save');
 const filterPane = Pane('Filter');
+const newLink = new Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
+const editQueryButton = Button('Edit query');
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -54,8 +63,21 @@ export default {
     cy.get('[class^="spinner"]').should('not.exist');
   },
 
+  waitForCompilingToComplete() {
+    cy.wait(1000);
+    cy.get('[class^=compilerWrapper]').should('not.exist');
+    cy.wait(1000);
+    cy.get('body').then(($body) => {
+      if ($body.find('div[data-test-message-banner]').length > 0) {
+        this.viewUpdatedList();
+      } else {
+        cy.log('"View updated list" didn\'t appear');
+      }
+    });
+  },
+
   queryBuilderActions() {
-    this.queryBuilderActionsWithParameters('User — Active', '==', 'True');
+    this.queryBuilderActionsWithParameters('Users — User — Active', '==', 'True');
   },
 
   queryBuilderActionsWithParameters(parameter, operator, value) {
@@ -64,67 +86,143 @@ export default {
     cy.get('[data-testid="operator-option-0"]').select(operator);
     cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
-    cy.wait(5000);
+    cy.wait(1000);
     cy.do(runQuery.click());
     cy.wait(2000);
   },
 
-  actionButton() {
+  openActions() {
+    cy.wait(500);
     cy.do(actions.click());
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   refreshList() {
     cy.do(refreshList.click());
-    cy.wait(5000);
+    cy.wait(3000);
   },
 
-  DeleteListModal() {
-    cy.do(DeleteButton.click());
-    cy.wait(5000);
+  verifyRefreshListButtonIsActive() {
+    cy.expect(refreshList.exists());
+    cy.expect(refreshList.has({ disabled: false }));
+  },
+
+  verifyRefreshListButtonIsDisabled() {
+    cy.expect(refreshList.has({ disabled: true }));
+  },
+
+  verifyRefreshListButtonDoesNotExist() {
+    cy.expect(refreshList.absent());
+  },
+
+  editQuery() {
+    cy.do(editQueryButton.click());
+    cy.wait(1000);
+  },
+
+  verifyEditorContainsQuery(query) {
+    cy.get('[id^=selected-field-option]').contains(query.field);
+    cy.get('[data-testid="operator-option-0"]').contains(query.operator);
+    cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
+  },
+
+  confirmDelete() {
+    cy.do(deleteButton.click());
+    cy.wait(1000);
   },
 
   cancelRefresh() {
     cy.do(cancelRefresh.click());
-    cy.wait(5000);
+    cy.wait(1000);
   },
 
   saveList() {
     cy.do(saveButton.click());
-    cy.wait(5000);
+    cy.wait(1000);
   },
 
   buildQuery() {
     cy.do(buildQueryButton.click());
-    cy.wait(5000);
+    cy.wait(1000);
   },
 
   editList() {
     cy.do(editList.click());
-    cy.wait(5000);
+    cy.wait(2000);
+  },
+
+  duplicateList() {
+    cy.do(duplicateList.click());
+    cy.wait(1000);
+  },
+
+  verifyDuplicateListButtonIsActive() {
+    cy.expect(duplicateList.exists());
+    cy.expect(duplicateList.has({ disabled: false }));
+  },
+
+  verifyDuplicateListButtonIsDisabled() {
+    cy.expect(duplicateList.has({ disabled: true }));
+  },
+
+  deleteList() {
+    cy.do(deleteList.click());
+    cy.wait(1000);
+  },
+
+  verifyDeleteListButtonIsActive() {
+    cy.expect(deleteList.exists());
+    cy.expect(deleteList.has({ disabled: false }));
+  },
+
+  verifyDeleteListButtonIsDisabled() {
+    cy.expect(deleteList.has({ disabled: true }));
+  },
+
+  verifyEditListButtonIsDisabled() {
+    cy.expect(editList.has({ disabled: true }));
+  },
+
+  verifyEditListButtonIsActive() {
+    cy.expect(editList.exists());
+    cy.expect(editList.has({ disabled: false }));
   },
 
   exportList() {
     cy.do(exportList.click());
+    cy.wait(1000);
+  },
+
+  verifyExportListButtonIsDisabled() {
+    cy.expect(exportList.has({ disabled: true }));
+  },
+
+  verifyExportListButtonIsActive() {
+    cy.expect(exportList.exists());
+    cy.expect(exportList.has({ disabled: false }));
   },
 
   cancelList() {
     cy.do(cancelButton.click());
-    cy.wait(5000);
+    cy.wait(3000);
   },
 
   closeWithoutSaving() {
     cy.do(closeWithoutSavingButton.click());
-    cy.wait(5000);
+    cy.wait(3000);
   },
 
   keepEditing() {
     cy.do(keepEditingButton.click());
-    cy.wait(5000);
+    cy.wait(3000);
   },
 
   openNewListPane() {
-    cy.do(Link('New').click());
+    cy.do(newLink.click());
+  },
+
+  verifyNewButtonIsEnabled() {
+    cy.expect(newLink.exists());
   },
 
   expiredPatronLoan() {
@@ -136,11 +234,19 @@ export default {
   },
 
   setName(value) {
-    cy.do(TextField({ name: 'listName' }).fillIn(value));
+    cy.do(listNameTextField.fillIn(value));
+  },
+
+  verifyListName(value) {
+    cy.expect(listNameTextField.has({ value }));
   },
 
   setDescription(value) {
-    cy.do(TextArea({ name: 'description' }).fillIn(value));
+    cy.do(listDescriptionTextArea.fillIn(value));
+  },
+
+  verifyListDescription(value) {
+    cy.expect(listDescriptionTextArea.has({ value }));
   },
 
   selectRecordTypeOld(option) {
@@ -157,16 +263,32 @@ export default {
       });
   },
 
+  checkKeyValue(label, value) {
+    cy.expect(KeyValue(label, { value }).exists());
+  },
+
+  verifyRecordType(recordType) {
+    this.checkKeyValue('Record type', recordType);
+  },
+
   selectVisibility(visibility) {
     cy.do(RadioButton(visibility).click());
     this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
+  verifyVisibility(visibility, selected) {
+    cy.expect(RadioButton(visibility).has({ checked: selected }));
+  },
+
   selectStatus(status) {
     cy.do(RadioButton(status).click());
     this.waitForSpinnerToDisappear();
     cy.wait(500);
+  },
+
+  verifyStatus(status, selected) {
+    cy.expect(RadioButton(status).has({ checked: selected }));
   },
 
   verifySuccessCalloutMessage(message) {
@@ -194,6 +316,17 @@ export default {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
+  openList(listName) {
+    cy.do(
+      ListRow(including(listName))
+        .find(MultiColumnListCell({ content: including(listName) }))
+        .find(Button(listName))
+        .click(),
+    );
+    cy.wait(1000);
+    this.waitForCompilingToComplete();
+  },
+
   verifyListsPaneIsEmpty() {
     cy.expect(HTML('The list contains no items').exists());
   },
@@ -213,44 +346,6 @@ export default {
           .find(MultiColumnListCell({ content: including(contentToCheck) }))
           .exists(),
       );
-    });
-  },
-
-  getViaApi() {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: 'lists',
-    });
-  },
-
-  getTypesViaApi() {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: 'entity-types',
-    });
-  },
-
-  deleteViaApi(id) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `lists/${id}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    });
-  },
-
-  createViaApi(newList) {
-    this.getTypesViaApi().then((response) => {
-      newList.entityTypeId = response.body.find(
-        (entityType) => entityType.label === newList.recordType,
-      ).id;
-      delete newList.recordType;
-      return cy.okapiRequest({
-        method: 'POST',
-        path: 'lists',
-        body: newList,
-        isDefaultSearchParamsRequired: false,
-      });
     });
   },
 
@@ -318,6 +413,11 @@ export default {
     cy.do(filterPane.find(Checkbox(name)).click());
   },
 
+  selectRecordTypeFilter(type) {
+    cy.do(MultiSelect().choose(type));
+    cy.wait(1000);
+  },
+
   verifyCheckboxChecked(name) {
     cy.expect(filterPane.find(Checkbox(name)).has({ checked: true }));
   },
@@ -355,6 +455,7 @@ export default {
   },
 
   resetAllFilters() {
+    cy.wait(1000);
     cy.get('button[id="clickable-reset-all"]').then((element) => {
       const disabled = element.attr('disabled');
       if (!disabled) {
@@ -385,12 +486,10 @@ export default {
     cy.contains(`List ${listName} saved.`);
   },
 
-  verifyDeleteListButtonIsDisabled() {
-    cy.contains('Delete list').should('be.disabled');
-  },
-
   viewUpdatedList() {
-    cy.contains('View updated list').click();
+    cy.wait(1000);
+    cy.contains('View updated list', { timeout: 30000 }).click();
+    cy.wait(1000);
   },
 
   verifyListsFilteredByStatus: (filters) => {
@@ -402,7 +501,6 @@ export default {
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {
@@ -410,20 +508,16 @@ export default {
       });
   },
 
-  verifyListsFilteredByRecordType: (filters) => {
+  verifyListsFilteredByRecordType: (filter) => {
     cy.wait(500);
-    const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
         cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
           .invoke('text')
           .then((cellValue) => {
-            cells.push(cellValue);
+            cy.expect(cellValue).to.equal(filter);
           });
-      })
-      .then(() => {
-        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
       });
   },
 
@@ -441,5 +535,82 @@ export default {
       .then(() => {
         cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
       });
+  },
+
+  buildQueryOnActiveUsers() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        entityTypeId: filteredEntityTypeId,
+        fqlQuery: '{"users.active":{"$eq":"true"}}',
+      };
+    });
+  },
+
+  createQueryViaApi(query) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'query',
+        body: query,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return {
+          queryId: response.body.queryId,
+          fqlQuery: query.fqlQuery,
+        };
+      });
+  },
+
+  createViaApi(list) {
+    const newList = JSON.parse(JSON.stringify(list));
+    return this.getTypesViaApi().then((response) => {
+      newList.entityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === newList.recordType,
+      ).id;
+      delete newList.recordType;
+      cy.okapiRequest({
+        method: 'POST',
+        path: 'lists',
+        body: newList,
+        isDefaultSearchParamsRequired: false,
+      }).then((newListResponse) => {
+        return newListResponse.body;
+      });
+    });
+  },
+
+  getViaApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'lists',
+    });
+  },
+
+  getTypesViaApi() {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'entity-types',
+    });
+  },
+
+  deleteViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `lists/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
+  },
+
+  // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
+  deleteListByNameViaApi(listName) {
+    this.getViaApi().then((response) => {
+      const filteredItem = response.body.content.find((item) => item.name === listName);
+      this.deleteViaApi(filteredItem.id);
+    });
   },
 };

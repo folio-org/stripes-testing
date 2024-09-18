@@ -11,6 +11,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
+      let createdAuthorityID;
       const testData = {
         authority: {
           searchInput: 'Robinson, Peter',
@@ -21,23 +22,18 @@ describe('MARC', () => {
       };
       const authorityPostfix = '?authRefType=Authorized&heading';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
-      const marcFiles = [
-        {
-          marc: 'marcAuthFileForC376592.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          numOfRecords: 1,
-        },
-      ];
-      const createdAuthorityIDs = [];
+      const marcFile = {
+        marc: 'marcAuthFileForC376592.mrc',
+        fileName: `C376592 testMarcFile.${getRandomPostfix()}.mrc`,
+      };
 
       before('Upload files', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
-              });
+              createdAuthorityID = response[0].authority.id;
             },
           );
         });
@@ -58,10 +54,9 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
-        });
+        MarcAuthority.deleteViaAPI(createdAuthorityID);
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
       });
 
       it(
@@ -69,7 +64,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
-          MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
+          MarcAuthorities.select(`${createdAuthorityID}${authorityPostfix}`);
           MarcAuthority.edit();
           QuickMarcEditor.addNewField(
             testData.field010.tag,

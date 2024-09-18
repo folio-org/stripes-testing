@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       it(
         'C350572 Edit an Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);

@@ -124,6 +124,7 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
@@ -154,7 +155,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
+            cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -165,10 +170,6 @@ describe('MARC', () => {
                   createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
-            });
-
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
             });
 
             cy.login(userData.username, userData.password, {
@@ -212,6 +213,8 @@ describe('MARC', () => {
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
 

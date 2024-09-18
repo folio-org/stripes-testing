@@ -8,6 +8,7 @@ const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
+const webpackPreprocessor = require('@cypress/webpack-preprocessor');
 
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -20,7 +21,7 @@ const reportportalOptions = {
 
 module.exports = defineConfig({
   retries: {
-    runMode: 1,
+    runMode: 0,
     openMode: 0,
   },
   numTestsKeptInMemory: 1,
@@ -49,6 +50,8 @@ module.exports = defineConfig({
   reporterOptions: reportportalOptions,
   e2e: {
     async setupNodeEvents(on, config) {
+      on('file:preprocessor', webpackPreprocessor());
+
       allureWriter(on, config);
 
       on('task', {

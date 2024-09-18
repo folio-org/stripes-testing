@@ -1,3 +1,4 @@
+import { including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -11,9 +12,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
-  including,
-  matching,
-  or,
+  Pane,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -71,10 +70,10 @@ export default {
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([
-      Section({ id: 'instance-form' }).exists(),
+      Pane({ id: 'instance-form' }).exists(),
       or(
-        PaneHeader(including('Edit instance')).exists(),
-        PaneHeader(including('Edit shared instance')).exists(),
+        Pane({ titleLabel: including('Edit instance') }).exists(),
+        Pane({ titleLabel: including('Edit shared instance') }).exists(),
       ),
     ]);
   },
@@ -387,7 +386,6 @@ export default {
   },
   getClassificationOptionsList() {
     cy.do(addClassificationButton.click());
-
     return cy.then(() => classificationSection
       .find(Select({ name: 'classifications[0].classificationTypeId' }))
       .optionsText());

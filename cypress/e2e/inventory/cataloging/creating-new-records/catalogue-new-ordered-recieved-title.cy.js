@@ -161,8 +161,7 @@ describe('Inventory', () => {
         InventoryInstance.verifyItemBarcode('No barcode');
         InventoryInstance.verifyLoan('Can circulate');
         InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode('-');
+        ItemRecordView.checkBarcode('No value set-');
         InventoryItems.edit();
         ItemRecordEdit.waitLoading(instanceTitle);
         ItemRecordEdit.addBarcode(barcode);

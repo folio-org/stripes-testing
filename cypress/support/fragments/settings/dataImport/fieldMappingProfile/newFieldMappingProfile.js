@@ -136,6 +136,7 @@ const save = () => {
   // TODO need to wait until profile to be filled
   cy.wait(3000);
   cy.do(saveButton.click());
+  cy.wait(1500);
 };
 const selectOrganizationByName = (organizationName) => {
   cy.do(organizationLookUpButton.click());

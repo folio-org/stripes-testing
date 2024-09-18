@@ -56,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353232 Verify error accordion during matching (In app approach) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -72,7 +72,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(validItemBarcodeFileName);

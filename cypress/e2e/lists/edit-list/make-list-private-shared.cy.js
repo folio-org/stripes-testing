@@ -44,10 +44,7 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(firstUser.username, firstUser.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(firstUser.userId);
       Users.deleteViaApi(secondUser.userId);
@@ -78,7 +75,7 @@ describe('lists', () => {
       Lists.waitLoading();
       Lists.selectSharedLists();
       Lists.selectList(listData.name);
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Private');
       Lists.saveList();
@@ -114,7 +111,7 @@ describe('lists', () => {
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       cy.contains(listData.name).click();
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Shared');
       Lists.saveList();

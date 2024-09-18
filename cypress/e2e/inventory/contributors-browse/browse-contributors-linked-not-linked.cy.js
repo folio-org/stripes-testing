@@ -53,6 +53,7 @@ describe('Inventory', () => {
               createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
+          cy.wait(5000);
         });
 
         cy.loginAsAdmin({
@@ -72,6 +73,8 @@ describe('Inventory', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

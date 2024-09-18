@@ -14,61 +14,88 @@ const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 const newTransformationCalloutMessage = '3 transformations have been successfully added';
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
-describe('settings: data-export', () => {
-  before('create test data', () => {
-    cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
+describe('Data Export', () => {
+  describe('Mapping profile - setup', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken();
+      ExportFieldMappingProfiles.getFieldMappingProfile({
+        query: `"name"=="${fieldMappingProfileName}"`,
+      }).then((response) => {
+        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
       });
+      Users.deleteViaApi(user.userId);
     });
+
+    it(
+      'C15821 Create a new mapping profile for MARC bib record with holdings and items data inluded (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
+      () => {
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [
+          'Inventory instance (selected fields)',
+          'Holdings',
+          'Item',
+        ]);
+        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+        ModalSelectTransformations.searchItemTransformationsByName('Instance - ID');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
+
+        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+        ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', 'a');
+
+        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.checkItemRecordTypeChechbox();
+        ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.fillInTransformationsTextfields('356', '5', '6', 'a');
+
+        ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+        InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Holdings - Instance - ID',
+          '245',
+          '3',
+          '4',
+          'a',
+        );
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Instance - ID',
+          '123',
+          '1',
+          '2',
+          'a',
+          1,
+        );
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Item - ID',
+          '356',
+          '5',
+          '6',
+          'a',
+          2,
+        );
+
+        ExportFieldMappingProfiles.saveMappingProfile();
+        InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+
+        ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
+      },
+    );
   });
-
-  after('delete test data', () => {
-    cy.getAdminToken();
-    ExportFieldMappingProfiles.getFieldMappingProfile({
-      query: `"name"=="${fieldMappingProfileName}"`,
-    }).then((response) => {
-      DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
-    });
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C15821 Create a new mapping profile for MARC bib record with holdings and items data inluded (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
-    () => {
-      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-      ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [
-        'Inventory instance (selected fields)',
-        'Holdings',
-        'Item',
-      ]);
-      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.uncheckItemRecordTypeChechbox();
-      ModalSelectTransformations.searchItemTransformationsByName('Instance - ID');
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
-
-      ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-      ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', '$a');
-
-      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.checkItemRecordTypeChechbox();
-      ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.fillInTransformationsTextfields('356', '5', '6', '$a');
-
-      ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-      InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
-
-      ExportFieldMappingProfiles.saveMappingProfile();
-      InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-
-      ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
-    },
-  );
 });

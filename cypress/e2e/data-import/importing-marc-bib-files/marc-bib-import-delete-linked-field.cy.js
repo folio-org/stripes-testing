@@ -97,22 +97,10 @@ describe('Data Import', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
-          });
-        });
 
         // create Match profile
         NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
@@ -143,6 +131,19 @@ describe('Data Import', () => {
               actionProfile.id,
             );
           });
+
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+        });
 
         // link MARC Bib field to MARC Authority
         cy.loginAsAdmin({

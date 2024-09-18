@@ -18,7 +18,7 @@ const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 let instanceHRID;
 let holdingsUUID;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Holdings records export', () => {
     before('create test data', () => {
       cy.createTempUser([

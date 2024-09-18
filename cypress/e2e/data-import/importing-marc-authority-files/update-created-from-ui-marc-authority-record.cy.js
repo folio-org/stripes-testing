@@ -146,7 +146,7 @@ describe('Data Import', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -215,6 +215,8 @@ describe('Data Import', () => {
         });
 
         // Click on the "Save & close" button
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         MarcAuthority.verifyAfterSaveAndClose();
         QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

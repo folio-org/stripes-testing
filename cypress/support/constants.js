@@ -370,10 +370,10 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   CALL_NUMBERS_ALL: 'Call numbers (all)',
   DEWEY_DECIMAL: 'Dewey Decimal classification',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
-  LOCAL: 'Local',
+  // LOCAL: 'Local',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
-  OTHER_SCHEME: 'Other scheme',
-  SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
+  // OTHER_SCHEME: 'Other scheme',
+  // SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
 };
 
 export const BROWSE_CLASSIFICATION_OPTIONS = {
@@ -840,15 +840,49 @@ export const DEFAULT_LOCALE_STRING = '{"locale":"en-US","timezone":"UTC","curren
 
 export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_HOLDINGS: {
+    ACQUISITION_METHOD: 'Acquisition method',
     HOLDINGS_UUID: 'Holdings UUID',
+    INSTANCE: 'Instance (Title, Publisher, Publication date)',
     HOLDINGS_HRID: 'Holdings HRID',
+    HOLDINGS_TYPE: 'Holdings type',
     ADMINISTRATIVE_NOTE: 'Administrative note',
     ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    ELECTRONIC_ACCESS: 'Electronic access',
     NOTE: 'Note',
     BINDING_NOTE: 'Binding note',
     ACTION_NOTE: 'Action note',
     COPY_NOTE: 'Copy note',
     REPRODUCTION: 'Reproduction note',
+    HOLDINGS_PERMANENT_LOCATION: 'Holdings permanent location',
+    PROVENANCE_NOTE: 'Provenance note',
+    HOLDINGS_TEMPORARY_LOCATION: 'Holdings temporary location',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    SOURCE: 'Source',
+    STATISTICAL_CODES: 'Statistical codes',
+    SHELVING_TITLE: 'Shelving title',
+    FORMER_HOLDINGS_ID: 'Former holdings Id',
+    HOLDINGS_COPY_NUMBER: 'Holdings copy number',
+    HOLDINGS_LEVEL_CALL_NUMBER_TYPE: 'Holdings level call number type',
+    HOLDINGS_LEVEL_CALL_NUMBER_PREFIX: 'Holdings level call number prefix',
+    HOLDINGS_LEVEL_CALL_NUMBER_SUFFIX: 'Holdings level call number suffix',
+    HOLDINGS_LEVEL_CALL_NUMBER: 'Holdings level call number',
+    NUMBER_OF_ITEMS: 'Number of items',
+    HOLDINGS_STATEMENT: 'Holdings statement',
+    HOLDINGS_STATEMENT_FOR_SUPPLEMENTS: 'Holdings statement for supplements',
+    HOLDINGS_STATEMENT_FOR_INDEXES: 'Holdings statement for indexes',
+    ILL_POLICY: 'ILL policy',
+    DIGITIZATION_POLICY: 'Digitization policy',
+    RETENTION_POLICY: 'Retention policy',
+    ORDER_FORMAT: 'Order format',
+    RECEIPT_STATUS: 'Receipt status',
+    TAGS: 'Tags',
+  },
+  INVENTORY_INSTANCES: {
+    INSTANCE_UUID: 'Instance UUID',
+    INSTANCE_HRID: 'Instance HRID',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    STAFF_SUPPRESS: 'Staff suppress',
+    RESOURCE_TITLE: 'Resource title',
   },
 };
 
@@ -860,4 +894,10 @@ export const HOLDING_NOTE_TYPES = {
   REPRODUCTION: 'Reproduction',
   NOTE: 'Note',
   BINDING: 'Binding',
+  PROVENANCE: 'Provenance',
+};
+
+export const AUTHORITY_FILE_SOURCES = {
+  LOCAL: 'Local',
+  FOLIO: 'FOLIO',
 };

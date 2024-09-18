@@ -138,7 +138,7 @@ describe('MARC', () => {
 
       it(
         'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -205,7 +205,10 @@ describe('MARC', () => {
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(9, 'Record cannot be saved. A MARC tag must contain three characters.');
+          QuickMarcEditor.checkErrorMessage(
+            9,
+            'Tag must contain three characters and can only accept numbers 0-9.',
+          );
         },
       );
 

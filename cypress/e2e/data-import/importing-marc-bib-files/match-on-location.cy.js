@@ -38,6 +38,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let preconditionUserId;
     let userId;
     const permanentLocation = 'Main Library (KU/CC/DI/M)';
     const recordType = 'MARC_BIBLIOGRAPHIC';
@@ -253,34 +254,40 @@ describe('Data Import', () => {
     };
 
     before('create test data', () => {
-      cy.getAdminToken();
-      testData.jobProfileForCreate = jobProfileForCreate;
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
 
-      testData.forEach((specialPair) => {
-        cy.createOnePairMappingAndActionProfiles(
-          specialPair.mappingProfile,
-          specialPair.actionProfile,
-        ).then((idActionProfile) => {
-          cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+        testData.jobProfileForCreate = jobProfileForCreate;
+
+        testData.forEach((specialPair) => {
+          cy.createOnePairMappingAndActionProfiles(
+            specialPair.mappingProfile,
+            specialPair.actionProfile,
+          ).then((idActionProfile) => {
+            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+          });
         });
-      });
-      SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
-        (bodyWithjobProfile) => {
-          testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-        },
-      );
+        SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
+          (bodyWithjobProfile) => {
+            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+          },
+        );
 
-      // upload a marc file for creating of the new instance, holding and item
-      DataImport.uploadFileViaApi(
-        'marcFileForC17027.mrc',
-        marcFileForCreate,
-        testData.jobProfileForCreate.profile.name,
-      ).then((response) => {
-        response.forEach((hrids) => instanceHrids.push(hrids.instance.hrid));
-        response.forEach((ids) => {
-          instanceIds.push(ids.instance.id);
-          holdingsIds.push(ids.holding.id);
-          itemIds.push(ids.item.id);
+        // upload a marc file for creating of the new instance, holding and item
+        DataImport.uploadFileViaApi(
+          'marcFileForC17027.mrc',
+          marcFileForCreate,
+          testData.jobProfileForCreate.profile.name,
+        ).then((response) => {
+          response.forEach((hrids) => instanceHrids.push(hrids.instance.hrid));
+          response.forEach((ids) => {
+            instanceIds.push(ids.instance.id);
+            holdingsIds.push(ids.holding.id);
+            itemIds.push(ids.item.id);
+          });
         });
       });
 
@@ -301,6 +308,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${fileNameAfterUpdate}`);
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(userId);
+        Users.deleteViaApi(preconditionUserId);
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);

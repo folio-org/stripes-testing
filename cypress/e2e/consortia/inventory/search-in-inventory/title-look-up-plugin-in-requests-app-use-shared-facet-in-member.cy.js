@@ -161,7 +161,6 @@ describe('Inventory', () => {
       });
 
       cy.setTenant(Affiliations.University);
-      TitleLevelRequests.disableTLRViaApi();
       createdRecordsFromUniversity.forEach((instanceId) => {
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });

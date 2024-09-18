@@ -115,7 +115,6 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C347888 Check that user can create Title level request from User app (use Actions) (vega) (Taas)',

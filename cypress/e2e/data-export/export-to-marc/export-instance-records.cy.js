@@ -16,13 +16,12 @@ const item = {
 };
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Export to MARC', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
-        permissions.dataExportAll.gui,
-        permissions.dataExportEnableModule.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
         const instanceID = InventoryInstances.createInstanceViaApi(

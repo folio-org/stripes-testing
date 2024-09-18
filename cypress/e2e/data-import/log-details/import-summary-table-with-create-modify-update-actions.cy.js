@@ -233,76 +233,74 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
-        collectionOfProfilesForCreate[0].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfProfilesForCreate[0].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          collectionOfProfilesForCreate[0].actionProfile.id = actionProfileResponse.body.id;
-        });
-      });
-      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
-        collectionOfProfilesForCreate[1].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfProfilesForCreate[1].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          collectionOfProfilesForCreate[1].actionProfile.id = actionProfileResponse.body.id;
-        });
-      });
-      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
-        collectionOfProfilesForCreate[2].mappingProfile,
-      ).then((mappingProfileResponse) => {
-        NewActionProfile.createActionProfileViaApi(
-          collectionOfProfilesForCreate[2].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          collectionOfProfilesForCreate[2].actionProfile.id = actionProfileResponse.body.id;
-        });
-      });
-      NewFieldMappingProfile.createItemMappingProfileViaApi(
-        collectionOfProfilesForCreate[3].mappingProfile,
-      )
-        .then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            collectionOfProfilesForCreate[3].actionProfile,
-            mappingProfileResponse.body.id,
-          ).then((actionProfileResponse) => {
-            collectionOfProfilesForCreate[3].actionProfile.id = actionProfileResponse.body.id;
-          });
-        })
-        .then(() => {
-          NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
-            jobProfileForCreate,
-            collectionOfProfilesForCreate[0].actionProfile.id,
-            collectionOfProfilesForCreate[1].actionProfile.id,
-            collectionOfProfilesForCreate[2].actionProfile.id,
-            collectionOfProfilesForCreate[3].actionProfile.id,
-          );
-        });
-      DataImport.uploadFileViaApi(
-        filePathForCreate,
-        fileNameForCreate,
-        jobProfileForCreate.name,
-      ).then((response) => {
-        instanceId = response[0].instance.id;
-        instanceHrid = response[0].instance.hrid;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
+          collectionOfProfilesForCreate[0].mappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            collectionOfProfilesForCreate[0].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            collectionOfProfilesForCreate[0].actionProfile.id = actionProfileResponse.body.id;
+          });
+        });
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          collectionOfProfilesForCreate[1].mappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            collectionOfProfilesForCreate[1].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            collectionOfProfilesForCreate[1].actionProfile.id = actionProfileResponse.body.id;
+          });
+        });
+        NewFieldMappingProfile.createHoldingsMappingProfileViaApi(
+          collectionOfProfilesForCreate[2].mappingProfile,
+        ).then((mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            collectionOfProfilesForCreate[2].actionProfile,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            collectionOfProfilesForCreate[2].actionProfile.id = actionProfileResponse.body.id;
+          });
+        });
+        NewFieldMappingProfile.createItemMappingProfileViaApi(
+          collectionOfProfilesForCreate[3].mappingProfile,
+        )
+          .then((mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              collectionOfProfilesForCreate[3].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              collectionOfProfilesForCreate[3].actionProfile.id = actionProfileResponse.body.id;
+            });
+          })
+          .then(() => {
+            NewJobProfile.createJobProfileWithLinkedFourActionProfilesViaApi(
+              jobProfileForCreate,
+              collectionOfProfilesForCreate[0].actionProfile.id,
+              collectionOfProfilesForCreate[1].actionProfile.id,
+              collectionOfProfilesForCreate[2].actionProfile.id,
+              collectionOfProfilesForCreate[3].actionProfile.id,
+            );
+          });
+        DataImport.uploadFileViaApi(
+          filePathForCreate,
+          fileNameForCreate,
+          jobProfileForCreate.name,
+        ).then((response) => {
+          instanceId = response[0].instance.id;
+          instanceHrid = response[0].instance.hrid;
+        });
 
         cy.login(userProperties.username, userProperties.password);
       });

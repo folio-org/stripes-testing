@@ -2,6 +2,7 @@ import { HTML, including } from '@interactors/html';
 import { not } from 'bigtest';
 import FileManager from '../../utils/fileManager';
 import {
+  Accordion,
   Modal,
   SelectionOption,
   Button,
@@ -22,6 +23,7 @@ import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
 
 const actionsBtn = Button('Actions');
+const bulkEditsAccordion = Accordion('Bulk edits');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
@@ -34,7 +36,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
-const startBulkEditInstanceButton = Button('Start bulk edit - Instance fields');
+const startBulkEditInstanceButton = Button('Instances and Administrative data');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -73,6 +75,9 @@ export default {
   startBulkEditLocalAbsent() {
     cy.expect(startBulkEditLocalButton.absent());
   },
+  startBulkEditInstanceAbsent() {
+    cy.expect(startBulkEditInstanceButton.absent());
+  },
   closeBulkEditInAppForm() {
     cy.do(cancelBtn.click());
     cy.wait(1000);
@@ -83,6 +88,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose(optionName),
     );
+    cy.wait(1000);
   },
   selectAction(actionName, rowIndex = 0) {
     cy.do(
@@ -119,12 +125,14 @@ export default {
   isSelectActionAbsent(rowIndex = 0) {
     cy.expect(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).absent());
   },
+
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
     this.verifyRowIcons();
   },
+
   verifyRowIcons() {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
@@ -149,15 +157,21 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
     BulkEditSearchPane.isConfirmButtonDisabled(true);
   },
+
   deleteRow(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
+
+  deleteRowBySelectedOption(option) {
+    cy.do(RepeatableFieldItem({ singleValue: option }).find(deleteBtn).click());
+  },
+
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewBtn).exists(),
-      areYouSureForm.find(Button('Commit changes')).exists(),
+      areYouSureForm.find(commitChanges).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
   },
@@ -176,6 +190,17 @@ export default {
         areYouSureForm
           .find(MultiColumnListRow({ indexRow: `row-${row}` }))
           .find(MultiColumnListCell({ column, content: including(value) }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyChangesInAreYouSureFormByRowExactMatch(column, changes, row = 0) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+          .find(MultiColumnListCell({ column, content: value }))
           .exists(),
       );
     });
@@ -449,6 +474,14 @@ export default {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(HTML(option)).absent());
   },
 
+  verifyRowWithOptionAbsent(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).absent());
+  },
+
+  verifyRowWithOptionExists(option) {
+    cy.expect(RepeatableFieldItem({ singleValue: option }).exists());
+  },
+
   verifyNewBulkEditRow(rowIndex = 1) {
     cy.expect([
       RepeatableFieldItem({ index: rowIndex - 1 })
@@ -701,6 +734,14 @@ export default {
     );
   },
 
+  verifyValueInSecondTextArea(value, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea({ dataTestID: 'input-textarea-1' }))
+        .has({ value }),
+    );
+  },
+
   selectFromUnchangedSelect(selection, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -832,6 +873,19 @@ export default {
     ]);
   },
 
+  selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .choose(newType),
+    ]);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteHoldingsType' }))
+        .has({ checkedOptionText: newType }),
+    );
+  },
+
   checkApplyToItemsRecordsCheckbox() {
     cy.do(Checkbox('Apply to all items records').click());
   },
@@ -899,6 +953,7 @@ export default {
 
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
+    cy.wait(500);
     cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
     BulkEditSearchPane.waitingFileDownload();
   },
@@ -933,7 +988,7 @@ export default {
 
   commitChanges() {
     cy.wait(2000);
-    cy.do([Modal().find(Button('Commit changes')).click()]);
+    cy.do([Modal().find(commitChanges).click()]);
   },
 
   clickNext() {
@@ -1195,6 +1250,18 @@ export default {
       areYouSureForm.find(MessageBanner()).has({
         textContent: `${numberOfRecords} records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.`,
       }),
+    );
+  },
+
+  verifyActionsColumnIsNotPopulated() {
+    cy.expect(bulkEditsAccordion.find(Select({ dataTestID: 'select-actions-1' })).absent());
+  },
+
+  verifyActionsSelectDropdownDisabled(rowIndex = 0, isDisabled = true) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select('Actions select'))
+        .has({ disabled: isDisabled }),
     );
   },
 };

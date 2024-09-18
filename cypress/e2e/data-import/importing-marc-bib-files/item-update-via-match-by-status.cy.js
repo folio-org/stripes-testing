@@ -137,11 +137,10 @@ describe('Data Import', () => {
       name: `C357552 Item HRID ${getRandomPostfix()}`,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryMarcItemInProcess.gui,
         Permissions.uiInventoryMarcItemIntellectual.gui,
@@ -159,10 +158,8 @@ describe('Data Import', () => {
         StatisticalCodes.createViaApi().then((resp) => {
           statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
         });
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
+        cy.visit(SettingsMenu.mappingProfilePath);
       });
     });
 
