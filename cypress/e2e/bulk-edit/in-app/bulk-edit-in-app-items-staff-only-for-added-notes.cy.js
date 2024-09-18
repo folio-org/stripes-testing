@@ -87,7 +87,7 @@ describe('bulk-edit', () => {
 
     it(
       'C466282 Verify Staff only checkbox for Added notes - items (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
