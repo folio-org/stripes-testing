@@ -7,18 +7,18 @@ import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
-      const randomPostfix = getRandomPostfix();
+      const applications = ['app-consortia', 'app-platform-full'];
       const testData = {
-        roleAName: `Auto Role A C553051 ${randomPostfix}`,
-        roleBName: `Auto Role B C553051 ${randomPostfix}`,
-        roleCName: `Auto Role C C553051 ${randomPostfix}`,
+        roleName: `Auto Role C553052 ${getRandomPostfix()}`,
         capabilitySets: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar',
-            action: CAPABILITY_ACTIONS.VIEW,
+            application: applications[0],
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Consortia Inventory Share Local Instance',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'UI-Notes Item Assign-Unassign',
             action: CAPABILITY_ACTIONS.EXECUTE,
@@ -26,56 +26,67 @@ describe('Eureka', () => {
         ],
         capabilitiesInSets: [
           {
+            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Calendars',
+            resource: 'Consortia Sharing-Instances Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Calendars CalendarId',
+            resource: 'Consortia Sharing-Instances Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Dates',
-            action: CAPABILITY_ACTIONS.VIEW,
+            resource: 'Consortia Sharing-Instances Item',
+            action: CAPABILITY_ACTIONS.CREATE,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Links Collection',
             action: CAPABILITY_ACTIONS.EDIT,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Domain',
             action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Module Notes Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
@@ -83,24 +94,16 @@ describe('Eureka', () => {
         ],
         capabilities: [
           {
+            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Owners Item',
+            resource: 'Consortia Sharing-Roles Item',
             action: CAPABILITY_ACTIONS.CREATE,
           },
           {
+            application: applications[1],
             table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'Roles Collection',
             action: CAPABILITY_ACTIONS.EXECUTE,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Tags Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Configuration Entries Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabSetIds: [],
@@ -119,16 +122,9 @@ describe('Eureka', () => {
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
         });
-        cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
-          testData.roleAId = role.id;
+        cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+          testData.roleId = role.id;
         });
-        cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
-          testData.roleBId = role.id;
-        });
-        cy.createAuthorizationRoleApi(testData.roleCName).then((role) => {
-          testData.roleCId = role.id;
-        });
-
         testData.capabilities.forEach((capability) => {
           capability.type = capability.table;
           cy.getCapabilityIdViaApi(capability).then((capabId) => {
@@ -144,10 +140,8 @@ describe('Eureka', () => {
       });
 
       before('Assign capabilities, login', () => {
-        cy.addCapabilitiesToNewRoleApi(testData.roleAId, testData.capabIds);
-        cy.addCapabilitySetsToNewRoleApi(testData.roleAId, testData.capabSetIds);
-        cy.addCapabilitySetsToNewRoleApi(testData.roleBId, testData.capabSetIds);
-        cy.addCapabilitiesToNewRoleApi(testData.roleCId, testData.capabIds);
+        cy.addCapabilitiesToNewRoleApi(testData.roleId, testData.capabIds);
+        cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
@@ -157,17 +151,15 @@ describe('Eureka', () => {
       after('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteAuthorizationRoleApi(testData.roleAId);
-        cy.deleteAuthorizationRoleApi(testData.roleBId);
-        cy.deleteAuthorizationRoleApi(testData.roleCId);
+        cy.deleteAuthorizationRoleApi(testData.roleId);
       });
 
       it(
-        'C553051 Unassign all capabilities/sets from existing role using dedicated button (eureka)',
-        { tags: ['criticalPath', 'eureka'] },
+        'C553052 Unassign all capabilities/sets from existing role using dedicated button (selected and deselected applications) (eureka)',
+        { tags: ['criticalPath', 'eureka', 'eurekaSnapshotECS'] },
         () => {
-          AuthorizationRoles.searchRole(testData.roleAName);
-          AuthorizationRoles.clickOnRoleName(testData.roleAName);
+          AuthorizationRoles.searchRole(testData.roleName);
+          AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.openForEdit();
           testData.capabilitySets.forEach((set) => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
@@ -178,56 +170,51 @@ describe('Eureka', () => {
           testData.capabilitiesInSets.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
-          AuthorizationRoles.clickUnassignAllCapabilitiesButton();
-          testData.capabilitySets.forEach((set) => {
-            AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
-          });
-          testData.capabilities.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
-          });
-          testData.capabilitiesInSets.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
-          });
-          AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.verifyRoleViewPane(testData.roleAName);
-          AuthorizationRoles.checkCapabilitySetsAccordionCounter('0');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('0');
 
-          AuthorizationRoles.searchRole(testData.roleBName);
-          AuthorizationRoles.clickOnRoleName(testData.roleBName);
-          AuthorizationRoles.openForEdit();
-          testData.capabilitySets.forEach((set) => {
-            AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
-          });
-          testData.capabilitiesInSets.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
-          });
-          AuthorizationRoles.clickUnassignAllCapabilitiesButton();
-          testData.capabilitySets.forEach((set) => {
-            AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
-          });
-          testData.capabilitiesInSets.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
-          });
-          AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
-          AuthorizationRoles.checkCapabilitySetsAccordionCounter('0');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('0');
+          AuthorizationRoles.clickSelectApplication();
+          AuthorizationRoles.selectApplicationInModal(applications[1], false);
+          AuthorizationRoles.clickSaveInModal();
+          testData.capabilitySets
+            .filter((item) => item.application === applications[0])
+            .forEach((set) => {
+              AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
+            });
+          testData.capabilities
+            .filter((item) => item.application === applications[0])
+            .forEach((capability) => {
+              AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
+            });
+          testData.capabilitiesInSets
+            .filter((item) => item.application === applications[0])
+            .forEach((capability) => {
+              AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+            });
 
-          AuthorizationRoles.searchRole(testData.roleCName);
-          AuthorizationRoles.clickOnRoleName(testData.roleCName);
-          AuthorizationRoles.openForEdit();
-          testData.capabilities.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
-          });
           AuthorizationRoles.clickUnassignAllCapabilitiesButton();
-          testData.capabilities.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
-          });
+          testData.capabilitySets
+            .filter((item) => item.application === applications[0])
+            .forEach((set) => {
+              AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
+            });
+          testData.capabilities
+            .filter((item) => item.application === applications[0])
+            .forEach((capability) => {
+              AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
+            });
+          testData.capabilitiesInSets
+            .filter((item) => item.application === applications[0])
+            .forEach((capability) => {
+              AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
+            });
           AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
+
+          AuthorizationRoles.verifyRoleViewPane(testData.roleName);
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('0');
           AuthorizationRoles.checkCapabilitiesAccordionCounter('0');
+          AuthorizationRoles.clickOnCapabilitySetsAccordion(false);
+          AuthorizationRoles.clickOnCapabilitiesAccordion(false);
+          AuthorizationRoles.verifyEmptyCapabilitiesAccordion();
+          AuthorizationRoles.verifyEmptyCapabilitySetsAccordion();
         },
       );
     });

@@ -913,3 +913,18 @@ export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
 };
+
+export const CAPABILITY_TYPES = {
+  DATA: 'Data',
+  SETTINGS: 'Settings',
+  PROCEDURAL: 'Procedural',
+};
+
+export const CAPABILITY_ACTIONS = {
+  VIEW: 'View',
+  CREATE: 'Create',
+  EDIT: 'Edit',
+  DELETE: 'Delete',
+  EXECUTE: 'Execute',
+  MANAGE: 'Manage',
+};
