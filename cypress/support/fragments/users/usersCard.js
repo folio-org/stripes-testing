@@ -54,6 +54,7 @@ const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfine
 const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
+const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
 
 export default {
   errors,
@@ -553,16 +554,13 @@ export default {
   },
 
   verifyPictureIsSet(url) {
-    cy.expect(
-      rootSection.find(ProfilePictureCard({ alt: 'Profile picture' })).has({ src: including(url) }),
-    );
+    cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
   },
 
   verifyProfilePictureRemoved() {
-    cy.expect(
-      ProfilePictureCard({ alt: 'Profile picture' }).has({
-        src: including('/./img/placeholderThumbnail'),
-      }),
-    );
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+  verifyPlaceholderProfilePictureIsPresent() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
   },
 };
