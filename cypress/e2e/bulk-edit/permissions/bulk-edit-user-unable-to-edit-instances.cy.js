@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.instanceHRID);
         BulkEditSearchPane.verifyPaneRecordsCount(1);
         BulkEditActions.openActions();
-        BulkEditActions.startBulkEditAbsent();
+        BulkEditActions.startBulkEditInstanceAbsent();
         BulkEditActions.downloadMatchedRecordsExists();
       },
     );
