@@ -21,6 +21,7 @@ const runQueryButton = Button('Run query');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
+const selectFieldButton = Button(including('Select field'));
 
 const booleanValues = ['AND'];
 
@@ -145,6 +146,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
+    cy.do(selectFieldButton.click());
     cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -155,6 +157,7 @@ export default {
   },
 
   selectField(selection, row = 0) {
+    cy.do(selectFieldButton.click());
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
   },
 
