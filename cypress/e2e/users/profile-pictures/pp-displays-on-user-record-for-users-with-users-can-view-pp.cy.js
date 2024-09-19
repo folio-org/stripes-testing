@@ -33,10 +33,7 @@ describe('Users', () => {
       });
 
       // create user A
-      cy.createTempUser([
-        Permissions.uiUserEdit.gui,
-        Permissions.uiUserViewProfilePictores.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiUserViewProfilePictores.gui]).then((userProperties) => {
         testData.userA = userProperties;
 
         cy.login(testData.userA.username, testData.userA.password, {
@@ -54,18 +51,13 @@ describe('Users', () => {
     });
 
     it(
-      'C442796 Verify that profile picture displays on user edit with for user with Users: Can view profile pictures (volaris)',
+      'C442805 Verify that profile picture displays on user record for users with Users: Can view profile pictures (volaris)',
       { tags: ['smoke', 'volaris'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
-        cy.wait(2000);
         UsersCard.waitLoading();
-        UserEdit.openEdit();
-        UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
-        UserEdit.cancelEdit();
-        UsersCard.waitLoading();
+        UsersCard.verifyProfilePictureIsPresent(testData.externalPictureUrl);
 
-        cy.wait(2000);
         UsersSearchPane.searchByUsername(testData.userC.username);
         UsersCard.waitLoading();
         UsersCard.verifyPlaceholderProfilePictureIsPresent();
