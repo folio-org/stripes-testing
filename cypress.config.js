@@ -47,7 +47,7 @@ module.exports = defineConfig({
     rtrAuth: false,
     ecsEnabled: false,
     eureka: true,
-    runAsAdmin: false,
+    runAsAdmin: true,
     systemRoleName: 'System admin role',
   },
   reporterOptions: reportportalOptions,
