@@ -41,8 +41,6 @@
     "@babel/preset-env": "^7.25.4",
     "@cypress/grep": "^4.0.1",
     "@cypress/request": "2.88.7",
-    "@cypress/webpack-batteries-included-preprocessor": "^3.0.5",
-    "@cypress/webpack-preprocessor": "^5.4.4",
     "@folio/eslint-config-stripes": "^7.1.0",
     "@interactors/html": "1.0.0-rc1.4",
     "@interactors/keyboard": "1.0.0-rc1.5",
