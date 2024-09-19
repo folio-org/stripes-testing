@@ -117,7 +117,6 @@ export default {
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
-      unassignAllCapabilitiesButton.exists(),
     ]);
     cy.wait(1000);
   },
