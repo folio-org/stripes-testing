@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423696 Verify Query tab permissions (In app Instances, Holdings, Items) (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.bulkEditPath,
