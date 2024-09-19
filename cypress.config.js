@@ -7,7 +7,7 @@ const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
-const webpackPreprocessor = require('@cypress/webpack-preprocessor');
+const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 
 module.exports = defineConfig({
   retries: {
