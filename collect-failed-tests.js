@@ -23,11 +23,11 @@ const team = {
 };
 
 const selectedStatus = [status.Failed, status.Retest];
-const selectedTeams = [team.Firebird, team.Folijet, team.Spitfire, team.Thunderjet, team.Vega, team.Volaris, team.Corsair];
+const selectedTeams = [team.Vega, team.Volaris];
 
-const testUsername = '';
-const testPassword = '';
-const runId = 2108;
+const testUsername = 'ostap_voitsekhovskyi@epam.com';
+const testPassword = 'LSQhOp6HZtKL9v.XhYYq-z8VW8HJZnaeAjGMxsIfb';
+const runId = 2628;
 
 const ids = [];
 const arrayOfFiles = [];

@@ -450,7 +450,7 @@ export default {
     internal: 'ui-users.viewuserservicepoints',
     gui: 'Users: Can view service points assigned to users',
   },
-  uiUsersfeefinesCRUD: {
+  uiUsersFeeFinesCRUD: {
     internal: 'ui-users.feesfines.actions.all',
     gui: 'Users: Can create, edit and remove fees/fines',
   },
