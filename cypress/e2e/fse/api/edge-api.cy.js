@@ -40,7 +40,7 @@ describe('fse-edge', () => {
     });
   });
 
-  it('TC195412 - edge-oai-pmh verification', { tags: ['fse', 'api', 'edge-oai'] }, () => {
+  it('TC195412 - edge-oai-pmh verification', { tags: ['fse', 'api', 'edge-oai-pmh'] }, () => {
     cy.allure().logCommandSteps(false);
     cy.getEdgeOai().then((response) => {
       cy.expect(response.status).to.eq(200);
