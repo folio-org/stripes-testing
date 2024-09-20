@@ -51,7 +51,7 @@ describe('Users', () => {
     });
 
     it(
-      "C442807 Verify that profile pictures don't display on user record without Users: Can view profile pictures (volaris)",
+      'C442805 Verify that profile picture displays on user record for users with Users: Can view profile pictures (volaris)',
       { tags: ['smoke', 'volaris'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
