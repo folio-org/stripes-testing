@@ -9,7 +9,13 @@ describe('Users', () => {
   describe('Profile pictures', () => {
     const testData = {
       externalPictureUrl:
-        'https://png.pngtree.com/png-vector/20191101/ourmid/pngtree-cartoon-color-simple-male-avatar-png-image_1934459.jpg',
+        'https://hips.hearstapps.com/hmg-prod/images/bright-forget-me-nots-royalty-free-image-1677788394.jpg?crop=0.535xw:1.00xh;0.359xw,0&resize=980:*',
+      newExternalPictureUrl:
+        'https://hips.hearstapps.com/hmg-prod/images/bright-me-nots-royalty-free-image-1677788394.jpg?crop=0.535xw:1.00xh;0.359xw,0&resize=980:*',
+      invalidExternalPictureUrl:
+        'https//hips.hearstapps.com/hmg-prod/images/bright-forget-me-nots-royalty-free-image-1677788394.jpg?crop=0.535xw:1.00xh;0.359xw,0&resize=980:*',
+      validExternalPictureUrl:
+        'https://kidlingoo.com/wp-content/uploads/flowers_name_in_english.jpg',
     };
 
     before('Create test data and login', () => {
@@ -45,21 +51,38 @@ describe('Users', () => {
     });
 
     it(
-      'C446093 Update profile picture via local storage (volaris)',
-      { tags: ['smoke', 'volaris'] },
+      'C442797 Verify that profile picture can be updated via URL (volaris)',
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
         UserEdit.openEdit();
-        UserEdit.verifyPlaceholderProfilePictureIsPresent();
-        UserEdit.verifyButtonsStateForProfilePicture([{ value: 'Local file' }]);
-        // steps 10-11 we can't automate
+        UserEdit.verifyProfileCardIsPresented();
+        UserEdit.verifyButtonsStateForProfilePicture([{ value: 'External URL' }]);
         UserEdit.setPictureFromExternalUrl(testData.externalPictureUrl);
         UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
-        cy.wait(3000);
         UserEdit.saveAndClose();
         UsersCard.waitLoading();
         UsersCard.verifyProfilePictureIsPresent(testData.externalPictureUrl);
+
+        UserEdit.openEdit();
+        UserEdit.verifyProfileCardIsPresented();
+        UserEdit.verifyButtonsStateForProfilePicture([{ value: 'External URL' }]);
+        UserEdit.setPictureFromExternalUrl(testData.newExternalPictureUrl, false);
+        UserEdit.verifyModalWithInvalidUrl(
+          'The provided URL is valid but does not point to an image file',
+        );
+        UserEdit.fillInExternalImageUrlTextField(testData.invalidExternalPictureUrl);
+        UserEdit.clickSaveButton();
+        UserEdit.verifyModalWithInvalidUrl('Invalid image URL');
+
+        UserEdit.clearExternalImageUrlTextField();
+        UserEdit.fillInExternalImageUrlTextField(testData.validExternalPictureUrl);
+        UserEdit.clickSaveButton();
+        cy.wait(3000);
+        UserEdit.saveAndClose();
+        UsersCard.waitLoading();
+        UsersCard.verifyProfilePictureIsPresent(testData.validExternalPictureUrl);
       },
     );
   });
