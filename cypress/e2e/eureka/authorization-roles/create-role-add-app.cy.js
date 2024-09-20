@@ -22,13 +22,6 @@ describe('Eureka', () => {
             action: 'View',
           },
         ],
-        originalCapabilitiesInSets: [
-          {
-            table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-        ],
         originalCapabilities: [
           {
             table: 'Procedural',
@@ -50,6 +43,11 @@ describe('Eureka', () => {
           {
             table: 'Settings',
             resource: 'Settings Consortia-Settings Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
             action: 'View',
           },
         ],
@@ -82,9 +80,6 @@ describe('Eureka', () => {
 
       testData.originalCapabilitySets.forEach((set) => {
         set.application = testData.originalApplication;
-      });
-      testData.originalCapabilitiesInSets.forEach((capab) => {
-        capab.application = testData.originalApplication;
       });
       testData.originalCapabilities.forEach((capab) => {
         capab.application = testData.originalApplication;
@@ -150,9 +145,6 @@ describe('Eureka', () => {
           testData.originalCapabilitySets.forEach((capabilitySet) => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabilitySet);
           });
-          testData.originalCapabilitiesInSets.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
-          });
           testData.originalCapabilities.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, true, true);
           });
@@ -178,9 +170,6 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
           testData.originalCapabilities.forEach((capability) => {
-            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
-          });
-          testData.originalCapabilitiesInSets.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
 
