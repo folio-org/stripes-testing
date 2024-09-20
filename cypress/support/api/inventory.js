@@ -478,3 +478,29 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
     })
     .then(({ body }) => body.holdingsNoteTypes[0].id);
 });
+
+Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: `instance-date-types?limit=${limit}`,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ status, body }) => {
+      return {
+        status,
+        instanceDateTypes: body.instanceDateTypes,
+      };
+    });
+});
+
+Cypress.Commands.add('patchInstanceDateTypeViaAPI', (dateTypeId, keyToUpdate, value) => {
+  const patchBody = {};
+  patchBody[keyToUpdate] = value;
+  return cy.okapiRequest({
+    method: 'PATCH',
+    path: `instance-date-types/${dateTypeId}`,
+    body: patchBody,
+    isDefaultSearchParamsRequired: false,
+  });
+});
