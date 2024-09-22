@@ -15,6 +15,7 @@ import {
   TextField,
   Image,
   MultiColumnListRow,
+  Headline,
 } from '../../../../interactors';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
@@ -40,6 +41,8 @@ const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 const areYouSureForm = Modal('Are you sure?');
+const previousPaginationButton = Button('Previous');
+const nextPaginationButton = Button('Next');
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -299,6 +302,7 @@ export default {
 
   selectRecordIdentifier(value) {
     cy.do(recordIdentifierDropdown.choose(value));
+    cy.wait(1000);
   },
 
   clickToBulkEditMainButton() {
@@ -490,6 +494,28 @@ export default {
     });
   },
 
+  verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
+    cy.then(() => resultsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        resultsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(identifier, columnName, value) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        changesAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -555,12 +581,16 @@ export default {
     }
     if (instance) {
       cy.expect([
-        Button('Start bulk edit - Instance fields').exists(),
-        Button('Start bulk edit - MARC fields').exists(),
+        DropdownMenu().find(Headline('Start bulk edit')).exists(),
+        Button('Instances and Administrative data').exists(),
       ]);
     } else {
       cy.expect(Button('Start bulk edit').exists());
     }
+  },
+
+  verifySearchColumnNameTextFieldExists() {
+    cy.expect(DropdownMenu().find(searchColumnNameTextfield).exists());
   },
 
   verifyUsersActionShowColumns() {
@@ -740,6 +770,14 @@ export default {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
   },
 
+  verifyPaneRecordsChangedCount(value) {
+    cy.expect(bulkEditPane.find(HTML(`${value} records changed`)).exists());
+  },
+
+  verifyFileNameHeadLine(fileName) {
+    cy.expect(bulkEditPane.find(HTML(`Filename: ${fileName}`)).exists());
+  },
+
   verifyPaneTitleFileName(fileName) {
     cy.expect(Pane(`Bulk edit ${fileName}`).exists());
   },
@@ -856,5 +894,13 @@ export default {
 
   verifyBulkEditsAccordionExists() {
     cy.expect(bulkEditsAccordion.exists());
+  },
+
+  verifyPreviousPaginationButtonDisabled(isDisabled = true) {
+    cy.expect(previousPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonDisabled(isDisabled = true) {
+    cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
   },
 };

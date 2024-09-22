@@ -45,7 +45,7 @@ describe('MARC', () => {
         ],
         inventoryInstanceSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         errorCalloutMessage:
-          'MARC 240 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
 
       const marcFiles = [

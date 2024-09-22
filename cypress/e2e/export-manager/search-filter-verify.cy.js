@@ -99,6 +99,7 @@ describe('Export Manager', () => {
     // Creating a circulation log job
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByCheckedOut();
+    cy.wait(500);
     SearchPane.exportResults();
     InteractorsTools.checkCalloutMessage(exportRequestedCalloutMessage);
     InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);

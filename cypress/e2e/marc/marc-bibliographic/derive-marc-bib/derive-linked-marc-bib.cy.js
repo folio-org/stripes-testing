@@ -21,7 +21,8 @@ describe('MARC', () => {
         tag240FifthBoxValue: '$m test',
         tag650FifthBoxValue: '$b 123',
         tag650SeventhBoxValue: '$b 123',
-        errorMessage: 'MARC 240 and MARC 650 has a subfield(s) that cannot be saved because the fields are controlled by authority records.',
+        errorMessage:
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
 
       const marcFiles = [

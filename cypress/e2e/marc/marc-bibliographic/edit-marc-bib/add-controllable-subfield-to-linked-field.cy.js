@@ -19,7 +19,7 @@ describe('MARC', () => {
         marcValue: 'C375954 Kerouac, Jack',
         instanceValue: 'C375954 On the road [sound recording] / Jack Kerouac.',
         errorMessage:
-          'MARC 100 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
 
       const marcFiles = [

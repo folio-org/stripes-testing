@@ -2,8 +2,11 @@ import {
   Accordion,
   Button,
   Callout,
+  calloutTypes,
   Checkbox,
   HTML,
+  including,
+  KeyValue,
   Link,
   ListRow,
   Modal,
@@ -14,11 +17,11 @@ import {
   RadioButton,
   TextArea,
   TextField,
-  calloutTypes,
-  including,
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 
+const listNameTextField = TextField({ name: 'listName' });
+const listDescriptionTextArea = TextArea({ name: 'description' });
 const closeModal = Modal();
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
@@ -43,6 +46,7 @@ const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
+const editQueryButton = Button('Edit query');
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -109,6 +113,17 @@ export default {
 
   verifyRefreshListButtonDoesNotExist() {
     cy.expect(refreshList.absent());
+  },
+
+  editQuery() {
+    cy.do(editQueryButton.click());
+    cy.wait(1000);
+  },
+
+  verifyEditorContainsQuery(query) {
+    cy.get('[id^=selected-field-option]').contains(query.field);
+    cy.get('[data-testid="operator-option-0"]').contains(query.operator);
+    cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
   },
 
   confirmDelete() {
@@ -219,11 +234,19 @@ export default {
   },
 
   setName(value) {
-    cy.do(TextField({ name: 'listName' }).fillIn(value));
+    cy.do(listNameTextField.fillIn(value));
+  },
+
+  verifyListName(value) {
+    cy.expect(listNameTextField.has({ value }));
   },
 
   setDescription(value) {
-    cy.do(TextArea({ name: 'description' }).fillIn(value));
+    cy.do(listDescriptionTextArea.fillIn(value));
+  },
+
+  verifyListDescription(value) {
+    cy.expect(listDescriptionTextArea.has({ value }));
   },
 
   selectRecordTypeOld(option) {
@@ -240,16 +263,32 @@ export default {
       });
   },
 
+  checkKeyValue(label, value) {
+    cy.expect(KeyValue(label, { value }).exists());
+  },
+
+  verifyRecordType(recordType) {
+    this.checkKeyValue('Record type', recordType);
+  },
+
   selectVisibility(visibility) {
     cy.do(RadioButton(visibility).click());
     this.waitForSpinnerToDisappear();
     cy.wait(500);
   },
 
+  verifyVisibility(visibility, selected) {
+    cy.expect(RadioButton(visibility).has({ checked: selected }));
+  },
+
   selectStatus(status) {
     cy.do(RadioButton(status).click());
     this.waitForSpinnerToDisappear();
     cy.wait(500);
+  },
+
+  verifyStatus(status, selected) {
+    cy.expect(RadioButton(status).has({ checked: selected }));
   },
 
   verifySuccessCalloutMessage(message) {

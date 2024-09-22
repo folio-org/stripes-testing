@@ -28,7 +28,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411810 Export list: Canned lists', { tags: ['smokeFlaky', 'corsair'] }, () => {
+    it('C411810 Export list: Canned lists (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
