@@ -64,8 +64,15 @@ let totalRows;
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
 const areYouSureForm = Modal('Are you sure?');
+const updateProfilePictureModal = Modal('Update profile picture');
 const keepEditingBtn = Button('Keep editing');
 const closeWithoutSavingButton = Button('Close without saving');
+const externalImageUrlTextField = updateProfilePictureModal.find(
+  TextField({ id: 'external-image-url' }),
+);
+const saveExternalLinkBtn = updateProfilePictureModal.find(
+  Button({ id: 'save-external-link-btn' }),
+);
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -425,14 +432,37 @@ export default {
     cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
   },
 
-  setPictureFromExternalUrl(url) {
+  fillInExternalImageUrlTextField(url) {
+    cy.wait(1000);
+    cy.do(externalImageUrlTextField.fillIn(url));
+  },
+
+  clickSaveButton() {
+    cy.expect(saveExternalLinkBtn.has({ disabled: false }));
+    cy.do(saveExternalLinkBtn.click());
+  },
+
+  clearExternalImageUrlTextField() {
+    cy.get('#external-image-url').clear();
+    cy.expect([
+      externalImageUrlTextField.has({ value: '' }),
+      saveExternalLinkBtn.has({ disabled: true }),
+    ]);
+  },
+
+  setPictureFromExternalUrl(url, setNewUrl = true) {
     cy.do(externalUrlButton.click({ force: true }));
-    cy.do(
-      cy.get('#external-image-url').clear(),
-      cy.get('#external-image-url').type(url),
-      cy.get('#save-external-link-btn').click(),
-    );
-    this.verifyProfilePictureIsPresent(url);
+    if (setNewUrl) {
+      cy.expect([
+        externalImageUrlTextField.has({ value: '' }),
+        saveExternalLinkBtn.has({ disabled: true }),
+      ]);
+      this.fillInExternalImageUrlTextField(url);
+      this.clickSaveButton();
+    } else {
+      this.fillInExternalImageUrlTextField(url);
+      this.clickSaveButton();
+    }
   },
 
   deleteProfilePicture(user) {
@@ -590,7 +620,7 @@ export default {
     });
   },
 
-  verifyProfileCardIsPresent() {
+  verifyProfileCardIsPresented() {
     cy.expect(profilePictureCard.exists());
   },
 
@@ -627,5 +657,13 @@ export default {
     } else {
       cy.expect(areYouSureForm.absent());
     }
+  },
+
+  verifyModalWithInvalidUrl(errorMessage) {
+    cy.expect([
+      externalImageUrlTextField.has({ error: errorMessage, errorTextRed: true }),
+      updateProfilePictureModal.exists(),
+      saveExternalLinkBtn.has({ disabled: true }),
+    ]);
   },
 };
