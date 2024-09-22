@@ -564,4 +564,8 @@ export default {
   verifyPlaceholderProfilePictureIsPresent() {
     cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
   },
+
+  verifyProfilePictureIsAbsent() {
+    cy.expect(profilePictureCard.absent());
+  },
 };
