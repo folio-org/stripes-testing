@@ -227,6 +227,7 @@ export default {
     // select existing record type
     if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
       selectExistingRecordType(existingRecordType);
+      cy.wait(3000);
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
       fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
@@ -240,6 +241,7 @@ export default {
       // wait for list with data to be loaded
       cy.wait(1500);
       selectExistingRecordType(existingRecordType);
+      cy.wait(3000);
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
       if (incomingRecordFields.in1) {
         fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
@@ -253,6 +255,7 @@ export default {
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
+      cy.wait(3000);
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
       fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
@@ -266,6 +269,7 @@ export default {
       // wait for list with data to be loaded
       cy.wait(1500);
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId: 'HOLDINGS' })).click());
+      cy.wait(3000);
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
       if (incomingRecordFields.in1) {
         fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
@@ -281,6 +285,7 @@ export default {
       cy.wait(1500);
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId: 'ITEM' })).click());
+      cy.wait(3000);
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
       if (incomingRecordFields.in1) {
         fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
@@ -306,6 +311,7 @@ export default {
   }) => {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
+    cy.wait(3000);
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
     fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
     fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
@@ -342,6 +348,7 @@ export default {
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
+    cy.wait(3000);
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
     fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
     fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
@@ -365,6 +372,7 @@ export default {
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
+    cy.wait(3000);
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
@@ -385,6 +393,7 @@ export default {
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
+    cy.wait(3000);
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
     fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
     fillIncomingRecordFields(incomingRecordFields.in2, 'in2');

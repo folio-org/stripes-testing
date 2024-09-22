@@ -96,6 +96,7 @@ export default {
     cy.do(Button('New match profile').click());
     MatchProfileEditForm.waitLoading();
     MatchProfileEditForm.verifyFormView();
+    cy.wait(3000);
 
     return MatchProfileEditForm;
   },

@@ -405,6 +405,7 @@ export default {
     eResourceDetails,
   }) {
     if (title) {
+      cy.wait(3000);
       cy.do([
         orderLineInformationFields.title.focus(),
         orderLineInformationFields.title.fillIn(`"${title}"`),

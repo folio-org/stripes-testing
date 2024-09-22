@@ -49,9 +49,9 @@ describe('Data Import', () => {
     const mappingProfile = {
       name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-      statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
-      statisticalCodeUI: 'Book, print (books)',
+      instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.CATALOGED,
+      statisticalCode: 'Actions: Delete - Delete',
+      statisticalCodeUI: 'Delete',
     };
 
     const actionProfile = {
