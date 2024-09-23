@@ -11,32 +11,32 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit Authority record', () => {
+      let createdAuthorityID;
       const testData = {
         authority: {
           searchOption: 'Keyword',
-          title: 'Beethoven, Ludwig van (no 010)',
+          title: 'C375166 Beethoven, Ludwig van (no 010)',
         },
         field010: { tag: '010', subfield1: '$a n90635366', subfield2: '$a n90635377' },
+        errorThreeCharacterMarcTag:
+          'Tag must contain three characters and can only accept numbers 0-9.',
       };
       const authorityPostfix = '?authRefType=Authorized';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
-      const marcFiles = [
-        {
-          marc: 'marcAuthFileForC375166.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-          numOfRecords: 1,
-        },
-      ];
-      const createdAuthorityIDs = [];
+      const marcFile = {
+        marc: 'marcAuthFileForC375166.mrc',
+        fileName: `C375166 testMarcFile.${getRandomPostfix()}.mrc`,
+      };
 
       before('Upload files', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375166*');
           DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
             (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
-              });
+              createdAuthorityID = response[0].authority.id;
             },
           );
         });
@@ -57,10 +57,9 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
-        createdAuthorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
-        });
+        MarcAuthority.deleteViaAPI(createdAuthorityID);
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
       });
 
       it(
@@ -68,7 +67,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
+          MarcAuthorities.select(`${createdAuthorityID}${authorityPostfix}`);
           MarcAuthority.edit();
           MarcAuthority.changeTag(5, '0');
           QuickMarcEditor.verifyTagValue(5, '0');
@@ -76,9 +75,12 @@ describe('MARC', () => {
 
           MarcAuthority.deleteTag(7);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyMarcTagThreeCharacterCallout();
-
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkErrorMessage(5, testData.errorThreeCharacterMarcTag);
           MarcAuthority.changeTag(5, '040');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
         },

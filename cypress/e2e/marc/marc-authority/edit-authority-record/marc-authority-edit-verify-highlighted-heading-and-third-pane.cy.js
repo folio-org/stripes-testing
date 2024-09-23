@@ -86,15 +86,19 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdAuthorityIDs.push(record.authority.id);
-              });
-            },
-          );
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record.authority.id);
+                });
+              },
+            );
+            cy.wait(5000);
+          });
         });
 
         cy.createTempUser([
@@ -117,6 +121,7 @@ describe('MARC', () => {
           MarcAuthority.deleteViaAPI(id);
         });
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
       });
 
       it(
@@ -138,6 +143,8 @@ describe('MARC', () => {
             );
             MarcAuthority.edit();
             QuickMarcEditor.updateExistingFieldContent(rowIndex, `$a ${content}${postfixC350909}`);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             MarcAuthority.clicksaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
             MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350909}`);
@@ -162,6 +169,8 @@ describe('MARC', () => {
                 rowIndex,
                 `$a ${content}${postfixC350911}`,
               );
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
               MarcAuthority.clicksaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndCloseAuthority();
               MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350911}`);
@@ -187,6 +196,8 @@ describe('MARC', () => {
             testData.editedFields[0].tag,
             `$a ${testData.editedFields[0].content}${postfixC350946}`,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
           MarcAuthority.contains(`${testData.editedFields[0].content}${postfixC350946}`);
           MarcAuthorities.switchToBrowse();
@@ -200,6 +211,8 @@ describe('MARC', () => {
             testData.editedGeographicNameField.tag,
             `$a ${testData.editedGeographicNameField.content}`,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
           MarcAuthority.contains(testData.editedGeographicNameField.content);
         },

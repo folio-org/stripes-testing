@@ -17,7 +17,7 @@ describe('MARC', () => {
       tag: '610',
       marcValueForBrowse: 'C375269Radio "Vaticana". Hrvatski program',
       marcValueForSearch: 'C375269Radio Vaticana. Hrvatski program',
-      rowIndex: 17,
+      rowIndex: 18,
       searchOption: 'Corporate/Conference name',
       instanceTitle:
         'Radio Vaticana e ordinamento italiano : atti del seminario di studi, Roma 26 aprile 2004 / a cura di Giuseppe Dalla Torre, Cesare Mirabelli.',
@@ -44,10 +44,11 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -75,6 +76,8 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.marcValueForSearch);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

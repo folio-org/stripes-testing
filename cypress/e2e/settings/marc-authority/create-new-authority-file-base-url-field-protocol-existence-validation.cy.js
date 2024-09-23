@@ -56,7 +56,7 @@ describe('MARC', () => {
               baseUrlInvalidProtocol,
               authorityFilesInvalidProtocol.isActive,
             );
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               authorityFilesInvalidProtocol.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,

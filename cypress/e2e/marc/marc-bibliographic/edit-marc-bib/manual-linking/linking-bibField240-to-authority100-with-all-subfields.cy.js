@@ -23,7 +23,7 @@ describe('MARC', () => {
           searchValue: 'Fail PASS (editable) test',
           placeholderMessage: 'Fail PASS (editable) test would be here',
           authorityMarkedValue: 'Dowland, John',
-          tag240rowindex: 29,
+          tag240rowindex: 28,
           authority100FieldValue:
             'C380763Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
           changesSavedCallout:
@@ -47,7 +47,7 @@ describe('MARC', () => {
           },
         ];
         const bib240AfterLinkingToAuth100 = [
-          29,
+          28,
           testData.tag240,
           '1',
           '0',
@@ -57,7 +57,7 @@ describe('MARC', () => {
           '$1 pass (editable) $2 pass (editable) $6 pass (editable) $7 pass (editable) $8 pass(editable)',
         ];
         const bib110UnlinkedFieldValues = [
-          29,
+          28,
           testData.tag240,
           '1',
           '0',
@@ -67,6 +67,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380763*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -76,7 +80,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -126,9 +129,11 @@ describe('MARC', () => {
             MarcAuthorities.selectTitle(testData.authority100FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.checkUnlinkTooltipText(29, 'Unlink from MARC Authority record');
+            QuickMarcEditor.checkUnlinkTooltipText(28, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.tag240rowindex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth100);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             cy.wait(2000);
@@ -137,6 +142,8 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib110UnlinkedFieldValues);
             QuickMarcEditor.checkLinkButtonExist(testData.tag240);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.changesSavedCallout);
             QuickMarcEditor.checkContent(
               bib110UnlinkedFieldValues[4],

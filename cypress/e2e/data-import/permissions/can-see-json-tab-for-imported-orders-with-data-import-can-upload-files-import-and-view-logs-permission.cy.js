@@ -15,7 +15,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import {
@@ -109,13 +109,6 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      // upload a marc file for creating of the new instance
-      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfile.profileName).then(
-        (response) => {
-          instanceId = response[0].instance.id;
-        },
-      );
-
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -123,6 +116,12 @@ describe('Data Import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(filePath, marcFileName);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.selectJobProfile();
+        JobProfiles.runImportFile();
       });
     });
 

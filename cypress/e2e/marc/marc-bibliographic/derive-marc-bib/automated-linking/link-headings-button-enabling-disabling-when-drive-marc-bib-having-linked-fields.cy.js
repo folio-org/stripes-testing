@@ -26,7 +26,7 @@ describe('MARC', () => {
           errorCalloutMessage: 'Field 700 must be set manually by selecting the link icon.',
           successCalloutMessage: 'Field 700 has been linked to MARC authority record(s).',
           bib130AfterLinkingToAuth100: [
-            17,
+            16,
             '130',
             '0',
             '\\',
@@ -36,7 +36,7 @@ describe('MARC', () => {
             '$0 n91074080',
           ],
           bib700AfterLinkingToAuth100: [
-            56,
+            55,
             '700',
             '1',
             '\\',
@@ -46,7 +46,7 @@ describe('MARC', () => {
             '',
           ],
           bib700_1AfterLinkingToAuth100: [
-            57,
+            56,
             '700',
             '1',
             '\\',
@@ -56,7 +56,7 @@ describe('MARC', () => {
             '',
           ],
           bib700AfterUnlinking: [
-            57,
+            56,
             '700',
             '1',
             '\\',
@@ -96,29 +96,21 @@ describe('MARC', () => {
         ];
         const linkingTagAndValues = [
           {
-            rowIndex: 17,
+            rowIndex: 16,
             value: 'C388561 Runaway Bride (Motion picture)',
             tag: 130,
           },
           {
-            rowIndex: 57,
+            rowIndex: 56,
             value: 'C388561 Gere, Richard',
             tag: 700,
           },
         ];
 
         before('Creating user and data', () => {
-          // make sure there are no duplicate authority records in the system before auto-linking
           cy.getAdminToken();
-          MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C388561"' }).then(
-            (records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            },
-          );
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388561*');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -154,6 +146,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -185,13 +179,13 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
             QuickMarcEditor.updateExistingField(testData.tag337, testData.ta337content);
-            QuickMarcEditor.checkContent(testData.ta337content, 22);
+            QuickMarcEditor.checkContent(testData.ta337content, 21);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag130seventhBoxContent);
+            QuickMarcEditor.fillLinkedFieldBox(16, 7, testData.tag130seventhBoxContent);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib130AfterLinkingToAuth100);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-            QuickMarcEditor.clickUnlinkIconInTagField(57);
+            QuickMarcEditor.clickUnlinkIconInTagField(56);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib700AfterUnlinking);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
@@ -201,15 +195,15 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700_1AfterLinkingToAuth100);
 
-            QuickMarcEditor.updateExistingFieldContent(56, testData.tag700content);
+            QuickMarcEditor.updateExistingFieldContent(55, testData.tag700content);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
-            QuickMarcEditor.deleteField(56);
+            QuickMarcEditor.deleteField(55);
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.undoDelete();
-            QuickMarcEditor.verifyTagValue(56, testData.tag700);
-            QuickMarcEditor.checkContent(testData.tag700content, 56);
+            QuickMarcEditor.verifyTagValue(55, testData.tag700);
+            QuickMarcEditor.checkContent(testData.tag700content, 55);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -217,18 +211,20 @@ describe('MARC', () => {
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
-            QuickMarcEditor.updateExistingFieldContent(56, testData.newTag700content);
+            QuickMarcEditor.updateExistingFieldContent(55, testData.newTag700content);
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(testData.successCalloutMessage);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700AfterLinkingToAuth100);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             cy.wait(3000);
             InventoryInstance.viewSource();
-            [17, 56, 57].forEach((index) => {
-              InventoryViewSource.verifyLinkedToAuthorityIcon(index - 3, true);
+            [16, 55, 56].forEach((index) => {
+              InventoryViewSource.verifyLinkedToAuthorityIcon(index - 2, true);
             });
           },
         );

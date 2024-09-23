@@ -31,7 +31,7 @@ describe('MARC', () => {
       const expectedSourceText = {
         row245: '245  1 4  $a The Riviera house / $c Natasha Lester.',
         row100: '100  1    $a Lester, Natasha, $d 1973- $e author.',
-        row660: '660    7  $a Historical fiction. $2 gsafd',
+        row660: '660    7  $a Historical fiction. $2 lcgft',
         row655primary: '655    7  $a Edited 4th field only',
         row655secondary: '655    7  $a Edited MARC tag and 4th field',
         row800: '800       $a Created row',
@@ -88,37 +88,39 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(tags.tag800, inputContent.field800, 28);
           QuickMarcEditor.checkContent(inputContent.field800, 29);
           // Update the first of three "655" fields to "660"
-          QuickMarcEditor.updateExistingTagValue(22, tags.tag660);
-          QuickMarcEditor.verifyTagValue(22, tags.tag660);
+          QuickMarcEditor.updateExistingTagValue(24, tags.tag660);
+          QuickMarcEditor.verifyTagValue(24, tags.tag660);
           // Update the second "655" field content in the following way $a Edited 4th field only
           QuickMarcEditor.updateExistingFieldContent(23, inputContent.field655primary);
           QuickMarcEditor.checkContent(inputContent.field655primary, 23);
           // Update the third "655" field in the following way $a Edited MARC tag and 4th field
-          QuickMarcEditor.updateExistingFieldContent(24, inputContent.field655secondary);
-          QuickMarcEditor.checkContent(inputContent.field655secondary, 24);
+          QuickMarcEditor.updateExistingFieldContent(25, inputContent.field655secondary);
+          QuickMarcEditor.checkContent(inputContent.field655secondary, 25);
           // Delete all editable 9XX fields by clicking on the "Delete this field" icons.
-          QuickMarcEditor.deleteField(25);
-          QuickMarcEditor.afterDeleteNotification(tags.tag906);
           QuickMarcEditor.deleteField(26);
-          QuickMarcEditor.afterDeleteNotification(tags.tag925);
+          QuickMarcEditor.afterDeleteNotification(tags.tag906);
           QuickMarcEditor.deleteField(27);
+          QuickMarcEditor.afterDeleteNotification(tags.tag925);
+          QuickMarcEditor.deleteField(28);
           QuickMarcEditor.afterDeleteNotification(tags.tag955);
           // Move "245" MARC field above the "100" field by clicking on the "Move field up a row" icon placed next to the "245" field.
           QuickMarcEditor.moveFieldUp(13);
           QuickMarcEditor.verifyTagValue(13, tags.tag100);
-          QuickMarcEditor.verifyTagValue(12, tags.tag245);
+          QuickMarcEditor.verifyTagValue(14, tags.tag245);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.continueWithSaveAndCheckNewInstanceCreated();
           InventoryInstance.viewSource();
           // Verify The "245" MARC field is displayed above the "100 field.
           InventoryViewSource.rowEquals(12, expectedSourceText.row245);
-          InventoryViewSource.rowEquals(13, expectedSourceText.row100);
+          InventoryViewSource.rowEquals(10, expectedSourceText.row100);
           // Verify edited "6XX" fields are displayed with updates user made.
           InventoryViewSource.rowEquals(22, expectedSourceText.row660);
-          InventoryViewSource.rowEquals(23, expectedSourceText.row655primary);
-          InventoryViewSource.rowEquals(24, expectedSourceText.row655secondary);
+          InventoryViewSource.rowEquals(21, expectedSourceText.row655primary);
+          InventoryViewSource.rowEquals(23, expectedSourceText.row655secondary);
           // Verify the created "800" field is displayed.
-          InventoryViewSource.rowEquals(25, expectedSourceText.row800);
+          InventoryViewSource.rowEquals(24, expectedSourceText.row800);
           // Verify there are no displayed editable "9XX" fields.
           InventoryViewSource.notContains(tags.tag906);
           InventoryViewSource.notContains(tags.tag925);

@@ -19,6 +19,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  ProfilePictureCard,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -53,6 +54,7 @@ const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfine
 const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
+const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
 
 export default {
   errors,
@@ -206,6 +208,11 @@ export default {
     ]);
   },
 
+  createNewRequest() {
+    cy.do(createRequestButton.click());
+    cy.wait(1000);
+  },
+
   verifySponsorsAlphabeticalOrder() {
     cy.do(Accordion({ id: 'proxySection' }).clickHeader());
     cy.get('#proxySection h3 a').then(($elements) => {
@@ -339,6 +346,17 @@ export default {
     );
   },
 
+  // Indexation starts from 1 for a row
+  verifyPatronBlockDescription(row, description) {
+    cy.expect(
+      patronBlocksSection
+        .find(MultiColumnList({ id: 'patron-block-mcl' }))
+        .find(MultiColumnListRow({ index: row - 1 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: description }),
+    );
+  },
+
   submitNewBlockPageOpen() {
     cy.expect([
       TextArea({ id: 'patronBlockForm-desc' }).exists(),
@@ -426,10 +444,6 @@ export default {
 
   startRequest: () => {
     cy.do(actionsButton.click());
-    cy.do(createRequestButton.click());
-  },
-
-  createNewRequest: () => {
     cy.do(createRequestButton.click());
   },
 
@@ -537,5 +551,21 @@ export default {
 
   verifyUserInformationPresence() {
     cy.expect(userInformationSection.exists());
+  },
+
+  verifyProfilePictureIsPresent(url) {
+    cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
+  },
+
+  verifyProfilePictureRemoved() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyPlaceholderProfilePictureIsPresent() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyProfilePictureIsAbsent() {
+    cy.expect(profilePictureCard.absent());
   },
 };

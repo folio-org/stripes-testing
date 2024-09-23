@@ -89,7 +89,14 @@ describe('lists', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -109,16 +116,14 @@ describe('lists', () => {
       // #1 Click on "Lists" in app navigation bar
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
-        Lists.getViaApi().then((response) => {
-          const filteredItem = response.body.content.find((item) => item.name === list.name);
-          Lists.deleteViaApi(filteredItem.id);
-        });
+        Lists.deleteListByNameViaApi(list.name);
       });
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
@@ -141,8 +146,8 @@ describe('lists', () => {
         Lists.verifyClearFilterButtonAbsent(statusFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
         // #5 Click on "Reset all"
-        Lists.resetAll();
-        Lists.verifyListsFileredByStatus(['Active']);
+        Lists.resetAllFilters();
+        Lists.verifyListsFilteredByStatus(['Active']);
       },
     );
 
@@ -163,7 +168,7 @@ describe('lists', () => {
         });
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByVisiblity(visibilityFilter.filters);
+        Lists.verifyListsFilteredByVisibility(visibilityFilter.filters);
         // #5 Click on "x"
         Lists.clickOnClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyVisibilityAccordionDefaultContent();
@@ -173,7 +178,7 @@ describe('lists', () => {
         Lists.verifyCheckboxChecked('Private');
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByVisiblity(['Private']);
+        Lists.verifyListsFilteredByVisibility(['Private']);
         // #7 Uncheck the "Private" visibility and click on "Shared" checkbox
         Lists.clickOnCheckbox('Private');
         Lists.verifyCheckboxUnchecked('Private');
@@ -181,7 +186,7 @@ describe('lists', () => {
         Lists.verifyCheckboxChecked('Shared');
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByVisiblity(['Shared']);
+        Lists.verifyListsFilteredByVisibility(['Shared']);
       },
     );
 
@@ -189,48 +194,18 @@ describe('lists', () => {
       'C411806 Filter section: Record types (corsair) (TaaS)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        // #2 Click on "Record types" accordion on the 'Filter' pane
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
-        // #3 Click on "Record types" accordion again
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
-        // #4 Check the list of record types
-        Lists.verifyRecordTypesAccordionDefaultContent();
-        // #5 Select all record types by marking the checkboxes as active
         recordTypesFilters.filters.forEach((filter) => {
-          Lists.clickOnCheckbox(filter);
+          Lists.selectRecordTypeFilter(filter);
+          Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+          Lists.verifyResetAllButtonEnabled();
+          Lists.verifyListsFilteredByRecordType(filter);
+          Lists.resetAllFilters();
+          Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
         });
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(recordTypesFilters.filters);
-        // #6 Click on "x"
-        Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyRecordTypesAccordionDefaultContent();
-        Lists.verifyListsFileredByRecordType(recordTypesFilters.filters);
-        // #7 Click on "Loans" checkbox
-        Lists.clickOnCheckbox('Loans');
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(['Loans']);
-        // #8 Click on "Items" checkbox
-        Lists.clickOnCheckbox('Loans');
-        Lists.verifyCheckboxUnchecked('Loans');
-        Lists.clickOnCheckbox('Items');
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(['Items']);
-        // #9 Click on "Users" checkbox
-        Lists.clickOnCheckbox('Items');
-        Lists.verifyCheckboxUnchecked('Items');
-        Lists.clickOnCheckbox('Users');
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFileredByRecordType(['Users']);
-        // #10 Click on "Reset all"
-        Lists.resetAll();
-        Lists.verifyRecordTypesAccordionDefaultContent();
-        Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
       },
     );
   });

@@ -23,7 +23,7 @@ describe('MARC', () => {
       authorized: 'Authorized',
       reference: 'Reference',
       bib240UnlinkedFieldValue: [
-        18,
+        17,
         '240',
         '1',
         '0',
@@ -47,24 +47,16 @@ describe('MARC', () => {
       },
     ];
     const linkingTagAndValues = {
-      rowIndex: 18,
+      rowIndex: 17,
       value: 'C423379 Beethoven, Ludwig van,',
       tag: 240,
       content: '$a C423379 Variations, $m piano. $k Selections',
     };
 
     before('Creating test data', () => {
-      // make sure there are no duplicate authority records in the system before auto-linking
       cy.getAdminToken();
-      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C423379"' }).then(
-        (records) => {
-          records.forEach((record) => {
-            if (record.authRefType === 'Authorized') {
-              MarcAuthority.deleteViaAPI(record.id);
-            }
-          });
-        },
-      );
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423379*');
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -103,6 +95,8 @@ describe('MARC', () => {
             linkingTagAndValues.tag,
             linkingTagAndValues.rowIndex,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

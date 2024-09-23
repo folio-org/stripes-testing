@@ -25,6 +25,11 @@ describe('MARC', () => {
         fieldContents: {
           tag245Content: 'New title',
         },
+        error06and07Filed:
+          'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+        error07Filed:
+          'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html',
+        errorMultipleTags: 'Field is non-repeatable.',
       };
       const field008DropdownsOptionsSets = [
         { name: INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST, option: 'm - Multiple dates' },
@@ -61,7 +66,7 @@ describe('MARC', () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyInvalidLDRValueCallout(['06', '07']);
+          QuickMarcEditor.checkErrorMessage(0, testData.error06and07Filed);
 
           QuickMarcEditor.selectFieldsDropdownOption(
             testData.tags.tagLDR,
@@ -83,7 +88,7 @@ describe('MARC', () => {
           });
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyInvalidLDRValueCallout('07');
+          QuickMarcEditor.checkErrorMessage(0, testData.error07Filed);
         },
       );
 
@@ -98,7 +103,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingTagName(testData.tags.tag245, testData.tags.tag246);
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyNo245TagCallout();
+          QuickMarcEditor.checkCallout('Field 245 is required.');
 
           QuickMarcEditor.updateExistingTagName(testData.tags.tag246, testData.tags.tag245);
           QuickMarcEditor.updateExistingField(
@@ -113,7 +118,7 @@ describe('MARC', () => {
           );
 
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyMultiple245TagCallout();
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMultipleTags);
           InventoryInstance.verifyNewQuickMarcEditorPaneExists();
         },
       );

@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { recurse } from 'cypress-recurse';
 import { INSTANCE_SOURCE_NAMES } from '../constants';
 import QuickMarcEditor from '../fragments/quickMarcEditor';
 
@@ -397,7 +398,29 @@ Cypress.Commands.add(
         marcFormat: 'HOLDINGS',
         suppressDiscovery: false,
       },
-    }).then(({ body }) => cy.expect(body.status === 'IN_PROGRESS'));
+    }).then(({ body }) => {
+      cy.expect(body.status === 'IN_PROGRESS');
+
+      recurse(
+        () => {
+          return cy.okapiRequest({
+            method: 'GET',
+            path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+            isDefaultSearchParamsRequired: false,
+          });
+        },
+        (response) => response.body.status === 'CREATED',
+        {
+          limit: 10,
+          timeout: 80000,
+          delay: 5000,
+        },
+      ).then((response) => {
+        cy.wrap(response.body.externalId).as('createdMarcHoldingId');
+
+        return cy.get('@createdMarcHoldingId');
+      });
+    });
   },
 );
 
@@ -407,6 +430,77 @@ Cypress.Commands.add('getInventoryInstanceByStatus', (status) => {
   );
   cy.okapiRequest({
     path: UpdatedUrl,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('createMarcBibliographicViaAPI', (LDR, fields) => {
+  cy.okapiRequest({
+    path: 'records-editor/records',
+    method: 'POST',
+    isDefaultSearchParamsRequired: false,
+    body: {
+      _actionType: 'create',
+      leader: LDR,
+      fields,
+      suppressDiscovery: false,
+      marcFormat: 'BIBLIOGRAPHIC',
+    },
+  }).then(({ body }) => {
+    recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => response.body.status === 'CREATED',
+      {
+        limit: 10,
+        timeout: 80000,
+        delay: 5000,
+      },
+    ).then((response) => {
+      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
+
+      return cy.get('@createdMarcBibliographicId');
+    });
+  });
+});
+
+Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: `holdings-note-types?query=(name=="${holdingNoteTypeName}")`,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => body.holdingsNoteTypes[0].id);
+});
+
+Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: `instance-date-types?limit=${limit}`,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ status, body }) => {
+      return {
+        status,
+        instanceDateTypes: body.instanceDateTypes,
+      };
+    });
+});
+
+Cypress.Commands.add('patchInstanceDateTypeViaAPI', (dateTypeId, keyToUpdate, value) => {
+  const patchBody = {};
+  patchBody[keyToUpdate] = value;
+  return cy.okapiRequest({
+    method: 'PATCH',
+    path: `instance-date-types/${dateTypeId}`,
+    body: patchBody,
     isDefaultSearchParamsRequired: false,
   });
 });

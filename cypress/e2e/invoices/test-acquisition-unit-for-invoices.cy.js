@@ -1,6 +1,5 @@
 import permissions from '../../support/dictionary/permissions';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import { Invoices, NewInvoice } from '../../support/fragments/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
@@ -8,7 +7,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-invoices: create', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -82,7 +81,7 @@ describe('ui-invoices: create', () => {
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
-      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,

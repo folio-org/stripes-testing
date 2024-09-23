@@ -126,6 +126,10 @@ export default {
     internal: 'ui-marc-authorities.authority-record.create',
     gui: 'MARC Authority: Create new MARC authority record',
   },
+  marcRecordsEditorAll: {
+    internal: 'marc-records-editor.all',
+    gui: 'All marc-records-editor permissions',
+  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
@@ -221,6 +225,10 @@ export default {
     internal: 'ui-inventory.settings.electronic-access-relationships',
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
+  uiInventorySetRecordsForDeletion: {
+    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    gui: 'Inventory: Set records for deletion',
+  },
   inventoryCRUDHoldings: {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
@@ -307,7 +315,7 @@ export default {
   },
   uiTenantSettingsServicePointsCRUD: {
     internal: 'ui-tenant-settings.settings.servicepoints',
-    gui: 'Settings (tenant): Can create, edit and remove service points',
+    gui: 'Settings (tenant): Can create and edit service points',
   },
   // DataImport
   dataImportUploadAll: {
@@ -361,6 +369,10 @@ export default {
   uiCirculationCreateViewOverdueFinesPolicies: {
     internal: 'ui-circulation.settings.view-overdue-fines-policies',
     gui: 'Settings (Circ): Can view overdue fine policies',
+  },
+  uiCirculationViewCreateEditDeleteFixedDueDateSchedules: {
+    internal: 'ui-circulation.settings.fixed-due-date-schedules',
+    gui: 'Settings (Circ): Can create, edit and remove fixed due date schedules',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
@@ -454,7 +466,7 @@ export default {
     internal: 'ui-users.settings.usergroups.view',
     gui: 'Settings (Users): Can view patron groups',
   },
-  uiUsersCreatePatronGroups: {
+  uiUsersCreateEditRemovePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
@@ -490,6 +502,15 @@ export default {
     internal: 'ui-users.financialTransactionReport',
     gui: 'Users: Create and download Financial transaction detail report',
   },
+  uiUserViewEditDeliteProfilePictores: {
+    internal: 'ui-users.profile-pictures.all',
+    gui: 'Users: Can view, edit, and delete profile pictures',
+  },
+  uiUserViewProfilePictores: {
+    internal: 'ui-users.profile-pictures.view',
+    gui: 'Users: Can view profile pictures',
+  },
+
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
@@ -542,18 +563,21 @@ export default {
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
-  dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
-  dataExportEnableModule: {
-    internal: 'module.data-export.enabled',
-    gui: 'Data export: all permissions',
+  dataExportViewAddUpdateProfiles: {
+    internal: 'ui-data-export.settings.edit',
+    gui: 'Settings (Data export): Can view, add, update profiles',
   },
-  dataExportEnableSettings: {
-    internal: 'ui-data-export.settings.enabled',
-    gui: 'Settings (Data export): display list of settings pages',
+  dataExportSettingsViewOnly: {
+    internal: 'ui-data-export.settings.view',
+    gui: 'Settings (Data export): Can view only',
   },
-  dataExportEnableApp: {
-    internal: 'ui-data-export.app.enabled',
-    gui: 'UI: Data export module is enabled',
+  dataExportViewOnly: {
+    internal: 'ui-data-export.view',
+    gui: 'Data export: Can view only',
+  },
+  dataExportUploadExportDownloadFileViewLogs: {
+    internal: 'ui-data-export.edit',
+    gui: 'Data export: Can upload files, export, download files and view logs',
   },
   // Loans
   loansAll: {
@@ -896,6 +920,10 @@ export default {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
   },
+  uiSettingsAcquisitionUnitsManageAcqUnitUserAssignments: {
+    internal: 'ui-acquisition-units.settings.userAssignments',
+    gui: 'Settings (acquisition units): Manage acquisition unit user assignments',
+  },
   uiInventorySettingsFastAdd: {
     internal: 'ui-inventory.settings.fast-add',
     gui: 'Settings (Inventory): Edit fast add settings',
@@ -911,6 +939,10 @@ export default {
   uiInventorySettingsConfigureSingleRecordImport: {
     internal: 'ui-inventory.settings.single-record-import',
     gui: 'Settings (Inventory): Configure single-record import',
+  },
+  uiInventorySettingsConfigureClassificationBrowse: {
+    internal: 'ui-inventory.settings.classification-browse',
+    gui: 'Settings (Inventory): Configure classification browse',
   },
   settingsDataImportView: {
     internal: 'ui-data-import.settings.readOnly',
@@ -935,6 +967,10 @@ export default {
   settingsCircView: {
     internal: 'ui-circulation.settings.cancellation-reasons',
     gui: 'Settings (Circ): Can create, edit and remove cancellation reasons',
+  },
+  settingsCircCRUDRequestPolicies: {
+    internal: 'ui-circulation.settings.request-policies',
+    gui: 'Settings (Circ): Can create, edit and remove request policies',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',
@@ -980,6 +1016,10 @@ export default {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
   },
+  uiSettingsViewAuthorityFiles: {
+    internal: 'ui-marc-authorities.settings.authority-files.view',
+    gui: 'Settings (MARC authority): View authority files',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
@@ -1001,6 +1041,14 @@ export default {
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
+  },
+  uiSettingsTenantReadingRoom: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.view',
+    gui: 'Settings (tenant): Can view reading room access',
+  },
+  uiSettingsTenantReadingRoomAll: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.all',
+    gui: 'Settings (tenant): Can create, edit and remove reading room access',
   },
   // Timers
   okapiTimersPatch: {
@@ -1050,6 +1098,10 @@ export default {
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
   // Consortia
+  settingsConsortiaCanViewNetworkOrdering: {
+    internal: 'ui-consortia-settings.settings.networkOrdering.view',
+    gui: 'Settings (Consortia): Can view network ordering',
+  },
   consortiaSettingsConsortiaAffiliationsEdit: {
     internal: 'ui-consortia-settings.consortia.affiliations.edit',
     gui: 'Consortia: Assign and unassign affiliations',
@@ -1095,6 +1147,11 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  listsEdit: {
+    internal: 'module.lists.refresh',
+    gui: 'Lists (Edit): Can create, edit, and refresh lists',
   },
 
   // Licenses

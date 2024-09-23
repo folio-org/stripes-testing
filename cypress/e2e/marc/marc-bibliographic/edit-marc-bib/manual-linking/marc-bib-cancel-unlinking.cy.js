@@ -56,6 +56,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating test user and an inventory instance', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365601*');
+
           cy.loginAsAdmin()
             .then(() => {
               cy.getAdminToken();
@@ -86,6 +90,8 @@ describe('MARC', () => {
                 linkingTagAndValues.tag,
                 linkingTagAndValues.rowIndex,
               );
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });

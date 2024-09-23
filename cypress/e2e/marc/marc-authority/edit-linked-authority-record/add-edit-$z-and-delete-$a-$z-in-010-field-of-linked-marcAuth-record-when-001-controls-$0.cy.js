@@ -59,48 +59,34 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValues = {
-        rowIndex: 16,
+        rowIndex: 15,
         value: 'C422055 Kerouac, Jack, 1922-1969',
         tag: '100',
       };
 
       before('Creating user and data', () => {
-        cy.getAdminToken().then(() => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C422055"' }).then(
-            (records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
+
+            // make sure there are no duplicate records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422055*');
+
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
-            },
-          );
-        });
-
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              cy.wait(2000);
             });
-          });
-        });
-
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
-
-          cy.loginAsAdmin().then(() => {
+          })
+          .then(() => {
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -116,8 +102,20 @@ describe('MARC', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
@@ -129,6 +127,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           testData.createdRecordIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -152,6 +151,8 @@ describe('MARC', () => {
             tag010.inputContent.field010_1,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_1, tag010.rowIndex);
 
@@ -160,6 +161,8 @@ describe('MARC', () => {
             tag010.inputContent.field010_2,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_2, tag010.rowIndex);
 
@@ -169,12 +172,16 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_3, tag010.rowIndex);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_3, tag010.rowIndex);
           cy.wait(3000);
 
           QuickMarcEditor.updateExistingFieldContent(4, tag010.inputContent.field010_4);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_1, tag010.rowIndex);
 
@@ -184,6 +191,8 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
 

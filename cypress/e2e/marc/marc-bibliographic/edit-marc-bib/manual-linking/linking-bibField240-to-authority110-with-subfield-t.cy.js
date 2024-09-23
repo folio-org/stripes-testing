@@ -44,7 +44,7 @@ describe('MARC', () => {
           },
         ];
         const bib240AfterLinkingToAuth110 = [
-          11,
+          10,
           testData.tag240,
           '1',
           '0',
@@ -54,7 +54,7 @@ describe('MARC', () => {
           '',
         ];
         const bib240AfterUninkingToAuth110 = [
-          11,
+          10,
           testData.tag240,
           '1',
           '0',
@@ -64,6 +64,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374111*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -73,7 +77,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -111,7 +114,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.updateExistingField(testData.tag240, testData.newTag240Content);
-            QuickMarcEditor.checkContent(testData.newTag240Content, 11);
+            QuickMarcEditor.checkContent(testData.newTag240Content, 10);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -119,9 +122,11 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.authority110FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-            QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
+            QuickMarcEditor.checkUnlinkTooltipText(10, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib240AfterLinkingToAuth110[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth110);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
@@ -140,9 +145,11 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth110);
-            QuickMarcEditor.clickUnlinkIconInTagField(11);
+            QuickMarcEditor.clickUnlinkIconInTagField(10);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240AfterUninkingToAuth110);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240AfterUninkingToAuth110);
           },

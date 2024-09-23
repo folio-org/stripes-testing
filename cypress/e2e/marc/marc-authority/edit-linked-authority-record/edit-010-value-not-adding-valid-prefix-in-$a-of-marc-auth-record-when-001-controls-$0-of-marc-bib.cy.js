@@ -15,10 +15,11 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit linked Authority record', () => {
       let userData;
+      let preconditionUserId;
 
       const marcBibRecordData = {
         tag100: 100,
-        rowIndex: 16,
+        rowIndex: 15,
         sectionId: 'list-contributors',
       };
 
@@ -46,14 +47,14 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC422065.mrc',
-          fileName: `testMarcFileC422065${getRandomPostfix()}.mrc`,
+          fileName: `C422065 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC422065.mrc',
-          fileName: `testMarcFileC422065${getRandomPostfix()}.mrc`,
+          fileName: `C422065 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
@@ -63,30 +64,28 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user and data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            preconditionUserId = userProperties.userId;
+
+            // make sure there are no duplicate records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422065*');
+
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
+                });
+              });
+              cy.wait(2000);
             });
-          });
-        });
-
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          userData = createdUserProperties;
-
-          cy.loginAsAdmin().then(() => {
+          })
+          .then(() => {
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
@@ -102,8 +101,20 @@ describe('MARC', () => {
               marcBibRecordData.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          userData = createdUserProperties;
 
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,
@@ -115,6 +126,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(userData.userId);
+          Users.deleteViaApi(preconditionUserId);
           createdAuthorityIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -138,6 +150,8 @@ describe('MARC', () => {
             marcAuthRecordData.newTag010Value,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(marcAuthRecordData.callOut);
           MarcAuthorities.closeMarcViewPane();

@@ -1,21 +1,18 @@
 import {
-  ACCEPTED_DATA_TYPE_NAMES,
-  ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
-  FOLIO_RECORD_TYPE,
-  LOCATION_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -29,9 +26,8 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -48,14 +44,11 @@ describe('Data Import', () => {
     const nameForCSVFile = `C380511autotestFile${getRandomPostfix()}.csv`;
     const mappingProfile = {
       name: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      update: true,
-      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      action: 'UPDATE',
+      folioRecordType: 'MARC_BIBLIOGRAPHIC',
     };
     const matchProfile = {
       profileName: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
@@ -71,13 +64,10 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
       profileName: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const protectedFields = {
       firstField: '100',
@@ -103,34 +93,38 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 16,
-        value: 'Ludwig van, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig van, Beethoven, 1770-1827.',
         tag: '100',
       },
       {
         rowIndex: 17,
         value:
-          'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
+          'C380511 Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
       },
       {
         rowIndex: 40,
-        value: 'Music piano',
+        value: 'C380511 Music piano',
         tag: '650',
       },
       {
         rowIndex: 49,
-        value: 'Hewitt, Angela, 1958-',
+        value: 'C380511 Hewitt, Angela, 1958-',
         tag: '700',
       },
       {
         rowIndex: 50,
-        value: 'Ludwig van, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig van, Beethoven, 1770-1827.',
         tag: '700',
       },
     ];
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380511*');
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -139,11 +133,11 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -156,64 +150,65 @@ describe('Data Import', () => {
           });
         });
 
-        cy.loginAsAdmin().then(() => {
-          // create Match profile
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(matchProfile);
-          // create Field mapping profile
-          cy.visit(SettingsMenu.mappingProfilePath);
-          FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
-          FieldMappingProfileView.closeViewMode(mappingProfile.name);
-          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-          // create Action profile and link it to Field mapping profile
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(actionProfile.name);
-          // create Job profile
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.openNewJobProfileForm();
-          NewJobProfile.fillJobProfile(jobProfile);
-          NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
-          // waiter needed for the action profile to be linked
-          cy.wait(1000);
-          NewJobProfile.saveAndClose();
-          JobProfiles.waitLoadingList();
-          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-        });
+        // create Match profile
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
+          .then((matchProfileResponse) => {
+            matchProfile.id = matchProfileResponse.body.id;
+          })
+          .then(() => {
+            // create Field mapping profile
+            NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
+              (mappingProfileResponse) => {
+                mappingProfile.id = mappingProfileResponse.body.id;
+              },
+            );
+          })
+          .then(() => {
+            // create Action profile and link it to Field mapping profile
+            NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+              (actionProfileResponse) => {
+                actionProfile.id = actionProfileResponse.body.id;
+              },
+            );
+          })
+          .then(() => {
+            // create Job profile
+            NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+              jobProfile.profileName,
+              matchProfile.id,
+              actionProfile.id,
+            );
+          });
 
-        cy.loginAsAdmin();
-        cy.getAdminToken().then(() => {
-          MarcFieldProtection.createViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '0',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.firstField,
-          }).then((resp) => {
-            firstFieldId = resp.id;
-          });
-          MarcFieldProtection.createViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '0',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.secondField,
-          }).then((resp) => {
-            secondFieldId = resp.id;
-          });
-          MarcFieldProtection.createViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '9',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.thirdField,
-          }).then((resp) => {
-            thirdFieldId = resp.id;
-          });
+        MarcFieldProtection.createViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '0',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.firstField,
+        }).then((resp) => {
+          firstFieldId = resp.id;
+        });
+        MarcFieldProtection.createViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '0',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.secondField,
+        }).then((resp) => {
+          secondFieldId = resp.id;
+        });
+        MarcFieldProtection.createViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '9',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.thirdField,
+        }).then((resp) => {
+          thirdFieldId = resp.id;
         });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -228,11 +223,11 @@ describe('Data Import', () => {
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
+        if (index) MarcAuthority.deleteViaAPI(id, true);
       });
-      MarcFieldProtection.deleteViaApi(firstFieldId);
-      MarcFieldProtection.deleteViaApi(secondFieldId);
-      MarcFieldProtection.deleteViaApi(thirdFieldId);
+      MarcFieldProtection.deleteViaApi(firstFieldId, true);
+      MarcFieldProtection.deleteViaApi(secondFieldId, true);
+      MarcFieldProtection.deleteViaApi(thirdFieldId, true);
       // clean up generated profiles
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -246,7 +241,7 @@ describe('Data Import', () => {
 
     it(
       'C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
@@ -261,13 +256,16 @@ describe('Data Import', () => {
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
         });
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -279,23 +277,23 @@ describe('Data Import', () => {
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
           [
-            'aLudwig van, Beethoven,d1770-1827ecomposer',
+            'aC380511 Ludwig van, Beethoven,d1770-1827ecomposer',
             '0id.loc.gov/authorities/names/n83130832',
-            'aMusic piano',
+            'aC380511 Music piano',
             'ewriter of supplementary textual content.',
-            'aLudwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
+            'aC380511 Ludwig van, Beethoven,d1770-1827iContainer of (work):0http://id.loc.gov/authorities/names/n79107741',
           ],
           [
-            'aBeethoven, Ludwig V.d1770-1827eAuthor',
+            'aC380511 Beethoven, Ludwig V.d1770-1827eAuthor',
             '0id.loc.gov/authorities/names/n83130833',
-            'aMusic pianocTest environment',
+            'aC380511 Music pianocTest environment',
             'eauthor of supplementary textual content.',
-            'aBeethoven, Ludwig V.d1770-1827iContainer of (work):',
+            'aC380511 Beethoven, Ludwig V.d1770-1827iContainer of (work):',
           ],
         );
 
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
@@ -313,7 +311,7 @@ describe('Data Import', () => {
           '100',
           '1',
           '\\',
-          '$a Ludwig van, Beethoven, $d 1770-1827',
+          '$a C380511 Ludwig van, Beethoven, $d 1770-1827',
           '$e composer.',
           '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
@@ -333,7 +331,7 @@ describe('Data Import', () => {
           '650',
           '\\',
           '0',
-          '$a Music piano',
+          '$a C380511 Music piano',
           '$c Test environment',
           '$0 http://id.loc.gov/authorities/childrensSubjects/sj2021056711',
           '',
@@ -343,7 +341,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Hewitt, Angela, $d 1958-',
+          '$a C380511 Hewitt, Angela, $d 1958-',
           '$e instrumentalist, $e writer of supplementary textual content.',
           '$0 http://id.loc.gov/authorities/names/n91099716',
           '',
@@ -353,7 +351,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '2',
-          '$a Ludwig van, Beethoven, $d 1770-1827',
+          '$a C380511 Ludwig van, Beethoven, $d 1770-1827',
           '$i Container of (work):',
           '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
@@ -363,14 +361,14 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
+          '$a C380511 Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
           52,
           '700',
           '1',
           '2',
-          '$a Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):',
+          '$a C380511 Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):',
         );
       },
     );

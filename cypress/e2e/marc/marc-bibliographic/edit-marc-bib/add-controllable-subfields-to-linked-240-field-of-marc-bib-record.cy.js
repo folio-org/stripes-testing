@@ -20,7 +20,7 @@ describe('MARC', () => {
         searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         marcAuthTitle: 'Variations',
         errorCalloutMessage:
-          'MARC 240 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
       const marcFiles = [
         {
@@ -80,6 +80,8 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tagForLinking);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             cy.wait(1000); // need to wait until save is done
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -111,25 +113,34 @@ describe('MARC', () => {
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);
           InventoryInstance.waitLoading();
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateLinkedFifthBox(18, '$n test');
+          QuickMarcEditor.updateLinkedFifthBox(17, '$n test');
           cy.wait(500); // need wait until changes appear
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$f test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$h test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$k test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$l test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$p test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$s test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$g test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-          QuickMarcEditor.updateLinkedFifthBox(18, '$d test');
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$f test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$h test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$k test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$l test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$p test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$s test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$g test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
+          QuickMarcEditor.updateLinkedFifthBox(17, '$d test');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
         },
       );
     });

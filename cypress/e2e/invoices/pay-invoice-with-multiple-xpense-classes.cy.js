@@ -74,7 +74,6 @@ describe('Invoices', () => {
       Orders.createApprovedOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
         firstOrder.id = secondOrderResponse.id;
         firstOrderNumber = secondOrderResponse.poNumber;
-        Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(

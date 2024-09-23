@@ -295,7 +295,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
-      Funds.checkFinancialActivityAndOverages('$100.00', '$0.00', '$0.00', '$100.00');
+      Funds.checkFinancialActivityAndOverages('$100.00', '$0.00', '$0.00', '$0.00', '$100.00');
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

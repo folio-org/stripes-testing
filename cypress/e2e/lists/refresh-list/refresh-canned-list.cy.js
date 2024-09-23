@@ -9,7 +9,14 @@ describe('lists', () => {
 
     before('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -21,12 +28,13 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
+      Lists.resetAllFilters();
       Lists.expiredPatronLoan();
-      Lists.actionButton();
+      Lists.openActions();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find(
           (item) => item.name === 'Inactive patrons with open loans',
@@ -40,7 +48,7 @@ describe('lists', () => {
         cy.contains(`Refresh complete with ${totalRecords} records: View updated list`).should(
           'be.visible',
         );
-        cy.contains('View updated list').click();
+        Lists.viewUpdatedList();
         cy.contains(`${totalRecords} records found`).should('be.visible');
       });
     });

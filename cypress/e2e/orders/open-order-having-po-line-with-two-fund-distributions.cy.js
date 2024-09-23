@@ -199,6 +199,7 @@ describe('Orders', () => {
       // Go back to "PO Line details - <number>" pane
       cy.visit(TopMenu.ordersPath);
       Orders.selectOrderByPONumber(testData.order.poNumber);
+      cy.reload();
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
 
       // Click the link in "Current encumbrance" column for "Fund B"

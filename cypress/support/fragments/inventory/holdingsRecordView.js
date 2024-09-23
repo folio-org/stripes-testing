@@ -153,6 +153,11 @@ export default {
       .find(HTML(including(note)))
       .exists(),
   ),
+  checkExactContentInAdministrativeNote: (note) => cy.expect(
+    MultiColumnList({ id: 'administrative-note-list' })
+      .find(MultiColumnListCell({ content: note }))
+      .exists(),
+  ),
   checkHoldingsStatement: (statement) => cy.expect(
     MultiColumnList({ id: 'list-holdingsStatement' })
       .find(HTML(including(statement)))
@@ -172,6 +177,14 @@ export default {
     cy.expect(
       MultiColumnList({ id: 'list-holdings-notes-0' })
         .find(MultiColumnListRow({ index: row }))
+        .find(MultiColumnListCell({ content: text }))
+        .exists(),
+    );
+  }),
+  checkHoldingsNoteByRowForDifferentNoteTypes: (value = [], row = 0) => value.forEach((text) => {
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${row}` })
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ content: text }))
         .exists(),
     );
@@ -218,9 +231,12 @@ export default {
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
-  verifyElectronicAccessByElementIndex: (index, content) => {
+  verifyElectronicAccessByElementIndex: (index, content, electronicAccessIndex = 0) => {
     cy.expect(
-      electronicAccessAccordion.find(MultiColumnListCell({ columnIndex: index, content })).exists(),
+      electronicAccessAccordion
+        .find(MultiColumnListRow({ index: electronicAccessIndex }))
+        .find(MultiColumnListCell({ columnIndex: index, content }))
+        .exists(),
     );
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
@@ -282,6 +298,71 @@ export default {
       Pane({ id: 'ui-inventory.holdingsRecordView' })
         .find(HTML(including(title)))
         .exists(),
+    );
+  },
+  checkPublicDisplayCheckboxState(expectedState) {
+    const accordionSection = document.querySelector('#receiving-history-accordion');
+    if (!accordionSection) {
+      return false;
+    }
+
+    const checkboxElement = accordionSection.querySelector(
+      'div[data-test-checkbox="true"] input[type="checkbox"]',
+    );
+    if (!checkboxElement) {
+      return false;
+    }
+
+    return checkboxElement.checked === expectedState;
+  },
+
+  checkAbsentRecordInReceivingHistory(record) {
+    cy.expect(
+      Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
+    );
+  },
+
+  checkNotesByType(
+    noteTypeRowIndex,
+    columnHeader,
+    noteValue,
+    staffOnlyValue = 'No',
+    noteRecordRowIndexInNoteType = 0,
+  ) {
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: 'Staff only',
+            content: staffOnlyValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
+    );
+    cy.expect(
+      MultiColumnList({ id: `list-holdings-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: columnHeader,
+            content: noteValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
+    );
+  },
+
+  checkHoldingNoteTypeAbsent(columnHeader, noteValue) {
+    cy.expect(
+      Accordion({ label: 'Holdings notes' })
+        .find(
+          MultiColumnListCell({
+            column: columnHeader,
+            content: noteValue,
+          }),
+        )
+        .absent(),
     );
   },
 };

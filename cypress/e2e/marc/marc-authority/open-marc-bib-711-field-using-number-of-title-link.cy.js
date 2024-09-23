@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '711',
       marcValue: 'Mostly Mozart Festival. sonet',
-      rowIndex: 28,
+      rowIndex: 29,
       searchOption: 'Keyword',
       instanceTitle:
         'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Mozart. Theme & variations / Rossini.',
@@ -43,10 +43,11 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -74,6 +75,8 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.marcValue);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

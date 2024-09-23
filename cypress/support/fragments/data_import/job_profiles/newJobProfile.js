@@ -416,6 +416,61 @@ export default {
       });
   },
 
+  createJobProfileWithLinkedMatchAndActionProfileAndNonMatchActionProfileViaApi: (
+    profileName,
+    matchProfileId,
+    actionProfileIdForMatches,
+    actionProfileIdForNonMatches,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileIdForMatches,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+            {
+              masterProfileId: matchProfileId,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileIdForNonMatches,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'NON_MATCH',
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
   createJobProfileWithLinkedThreeActionProfilesViaApi: (
     profile,
     actionProfileId1,
@@ -560,33 +615,14 @@ export default {
       });
   },
 
-  createJobProfileWithoutLinkedProfilesViaApi: (nameProfile) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'data-import-profiles/jobProfiles',
-        body: {
-          profile: {
-            name: nameProfile,
-            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
-          },
-          addedRelations: [],
-          deletedRelations: [],
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((responce) => {
-        return responce.body.id;
-      });
-  },
-
   unlinkProfile: (number) => {
+    cy.wait(2000);
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
       .eq(number)
       .find('button[icon="unlink"]')
       .click();
+    cy.wait(1000);
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
-    cy.wait(7000);
   },
 
   checkCalloutMessage: (message) => {

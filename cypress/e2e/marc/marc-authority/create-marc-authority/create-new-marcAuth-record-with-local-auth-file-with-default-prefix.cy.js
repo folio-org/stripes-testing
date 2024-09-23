@@ -13,7 +13,7 @@ describe('MARC', () => {
       const tag001 = '001';
       const headerText = 'Create a new MARC authority record';
       const newField = {
-        rowIndex: 3,
+        previousFieldTag: '008',
         tag: '111',
         content:
           '$a C423559 Create a new MARC authority record with Local authority file which includes default prefix in it',
@@ -66,10 +66,10 @@ describe('MARC', () => {
 
       it(
         'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 
@@ -90,10 +90,16 @@ describe('MARC', () => {
 
           // 5 Add 1 new field by clicking on "+" icon and fill it as specified:
           // 111 \\ "$a Create a new MARC authority record with Local authority file which includes default prefix in it"
-          MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField.previousFieldTag,
+            newField.tag,
+            newField.content,
+          );
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
           // 6 Click on the "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

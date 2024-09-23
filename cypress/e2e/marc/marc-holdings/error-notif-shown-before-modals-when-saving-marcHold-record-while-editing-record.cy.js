@@ -6,7 +6,6 @@ import {
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -40,7 +39,7 @@ describe('MARC', () => {
         rowIndex: 9,
       },
       errors: {
-        tagCharacterLength: 'Record cannot be saved. A MARC tag must contain three characters.',
+        tagCharacterLength: 'Tag must contain three characters and can only accept numbers 0-9.',
       },
     };
     const marcFile = {
@@ -80,7 +79,7 @@ describe('MARC', () => {
         testData.editedMarcFileName,
         testData.jobProfileToRun,
       );
-      JobProfiles.waitFileIsImported(testData.editedMarcFileName);
+      Logs.waitFileIsImported(testData.editedMarcFileName);
       Logs.openFileDetails(testData.editedMarcFileName);
       cy.logout();
 
@@ -140,7 +139,7 @@ describe('MARC', () => {
           MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
         );
         QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkCallout(testData.errors.tagCharacterLength);
+        QuickMarcEditor.checkErrorMessage(6, testData.errors.tagCharacterLength);
         QuickMarcEditor.updateExistingTagValue(testData.tag014.rowIndex, testData.tag014.tag);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.clickSaveAndCloseThenCheck(1);

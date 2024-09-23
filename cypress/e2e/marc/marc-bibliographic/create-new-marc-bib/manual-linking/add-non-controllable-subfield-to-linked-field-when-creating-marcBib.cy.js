@@ -85,6 +85,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380747*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -94,7 +98,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -118,7 +121,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
           for (let i = 0; i < 2; i++) {
-            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
+            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i], true);
           }
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
         });
@@ -134,8 +137,10 @@ describe('MARC', () => {
             );
             QuickMarcEditor.updateLDR06And07Positions();
             MarcAuthority.addNewField(4, newFields[0].tag, `$a ${newFields[0].content}`);
+            cy.wait(500);
             QuickMarcEditor.checkLinkButtonExistByRowIndex(5);
             MarcAuthority.addNewField(5, newFields[1].tag, `$a ${newFields[1].content}`);
+            cy.wait(500);
             QuickMarcEditor.checkLinkButtonExistByRowIndex(6);
 
             newFields.forEach((newField) => {
@@ -178,6 +183,9 @@ describe('MARC', () => {
               testData.fieldName.seventhBox(5),
               newFields[0].boxSeventhUpdate,
             );
+            cy.wait(500);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(testData.successMessage);
             InventoryInstance.editMarcBibliographicRecord();

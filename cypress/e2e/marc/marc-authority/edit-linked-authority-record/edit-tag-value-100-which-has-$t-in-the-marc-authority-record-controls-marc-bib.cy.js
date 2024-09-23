@@ -27,7 +27,7 @@ describe('MARC', () => {
         calloutMessage:
           'Cannot change the saved MARC authority field 100 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         calloutMessageAfterDeleteingSubfield:
-          'Cannot remove $t from the $100 field  because it controls a bibliographic field(s) that requires  this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
+          'Cannot remove $t from the $100 field because it controls a bibliographic field(s) that requires this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
         calloutMessageAfterDeleting1XXField: 'Record cannot be saved without 1XX field.',
         searchOption: 'Keyword',
       };
@@ -35,14 +35,14 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC374138.mrc',
-          fileName: `testMarcFileC374138${getRandomPostfix()}.mrc`,
+          fileName: `C374138 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC374138.mrc',
-          fileName: `testMarcFileC374138${getRandomPostfix()}.mrc`,
+          fileName: `C374138 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'C374138 Beethoven, Ludwig van,',
           numOfRecords: 1,
@@ -50,7 +50,7 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValues = {
-        rowIndex: 18,
+        rowIndex: 17,
         value:
           'C374138 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
@@ -60,16 +60,22 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user and data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374138*');
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -97,6 +103,8 @@ describe('MARC', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -110,6 +118,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.userProperties.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           createdAuthorityIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -128,31 +137,32 @@ describe('MARC', () => {
           MarcAuthority.edit();
           cy.wait(2000);
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag130);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag150);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag151);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag151, testData.tag155);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag119);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageAfterDeleting1XXField);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag119, testData.tag100);
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100content);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndKeepEditing('$t from the $100 field');
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessageAfterDeleteingSubfield);
         },
       );
     });

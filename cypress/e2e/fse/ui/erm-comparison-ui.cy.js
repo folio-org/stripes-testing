@@ -10,8 +10,8 @@ describe('fse-erm-comparison - UI', () => {
   });
 
   it(
-    'TC195305 - verify that erm-comparison module is displayed',
-    { tags: ['sanity', 'fse', 'ui', 'erm-comparison'] },
+    `TC195305 - verify that erm-comparison module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['fse', 'ui', 'folio_erm-comparisons'] },
     () => {
       cy.visit(TopMenu.ermComparisonPath);
       ErmComparison.waitLoading();

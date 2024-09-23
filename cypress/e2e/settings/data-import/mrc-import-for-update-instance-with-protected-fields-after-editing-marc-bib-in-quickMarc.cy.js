@@ -15,9 +15,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -100,7 +100,7 @@ describe('Data Import', () => {
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -186,6 +186,8 @@ describe('Data Import', () => {
         InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');
         InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
         InventoryEditMarcRecord.saveAndClose();
+        cy.wait(1500);
+        InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
         InventoryInstance.waitInstanceRecordViewOpened(instanceTitle);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -207,7 +209,6 @@ describe('Data Import', () => {
               [uuid[0], uuid[1], instanceHrid],
             );
           });
-          InventoryViewSource.close();
 
           // export instance
           cy.visit(TopMenu.inventoryPath);
@@ -223,7 +224,7 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(nameMarcFileForUpload);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(nameMarcFileForUpload, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpload);
           [
             FileDetails.columnNameInResultList.srsMarc,

@@ -12,8 +12,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import {
@@ -21,6 +20,8 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -114,6 +115,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
         collectionOfProfiles.forEach((profile) => {
           SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.jobProfile.profileName);
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
@@ -176,7 +178,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForFirstImport);
         Logs.checkImportFile(collectionOfProfiles[0].jobProfile.profileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        LogsViewAll.verifyJobStatus(fileNameForFirstImport, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(invoiceNumber);
@@ -198,7 +200,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForSecondImport);
         Logs.checkImportFile(collectionOfProfiles[1].jobProfile.profileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        LogsViewAll.verifyJobStatus(fileNameForSecondImport, JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(invoiceNumber);
@@ -207,9 +209,6 @@ describe('Data Import', () => {
         InvoiceView.selectInvoiceLine();
         InvoiceView.verifyInvoiceLineSubscription(invoiceData[1].subscriptionInfo);
         InvoiceView.verifyInvoiceLineComment(invoiceData[1].comment);
-
-        cy.getAdminToken();
-        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
       },
     );
   });

@@ -17,6 +17,8 @@ const item = {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
+
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -58,13 +60,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         [
+          'Suppress from discovery',
           'Holdings HRID',
+          'Source',
           'Holdings type',
-          'Permanent location',
-          'Temporary location',
-          'Call number prefix',
-          'Call number',
-          'Call number suffix',
+          'Holdings permanent location',
         ].forEach((title) => {
           BulkEditSearchPane.verifyResultColumnTitles(title);
         });

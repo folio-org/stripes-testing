@@ -24,6 +24,7 @@ describe('MARC', () => {
           { rowIndex: 4, tag: '010', content: '$a n  94000330' },
           { rowIndex: 5, tag: '010', content: '$a n  94000339' },
         ],
+        errorMessage: 'Field is non-repeatable.',
       };
       const subfieldPrefix = '$a';
       const authorityPostfix = '?authRefType=Authorized&heading';
@@ -92,7 +93,9 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(`${subfieldPrefix} ${testData.editedField.content}`, 6);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.verifyAndDismissMultiple010TagCallout();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkErrorMessage(5, testData.errorMessage);
         },
       );
     });

@@ -5,37 +5,41 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 
-describe('Custom Fields', () => {
-  let userData;
-  let servicePointId;
+describe('Users', () => {
+  describe('Custom Fields (Users)', () => {
+    let userData;
+    let servicePointId;
 
-  before('Preconditions', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-        servicePointId = servicePoints[0].id;
+    before('Preconditions', () => {
+      cy.getAdminToken().then(() => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
+          (servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          },
+        );
+        cy.createTempUser([permissions.uiUsersCanViewCustomFields.gui])
+          .then((userProperties) => {
+            userData = userProperties;
+            UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+          })
+          .then(() => {
+            cy.login(userData.username, userData.password);
+          });
       });
-      cy.createTempUser([permissions.uiUsersCanViewCustomFields.gui])
-        .then((userProperties) => {
-          userData = userProperties;
-          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        })
-        .then(() => {
-          cy.login(userData.username, userData.password);
-        });
     });
-  });
 
-  after('Deleting created entities', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(userData.userId);
-  });
+    after('Deleting created entities', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(userData.userId);
+    });
 
-  it(
-    'C388654 permission insufficient to view custom fields on user settings (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
-    () => {
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.waitLoading();
-    },
-  );
+    it(
+      'C388654 permission insufficient to view custom fields on user settings (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        cy.visit(TopMenu.customFieldsPath);
+        CustomFields.waitLoading();
+      },
+    );
+  });
 });

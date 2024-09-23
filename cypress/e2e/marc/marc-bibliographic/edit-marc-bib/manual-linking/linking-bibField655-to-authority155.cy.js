@@ -45,7 +45,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib655FieldValues = [
-          52,
+          51,
           testData.tag655,
           '\\',
           '7',
@@ -53,7 +53,7 @@ describe('MARC', () => {
         ];
 
         const bib655AfterLinkingToAuth155 = [
-          52,
+          51,
           testData.tag655,
           '\\',
           '7',
@@ -64,7 +64,7 @@ describe('MARC', () => {
         ];
 
         const bib655AfterUnlinking = [
-          52,
+          51,
           testData.tag655,
           '\\',
           '7',
@@ -72,6 +72,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380766*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -150,6 +154,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag655, bib655FieldValues[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -183,6 +189,8 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib655AfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(bib655FieldValues[0]);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);

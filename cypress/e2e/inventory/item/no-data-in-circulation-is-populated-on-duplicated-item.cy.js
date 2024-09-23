@@ -109,7 +109,7 @@ describe('Inventory', () => {
 
     it(
       'C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
@@ -143,7 +143,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(newItemBarcode);
-        ItemRecordView.checkItemCirculationHistory('-', '-', '-');
+        ItemRecordView.checkItemCirculationHistory('-', 'No value set-', '-');
       },
     );
   });

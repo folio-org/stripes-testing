@@ -40,6 +40,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating user and records', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380755*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.moduleDataImportEnabled.gui,
@@ -49,7 +53,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -107,7 +110,8 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n83169267',
               '',
             );
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');

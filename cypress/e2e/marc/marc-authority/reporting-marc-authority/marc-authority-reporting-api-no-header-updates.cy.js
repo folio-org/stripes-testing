@@ -26,7 +26,6 @@ const testData = {
   sourceFileName: 'LC Name Authority file (LCNAF)',
 };
 
-const yesterday = DateTools.getPreviousDayDateForFiscalYear();
 const twoPreviousDay = DateTools.getTwoPreviousDaysDateForFiscalYear();
 
 const marcFiles = [
@@ -62,27 +61,29 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
 
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+            // make sure there are no duplicate authority records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380530*');
+
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
+              cy.wait(2000);
             });
-          });
-
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          })
+          .then(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -94,11 +95,20 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(testData.marcValue);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 17);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
           });
+
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
@@ -112,6 +122,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
       });
 
       it(
@@ -125,15 +136,19 @@ describe('MARC', () => {
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
-          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, yesterday);
+          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, twoPreviousDay);
         },
       );
     });

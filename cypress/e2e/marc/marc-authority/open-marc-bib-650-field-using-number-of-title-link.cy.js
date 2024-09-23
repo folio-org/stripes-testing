@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '650',
       marcValue: 'Speaking Oratory debating',
-      rowIndex: 14,
+      rowIndex: 15,
       searchOption: 'Keyword',
       instanceTitle:
         'Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
@@ -43,10 +43,11 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -74,6 +75,8 @@ describe('MARC', () => {
           InventoryInstance.searchResults(testData.marcValue);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

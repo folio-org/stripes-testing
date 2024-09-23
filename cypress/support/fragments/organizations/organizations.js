@@ -105,8 +105,9 @@ export default {
 
   createOrganizationViaUi: (organization) => {
     cy.expect(buttonNew.exists());
+    cy.do(buttonNew.click());
+    cy.wait(4000);
     cy.do([
-      buttonNew.click(),
       organizationStatus.choose(organization.status),
       organizationNameField.fillIn(organization.name),
       organizationCodeField.fillIn(organization.code),
@@ -205,24 +206,27 @@ export default {
     cy.do(Checkbox('Active').click());
   },
 
+  selectPendingStatus: () => {
+    cy.wait(3000);
+    cy.do(Checkbox('Pending').click());
+  },
+
   selectIsDonorFilter: (isDonor) => {
     if (isDonor === 'Yes') {
+      cy.wait(3000);
       cy.do([
         toggleButtonIsDonor.click(),
         donorSection.find(Checkbox('Yes')).click(),
         toggleButtonIsDonor.click(),
       ]);
     } else if (isDonor === 'No') {
+      cy.wait(3000);
       cy.do([
         toggleButtonIsDonor.click(),
         donorSection.find(Checkbox('No')).click(),
         toggleButtonIsDonor.click(),
       ]);
     }
-  },
-
-  selectPendingStatus: () => {
-    cy.do(Checkbox('Pending').click());
   },
 
   checkOrganizationFilter: () => {
@@ -405,6 +409,7 @@ export default {
   },
 
   checkOrganizationInfo: (organization) => {
+    cy.wait(3000);
     OrganizationDetails.waitLoading();
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
@@ -420,8 +425,10 @@ export default {
   },
 
   resetFilters: () => {
+    cy.wait(3000);
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true })); // Actual : true
+    cy.wait(3000);
   },
 
   checkSearchResults: (organization) => {
@@ -430,17 +437,12 @@ export default {
   },
 
   selectYesInIsVendor: () => {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
-      Checkbox('Yes').click(),
-    ]);
+    cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('Yes').click()]);
   },
 
   selectNoInIsVendor: () => {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
-      Checkbox('No').click(),
-    ]);
+    cy.wait(3000);
+    cy.do([Button({ id: 'accordion-toggle-button-isVendor' }).click(), Checkbox('No').click()]);
   },
 
   selectVendor: () => {
@@ -458,6 +460,7 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
   },
   selectCountryFilter: () => {
+    cy.wait(3000);
     cy.do([
       Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
       Button({ id: 'addresses-selection' }).click(),
@@ -466,6 +469,7 @@ export default {
   },
 
   selectLanguageFilter: () => {
+    cy.wait(3000);
     cy.do([
       Button({ id: 'accordion-toggle-button-plugin-language-filter' }).click(),
       Button({ id: 'language-selection' }).click(),
@@ -474,6 +478,7 @@ export default {
   },
 
   selectCashInPaymentMethod: () => {
+    cy.wait(3000);
     cy.do([
       Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
       Checkbox('Cash').click(),
@@ -829,7 +834,7 @@ export default {
   selectOrganization: (organizationName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
-
+    cy.wait(3000);
     OrganizationDetails.waitLoading();
 
     return OrganizationDetails;

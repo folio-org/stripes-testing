@@ -10,20 +10,31 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       const testData = {
-        marcBibTitle: 'The title: the face of a record',
-        marcBibTitle2: 'Another title',
-        positions: [5, 6, 7, 8, 18, 19],
-        validLDRValue: '00000naa\\a2200000uu\\4500',
-        invalidLDRvalue: '000001b!ba2200000u$f4500',
         fieldValues: [
-          { tag: '035', content: '$a test1' },
-          { tag: '240', content: '$a test2 $a test3 $a test4' },
-          { tag: '300', content: '$a test5 $a test6' },
+          {
+            tag: '035',
+            content: '$a test1',
+            isArrowUpButtonShown: true,
+            isArrowDownButtonShown: true,
+            rowIndex: 5,
+          },
+          {
+            tag: '240',
+            content: '$a test2 $a test3 $a test4',
+            isArrowUpButtonShown: true,
+            isArrowDownButtonShown: true,
+            rowIndex: 6,
+          },
+          {
+            tag: '300',
+            content: '$a test5 $a test6',
+            isArrowUpButtonShown: true,
+            isArrowDownButtonShown: false,
+            rowIndex: 7,
+          },
         ],
       };
       const firstEditableRow = 4;
-      const lastEditableRow = 7;
-      const lastRow = 8;
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -56,40 +67,59 @@ describe('MARC', () => {
           testData.fieldValues.forEach(({ tag, content }, index) => {
             const rowIndex = firstEditableRow + index;
             QuickMarcEditor.addNewField(tag, content, rowIndex);
-            QuickMarcEditor.verifyEditableFieldIcons(rowIndex + 1);
           });
+          testData.fieldValues.forEach(
+            ({ rowIndex, isArrowUpButtonShown, isArrowDownButtonShown }) => {
+              QuickMarcEditor.verifyEditableFieldIcons(
+                rowIndex,
+                isArrowUpButtonShown,
+                isArrowDownButtonShown,
+              );
+            },
+          );
+          QuickMarcEditor.verifyEditableFieldIcons(3, false, true, false);
+          QuickMarcEditor.verifyEditableFieldIcons(4, true, true, false);
           QuickMarcEditor.waitLoading();
 
           // Move field up
-          QuickMarcEditor.moveFieldUp(lastEditableRow);
-          for (let i = lastEditableRow - 1; i > firstEditableRow; i--) {
-            QuickMarcEditor.verifyAfterMovingFieldUp(
-              i,
-              testData.fieldValues[2].tag,
-              testData.fieldValues[2].content,
-            );
-            QuickMarcEditor.moveFieldUpWithEnter(i);
-          }
-          QuickMarcEditor.verifyAfterMovingFieldUpFirstEditableRow(
+          QuickMarcEditor.moveFieldUp(6);
+          QuickMarcEditor.verifyAfterMovingFieldUp(
+            5,
+            testData.fieldValues[1].tag,
+            testData.fieldValues[1].content,
+          );
+          QuickMarcEditor.moveFieldUpWithEnter(5);
+          QuickMarcEditor.verifyAfterMovingFieldUp(
             4,
-            testData.fieldValues[2].tag,
-            testData.fieldValues[2].content,
+            testData.fieldValues[1].tag,
+            testData.fieldValues[1].content,
+          );
+          QuickMarcEditor.moveFieldUpWithEnter(4);
+          QuickMarcEditor.verifyAfterMovingFieldUpFirstEditableRow(
+            3,
+            testData.fieldValues[1].tag,
+            testData.fieldValues[1].content,
           );
 
           // Move field down
-          QuickMarcEditor.clickArrowDownButton(firstEditableRow);
-          for (let i = firstEditableRow + 1; i < lastRow; i++) {
-            QuickMarcEditor.verifyAfterMovingFieldDown(
-              i,
-              testData.fieldValues[2].tag,
-              testData.fieldValues[2].content,
-            );
-            QuickMarcEditor.moveFieldDownWithEnter(i);
-          }
+          QuickMarcEditor.clickArrowDownButton(3);
+          QuickMarcEditor.verifyAfterMovingFieldDown(
+            4,
+            testData.fieldValues[1].tag,
+            testData.fieldValues[1].content,
+          );
+          QuickMarcEditor.moveFieldDownWithEnter(4);
+          QuickMarcEditor.verifyAfterMovingFieldDown(
+            5,
+            testData.fieldValues[1].tag,
+            testData.fieldValues[1].content,
+          );
+          QuickMarcEditor.moveFieldDownWithEnter(5);
+          QuickMarcEditor.moveFieldDownWithEnter(6);
           QuickMarcEditor.verifyAfterMovingFieldDownLastEditableRow(
-            lastRow,
-            testData.fieldValues[2].tag,
-            testData.fieldValues[2].content,
+            7,
+            testData.fieldValues[1].tag,
+            testData.fieldValues[1].content,
           );
 
           // Check text field focus by pressing Tab
@@ -100,20 +130,15 @@ describe('MARC', () => {
           // Delete fields
           QuickMarcEditor.deleteField(5);
           cy.wait(100);
+          QuickMarcEditor.checkDeleteThisFieldHoverText();
+          QuickMarcEditor.verifyDeleteButtonInFocus(5);
           QuickMarcEditor.deleteFieldWithEnter(5);
-          QuickMarcEditor.checkAfterDeleteField('035');
-          QuickMarcEditor.deleteField(5);
-          QuickMarcEditor.checkAfterDeleteLastEditableField('240');
+          QuickMarcEditor.checkAfterDeleteField(testData.fieldValues[0].tag);
 
-          // Add empty field and check that tag box is focused
-          QuickMarcEditor.addEmptyFields(5);
-          QuickMarcEditor.verifyTagBoxIsFocused(6);
-          QuickMarcEditor.deleteField(6);
-
-          // move cursor between subfields of the same field
-          QuickMarcEditor.moveCursorToTagBox(6);
-          QuickMarcEditor.movetoFourthBoxUsingTab(6);
-          InventoryKeyboardShortcuts.moveCursorBetweenSubfieldsAndCheck(6);
+          // Move cursor between subfields of the same field
+          QuickMarcEditor.moveCursorToTagBox(5);
+          QuickMarcEditor.movetoFourthBoxUsingTab(5);
+          InventoryKeyboardShortcuts.moveCursorBetweenSubfieldsAndCheck(5);
         },
       );
     });

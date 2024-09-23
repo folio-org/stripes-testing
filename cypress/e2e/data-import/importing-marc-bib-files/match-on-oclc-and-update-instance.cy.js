@@ -7,15 +7,13 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -25,15 +23,20 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
+    let user;
     const itemsForCreateInstance = {
       catalogedDate: '###TODAY###',
       catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
@@ -116,14 +119,21 @@ describe('Data Import', () => {
           }
         },
       );
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password);
       });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(
           collectionOfJobProfiles[0].jobProfile.profileName,
         );
@@ -150,6 +160,7 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile for creating instance
+        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
@@ -160,7 +171,7 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
         NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
-        NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
+        NewFieldMappingProfile.addNatureOfContentTerms('"bibliography"');
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
@@ -195,7 +206,7 @@ describe('Data Import', () => {
         JobProfiles.search(collectionOfJobProfiles[0].jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -226,6 +237,7 @@ describe('Data Import', () => {
           NewFieldMappingProfile.fillSummaryInMappingProfile(
             collectionOfMappingAndActionProfiles[1].mappingProfile,
           );
+          cy.wait(1000);
           NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
           NewFieldMappingProfile.save();
@@ -269,7 +281,7 @@ describe('Data Import', () => {
           JobProfiles.search(collectionOfJobProfiles[1].jobProfile.profileName);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(nameMarcFileForUpdate);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(nameMarcFileForUpdate, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpdate);
           [
             FileDetails.columnNameInResultList.srsMarc,

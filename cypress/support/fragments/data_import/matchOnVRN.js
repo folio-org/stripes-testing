@@ -296,6 +296,7 @@ function createMatchProfileForVRN({
     incomingSubField.fillIn(subfield),
     criterionValueButton.click(),
   ]);
+  cy.wait(1000);
   cy.expect(criterionSelection.exists());
   cy.do(criterionSelection.select('Acquisitions data: Vendor reference number'));
 

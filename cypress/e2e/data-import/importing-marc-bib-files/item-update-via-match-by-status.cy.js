@@ -19,9 +19,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -37,7 +37,6 @@ import StatisticalCodes from '../../../support/fragments/settings/inventory/inst
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -45,6 +44,7 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let statisticalCode;
+    let statisticalCodeId;
     const titlesItemsStatusChanged = [
       'Making the news popular : mobilizing U.S. news audiences / Anthony M. Nadler.',
       'Genius : the game / Leopoldo Gout.',
@@ -137,11 +137,10 @@ describe('Data Import', () => {
       name: `C357552 Item HRID ${getRandomPostfix()}`,
     };
 
-    before('Create test data', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryMarcItemInProcess.gui,
         Permissions.uiInventoryMarcItemIntellectual.gui,
@@ -150,18 +149,17 @@ describe('Data Import', () => {
         Permissions.uiInventoryMarcItemUnavailable.gui,
         Permissions.uiInventoryMarcItemUnknow.gui,
         Permissions.uiInventoryMarkItemsWithdrawn.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
         StatisticalCodes.createViaApi().then((resp) => {
           statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
         });
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
+        cy.visit(SettingsMenu.mappingProfilePath);
       });
     });
 
@@ -182,6 +180,7 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
+        StatisticalCodes.deleteViaApi(statisticalCodeId);
       });
     });
 
@@ -320,13 +319,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
         InventorySearchAndFilter.saveUUIDs();
-        // need to create a new file with instance UUID because tests are runing in multiple threads
-        cy.intercept('/search/instances/ids**').as('getIds');
-        cy.wait('@getIds', getLongDelay()).then((req) => {
-          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
-
-          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
-        });
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

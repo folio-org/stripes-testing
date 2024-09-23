@@ -42,7 +42,7 @@ describe('MARC', () => {
 
       const linkingTagAndValues = {
         tag: '240',
-        rowIndex: 18,
+        rowIndex: 17,
         value: 'C374160 Beethoven, Ludwig van',
         boxFourth: '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
         boxFifth: '',
@@ -106,6 +106,8 @@ describe('MARC', () => {
               linkingTagAndValues.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -132,12 +134,16 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthority.edit();
-          QuickMarcEditor.updateExistingFieldContent(12, testData.update400Field);
+          QuickMarcEditor.updateExistingFieldContent(11, testData.update400Field);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(testData.tag035, testData.update035Field);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           MarcAuthorities.verifyMarcViewPaneIsOpened();

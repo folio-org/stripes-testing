@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -12,7 +11,7 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import InteractorsTools from '../../support/utils/interactorsTools';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -20,12 +19,14 @@ describe('Orders', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const firstOrder = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
     approved: true,
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   let user;
   let orderNumber;
   let servicePointId;
@@ -33,9 +34,9 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
+      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
@@ -43,32 +44,26 @@ describe('Orders', () => {
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
+          ServicePoints.getViaApi().then((servicePoint) => {
+            servicePointId = servicePoint[0].id;
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+              location = res;
+              Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+                organization.id = responseOrganizations;
+                firstOrder.vendor = organization.id;
+                Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
+                  firstOrder.id = firstOrderResponse.id;
+                  orderNumber = firstOrderResponse.poNumber;
+                });
+              });
+            });
+          });
         });
       });
     });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    firstOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(firstOrder);
-    });
-
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
@@ -83,7 +78,7 @@ describe('Orders', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(firstOrder.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
@@ -93,12 +88,7 @@ describe('Orders', () => {
       location.libraryId,
       location.id,
     );
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    Funds.checkIsBudgetDeleted();
+    Budgets.deleteViaApi(firstBudget.id);
 
     Funds.deleteFundViaApi(defaultFund.id);
 
@@ -116,7 +106,7 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.claimingActiveAndSetInterval('35');
       OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
         defaultFund,

@@ -14,9 +14,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -35,16 +35,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let userId;
-    const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
-    const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
+    const filePathForCreateInstance = 'marcFileForC347829.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347829_1.mrc';
     const fileNameForCreateInstance = `C347829 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347829 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
     const resourceIdentifiers = [
-      { type: 'UPC', value: 'ORD32671387-4' },
+      { type: 'UPC', value: 'ORD32671387-5' },
       { type: 'OCLC', value: '(OCoLC)84714376518561876438' },
-      { type: 'Invalid UPC', value: 'ORD32671387-4' },
+      { type: 'Invalid UPC', value: 'ORD32671387-5' },
       { type: 'System control number', value: '(AMB)84714376518561876438' },
     ];
     const matchProfile = {
@@ -127,7 +127,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreateInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
@@ -185,7 +185,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdateInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.NO_ACTION);
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.UPDATED);

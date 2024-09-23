@@ -19,9 +19,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
-    const fieldMappingProfile = `autotest_mapping_profile_name_${getRandomPostfix()}`;
-    const actionProfile = `autotest_action_profile_name_${getRandomPostfix()}`;
-    const jobProfile = `autotest_job_profile_name_${getRandomPostfix()}`;
+    const fieldMappingProfile = `C376006 autotest_mapping_profile_name_${getRandomPostfix()}`;
+    const actionProfile = `C376006 autotest_action_profile_name_${getRandomPostfix()}`;
+    const jobProfile = `C376006 autotest_job_profile_name_${getRandomPostfix()}`;
     const orderLineTitle = '245$a';
 
     const testData = {
@@ -38,9 +38,9 @@ describe('Data Import', () => {
         orderLineInformation: {
           title: orderLineTitle,
           contributors: [
-            { name: 'Lewis, Meriwether', type: 'Personal name' },
-            { name: 'American Philosophical Society', type: 'Corporate name' },
-            { name: 'Lewis and Clark Expedition', type: 'Meeting name' },
+            { name: '100$a', type: 'Personal name' },
+            { name: '710$a', type: 'Corporate name' },
+            { name: '711$a', type: 'Meeting name' },
           ],
           productIds: [{ id: '020$a', type: 'ISBN' }],
           poLineDetails: {
@@ -79,7 +79,7 @@ describe('Data Import', () => {
       },
       marcFile: {
         marc: 'marcFileForC376006.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C376006 testMarcFile.${getRandomPostfix()}.mrc`,
       },
       user: {},
     };
@@ -166,15 +166,14 @@ describe('Data Import', () => {
         cy.visit(TopMenu.dataImportPath);
 
         // Click on the "or choose files" button,  Select file from the precondition, Click on the "Open" button
-        DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
+        DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
 
         // Select job profile
         DataImportJobProfiles.search(jobProfile);
 
         // Click on the "Actions" button,  Select "Run", Click on the "Run" button
         DataImportJobProfiles.runImportFile();
-        DataImportJobProfiles.waitFileIsImported(testData.marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
 
         // Go to the "Orders" app, Click "Order lines"
         cy.visit(TopMenu.orderLinesPath);

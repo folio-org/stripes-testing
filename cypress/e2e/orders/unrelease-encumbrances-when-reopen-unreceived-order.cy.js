@@ -4,7 +4,6 @@ import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -15,94 +14,132 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  INVOICE_STATUSES,
+  ORDER_STATUSES,
+} from '../../support/constants';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 
 describe('Orders', () => {
-  const order = {
-    ...NewOrder.defaultOngoingTimeOrder,
-    approved: true,
-  };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-    ],
-  };
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const allocatedQuantity = '1000';
-  let orderNumber;
+
+  const defaultOrder = {
+    ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
+    approved: true,
+    reEncumber: true,
+  };
+  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 1000,
+  };
   let user;
-  let effectiveLocationServicePoint;
+  let orderNumber;
+  let servicePointId;
   let location;
-  const invoice = { ...NewInvoice.defaultUiInvoice };
+  let firstInvoice;
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
+      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+      firstBudget.fiscalYearId = defaultFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
+
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
+          ServicePoints.getViaApi().then((servicePoint) => {
+            servicePointId = servicePoint[0].id;
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+              location = res;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          Helper.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-      });
-    });
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
+              MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+                (mtypes) => {
+                  cy.getAcquisitionMethodsApi({
+                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                  }).then((params) => {
+                    // Prepare 2 Open Orders for Rollover
+                    Organizations.createOrganizationViaApi(organization).then(
+                      (responseOrganizations) => {
+                        organization.id = responseOrganizations;
+                        defaultOrder.vendor = organization.id;
+                        const firstOrderLine = {
+                          ...BasicOrderLine.defaultOrderLine,
+                          cost: {
+                            listUnitPrice: 100.0,
+                            currency: 'USD',
+                            discountType: 'percentage',
+                            quantityPhysical: 1,
+                            poLineEstimatedPrice: 100.0,
+                          },
+                          fundDistribution: [
+                            { code: defaultFund.code, fundId: defaultFund.id, value: 100 },
+                          ],
+                          locations: [
+                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
+                          ],
+                          acquisitionMethod: params.body.acquisitionMethods[0].id,
+                          physical: {
+                            createInventory: 'Instance, Holding, Item',
+                            materialType: mtypes.body.id,
+                            materialSupplier: responseOrganizations,
+                            volumes: [],
+                          },
+                        };
 
-        cy.visit(TopMenu.ordersPath);
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-          Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList(orderNumber);
-          Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-          OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
-            defaultFund,
-            '100',
-            '1',
-            '100',
-            location.name,
-          );
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
-          cy.visit(TopMenu.invoicesPath);
-          Invoices.createRolloverInvoice(invoice, organization.name);
-          Invoices.createInvoiceLineFromPol(orderNumber);
-          Invoices.approveInvoice();
-          Invoices.payInvoice();
-          cy.visit(TopMenu.ordersPath);
-          Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList(orderNumber);
-          Orders.cancelOrder();
+                        Orders.createOrderViaApi(defaultOrder).then((defaultOrderResponse) => {
+                          defaultOrder.id = defaultOrderResponse.id;
+                          orderNumber = defaultOrderResponse.poNumber;
+                          firstOrderLine.purchaseOrderId = defaultOrderResponse.id;
+
+                          OrderLines.createOrderLineViaApi(firstOrderLine);
+                          Orders.updateOrderViaApi({
+                            ...defaultOrderResponse,
+                            workflowStatus: ORDER_STATUSES.OPEN,
+                          });
+                          Invoices.createInvoiceWithInvoiceLineViaApi({
+                            vendorId: organization.id,
+                            fiscalYearId: defaultFiscalYear.id,
+                            poLineId: firstOrderLine.id,
+                            fundDistributions: firstOrderLine.fundDistribution,
+                            accountingCode: organization.erpCode,
+                            releaseEncumbrance: true,
+                            subTotal: 100,
+                          }).then((invoiceRescponse) => {
+                            firstInvoice = invoiceRescponse;
+
+                            Invoices.changeInvoiceStatusViaApi({
+                              invoice: firstInvoice,
+                              status: INVOICE_STATUSES.PAID,
+                            });
+                            cy.loginAsAdmin({
+                              path: TopMenu.ordersPath,
+                              waiter: Orders.waitLoading,
+                            });
+                            Orders.searchByParameter('PO number', orderNumber);
+                            Orders.selectFromResultsList(orderNumber);
+                            Orders.cancelOrder();
+                          });
+                        });
+                      },
+                    );
+                  });
+                },
+              );
+            });
+          });
         });
       });
     });

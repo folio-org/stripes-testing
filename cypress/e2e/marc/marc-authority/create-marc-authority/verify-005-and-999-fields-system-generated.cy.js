@@ -24,12 +24,12 @@ describe('MARC', () => {
       };
       const tag999 = '999';
       const newField010 = {
-        rowIndex: 4,
+        previousFieldTag: '008',
         tag: '010',
         content: `$a ${localAuthFile.prefix}${randomFourDigitNumber()}`,
       };
       const newField100 = {
-        rowIndex: 5,
+        previousFieldTag: '010',
         tag: '100',
         content: '$a 005 and 999 auto-generated test',
       };
@@ -76,7 +76,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
 
@@ -93,12 +93,22 @@ describe('MARC', () => {
           // 3 Add 2 new fields by clicking on "+" icon and fill them as specified:
           // 010 \\ "$a <<enter a value in format <Prefix><Value> in accordance to selected authority file>>", ex.: "n000232"
           // 100 \\ "$a 005 and 999 auto-generated test"
-          MarcAuthority.addNewField(newField010.rowIndex, newField010.tag, newField010.content);
-          MarcAuthority.addNewField(newField100.rowIndex, newField100.tag, newField100.content);
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField010.previousFieldTag,
+            newField010.tag,
+            newField010.content,
+          );
+          MarcAuthority.addNewFieldAfterExistingByTag(
+            newField100.previousFieldTag,
+            newField100.tag,
+            newField100.content,
+          );
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 
           // 4 Click on the "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

@@ -11,6 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
+    let preconditionUserId;
     let user;
     let instanceHrid;
     let instanceId;
@@ -20,15 +21,21 @@ describe('Inventory', () => {
     const fileName = `C402775 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+            instanceId = response[0].instance.id;
+          },
+        );
       });
 
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           user = userProperties;
+
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -39,6 +46,7 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(preconditionUserId);
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -46,7 +54,7 @@ describe('Inventory', () => {
 
     it(
       'C402775 (NON-CONSORTIA) Verify the Source of a MARC Instance on non-consortial tenant (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.instanceTabIsDefault();

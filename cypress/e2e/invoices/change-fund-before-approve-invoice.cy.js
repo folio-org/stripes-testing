@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -16,6 +15,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
@@ -47,7 +47,14 @@ describe('Invoices', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-  const allocatedQuantityForFistFund = '100';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
+  const secondBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   let user;
   let orderNumber;
 
@@ -65,31 +72,31 @@ describe('Invoices', () => {
       organization.addresses.find((address) => address.isPrimary === true),
     );
     invoice.batchGroup = 'FOLIO';
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
+      defaultFiscalYear.id = defaultFiscalYearResponse.id;
+      firstBudget.fiscalYearId = defaultFiscalYearResponse.id;
+      secondBudget.fiscalYearId = defaultFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
         secondFund.ledgerId = defaultLedger.id;
+
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantityForFistFund);
-        });
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantityForFistFund);
+          firstBudget.fundId = fundResponse.fund.id;
+          Budgets.createViaApi(firstBudget);
+
+          Funds.createViaApi(secondFund).then((secondFundResponse) => {
+            secondFund.id = secondFundResponse.fund.id;
+            secondBudget.fundId = secondFundResponse.fund.id;
+            Budgets.createViaApi(secondBudget);
+          });
         });
       });
     });
+    cy.loginAsAdmin();
+
     cy.visit(SettingsMenu.approvalsPath);
     SettingsOrders.selectApprovalRequired();
     cy.createTempUser([

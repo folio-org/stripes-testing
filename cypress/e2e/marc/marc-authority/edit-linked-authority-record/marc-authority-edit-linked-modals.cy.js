@@ -56,10 +56,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -72,6 +73,7 @@ describe('MARC', () => {
             });
           });
 
+          cy.getAdminToken();
           cy.loginAsAdmin({
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -92,6 +94,8 @@ describe('MARC', () => {
             );
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag600);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -126,6 +130,8 @@ describe('MARC', () => {
           QuickMarcEditor.afterDeleteNotification(testData.updatedTagName);
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
@@ -136,6 +142,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag046, testData.updated046FieldValue);
           QuickMarcEditor.deleteFieldAndCheck(7, testData.tag046);
           QuickMarcEditor.afterDeleteNotification(testData.tag046);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
@@ -144,6 +152,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
           QuickMarcEditor.deleteFieldAndCheck(18, testData.tag952);
           QuickMarcEditor.afterDeleteNotification(testData.tag952);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();

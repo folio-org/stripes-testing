@@ -5,6 +5,7 @@ import {
   PaneHeader,
   Popover,
   including,
+  Link,
 } from '../../../../../interactors';
 
 const transactionDetailSection = Section({ id: 'pane-transaction-details' });
@@ -32,5 +33,9 @@ export default {
   },
   closeTransactionDetails() {
     cy.do(transactionDetailsPaneHeader.find(Button({ icon: 'times' })).click());
+  },
+
+  openSourceInTransactionDetails(source) {
+    cy.do(transactionDetailSection.find(Link(source)).click());
   },
 };

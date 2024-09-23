@@ -111,7 +111,7 @@ describe('Title Level Request', () => {
   it(
     'C380500: Editing recall request does not change recalled item (vega) (TaaS)',
     {
-      tags: ['criticalPath', 'vega'],
+      tags: ['criticalPath', 'vega', 'shiftLeft'],
     },
     () => {
       // Enter patron id or choose patron with "Patron look-up" function.

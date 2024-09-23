@@ -12,7 +12,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -109,7 +109,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ])
         .then((userProperties) => {
           testData.user = userProperties;
@@ -121,7 +121,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
 
           cy.resetTenant();
@@ -131,7 +131,7 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
           cy.resetTenant();
         })
@@ -215,7 +215,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);

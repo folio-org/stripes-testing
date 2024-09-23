@@ -254,6 +254,40 @@ export default {
     });
     return cy.get('@invoice');
   },
+
+  createInvoiceWithInvoiceLineWithoutOrderViaApi({
+    vendorId,
+    fiscalYearId,
+    batchGroupId,
+    invoiceStatus,
+    fundDistributions,
+    accountingCode,
+    subTotal,
+    releaseEncumbrance,
+    exportToAccounting,
+  }) {
+    this.createInvoiceViaApi({
+      vendorId,
+      accountingCode,
+      fiscalYearId,
+      batchGroupId,
+      invoiceStatus,
+      exportToAccounting,
+    }).then((resp) => {
+      cy.wrap(resp).as('invoice');
+      const { id: invoiceId, status: invoiceLineStatus } = resp;
+      const invoiceLine = getDefaultInvoiceLine({
+        invoiceId,
+        invoiceLineStatus,
+        fundDistributions,
+        subTotal,
+        accountingCode,
+        releaseEncumbrance,
+      });
+      this.createInvoiceLineViaApi(invoiceLine);
+    });
+    return cy.get('@invoice');
+  },
   selectFolio() {
     cy.do([
       Button({ id: 'accordion-toggle-button-status' }).click(),
@@ -277,9 +311,10 @@ export default {
     ]);
     FinanceHelper.selectFromResultsList();
     cy.get('input[name="subTotal"]').clear().type(total);
-    cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
+    cy.do([fundInInvoiceSection.find(Button('%')).click()]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
-    cy.wait(4000);
   },
 
   checkSearchResultsContent({ records = [] } = {}) {
@@ -329,8 +364,6 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Button({ name: 'accountNo' }).click(),
-      SelectionList().select(`Default (${invoice.accountingCode})`),
       batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
       invoicePaymentMethodSelect.choose('Cash'),
@@ -379,6 +412,27 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createInvoiceFromOrderWithMultiLines(invoice, fiscalYear) {
+    cy.wait(4000);
+    cy.do(Button({ id: 'invoice-fiscal-year' }).click());
+    cy.wait(4000);
+    cy.do([
+      SelectionOption(fiscalYear).click(),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+    ]);
+    cy.wait(4000);
+    cy.do(Button('Save & continue').click());
+    cy.wait(4000);
+    cy.do(saveAndClose.click());
+    cy.wait(4000);
   },
 
   createInvoiceFromOrderWithoutFY(invoice) {
@@ -477,6 +531,7 @@ export default {
       Button({ id: 'adjustments[0].fundDistributions[0].fundId' }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
+    cy.wait(3000);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
@@ -627,6 +682,8 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
@@ -651,11 +708,15 @@ export default {
       Button('Add line from POL').click(),
     ]);
     cy.expect(Modal('Select order lines').exists());
+    cy.wait(4000);
     cy.do([
       Modal('Select order lines')
         .find(SearchField({ id: searchInputId }))
         .fillIn(orderNumber),
       Modal('Select order lines').find(searchButton).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click(),
     ]);
@@ -706,9 +767,11 @@ export default {
       Button({ id: 'fundDistributions-add-button' }).click(),
       Selection('Fund ID*').open(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
-      saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do([saveAndClose.click()]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+    cy.wait(8000);
   },
 
   changeFundInLine: (fund) => {
@@ -734,6 +797,8 @@ export default {
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
       saveAndClose.click(),
     ]);
+    cy.wait(2000);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
@@ -785,6 +850,23 @@ export default {
       submitButton.click(),
     ]);
     InteractorsTools.checkCalloutErrorMessage(errorMessage);
+  },
+
+  canNotApproveAndPayInvoice: (errorMessage) => {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button('Approve & pay').click(),
+      submitButton.click(),
+    ]);
+    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+  },
+
+  approveAndPayInvoice: () => {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button('Approve & pay').click(),
+      submitButton.click(),
+    ]);
   },
 
   searchByNumber: (invoiceNumber) => {
@@ -940,6 +1022,10 @@ export default {
     );
   },
 
+  selectInvoiceLineByNumber(total) {
+    cy.contains(total).click();
+  },
+
   checkFundInInvoiceLine: (fund) => {
     cy.expect(
       Section({ id: 'invoiceLineFundDistribution' })
@@ -973,6 +1059,16 @@ export default {
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
+  selectInvoiceByIndex: (invoiceNumber, indexNumber) => {
+    cy.wait(4000);
+    cy.do(
+      invoiceResultsPane
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(Link(invoiceNumber))
+        .click(),
+    );
+  },
+
   checkVendorCodeInInvoicePane: (vendorCode) => {
     cy.wait(4000);
     cy.expect(Pane({ subtitle: vendorCode }).exists());
@@ -980,6 +1076,12 @@ export default {
 
   closeInvoiceDetailsPane: () => {
     cy.do(invoiceDetailsPane.find(Button({ icon: 'times' })).click());
+    cy.wait(2000);
+  },
+
+  closeInvoiceLineDetailsPane: () => {
+    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'times' })).click());
+    cy.wait(2000);
   },
 
   resetFilters: () => {
@@ -1101,7 +1203,11 @@ export default {
         .fillIn(organization.name),
       searchButton.click(),
     ]);
-    FinanceHelper.selectFromResultsList();
+    cy.do(
+      Modal('Select Organization')
+        .find(MultiColumnListRow({ index: 0 }))
+        .click(),
+    );
   },
 
   selectApprovalDateFilter: (dateFrom, dateTo) => {
@@ -1167,6 +1273,16 @@ export default {
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  verifyCurrentEncumbrance: (expectedValue) => {
+    cy.get('#invoiceLineFundDistribution')
+      .find('div[role="gridcell"]')
+      .filter(':nth-child(6)')
+      .each(($el) => {
+        const text = $el.text().trim();
+        expect(text).to.eq(expectedValue);
+      });
   },
 
   openPOLFromInvoiceLineInCurrentPage: (polNumber) => {

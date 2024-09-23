@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  itemIdentifiers,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -19,6 +21,7 @@ const invalidBarcode = getRandomPostfix();
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
@@ -56,7 +59,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353232 Verify error accordion during matching (In app approach) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -72,7 +75,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
@@ -82,22 +85,22 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.actionsIsShown();
 
         const expectedColumnTitles = [
+          'Item effective location',
+          'Effective call number',
           'Item HRID',
           'Barcode',
-          'Effective call number',
-          'Status',
           'Material type',
           'Permanent loan type',
           'Temporary loan type',
-          'Item effective location',
+          'Status',
         ];
         expectedColumnTitles.forEach((title) => BulkEditSearchPane.verifyResultColumnTitles(title));
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
         BulkEditActions.verifyItemActionDropdownItems();
 
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item ID');
-        BulkEditSearchPane.verifyResultColumnTitles('Item ID');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item UUID');
+        BulkEditSearchPane.verifyResultColumnTitles('Item UUID');
       },
     );
 
@@ -105,7 +108,9 @@ describe('bulk-edit', () => {
       'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.isItemsRadioChecked(true);
+        BulkEditSearchPane.verifyRecordIdentifiers(itemIdentifiers);
 
         [
           {

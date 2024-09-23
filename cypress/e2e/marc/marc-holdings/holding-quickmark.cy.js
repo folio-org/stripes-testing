@@ -30,23 +30,28 @@ describe('MARC', () => {
         permissions.inventoryAll.gui,
         permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
         permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-      });
 
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
-          (response) => {
-            response.forEach((record) => {
-              instanceID = record[propertyName].id;
-            });
-          },
-        );
-        Logs.waitFileIsImported(fileName);
-        Logs.checkJobStatus(fileName, 'Completed');
-        Logs.openFileDetails(fileName);
-        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
-        InventorySteps.addMarcHoldingRecord();
+        cy.getUserToken(testData.user.username, testData.user.password);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        }).then(() => {
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+            (response) => {
+              response.forEach((record) => {
+                instanceID = record[propertyName].id;
+              });
+            },
+          );
+          Logs.waitFileIsImported(fileName);
+          Logs.checkJobStatus(fileName, 'Completed');
+          Logs.openFileDetails(fileName);
+          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
+          InventorySteps.addMarcHoldingRecord();
+        });
       });
     });
 
@@ -79,7 +84,7 @@ describe('MARC', () => {
 
     it(
       'C345390 Add a field to a record using quickMARC (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
       () => {
         QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
         QuickMarcEditor.checkInitialContent(
@@ -100,35 +105,39 @@ describe('MARC', () => {
       },
     );
 
-    it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
-      // Wait until the page to be loaded fully.
-      cy.wait(1000);
-      QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
+    it(
+      'C345398 Edit MARC 008 (spitfire)',
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+      () => {
+        // Wait until the page to be loaded fully.
+        cy.wait(1000);
+        QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
-      const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
-      HoldingsRecordView.waitLoading();
-      // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-      HoldingsRecordView.close();
-      InventoryInstance.openHoldingView();
-      HoldingsRecordView.viewSource();
-      InventoryViewSource.contains(changed008TagValue);
-      InventoryViewSource.close();
-      HoldingsRecordView.editInQuickMarc();
-      QuickMarcEditor.waitLoading();
+        const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
+        HoldingsRecordView.waitLoading();
+        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.contains(changed008TagValue);
+        InventoryViewSource.close();
+        HoldingsRecordView.editInQuickMarc();
+        QuickMarcEditor.waitLoading();
 
-      const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
-      HoldingsRecordView.waitLoading();
-      HoldingsRecordView.viewSource();
-      InventoryViewSource.contains(cleared008TagValue);
-      InventoryViewSource.close();
-      HoldingsRecordView.editInQuickMarc();
-      QuickMarcEditor.waitLoading();
-      QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
-    });
+        const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.contains(cleared008TagValue);
+        InventoryViewSource.close();
+        HoldingsRecordView.editInQuickMarc();
+        QuickMarcEditor.waitLoading();
+        QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
+      },
+    );
 
     it(
       'C345400 Attempt to save a record without a MARC 852 (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
       () => {
         QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
           QuickMarcEditor.deleteTag(5);
@@ -137,7 +146,7 @@ describe('MARC', () => {
             'Record cannot be saved. An 852 is required.',
             calloutTypes.error,
           );
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.pressCancel();
           HoldingsRecordView.viewSource();
           InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
         });

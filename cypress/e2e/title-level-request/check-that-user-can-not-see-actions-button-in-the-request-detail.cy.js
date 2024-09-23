@@ -1,14 +1,13 @@
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import Permissions from '../../support/dictionary/permissions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
-import UserEdit from '../../support/fragments/users/userEdit';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
 describe('Title level Request', () => {
@@ -20,10 +19,6 @@ describe('Title level Request', () => {
 
   before('Preconditions', () => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
     TitleLevelRequests.enableTLRViaApi();
     ServicePoints.createViaApi(testData.servicePoint);
     testData.defaultLocation = Locations.getDefaultLocation({
@@ -88,9 +83,10 @@ describe('Title level Request', () => {
     Locations.deleteViaApi(testData.defaultLocation);
   });
 
+  // Tests changes TLR settings for the whole suite!
   it(
     'C350530 Check that user can not see Actions button in the Request detail if all request closed and Title level request option closed (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPathBroken', 'vega'] },
     () => {
       // Open Request detail page for Title level request
       Requests.findCreatedRequest(testData.user.barcode);

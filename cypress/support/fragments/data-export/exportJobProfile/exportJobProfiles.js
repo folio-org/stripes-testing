@@ -80,6 +80,7 @@ export default {
     method: 'DELETE',
     path: `data-export/job-profiles/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }),
 
   verifyDefaultProfiles() {
@@ -87,6 +88,7 @@ export default {
       MultiColumnListRow(including('Default authority export job profile')).exists(),
       MultiColumnListRow(including('Default holdings export job profile')).exists(),
       MultiColumnListRow(including('Default instances export job profile')).exists(),
+      MultiColumnListRow(including('Deleted authority export job profile')).exists(),
     ]);
   },
 

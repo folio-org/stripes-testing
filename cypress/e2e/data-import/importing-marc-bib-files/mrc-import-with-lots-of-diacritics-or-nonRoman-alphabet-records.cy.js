@@ -12,9 +12,12 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let user;
     const quantityOfItems = '15';
     const rowNumbers = [1, 4, 7, 14];
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
@@ -63,8 +66,20 @@ describe('Data Import', () => {
     };
     const nameMarcFileForCreate = `C6709 autotestFile${getRandomPostfix()}.mrc`;
 
-    before('Login', () => {
-      cy.loginAsAdmin();
+    before('Create user and login', () => {
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password);
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -79,7 +94,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
         rowNumbers.forEach((rowNumber) => {
           FileDetails.checkStatusInColumn(

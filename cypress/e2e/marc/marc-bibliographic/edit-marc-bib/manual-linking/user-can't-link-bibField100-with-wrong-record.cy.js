@@ -60,7 +60,7 @@ describe('MARC', () => {
             marc: 'marcAuthFileForC380449.mrc',
             fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            numOfRecords: 10,
+            numOfRecords: 11,
             propertyName: 'authority',
           },
         ];
@@ -76,6 +76,10 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380449*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -217,6 +221,7 @@ describe('MARC', () => {
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
             MarcAuthorities.checkRow(testData.authorityFieldValue.field155);
+            cy.wait(2000);
             MarcAuthorities.selectTitle(testData.authorityFieldValue.field155);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);

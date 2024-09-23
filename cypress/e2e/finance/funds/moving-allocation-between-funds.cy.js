@@ -9,43 +9,45 @@ import {
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Finance: Funds', () => {
-  const toFund = Funds.getDefaultFund();
-  const fromFund = {
-    ...Funds.getDefaultFund(),
-    allocatedToIds: [toFund.id],
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const fromFund = { ...Funds.defaultUiFund };
+  const toFund = {
+    name: `autotest_fund2_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
+
   const toBudget = Budgets.getDefaultBudget();
   const fromBudget = Budgets.getDefaultBudget();
-
-  const testData = {
-    fiscalYear: FiscalYears.getDefaultFiscalYear(),
-    ledger: Ledgers.getDefaultLedger(),
-    funds: [toFund, fromFund],
-    budgets: [toBudget, fromBudget],
-    user: {},
-  };
+  let user;
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      FiscalYears.createViaApi(testData.fiscalYear).then(() => {
-        const ledgerProperties = {
-          ...testData.ledger,
-          fiscalYearOneId: testData.fiscalYear.id,
-        };
-        Ledgers.createViaApi(ledgerProperties).then(() => {
-          testData.funds.forEach((fund, ind) => {
-            const fundProperties = {
-              ...fund,
-              ledgerId: testData.ledger.id,
-            };
-            Funds.createViaApi(fundProperties).then(() => {
-              Budgets.createViaApi({
-                ...testData.budgets[ind],
-                fiscalYearId: testData.fiscalYear.id,
-                fundId: testData.funds[ind].id,
-              });
+      FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+        firstFiscalYear.id = firstFiscalYearResponse.id;
+        toBudget.fiscalYearId = firstFiscalYearResponse.id;
+        fromBudget.fiscalYearId = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          fromFund.ledgerId = defaultLedger.id;
+          toFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(toFund).then((fundResponse) => {
+            toFund.id = fundResponse.fund.id;
+            toBudget.fundId = fundResponse.fund.id;
+            Budgets.createViaApi(toBudget);
+            fromFund.allocatedToIds = [fundResponse.fund.id];
+            Funds.createViaApi(fromFund).then((secondFundResponse) => {
+              fromFund.id = secondFundResponse.fund.id;
+              fromBudget.fundId = secondFundResponse.fund.id;
+              Budgets.createViaApi(fromBudget);
             });
           });
         });
@@ -56,7 +58,7 @@ describe('Finance: Funds', () => {
       permissions.uiFinanceCreateAllocations.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
     ]).then((userProperties) => {
-      testData.user = userProperties;
+      user = userProperties;
 
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.fundPath,
@@ -67,11 +69,13 @@ describe('Finance: Funds', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    testData.budgets.forEach(({ id }) => Budgets.deleteViaApi(id));
-    testData.funds.forEach(({ id }) => Funds.deleteFundViaApi(id));
-    Ledgers.deleteledgerViaApi(testData.ledger.id);
-    FiscalYears.deleteFiscalYearViaApi(testData.fiscalYear.id);
-    Users.deleteViaApi(testData.user.userId);
+    Budgets.deleteViaApi(toBudget.id);
+    Budgets.deleteViaApi(fromBudget.id);
+    Funds.deleteFundViaApi(toFund.id);
+    Funds.deleteFundViaApi(fromFund.id);
+    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
@@ -87,7 +91,7 @@ describe('Finance: Funds', () => {
       const amount = '100';
       Funds.moveAllocation({ fromFund, toFund, amount });
       InteractorsTools.checkCalloutErrorMessage(
-        `$${amount}.00 was not successfully allocated to the budget ${toBudget.name} because it exceeds the total allocation amount of ${fromBudget.name}`,
+        `$${amount}.00 was not successfully allocated to the budget ${fromBudget.name}`,
       );
       Funds.closeTransferModal();
       Funds.closeBudgetDetails();

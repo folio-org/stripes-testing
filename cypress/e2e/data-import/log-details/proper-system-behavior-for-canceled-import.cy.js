@@ -63,7 +63,7 @@ describe('Data Import', () => {
         Logs.checkFileIsRunning(secondMarcFileName);
         DataImport.deleteImportJob(secondMarcFileName);
         JobProfiles.waitFileIsImported(secondMarcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(secondMarcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

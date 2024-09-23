@@ -16,7 +16,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
     tag100: '100',
     createdRecordIDs: [],
     bib100AfterLinkingToAuth100: [
-      33,
+      32,
       '100',
       '1',
       '\\',
@@ -46,7 +46,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
   ];
 
   const linkingTagAndValue = {
-    rowIndex: 33,
+    rowIndex: 32,
     value: 'C366576 ',
     tag: 100,
   };
@@ -98,6 +98,8 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
           linkingTagAndValue.rowIndex,
         );
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
 
@@ -125,20 +127,22 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
-      QuickMarcEditor.deleteField(33);
+      QuickMarcEditor.deleteField(32);
       QuickMarcEditor.afterDeleteNotification(testData.tag100);
       QuickMarcEditor.checkButtonsEnabled();
       QuickMarcEditor.undoDelete();
-      QuickMarcEditor.verifyTagValue(33, testData.tag100);
+      QuickMarcEditor.verifyTagValue(32, testData.tag100);
       QuickMarcEditor.checkButtonsDisabled();
-      QuickMarcEditor.deleteField(33);
+      QuickMarcEditor.deleteField(32);
       QuickMarcEditor.afterDeleteNotification(testData.tag100);
       QuickMarcEditor.checkButtonsEnabled();
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      cy.wait(1500);
       QuickMarcEditor.clickSaveAndKeepEditingButton();
       QuickMarcEditor.checkDeleteModal(1);
       QuickMarcEditor.clickRestoreDeletedField();
       QuickMarcEditor.checkDeleteModalClosed();
-      QuickMarcEditor.verifyTagValue(33, testData.tag100);
+      QuickMarcEditor.verifyTagValue(32, testData.tag100);
       QuickMarcEditor.checkButtonsDisabled();
       QuickMarcEditor.pressCancel();
       InstanceRecordView.verifyInstancePaneExists();

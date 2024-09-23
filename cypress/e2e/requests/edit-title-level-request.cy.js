@@ -95,7 +95,7 @@ describe('Title Level Request', () => {
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
+            userData.patronGroup = userProperties.userGroup.group;
             userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
@@ -146,7 +146,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350559 Check that the user can Edit request (Title level request) (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

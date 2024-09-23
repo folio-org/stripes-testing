@@ -89,6 +89,9 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422149*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -127,7 +130,7 @@ describe('MARC', () => {
 
         it(
           'C422149 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
-          { tags: ['smoke', 'spitfire'] },
+          { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -223,6 +226,8 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n99036055',
               '',
             );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 

@@ -4,9 +4,9 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -35,10 +35,15 @@ describe('Data Import', () => {
       profileName: `402365 autotest match profile_${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
+        in1: '',
+        in2: '',
+        subfield: '',
       },
       matchCriterion: 'Exactly matches',
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
       existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
+      existingMatchExpressionValue: 'instance.hrid',
     };
     const jobProfile = {
       name: `402365 autotest job profile_${getRandomPostfix()}`,

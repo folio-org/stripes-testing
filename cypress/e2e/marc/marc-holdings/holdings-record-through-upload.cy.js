@@ -37,7 +37,7 @@ describe('MARC', () => {
 
     it(
       'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(createdInstanceID);

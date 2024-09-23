@@ -17,17 +17,17 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         const fieldsToUpdate = [
           {
-            rowIndex: 22,
+            rowIndex: 21,
             tag: '337',
             content: '$a video $b v $2 rdamedia $0 n91074080C388533',
           },
           {
-            rowIndex: 17,
+            rowIndex: 16,
             tag: '130',
             naturalId: '$0 n91074080C388533',
           },
           {
-            rowIndex: 56,
+            rowIndex: 55,
             tag: '700',
             content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n91074080C388533',
             emptyContent: '',
@@ -59,12 +59,12 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 17,
+            rowIndex: 16,
             value: 'C388533 Runaway Bride (Motion picture)',
             tag: 130,
           },
           {
-            rowIndex: 57,
+            rowIndex: 56,
             value: 'C388533 Gere, Richard, 1949-',
             tag: 700,
           },
@@ -76,6 +76,9 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388533*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -111,6 +114,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -145,7 +150,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.fillEmptyTextAreaOfField(
               fieldsToUpdate[1].rowIndex,
-              'records[17].subfieldGroups.uncontrolledNumber',
+              'records[16].subfieldGroups.uncontrolledNumber',
               fieldsToUpdate[1].naturalId,
             );
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -191,6 +196,8 @@ describe('MARC', () => {
             QuickMarcEditor.deleteField(fieldsToUpdate[2].rowIndex);
             QuickMarcEditor.afterDeleteNotification('700');
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkDeletingFieldsModal();
             QuickMarcEditor.restoreDeletedFields();

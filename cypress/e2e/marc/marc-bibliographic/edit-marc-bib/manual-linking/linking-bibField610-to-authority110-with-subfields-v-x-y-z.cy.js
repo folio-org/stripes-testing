@@ -17,7 +17,7 @@ describe('MARC', () => {
         const testData = {
           tag610: '610',
           linkedIconText: 'Linked to MARC authority',
-          subjectValue: 'Radio "Roma". Hrvatski program test--TestV--TestX--TestY--TestZ',
+          subjectValue: 'C377025 Radio "Roma". Hrvatski program test--TestV--TestX--TestY--TestZ',
         };
 
         const marcFiles = [
@@ -51,7 +51,7 @@ describe('MARC', () => {
           testData.tag610,
           '2',
           '0',
-          '$a Radio "Roma". $b Hrvatski program',
+          '$a C377025 Radio "Roma". $b Hrvatski program',
           '$u test $v TestV $x TestX $y TestY $z TestZ',
           '$0 4510955',
           '',
@@ -59,6 +59,9 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377025*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -110,6 +113,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib610AfterLinkingToAuth110);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();

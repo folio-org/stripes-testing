@@ -6,6 +6,7 @@ import {
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -14,9 +15,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -167,7 +168,7 @@ describe('Data Import', () => {
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
         [

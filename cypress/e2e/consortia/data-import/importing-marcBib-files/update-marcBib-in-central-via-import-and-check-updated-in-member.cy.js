@@ -12,7 +12,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -34,6 +34,7 @@ import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -44,6 +45,7 @@ describe('Data Import', () => {
         fileName: `C411795 testMarcFile${getRandomPostfix()}.mrc`,
         exportedFileName: `C411795 exportedTestMarcFile${getRandomPostfix()}.mrc`,
         modifiedMarcFile: `C411795 modifiedTestMarcFile${getRandomPostfix()}.mrc`,
+        editedMarcFile: `C411795 editedTestMarcFile${getRandomPostfix()}.mrc`,
       },
       instanceTitle: 'C411795 Instance Shared Central',
       updatedInstanceTitle: 'C411795 Instance Shared Central Updated',
@@ -117,12 +119,38 @@ describe('Data Import', () => {
       }).location;
       Locations.createViaApi(collegeLocationData).then((location) => {
         testData.collegeLocation = location;
-        InventoryHoldings.createHoldingRecordViaApi({
-          instanceId: testData.sharedInstanceId,
-          permanentLocationId: testData.collegeLocation.id,
-        }).then((holding) => {
-          testData.holding = holding;
-        });
+
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+          (holdingSources) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.sharedInstanceId,
+              permanentLocationId: testData.collegeLocation.id,
+              sourceId: holdingSources[0].id,
+            }).then((holding) => {
+              testData.holding = holding;
+            });
+          },
+        );
+
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+          (holdingSources) => {
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.sharedInstanceId,
+              permanentLocationId: testData.collegeLocation.id,
+              sourceId: holdingSources[0].id,
+            }).then((holding) => {
+              testData.holding = holding;
+            });
+          },
+        );
+      });
+      // need to delete 245 from protected fields before updating
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${testData.field245.tag}"`,
+      }).then((list) => {
+        if (list) {
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        }
       });
       cy.resetTenant();
 
@@ -131,7 +159,8 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         users.userAProperties = userProperties;
       });
@@ -168,8 +197,8 @@ describe('Data Import', () => {
       Users.deleteViaApi(users.userBProperties.userId);
       cy.setTenant(Affiliations.College);
       InventoryHoldings.deleteHoldingRecordViaApi(testData.holding.id);
-      Locations.deleteViaApi(testData.collegeLocation);
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
+      // Locations.deleteViaApi(testData.collegeLocation);
       cy.resetTenant();
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
@@ -213,11 +242,11 @@ describe('Data Import', () => {
         // upload the exported and edited marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
+        DataImport.uploadFile(testData.marcFile.modifiedMarcFile, testData.marcFile.editedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.editedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         cy.visit(TopMenu.inventoryPath);

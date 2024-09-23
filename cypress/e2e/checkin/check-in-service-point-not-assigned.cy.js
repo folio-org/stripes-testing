@@ -10,7 +10,7 @@ import Users from '../../support/fragments/users/users';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   let userData;
   let materialType;
   let testData;

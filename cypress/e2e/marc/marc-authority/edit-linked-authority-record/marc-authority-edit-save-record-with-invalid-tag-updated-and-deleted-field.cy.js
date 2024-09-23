@@ -24,19 +24,19 @@ describe('MARC', () => {
         tag952RowIndex: 18,
         tag600RowIndex: 25,
         searchOption: 'Keyword',
-        calloutMessage: 'Record cannot be saved. A MARC tag must contain three characters.',
+        calloutMessage: 'Tag must contain three characters and can only accept numbers 0-9.',
       };
 
       const marcFiles = [
         {
           marc: 'marcBibFileForC375171.mrc',
-          fileName: `testMarcFileC375171.${getRandomPostfix()}.mrc`,
+          fileName: `C375171 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC375171.mrc',
-          fileName: `testMarcFileC375171.${getRandomPostfix()}.mrc`,
+          fileName: `C375171 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'Clovio, Giulio',
           propertyName: 'authority',
@@ -46,48 +46,58 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
+
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
+              });
+              cy.wait(2000);
             });
+          })
+          .then(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIconByIndex(testData.tag600RowIndex);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag100,
+              testData.authority100FieldValue,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              testData.tag600,
+              testData.tag600RowIndex,
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
           });
-        });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIconByIndex(testData.tag600RowIndex);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySearchOptions();
-          InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag100,
-            testData.authority100FieldValue,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, testData.tag600RowIndex);
-          QuickMarcEditor.pressSaveAndClose();
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
-          cy.createTempUser([
-            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          ]).then((createdUserProperties) => {
-            testData.userProperties = createdUserProperties;
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
           });
         });
       });
@@ -115,10 +125,12 @@ describe('MARC', () => {
           QuickMarcEditor.deleteField(testData.tag952RowIndex);
           QuickMarcEditor.afterDeleteNotification(testData.tag952);
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(6, testData.calloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
 

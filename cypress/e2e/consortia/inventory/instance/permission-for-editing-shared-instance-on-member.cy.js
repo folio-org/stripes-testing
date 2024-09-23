@@ -15,7 +15,7 @@ describe('Inventory', () => {
   describe('Instance', () => {
     let user;
     const testData = {
-      newInstanceTitle: `C407746 instanceTitle${getRandomPostfix()}`,
+      newInstanceTitle: `C407751 instanceTitle${getRandomPostfix()}`,
     };
 
     before('Create test data', () => {

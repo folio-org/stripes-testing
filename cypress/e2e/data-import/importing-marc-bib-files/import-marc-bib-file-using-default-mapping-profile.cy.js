@@ -36,10 +36,9 @@ describe('Data Import', () => {
 
     it(
       'C2325 Import a MARC Bib file using the default mapping profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -47,8 +46,8 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
-        Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        cy.wait(120000);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );
   });

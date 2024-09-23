@@ -411,7 +411,7 @@ const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library
 const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
-const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
+const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save & close'));
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
@@ -615,6 +615,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field down a row' }));
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).has({ focused: true }),
+    );
   },
 
   verifyAfterMovingFieldDownLastEditableRow(newRowNumber, tag, content) {
@@ -622,6 +625,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).absent());
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).has({ focused: true }),
+    );
   },
 
   moveCursorToTagBox(rowNumber) {
@@ -631,6 +637,12 @@ export default {
 
   verifyTagBoxIsFocused(rowNumber) {
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(tagBox).has({ focused: true }));
+  },
+
+  verifyDeleteButtonInFocus(rowNumber) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).has({ focused: true }),
+    );
   },
 
   movetoFourthBoxUsingTab(rowNumber) {
@@ -660,6 +672,10 @@ export default {
 
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+    cy.expect(unlinkModal.exists());
+  },
+  clickUnlinkIconInFieldByTag(tag) {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
   },
   clickViewMarcAuthorityIconInTagField(rowIndex) {
@@ -822,6 +838,10 @@ export default {
     cy.expect(Tooltip().has({ text: 'Delete this field' }));
   },
 
+  checkDeleteThisFieldHoverText() {
+    cy.expect(Tooltip().has({ text: 'Delete this field' }));
+  },
+
   checkAfterDeleteLastEditableField(tag) {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
@@ -932,9 +952,23 @@ export default {
     );
   },
 
-  verifyEditableFieldIcons(rowNumber, isDeleteFieldButtonShown = true) {
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
+  verifyEditableFieldIcons(
+    rowNumber,
+    isArrowUpButtonShown,
+    isArrowDownButtonShown,
+    isDeleteFieldButtonShown = true,
+  ) {
+    if (isArrowUpButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).absent());
+    }
+    if (isArrowDownButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).absent());
+    }
+
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
     if (isDeleteFieldButtonShown) {
       cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
@@ -955,6 +989,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).has({ focused: true }),
+    );
   },
 
   verifyAfterMovingFieldUpFirstEditableRow(newRowNumber, tag, content) {
@@ -962,6 +999,9 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field down a row' }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).absent());
+    cy.expect(
+      QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).has({ focused: true }),
+    );
   },
 
   checkFieldContentMatch(selector, regExp) {
@@ -1007,6 +1047,13 @@ export default {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
+    ]);
+  },
+
+  verifyUnlinkAndViewAuthorityButtonsinFieldByTag(tag) {
+    cy.expect([
+      QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ tagValue: tag }).find(viewAuthorityIconButton).exists(),
     ]);
   },
 
@@ -1094,6 +1141,41 @@ export default {
     ]);
   },
 
+  verifyTagFieldAfterLinkingByTag(
+    tag,
+    secondBox,
+    thirdBox,
+    content,
+    eSubfield,
+    zeroSubfield,
+    seventhBox,
+  ) {
+    cy.expect([
+      QuickMarcEditorRow({ tagValue: tag }).find(tagBox).has({ disabled: true, value: tag }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(firstIndicatorBox)
+        .has({ disabled: true, value: secondBox }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(secondIndicatorBox)
+        .has({ disabled: true, value: thirdBox }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(fourthBoxInLinkedField)
+        .has({ disabled: true, value: content }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(fifthBoxInLinkedField)
+        .has({ disabled: false, value: eSubfield }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(sixthBoxInLinkedField)
+        .has({ disabled: true, value: zeroSubfield }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(seventhBoxInLinkedField)
+        .has({ disabled: false, value: seventhBox }),
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea({ value: '$9' }))
+        .absent(),
+    ]);
+  },
+
   verifyTagFieldAfterUnlinking(rowIndex, tag, secondBox, thirdBox, content) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex })
@@ -1108,6 +1190,15 @@ export default {
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ name: `records[${rowIndex}].content` }))
         .has({ value: content }),
+    ]);
+  },
+
+  verifyTagFieldAfterUnlinkingByTag(tag, secondBox, thirdBox, content) {
+    cy.expect([
+      QuickMarcEditorRow({ tagValue: tag }).find(tagBox).has({ value: tag }),
+      QuickMarcEditorRow({ tagValue: tag }).find(firstIndicatorBox).has({ value: secondBox }),
+      QuickMarcEditorRow({ tagValue: tag }).find(secondIndicatorBox).has({ value: thirdBox }),
+      QuickMarcEditorRow({ tagValue: tag }).find(fourthBox).has({ value: content }),
     ]);
   },
 
@@ -1613,17 +1704,6 @@ export default {
     ]);
   },
 
-  checkAuthority008SubfieldsLength() {
-    validRecord.tag008AuthorityBytesProperties
-      .getAllProperties()
-      .map((property) => property.interactor)
-      .forEach((subfield) => {
-        cy.expect(
-          getRowInteractorByTagName('008').find(subfield).has({ maxLength: (1).toString() }),
-        );
-      });
-  },
-
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
@@ -1642,6 +1722,10 @@ export default {
   },
   checkUnlinkTooltipText(rowIndex, text) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).hoverMouse());
+    cy.expect(Tooltip().has({ text }));
+  },
+  checkUnlinkTooltipTextInFieldByTag(tag, text) {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
   checkViewMarcAuthorityTooltipText(rowIndex) {
@@ -1672,6 +1756,15 @@ export default {
 
   checkCallout(callout) {
     cy.expect(Callout(callout).exists());
+  },
+
+  checkErrorMessage(rowIndex, errorMessage) {
+    cy.wait(1000);
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(HTML(including(errorMessage)))
+        .exists(),
+    );
   },
 
   checkNonEditableLdrCalloutBib() {
@@ -1816,6 +1909,10 @@ export default {
     cy.expect(PaneHeader({ text: including(text) }).exists());
   },
 
+  checkRecordStatusNew() {
+    cy.expect(Pane('Create a new  MARC authority record').has({ subtitle: 'Status:New' }));
+  },
+
   verifyPaneheaderWithContentAbsent(text) {
     cy.expect(PaneHeader({ text: including(text) }).absent());
   },
@@ -1895,23 +1992,6 @@ export default {
       QuickMarcEditorRow({ index: rowIndex })
         .find(boxes[boxNumber - 1])
         .has({ value }),
-    );
-  },
-
-  verifyCalloutControlledFields(tags) {
-    let tagsText = `MARC ${tags[0]}`;
-    if (tags.length === 2) tagsText += ` and MARC ${tags[1]}`;
-    else if (tags.length > 2) {
-      for (let i = 1; i <= tags.length - 2; i++) {
-        tagsText += `, MARC ${tags[i]}`;
-      }
-      tagsText += `, and MARC ${tags[tags.length - 1]}`;
-    }
-    cy.expect(
-      Callout(
-        tagsText +
-          ' has a subfield(s) that cannot be saved because the fields are controlled by authority records.',
-      ).exists(),
     );
   },
 
@@ -2222,7 +2302,9 @@ export default {
   },
 
   checkOnlyBackslashesIn008Boxes() {
-    cy.get('div[data-testid="bytes-field-col"]')
+    cy.get('input[value="008"]')
+      .parents('[data-testid="quick-marc-editorid"]')
+      .find('div[data-testid="bytes-field-col"]')
       .find('input')
       .then((fields) => {
         const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
@@ -2299,6 +2381,39 @@ export default {
       'ui-quick-marc.record.fixedField-MultiLvl-text',
       'Multipart resource record level',
     );
+  },
+
+  checkDefaultFieldsInOrder() {
+    cy.expect(
+      QuickMarcEditorRow({ index: 0 })
+        .find(TextField('Field'))
+        .has({ value: 'LDR', disabled: true }),
+    );
+    cy.expect(
+      QuickMarcEditorRow({ index: 1 })
+        .find(TextField('Field'))
+        .has({ value: '001', disabled: true }),
+    );
+    this.checkEmptyContent('001');
+    cy.expect(
+      QuickMarcEditorRow({ index: 2 })
+        .find(TextField('Field'))
+        .has({ value: '005', disabled: true }),
+    );
+    this.checkEmptyContent('005');
+    cy.expect(
+      QuickMarcEditorRow({ index: 3 })
+        .find(TextField('Field'))
+        .has({ value: '008', disabled: false }),
+    );
+    this.checkOnlyBackslashesIn008Boxes();
+    cy.expect(
+      QuickMarcEditorRow({ index: 4 })
+        .find(TextField('Field'))
+        .has({ value: '999', disabled: true }),
+    );
+    this.verifyTagField(4, '999', 'f', 'f', '', '');
+    this.verifyAllBoxesInARowAreDisabled(4);
   },
 
   checkEditableQuickMarcFormIsOpened: () => {
@@ -2653,5 +2768,25 @@ export default {
         .find(TextField('Indicator', { name: including('.indicators[1]') }))
         .has({ disabled: isDisabled }),
     ]);
+  },
+
+  selectOptionsIn008FieldRelfDropdowns(...options) {
+    options.forEach((option, index) => {
+      cy.do(
+        QuickMarcEditorRow({ tagValue: '008' })
+          .find(Select({ name: including(`records[3].content.Relf[${index}]`) }))
+          .choose(option),
+      );
+    });
+  },
+
+  checkOptionsSelectedIn008FieldRelfDropdowns(...options) {
+    options.forEach((option, index) => {
+      cy.expect(
+        QuickMarcEditorRow({ tagValue: '008' })
+          .find(Select({ name: including(`records[3].content.Relf[${index}]`) }))
+          .has({ checkedOptionText: option }),
+      );
+    });
   },
 };

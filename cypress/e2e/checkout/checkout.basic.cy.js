@@ -15,7 +15,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Check Out - Actions ', () => {
+describe('Check out', () => {
   const userData = {
     group: getTestEntityValue('staff$'),
     personal: {},

@@ -70,7 +70,7 @@ describe('MARC', () => {
               localAuthFile.baseUrl,
               false,
             );
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               localAuthFile.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.HRID_STARTS_WITH,

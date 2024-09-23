@@ -14,7 +14,7 @@ import JobProfiles from '../../../../support/fragments/data_import/job_profiles/
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -32,6 +32,7 @@ import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -114,7 +115,8 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         users.userAProperties = userProperties;
       });
@@ -135,6 +137,14 @@ describe('Data Import', () => {
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           ]);
+          // need to delete 245 from protected fields before updating
+          MarcFieldProtection.getListViaApi({
+            query: `"field"=="${testData.field245.tag}"`,
+          }).then((list) => {
+            if (list) {
+              list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+            }
+          });
           cy.resetTenant();
         });
     });
@@ -196,7 +206,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);

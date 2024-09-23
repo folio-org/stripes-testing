@@ -81,12 +81,13 @@ export default {
       cy.do(enterItemBarcodeButton.click());
     }
     cy.wait('@getLoans');
+    cy.wait(500);
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
-    cy.wait(500);
+    cy.wait(1000);
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
@@ -141,6 +142,7 @@ export default {
     // need to synchronize actions before click
     cy.wait(3000);
     cy.do(titleLevelRequest.click());
+    cy.wait(2000);
   },
 
   waitLoadingNewRequestPage(TLR = false) {
@@ -234,6 +236,11 @@ export default {
     cy.expect(requestInfoSection.find(Link(including(userName))).exists());
     cy.expect(requestInfoSection.find(Link(including(userBarcode))).exists());
     cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
+  },
+
+  verifyRequesterInformationWithBarcode: (userName) => {
+    cy.expect(requestInfoSection.find(Link(including(userName))).exists());
+    cy.expect(requestInfoSection.find(HTML(including('-'))).exists());
   },
 
   enterRequestAndPatron(patron) {
@@ -349,7 +356,22 @@ export default {
       including(`Request has been successfully created for ${username}`),
     );
   },
-  checkItemInformationSecton(instanceTitle, location, itemStatus) {
+  verifyModal(header, content) {
+    cy.wait(1000);
+    cy.expect(
+      Modal(including(header)).has({
+        message: including(content),
+      }),
+    );
+  },
+  verifyModalAbsent(header) {
+    cy.wait(3000);
+    cy.expect(Modal(including(header)).absent());
+  },
+  viewBlockDetails() {
+    cy.do(Button('View block details').click());
+  },
+  checkItemInformationSection(instanceTitle, location, itemStatus) {
     cy.expect([
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),

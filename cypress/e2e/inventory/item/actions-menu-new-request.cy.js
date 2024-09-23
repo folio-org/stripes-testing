@@ -204,7 +204,7 @@ describe('Inventory', () => {
           InventoryItems.openActions();
           InventoryItems.clickNewRequestButton();
           NewRequest.waitLoadingNewRequestPage();
-          NewRequest.checkItemInformationSecton(
+          NewRequest.checkItemInformationSection(
             testData.instanceTitle,
             LOCATION_NAMES.MAIN_LIBRARY_UI,
             itemStatus,

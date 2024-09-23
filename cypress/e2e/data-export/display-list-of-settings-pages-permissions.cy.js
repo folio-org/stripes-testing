@@ -6,7 +6,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 let user;
 
-describe('data-export', () => {
+describe('Data Export', () => {
   before('Create test data', () => {
     cy.createTempUser([Permissions.uiUsersView.gui, Permissions.uiUsersPermissions.gui]).then(
       (userProperties) => {
@@ -25,7 +25,7 @@ describe('data-export', () => {
   });
 
   it(
-    'C389473 Verify that "Settings (Data export): display list of settings pages" permission is searchable and renamed (firebird) (Taas)',
+    'C389473 Verify that "Settings (Data export): Can view only" permission is searchable and renamed (firebird) (Taas)',
     { tags: ['firebird', 'extendedPath'] },
     () => {
       UsersSearchPane.searchByStatus('Active');
@@ -34,15 +34,16 @@ describe('data-export', () => {
       UserEdit.openEdit();
       UserEdit.verifyUserPermissionsAccordion();
       UserEdit.openSelectPermissionsModal();
-      UserEdit.searchForPermission('Settings (Data export): display list of settings pages');
-      UserEdit.verifyPermissionsFiltered([
-        'Settings (Data export): display list of settings pages',
-      ]);
+      UserEdit.searchForPermission(Permissions.dataExportSettingsViewOnly.gui);
+      UserEdit.verifyPermissionsFiltered([Permissions.dataExportSettingsViewOnly.gui]);
       UserEdit.resetAll();
       UserEdit.searchForPermission('Data export');
+      cy.wait(500);
       UserEdit.verifyPermissionsFiltered([
-        'Settings (Data export): display list of settings pages',
-        'UI: Data export module is enabled',
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewOnly.gui,
+        Permissions.dataExportSettingsViewOnly.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]);
     },
   );

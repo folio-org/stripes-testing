@@ -11,19 +11,21 @@ let user;
 
 const validFile = `autoTestValidFile${GetRandomPostfix()}.cql`;
 
-describe('data-export', () => {
+describe('Data Export', () => {
   before('Create test data', () => {
-    cy.createTempUser([Permissions.dataExportEnableApp.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.dataExportPath,
-        waiter: DataExportLogs.waitLoading,
-      });
-      FileManager.createFile(
-        `cypress/fixtures/${validFile}`,
-        '(keyword all "*" or isbn="*" or hrid=="*" or id=="*") sortby title',
-      );
-    });
+    cy.createTempUser([Permissions.dataExportUploadExportDownloadFileViewLogs.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
+        FileManager.createFile(
+          `cypress/fixtures/${validFile}`,
+          '(keyword all "*" or isbn="*" or hrid=="*" or id=="*") sortby title',
+        );
+      },
+    );
   });
 
   after('Delete test data', () => {

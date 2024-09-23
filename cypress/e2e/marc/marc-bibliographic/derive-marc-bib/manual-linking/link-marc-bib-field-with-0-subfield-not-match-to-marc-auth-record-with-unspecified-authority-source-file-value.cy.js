@@ -15,7 +15,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
   let userData = {};
   const testData = {
     tag700: '700',
-    rowIndex: 76,
+    rowIndex: 75,
     content:
       '$a C365594 Sprouse, Chris, $e artist. $0 http://id.loc.gov/authorities/names/no98105698',
     createdRecordsIDs: [],
@@ -59,6 +59,10 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
   const bib700AfterLinking = [72, ...bib700AfterLinkingToAuth100.slice(1)];
 
   before('Creating user and test data', () => {
+    cy.getAdminToken();
+    // make sure there are no duplicate authority records in the system
+    MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365594*');
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -69,16 +73,14 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      cy.loginAsAdmin().then(() => {
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
-            });
+      marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.createdRecordsIDs.push(record[marcFile.propertyName].id);
           });
         });
       });
@@ -94,7 +96,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     InventoryInstance.deleteInstanceViaApi(testData.createdRecordsIDs[0]);
-    MarcAuthority.deleteViaAPI(testData.createdRecordsIDs[1]);
+    MarcAuthority.deleteViaAPI(testData.createdRecordsIDs[1], true);
   });
 
   it(
@@ -124,8 +126,9 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
       QuickMarcEditor.checkCallout('Field 700 has been linked to a MARC authority record.');
       QuickMarcEditor.pressSaveAndClose();
+      cy.wait(1500);
+      QuickMarcEditor.pressSaveAndClose();
       InventoryInstances.verifyInstanceDetailsView();
-      cy.wait(3000);
       QuickMarcEditor.checkCallout('Record created.');
       InventoryInstance.verifyContributorWithMarcAppLink(2, 1, marcAuthData.tag100Value);
       InventoryInstance.editMarcBibliographicRecord();

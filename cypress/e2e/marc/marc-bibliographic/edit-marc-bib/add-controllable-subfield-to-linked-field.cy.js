@@ -19,7 +19,7 @@ describe('MARC', () => {
         marcValue: 'C375954 Kerouac, Jack',
         instanceValue: 'C375954 On the road [sound recording] / Jack Kerouac.',
         errorMessage:
-          'MARC 100 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
 
       const marcFiles = [
@@ -48,7 +48,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -74,6 +73,8 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -107,7 +108,7 @@ describe('MARC', () => {
           // wait for the data will be filled in.
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(15, testData.errorMessage);
           QuickMarcEditor.fillEmptyTextAreaOfField(
             15,
             'records[15].subfieldGroups.uncontrolledAlpha',
@@ -119,7 +120,7 @@ describe('MARC', () => {
             '$c 123',
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessage);
+          QuickMarcEditor.checkErrorMessage(15, testData.errorMessage);
         },
       );
     });

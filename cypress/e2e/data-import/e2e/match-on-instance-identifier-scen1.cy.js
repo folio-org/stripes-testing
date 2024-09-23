@@ -13,9 +13,9 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -34,6 +34,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
     let userId;
+    const filePathForCreateInstance = 'marcFileForC347828.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347828_1.mrc';
     const fileNameForCreateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const fileNameForUpdateInstance = `C347828 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
@@ -57,7 +59,7 @@ describe('Data Import', () => {
       instanceOption: 'Identifier: UPC',
     };
     const mappingProfile = {
-      name: `autotestMappingProf${getRandomPostfix()}`,
+      name: `C347828 autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       suppressFromDiscavery: 'Mark for all affected records',
       catalogedDate: '"2021-12-01"',
@@ -65,16 +67,25 @@ describe('Data Import', () => {
       instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
     const actionProfile = {
-      name: `autotestActionProf${getRandomPostfix()}`,
+      name: `C347828 autotestActionProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const jobProfile = {
-      profileName: `autotestJobProf${getRandomPostfix()}`,
+      profileName: `C347828 autotestJobProf${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+        (instances) => {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        },
+      );
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -86,18 +97,11 @@ describe('Data Import', () => {
         Permissions.invoiceSettingsAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-          (instances) => {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          },
-        );
       });
     });
 
@@ -117,15 +121,12 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.verifyUploadState();
-        DataImport.uploadFile(
-          'marcFileForMatchOnIdentifierForCreate.mrc',
-          fileNameForCreateInstance,
-        );
+        DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreateInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForCreateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
@@ -179,15 +180,12 @@ describe('Data Import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFile(
-          'marcFileForMatchOnIdentifierForUpdate_1.mrc',
-          fileNameForUpdateInstance,
-        );
+        DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForUpdateInstance);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(fileNameForUpdateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
         Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.NO_ACTION);

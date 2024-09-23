@@ -19,7 +19,7 @@ describe('MARC', () => {
           createdRecordIDs: [],
           contributor: 'Coates, Ta-Nehisi',
           bib100AfterLinkingToAuth100: [
-            33,
+            32,
             '100',
             '1',
             '\\',
@@ -29,7 +29,7 @@ describe('MARC', () => {
             '',
           ],
           bib700AfterLinkingToAuth100: [
-            76,
+            75,
             '700',
             '1',
             '\\',
@@ -69,12 +69,12 @@ describe('MARC', () => {
         const linkingTagAndValues = [
           {
             tag: '100',
-            rowIndex: 33,
+            rowIndex: 32,
             value: 'C366574 Coates, Ta-Nehisi',
           },
           {
             tag: '700',
-            rowIndex: 76,
+            rowIndex: 75,
             value: 'C366574 Sprouse, Chris',
           },
         ];
@@ -128,6 +128,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -155,8 +157,10 @@ describe('MARC', () => {
             InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700AfterLinkingToAuth100);
-            QuickMarcEditor.deleteField(76);
+            QuickMarcEditor.deleteField(75);
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();

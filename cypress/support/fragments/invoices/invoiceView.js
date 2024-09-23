@@ -1,25 +1,26 @@
 import {
-  MultiColumnListCell,
-  MultiColumnListRow,
-  Section,
+  Accordion,
+  Button,
+  HTML,
   including,
   KeyValue,
-  PaneHeader,
-  Pane,
-  HTML,
-  MultiColumnList,
   Link,
-  Button,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  PaneHeader,
+  Section,
 } from '../../../../interactors';
-import InvoiceEditForm from './invoiceEditForm';
-import InvoiceLineEditForm from './invoiceLineEditForm';
-import InvoiceLineDetails from './invoiceLineDetails';
-import ApproveInvoiceModal from './modal/approveInvoiceModal';
-import PayInvoiceModal from './modal/payInvoiceModal';
-import CancelInvoiceModal from './modal/cancelInvoiceModal';
-import SelectOrderLinesModal from './modal/selectOrderLinesModal';
-import InvoiceStates from './invoiceStates';
 import interactorsTools from '../../utils/interactorsTools';
+import InvoiceEditForm from './invoiceEditForm';
+import InvoiceLineDetails from './invoiceLineDetails';
+import InvoiceLineEditForm from './invoiceLineEditForm';
+import InvoiceStates from './invoiceStates';
+import ApproveInvoiceModal from './modal/approveInvoiceModal';
+import CancelInvoiceModal from './modal/cancelInvoiceModal';
+import PayInvoiceModal from './modal/payInvoiceModal';
+import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -27,9 +28,6 @@ const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const actionsButton = Button('Actions');
 const newBlankLineButton = Button('New blank line');
-
-// information section
-const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
 
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
@@ -44,6 +42,7 @@ const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetail
 
 export default {
   expandActionsDropdown() {
+    cy.wait(4000);
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
   },
   selectFirstInvoice() {
@@ -133,7 +132,16 @@ export default {
     }
 
     invoiceInformation.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+      cy.contains('div[class^="kvRoot"]', key)
+        .parent()
+        .within(() => {
+          cy.get('[data-test-kv-value="true"]')
+            .invoke('text')
+            .then((text) => {
+              const normalizedText = Cypress._.trim(Cypress._.replace(text, /\u00a0/g, ' '));
+              cy.wrap(normalizedText).should('include', value);
+            });
+        });
     });
 
     vendorDetails.forEach(({ key, value }) => {
@@ -217,6 +225,12 @@ export default {
 
     ApproveInvoiceModal.verifyModalView({ isApprovePayEnabled });
     ApproveInvoiceModal.clickSubmitButton({ isApprovePayEnabled });
+  },
+  clickApproveAndPayInvoice({ isApprovePayEnabled = false } = {}) {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button(isApprovePayEnabled ? 'Approve & pay' : 'Approve').click(),
+    ]);
   },
   payInvoice() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Pay').click()]);
@@ -321,5 +335,10 @@ export default {
   },
   verifyWarningMessage(message) {
     cy.expect(HTML(including(message)).exists());
+  },
+
+  verifyCurrency(currency) {
+    cy.do(Accordion({ id: 'extendedInformation' }).clickHeader());
+    cy.expect(KeyValue('Currency').has({ value: currency }));
   },
 };

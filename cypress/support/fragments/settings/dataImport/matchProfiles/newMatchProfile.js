@@ -10,7 +10,6 @@ import {
   Section,
   Select,
   SelectionList,
-  SelectionOption,
   TextArea,
   TextField,
 } from '../../../../../../interactors';
@@ -79,7 +78,7 @@ function fillExistingRecordSections({ existingRecordFields }) {
 function fillName(profileName) {
   cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(10000);
+  cy.wait(7000);
 }
 
 function selectExistingRecordType(existingRecordType) {
@@ -176,13 +175,7 @@ function selectMatchCriterion(matchCriterion) {
 
 function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeButton.click());
-  cy.expect(criterionValueTypeList.exists());
-  // TODO wait for list will be loaded
-  cy.wait(1000);
-  cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
-  // TODO wait until option will be selected
-  cy.wait(1500);
-  cy.get('#selected-criterion-value-type-item').contains(existingRecordOption);
+  cy.do(criterionValueTypeList.select(existingRecordOption));
 }
 
 function fillOnlyComparePartOfTheValue(value) {
@@ -244,11 +237,7 @@ export default {
         fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.do(criterionValueTypeButton.click());
-      cy.expect(criterionValueTypeList.exists());
-      cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
-      // TODO need to wait until profile will be filled
-      cy.wait(1500);
+      selectExistingRecordField(instanceOption);
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
@@ -273,11 +262,7 @@ export default {
         fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.do(criterionValueTypeButton.click());
-      cy.expect(criterionValueTypeList.exists());
-      cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
-      // TODO need to wait until profile will be filled
-      cy.wait(1500);
+      selectExistingRecordField(holdingsOption);
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId: 'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
@@ -288,11 +273,7 @@ export default {
         fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.do(criterionValueTypeButton.click());
-      cy.expect(criterionValueTypeList.exists());
-      cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
-      // TODO need to wait until profile will be filled
-      cy.wait(1500);
+      selectExistingRecordField(itemOption);
     }
   },
 
@@ -325,6 +306,7 @@ export default {
     selectExistingRecordType(existingRecordType);
     fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
     selectMatchCriterion(matchCriterion);
+    cy.wait(1000);
     selectExistingRecordField(existingRecordOption);
   },
 
@@ -499,6 +481,126 @@ export default {
                     },
                   ],
                   dataValueType: 'VALUE_FROM_RECORD',
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createMatchProfileWithIncomingAndExistingOCLCMatchExpressionViaApi: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordType,
+    recordType,
+    identifierTypeId = '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: recordType,
+            matchDetails: [
+              {
+                incomingRecordType: recordType,
+                incomingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: incomingRecordFields.field,
+                    },
+                    {
+                      label: 'indicator1',
+                      value: incomingRecordFields.in1,
+                    },
+                    {
+                      label: 'indicator2',
+                      value: incomingRecordFields.in2,
+                    },
+                    {
+                      label: 'recordSubfield',
+                      value: incomingRecordFields.subfield,
+                    },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: 'instance.identifiers[].value',
+                    },
+                    { label: 'identifierTypeId', value: identifierTypeId },
+                  ],
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi: ({
+    profileName,
+    incomingStaticValue,
+    existingRecordType,
+    existingRecordOption,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: 'STATIC_VALUE',
+            matchDetails: [
+              {
+                incomingRecordType: 'STATIC_VALUE',
+                incomingMatchExpression: {
+                  staticValueDetails: {
+                    staticValueType: 'TEXT',
+                    text: incomingStaticValue,
+                    number: '',
+                    exactDate: '',
+                    fromDate: '',
+                    toDate: '',
+                  },
+                  dataValueType: 'STATIC_VALUE',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [{ label: 'field', value: existingRecordOption }],
+                  dataValueType: 'VALUE_FROM_RECORD',
+                  qualifier: {
+                    qualifierType: null,
+                    qualifierValue: null,
+                  },
                 },
                 matchCriterion: 'EXACTLY_MATCHES',
               },

@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyPaneRecordsCount(1);
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings ID');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings UUID');
         BulkEditSearchPane.verifyMatchedResults(item.holdingsUUID);
         BulkEditActions.startBulkEditAbsent();
         ExportFile.verifyFileIncludes(holdingsUUIDsMatchedRecordsFileName, [item.holdingsUUID]);
@@ -80,7 +80,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyPaneRecordsCount(1);
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item ID');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item UUID');
         BulkEditSearchPane.verifyMatchedResults(item.UUID);
         BulkEditActions.startBulkEditAbsent();
         ExportFile.verifyFileIncludes(itemUUIDsMatchedRecordsFileName, [item.holdingsUUID]);

@@ -16,14 +16,14 @@ describe('MARC', () => {
       const testData = {
         tag700: '700',
         firstTag700Values: [
-          76,
+          75,
           '700',
           '1',
           '\\',
           '$a C366115 Sprouse, Chris $e artist. $0 1357871',
         ],
         secondTag700Values: [
-          77,
+          76,
           '700',
           '1',
           '\\',
@@ -55,12 +55,12 @@ describe('MARC', () => {
       ];
       const linkingTagAndValues = [
         {
-          rowIndex: 76,
+          rowIndex: 75,
           value: 'C366115 Sprouse, Chris',
           tag: 700,
         },
         {
-          rowIndex: 77,
+          rowIndex: 76,
           value: 'C366115 Martin, Laura (Comic book artist)',
           tag: 700,
         },
@@ -68,33 +68,26 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
-        cy.createTempUser([
-          Permissions.inventoryAll.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.user = createdUserProperties;
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((createdUserProperties) => {
+            testData.preconditionUserId = createdUserProperties.userId;
+            // make sure there are no duplicate authority records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115*');
 
-          marcFiles.forEach((marcFile) => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-              () => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
-              },
-            );
-          });
-
-          cy.visit(TopMenu.inventoryPath).then(() => {
+              });
+            });
+          })
+          .then(() => {
+            cy.visit(TopMenu.inventoryPath);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -108,8 +101,20 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
+
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        ]).then((createdUserProperties) => {
+          testData.user = createdUserProperties;
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
@@ -121,6 +126,7 @@ describe('MARC', () => {
       after('Deleting created user and data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         createdRecordIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id);
@@ -129,7 +135,7 @@ describe('MARC', () => {
 
       it(
         'C366115 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "Remove linking" button in "Remove authority linking" modal (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -144,6 +150,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.secondTag700Values);
           QuickMarcEditor.checkLinkButtonToolTipTextByIndex(linkingTagAndValues[1].rowIndex);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.verifyContributor(2, 1, linkingTagAndValues[0].value);
           InventoryInstance.checkMarcAppIconAbsent(2);
@@ -152,8 +160,8 @@ describe('MARC', () => {
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
-          QuickMarcEditor.verifyIconsAfterUnlinking(72);
-          QuickMarcEditor.verifyIconsAfterUnlinking(73);
+          QuickMarcEditor.verifyIconsAfterUnlinking(75);
+          QuickMarcEditor.verifyIconsAfterUnlinking(76);
         },
       );
     });

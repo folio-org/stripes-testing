@@ -16,6 +16,7 @@ const testData = {
   propertyName: 'instance',
   instanceTitle: 'The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
+  error: 'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
 };
 
 let instanceId;
@@ -68,12 +69,17 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyRecordCanNotBeSavedCalloutLDR();
-          QuickMarcEditor.fillInElvlBoxInLDRField('\\');
-          QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
-          QuickMarcEditor.checkButtonsDisabled();
+          QuickMarcEditor.checkDeleteModalClosed();
+          QuickMarcEditor.checkContent('$a The Journal of ecclesiastical history', 13);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
         },
       );
     });

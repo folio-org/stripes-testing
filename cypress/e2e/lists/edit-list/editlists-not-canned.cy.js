@@ -9,14 +9,21 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: ['Active', 'Inactive'],
       visibility: 'Private',
     };
 
     beforeEach('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -24,13 +31,8 @@ describe('lists', () => {
     });
 
     afterEach('Delete a user', () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.getUserToken(userData.username, userData.password);
-      cy.getAdminToken();
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      cy.getUserToken(userData.username, userData.password);
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
@@ -39,12 +41,10 @@ describe('lists', () => {
       'C411737 Edit list: Refresh is in progress (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -53,10 +53,9 @@ describe('lists', () => {
         Lists.selectStatus(listData.status[0]);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        Lists.actionButton();
-        cy.contains('Edit list').should('be.disabled');
-        cy.wait(7000);
-        cy.contains('View updated list').click();
+        Lists.openActions();
+        Lists.verifyEditListButtonIsDisabled();
+        Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
         cy.reload();
       },
@@ -66,12 +65,10 @@ describe('lists', () => {
       'C411738 Edit list: Export is in progress (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -80,13 +77,11 @@ describe('lists', () => {
         Lists.selectStatus(listData.status[0]);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(10000);
-        cy.contains('View updated list').click();
-        Lists.actionButton();
-        cy.contains('Export list').click();
-        cy.wait(1000);
-        Lists.actionButton();
-        cy.contains('Edit list').should('be.disabled');
+        Lists.viewUpdatedList();
+        Lists.openActions();
+        Lists.exportList();
+        Lists.openActions();
+        Lists.verifyEditListButtonIsDisabled();
         Lists.closeListDetailsPane();
         cy.reload();
       },
@@ -96,12 +91,10 @@ describe('lists', () => {
       'C411734 Edit list: Make the list Inactive (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -110,11 +103,10 @@ describe('lists', () => {
         Lists.selectStatus(listData.status[0]);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(10000);
-        cy.contains('View updated list').click();
+        Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
         cy.contains(listData.name).click();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.editList();
         Lists.selectStatus('Inactive');
         cy.contains('Warning: making status inactive will clear list contents.').should(
@@ -127,12 +119,11 @@ describe('lists', () => {
     );
 
     it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.login(userData.username, userData.password);
-      cy.loginAsAdmin();
+      cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
+      Lists.selectInactiveLists();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -144,12 +135,15 @@ describe('lists', () => {
       cy.wait(2000);
       cy.contains(listData.name).click();
       cy.wait(2000);
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectStatus('Active');
       Lists.saveList();
       cy.contains(`List ${listData.name} saved.`);
       cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
+      Lists.closeListDetailsPane();
+      cy.wait(2000);
+      cy.contains(listData.name).click();
     });
   });
 });

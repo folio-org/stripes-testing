@@ -18,8 +18,7 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         let userData;
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
         const createdRecordIDs = [];
         const naturalIds = ['n2008052404', 'sh96007532', 'sh99014708', 'sh85009933'];
@@ -27,14 +26,14 @@ describe('MARC', () => {
           {
             tag: '650',
             value: 'Lesbian authors',
-            rowIndex: 31,
+            rowIndex: 30,
             newContent:
               '$a Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
             value: 'Lesbian activists',
-            rowIndex: 32,
+            rowIndex: 31,
             newContent:
               '$a Lesbian activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
@@ -133,6 +132,8 @@ describe('MARC', () => {
                   QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
                 });
                 QuickMarcEditor.pressSaveAndClose();
+                cy.wait(1500);
+                QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -187,7 +188,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyRowLinked(preLinkedFields[0].rowIndex, false);
             QuickMarcEditor.checkContent(
               preLinkedFields[0].newContent,
-              preLinkedFields[0].rowNumber,
+              preLinkedFields[0].rowIndex,
             );
             // #8 Click on the "Link headings" again.
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -202,6 +203,8 @@ describe('MARC', () => {
               '',
             );
             // #9 Click on the "Save & close" button.
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             // #10 Click on the "Browse" toggle >> Select "Subjects" in browse option dropdown >> Enter "Lesbian activists--Jamaica--Biography" value in the search box >> Click on the "Search"  button.

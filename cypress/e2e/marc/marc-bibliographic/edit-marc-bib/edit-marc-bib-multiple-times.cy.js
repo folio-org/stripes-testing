@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -20,7 +21,7 @@ describe('MARC', () => {
         },
         edited100Field: {
           tag: '100',
-          rowIndex: 16,
+          rowIndex: 15,
           content: ['edited 100 - once', 'edited 100 - twice', 'edited 100 - three times'],
         },
         added500Fields: {
@@ -38,6 +39,10 @@ describe('MARC', () => {
       let instanceId;
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350697*');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -107,7 +112,7 @@ describe('MARC', () => {
             // *The "Save & close" button became clickable.
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             // #9 Delete an existing MARC tag (NOT 035, 1XX).
-            QuickMarcEditor.deleteField(29);
+            QuickMarcEditor.deleteField(28);
             // *A tag deleted.
             QuickMarcEditor.checkAfterDeleteField(deletedFieldTag);
             // *The "Save & close" button stays clickable.
@@ -126,6 +131,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             // #11 Click on the "Save & close" button.
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             // *The success saving message is displayed.
             // *Detail record opened in the third pane.
             QuickMarcEditor.confirmDelete();
@@ -142,7 +149,7 @@ describe('MARC', () => {
               testData.edited100Field.tag,
               testData.edited100Field.content[index],
             );
-            InventoryViewSource.verifyAbsenceOfValueInRow(deletedFieldTag, 29);
+            InventoryViewSource.verifyAbsenceOfValueInRow(deletedFieldTag, 28);
             // #13 Return to the "Instance" record by clicking on "X"icon.
             InventoryViewSource.close();
             // Detail view of "Instance" record opened in the third pane.

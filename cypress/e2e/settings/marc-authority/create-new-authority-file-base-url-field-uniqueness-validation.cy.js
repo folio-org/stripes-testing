@@ -78,7 +78,7 @@ describe('MARC', () => {
             );
             ManageAuthorityFiles.checkCancelButtonEnabled();
             ManageAuthorityFiles.checkSaveButtonEnabled();
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               authorityFilesNonUniqueBaseUrl.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.BASE_URL,

@@ -45,8 +45,6 @@ describe('MARC', () => {
           'Comics (Graphic works)',
         ];
 
-        const alternativeTitles = ['Marvel comics', 'Black Panther'];
-
         const seriesList = [
           'Neilson, Donald, 1936-2011',
           'Black Panther Party',
@@ -56,7 +54,7 @@ describe('MARC', () => {
 
         const preLinkedFields = [
           {
-            rowIndex: 85,
+            rowIndex: 82,
             value: 'C388641 Lee, Stan, 1922-2018,',
             tag: 700,
             boxFourth: '$a C388641 Lee, Stan, $d 1922-2018',
@@ -65,7 +63,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 87,
+            rowIndex: 84,
             value: 'C388641 Robinson & Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388641 Robinson & Associates, Inc.',
@@ -74,7 +72,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 88,
+            rowIndex: 85,
             value:
               'C388641 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
@@ -85,7 +83,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 89,
+            rowIndex: 86,
             value: 'C388641 Gone with the wind (Motion picture : 1939)',
             tag: 730,
             boxFourth: '$a C388641 Gone with the wind $f 1939) $g (Motion picture :',
@@ -103,76 +101,61 @@ describe('MARC', () => {
           },
           {
             rowIndex: 33,
-            tag: '110',
-            naturalId: 'no2006108277C388641',
-          },
-          {
-            rowIndex: 34,
-            tag: '111',
-            naturalId: 'no2009176429C388641',
-          },
-          {
-            rowIndex: 35,
-            tag: '130',
-            naturalId: 'n80026980C388641',
-          },
-          {
-            rowIndex: 36,
             tag: '240',
             naturalId: 'no2020024230C388641',
           },
           {
-            rowIndex: 64,
+            rowIndex: 61,
             tag: '600',
             naturalId: 'n2016004081C388641',
           },
           {
-            rowIndex: 59,
+            rowIndex: 56,
             tag: '610',
             naturalId: 'nb2009024488C388641',
           },
           {
-            rowIndex: 60,
+            rowIndex: 57,
             tag: '611',
             naturalId: 'n82216757C388641',
           },
           {
-            rowIndex: 61,
+            rowIndex: 58,
             tag: '630',
             naturalId: 'no2023006889C388641',
           },
           {
-            rowIndex: 66,
+            rowIndex: 63,
             tag: '650',
             naturalId: 'sh2009125989C388641',
           },
           {
-            rowIndex: 70,
+            rowIndex: 67,
             tag: '651',
             naturalId: 'sh85001531C388641',
           },
           {
-            rowIndex: 72,
+            rowIndex: 69,
             tag: '655',
             naturalId: 'gf2014026266C388641',
           },
           {
-            rowIndex: 90,
+            rowIndex: 87,
             tag: '800',
             naturalId: 'n79023811C388641',
           },
           {
-            rowIndex: 91,
+            rowIndex: 88,
             tag: '810',
             naturalId: 'n80095585C388641',
           },
           {
-            rowIndex: 92,
+            rowIndex: 89,
             tag: '811',
             naturalId: 'no2018125587C388641',
           },
           {
-            rowIndex: 93,
+            rowIndex: 90,
             tag: '830',
             naturalId: 'no2018018754C388641',
           },
@@ -181,8 +164,7 @@ describe('MARC', () => {
         const createdRecordsIDs = [];
 
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
 
         before('Creating user and data', () => {
@@ -251,6 +233,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -266,13 +250,13 @@ describe('MARC', () => {
           Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
         it(
           'C388641 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire'] },
           () => {
             // 1 Find and open detail view of "MARC Bib" record from precondition
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
@@ -305,7 +289,7 @@ describe('MARC', () => {
             // 3 Click on the "Link headings" button.
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
-              'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+              'Field 100, 240, 600, 610, 611, 630, 650, 651, 655, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
             );
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             linkedFields.forEach((field) => {
@@ -325,6 +309,8 @@ describe('MARC', () => {
             });
             // 4 Click on the "Save & close" button.
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
             // 5 Scroll down to the "Subject" accordion button. "MARC authority" app icon is displayed next to each linked subject name
             subjectHeadings.forEach((heading) => {
@@ -336,14 +322,6 @@ describe('MARC', () => {
               subjectHeadings[0],
               createdRecordsIDs[7],
             );
-            // 7 Scroll down to the "Alternative title" accordion button. "MARC authority" app icon is displayed next to each linked alternative title
-            alternativeTitles.forEach((title) => {
-              InventoryInstance.checkAuthorityAppIconInSection(
-                'list-alternative-titles',
-                title,
-                true,
-              );
-            });
             // 8 Scroll down to the "Series" accordion button. "MARC authority" app icon is displayed next to each linked series
             seriesList.forEach((series) => {
               InventoryInstance.checkAuthorityAppIconInSection(

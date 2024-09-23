@@ -35,12 +35,12 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 76,
+            rowIndex: 75,
             value: 'C365602 Sprouse, Chris',
             tag: 700,
           },
           {
-            rowIndex: 77,
+            rowIndex: 76,
             value: 'C365602 Martin, Laura',
             tag: 700,
           },
@@ -49,6 +49,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating user and records', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365602*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -59,7 +63,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -89,6 +92,8 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -99,7 +104,7 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
           createdAuthorityIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
@@ -117,12 +122,11 @@ describe('MARC', () => {
             QuickMarcEditor.verifyRemoveLinkingModal();
 
             QuickMarcEditor.clickKeepLinkingButton();
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(75);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(76);
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(77);
-            // TODO: check if button not enabled is bug or not
-            // QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.verifySaveAndCloseButtonDisabled();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              76,
+              75,
               '700',
               '1',
               '\\',
@@ -132,16 +136,17 @@ describe('MARC', () => {
               '',
             );
 
-            QuickMarcEditor.clickUnlinkIconInTagField(76);
+            QuickMarcEditor.clickUnlinkIconInTagField(75);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(
-              76,
+              75,
               '700',
               '1',
               '\\',
               '$a C365602 Sprouse, Chris $e artist. $0 1357871',
             );
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Creating record may take several seconds.');
             QuickMarcEditor.checkCallout('Record created.');

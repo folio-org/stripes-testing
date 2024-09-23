@@ -12,7 +12,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -111,7 +111,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -121,7 +121,7 @@ describe('Data Import', () => {
           Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.dataExportEnableApp.gui,
+          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]);
         NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
@@ -147,12 +147,17 @@ describe('Data Import', () => {
         }).location;
         Locations.createViaApi(collegeLocationData).then((location) => {
           testData.collegeLocation = location;
-          InventoryHoldings.createHoldingRecordViaApi({
-            instanceId: testData.sharedInstanceId,
-            permanentLocationId: testData.collegeLocation.id,
-          }).then((holding) => {
-            testData.holding = holding;
-          });
+          InventoryHoldings.getHoldingSources({ query: '(name=="MARK")' }).then(
+            (holdingSources) => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: testData.sharedInstanceId,
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: holdingSources[0].id,
+              }).then((holding) => {
+                testData.holding = holding;
+              });
+            },
+          );
         });
         cy.resetTenant();
 
@@ -162,7 +167,7 @@ describe('Data Import', () => {
           Permissions.moduleDataImportEnabled.gui,
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          Permissions.dataExportEnableApp.gui,
+          Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]);
         cy.resetTenant();
 
@@ -231,7 +236,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.marcFile.modifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.modifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);

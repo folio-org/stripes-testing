@@ -6,6 +6,7 @@ import {
   Callout,
   Checkbox,
   Dropdown,
+  DropdownMenu,
   Form,
   HTML,
   KeyValue,
@@ -68,7 +69,7 @@ const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
-const textFieldTagInput = MultiSelect({ ariaLabelledby: 'input-tag-label' });
+const textFieldTagInput = MultiSelect({ label: 'Tag text area' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const titleDataAccordion = Accordion('Title data');
@@ -373,6 +374,7 @@ export default {
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
+  openInstanceNotesAccordion: () => cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -490,13 +492,13 @@ export default {
   editInstance: () => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
-    InstanceRecordEdit.waitLoading();
+    cy.expect(Pane({ id: 'instance-form' }).exists());
 
     return InstanceRecordEdit;
   },
 
   editMarcBibliographicRecord: () => {
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.do(editMARCBibRecordButton.click());
@@ -818,6 +820,10 @@ export default {
     return HoldingsRecordView;
   },
 
+  viewHoldings: () => {
+    cy.do(viewHoldingsButton.click());
+  },
+
   expandConsortiaHoldings() {
     cy.wait(2000);
     cy.do(consortiaHoldingsAccordion.clickHeader());
@@ -896,8 +902,11 @@ export default {
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
-        .find(Dropdown({ label: 'Move to' }))
-        .choose(including(toHolding)),
+        .find(Button('Move to'))
+        .click(),
+      DropdownMenu()
+        .find(Button(including(toHolding)))
+        .click(),
     ]);
 
     if (itemMoved) {
@@ -947,8 +956,11 @@ export default {
         .find(Checkbox())
         .click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) })
-        .find(Dropdown({ label: 'Move to' }))
-        .choose(including(firstHoldingName)),
+        .find(Button('Move to'))
+        .click(),
+      DropdownMenu()
+        .find(Button(including(firstHoldingName)))
+        .click(),
     ]);
   },
 
@@ -996,25 +1008,12 @@ export default {
     );
   },
 
-  checkPrecedingTitle: (rowNumber, title, isbn, issn) => {
+  checkPrecedingTitle: (title, isbn, issn) => {
     cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: title }))
-        .exists(),
+      instanceDetailsSection.find(MultiColumnListCell({ content: including(title) })).exists(),
     );
-    cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: isbn }))
-        .exists(),
-    );
-    cy.expect(
-      MultiColumnList({ id: 'precedingTitles' })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: issn }))
-        .exists(),
-    );
+    cy.expect(instanceDetailsSection.find(MultiColumnListCell({ content: isbn })).exists());
+    cy.expect(instanceDetailsSection.find(MultiColumnListCell({ content: issn })).exists());
   },
 
   edit() {
@@ -1031,6 +1030,7 @@ export default {
     // TODO: clarify with developers what should be waited
     cy.wait(1500);
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
+    cy.wait(1500);
   },
 
   checkAddedTag: (tagName, instanceTitle) => {
@@ -1038,7 +1038,7 @@ export default {
     cy.wait(1500);
     cy.do(tagButton.click());
     cy.wait(1500);
-    cy.expect(MultiSelect({ ariaLabelledby: 'input-tag-label' }).exists(tagName));
+    cy.expect(textFieldTagInput.exists(tagName));
   },
 
   deleteTag: (tagName) => {
@@ -1420,7 +1420,7 @@ export default {
 
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Button(barcode)).click());
-    cy.expect(KeyValue('Temporary loan type').has({ value }));
+    cy.expect(KeyValue('Temporary loan type').has({ value: including(value) }));
     cy.do(Button({ icon: 'times' }).click());
   },
 
@@ -1433,10 +1433,12 @@ export default {
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
-    cy.get(`div[class^="mclCell-"]:contains('${barcode}')`).then((cell) => {
-      const row = cell.closest('div[class^="mclRow-"]');
-      row.find('button').first().click();
-    });
+    cy.get('div[class^="mclCell-"]')
+      .contains(barcode)
+      .then((cell) => {
+        const row = cell.closest('div[class^="mclRow-"]');
+        cy.wrap(row).find('a').first().click();
+      });
   },
 
   openItemByStatus: (status) => {
@@ -1444,7 +1446,7 @@ export default {
       .find('div[class^="mclCell-"]')
       .contains(status)
       .then((elem) => {
-        elem.parent()[0].querySelector('button[type="button"]').click();
+        elem.parent()[0].querySelector('a[href]').click();
       });
   },
 
@@ -1677,6 +1679,10 @@ export default {
       Section({ id: 'consortialHoldings' }).exists(),
       Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
     ]);
+  },
+
+  verifyConsortiaHoldingsAccordionAbsent() {
+    cy.expect(instanceDetailsSection.find(Section({ id: 'consortialHoldings' })).absent());
   },
 
   verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {

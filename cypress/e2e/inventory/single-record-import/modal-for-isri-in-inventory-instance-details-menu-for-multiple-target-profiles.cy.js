@@ -16,6 +16,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Single record import', () => {
+    let preconditionUserId;
     let user;
     let instanceHRID;
     let instanceId;
@@ -38,7 +39,9 @@ describe('Inventory', () => {
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('Create test data and login', () => {
-      cy.getAdminToken().then(() => {
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
         DataImport.uploadFileViaApi(
           'oneMarcBib.mrc',
           fileName,
@@ -47,6 +50,8 @@ describe('Inventory', () => {
           instanceHRID = response[0].instance.hrid;
           instanceId = response[0].instance.id;
         });
+      });
+      cy.getAdminToken().then(() => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(newTargetProfileName).then(
           (initialId) => {
@@ -90,6 +95,7 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
+        Users.deleteViaApi(preconditionUserId);
         Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -113,7 +119,7 @@ describe('Inventory', () => {
         // https://issues.folio.org/browse/MODCPCT-73
         cy.wait(7000);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
-        InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+        InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
       },
     );
   });

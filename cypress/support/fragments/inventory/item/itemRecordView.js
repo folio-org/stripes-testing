@@ -56,10 +56,11 @@ const closeDetailView = () => {
   cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`).then((cell) => {
-    const row = cell.closest('div[class^="mclRow-"]');
-    row.find('button').click();
-  });
+  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`)
+    .closest('div[class^="mclRow-"]')
+    .within(() => {
+      cy.get('a').click();
+    });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
@@ -169,7 +170,7 @@ export default {
   verifyTemporaryLocation: (location) => {
     cy.expect(
       Accordion({ label: 'Location' })
-        .find(KeyValue({ dataTestId: 'item-temporary-location', value: location }))
+        .find(KeyValue({ dataTestId: 'item-temporary-location', value: including(location) }))
         .exists(),
     );
   },
@@ -200,6 +201,26 @@ export default {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);
     });
   },
+
+  checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+    cy.get('#acc05').within(() => {
+      cy.get("[class^='row---']")
+        .eq(rowIndex)
+        .within(() => {
+          cy.get("[class^='col-']")
+            .first()
+            .within(() => {
+              cy.get("[class^='kvRoot-'] [class^='kvValue---']").should('contain', staffOnly);
+            });
+
+          cy.get("[class^='col-']:nth-child(2)").within(() => {
+            cy.get("[class^='kvRoot-'] [class^='kvLabel-']").should('contain', noteType);
+            cy.get("[class^='kvRoot-'] [class^='kvValue-']").should('contain', noteText);
+          });
+        });
+    });
+  },
+
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));

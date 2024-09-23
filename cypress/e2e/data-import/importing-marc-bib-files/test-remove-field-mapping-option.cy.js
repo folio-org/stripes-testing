@@ -10,15 +10,13 @@ import {
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -30,15 +28,20 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let user;
     const itemBarcode = uuid();
     const quantityOfItems = '1';
     const marcFileNameForCreate = `C17033 autotestFile${getRandomPostfix()}.mrc`;
@@ -159,10 +162,18 @@ describe('Data Import', () => {
       profileName: `C17033 update job profile_${getRandomPostfix()}`,
     };
 
-    before('Login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
+    before('Create user and login', () => {
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -171,6 +182,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
@@ -453,9 +465,9 @@ describe('Data Import', () => {
                 .permanentLocationInHoldingsAccordion,
             );
             InventoryInstance.openItemByBarcode(itemBarcode);
-            ItemRecordView.checkAccessionNumber('-');
-            ItemRecordView.verifyNumberOfPieces('-');
-            ItemRecordView.verifyTemporaryLoanType('-');
+            ItemRecordView.checkAccessionNumber('No value set-');
+            ItemRecordView.verifyNumberOfPieces('No value set-');
+            ItemRecordView.verifyTemporaryLoanType('No value set-');
           });
         });
       },

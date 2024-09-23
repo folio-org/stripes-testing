@@ -37,6 +37,7 @@ export default {
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     exportNewFieldMappingProfile.fillMappingProfile(mappingProfile);
+    cy.wait(5000);
     saveMappingProfile();
   },
 
@@ -113,20 +114,20 @@ export default {
       searchButton.has({ disabled: true }),
     ]);
     cy.do(cy.get('[class^=mclEndOfListContainer--]').should('have.text', 'End of list'));
+    cy.wait(3000);
     this.verifyFieldMappingProfilesCount();
     this.verifyColumnTitles();
   },
 
   verifyFieldMappingProfilesCount() {
-    cy.do(
-      cy.get('#search-results-list').then((elem) => {
-        cy.expect(
-          cy
-            .get('#paneHeaderpane-results-subtitle')
-            .should('have.text', `${elem.attr('data-total-count')} field mapping profiles`),
-        );
-      }),
-    );
+    cy.get('#search-results-list').then((elem) => {
+      const rowCount = parseInt(elem.attr('aria-rowcount'), 10);
+      const expectedCount = rowCount - 1;
+      cy.get('#paneHeaderpane-results-subtitle').should(
+        'have.text',
+        `${expectedCount} field mapping profiles`,
+      );
+    });
   },
 
   verifyColumnTitles() {

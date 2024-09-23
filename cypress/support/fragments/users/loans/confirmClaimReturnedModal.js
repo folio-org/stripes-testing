@@ -21,7 +21,9 @@ export default {
       cy.wait(500);
       cy.do(confirmButton.click());
       cy.wait(500);
-      cy.do(confirmModal.dismiss());
+      cy.do(Modal(including('Claim returned confirmation')).find(Button('Close')).click());
+      // eslint-disable-next-line spaced-comment
+      //cy.do(confirmModal.dismiss());
       cy.wait(500);
     });
   },

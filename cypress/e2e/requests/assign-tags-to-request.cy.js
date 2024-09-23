@@ -3,7 +3,7 @@ import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-requests: Assign Tags to Request', () => {
+describe('Requests', () => {
   let userId;
   let requestData;
   let instanceData;

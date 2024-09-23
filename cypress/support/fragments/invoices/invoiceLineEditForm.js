@@ -66,12 +66,16 @@ export default {
     FinanceHelper.selectFromResultsList();
   },
   expandDropDown(label) {
+    cy.wait(2000);
     cy.do(Selection(including(label)).open());
   },
   checkDropDownOptionsListCount(count) {
-    cy.get('ul[aria-label="Expense class options filter"] li').then((listItems) => {
-      cy.expect([...listItems].length).to.equal(count);
-    });
+    cy.wait(2000);
+    cy.get('ul[aria-labelledby="sl-label-fundDistributions[0].expenseClassId"] li').then(
+      (listItems) => {
+        cy.expect([...listItems].length).to.equal(count);
+      },
+    );
   },
   setDropDownValue(option) {
     cy.do([SelectionList().filter(option), SelectionList().select(including(option))]);
@@ -88,6 +92,7 @@ export default {
   },
   selectFundDistribution(fund) {
     this.selectDropDownValue('Fund ID', fund);
+    cy.wait(2000);
   },
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
@@ -124,6 +129,7 @@ export default {
   },
   clickSaveButton({ invoiceLineSaved = true } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
+    cy.wait(2000);
     cy.do(saveButton.click());
 
     if (invoiceLineSaved) {

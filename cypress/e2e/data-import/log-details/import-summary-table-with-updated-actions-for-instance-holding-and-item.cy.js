@@ -14,6 +14,7 @@ import {
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -25,8 +26,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -38,18 +37,22 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
     let instanceHrid;
+    let user;
     const subject = `Test update${getRandomPostfix()}`;
     const instanceTitle = 'Das Kantatenwerk [sound recording] / Johann Sebastian Bach.';
     const filePath = 'marcBibFileNameC430253.mrc';
@@ -115,10 +118,10 @@ describe('Data Import', () => {
       name: `C430253 mapping profile ${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
       holdingsMarcField: '901',
-      subfieldForHoldings: '$h',
+      subfieldForHoldings: 'h',
       itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
       itemMarcField: '902',
-      subfieldForItem: '$i',
+      subfieldForItem: 'i',
     };
     const jobProfileNameForExport = `C430253 job profile.${getRandomPostfix()}`;
     // profiles for updating instance, holdings, item
@@ -274,7 +277,20 @@ describe('Data Import', () => {
           );
         });
 
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+      });
     });
 
     after('Delete test data', () => {
@@ -282,6 +298,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
@@ -347,13 +364,13 @@ describe('Data Import', () => {
 
         cy.visit(SettingsMenu.exportMappingProfilePath);
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+        cy.wait(10000);
 
         cy.visit(SettingsMenu.exportJobProfilePath);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchByParameter('Subject', subject);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.saveUUIDs();
@@ -427,7 +444,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.checkItemsStatusesInResultList(0, [
           RECORD_STATUSES.UPDATED,

@@ -6,9 +6,9 @@ import {
   MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -96,7 +96,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[0].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[0].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[0].name);
 
         // create mapping profile for holdings
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -115,7 +114,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[1].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[1].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[1].name);
 
         // create mapping profile for item
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -134,7 +132,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[2].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[2].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[2].name);
       },
     );
   });

@@ -18,7 +18,7 @@ describe('MARC', () => {
         tag110: '110',
         tag240: '240',
         linked240FieldValues: [
-          18,
+          17,
           '240',
           '1',
           '0',
@@ -45,7 +45,7 @@ describe('MARC', () => {
         ],
         inventoryInstanceSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         errorCalloutMessage:
-          'MARC 240 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
 
       const marcFiles = [
@@ -67,6 +67,10 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376597*');
+
         cy.loginAsAdmin({
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -99,6 +103,8 @@ describe('MARC', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
@@ -138,13 +144,13 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked240FieldValues);
 
           testData.updateLinkedFieldValues.forEach((fifthBoxValue, index) => {
-            QuickMarcEditor.updateLinkedFifthBox(18, fifthBoxValue);
+            QuickMarcEditor.updateLinkedFifthBox(17, fifthBoxValue);
             // Need to wait until empty field is updated with the first value
             if (!index) cy.wait(500);
             testData.linked240FieldValues[5] = fifthBoxValue;
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked240FieldValues);
-            QuickMarcEditor.pressSaveAndKeepEditing(testData.errorCalloutMessage);
-            QuickMarcEditor.closeCallout();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.checkErrorMessage(17, testData.errorCalloutMessage);
           });
         },
       );

@@ -67,25 +67,23 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         [
+          'Suppress from discovery',
           'Holdings HRID',
+          'Source',
           'Holdings type',
-          'Permanent location',
-          'Temporary location',
-          'Call number prefix',
-          'Call number',
-          'Call number suffix',
+          'Holdings permanent location',
         ].forEach((title) => {
           BulkEditSearchPane.verifyResultColumnTitles(title);
         });
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyHoldingActionShowColumns();
 
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
-        BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
-        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings permanent location');
+        BulkEditSearchPane.changeShowColumnCheckbox('Holdings permanent location');
+        BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Holdings permanent location');
 
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Call number type');
-        BulkEditSearchPane.verifyResultColumnTitles('Call number type');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings level call number type');
+        BulkEditSearchPane.verifyResultColumnTitles('Holdings level call number type');
       },
     );
 
@@ -113,7 +111,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings permanent location');
         BulkEditSearchPane.verifyChangedResults(permLocation);
         BulkEditActions.verifySuccessBanner(1);
 

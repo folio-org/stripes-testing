@@ -11,6 +11,7 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -92,6 +93,31 @@ describe('MARC', () => {
         },
       ];
 
+      const marcFiles = [
+        {
+          marc: 'marcBibFileForC353526.mrc',
+          fileName: `testMarcFileC353526.${getRandomPostfix()}.mrc`,
+          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          propertyName: 'instance',
+        },
+      ];
+      let instanceIds;
+
+      before('Create test data', () => {
+        cy.getAdminToken();
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              instanceIds = record[marcFile.propertyName].id;
+            });
+          });
+        });
+      });
+
       beforeEach(() => {
         fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
         cy.createTempUser([
@@ -126,10 +152,15 @@ describe('MARC', () => {
         cy.getAdminToken();
         if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
         Users.deleteViaApi(testData.userProperties.userId);
-        MarcFieldProtection.getListViaApi({
-          query: `"field"=="${protectedFields.protectedField}"`,
-        }).then((list) => {
-          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+
+      after('Delete test data', () => {
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(instanceIds);
+        cy.visit(SettingsMenu.marcFieldProtectionPath);
+        protectedFields.forEach((field) => {
+          MarcFieldProtection.delete(field.protectedField);
+          MarcFieldProtection.confirmDelete();
         });
       });
 
@@ -147,7 +178,7 @@ describe('MARC', () => {
 
       it(
         'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           InventoryInstance.deriveNewMarcBib();
           tagArray.forEach((tag) => {
@@ -160,15 +191,18 @@ describe('MARC', () => {
         'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          InventoryInstances.searchByTitle(instanceIds);
           InventoryInstance.editMarcBibliographicRecord();
           MarcAuthority.checkInfoButton('999');
           MarcAuthority.addNewField(5, testData.tags.tag260, '$a London', '1', '1');
           MarcAuthority.addNewField(6, testData.tags.tag520, '$a Added row');
-          MarcAuthority.addNewField(7, testData.tags.tag655, '$b Added row', '1', '/');
-          MarcAuthority.addNewField(8, testData.tags.tag655, '$b Different row', '1', '/');
-          MarcAuthority.addNewField(9, testData.tags.tag655, '$b Row without indicator', '1', '/');
-          MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '/');
+          MarcAuthority.addNewField(7, testData.tags.tag655, '$b Added row', '1', '#');
+          MarcAuthority.addNewField(8, testData.tags.tag655, '$b Different row', '1', '#');
+          MarcAuthority.addNewField(9, testData.tags.tag655, '$b Row without indicator', '1', '#');
+          MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '#');
           cy.wait(2000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.visit(SettingsMenu.marcFieldProtectionPath);
@@ -192,6 +226,8 @@ describe('MARC', () => {
           MarcAuthority.updateDataByRowIndex(7, 'Updated protected row content');
           MarcAuthority.updateDataByRowIndex(8, 'Updated protected row content');
           MarcAuthority.updateDataByRowIndex(30, 'Updated protected row content');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           InventoryInstance.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource('245\t', 'Updated protected row content');

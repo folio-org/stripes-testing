@@ -9,7 +9,7 @@ Cypress.Commands.add('getConsortiaId', () => {
 });
 
 Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUserId) => {
-  cy.wait(3000);
+  cy.wait(15000);
   cy.getConsortiaId().then((consortiaId) => {
     cy.okapiRequest({
       method: 'POST',
@@ -36,6 +36,18 @@ Cypress.Commands.add('getPublications', (publicationForTenants, publicationUrl) 
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
       return body.id;
+    });
+  });
+});
+
+Cypress.Commands.add('getUserAffiliationsCount', () => {
+  cy.getConsortiaId().then((consortiaId) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `consortia/${consortiaId}/_self`,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.totalRecords;
     });
   });
 });

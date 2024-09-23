@@ -1,21 +1,22 @@
 import { including } from '@interactors/html';
 import {
   Button,
-  TextField,
-  Pane,
-  Link,
+  Callout,
   KeyValue,
-  Selection,
-  SelectionList,
-  Select,
+  Link,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Callout,
+  Pane,
+  Select,
+  Selection,
+  TextField,
 } from '../../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
-const targetProfileName = Pane('Z39.50 target profiles');
+const targetProfilesListPane = Pane('Z39.50 target profiles');
 const newPane = Pane('New');
+const newButton = Button('+ New');
+const editButton = Button('Edit');
 
 const defaultCreateInstanceJobProfileName =
   'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
@@ -30,13 +31,13 @@ const defaultUpdateInstanceJobProfileId = '91f9b8d6-d80e-4727-9783-73fb53e3c786'
 const defaultCopyCatProfileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4';
 
 function edit(profileName) {
-  cy.do(Pane(profileName).find(Button('Edit')).click());
+  cy.do(Pane(profileName).find(editButton).click());
 }
 function save() {
   cy.do(Pane('OCLC WorldCat').find(Button('Save & close')).click());
 }
 function create() {
-  cy.do(targetProfileName.find(Button('+ New')).click());
+  cy.do(targetProfilesListPane.find(newButton).click());
   cy.expect(newPane.exists());
 }
 
@@ -44,18 +45,14 @@ function addJobProfileForCreate(profile = defaultCreateInstanceJobProfileName) {
   // wait until elements will be displayed on page
   cy.wait(2000);
   cy.do(Button('Add job profile for import/create').click());
-  cy.wait(2000);
-  cy.do([
-    Selection({ singleValue: 'Select job profile for import/create' }).open(),
-    SelectionList().select(profile),
-  ]);
+  cy.wait(1000);
+  cy.do(Selection({ value: including('Select job profile for import/create') }).choose(profile));
 }
 function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   cy.wait(2000);
   cy.do([
     Button('Add job profile for overlay/update').click(),
-    Selection({ singleValue: 'Select job profile for overlay/update' }).open(),
-    SelectionList().select(profile),
+    Selection({ value: including('Select job profile for overlay/update') }).choose(profile),
   ]);
 }
 
@@ -159,12 +156,31 @@ export default {
       },
       isDefaultSearchParamsRequired: false,
     });
+
+    cy.okapiRequest({
+      method: 'PUT',
+      path: 'copycat/profiles/8594713d-4525-4cc7-b138-a07db4692c37',
+      body: {
+        name: 'Library of Congress',
+        url: 'lx2.loc.gov:210/LCDB',
+        externalIdQueryMap: '@attr 1=9 $identifier',
+        internalIdEmbedPath: '999ff$i',
+        createJobProfileId: defaultCreateInstanceJobProfileId,
+        updateJobProfileId: defaultUpdateInstanceJobProfileId,
+        allowedCreateJobProfileIds: [defaultCreateInstanceJobProfileId],
+        allowedUpdateJobProfileIds: [defaultUpdateInstanceJobProfileId],
+        targetOptions: { preferredRecordSyntax: 'usmarc' },
+        externalIdentifierType: 'c858e4f2-2b6b-4385-842b-60732ee14abb',
+        enabled: false,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   openTargetProfile: (id = defaultCopyCatProfileId) => {
     cy.wait(1500);
     cy.do(
-      targetProfileName
+      targetProfilesListPane
         .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
         .click(),
     );
@@ -183,7 +199,7 @@ export default {
 
   checkIsOclcWorldCatIsChanged: (auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth }))),
 
-  verifyTargetProfileFormOpened: () => cy.expect(targetProfileName.exists()),
+  verifyTargetProfilesListDisplayed: () => cy.expect(targetProfilesListPane.exists()),
 
   verifyTargetProfileForm() {
     cy.expect([
@@ -255,6 +271,20 @@ export default {
       Pane(name).absent(),
       Pane(`✕ ${newName}`).exists(),
       Callout({ textContent: including('updated') }).exists(),
+    ]);
+  },
+
+  verifyNewButtonState: () => {
+    cy.expect([
+      targetProfilesListPane.find(newButton).exists(),
+      targetProfilesListPane.find(newButton).has({ disabled: false }),
+    ]);
+  },
+
+  verifyEditButtonState: (paneName) => {
+    cy.expect([
+      Pane(`✓ ${paneName}`).find(editButton).exists(),
+      Pane(`✓ ${paneName}`).find(editButton).has({ disabled: false }),
     ]);
   },
 

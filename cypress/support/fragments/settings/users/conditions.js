@@ -35,15 +35,24 @@ const updateViaApi = (conditionProperties) => cy.okapiRequest({
 
 export default {
   updateViaApi,
-  resetConditionViaApi: (conditionId, conditionName) => updateViaApi({
-    id: conditionId,
-    name: conditionName,
-    blockBorrowing: false,
-    blockRenewals: false,
-    blockRequests: false,
-    valueType: 'Double',
-    message: '',
-  }),
+  resetConditionViaApi(conditionName) {
+    this.getConditionsViaApi().then((conditions) => {
+      conditions.forEach((condition) => {
+        if (condition.name === conditionName) {
+          updateViaApi({
+            id: condition.id,
+            name: condition.name,
+            blockBorrowing: false,
+            blockRenewals: false,
+            blockRequests: false,
+            valueType: 'Double',
+            message: '',
+          });
+        }
+      });
+    });
+  },
+
   defaultConditions,
   conditionTypes,
   waitLoading: () => conditionTypes.forEach((conditionValue) => cy.expect(rootPaneset.find(NavListItem(conditionValue)).exists())),

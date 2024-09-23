@@ -53,7 +53,7 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(updatedFileName);
+        Logs.waitFileIsImported(updatedFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(updatedFileName);
         Logs.getCreatedItemsID().then((link) => {
@@ -71,17 +71,19 @@ describe('Data Import', () => {
         QuickMarcEditor.updateExistingFieldContent(10, testData.new082fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(13, testData.new260fieldRecord);
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkFieldContentToEqual(
-          'textarea[name="records[7].content"]',
+          'textarea[name="records[6].content"]',
           testData.new050fieldRecord,
         );
         QuickMarcEditor.checkFieldContentToEqual(
-          'textarea[name="records[8].content"]',
+          'textarea[name="records[7].content"]',
           testData.new082fieldRecord,
         );
         QuickMarcEditor.checkFieldContentToEqual(
-          'textarea[name="records[11].content"]',
+          'textarea[name="records[10].content"]',
           testData.new260fieldRecord,
         );
         QuickMarcEditor.pressCancel();

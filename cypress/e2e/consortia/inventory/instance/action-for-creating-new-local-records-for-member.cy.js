@@ -68,9 +68,9 @@ describe('Inventory', () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.checkInstanceDetails([
-          { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
-        ]);
+        InventoryInstance.checkInstanceDetails({
+          instanceInformation: [{ key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO }],
+        });
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });

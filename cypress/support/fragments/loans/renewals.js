@@ -73,12 +73,13 @@ const scrollParams = {
   direction: 'left',
   value: 600,
 };
+const renewalBlockMessage = 'Patron blocked from renewing';
 
 const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
 
   cy.do(Button(buttonLabels.renew).click());
-
+  cy.wait(2000);
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
 };
 
@@ -117,10 +118,12 @@ const checkModalTable = (modalTitle, itemData) => {
 const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${loanId}`;
 
 export default {
+  renewalBlockMessage,
   checkLoansPage,
   renewWithoutOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
 
+    cy.wait(5000);
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -132,6 +135,7 @@ export default {
   renewWithOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
 
+    cy.wait(5000);
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -195,7 +199,7 @@ export default {
   },
 
   renewAllLoans() {
-    cy.get('#clickable-list-column- input[type=checkbox]').click();
+    cy.get('input[name=check-all]').click();
     cy.do(Button(buttonLabels.renew).click());
   },
   confirmRenewalsSuccess() {
@@ -218,5 +222,18 @@ export default {
       TextArea(fieldLabels.comment).fillIn(commentText),
       Button(buttonLabels.saveAndClose).click(),
     ]);
+  },
+
+  verifyModal(header, content) {
+    cy.wait(1000);
+    cy.expect(
+      Modal(including(header)).has({
+        message: including(content),
+      }),
+    );
+  },
+
+  viewBlockDetails() {
+    cy.do(Button({ id: 'patron-block-details-modal' }).click());
   },
 };

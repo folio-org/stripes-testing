@@ -32,9 +32,8 @@ describe('MARC', () => {
               return `records[${rowIndex}].subfieldGroups.uncontrolledNumber`;
             },
           },
-          errorMessage: (tag) => {
-            return `MARC ${tag} has a subfield(s) that cannot be saved because the field is controlled by an authority record.`;
-          },
+          errorCalloutMessage:
+            'A subfield(s) cannot be updated because it is controlled by an authority heading.',
         };
 
         const newFields = [
@@ -77,6 +76,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380745*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -86,7 +89,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -156,7 +158,7 @@ describe('MARC', () => {
               '$b test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkCallout(testData.errorMessage(newFields[0].tag));
+            QuickMarcEditor.checkErrorMessage(5, testData.errorCalloutMessage);
 
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.fifthBox(5), '');
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.seventhBox(5), '');
@@ -167,7 +169,7 @@ describe('MARC', () => {
               '$f test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkCallout(testData.errorMessage(newFields[1].tag));
+            QuickMarcEditor.checkErrorMessage(6, testData.errorCalloutMessage);
           },
         );
       });

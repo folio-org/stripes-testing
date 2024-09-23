@@ -6,11 +6,10 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -157,11 +156,11 @@ describe('Settings: Tenant', () => {
       Campuses.checkResultsTableContent([testData.campuses[2], testData.campuses[3]]);
 
       // #10 Navigated to the "Inventory" app
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.waitContentLoading();
 
       // #11 Navigate back to the "Settings" -> "Campuses" on the "Tenant" pane
-      cy.visit(SettingsMenu.tenantCampusesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       //  * **"Institution CD"** from Preconditions #1 is displayed in "Institution" dropdown
       Campuses.checkOptionSelected('Institution', testData.institutions[1]);
       //  * **"Campus C"** and **"Campus D"** records are displayed in "Campuses" table

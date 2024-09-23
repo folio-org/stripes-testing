@@ -6,8 +6,8 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -65,17 +65,17 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
 
-      // upload a marc file for creating of the new instance, holding
-      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        // upload a marc file for creating of the new instance, holding
+        DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+        });
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,

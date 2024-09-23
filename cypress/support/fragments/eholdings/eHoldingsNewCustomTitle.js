@@ -14,6 +14,12 @@ export default {
 
   fillInRequiredProperties: (packageName, titleName) => {
     cy.do(TextField({ name: 'name' }).fillIn(titleName));
+    cy.do(Selection({ value: including('Choose a package') }).open());
+    cy.do(SelectionList().filter(packageName));
+    cy.do(SelectionList().select(packageName));
+  },
+  fillInRequiredPropertiesWhenNotEnglishSession: (packageName, titleName) => {
+    cy.do(TextField({ name: 'name' }).fillIn(titleName));
     cy.do(Selection({ name: 'packageId' }).open());
     cy.do(SelectionList().filter(packageName));
     cy.do(SelectionList().select(packageName));

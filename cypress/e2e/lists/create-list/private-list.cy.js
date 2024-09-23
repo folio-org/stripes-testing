@@ -17,12 +17,26 @@ describe('lists', () => {
 
     before('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         firstUser.username = userProperties.username;
         firstUser.password = userProperties.password;
         firstUser.userId = userProperties.userId;
       });
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         secondUser.username = userProperties.username;
         secondUser.password = userProperties.password;
         secondUser.userId = userProperties.userId;
@@ -30,25 +44,18 @@ describe('lists', () => {
     });
 
     after('Delete a user', () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.getUserToken(userData.username, userData.password);
-      cy.getAdminToken();
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      cy.getUserToken(firstUser.username, firstUser.password);
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(firstUser.userId);
       Users.deleteViaApi(secondUser.userId);
     });
 
     it(
-      "C411710 Verify that private list isn't visible for the other users",
+      "C411710 Verify that private list isn't visible for the other users (corsair)",
       { tags: ['smoke', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(firstUser.username, firstUser.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
         Lists.openNewListPane();
@@ -63,7 +70,7 @@ describe('lists', () => {
         cy.login(secondUser.username, secondUser.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.verifyListsPaneIsEmpty();
+        Lists.verifyListIsNotPresent(listData.name);
       },
     );
   });

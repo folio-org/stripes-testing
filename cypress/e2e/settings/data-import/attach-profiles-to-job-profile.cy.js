@@ -5,7 +5,7 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -31,9 +31,9 @@ describe('Data Import', () => {
             in2: '',
             subfield: '',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+          existingMatchExpressionValue: 'instance.hrid',
         },
       },
       {
@@ -45,9 +45,9 @@ describe('Data Import', () => {
             in2: '',
             subfield: '',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+          existingMatchExpressionValue: 'instance.hrid',
         },
       },
     ];

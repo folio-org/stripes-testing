@@ -1,22 +1,19 @@
 import {
-  ACCEPTED_DATA_TYPE_NAMES,
-  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORD_NAMES,
-  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -29,8 +26,6 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -68,13 +63,11 @@ describe('Data Import', () => {
     };
     const mappingProfile = {
       name: `C374187 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
-      update: true,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
       name: `C374187 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      action: 'UPDATE',
+      folioRecordType: 'MARC_AUTHORITY',
     };
     const matchProfile = {
       profileName: `C374187 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
@@ -90,13 +83,10 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
+      recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
       profileName: `C374187 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const marcFiles = [
       {
@@ -123,34 +113,39 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
-      });
+      // make sure there are no duplicate records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374187*');
+
       // create Field mapping profile
-      FieldMappingProfiles.createMappingProfileForUpdatesMarcAuthority(mappingProfile);
-      FieldMappingProfileView.closeViewMode(mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+      NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
+        .then((mappingProfileResponse) => {
+          mappingProfile.id = mappingProfileResponse.body.id;
+        })
+        .then(() => {
+          // create Action profile and link it to Field mapping profile
+          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+            (actionProfileResponse) => {
+              actionProfile.id = actionProfileResponse.body.id;
+            },
+          );
+        })
+        .then(() => {
+          // create Match profile
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile).then(
+            (matchProfileResponse) => {
+              matchProfile.id = matchProfileResponse.body.id;
+            },
+          );
+        })
+        .then(() => {
+          // create Job profile
+          NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+            jobProfile.profileName,
+            matchProfile.id,
+            actionProfile.id,
+          );
+        });
 
-      // create Action profile and link it to Field mapping profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-
-      // create Match profile
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
-
-      // create Job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.openNewJobProfileForm();
-      NewJobProfile.fillJobProfile(jobProfile);
-      NewJobProfile.linkMatchProfile(matchProfile.profileName);
-      NewJobProfile.linkActionProfileForMatches(actionProfile.name);
-      // wait for the action profile to be linked
-      cy.wait(1000);
-      NewJobProfile.saveAndClose();
-
-      cy.getAdminToken();
       marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(
           marcFile.marc,
@@ -162,8 +157,10 @@ describe('Data Import', () => {
           });
         });
       });
-
-      cy.visit(TopMenu.inventoryPath).then(() => {
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      }).then(() => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -171,12 +168,13 @@ describe('Data Import', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(linkingTagAndValue.value);
-        // MarcAuthoritiesSearch.selectAuthorityByIndex(0);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
           linkingTagAndValue.tag,
           linkingTagAndValue.rowIndex,
         );
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
@@ -188,7 +186,8 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 

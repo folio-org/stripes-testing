@@ -100,6 +100,7 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `patron-notice-policy-storage/patron-notice-policies/${id}`,
+      failOnStatusCode: false,
     });
   },
 };

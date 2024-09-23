@@ -104,6 +104,9 @@ export default {
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ textContent: text }).is({ type: calloutType }));
   },
+  checkCalloutContainsMessage: (text, calloutType = calloutTypes.success) => {
+    cy.expect(Callout({ textContent: including(text) }).is({ type: calloutType }));
+  },
   closeCalloutMessage: () => cy.do(
     Callout()
       .find(Button({ icon: 'times' }))
@@ -120,6 +123,7 @@ export default {
   },
   setTextFieldValue({ textField, fieldValue, clearField = false }) {
     if (fieldValue) {
+      cy.wait(1000);
       cy.do([textField.focus(), textField.fillIn(fieldValue)]);
       cy.expect(textField.has({ value: fieldValue }));
     } else if (fieldValue !== undefined && clearField) {

@@ -47,6 +47,7 @@ const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions')
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
+const resetAllButton = Button('Reset all');
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -69,6 +70,7 @@ function createRequestApi(
   itemStatus = ITEM_STATUS_NAMES.AVAILABLE,
   requestType = REQUEST_TYPES.PAGE,
   requestLevel = REQUEST_LEVELS.ITEM,
+  namePrefix = '',
 ) {
   const userData = {
     active: true,
@@ -92,7 +94,7 @@ function createRequestApi(
     userId: null,
   };
   const instanceRecordData = {
-    instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
+    instanceTitle: `${namePrefix}autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
     itemBarcode: `item-barcode-${uuid()}`,
     instanceId: uuid(),
     itemId: uuid(),
@@ -244,7 +246,6 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
 
@@ -348,7 +349,7 @@ export default {
   addTag(tag) {
     waitLoadingTags();
     cy.wait(1000);
-    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));
+    cy.do(tagsPane.find(MultiSelect({ id: 'input-tag' })).choose(tag));
     // TODO investigate what to wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
@@ -428,33 +429,33 @@ export default {
     {
       title: 'Title',
       id: 'title',
-      columnIndex: 2,
+      columnIndex: 3,
     },
     {
       title: 'Type',
       id: 'type',
-      columnIndex: 5,
+      columnIndex: 6,
     },
     {
       title: 'Item barcode',
       id: 'itembarcode',
-      columnIndex: 4,
+      columnIndex: 5,
     },
     {
       title: 'Requester',
       id: 'requester',
-      columnIndex: 8,
+      columnIndex: 9,
     },
     {
-      title: 'Requester Barcode',
+      title: 'Requester barcode',
       id: 'requesterbarcode',
-      columnIndex: 9,
+      columnIndex: 10,
     },
   ],
 
   columns: [
     {
-      title: 'Request Date',
+      title: 'Request date',
       id: 'requestdate',
       columnIndex: 1,
     },
@@ -514,7 +515,6 @@ export default {
       if (!b) return -1;
       return a.localeCompare(b);
     });
-
     expect(prev).to.deep.equal(itemsClone);
   },
 
@@ -646,9 +646,26 @@ export default {
     cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
+  verifyRequestIsPresent(itemData) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListRow({ content: including(itemData) })).exists(),
+    );
+  },
+
   verifyRequestIsAbsent(barcode) {
     cy.expect(
       requestsResultsSection.find(MultiColumnListRow({ content: including(barcode) })).absent(),
+    );
+  },
+
+  clickResetAllButton() {
+    cy.expect(resetAllButton.has({ disabled: false }));
+    cy.do(resetAllButton.click());
+    cy.wait(2000);
+    cy.expect(
+      HTML({ className: including('noResultsMessage-') }).has({
+        text: 'Choose a filter or enter a search query to show results.',
+      }),
     );
   },
 

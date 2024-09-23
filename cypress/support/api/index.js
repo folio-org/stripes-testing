@@ -29,3 +29,6 @@ import './organizations';
 import './receiving';
 import './settings';
 import './edge';
+import './tenant';
+import './specifications';
+import './profile-pictures';

@@ -40,9 +40,9 @@ export default {
       cy.do(financialReport.find(startDateTextfield).fillIn(startDate));
     } else {
       cy.do(financialReport.find(startDateTextfield).fillIn(firstDayOfMonth));
-      cy.expect(financialReport.find(feeFineOwnerSelect).exists());
-      cy.do(financialReport.find(feeFineOwnerSelect).choose(ownerName));
     }
+    cy.expect(financialReport.find(feeFineOwnerSelect).exists());
+    cy.do(financialReport.find(feeFineOwnerSelect).choose(ownerName));
   },
 
   fillInStartDate(startDate) {
@@ -157,8 +157,14 @@ export default {
     cy.do(financialReport.find(Button(including('Cancel'))).click());
   },
 
-  clickEndDateField() {
-    cy.do(financialReport.find(endDateTextfield).click());
+  focusStartDateField() {
+    cy.do(financialReport.find(startDateTextfield).focus());
+    cy.wait(200);
+  },
+
+  focusEndDateField() {
+    cy.do(financialReport.find(endDateTextfield).focus());
+    cy.wait(200);
   },
 
   activateFeeFineOwnerSelect() {

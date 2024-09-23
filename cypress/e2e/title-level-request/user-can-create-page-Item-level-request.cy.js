@@ -10,7 +10,6 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -37,10 +36,6 @@ describe('Create Item or Title level request', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -108,7 +103,7 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.enableTLRViaApi();
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,
         waiter: Requests.waitLoading,
@@ -117,10 +112,7 @@ describe('Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
+    cy.getAdminToken();
     cy.get('@requestId').then((id) => {
       Requests.deleteRequestViaApi(id);
     });
@@ -138,11 +130,10 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C350422 Check that user can create "Page" Item level request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();

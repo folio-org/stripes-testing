@@ -25,9 +25,9 @@ describe('MARC', () => {
       const users = {};
 
       const newFields = [
-        { rowIndex: 4, tag: '010', content: '$a n4332123 $z n1234432333' },
+        { previousFieldTag: '008', tag: '010', content: '$a n4332123 $z n1234432333' },
         {
-          rowIndex: 5,
+          previousFieldTag: '010',
           tag: '100',
           content: '$a Create a new MARC authority record with FOLIO authority file test',
         },
@@ -57,7 +57,7 @@ describe('MARC', () => {
       after('Delete users, data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(testData.authorityId);
+        MarcAuthority.deleteViaAPI(testData.authorityId, true);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
       });
 
@@ -65,7 +65,7 @@ describe('MARC', () => {
         'C423536 Create a new MARC authority record with "FOLIO" authority file selected (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
           QuickMarcEditor.verifyAuthorityLookUpButton();
           QuickMarcEditor.clickAuthorityLookUpButton();
@@ -74,11 +74,17 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag(testData.tag001, '');
           newFields.forEach((newField) => {
-            MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+            MarcAuthority.addNewFieldAfterExistingByTag(
+              newField.previousFieldTag,
+              newField.tag,
+              newField.content,
+            );
           });
           QuickMarcEditor.checkContentByTag(testData.tag001, testData.tag001Value);
           QuickMarcEditor.checkContentByTag(testData.tag010, newFields[0].content);
           QuickMarcEditor.checkContentByTag(testData.tag100, newFields[1].content);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);

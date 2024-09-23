@@ -15,9 +15,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -39,6 +39,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let preconditionUserId = null;
     let user = null;
     let holdingsHrId = null;
     let instanceHrid = null;
@@ -55,7 +56,7 @@ describe('Data Import', () => {
     };
     const holdingsMappingProfileForCreate = {
       name: `C347894 autotest holdings mapping profile for create.${getRandomPostfix()}`,
-      permanentLocation: 'Main Library (KU/CC/DI/M)',
+      permanentLocation: 'Online',
     };
     const actionProfilesForCreate = [
       {
@@ -127,52 +128,58 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createInstanceMappingProfileViaApi(
-        instanceMappingProfileForCreate,
-      ).then((mappingProfileResponse) => {
-        mappingProfileIds.push(mappingProfileResponse.body.id);
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
 
-        NewActionProfile.createActionProfileViaApi(
-          actionProfilesForCreate[0].actionProfile,
-          mappingProfileResponse.body.id,
-        ).then((actionProfileResponse) => {
-          actionProfileIds.push(actionProfileResponse.body.id);
-        });
-      });
-      NewFieldMappingProfile.createHoldingsMappingProfileViaApi(holdingsMappingProfileForCreate)
-        .then((mappingProfileResponse) => {
+        NewFieldMappingProfile.createInstanceMappingProfileViaApi(
+          instanceMappingProfileForCreate,
+        ).then((mappingProfileResponse) => {
           mappingProfileIds.push(mappingProfileResponse.body.id);
 
           NewActionProfile.createActionProfileViaApi(
-            actionProfilesForCreate[1].actionProfile,
+            actionProfilesForCreate[0].actionProfile,
             mappingProfileResponse.body.id,
           ).then((actionProfileResponse) => {
             actionProfileIds.push(actionProfileResponse.body.id);
           });
-        })
-        .then(() => {
-          NewJobProfile.createJobProfileWithLinkedTwoActionProfilesViaApi(
-            jobProfileForCreate,
-            actionProfileIds[0],
-            actionProfileIds[1],
-          );
         });
-      // upload a marc file for creating of the new instance, holding
-      DataImport.uploadFileViaApi(
-        filePathToUpload,
-        marcFileNameForCreate,
-        jobProfileForCreate.name,
-      ).then((response) => {
-        holdingsHrId = response[0].instance.hrid;
+        NewFieldMappingProfile.createHoldingsMappingProfileViaApi(holdingsMappingProfileForCreate)
+          .then((mappingProfileResponse) => {
+            mappingProfileIds.push(mappingProfileResponse.body.id);
+
+            NewActionProfile.createActionProfileViaApi(
+              actionProfilesForCreate[1].actionProfile,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              actionProfileIds.push(actionProfileResponse.body.id);
+            });
+          })
+          .then(() => {
+            NewJobProfile.createJobProfileWithLinkedTwoActionProfilesViaApi(
+              jobProfileForCreate,
+              actionProfileIds[0],
+              actionProfileIds[1],
+            );
+          });
+        // upload a marc file for creating of the new instance, holding
+        DataImport.uploadFileViaApi(
+          filePathToUpload,
+          marcFileNameForCreate,
+          jobProfileForCreate.name,
+        ).then((response) => {
+          holdingsHrId = response[0].holding.hrid;
+        });
       });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.dataExportEnableSettings.gui,
         Permissions.settingsDataImportEnabled.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -187,7 +194,7 @@ describe('Data Import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfile.profileName);
@@ -203,6 +210,7 @@ describe('Data Import', () => {
         mappingProfileIds.forEach((id) => {
           SettingsFieldMappingProfiles.deleteMappingProfileViaApi(id);
         });
+        Users.deleteViaApi(preconditionUserId);
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
@@ -221,6 +229,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHrId);
         InventorySearchAndFilter.selectResultCheckboxes(1);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         InventorySearchAndFilter.exportInstanceAsMarc();
         cy.intercept('/data-export/quick-export').as('getHrid');
         cy.wait('@getHrid', getLongDelay()).then((req) => {

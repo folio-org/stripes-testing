@@ -61,7 +61,7 @@ const transactionList = MultiColumnList({ id: 'transactions-list' });
 const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: '7' });
-const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '5' });
+const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '6' });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
@@ -132,8 +132,9 @@ export default {
     return FundEditForm;
   },
   createFund(fund) {
+    cy.do([newButton.click()]);
+    cy.wait(8000);
     cy.do([
-      newButton.click(),
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccount),
@@ -210,6 +211,7 @@ export default {
   },
 
   cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
+    cy.wait(4000);
     cy.do([
       newButton.click(),
       nameField.fillIn(defaultFund.name),
@@ -370,6 +372,10 @@ export default {
     cy.do(Link('View transactions').click());
   },
 
+  viewTransactionsForCurrentBudget: () => {
+    cy.do([actionsButton.click(), Button('View transactions for current budget').click()]);
+  },
+
   checkTransactionList: (fundCode) => {
     cy.expect([
       transactionList
@@ -465,6 +471,30 @@ export default {
       .eq(0)
       .find('a')
       .click();
+  },
+
+  selectTransactionWithAmountInList: (transactionType, amount) => {
+    cy.get('div[class*=mclRow-]').each(($row) => {
+      const transactionTypeCell = $row.find(`div[class*=mclCell-]:contains("${transactionType}")`);
+      const amountCell = $row.find(`div[class*=mclCell-]:contains("${amount}")`);
+      if (transactionTypeCell.length > 0 && amountCell.length > 0) {
+        cy.wrap(transactionTypeCell).find('a').click();
+      }
+    });
+  },
+
+  verifyTransactionWithAmountExist: (transactionType, amount) => {
+    cy.get('div[class*=mclRow-]').then(($rows) => {
+      const matchFound = Array.from($rows).some((row) => {
+        const transactionTypeCell = Cypress.$(row).find(
+          `div[class*=mclCell-]:contains("${transactionType}")`,
+        );
+        const amountCell = Cypress.$(row).find(`div[class*=mclCell-]:contains("${amount}")`);
+        return transactionTypeCell.length > 0 && amountCell.length > 0;
+      });
+
+      cy.wrap(matchFound).should('be.true');
+    });
   },
 
   checkNoTransactionOfType: (transactionType) => {
@@ -599,6 +629,7 @@ export default {
     amountEncumbered,
     amountAwaitingPayment,
     amountExpended,
+    amountCredited,
     amountUnavailable,
   ) => {
     cy.expect(budgetSummaryAcordion.exists());
@@ -630,10 +661,18 @@ export default {
         .exists(),
       financialActivityAndOveragesMCList
         .find(MultiColumnListRow({ indexRow: 'row-3' }))
-        .find(MultiColumnListCell({ content: 'Unavailable' }))
+        .find(MultiColumnListCell({ content: 'Credited' }))
         .exists(),
       financialActivityAndOveragesMCList
         .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: amountCredited }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
+        .find(MultiColumnListCell({ content: 'Unavailable' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
         .find(MultiColumnListCell({ content: amountUnavailable }))
         .exists(),
     ]);
@@ -844,6 +883,7 @@ export default {
   },
 
   selectBudgetDetails(rowNumber = 0) {
+    cy.wait(4000);
     cy.do(currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click());
     cy.expect(budgetPane.exists());
   },
@@ -1049,7 +1089,6 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.wait(4000);
     FundDetails.waitLoading();
   },
 

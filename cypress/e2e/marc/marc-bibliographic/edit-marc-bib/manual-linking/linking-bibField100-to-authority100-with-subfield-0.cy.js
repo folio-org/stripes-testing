@@ -18,7 +18,7 @@ describe('MARC', () => {
           tag100: '100',
           tag010: '010',
           tag240: '240',
-          authority100FieldValue: 'Coates, Ta-Nehisi',
+          authority100FieldValue: 'C365134 Coates, Ta-Nehisi',
           authority010FieldValue: 'n 2008001084',
           successMsg:
             'This record has successfully saved and is in process. Changes may not appear immediately.',
@@ -45,16 +45,21 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before('Creating user', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365134*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -114,11 +119,13 @@ describe('MARC', () => {
               '100',
               '1',
               '\\',
-              '$a Coates, Ta-Nehisi',
+              '$a C365134 Coates, Ta-Nehisi',
               '$e author.',
               '$0 http://id.loc.gov/authorities/names/n2008001084',
               '',
             );
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
 
             InventoryInstance.clickViewAuthorityIconDisplayedInTagField(testData.tag100);

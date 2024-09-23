@@ -43,7 +43,7 @@ describe('MARC', () => {
         ];
 
         const linkingTagAndValues = {
-          rowIndex: 10,
+          rowIndex: 11,
           value: 'C417049 Chin, Staceyann, 1972-',
           tag: 100,
         };
@@ -51,6 +51,10 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C417049*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
@@ -59,17 +63,15 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
 
-            cy.loginAsAdmin().then(() => {
-              cy.visit(TopMenu.dataImportPath);
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdAuthorityIDs.push(record[marcFile.propertyName].id);
-                  });
+            cy.visit(TopMenu.dataImportPath);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
@@ -92,6 +94,8 @@ describe('MARC', () => {
                 linkingTagAndValues.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1000);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -106,7 +110,7 @@ describe('MARC', () => {
 
         it(
           'C417049 Derive | Verify that derived MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire'] },
           () => {
             cy.login(testData.userData.username, testData.userData.password, {
               path: TopMenu.inventoryPath,
@@ -119,6 +123,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Content);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.checkPresentedText(testData.instanceTitleAfterUpdate);

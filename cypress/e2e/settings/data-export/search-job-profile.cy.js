@@ -13,43 +13,42 @@ let fieldMappingProfileId;
 const newJobProfileName = `jobProfile${getRandomPostfix()}`;
 const fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
 
-describe('settings: data-export', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
-        (response) => {
+describe('Data Export', () => {
+  describe('Job profile - setup', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
+        user = userProperties;
+        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(
+          fieldMappingProfileName,
+        ).then((response) => {
           fieldMappingProfileId = response.body.id;
           ExportNewJobProfile.createNewJobProfileViaApi(newJobProfileName, response.body.id);
-        },
-      );
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
-  });
 
-  after('delete test data', () => {
-    cy.getAdminToken();
-    ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` }).then(
-      (response) => {
-        ExportJobProfiles.deleteJobProfileViaApi(response.id);
-      },
-    );
-    DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
-    Users.deleteViaApi(user.userId);
-  });
+    after('delete test data', () => {
+      cy.getAdminToken();
+      ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` }).then(
+        (response) => {
+          ExportJobProfiles.deleteJobProfileViaApi(response.id);
+        },
+      );
+      DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
+      Users.deleteViaApi(user.userId);
+    });
 
-  it('C345411 Search job profiles (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
-    ExportJobProfiles.goToJobProfilesTab();
+    it('C345411 Search job profiles (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
+      ExportJobProfiles.goToJobProfilesTab();
 
-    [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
-      ExportJobProfiles.searchJobProfile(element);
-      ExportJobProfiles.verifyJobProfileSearchResult(element);
+      [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
+        ExportJobProfiles.searchJobProfile(element);
+        ExportJobProfiles.verifyJobProfileSearchResult(element);
+      });
     });
   });
 });

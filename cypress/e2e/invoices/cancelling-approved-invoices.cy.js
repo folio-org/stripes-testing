@@ -17,7 +17,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-invoices: Cancelling approved invoices', () => {
+describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const order = { ...NewOrder.defaultOneTimeOrder };

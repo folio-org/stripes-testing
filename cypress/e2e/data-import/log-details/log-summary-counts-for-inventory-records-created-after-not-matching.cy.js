@@ -7,6 +7,7 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   RECORD_STATUSES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -15,9 +16,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -222,7 +223,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -242,7 +243,7 @@ describe('Data Import', () => {
         FileDetails.checkItemsQuantityInSummaryTable(3, '0');
 
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
+        InstanceRecordView.verifyInstanceIsOpened(firstInstanceTitle);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);

@@ -51,6 +51,10 @@ describe('MARC', () => {
     const createdRecordIDs = [];
 
     before('Creating user and data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C432300*');
+
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
@@ -67,6 +71,7 @@ describe('MARC', () => {
               createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
+          cy.wait(2000);
         });
 
         cy.loginAsAdmin().then(() => {
@@ -85,6 +90,8 @@ describe('MARC', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

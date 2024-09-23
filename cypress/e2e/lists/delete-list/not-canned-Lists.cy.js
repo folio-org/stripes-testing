@@ -15,28 +15,33 @@ describe('lists', () => {
 
     before('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
       });
     });
     it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      // eslint-disable-next-line spaced-comment
-      //cy.login(userData.username, userData.password);
-      cy.loginAsAdmin();
+      cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-      Lists.resetAll();
+      Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility(listData.visibility);
       Lists.saveList();
-      Lists.actionButton();
-      cy.contains('Delete list').click();
-      Lists.DeleteListModal();
+      Lists.openActions();
+      Lists.deleteList();
+      Lists.confirmDelete();
       cy.contains(`List ${listData.name} deleted.`);
     });
 
@@ -44,23 +49,21 @@ describe('lists', () => {
       'C411772 Delete list: "Edit list" mode (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.saveList();
-        Lists.actionButton();
-        cy.contains('Edit list').click();
-        Lists.actionButton();
-        cy.contains('Delete list').click();
-        Lists.DeleteListModal();
+        Lists.openActions();
+        Lists.editList();
+        Lists.openActions();
+        Lists.deleteList();
+        Lists.confirmDelete();
         cy.contains(`List ${listData.name} deleted.`);
       },
     );

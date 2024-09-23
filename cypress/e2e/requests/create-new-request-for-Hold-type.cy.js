@@ -12,7 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('Request', () => {
+describe('Requests', () => {
   let userData = {};
   let requestId;
   let itemBarcode;
@@ -79,7 +79,7 @@ describe('Request', () => {
 
   it(
     'C545 Create new request for "Hold" type and check links to/from user and item (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();

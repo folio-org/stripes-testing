@@ -50,7 +50,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -83,6 +82,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -114,6 +115,8 @@ describe('MARC', () => {
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.subfieldZValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(
@@ -121,6 +124,8 @@ describe('MARC', () => {
             `$a ${marcFiles[1].authority010FieldValue} $z ${testData.updatedSubfieldZValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           QuickMarcEditor.updateExistingField(
@@ -128,6 +133,8 @@ describe('MARC', () => {
             `$a ${marcFiles[1].authority010FieldValue}`,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
 

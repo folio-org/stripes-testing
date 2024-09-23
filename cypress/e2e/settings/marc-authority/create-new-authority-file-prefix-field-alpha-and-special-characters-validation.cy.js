@@ -53,7 +53,7 @@ describe('MARC', () => {
           );
           ManageAuthorityFiles.checkSaveButtonEnabledInFile(authorityFile.name);
           ManageAuthorityFiles.checkCancelButtonEnabledInFile(authorityFile.name);
-          ManageAuthorityFiles.clickSaveButton();
+          ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
           ManageAuthorityFiles.checkErrorInField(
             authorityFile.name,
             AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,
@@ -67,7 +67,7 @@ describe('MARC', () => {
             );
             ManageAuthorityFiles.checkSaveButtonEnabledInFile(authorityFile.name);
             ManageAuthorityFiles.checkCancelButtonEnabledInFile(authorityFile.name);
-            ManageAuthorityFiles.clickSaveButton();
+            ManageAuthorityFiles.clickSaveButtonAfterCreationFile();
             ManageAuthorityFiles.checkErrorInField(
               authorityFile.name,
               AUTHORITY_FILE_TEXT_FIELD_NAMES.PREFIX,

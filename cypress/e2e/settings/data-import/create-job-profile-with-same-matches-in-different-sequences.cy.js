@@ -2,7 +2,7 @@ import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
@@ -79,7 +79,7 @@ describe('Data Import', () => {
 
     it(
       'C399081 Verify the ability to create job profile with the same matches in different sequences (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
@@ -117,6 +117,7 @@ describe('Data Import', () => {
         NewJobProfile.linkMatchProfileForSubMatches(
           collectionOfMatchProfiles[3].matchProfile.profileName,
         );
+        NewJobProfile.linkActionProfileForMatches('Default - Create instance');
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName, 1);
         NewJobProfile.waitLoading();
         NewJobProfile.linkMatchProfileForMatches(
@@ -127,6 +128,7 @@ describe('Data Import', () => {
         NewJobProfile.linkMatchProfileForSubMatches(
           collectionOfMatchProfiles[2].matchProfile.profileName,
         );
+        NewJobProfile.linkActionProfileForMatches('Default - Create instance');
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
         JobProfiles.checkCalloutMessage(calloutMessage);

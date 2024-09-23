@@ -54,9 +54,9 @@ describe('MARC', () => {
       };
 
       before('Creating user, importing and linking records', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
-        cy.getAdminToken().then(() => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+          // make sure there are no duplicate authority records in the system
           MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374143"' }).then(
             (records) => {
               records.forEach((record) => {
@@ -66,17 +66,18 @@ describe('MARC', () => {
               });
             },
           );
-        });
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -94,6 +95,8 @@ describe('MARC', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -116,6 +119,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           testData.createdRecordIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -137,44 +141,38 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag100);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag150);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag151);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag151, testData.tag155);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag121);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterSaving);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag121, testData.tag130);
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.updateExistingField(testData.tag130, testData.tag130content);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessageAfterAddingSubfield);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterAddingSubfield);
         },
       );
     });

@@ -45,7 +45,7 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValue = {
-        rowIndex: 18,
+        rowIndex: 17,
         value: 'Beethoven, Ludwig van,',
         tag: '240',
       };
@@ -53,6 +53,10 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374156*');
+
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -92,6 +96,8 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -123,11 +129,17 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(testData.updatedValue, 7);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();

@@ -20,7 +20,7 @@ describe('MARC', () => {
             'C388638 Runaway bride/ produced by Robert W. Cort, Ted Field, Scott Kroopf, Tom Rosenberg; written by Josann McGibbon, Sara Parriott; directed by Garry Marshall.',
           createdRecordIDs: [],
           tag130content: [
-            17,
+            16,
             '130',
             '0',
             '\\',
@@ -34,23 +34,23 @@ describe('MARC', () => {
           },
           field130: {
             tag130: '130',
-            rowIndex: 17,
+            rowIndex: 16,
             content: '$a C388638 Runaway Bride (Motion picture)',
           },
           field240: {
             tag240: '240',
-            rowIndex: 18,
+            rowIndex: 17,
             constnet: '$a Value240 $0 n99036055',
           },
           field600: {
             tag600: '600',
-            rowIndex: 39,
+            rowIndex: 38,
             content: '$a Value600 $0 y021021',
           },
           field650: {
             tag650: '650',
-            rowIndex: 41,
-            content: '$a Man-woman relationships $v Drama. $0 sh85095299',
+            rowIndex: 40,
+            content: '$a Man-woman relationships $v Drama. $0 sh85095291',
           },
           field711: {
             tag711: '711',
@@ -113,37 +113,24 @@ describe('MARC', () => {
         ];
 
         before('Create test data', () => {
-          cy.loginAsAdmin();
-          cy.getAdminToken().then(() => {
-            // make sure there are no duplicate authority records in the system
-            cy.getAdminToken().then(() => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 100,
-                query: 'keyword="C388638"',
-              }).then((records) => {
-                records.forEach((record) => {
-                  if (record.authRefType === 'Authorized') {
-                    MarcAuthority.deleteViaAPI(record.id);
-                  }
-                });
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388638*');
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
+          });
 
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-            });
-
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
+          linkableFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
           });
 
           cy.createTempUser([
@@ -154,6 +141,7 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.user = createdUserProperties;
 
+            cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
@@ -165,6 +153,8 @@ describe('MARC', () => {
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.field130.tag130);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(3000);
 
@@ -214,6 +204,7 @@ describe('MARC', () => {
               testData.field830.content,
             );
             QuickMarcEditor.clickLinkHeadingsButton();
+            cy.wait(1000);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field240.rowIndex);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field650.rowIndex);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field130.rowIndex);
@@ -223,6 +214,8 @@ describe('MARC', () => {
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);
             InventoryInstance.viewSource();
@@ -231,7 +224,7 @@ describe('MARC', () => {
               testData.field240.rowIndex,
               testData.field650.rowIndex,
             ].forEach((index) => {
-              InventoryViewSource.verifyLinkedToAuthorityIcon(index - 3, true);
+              InventoryViewSource.verifyLinkedToAuthorityIcon(index - 2, true);
             });
           },
         );

@@ -24,63 +24,68 @@ describe('MARC', () => {
         instanceTitle: 'C360098 Narysy z historyi belaruskaha mastatstva / Mikola Shchakatsikhin.',
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
+      const calloutMarcTagWrongLength =
+        'Tag must contain three characters and can only accept numbers 0-9.';
+      const calloutMultiple245MarcTags = 'Field is non-repeatable.';
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
-        fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
+        fileName: `C360098 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
       const marcFileC359239 = {
         marc: 'marcBibFileC359239.mrc',
-        fileName: `testMarcFileC359239.${getRandomPostfix()}.mrc`,
+        fileName: `C359239 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
       const createdInstanceIDs = [];
 
       before(() => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            `${marcFile.fileName}_copy`,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          DataImport.uploadFileViaApi(
+            marcFileC359239.marc,
+            marcFileC359239.fileName,
+            marcFileC359239.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                `${marcFile.fileName}_copy`,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-              DataImport.uploadFileViaApi(
-                marcFileC359239.marc,
-                marcFileC359239.fileName,
-                marcFileC359239.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
-                });
-              });
-            },
-          );
         });
       });
 
       after('Deleting created users, Instances', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.userProperties.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
           InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
         });
@@ -98,37 +103,38 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.updateExistingTagValue(19, '');
+          QuickMarcEditor.updateExistingTagValue(20, '');
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-          QuickMarcEditor.verifyTagValue(19, '');
-          QuickMarcEditor.updateExistingTagValue(19, testData.tag504FirstUpdatedTag);
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-          QuickMarcEditor.verifyTagValue(19, testData.tag504FirstUpdatedTag);
-          QuickMarcEditor.updateExistingTagValue(19, testData.tag504SecondUpdatedTag);
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
+          QuickMarcEditor.verifyTagValue(20, '');
+          QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyInvalidTagCallout();
-          QuickMarcEditor.verifyTagValue(19, testData.tag504SecondUpdatedTag);
-          QuickMarcEditor.updateExistingTagValue(19, testData.tag245);
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyMultiple245TagCallout();
-          QuickMarcEditor.verifyTagValue(19, testData.tag245);
-          QuickMarcEditor.updateExistingTagValue(19, testData.tag504);
-          QuickMarcEditor.updateExistingTagValue(13, testData.tag555);
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
+          QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
+          QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyNo245TagCallout();
-          QuickMarcEditor.verifyTagValue(13, testData.tag555);
-          QuickMarcEditor.updateExistingTagValue(13, testData.tag245);
-          QuickMarcEditor.updateExistingTagValue(15, '');
-          QuickMarcEditor.updateTagNameToLockedTag(15, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(15, false);
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyMultiple001TagCallout();
-          QuickMarcEditor.verifyTagValue(15, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(15, false);
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
+          QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
+          QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(20, calloutMultiple245MarcTags);
+          QuickMarcEditor.verifyTagValue(20, testData.tag245);
+          QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
+          QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkCallout('Field 245 is required.');
+          QuickMarcEditor.closeWithoutSaving();
           InventoryInstance.waitLoading();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
           InventoryInstance.checkDetailViewOfInstance(
@@ -187,6 +193,8 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
           QuickMarcEditor.checkTagAbsent('');
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(1);
           QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndClose();
@@ -316,6 +324,8 @@ describe('MARC', () => {
           cy.wait(1000);
           QuickMarcEditor.deleteField(31);
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeletingFieldsModal();
           QuickMarcEditor.restoreDeletedFields();

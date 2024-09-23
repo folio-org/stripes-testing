@@ -8,6 +8,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   Pane,
   PaneContent,
@@ -22,6 +23,7 @@ import UrlParams from '../url-params';
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
 const errorsInImportAccordion = Accordion('Errors in import');
+const jobProfileAccordion = Accordion({ id: 'profileIdAny' });
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
@@ -53,7 +55,7 @@ const columnName = {
 function waitUIToBeFiltered() {
   // Need some waiting when jobs list is long, UI takes longer to be filtered
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(1800);
+  cy.wait(2000);
 }
 
 function checkByErrorsInImport(...status) {
@@ -146,7 +148,8 @@ export default {
   },
 
   searchWithTerm(term) {
-    cy.get('#input-job-logs-search').clear().type(term);
+    const newFileName = term.replace('.mrc', '');
+    cy.get('#input-job-logs-search').clear().type(newFileName);
     cy.do(Button('Search').click());
     // need to wait until search list is populated
     cy.wait(1500);
@@ -156,7 +159,7 @@ export default {
     if (rowCount === 0) {
       cy.expect(MultiColumnList().absent());
     } else {
-      cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
+      cy.expect(dataImportList.has({ rowCount }));
     }
   },
 
@@ -209,10 +212,8 @@ export default {
 
   filterJobsByJobProfile(jobProfile) {
     cy.do([
-      Accordion({ id: 'profileIdAny' }).clickHeader(),
-      Accordion({ id: 'profileIdAny' })
-        .find(Selection({ singleValue: 'Choose job profile' }))
-        .open(),
+      jobProfileAccordion.clickHeader(),
+      jobProfileAccordion.find(Selection({ value: including('Choose job profile') })).open(),
       SelectionList().select(jobProfile),
     ]);
   },
@@ -222,7 +223,7 @@ export default {
   },
 
   filterJobsByUser(user) {
-    cy.do([Selection({ singleValue: 'Choose user' }).open(), SelectionList().select(user)]);
+    cy.do([Selection({ value: including('Choose user') }).open(), SelectionList().select(user)]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
@@ -262,7 +263,7 @@ export default {
     this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(
       (cells) => {
         // convert each cell value to Date object
-        const dates = cells.map((cell) => new Date(cell));
+        const dates = cells.map((cell) => new Date().toISOString(cell));
 
         // create new array from the dates and sort this array in descending order
         const sortedDates = [...dates].sort((a, b) => b - a);
@@ -403,13 +404,21 @@ export default {
       });
   },
 
+  getLogId() {
+    return cy
+      .get('#list-data-import')
+      .find('div[data-row-inner="0"]')
+      .find('div[role=gridcell]')
+      .eq(8)
+      .invoke('text')
+      .then((text) => {
+        return text;
+      });
+  },
+
   viewAllIsOpened: () => {
     cy.expect(searchFilterPane.exists());
-    cy.expect(
-      Pane('Logs')
-        .find(MultiColumnList({ id: 'list-data-import' }))
-        .exists(),
-    );
+    cy.expect(Pane('Logs').find(dataImportList).exists());
   },
 
   selectAllLogs: () => {
@@ -447,11 +456,7 @@ export default {
   openFileDetails: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
 
-    cy.do(
-      MultiColumnList({ id: 'list-data-import' })
-        .find(Link(including(newFileName)))
-        .click(),
-    );
+    cy.do(dataImportList.find(Link(including(newFileName))).click());
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
@@ -557,18 +562,14 @@ export default {
   verifyUserNameIsAbsntInFilter(userName) {
     cy.do(
       Accordion({ id: 'userId' })
-        .find(Selection({ singleValue: 'Choose user' }))
+        .find(Selection({ value: 'Choose user' }))
         .open(),
     );
     cy.get(userName).should('not.exist');
   },
 
   verifyJobProfileIsAbsntInFilter(jobProfile) {
-    cy.do(
-      Accordion({ id: 'profileIdAny' })
-        .find(Selection({ singleValue: 'Choose job profile' }))
-        .open(),
-    );
+    cy.do(jobProfileAccordion.find(Selection({ value: 'Choose job profile' })).open());
     cy.get(jobProfile).should('not.exist');
   },
 
@@ -599,10 +600,31 @@ export default {
 
   verifySearchResult(fileName) {
     const newFileName = fileName.replace('.mrc', '');
-    cy.expect(
-      logsResultPane
-        .find(MultiColumnListCell({ row: 0, content: including(newFileName) }))
-        .exists(),
+
+    cy.do(
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          dataImportList.find(MultiColumnListRow({ indexRow: `row-${rowNumber}` })).exists(),
+        );
+      }),
+    );
+  },
+  verifyJobStatus: (fileName, status) => {
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+
+    cy.do(
+      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          dataImportList
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: status }))
+            .exists(),
+        );
+      }),
     );
   },
 };

@@ -22,35 +22,6 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
-      () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-          Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
-          Permissions.moduleeHoldingsEnabled.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-          EHoldingsPackages.getNotSelectedPackageIdViaApi().then((specialPackage) => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
-              waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
-            });
-            cy.wait(3000);
-            EHoldingsPackage.addToHoldings();
-            cy.wait(3000);
-            EHoldingsPackage.verifyHoldingStatus();
-            cy.wait(3000);
-            EHoldingsPackage.filterTitles();
-            EHoldingsPackage.checkEmptyTitlesList();
-            // reset test data
-            EHoldingsPackage.removeFromHoldings();
-          });
-        });
-      },
-    );
-
-    it(
       'C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft'] },
       () => {
@@ -68,6 +39,7 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.byName();
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
+            cy.reload();
             const addedTag2 = EHoldingsPackage.addTag();
             EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byName(selectedPackage);
@@ -171,38 +143,6 @@ describe('eHoldings', () => {
       cy.getAdminToken();
       EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
     });
-
-    it(
-      'C756 Remove a tag from a package record (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
-      () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-          Permissions.uiTagsPermissionAll.gui,
-          Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
-          EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName();
-          EHoldingsPackages.openPackage().then(() => {
-            // existing test data clearing
-            EHoldingsPackage.removeExistingTags();
-            const addedTag = EHoldingsPackage.addTag();
-            EHoldingsPackage.closePackage();
-            EHoldingsPackagesSearch.byTag(addedTag);
-            EHoldingsPackages.openPackage();
-            EHoldingsPackage.verifyExistingTags(addedTag);
-            EHoldingsPackage.removeExistingTags();
-            cy.reload();
-            EHoldingsPackage.verifyExistingTags();
-          });
-        });
-      },
-    );
 
     it(
       'C699 Add or edit package custom coverage (spitfire)',

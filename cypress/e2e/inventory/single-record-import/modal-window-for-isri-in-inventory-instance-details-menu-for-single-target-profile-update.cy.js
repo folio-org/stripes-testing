@@ -79,7 +79,7 @@ describe('Inventory', () => {
 
     it(
       'C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);
@@ -94,7 +94,7 @@ describe('Inventory', () => {
         // https://issues.folio.org/browse/MODCPCT-73
         cy.wait(7000);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
-        InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+        InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
       },
     );
   });

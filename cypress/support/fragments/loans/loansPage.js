@@ -92,6 +92,7 @@ export default {
   },
   renewalMessageCheck(message) {
     this.renewLoan();
+    cy.wait(1000);
     cy.contains(message).should('be.visible');
   },
   checkOverrideButtonHidden() {

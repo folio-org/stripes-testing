@@ -40,13 +40,17 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValue = {
-        rowIndex: 56,
+        rowIndex: 55,
         value: 'C374157 Roberts, Julia,',
         tag: '700',
       };
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374157*');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -85,6 +89,8 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
 
@@ -115,6 +121,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.updatedValue);
           cy.wait(2000);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();

@@ -5,7 +5,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('Cancel item level request', () => {
-  const userData = {};
+  let userData = {};
   const cancellationReason = {
     id: uuid(),
     name: uuid(),
@@ -21,12 +21,7 @@ describe('Cancel item level request', () => {
       .then(() => {
         cy.createTempUser([Permissions.settingsCircView.gui])
           .then((userProperties) => {
-            userData.username = userProperties.username;
-            userData.password = userProperties.password;
-            userData.userId = userProperties.userId;
-            userData.barcode = userProperties.barcode;
-            userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
+            userData = userProperties;
           })
           .then(() => {
             cy.login(userData.username, userData.password, {

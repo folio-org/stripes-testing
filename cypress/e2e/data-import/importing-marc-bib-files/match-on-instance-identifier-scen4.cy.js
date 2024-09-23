@@ -15,9 +15,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -39,6 +39,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
+    const filePathForCreateInstance = 'marcFileForC347831.mrc';
+    const filePathForUpdateInstance = 'marcFileForC347831_1.mrc';
     const randomIdentifierCode = GenerateIdentifierCode.getRandomIdentifierCode();
     const editedMarcFileNameForCreate = `C347831 marcFileForCreate${getRandomPostfix()}.mrc`;
     const editedMarcFileNameForUpdate = `C347831 marcFileForUpdate${getRandomPostfix()}.mrc`;
@@ -51,9 +53,9 @@ describe('Data Import', () => {
       'Letters from a Stoic : The Ancient Classic  / Seneca, with a introduction of Donald Robertson.';
     const instanceGeneralNote = 'IDENTIFIER UPDATE 4';
     const resourceIdentifiers = [
-      { type: 'UPC', value: 'ORD32671387-4' },
+      { type: 'UPC', value: 'ORD32671387-7' },
       { type: 'OCLC', value: '(OCoLC)84714376518561876438' },
-      { type: 'Invalid UPC', value: 'ORD32671387-4' },
+      { type: 'Invalid UPC', value: 'ORD32671387-7' },
       { type: 'System control number', value: `(${randomIdentifierCode})84714376518561876438` },
     ];
     const matchProfile = {
@@ -143,13 +145,13 @@ describe('Data Import', () => {
       () => {
         // change files for create and update instance using random identifier code
         DataImport.editMarcFile(
-          'marcFileForMatchOnIdentifierForCreate.mrc',
+          filePathForCreateInstance,
           editedMarcFileNameForCreate,
           ['AMB'],
           [randomIdentifierCode],
         );
         DataImport.editMarcFile(
-          'marcFileForMatchOnIdentifierForUpdate_4.mrc',
+          filePathForUpdateInstance,
           editedMarcFileNameForUpdate,
           ['AMB'],
           [randomIdentifierCode],

@@ -48,14 +48,14 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC376595.mrc',
-          fileName: `testMarcFileC376595.${getRandomPostfix()}.mrc`,
+          fileName: `C376595 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
           instanceTitle: 'Surface chemistry of solid and liquid interfaces / H. Yıldırım Erbil.',
         },
         {
           marc: 'marcAuthFileForC376595.mrc',
-          fileName: `testMarcFileC376595.${getRandomPostfix()}.mrc`,
+          fileName: `C376595 testMarcFileC376595${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
           authorityHeading: 'Erbil, H. Yıldırım',
@@ -65,16 +65,20 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -95,6 +99,8 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
@@ -120,6 +126,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
       });
 
       it(
@@ -132,7 +139,8 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.tag010NewValue);
           QuickMarcEditor.checkButtonsEnabled();
-
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.verifyAreYouSureModal(testData.areYouSureModalMessage);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);

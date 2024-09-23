@@ -61,17 +61,18 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.instanceId);
         QueryModal.verifySelectedField(itemFieldValues.instanceId);
-        QueryModal.verifyQueryAreaContent('(instance_id  )');
+        QueryModal.verifyQueryAreaContent('(instances.id  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(stringStoresUuidButMillionOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(instance_id in (""))');
+        QueryModal.verifyQueryAreaContent('(instances.id in (""))');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(`${firstItem.instanceId},${secondItem.instanceId}`);
         QueryModal.verifyQueryAreaContent(
-          `(instance_id in ("${firstItem.instanceId}","${secondItem.instanceId}"))`,
+          `(instances.id in ("${firstItem.instanceId}","${secondItem.instanceId}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

@@ -6,6 +6,7 @@ import {
   LOCATION_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -13,7 +14,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -23,15 +23,18 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
+    let userId = null;
     // unique file name to upload
     const nameForMarcFile = `C343343 autotestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C343343 autotestFile${getRandomPostfix()}.mrc`;
@@ -84,8 +87,17 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Login', () => {
-      cy.loginAsAdmin();
+    before('Create user and login', () => {
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+
+        cy.login(userProperties.username, userProperties.password);
+      });
     });
 
     after('Delete test data', () => {
@@ -94,6 +106,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       FileManager.deleteFileFromDownloadsByMask('*SearchInstanceUUIDs*');
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(userId);
         // clean up generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForExport.profileName);

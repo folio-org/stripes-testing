@@ -39,16 +39,16 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC374144.mrc',
-          fileName: `testMarcFileC374144.${getRandomPostfix()}.mrc`,
+          fileName: `C374144 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          instanceTitle: 'Oratory, Primitive',
+          instanceTitle: 'C374144 Oratory, Primitive',
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC374144.mrc',
-          fileName: `testMarcFileC374144.${getRandomPostfix()}.mrc`,
+          fileName: `C374144testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          authorityHeading: 'Oratory',
+          authorityHeading: 'C374144 Oratory',
           propertyName: 'authority',
         },
       ];
@@ -56,16 +56,31 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="374144" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id);
+              });
+            }
+          });
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -87,6 +102,8 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([
             Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -107,6 +124,7 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       });
@@ -126,36 +144,30 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag100);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag130);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag151);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag151, testData.tag155);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.cannotChangeCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag149);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotSaveCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag149, testData.tag150);
           QuickMarcEditor.checkButtonsDisabled();
@@ -166,8 +178,8 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
 
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotAddCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotAddCalloutMessage);
         },
       );
     });

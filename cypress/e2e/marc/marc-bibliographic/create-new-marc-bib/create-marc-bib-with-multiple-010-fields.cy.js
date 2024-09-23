@@ -6,7 +6,6 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
@@ -16,9 +15,10 @@ describe('MARC', () => {
         tag010: '010',
         tagLDR: 'LDR',
         tag008: '008',
+        tag245: '245',
         tag010Values: ['58020553', '766384'],
       };
-      const calloutMessage = 'Record cannot be saved with more than one 010 field';
+      const calloutMessage = 'Field is non-repeatable.';
 
       let instanceId;
       before('Create test data', () => {
@@ -51,14 +51,18 @@ describe('MARC', () => {
           // #2 Replace blank values in LDR positions 06, 07 with valid values
           QuickMarcEditor.updateLDR06And07Positions();
           // #3 Fill in the required fields with valid data:
-          QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
+          QuickMarcEditor.updateExistingField(testData.tag245, `$a ${getRandomPostfix()}`);
+          QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 1);
           // #4 Add two new "010" fields and fill in them as specified:
           MarcAuthority.addNewField(4, testData.tag010, `$a ${testData.tag010Values[0]}`);
           MarcAuthority.addNewField(5, testData.tag010, `$a ${testData.tag010Values[1]}`);
 
           // #5 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
-          InteractorsTools.checkCalloutMessage(calloutMessage, 'error');
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkErrorMessage(6, calloutMessage);
 
           // #6 Delete one of the created "010" fields.
           QuickMarcEditor.deleteField(6);

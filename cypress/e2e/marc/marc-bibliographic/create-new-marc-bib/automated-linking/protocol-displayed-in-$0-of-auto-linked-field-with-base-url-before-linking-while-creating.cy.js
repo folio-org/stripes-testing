@@ -150,6 +150,7 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
@@ -180,7 +181,11 @@ describe('MARC', () => {
               });
             });
 
-            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
+            cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -191,10 +196,6 @@ describe('MARC', () => {
                   createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
-            });
-
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
             });
 
             cy.login(userData.username, userData.password, {
@@ -225,15 +226,20 @@ describe('MARC', () => {
             QuickMarcEditor.checkPaneheaderContains('Create a new MARC bib record');
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
             QuickMarcEditor.updateLDR06And07Positions();
+            cy.wait(500);
             newFields.forEach((newField) => {
               MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
+              cy.wait(500);
             });
+            cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(testData.calloutMessage);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             linkedTags.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

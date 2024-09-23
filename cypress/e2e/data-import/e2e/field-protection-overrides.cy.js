@@ -8,14 +8,13 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -26,10 +25,13 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -38,6 +40,7 @@ describe('Data Import', () => {
     let firstFieldId = null;
     let secondFieldId = null;
     let instanceHrid = null;
+    let userId = null;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file name to upload
     const fileNameForCreatingInstance = `C17018autotestFileCreteInstance${getRandomPostfix()}.mrc`;
@@ -180,7 +183,17 @@ describe('Data Import', () => {
           secondFieldId = resp.id;
         });
       });
-      cy.loginAsAdmin();
+
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+
+        cy.login(userProperties.username, userProperties.password);
+      });
     });
 
     after('Delete test data', () => {
@@ -188,6 +201,7 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(userId);
         MarcFieldProtection.deleteViaApi(firstFieldId);
         MarcFieldProtection.deleteViaApi(secondFieldId);
         // delete profiles

@@ -66,7 +66,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.addStatisticalCode();
+        InstanceRecordEdit.clickAddStatisticalCodeButton();
         InstanceRecordEdit.getStatisticalCodesFromInstance().then((codes) => {
           cy.visit(SettingsMenu.statisticalCodesPath);
           StatisticalCodes.verifyListOfStatisticalCodesIsIdenticalToListInInstance(codes);

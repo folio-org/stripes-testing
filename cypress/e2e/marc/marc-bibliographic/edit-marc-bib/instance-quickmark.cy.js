@@ -54,7 +54,7 @@ describe('MARC', () => {
 
       it(
         'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
           const tagLDR = 'LDR';
           const field008BoxesAbsent = ['Type', 'Blvl'];
@@ -121,6 +121,8 @@ describe('MARC', () => {
               checkedTypeDropdownOption,
             );
             cy.wait(1000);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
           }

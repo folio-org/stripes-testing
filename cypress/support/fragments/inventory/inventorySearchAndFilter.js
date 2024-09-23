@@ -355,14 +355,14 @@ export default {
     Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Call numbers'))
+          .find(OptionGroup('Call numbers (item)'))
           .has({ text: including(value) }),
       );
     });
     Object.values(BROWSE_CLASSIFICATION_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Classification'))
+          .find(OptionGroup('Classification (instance)'))
           .has({ text: including(value) }),
       );
     });
@@ -521,6 +521,10 @@ export default {
     else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
   },
 
+  verifySearchResultIncludingValue: (value) => {
+    cy.expect(MultiColumnListCell({ content: including(value) }).exists());
+  },
+
   verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
@@ -562,6 +566,10 @@ export default {
       inventorySearchAndFilterInput.choose(searchOption),
       inventorySearchAndFilter.fillIn(text),
     ]);
+  },
+
+  selectSearchOption(searchOption) {
+    cy.do([inventorySearchAndFilterInput.choose(searchOption)]);
   },
 
   executeSearch(text) {
@@ -731,6 +739,10 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
+  selectFoundItemFromBrowse(value) {
+    cy.do(Button(including(value)).click());
+  },
+
   verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
     if (byInnerText) {
       cy.expect(MultiColumnListCell({ innerText: instanceTitle }).exists());
@@ -744,6 +756,13 @@ export default {
       expect(elem.text()).to.include('Effective call number (item), shelving order');
     });
     cy.expect(inventorySearchAndFilter.has({ value: val }));
+  },
+
+  verifySearchOptionAndQuery(searchOption, queryValue) {
+    cy.get('#input-inventory-search-qindex').then((elem) => {
+      expect(elem.text()).to.include(searchOption);
+    });
+    cy.expect(inventorySearchAndFilter.has({ value: queryValue }));
   },
 
   verifyPanesExist() {
@@ -804,6 +823,7 @@ export default {
     cy.wait(ONE_SECOND);
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
+    cy.wait(ONE_SECOND);
   },
 
   checkRowsCount: (expectedRowsCount) => {
@@ -870,7 +890,7 @@ export default {
   },
 
   selectBrowseOptionFromCallNumbersGroup(option) {
-    cy.get('optgroup[label="Call numbers"]')
+    cy.get('optgroup[label="Call numbers (item)"]')
       .contains('option', option)
       .then((optionToSelect) => {
         cy.get('select').select(optionToSelect.val());
@@ -883,7 +903,6 @@ export default {
 
   browseOptionsDropdownIncludesOptions(options) {
     const browseOptionsDropdown = Select('Search field index');
-    this.switchToBrowseTab();
     options.forEach((name) => {
       cy.expect(browseOptionsDropdown.has({ content: including(name) }));
     });
@@ -900,7 +919,7 @@ export default {
   verifySearchAndFilterPane() {
     this.searchTabIsDefault();
     this.instanceTabIsDefault();
-    this.searchTypeDropdownDefaultValue('all');
+    this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
     this.verifySearchFieldIsEmpty();
     cy.expect([
       searchToggleButton.exists(),
@@ -936,7 +955,7 @@ export default {
   },
 
   searchTypeDropdownDefaultValue(value) {
-    cy.expect(searchTypeDropdown.has({ value }));
+    cy.expect(searchTypeDropdown.has({ checkedOptionText: value }));
   },
 
   verifySearchFieldIsEmpty() {

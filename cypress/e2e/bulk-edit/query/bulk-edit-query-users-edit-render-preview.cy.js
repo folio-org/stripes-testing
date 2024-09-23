@@ -6,7 +6,7 @@ import QueryModal, {
   QUERY_OPERATIONS,
   usersFieldValues,
 } from '../../../support/fragments/bulk-edit/query-modal';
-import { patronGroupNames, patronGroupUuids } from '../../../support/constants';
+import { patronGroupNames } from '../../../support/constants';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -50,17 +50,18 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-        QueryModal.verifyQueryAreaContent('(user_patron_group  )');
+        QueryModal.verifyQueryAreaContent('(groups.group  )');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-        QueryModal.verifyQueryAreaContent('(user_patron_group == )');
+        QueryModal.verifyQueryAreaContent('(groups.group == )');
         QueryModal.verifyValueColumn();
-        QueryModal.chooseValueSelect(patronGroupNames.STAFF);
+        QueryModal.fillInValueTextfield(patronGroupNames.STAFF);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent(`(user_patron_group == "${patronGroupUuids.STAFF}")`);
+        QueryModal.verifyQueryAreaContent(`(groups.group == "${patronGroupNames.STAFF}")`);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();

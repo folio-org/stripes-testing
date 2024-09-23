@@ -16,7 +16,7 @@ describe('MARC', () => {
     const testData = {
       tag: '110',
       marcValue: 'C375261 Beatles',
-      rowIndex: 32,
+      rowIndex: 33,
       searchOption: 'Corporate/Conference name',
       instanceTitle: 'The Beatles in mono.',
     };
@@ -42,10 +42,11 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -74,6 +75,8 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(testData.marcValue);
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });

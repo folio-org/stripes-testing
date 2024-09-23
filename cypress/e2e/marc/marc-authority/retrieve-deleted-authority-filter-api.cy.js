@@ -67,6 +67,10 @@ describe('MARC', () => {
     const createdRecordIDs = [];
 
     before('Creating user and data', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*C432317Auto');
+
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
@@ -104,6 +108,8 @@ describe('MARC', () => {
               testData.tag010,
               `$a ${testData.localSourceCode}432317`,
             );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
           });

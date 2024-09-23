@@ -5,6 +5,7 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -57,6 +58,9 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C389478*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -127,6 +131,8 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
 
             // #5 Click "Save & close" button
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 

@@ -44,10 +44,11 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -77,7 +78,7 @@ describe('MARC', () => {
 
     it(
       'C440111 Search for "MARC authority" by "LCCN" option using a query without prefix (numbers only) when "LCCN" (010 $a) has (leading, internal, trailing) spaces". (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         MarcAuthorities.searchByParameter(
           testData.searchOption,

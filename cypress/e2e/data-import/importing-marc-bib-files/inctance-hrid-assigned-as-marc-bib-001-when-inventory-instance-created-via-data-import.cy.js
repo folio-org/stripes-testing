@@ -22,7 +22,7 @@ describe('Data Import', () => {
     const title = 'The Journal of ecclesiastical history.';
     const resourceIdentifier = { type: 'System control number', value: '366832' };
 
-    before('Login', () => {
+    before('Create user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -58,7 +58,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(jobProfileToRun);
+        Logs.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
         FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.openJsonScreen(title);

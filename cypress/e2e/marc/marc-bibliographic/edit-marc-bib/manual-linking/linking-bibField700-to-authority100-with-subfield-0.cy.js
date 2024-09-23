@@ -36,9 +36,9 @@ describe('MARC', () => {
 
         const field700 = {
           tag: '700',
-          rowIndex: 79,
+          rowIndex: 78,
           content: [
-            79,
+            78,
             '700',
             '1',
             '\\',
@@ -47,7 +47,7 @@ describe('MARC', () => {
           updatedContent:
             '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
           contentAfterLinking: [
-            79,
+            78,
             '700',
             '1',
             '\\',
@@ -57,7 +57,7 @@ describe('MARC', () => {
             '',
           ],
           contentAfterUnlinking: [
-            79,
+            78,
             '700',
             '1',
             '\\',
@@ -83,19 +83,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user', () => {
+          cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          cy.getAdminToken().then(() => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C380742"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380742*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -168,6 +159,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field700.tag, field700.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...field700.contentAfterLinking);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(field700.rowIndex);
             QuickMarcEditor.clickViewMarcAuthorityIconInTagField(field700.rowIndex);
@@ -207,6 +200,8 @@ describe('MARC', () => {
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...field700.contentAfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(field700.rowIndex);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(testData.successMsg);
 

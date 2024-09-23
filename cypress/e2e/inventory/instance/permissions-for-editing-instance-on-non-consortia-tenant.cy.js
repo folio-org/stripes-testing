@@ -41,22 +41,16 @@ describe('Inventory', () => {
 
     it(
       'C407752 (NON-CONSORTIA) Verify the permission for editing instance on Non-consortia tenant (folijet) (TaaS)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
-          const instanceHrid = initialInstanceHrId;
-
-          InstanceRecordView.edit();
-          InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
-          InstanceRecordEdit.saveAndClose();
-          InstanceRecordView.verifyCalloutMessage(
-            `The instance - HRID ${instanceHrid} has been successfully saved.`,
-          );
-          InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
-        });
+        InstanceRecordView.edit();
+        InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
+        InstanceRecordEdit.saveAndClose();
+        InstanceRecordView.verifySuccsessCalloutMessage();
+        InstanceRecordView.verifyInstancePaneExists();
+        InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
       },
     );
   });

@@ -111,11 +111,13 @@ describe('Invoices', () => {
       InvoiceEditForm.clickSaveButton();
 
       // * Selected currency is displayed in "Invoice information" accordion
+      const normalizedSubTotalValue = 'UYU 0.00'.replace(/\u00a0/g, ' ').trim();
+
       InvoiceView.checkInvoiceDetails({
         title: testData.invoice.vendorInvoiceNo,
         invoiceInformation: [
           { key: 'Status', value: INVOICE_STATUSES.OPEN },
-          { key: 'Sub-total', value: 'UYU&nbsp;0.00' },
+          { key: 'Sub-total', value: normalizedSubTotalValue },
         ],
       });
 

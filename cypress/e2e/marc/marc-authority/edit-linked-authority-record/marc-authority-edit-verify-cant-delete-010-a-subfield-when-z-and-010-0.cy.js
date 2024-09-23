@@ -5,7 +5,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import AreYouSureModal from '../../../../support/fragments/orders/modals/areYouSureModal';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -114,6 +113,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             cy.wait(1000);
 
             cy.login(userData.username, userData.password, {
@@ -144,17 +145,18 @@ describe('MARC', () => {
           MarcAuthority.edit();
 
           QuickMarcEditor.updateExistingField(testData.tag010, testData.new010FieldValue);
+          cy.wait(2000);
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.colloutMessage);
-          QuickMarcEditor.closeCallout();
-
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.colloutMessage);
-          QuickMarcEditor.closeCallout();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
 
           QuickMarcEditor.pressCancel();
-          AreYouSureModal.clickCloseWithoutSavingButton();
           MarcAuthorities.verifyMarcViewPaneIsOpened();
           cy.get('@viewAuthorityPaneContent').then((viewAuthorityPaneContent) => {
             MarcAuthorities.verifyViewPaneContent(viewAuthorityPaneContent);

@@ -59,7 +59,7 @@ describe('MARC', () => {
       const dataForC375220 = [
         {
           recordTitle: createdAuthorityID[0],
-          index: 18,
+          index: 17,
           tagValue: '240',
           marcValue:
             'C375220 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
@@ -67,13 +67,17 @@ describe('MARC', () => {
         {
           recordTitle: createdAuthorityID[0],
           tagValue: '700',
-          index: 50,
+          index: 49,
           marcValue:
             'C375220 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
         },
       ];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375220*');
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -112,6 +116,8 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
           });
@@ -142,6 +148,8 @@ describe('MARC', () => {
           // Waiter needed for the whole page to be loaded.
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 

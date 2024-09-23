@@ -4,6 +4,7 @@ import DataImport from '../../../../../support/fragments/data_import/dataImport'
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -56,6 +57,9 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C387524*');
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -137,6 +141,8 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification(fieldsToUpdate[1].tag);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.checkNoDeletePlaceholder();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -176,6 +182,8 @@ describe('MARC', () => {
               fieldsToUpdate[1].sixthBox,
               fieldsToUpdate[1].seventhBox,
             );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

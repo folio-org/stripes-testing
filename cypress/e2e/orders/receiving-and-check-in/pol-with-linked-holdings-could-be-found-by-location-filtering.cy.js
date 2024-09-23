@@ -20,7 +20,7 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import Receiving from '../../../support/fragments/receiving/receiving';
 
-describe('Orders > Receiving and Check-in ', () => {
+describe('Receiving', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -250,6 +250,7 @@ describe('Orders > Receiving and Check-in ', () => {
       Receiving.checkExistingPOLInReceivingList(`${secondOrderNumber}-1`);
       Receiving.checkExistingPOLInReceivingList(`${thirdOrderNumber}-1`);
       Receiving.checkExistingPOLInReceivingList(`${fourthOrderNumber}-1`);
+      Orders.resetFilters();
     },
   );
 });

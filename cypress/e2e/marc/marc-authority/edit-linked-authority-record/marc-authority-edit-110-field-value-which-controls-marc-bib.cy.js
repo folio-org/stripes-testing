@@ -30,13 +30,13 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileC374139.mrc',
-          fileName: `testMarcFileC374139${getRandomPostfix()}.mrc`,
+          fileName: `C374139 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileC374139.mrc',
-          fileName: `testMarcFileC374139${getRandomPostfix()}.mrc`,
+          fileName: `C374139 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
         },
@@ -48,16 +48,20 @@ describe('MARC', () => {
       };
 
       before('Creating user, importing and linking records', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -75,6 +79,8 @@ describe('MARC', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -97,6 +103,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           testData.createdRecordIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -120,56 +127,49 @@ describe('MARC', () => {
             testData.tagsForChanging[0],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[0],
             testData.tagsForChanging[3],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[3],
             testData.tagsForChanging[4],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[4],
             testData.tagsForChanging[5],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[5],
             testData.tagsForChanging[6],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[6],
             testData.tagsForChanging[7],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[7],
             testData.tagsForChanging[1],
           );
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterSaving);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(
             testData.tagsForChanging[1],
@@ -178,7 +178,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.updateExistingField(testData.tag110, testData.tag110content);
           QuickMarcEditor.checkButtonsEnabled();
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessageAfterAddingSubfield);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(20, testData.errorMessageAfterAddingSubfield);
         },
       );
     });

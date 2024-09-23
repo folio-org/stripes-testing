@@ -18,7 +18,7 @@ describe('MARC', () => {
           createdRecordIDs: [],
           contributor: 'Coates, Ta-Nehisi',
           bib100AfterLinkingToAuth100: [
-            33,
+            32,
             '100',
             '1',
             '\\',
@@ -47,7 +47,7 @@ describe('MARC', () => {
         ];
         const linkingTagAndValue = {
           tag: '100',
-          rowIndex: 33,
+          rowIndex: 32,
           value: 'C366573 Coates, Ta-Nehisi,',
         };
 
@@ -101,6 +101,8 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.user.username, testData.user.password, {
@@ -131,6 +133,8 @@ describe('MARC', () => {
               linkingTagAndValue.tag,
             );
             QuickMarcEditor.checkButtonsEnabled();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
             InventoryInstance.verifyContributorAbsent(testData.contributor);

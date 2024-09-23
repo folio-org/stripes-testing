@@ -1,17 +1,18 @@
+import { including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Checkbox,
+  FieldSet,
+  PaneHeader,
+  RepeatableFieldItem,
   Section,
   Select,
+  Selection,
+  SelectionList,
   TextArea,
   TextField,
-  FieldSet,
-  Selection,
-  including,
-  RepeatableFieldItem,
-  PaneHeader,
-  Checkbox,
-  matching,
+  Pane,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -25,6 +26,7 @@ const addClassificationButton = classificationSection.find(Button('Add classific
 const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');
 const contributorAccordion = Accordion('Contributor');
+const subjectAccordion = Accordion('Subject');
 const contributorButton = Button('Add contributor');
 const deleteButton = Button({ icon: 'trash' });
 const supressFromDiscoveryCheckbox = Checkbox({ name: 'discoverySuppress' });
@@ -40,6 +42,7 @@ const childInstanceFieldSet = FieldSet({ id: 'clickable-add-child-instance' });
 const fieldSetRelationSelect = Select({ content: including('Select type') });
 const findInstanceButton = Button({ id: 'find-instance-trigger' });
 const deleteItemButton = Button({ ariaLabel: 'Delete this item' });
+const subjectField = TextField({ name: 'subjects[0].value' });
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -51,15 +54,29 @@ function addNatureOfContent() {
   cy.do(addNatureOfContentButton.click());
 }
 
-function addStatisticalCode() {
+function clickAddStatisticalCodeButton() {
   cy.do(Button('Add statistical code').click());
+}
+
+function chooseStatisticalCode(code) {
+  cy.do(Button({ name: 'statisticalCodeIds[0]' }).click());
+  cy.do(SelectionList().select(code));
 }
 
 export default {
   addNatureOfContent,
-  addStatisticalCode,
+  clickAddStatisticalCodeButton,
+  chooseStatisticalCode,
   close: () => cy.do(closeButton.click()),
-  waitLoading: () => cy.expect(Section({ id: 'instance-form' }).exists()),
+  waitLoading: () => {
+    cy.expect([
+      Pane({ id: 'instance-form' }).exists(),
+      or(
+        Pane({ titleLabel: including('Edit instance') }).exists(),
+        Pane({ titleLabel: including('Edit shared instance') }).exists(),
+      ),
+    ]);
+  },
   // related with Actions->Overlay
   checkReadOnlyFields() {
     const readonlyTextFields = {
@@ -155,26 +172,44 @@ export default {
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },
+  addSubject: (subject) => {
+    cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
+  },
+  changeSubject: (subject) => {
+    cy.do(subjectField.fillIn(subject));
+  },
+  deleteSubject: () => {
+    cy.do(subjectAccordion.find(Button({ icon: 'trash' })).click());
+    cy.wait(1000);
+  },
   selectNatureOfContent(value) {
     cy.do(Select('Nature of content term').choose(value));
   },
   choosePermanentLocation(locationName) {
     // wait fixes selection behavior
     cy.wait(1000);
-    cy.do([Selection('Permanent').open(), Selection('Permanent').choose(including(locationName))]);
+    cy.do([Selection({ id: 'additem_permanentlocation' }).choose(including(locationName))]);
   },
   chooseTemporaryLocation(locationName) {
-    cy.do([Selection('Temporary').open(), Selection('Temporary').choose(including(locationName))]);
+    cy.do([Selection({ id: 'additem_temporarylocation' }).choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
     cy.do(Select('Instance status term').choose(statusTerm));
   },
-  saveAndClose: () => {
+  saveAndClose() {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
-    cy.expect([actionsButton.exists(), PaneHeader(including('Edit instance')).absent()]);
+    cy.expect([
+      actionsButton.exists(),
+      or(
+        PaneHeader(including('Edit instance')).absent(),
+        PaneHeader(including('Edit shared instance')).absent(),
+      ),
+    ]);
   },
-
+  clickSaveAndCloseButton() {
+    cy.do(saveAndCloseButton.click());
+  },
   clickAddContributor() {
     cy.expect(contributorAccordion.exists());
     cy.do(contributorButton.click());
@@ -237,6 +272,17 @@ export default {
     cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
     cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
   },
+  addStatisticalCode: (code) => {
+    clickAddStatisticalCodeButton();
+    chooseStatisticalCode(code);
+  },
+  clickAddNoteButton(noteType, note) {
+    cy.do([
+      Accordion('Instance notes').find(Button('Add note')).click(),
+      Select({ name: 'notes[0].instanceNoteTypeId' }).choose(noteType),
+      TextArea({ name: 'notes[0].note' }).fillIn(note),
+    ]);
+  },
   verifySuccessfulMessage: () => {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
@@ -255,7 +301,7 @@ export default {
   },
   verifyStatisticalCodeIsEnabled() {
     cy.do(addStatisticalCodeButton.click());
-    cy.expect(Selection({ singleValue: 'Select code' }).visible());
+    cy.expect(Selection({ value: including('Select code') }).visible());
     cy.get('[class*=selectionControlContainer] button').should('be.enabled');
   },
   verifyNatureOfContentIsEnabled() {
@@ -340,9 +386,24 @@ export default {
   },
   getClassificationOptionsList() {
     cy.do(addClassificationButton.click());
-
     return cy.then(() => classificationSection
       .find(Select({ name: 'classifications[0].classificationTypeId' }))
       .optionsText());
+  },
+  deleteStatisticalCode(statisticalCode) {
+    cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
+    cy.expect(Selection({ value: including(statisticalCode) }).absent());
+  },
+  verifyErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(FieldSet('Statistical code').has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
   },
 };

@@ -74,7 +74,7 @@ describe('Inventory', () => {
         JobProfiles.search('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(testData.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(testData.fileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.fileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventorySearchAndFilter.verifyInstanceDetailsView();

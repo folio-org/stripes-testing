@@ -61,11 +61,13 @@ describe('MARC', () => {
 
       it(
         'C396356 "Entered" value in "008" field updated when deriving new "MARC Bib" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire'] },
         () => {
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.checkSubfieldsPresenceInTag008();
           QuickMarcEditor.updateExistingField(testData.tag245, testData.newTitle);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkInstanceTitle(testData.newTitle);

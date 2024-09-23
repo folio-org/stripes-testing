@@ -1,7 +1,6 @@
 import {
   Button,
   HTML,
-  Keyboard,
   Modal,
   MultiColumnList,
   MultiSelect,
@@ -22,28 +21,32 @@ const runQueryButton = Button('Run query');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
+const selectFieldButton = Button(including('Select field'));
 
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Instance UUID',
+  instanceUuid: 'Holdings — Holding — Instance UUID',
 };
 export const instanceFieldValues = {
-  instanceHrid: 'Instance HRID',
+  instanceHrid: 'Instances — Instance — Instance HRID',
+  instanceResourceTitle: 'Instances — Instance — Resource title',
 };
 export const itemFieldValues = {
-  instanceId: 'Instance ID',
-  itemStatus: 'Item status',
-  holdingsId: 'Holdings ID',
-  temporaryLocation: 'Item temporary location name',
+  instanceId: 'Items — Instances — Instance UUID',
+  itemStatus: 'Items — Items — Status',
+  itemUuid: 'Items — Items — Item UUID',
+  holdingsId: 'Items — Holdings — UUID',
+  temporaryLocation: 'Items — Temporary location — Name',
 };
 export const usersFieldValues = {
-  expirationDate: 'User expiration date',
-  firstName: 'User first name',
-  lastName: 'User last name',
-  patronGroup: 'User patron group',
-  userActive: 'User active',
-  userBarcode: 'User barcode',
+  expirationDate: 'Users — User — Expiration date',
+  firstName: 'Users — User — First name',
+  lastName: 'Users — User — Last name',
+  patronGroup: 'Users — Group — Group',
+  preferredContactType: 'Users — User — Preferred contact type',
+  userActive: 'Users — User — Active',
+  userBarcode: 'Users — User — Barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -53,22 +56,6 @@ export const dateTimeOperators = [
   '<',
   '>=',
   '<=',
-  'is null/empty',
-];
-export const stringOperators = [
-  'Select operator',
-  'equals',
-  'not equal to',
-  'contains',
-  'starts with',
-  'is null/empty',
-];
-export const stringStoresUuidOperators = [
-  'Select operator',
-  'equals',
-  'not equal to',
-  'in',
-  'not in',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
@@ -98,6 +85,24 @@ export const QUERY_OPERATIONS = {
   IS_NULL: 'is null/empty',
   CONTAINS: 'contains',
   START_WITH: 'starts with',
+};
+
+export const STRING_OPERATORS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  CONTAINS: 'contains',
+  START_WITH: 'starts with',
+  IS_NULL: 'is null/empty',
+};
+
+export const STRING_STORES_UUID_OPERATORS = {
+  PLACEHOLDER: 'Select operator',
+  EQUAL: 'equals',
+  NOT_EQUAL: 'not equal to',
+  IN: 'in',
+  NOT_IN: 'not in',
+  IS_NULL: 'is null/empty',
 };
 
 export default {
@@ -141,6 +146,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
+    cy.do(selectFieldButton.click());
     cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -154,13 +160,17 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
   },
 
+  clickSelectFieldButton() {
+    cy.do(selectFieldButton.click());
+  },
+
   typeInAndSelectField(string, row = 0) {
+    cy.wait(1000);
     cy.do([
       RepeatableFieldItem({ index: row }).find(Selection()).open(),
-      RepeatableFieldItem({ index: row }).find(Selection()).filterOptions(string),
-      cy.wait(1000),
-      Keyboard.enter(),
+      RepeatableFieldItem({ index: row }).find(Selection()).filter(string),
     ]);
+    cy.do(RepeatableFieldItem({ index: row }).find(Selection()).chooseWithoutVerification(string));
   },
 
   verifySelectedField(selection, row = 0) {
@@ -188,7 +198,7 @@ export default {
     cy.get(`[data-testid="row-${row}"] [class^="col-sm-2"] [class^="selectControl"] option`).then(
       (options) => {
         const textArray = options.get().map((el) => el.label);
-        expect(textArray).to.eql(operators);
+        expect(textArray).to.eql(Object.values(operators));
       },
     );
   },
@@ -225,19 +235,20 @@ export default {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
     cy.do([
-      RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle(),
       RepeatableFieldItem({ index: row })
         .find(MultiSelectOption(including(text)))
         .click(),
     ]);
+    cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
     cy.do([
-      RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle(),
       RepeatableFieldItem({ index: row })
         .find(MultiSelectOption(including(text)))
         .click(),
+      buildQueryModal.click(),
     ]);
   },
 
@@ -245,6 +256,7 @@ export default {
     cy.contains('[data-test-selection-option-segment="true"]', text)
       .parent()
       .siblings('[icon="times"]')
+      .focus()
       .click();
   },
 

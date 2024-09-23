@@ -88,6 +88,28 @@ export default {
     return cy.do(Link(noticePolicyTemplate.name).click());
   },
 
+  verifyNoticePolicyTemplate(noticePolicyTemplate) {
+    this.verifyKeyValue('Patron notice template name', noticePolicyTemplate.name);
+    this.verifyKeyValue('Description', noticePolicyTemplate.description);
+    this.verifyKeyValue('Subject', noticePolicyTemplate.subject);
+    this.verifyKeyValue('Body', noticePolicyTemplate.body);
+  },
+
+  updateBodyText(text) {
+    cy.wait(1000);
+    cy.do(bodyField.fillIn(text));
+    cy.expect(bodyField.has({ value: text }));
+    cy.do(this.saveAndClose());
+  },
+
+  verifyRequestPolicyInNotInTheList(name) {
+    cy.contains(name).should('not.exist');
+  },
+
+  verifyKeyValue(verifyKey, verifyValue) {
+    cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
+  },
+
   create(noticePolicyTemplate, autoSave = true) {
     // need to wait for validation to complete
     cy.wait(1000);
@@ -103,6 +125,7 @@ export default {
     cy.do(bodyField.fillIn(noticePolicyTemplate.body));
     cy.expect(bodyField.has({ value: noticePolicyTemplate.body }));
 
+    cy.wait(1000);
     if (autoSave) {
       cy.do(saveButton.click());
     }
@@ -253,6 +276,51 @@ export default {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   },
 
+  checkSubjectEmptyError() {
+    cy.do(nameField.fillIn('Test'));
+    cy.expect(nameField.has({ value: 'Test' }));
+
+    cy.do(descriptionField.fillIn('Test'));
+    cy.expect(descriptionField.has({ value: 'Test' }));
+
+    cy.do(subjectField.fillIn(''));
+    cy.wait(1000);
+    cy.do(bodyField.fillIn('Test'));
+    cy.wait(1000);
+    cy.get('*[id=icon-input-patron-notice-subject-validation-error]').should('exist');
+
+    cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+  },
+
+  checkRichTextEditor() {
+    cy.wait(1000);
+    cy.do(nameField.fillIn('Test'));
+    cy.expect(nameField.has({ value: 'Test' }));
+
+    cy.do(descriptionField.fillIn('Test'));
+    cy.expect(descriptionField.has({ value: 'Test' }));
+
+    cy.do(subjectField.fillIn('Test'));
+    cy.expect(subjectField.has({ value: 'Test' }));
+
+    cy.do(bodyField.fillIn('Preview Test'));
+    cy.get('button[aria-label="ordered list"]').click();
+
+    cy.do([
+      cy.get('button[aria-label="increase indent"]').click(),
+      cy.get('button[aria-label="increase indent"]').click(),
+    ]);
+
+    cy.get('li[style="text-indent: 2em;"]').should('exist');
+    cy.get('div[class^="preview"] button').click();
+    cy.expect([
+      previewModal.has({ header: 'Preview of patron notice template' }),
+      previewModal.has({ message: including('Preview Test') }),
+    ]);
+    cy.do(previewModal.find(Button('Close')).click());
+    cy.expect(previewModal.absent());
+  },
+
   createPatronNoticeTemplate(template, dublicate = false) {
     cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
       statusCode: 201,
@@ -277,5 +345,32 @@ export default {
     this.checkPreview(template.previewText);
     this.saveAndClose();
     cy.expect(patronNoticeForm.absent());
+  },
+
+  getNoticePolicyTemplatesByNameViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'templates',
+      })
+      .then((response) => {
+        return response.body.templates;
+      });
+  },
+
+  deleteNoticePolicyTemplateByNameViaAPI(name) {
+    this.getNoticePolicyTemplatesByNameViaAPI().then((policies) => {
+      const policy = policies.find((p) => p.name === name);
+      if (policy !== undefined) {
+        this.deleteViaAPI(policy.id);
+      }
+    });
+  },
+
+  deleteViaAPI(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `templates/${id}`,
+    });
   },
 };

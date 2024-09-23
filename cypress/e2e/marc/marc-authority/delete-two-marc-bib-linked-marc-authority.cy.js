@@ -53,12 +53,12 @@ describe('MARC', () => {
 
     const linkingTagForSecondMarcBib = [
       {
-        rowIndex: 10,
+        rowIndex: 11,
         value: 'Chin, Staceyann, 1972- C369084',
         tag: 100,
       },
       {
-        rowIndex: 18,
+        rowIndex: 19,
         value: 'Feminist poetry C369084',
         tag: 650,
       },
@@ -77,6 +77,9 @@ describe('MARC', () => {
     ];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*C369084');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -117,6 +120,8 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -168,14 +173,14 @@ describe('MARC', () => {
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Subject');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          10,
+          11,
           '100',
           '1',
           '\\',
           '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 http://id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          18,
+          19,
           '650',
           '\\',
           '0',

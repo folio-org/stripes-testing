@@ -89,14 +89,12 @@ export default {
     ]);
   },
 
-  unAssignUser: (AUName) => {
-    cy.do([
-      auListPane.find(Button(AUName)).click(),
-      assignedUsersSection
-        .find(MultiColumnListCell({ row: 1, columnIndex: 2 }))
-        .find(trashButton)
-        .click(),
-    ]);
+  unAssignUser: (userName, AUName) => {
+    cy.do(auListPane.find(Button(AUName)).click());
+    cy.contains('div[class*="mclCell-"]', userName)
+      .parent('div[class*="mclRow-"]')
+      .find('button[icon="trash"]')
+      .click();
   },
 
   unAssignAdmin: (AUName) => {
@@ -177,6 +175,29 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `acquisitions-units/units/${acqUnitId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+  assignUserViaApi(userId, acquisitionsUnitId) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'acquisitions-units/memberships',
+        body: {
+          acquisitionsUnitId,
+          userId,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.id;
+      });
+  },
+  unAssignUserViaApi(userId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `acquisitions-units/memberships/${userId}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 };

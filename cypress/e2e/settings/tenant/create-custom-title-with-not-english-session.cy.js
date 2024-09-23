@@ -62,7 +62,10 @@ describe('eHoldings', () => {
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForFirstPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
       EHoldingsSearch.switchToTitles('Títulos');
-      EHoldingsTitles.create(testData.packageName, testData.dataForFirstPackage.titleName);
+      EHoldingsTitles.createWhenNotEnglishSession(
+        testData.packageName,
+        testData.dataForFirstPackage.titleName,
+      );
       EHoldingsResourceView.checkNames(
         testData.packageName,
         testData.dataForFirstPackage.titleName,
@@ -75,7 +78,10 @@ describe('eHoldings', () => {
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForSecondPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
       EHoldingsSearch.switchToTitles('Titoli');
-      EHoldingsTitles.create(testData.packageName, testData.dataForSecondPackage.titleName);
+      EHoldingsTitles.createWhenNotEnglishSession(
+        testData.packageName,
+        testData.dataForSecondPackage.titleName,
+      );
       EHoldingsResourceView.checkNames(
         testData.packageName,
         testData.dataForSecondPackage.titleName,

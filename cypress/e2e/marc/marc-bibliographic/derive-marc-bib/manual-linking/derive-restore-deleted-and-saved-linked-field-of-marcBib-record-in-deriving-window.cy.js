@@ -22,7 +22,7 @@ describe('MARC', () => {
             "$a Black Panther /Updated $c writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
           createdRecordIDs: [],
           bib100AfterLinkingToAuth100: [
-            33,
+            32,
             '100',
             '1',
             '\\',
@@ -53,7 +53,7 @@ describe('MARC', () => {
         ];
 
         const linkingTagAndValue = {
-          rowIndex: 33,
+          rowIndex: 32,
           value: 'C366577 Coates, Ta-Nehisi',
           tag: 100,
         };
@@ -108,6 +108,8 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
@@ -135,19 +137,23 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
-            QuickMarcEditor.deleteField(33);
+            QuickMarcEditor.deleteField(32);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
             QuickMarcEditor.undoDelete();
-            QuickMarcEditor.verifyTagValue(33, testData.tag100);
-            QuickMarcEditor.deleteField(33);
+            QuickMarcEditor.verifyTagValue(32, testData.tag100);
+            QuickMarcEditor.deleteField(32);
             QuickMarcEditor.afterDeleteNotification(testData.tag100);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndCloseThenCheck(1);
             QuickMarcEditor.checkDeletingFieldsModal();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.checkDeleteModalClosed();
-            QuickMarcEditor.verifyTagValue(33, testData.tag100);
+            QuickMarcEditor.verifyTagValue(32, testData.tag100);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245content);
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Record created.');
             InstanceRecordView.verifyInstancePaneExists();

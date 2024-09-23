@@ -14,9 +14,6 @@ let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  instanceId: '',
-  holdingUUID: '',
-  holdingHRID: '',
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 
@@ -66,7 +63,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Effective location');
 
         BulkEditActions.openInAppStartBulkEditFrom();
         const newLocation = 'Online';
@@ -75,8 +71,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns('Temporary location', newLocation);
-        BulkEditSearchPane.verifyChangesUnderColumns('Effective location', newLocation);
+        BulkEditSearchPane.verifyChangesUnderColumns('Holdings temporary location', newLocation);
 
         // Delete items because only holdings with no items have field "Effective location" in Inventory
         cy.getInstance({

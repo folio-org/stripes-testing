@@ -55,22 +55,25 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.exportManagerAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-        });
-
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityID.push(record[marcFile.propertyName].id);
+          Permissions.moduleDataImportEnabled.gui,
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+          })
+          .then(() => {
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityID.push(record[marcFile.propertyName].id);
+                });
+              });
             });
           });
-        });
       });
 
       beforeEach('Login to the application', () => {
@@ -84,13 +87,13 @@ describe('MARC', () => {
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityID[1]);
-        MarcAuthority.deleteViaAPI(createdAuthorityID[2]);
+        MarcAuthority.deleteViaAPI(createdAuthorityID[2], true);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-        { tags: ['smoke', 'spitfire'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
         () => {
           const dataForC375231 = [
             {
@@ -118,6 +121,8 @@ describe('MARC', () => {
             InventoryInstance.searchResults(value.marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             InventoryInstance.waitLoading();
           });
 
@@ -131,6 +136,8 @@ describe('MARC', () => {
             '100',
             '$a C375231Beethoven, Ludwig Jr, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           );
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.saveAndCheck();
 

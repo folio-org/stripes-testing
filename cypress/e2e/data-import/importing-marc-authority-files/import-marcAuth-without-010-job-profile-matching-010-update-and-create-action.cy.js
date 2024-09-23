@@ -13,7 +13,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -100,7 +100,8 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 

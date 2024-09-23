@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Section,
   or,
@@ -19,6 +19,7 @@ import {
   MultiColumnListRow,
   AdvancedSearch,
   AdvancedSearchRow,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -28,6 +29,8 @@ import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
+import parseMrkFile from '../../utils/parseMrkFile';
+import FileManager from '../../utils/fileManager';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -68,12 +71,14 @@ const searchInstancesOptions = [
   'Contributor',
   'Title (all)',
   'Identifier (all)',
+  'Classification, normalized',
   'ISBN',
   'ISSN',
   'LCCN, normalized',
   'OCLC number, normalized',
   'Instance notes (all)',
   'Instance administrative notes',
+  'Place of publication',
   'Subject',
   'Effective call number (item), shelving order',
   'Instance HRID',
@@ -94,6 +99,8 @@ const searchHoldingsOptions = [
   'Holdings HRID',
   'Holdings UUID',
   'All',
+  'Query search',
+  'Advanced search',
 ];
 const searchItemsOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -108,18 +115,22 @@ const searchItemsOptions = [
   'Item HRID',
   'Item UUID',
   'All',
+  'Query search',
+  'Advanced search',
 ];
 const searchInstancesOptionsValues = [
   'all',
   'contributor',
   'title',
   'identifier',
+  'normalizedClassificationNumber',
   'isbn',
   'issn',
   'lccn',
   'oclc',
   'instanceNotes',
   'instanceAdministrativeNotes',
+  'placeOfPublication',
   'subject',
   'callNumber',
   'hrid',
@@ -140,6 +151,8 @@ const searchHoldingsOptionsValues = [
   'holdingsHrid',
   'hid',
   'allFields',
+  'querySearch',
+  'advancedSearch',
 ];
 const searchItemsOptionsValues = [
   'keyword',
@@ -154,21 +167,55 @@ const searchItemsOptionsValues = [
   'itemHrid',
   'iid',
   'allFields',
+  'querySearch',
+  'advancedSearch',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
-const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
-const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 17);
+const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
+const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 17);
 const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 9);
 const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
-  .filter((option, index) => index <= 14);
+  .filter((option, index) => index <= 11);
 
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
+
+const defaultField008Values = {
+  Alph: '\\',
+  Audn: '\\',
+  BLvl: 's',
+  Biog: '\\',
+  Comp: '\\\\',
+  Conf: '|',
+  Cont: ['\\', '\\', '\\'],
+  Ctry: '\\\\\\',
+  Date1: '\\\\\\\\',
+  Date2: '\\\\\\\\',
+  DtSt: '|',
+  EntW: '\\',
+  FMus: '\\',
+  Fest: '\\',
+  Form: '\\',
+  Freq: '\\',
+  GPub: '\\',
+  Indx: '\\',
+  Lang: '\\\\\\',
+  LitF: '\\',
+  MRec: '\\',
+  Orig: '\\',
+  Part: '\\',
+  Regl: '|',
+  'S/L': '|',
+  SrTp: '\\',
+  Srce: '\\',
+  TrAr: '\\',
+  Type: 'a',
+};
 
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => {
   return cy.okapiRequest({
@@ -304,6 +351,7 @@ export default {
   },
 
   searchByTitle(title, result = true) {
+    cy.wait(2000);
     cy.do([
       filterSection.find(inventorySearchInput).fillIn(title),
       filterSection.find(searchButton).click(),
@@ -320,7 +368,7 @@ export default {
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
@@ -946,6 +994,26 @@ export default {
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
+  deleteInstanceByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams: {
+          limit: 100,
+          query: `title="${instanceTitle}"`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      })
+      .then((instances) => {
+        instances.forEach((instance) => {
+          if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      });
+  },
+
   createLocalCallNumberTypeViaApi: (name) => {
     return cy
       .okapiRequest({
@@ -969,19 +1037,62 @@ export default {
     });
   },
 
+  createMarcBibliographicRecordViaApiByReadingFromMrkFile(
+    mrkFileName,
+    field008Values = defaultField008Values,
+    additionalFields = [],
+  ) {
+    return new Promise((resolve) => {
+      FileManager.readFile(`cypress/fixtures/${mrkFileName}`).then((fileContent) => {
+        const parsedFromMrkFileFields = parseMrkFile(fileContent);
+        const tag008 = {
+          // default 008 field values
+          tag: '008',
+          content: field008Values,
+        };
+        // add to the fields array default 008 field values
+        parsedFromMrkFileFields.fields.unshift(tag008);
+
+        // add additional fields to the fields array which wasn't parsed in the parseMrkFile() method, e.g. '006', '007'
+        parsedFromMrkFileFields.fields.push(...additionalFields);
+
+        cy.createMarcBibliographicViaAPI(
+          parsedFromMrkFileFields.leader,
+          parsedFromMrkFileFields.fields,
+        ).then((createdMarcBibliographicId) => {
+          resolve(createdMarcBibliographicId);
+        });
+      });
+    });
+  },
+
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());
+  },
+
+  importWithOclcViaApi: (oclcNumber) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'copycat/imports',
+      body: {
+        externalIdentifier: oclcNumber,
+        profileId: 'f26df83c-aa25-40b6-876e-96852c3d4fd4',
+        selectedJobProfileId: 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002',
+      },
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   importWithOclc: (
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.expect(singleRecordImportModal.exists());
+    cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
+    cy.wait(1000);
     cy.do([
-      actionsButton.click(),
-      Button({ id: 'dropdown-clickable-import-record' }).click(),
-      Select({ name: 'selectedJobProfileId' }).choose(profile),
       singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
       singleRecordImportModal.find(Button('Import')).click(),
     ]);
@@ -1212,6 +1323,24 @@ export default {
     });
   },
 
+  verifyInstanceSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchInstancesOptions));
+    });
+  },
+
+  verifyHoldingsSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchHoldingsOptions));
+    });
+  },
+
+  verifyItemSearchOptionsInOrder() {
+    cy.wrap(inventorySearchAndFilterInput.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(searchItemsOptions));
+    });
+  },
+
   verifyInventorySearchPaneheader() {
     cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
   },
@@ -1336,5 +1465,59 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .has({ text: including(contributorName) }),
     );
+  },
+
+  checkResultsCellContainsAnyOfValues(valuesArray, columnIndex = 0, rowIndex = 0) {
+    const regEx = new RegExp(`.*(${valuesArray.join('|')}).*`, 'm');
+    cy.expect(
+      resultsPaneContent
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex }))
+        .has({ text: matching(regEx) }),
+    );
+  },
+
+  verifySearchResultIncludingValue: (value) => {
+    cy.expect([
+      inventoriesList.exists(),
+      inventoriesList.find(MultiColumnListRow({ index: 0 })).has({ text: including(value) }),
+    ]);
+  },
+
+  createMarcBibViaApi(body) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'records-editor/records',
+      body,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  verifyRecordsMatchingViaApi() {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'source-storage/records/matching',
+      body: {
+        logicalOperator: 'AND',
+        filters: [
+          {
+            values: ['64758', '(OCoLC)64758'],
+            field: '035',
+            indicator1: '',
+            indicator2: '',
+            subfield: 'a',
+            matchType: 'EXACTLY_MATCHES',
+            qualifier: 'ENDS_WITH',
+            qualifierValue: '758',
+          },
+        ],
+        recordType: 'MARC_BIB',
+        limit: 1000,
+        offset: 0,
+        returnTotalRecordsCount: true,
+      },
+      isDefaultSearchParamsRequired: false,
+    })
+      .its('status')
+      .should('equal', 200);
   },
 };

@@ -71,35 +71,42 @@ describe('MARC', () => {
         const createdRecordsIDs = [];
 
         before('Creating user and test data', () => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-          cy.getAdminToken().then(() => {
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdRecordsIDs.push(record[marcFile.propertyName].id);
-                });
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365603*');
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordsIDs.push(record[marcFile.propertyName].id);
               });
             });
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(createdRecordsIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              linkingTagAndValues.forEach((linking) => {
-                QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-                MarcAuthorities.switchToSearch();
-                InventoryInstance.verifySelectMarcAuthorityModal();
-                InventoryInstance.verifySearchOptions();
-                InventoryInstance.searchResults(linking.value);
-                InventoryInstance.clickLinkButton();
-                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-              });
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
+          });
+
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            InventoryInstances.searchByTitle(createdRecordsIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            linkingTagAndValues.forEach((linking) => {
+              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
 
           cy.createTempUser([
@@ -125,8 +132,8 @@ describe('MARC', () => {
           cy.getAdminToken().then(() => {
             Users.deleteViaApi(testData.userData.userId);
             InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
-            MarcAuthority.deleteViaAPI(createdRecordsIDs[1]);
-            MarcAuthority.deleteViaAPI(createdRecordsIDs[2]);
+            MarcAuthority.deleteViaAPI(createdRecordsIDs[1], true);
+            MarcAuthority.deleteViaAPI(createdRecordsIDs[2], true);
           });
         });
 
@@ -151,7 +158,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkModal(testData.tag700);
             InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
             QuickMarcEditor.checkDeleteModalClosed();
-            QuickMarcEditor.checkButtonSaveAndCloseEnable();
+            QuickMarcEditor.verifySaveAndCloseButtonDisabled();
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(linkingTagAndValues[0].rowIndex);
             QuickMarcEditor.clickViewMarcAuthorityIconInTagField(linkingTagAndValues[0].rowIndex);
             MarcAuthorities.checkFieldAndContentExistence(testData.tag100, testData.tag100content);
@@ -159,23 +166,25 @@ describe('MARC', () => {
             cy.go('back');
             cy.wait(1000);
             QuickMarcEditor.clickKeepLinkingButton();
-            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.updateExistingField('100', '$a Coates, Ta-Nehisi, $e creator.');
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Record created.');
             InstanceRecordView.verifyInstancePaneExists();
             InstanceRecordView.verifyContributorNameWithMarcAppIcon(
-              1,
+              2,
               1,
               linkingTagAndValues[0].value,
             );
             InstanceRecordView.verifyContributorNameWithMarcAppIcon(
-              4,
+              5,
               1,
               linkingTagAndValues[1].value,
             );
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterLinking(
-              71,
+              72,
               testData.tag700,
               '1',
               '\\',

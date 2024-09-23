@@ -111,16 +111,16 @@ describe('Finance', () => {
     () => {
       FinanceHelp.searchByName(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
-      FiscalYears.checkAvailableBalance('$1,000.00', '-$100.00');
+      FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
       FiscalYears.clickOnLedgerTab();
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
-      FiscalYears.checkAvailableBalance('$1,000.00', '-$100.00');
+      FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
       Ledgers.clickOnFundTab();
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
-      FiscalYears.checkAvailableBalance('$1,000.00', '-$100.00');
+      FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
     },
   );
 });

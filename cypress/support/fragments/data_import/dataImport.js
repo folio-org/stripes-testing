@@ -39,6 +39,7 @@ const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
+const cancelMultipleImportJobModal = Modal('Cancel multipart import job?');
 const yesButton = Button('Yes, cancel import job');
 const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
@@ -46,9 +47,9 @@ const importBlockedModal = Modal('Import blocked');
 const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
-  cy.wait(1000);
+  cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
-  cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+  cy.wait(10000);
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {
@@ -57,6 +58,7 @@ const uploadBunchOfDifferentFiles = (fileNames) => {
     arrayOfFiles.push(fileNames[i]);
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
+  cy.wait(5000);
   cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
   cy.wait(1500);
 };
@@ -241,7 +243,7 @@ function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
   });
 }
 
-function getJodStatus(jobExecutionId) {
+function getJobStatus(jobExecutionId) {
   return cy.okapiRequest({
     path: `change-manager/jobExecutions/${jobExecutionId}`,
     isDefaultSearchParamsRequired: false,
@@ -296,12 +298,32 @@ function uploadDefinitionWithAssembleStorageFile(
   });
 }
 
-function getParentJobExecutionId() {
+function getParentJobExecutions() {
   // splitting process creates additional job executions for parent/child
   // so we need to query to get the correct job execution ID COMPOSITE_PARENT
   return cy.okapiRequest({
     path: 'metadata-provider/jobExecutions?limit=10000&sortBy=started_date,desc&subordinationTypeNotAny=COMPOSITE_CHILD&subordinationTypeNotAny=PARENT_SINGLE',
     isDefaultSearchParamsRequired: false,
+  });
+}
+
+function getParentJobExecutionId(sourcePath) {
+  function filterResponseBySourcePath(response) {
+    const {
+      body: { jobExecutions },
+    } = response;
+    return jobExecutions.find((jobExecution) => {
+      return jobExecution.sourcePath === sourcePath;
+    });
+  }
+  return recurse(
+    () => getParentJobExecutions(),
+    (response) => filterResponseBySourcePath(response) !== undefined,
+    {
+      limit: 5,
+    },
+  ).then((response) => {
+    return filterResponseBySourcePath(response).id;
   });
 }
 
@@ -352,7 +374,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
       );
 
       recurse(
-        () => getJodStatus(jobExecutionId),
+        () => getJobStatus(jobExecutionId),
         (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
         {
           limit: 16,
@@ -428,12 +450,9 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                 },
               );
 
-              getParentJobExecutionId().then((jobExecutionResponse) => {
-                const parentJobExecutionId = jobExecutionResponse.body.jobExecutions.find(
-                  (exec) => exec.sourcePath === sourcePath,
-                ).id;
+              getParentJobExecutionId(sourcePath).then((parentJobExecutionId) => {
                 recurse(
-                  () => getJodStatus(parentJobExecutionId),
+                  () => getJobStatus(parentJobExecutionId),
                   (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
                   {
                     limit: 16,
@@ -441,7 +460,6 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                     delay: 5000,
                   },
                 );
-
                 getChildJobExecutionId(parentJobExecutionId).then((resp2) => {
                   const childJobExecutionId = resp2.body.jobExecutions[0].id;
 
@@ -449,6 +467,7 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                     const sourceRecords = resp3.body.entries;
                     const infos = [];
 
+                    cy.wait(2000);
                     // Use Promise.all to wait for all asynchronous operations to complete
                     return Promise.all(
                       sourceRecords.map((record) => {
@@ -471,11 +490,11 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                               id:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.id,
+                                  : recordResponse.body.relatedHoldingsInfo[0].id,
                               hrid:
                                 recordResponse.body.relatedHoldingsInfo.length === 0
                                   ? ''
-                                  : recordResponse.body.relatedHoldingsInfo.hrid,
+                                  : recordResponse.body.relatedHoldingsInfo[0].hrid,
                             },
                             item: {
                               id:
@@ -530,14 +549,14 @@ export default {
     JobProfiles.waitLoadingList();
     JobProfiles.search(profileName);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileName);
+    Logs.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
   },
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
-    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+    cy.get('div[class^="progressInfo-"]', getLongDelay()).should('not.exist');
   },
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
@@ -553,7 +572,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 8;
+    const hrIdColumnIndex = 9;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -690,7 +709,9 @@ export default {
   verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
 
   verifyDeleteLogsButtonDisabled: () => {
+    cy.wait(1500);
     cy.do(actionsButton.click());
+    cy.wait(1500);
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
@@ -699,21 +720,19 @@ export default {
     // because this is possible by design
     // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
+    cy.wait(10000);
+    cy.reload();
+    cy.wait(5000);
+    cy.allure().startStep('Delete files before upload file');
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
         if (isDeleteFilesButtonExists) {
-          cy.wait(5000);
-          cy.reload();
-          cy.wait(15000);
-          cy.reload();
-          cy.wait(3000);
           cy.do(Button('Delete files').click());
           cy.expect(Button('or choose files').exists());
+          cy.allure().endStep();
         }
       },
     );
-    cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
-    cy.wait(3000);
   },
 
   clickResumeButton: () => {
@@ -740,25 +759,77 @@ export default {
   },
 
   verifyCancelImportJobModal: () => {
-    const headerModalContent = 'Are you sure that you want to cancel this import job?';
-    const modalContent =
-      'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
-    cy.expect([
-      cancelImportJobModal.exists(),
-      cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
-      cancelImportJobModal.find(HTML(including(modalContent))).exists(),
-      cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
-      cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
-    ]);
+    checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        const headerModalContent = 'Are you sure that you want to cancel this import job?';
+        const modalContent =
+          'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
+        cy.expect([
+          cancelImportJobModal.exists(),
+          cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
+          cancelImportJobModal.find(HTML(including(modalContent))).exists(),
+          cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
+          cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
+        ]);
+      } else {
+        const headerModalContent =
+          'Are you sure that you want to cancel this multipart import job?';
+
+        cy.expect([
+          cancelMultipleImportJobModal.exists(),
+          cancelMultipleImportJobModal.find(HTML(including(headerModalContent))).exists(),
+          cancelMultipleImportJobModal.find(HTML(including('Please note:'))).exists(),
+          cancelMultipleImportJobModal
+            .find(HTML(including('Cancelled jobs cannot be restarted.')))
+            .exists(),
+          cancelMultipleImportJobModal
+            .find(
+              HTML(
+                including(
+                  'Records created or updated before the job is cancelled cannot be reverted',
+                ),
+              ),
+            )
+            .exists(),
+          cancelMultipleImportJobModal
+            .find(HTML(including(' job parts have already been processed and will ')))
+            .exists(),
+          cancelMultipleImportJobModal
+            .find(
+              HTML(
+                including(
+                  ' remaining job parts including any that are currently in progress and all that have not yet started ',
+                ),
+              ),
+            )
+            .exists(),
+          cancelMultipleImportJobModal.find(cancelButton, { disabled: true }).exists(),
+          cancelMultipleImportJobModal.find(yesButton, { disabled: false }).exists(),
+        ]);
+      }
+    });
   },
 
   confirmDeleteImportJob: () => {
-    cy.do(cancelImportJobModal.find(yesButton).click());
+    checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        cy.do(cancelImportJobModal.find(yesButton).click());
+      } else {
+        cy.do(cancelMultipleImportJobModal.find(yesButton).click());
+      }
+    });
   },
 
   cancelDeleteImportJob: () => {
-    cy.do(cancelImportJobModal.find(cancelButton).click());
-    cy.expect(cancelImportJobModal.absent());
+    checkSplitStatus().then((resp) => {
+      if (resp.body.splitStatus === false) {
+        cy.do(cancelImportJobModal.find(cancelButton).click());
+        cy.expect(cancelImportJobModal.absent());
+      } else {
+        cy.do(cancelMultipleImportJobModal.find(cancelButton).click());
+        cy.expect(cancelMultipleImportJobModal.absent());
+      }
+    });
   },
 
   waitFileIsUploaded: () => {

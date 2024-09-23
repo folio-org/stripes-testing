@@ -1,15 +1,16 @@
 import { MultiColumnListHeader } from '../../../interactors';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-requests: Sort requests', () => {
+describe('Requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
+  const instanceTitlePrefix = 'test_sort_';
 
   beforeEach(() => {
     cy.getAdminToken().then(() => {
@@ -18,13 +19,16 @@ describe('ui-requests: Sort requests', () => {
           requestType === REQUEST_TYPES.PAGE
             ? ITEM_STATUS_NAMES.AVAILABLE
             : ITEM_STATUS_NAMES.CHECKED_OUT;
-        Requests.createRequestApi(itemStatus, requestType).then(
-          ({ instanceRecordData, createdRequest, createdUser }) => {
-            userIds.push(createdUser.id);
-            instances.push(instanceRecordData);
-            requests.push(createdRequest);
-          },
-        );
+        Requests.createRequestApi(
+          itemStatus,
+          requestType,
+          REQUEST_LEVELS.ITEM,
+          instanceTitlePrefix,
+        ).then(({ instanceRecordData, createdRequest, createdUser }) => {
+          userIds.push(createdUser.id);
+          instances.push(instanceRecordData);
+          requests.push(createdRequest);
+        });
       });
     });
     cy.loginAsAdmin();
@@ -45,23 +49,27 @@ describe('ui-requests: Sort requests', () => {
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (vega)', { tags: ['smokeBroken', 'vega'] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega'] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');
 
     Requests.checkAllRequestTypes();
     Requests.validateRequestTypesChecked();
+    Requests.findCreatedRequest(instanceTitlePrefix);
 
     // Validate that the requests are sorted by Request date (oldest at top) by default
     Requests.validateRequestsDateSortingOrder('ascending');
 
     // Click column header Request Date to verify that they reverse sort
-    cy.do(MultiColumnListHeader('Request Date').click());
+    cy.do(MultiColumnListHeader('Request date').click());
     Requests.waitLoadingRequests();
     Requests.validateRequestsDateSortingOrder('descending');
 
     Requests.sortingColumns.forEach((column) => {
+      if (column.title === 'Requester barcode') {
+        cy.get('#list-requests > [class*="mclScrollable"]').scrollTo('right');
+      }
       // Validate sort
       cy.do(MultiColumnListHeader(column.title).click());
       Requests.validateRequestsSortingOrder({

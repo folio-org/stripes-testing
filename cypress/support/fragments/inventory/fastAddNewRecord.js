@@ -14,7 +14,7 @@ import getRandomPostfix from '../../utils/stringTools';
 
 const fastAddNewRecordFormDetails = {
   instanceStatusCodeValue: 'uncat',
-  resourceTitle: 'Monograph',
+  resourceTitle: `Monograph${getRandomPostfix()}`,
   resourceType: 'text',
   permanentLocationOption: 'Online (E) ',
   permanentLocationValue: 'Online',

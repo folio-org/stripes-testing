@@ -47,7 +47,7 @@ describe('MARC', () => {
           INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.SRCE,
         ],
         calloutMessage: 'Creating record may take several seconds.',
-        errorCalloutMessage: 'Record cannot be saved without 008 field',
+        errorCalloutMessage: 'Field 008 is required.',
         initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
       };
       const field008DropdownValues = [
@@ -149,6 +149,8 @@ describe('MARC', () => {
             );
             cy.wait(500);
           });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.editMarcBibliographicRecord();

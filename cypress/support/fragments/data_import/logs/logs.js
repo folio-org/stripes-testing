@@ -10,7 +10,6 @@ import {
   Selection,
   SelectionList,
 } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
 import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -49,7 +48,7 @@ export default {
     cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
-      anyProfileAccordion.find(Selection({ singleValue: including('Choose job profile') })).open(),
+      anyProfileAccordion.find(Selection({ value: including('Choose job profile') })).open(),
     ]);
     cy.do(SelectionList().select(jobProfileName));
     cy.expect(MultiColumnListCell(jobProfileName).exists());
@@ -64,6 +63,27 @@ export default {
       MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
         const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
+        cy.expect(
+          MultiColumnList({ id: 'job-logs-list' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: status }))
+            .exists(),
+        );
+      }),
+    );
+  },
+  checkJobStatusByUser: (fileName, username, status) => {
+    const newFileName = fileName.replace(/\.mrc$/i, '');
+    cy.do(
+      MultiColumnListCell({ content: username }).perform((element) => {
+        const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+        cy.expect(
+          MultiColumnList({ id: 'job-logs-list' })
+            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+            .find(MultiColumnListCell({ content: including(newFileName) }))
+            .exists(),
+        );
         cy.expect(
           MultiColumnList({ id: 'job-logs-list' })
             .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
@@ -116,7 +136,7 @@ export default {
 
   checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
-
+    cy.wait(1500);
     propertiesArray.forEach((property) => {
       cy.expect(HTML(property).exists());
     });
@@ -142,6 +162,7 @@ export default {
   },
 
   checkFileIsRunning: (fileName) => {
+    cy.wait(1500);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
@@ -197,7 +218,7 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
-    cy.expect(runningAccordion.find(HTML(including(newFileName))).absent(), getLongDelay(240000));
+
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

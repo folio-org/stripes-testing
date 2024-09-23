@@ -13,9 +13,7 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
-
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
@@ -23,7 +21,7 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const matchedRecordsFileName = `Matched-Records-${instanceHRIDFileName}`;
+const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${instanceHRIDFileName}`;
 
@@ -114,28 +112,13 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(instanceHRIDFileName, [item.instanceHRID]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            `*${matchedRecordsFileName}`,
-            [item.instanceHRID],
-            'instanceHrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.holdingsHRID]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            previewOfProposedChangesFileName,
-            [item.instanceHRID],
-            'instanceHrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [item.holdingsHRID]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
-            updatedRecordsFileName,
-            [item.instanceHRID],
-            'instanceHrid',
-            true,
-          );
+          ExportFile.verifyFileIncludes(updatedRecordsFileName, [item.holdingsHRID]);
 
           TopMenuNavigation.navigateToApp('Inventory');
           InventoryInstances.searchByTitle(item.instanceName);

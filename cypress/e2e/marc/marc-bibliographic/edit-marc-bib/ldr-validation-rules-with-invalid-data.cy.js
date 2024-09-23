@@ -123,7 +123,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
 
-          QuickMarcEditor.pressSaveAndKeepEditing(errorMessageFirstSave);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(0, errorMessageFirstSave);
 
           Object.values(INVENTORY_LDR_FIELD_STATUS_DROPDOWN).forEach((dropdownOption) => {
             QuickMarcEditor.verifyFieldsDropdownOption(
@@ -149,7 +150,8 @@ describe('MARC', () => {
             INVENTORY_LDR_FIELD_STATUS_DROPDOWN.C,
           );
 
-          QuickMarcEditor.pressSaveAndKeepEditing(errorMessageSecondSave);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(0, errorMessageSecondSave);
 
           fieldLDRDropdownsOptionsSet.forEach((LDRFieldDropdownsOption) => {
             QuickMarcEditor.selectFieldsDropdownOption(

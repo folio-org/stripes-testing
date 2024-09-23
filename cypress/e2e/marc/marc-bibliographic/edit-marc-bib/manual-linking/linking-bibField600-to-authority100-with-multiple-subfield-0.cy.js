@@ -30,7 +30,7 @@ describe('MARC', () => {
             'keyword exactPhrase C380753 Black Panther or identifiers.value exactPhrase n2016004081 or identifiers.value exactPhrase no2020004029 or identifiers.value exactPhrase 2006108277 or identifiers.value exactPhrase no 00041049',
           ],
           bib600AfterUnlinking: [
-            46,
+            45,
             '600',
             '0',
             '0',
@@ -57,7 +57,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib600FieldValues = [
-          46,
+          45,
           testData.tag600,
           '0',
           '0',
@@ -65,7 +65,7 @@ describe('MARC', () => {
         ];
 
         const bib600AfterLinkingToAuth100 = [
-          46,
+          45,
           testData.tag600,
           '0',
           '0',
@@ -76,6 +76,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380753*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -84,7 +88,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -121,7 +124,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);
-            QuickMarcEditor.clickLinkIconInTagField(46);
+            QuickMarcEditor.clickLinkIconInTagField(45);
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthoritiesSearch.verifyFiltersState(
               testData.filterState[0],
@@ -130,8 +133,10 @@ describe('MARC', () => {
             );
             MarcAuthorities.selectTitle(testData.marcValue);
             InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, 46);
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, 45);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib600AfterLinkingToAuth100);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitInventoryLoading();
@@ -157,11 +162,13 @@ describe('MARC', () => {
             InstanceRecordView.verifyInstancePaneExists();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkFieldsExist([testData.tag600]);
-            QuickMarcEditor.clickUnlinkIconInTagField(46);
+            QuickMarcEditor.clickUnlinkIconInTagField(45);
             QuickMarcEditor.checkUnlinkModal(testData.tag600);
             QuickMarcEditor.confirmUnlinkingField();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib600AfterUnlinking);
-            QuickMarcEditor.checkLinkButtonExistByRowIndex(46);
+            QuickMarcEditor.checkLinkButtonExistByRowIndex(45);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(

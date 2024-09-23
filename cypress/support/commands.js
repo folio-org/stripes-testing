@@ -8,3 +8,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
   console.log(`${runnable?.title}: ${err?.message}`);
   return false;
 });
+
+Cypress.Commands.add('normalizeText', (text) => {
+  return text.replace(/\u00a0/g, ' ').trim();
+});

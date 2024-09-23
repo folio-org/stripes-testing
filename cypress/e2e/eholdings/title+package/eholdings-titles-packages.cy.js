@@ -71,7 +71,7 @@ describe('eHoldings', () => {
           waiter: EHoldingsTitlesSearch.waitLoading,
         });
         EHoldingSearch.switchToTitles();
-        EHoldingsTitlesSearch.byTitle(testData.titleC9240);
+        EHoldingsTitlesSearch.byTitle('Wiley');
         EHoldingsTitlesSearch.bySelectionStatus('Selected');
         EHoldingsTitlesSearch.openTitle(testData.titleC9240);
         EHoldingsTitle.openResource();

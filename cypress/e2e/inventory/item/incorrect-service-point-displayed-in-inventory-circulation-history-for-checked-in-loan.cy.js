@@ -120,7 +120,7 @@ describe('Inventory', () => {
 
     it(
       'C399075 Incorrect service point displayed in Inventory Circulation history for checked in loan (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();

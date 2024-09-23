@@ -7,14 +7,12 @@ import {
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -25,10 +23,14 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -38,6 +40,7 @@ describe('Data Import', () => {
     let holdingsHrId;
     let instanceId;
     let holdingsId;
+    let userId;
     const filePathToUpload = 'marcBibFileForC11106.mrc';
     const editedMarcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
     const marcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
@@ -112,9 +115,18 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.enableStaffSuppressFacet.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
 
       // create mapping profiles
@@ -142,7 +154,7 @@ describe('Data Import', () => {
         8,
       );
       NewFieldMappingProfile.addNatureOfContentTerms(
-        collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.natureOfContent,
+        `"${collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.natureOfContent}"`,
       );
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(
@@ -199,14 +211,15 @@ describe('Data Import', () => {
       ).then((response) => {
         instanceHrid = response[0].instance.hrid;
         instanceId = response[0].instance.id;
-        holdingsHrId = response[0].holdings.hrid;
-        holdingsId = response[0].holdings.id;
+        holdingsHrId = response[0].holding.hrid;
+        holdingsId = response[0].holding.id;
       });
     });
 
     after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

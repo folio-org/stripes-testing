@@ -12,9 +12,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
@@ -156,7 +156,7 @@ describe('Data Import', () => {
         InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });
-        InstanceRecordView.verifyIsInstanceOpened('Herpetological conservation and biology.');
+        InstanceRecordView.verifyInstanceIsOpened('Herpetological conservation and biology.');
         InstanceRecordView.verifyInstanceAdministrativeNote(instanceMappingProfile.adminNotes);
         InstanceRecordView.verifyInstanceNote(mappingProfileFieldsForModify.modifications.data);
       },

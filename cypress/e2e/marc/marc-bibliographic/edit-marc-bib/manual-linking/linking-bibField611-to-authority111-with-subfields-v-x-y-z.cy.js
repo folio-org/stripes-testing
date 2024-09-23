@@ -53,6 +53,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377027*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -109,6 +113,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkUnlinkTooltipText(15, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib611AfterLinkingToAuth111[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib611AfterLinkingToAuth111);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(

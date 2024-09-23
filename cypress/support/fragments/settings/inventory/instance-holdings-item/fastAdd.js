@@ -9,6 +9,7 @@ const calloutMessages = {
 export default {
   calloutMessages,
   changeDefaultInstanceStatus: (statusCode) => {
+    cy.wait(2000);
     cy.do(Select({ name: 'instanceStatusCode' }).choose(statusCode));
     cy.get('button[type="submit"]').then((element) => {
       if (!element.attr('disabled')) {

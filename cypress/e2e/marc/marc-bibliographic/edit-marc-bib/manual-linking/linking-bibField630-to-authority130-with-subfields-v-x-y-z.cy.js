@@ -40,7 +40,7 @@ describe('MARC', () => {
         const createdRecordIDs = [];
 
         const bib630AfterLinkingToAuth130 = [
-          23,
+          22,
           testData.tag630,
           '0',
           '7',
@@ -51,6 +51,10 @@ describe('MARC', () => {
         ];
 
         before('Creating user and data', () => {
+          cy.getAdminToken();
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377028*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -104,9 +108,11 @@ describe('MARC', () => {
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag630);
-            QuickMarcEditor.checkUnlinkTooltipText(23, 'Unlink from MARC Authority record');
+            QuickMarcEditor.checkUnlinkTooltipText(22, 'Unlink from MARC Authority record');
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib630AfterLinkingToAuth130[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib630AfterLinkingToAuth130);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyInstanceSubject(

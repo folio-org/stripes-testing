@@ -13,7 +13,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        tag245rowIndex: 13,
+        tag245rowIndex: 14,
         tag245value1: '$a Edited $h [Sound Recording] / $c Cypress Automation',
         instanceTitle1: 'Instance • Edited [Sound Recording] / Cypress Automation',
         tag245value2: '$a Edited Twice $h [Sound Recording] / $c Cypress Automation',
@@ -69,13 +69,15 @@ describe('MARC', () => {
 
       it(
         'C360097 Verify updates are saved after clicking "Save & keep editing" button in "MARC Bibliographic" edit mode (Spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire'] },
         () => {
           QuickMarcEditor.updateExistingFieldContent(
             testData.tag245rowIndex,
             testData.tag245value1,
           );
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value1, testData.tag245rowIndex);
           QuickMarcEditor.closeUsingCrossButton();
@@ -90,6 +92,8 @@ describe('MARC', () => {
             testData.tag245rowIndex,
             testData.tag245value2,
           );
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
           QuickMarcEditor.checkContent(testData.tag245value2, testData.tag245rowIndex);
           cy.go('back');

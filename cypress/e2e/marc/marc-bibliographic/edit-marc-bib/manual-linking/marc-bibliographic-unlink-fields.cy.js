@@ -49,7 +49,6 @@ describe('MARC', () => {
           },
         ];
         const linkedField = {
-          rowIndex: 10,
           tag: '100',
           secondBox: '1',
           thirdBox: '\\',
@@ -59,7 +58,6 @@ describe('MARC', () => {
           seventhBox: '$1 http://viaf.org/viaf/24074052',
         };
         const unlinkedField = {
-          rowIndex: 10,
           tag: '100',
           indicator0: '1',
           indicator1: '\\',
@@ -73,26 +71,30 @@ describe('MARC', () => {
         const createdAuthorityIDs = [];
 
         before(() => {
+          cy.getAdminToken();
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365598*');
+
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ])
             .then((createdUserProperties) => {
               testData.userProperties = createdUserProperties;
 
-              cy.loginAsAdmin().then(() => {
-                marcFiles.forEach((marcFile) => {
-                  DataImport.uploadFileViaApi(
-                    marcFile.marc,
-                    marcFile.fileName,
-                    marcFile.jobProfileToRun,
-                  ).then((response) => {
-                    response.forEach((record) => {
-                      createdAuthorityIDs.push(record[marcFile.propertyName].id);
-                    });
+              cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdAuthorityIDs.push(record[marcFile.propertyName].id);
                   });
                 });
               });
@@ -136,9 +138,10 @@ describe('MARC', () => {
             InventoryInstance.searchResults(testData.authority700FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
-            QuickMarcEditor.verifyTagFieldAfterLinking(
-              linkedField.rowIndex,
+            QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
               linkedField.tag,
               linkedField.secondBox,
               linkedField.thirdBox,
@@ -147,18 +150,22 @@ describe('MARC', () => {
               linkedField.zeroSubfield,
               linkedField.seventhBox,
             );
-            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(10);
-            QuickMarcEditor.checkUnlinkTooltipText(10, 'Unlink from MARC Authority record');
-            QuickMarcEditor.clickUnlinkIconInTagField(10);
+            QuickMarcEditor.verifyUnlinkAndViewAuthorityButtonsinFieldByTag(linkedField.tag);
+            QuickMarcEditor.checkUnlinkTooltipTextInFieldByTag(
+              linkedField.tag,
+              'Unlink from MARC Authority record',
+            );
+            QuickMarcEditor.clickUnlinkIconInFieldByTag(linkedField.tag);
             QuickMarcEditor.checkUnlinkModal(testData.tag100);
             QuickMarcEditor.confirmUnlinkingField();
-            QuickMarcEditor.verifyTagFieldAfterUnlinking(
-              unlinkedField.rowIndex,
+            QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(
               unlinkedField.tag,
               unlinkedField.indicator0,
               unlinkedField.indicator1,
               unlinkedField.content,
             );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyContributor(0, 1, contributors.firstName);

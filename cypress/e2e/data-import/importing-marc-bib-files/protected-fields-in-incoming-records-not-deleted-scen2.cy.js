@@ -99,7 +99,7 @@ describe('Data Import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
@@ -132,7 +132,9 @@ describe('Data Import', () => {
         Object.values(fieldsForChanging).forEach((field) => InventoryEditMarcRecord.editField(field, `${field} $5 NcD`));
         InventoryEditMarcRecord.addField('580', 'Test $5 NcD');
         InventoryEditMarcRecord.saveAndClose();
-
+        cy.wait(1500);
+        InventoryEditMarcRecord.saveAndClose();
+        cy.wait(8000);
         // overlay source bibliographic record
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();

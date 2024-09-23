@@ -85,9 +85,10 @@ export default {
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
       SelectionOption(including(newTenantName)).click(),
-      Button({ id: 'save-active-affiliation' }).click(),
     ]);
-    cy.wait(8000);
+    cy.wait(1000);
+    cy.do(Button({ id: 'save-active-affiliation' }).click());
+    cy.wait(6000);
     cy.expect(
       Button({
         ariaLabel: or(`${newTenantName}  profile`, `${newTenantName} ${servicePointName} profile`),

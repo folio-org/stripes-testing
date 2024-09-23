@@ -23,9 +23,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -37,11 +34,13 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -126,10 +125,10 @@ describe('Data Import', () => {
       name: `C356791 autotest mapping profile.${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
       holdingsMarcField: '901',
-      subfieldForHoldings: '$h',
+      subfieldForHoldings: 'h',
       itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
       itemMarcField: '902',
-      subfieldForItem: '$i',
+      subfieldForItem: 'i',
     };
     const collectionOfProfilesForUpdate = [
       {
@@ -243,8 +242,8 @@ describe('Data Import', () => {
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.dataExportEnableApp.gui,
-        Permissions.dataExportEnableSettings.gui,
+        Permissions.dataExportViewAddUpdateProfiles.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -393,14 +392,9 @@ describe('Data Import', () => {
           'Subject',
           collectionOfProfilesForCreate[0].mappingProfile.modifications.data,
         );
+        cy.wait(1500);
         InventorySearchAndFilter.saveUUIDs();
-        // need to create a new file with instance UUID because tests are runing in multiple threads
-        cy.intercept('/search/instances/ids**').as('getIds');
-        cy.wait('@getIds', getLongDelay()).then((req) => {
-          const expectedUUID = InventorySearchAndFilter.getUUIDsFromRequest(req);
-
-          FileManager.createFile(`cypress/fixtures/${nameForCSVFile}`, expectedUUID);
-        });
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);

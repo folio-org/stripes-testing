@@ -80,7 +80,7 @@ describe('MARC', () => {
         { tags: ['criticalPath', 'spitfire'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
-          MarcAuthorities.clickNewAuthorityButton();
+          MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
 
           // 2 Click on "Authority file look-up" hyperlink
@@ -117,6 +117,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAllBoxesInARowAreDisabled(newField999.rowIndex);
 
           // 6 Click on the "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

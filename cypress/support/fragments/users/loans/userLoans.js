@@ -1,18 +1,19 @@
-import moment from 'moment';
 import { matching } from 'bigtest';
+import moment from 'moment';
 import {
-  Pane,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  Select,
-  HTML,
-  including,
   Button,
+  HTML,
   KeyValue,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
   PaneHeader,
+  Select,
+  including,
+  Link,
 } from '../../../../../interactors';
-import ItemRecordView from '../../inventory/item/itemRecordView';
 import { REQUEST_METHOD } from '../../../constants';
+import ItemRecordView from '../../inventory/item/itemRecordView';
 import LoansPage from '../../loans/loansPage';
 import ConfirmItemStatusModal from './confirmItemStatusModal';
 
@@ -65,6 +66,11 @@ export default {
   },
   selectLoan: (barcode) => {
     cy.do(rowInList.find(HTML(including(barcode))).click());
+  },
+  showClosedLoans() {
+    cy.wait(1000);
+    cy.do(Link({ id: 'loans-show-closed' }).click());
+    cy.wait(1000);
   },
   openLoanDetails: (itemBarcode) => {
     cy.wait(2000);

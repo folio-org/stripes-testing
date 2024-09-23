@@ -9,14 +9,21 @@ describe('lists', () => {
     const userData = {};
     const listData = {
       name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
+      recordType: 'Users',
       status: 'Active',
       visibility: 'Shared',
     };
 
     beforeEach('Create a user', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -25,10 +32,7 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
@@ -37,12 +41,10 @@ describe('lists', () => {
       'C411770 Delete list: Refresh is in progress (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -50,11 +52,9 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(1000);
-        Lists.actionButton();
-        cy.contains('Delete list').should('be.disabled');
-        cy.wait(7000);
-        cy.contains('View updated list').click();
+        Lists.openActions();
+        Lists.verifyDeleteListButtonIsDisabled();
+        Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
@@ -67,12 +67,10 @@ describe('lists', () => {
       'C411771 Delete list: Export is in progress (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        // eslint-disable-next-line spaced-comment
-        //cy.login(userData.username, userData.password);
-        cy.loginAsAdmin();
+        cy.login(userData.username, userData.password);
         cy.visit(TopMenu.listsPath);
         Lists.waitLoading();
-        Lists.resetAll();
+        Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -80,12 +78,11 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(10000);
-        cy.contains('View updated list').click();
-        Lists.actionButton();
+        Lists.viewUpdatedList();
+        Lists.openActions();
         Lists.exportList();
-        Lists.actionButton();
-        cy.contains('Delete list').should('be.disabled');
+        Lists.openActions();
+        Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
         cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
