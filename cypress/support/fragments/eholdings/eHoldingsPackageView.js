@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Button,
   HTML,
@@ -179,6 +180,31 @@ export default {
       const jobId = match ? match[0] : null;
       return jobId;
     });
+  },
+
+  waitForJobToComplete: (jobId) => {
+    function getImportJobStatus() {
+      return cy.okapiRequest({
+        method: 'GET',
+        path: 'data-export-spring/jobs',
+        searchParams: {
+          limit: 100,
+          offset: 0,
+          query: `((name="*${jobId}*"))`,
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    }
+    recurse(
+      () => getImportJobStatus(),
+      (response) => {
+        return response.body.jobRecords[0].status === 'SUCCESSFUL';
+      },
+      {
+        limit: 10,
+        delay: 1_000,
+      },
+    );
   },
 
   selectTitleFieldsToExport: (value) => {
