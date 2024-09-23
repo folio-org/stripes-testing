@@ -285,6 +285,14 @@ export default {
     internal: 'ui-inventory.instance.view-staff-suppressed-records',
     gui: 'Inventory: Enable staff suppress facet',
   },
+  patchInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.item.patch',
+    gui: 'inventory storage - patch instance-date-type',
+  },
+  getInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.collection.get',
+    gui: 'inventory storage - get list of instance-date-types',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -502,6 +510,15 @@ export default {
     internal: 'ui-users.financialTransactionReport',
     gui: 'Users: Create and download Financial transaction detail report',
   },
+  uiUserViewEditDeliteProfilePictores: {
+    internal: 'ui-users.profile-pictures.all',
+    gui: 'Users: Can view, edit, and delete profile pictures',
+  },
+  uiUserViewProfilePictores: {
+    internal: 'ui-users.profile-pictures.view',
+    gui: 'Users: Can view profile pictures',
+  },
+
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
