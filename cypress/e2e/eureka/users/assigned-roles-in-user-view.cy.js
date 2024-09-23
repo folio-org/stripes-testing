@@ -21,11 +21,17 @@ describe('Eureka', () => {
       { type: 'Data', resource: 'UI-Users', action: 'View' },
     ];
 
+    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+
     before('Create users, roles', () => {
       cy.getAdminToken();
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
-        cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
+        cy.assignCapabilitiesToExistingUser(
+          testData.tempUser.userId,
+          capabsToAssign,
+          capabSetsToAssign,
+        );
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {

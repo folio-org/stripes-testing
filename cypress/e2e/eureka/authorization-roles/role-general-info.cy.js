@@ -20,6 +20,8 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
+      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+
       before(() => {
         cy.getAdminToken();
         // set default locale settings for tenant (with UTC)
@@ -32,11 +34,19 @@ describe('Eureka', () => {
         });
         cy.createTempUser([]).then((createdUserAProperties) => {
           testData.userA = createdUserAProperties;
-          cy.assignCapabilitiesToExistingUser(testData.userA.userId, [], capabSetsToAssign);
+          cy.assignCapabilitiesToExistingUser(
+            testData.userA.userId,
+            capabsToAssign,
+            capabSetsToAssign,
+          );
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
           cy.createTempUser([]).then((createdUserBProperties) => {
             testData.userB = createdUserBProperties;
-            cy.assignCapabilitiesToExistingUser(testData.userB.userId, [], capabSetsToAssign);
+            cy.assignCapabilitiesToExistingUser(
+              testData.userB.userId,
+              capabsToAssign,
+              capabSetsToAssign,
+            );
             if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userB.userId, []);
 
             cy.login(testData.userA.username, testData.userA.password, {

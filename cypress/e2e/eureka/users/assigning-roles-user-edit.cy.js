@@ -26,6 +26,7 @@ describe('Eureka', () => {
     const capabsToAssign = [
       { type: 'Data', resource: 'UI-Users', action: 'View' },
       { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+      { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
     ];
 
     before('Create users, roles', () => {
