@@ -157,8 +157,11 @@ export default {
   },
 
   selectField(selection, row = 0) {
-    cy.do(selectFieldButton.click());
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+  },
+
+  clickSelectFieldButton() {
+    cy.do(selectFieldButton.click());
   },
 
   typeInAndSelectField(string, row = 0) {

@@ -56,6 +56,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.temporaryLocation);
         QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
         QueryModal.verifyQueryAreaContent('(temporary_location.name  )');

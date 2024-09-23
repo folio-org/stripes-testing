@@ -61,6 +61,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.instanceId);
         QueryModal.verifySelectedField(itemFieldValues.instanceId);
         QueryModal.verifyQueryAreaContent('(instances.id  )');
