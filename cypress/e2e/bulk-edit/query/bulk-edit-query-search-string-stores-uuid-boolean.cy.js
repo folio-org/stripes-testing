@@ -52,6 +52,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.preferredContactType);
         QueryModal.verifySelectedField(usersFieldValues.preferredContactType);
         QueryModal.verifyQueryAreaContent('(users.preferred_contact_type  )');

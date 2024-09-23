@@ -989,6 +989,7 @@ export default {
   commitChanges() {
     cy.wait(2000);
     cy.do([Modal().find(commitChanges).click()]);
+    cy.wait(2000);
   },
 
   clickNext() {

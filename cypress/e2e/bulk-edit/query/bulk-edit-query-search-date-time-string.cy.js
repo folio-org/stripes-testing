@@ -49,6 +49,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.expirationDate);
         QueryModal.verifySelectedField(usersFieldValues.expirationDate);
         QueryModal.verifyQueryAreaContent('(users.expiration_date  )');
