@@ -109,12 +109,9 @@ describe('Data Import', () => {
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkContent('$9 000442923', 6);
         QuickMarcEditor.checkPaneheaderContains(`Source: ${user.username}`);
-        QuickMarcEditor.addValuesToExistingField(
-          7,
+        QuickMarcEditor.updateExistingField(
           '852',
           '$b E $h BR140 $i .J86 $x dbe=c $z Current issues in Periodicals Room $x CHECK-IN RECORD CREATED $9 Test',
-          '0',
-          '1',
         );
         cy.wait(2000);
         QuickMarcEditor.pressSaveAndKeepEditing(changesSavedCallout);
