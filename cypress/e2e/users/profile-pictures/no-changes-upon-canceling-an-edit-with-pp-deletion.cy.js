@@ -52,7 +52,7 @@ describe('Users', () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
         UserEdit.openEdit();
-        UserEdit.verifyProfileCardIsPresent();
+        UserEdit.verifyProfileCardIsPresented();
         UserEdit.verifyButtonsStateForProfilePicture([{ value: 'Delete' }]);
         UserEdit.deleteProfilePicture(testData.userB);
         UserEdit.verifyPictureIsRemoved(testData.externalPictureUrl);

@@ -16,7 +16,7 @@ const resetAllButton = Button({ id: 'clickable-reset-all' });
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
-  cy.wait(1000);
+  cy.wait(1500);
 };
 
 export default {
@@ -82,5 +82,6 @@ export default {
 
   resetAllFilters() {
     cy.do(resetAllButton.click());
+    cy.wait(1000);
   },
 };
