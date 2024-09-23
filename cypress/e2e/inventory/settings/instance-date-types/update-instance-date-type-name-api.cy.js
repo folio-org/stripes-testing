@@ -21,8 +21,8 @@ describe('Inventory', () => {
           originalDateType = response.instanceDateTypes[response.instanceDateTypes.length - 1];
         });
         cy.createTempUser([
-          Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
-          Permissions.crudClassificationIdentifierTypes.gui,
+          Permissions.getInstanceDateTypes.gui,
+          Permissions.patchInstanceDateTypes.gui,
         ]).then((userProperties) => {
           user = userProperties;
         });
@@ -35,6 +35,7 @@ describe('Inventory', () => {
           originalDateType.id,
           testData.keyToUpdate,
           originalDateType.name,
+          true,
         );
         Users.deleteViaApi(user.userId);
       });
@@ -43,6 +44,7 @@ describe('Inventory', () => {
         'C506694 Update of Date type\'s "name" (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
+          cy.getUserToken(user.username, user.password);
           cy.patchInstanceDateTypeViaAPI(
             originalDateType.id,
             testData.keyToUpdate,
