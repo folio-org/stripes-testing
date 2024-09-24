@@ -1,4 +1,4 @@
-import { Button, Checkbox, Link, Modal, Pane, Section, TextArea } from '../../../../../interactors';
+import { Button, Checkbox, Link, Modal, Section, TextArea } from '../../../../../interactors';
 import RichTextEditor from '../../../../../interactors/rich-text-editor';
 import InteractorsTools from '../../../utils/interactorsTools';
 
@@ -25,7 +25,9 @@ export default {
 
   save() {
     cy.do(Button({ id: 'routing-list-configuration-save-button' }).click());
-    InteractorsTools.checkCalloutMessage('The Routing list configuration notice template was successfully updated.');
+    InteractorsTools.checkCalloutMessage(
+      'The Routing list configuration notice template was successfully updated.',
+    );
   },
 
   cancel() {
@@ -40,13 +42,12 @@ export default {
     cy.do(Button('Cancel').click());
     cy.expect(cancelEditingConfirmationModal.exists());
     cy.do(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }).click());
-
   },
 
   fillInfoSectionFields(descripription, body) {
     cy.wait(2000);
-      cy.do(TextArea({ name: 'description' }).fillIn(descripription));
-      cy.do(RichTextEditor().fillIn(body));    
+    cy.do(TextArea({ name: 'description' }).fillIn(descripription));
+    cy.do(RichTextEditor().fillIn(body));
   },
 
   addLinkInBody: () => {
@@ -62,23 +63,23 @@ export default {
 
   clickOnAddTokensInBody() {
     cy.wait(2000);
-    cy.do(Button({ ariaLabel: 'token' }).click());  
+    cy.do(Button({ ariaLabel: 'token' }).click());
     cy.expect(addTokenModal.exists());
   },
 
   selectToken(tokenName) {
     cy.wait(2000);
-    cy.do(Checkbox(tokenName).click());  
+    cy.do(Checkbox(tokenName).click());
   },
 
   addToken() {
     cy.wait(2000);
-    cy.do(addTokenModal.find(Button('Add token')).click());  
+    cy.do(addTokenModal.find(Button('Add token')).click());
   },
 
   cancelAddToken() {
     cy.wait(2000);
-    cy.do(addTokenModal.find(Button('Cancel')).click());  
+    cy.do(addTokenModal.find(Button('Cancel')).click());
   },
 
   clickOnLinkInPreview(linkName) {
@@ -90,7 +91,7 @@ export default {
     cy.wait(2000);
     cy.do(previewModal.find(Button('Close')).click());
   },
-  
+
   checkTokenInPreview(tokenName) {
     cy.wait(2000);
     cy.get('#preview-modal-content').contains(`${tokenName}`);

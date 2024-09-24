@@ -11,15 +11,15 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.ordersListConfigurationPath,
-        waiter: ListConfiguration.waitLoading,
-      });
-    });
+    cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.ordersListConfigurationPath,
+          waiter: ListConfiguration.waitLoading,
+        });
+      },
+    );
   });
 
   after(() => {

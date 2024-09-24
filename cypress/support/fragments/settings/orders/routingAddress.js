@@ -4,5 +4,4 @@ export default {
   waitLoading() {
     cy.expect(Section({ id: 'central-ordering' }).exists());
   },
-
 };
