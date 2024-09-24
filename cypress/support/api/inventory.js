@@ -494,13 +494,17 @@ Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
     });
 });
 
-Cypress.Commands.add('patchInstanceDateTypeViaAPI', (dateTypeId, keyToUpdate, value) => {
-  const patchBody = {};
-  patchBody[keyToUpdate] = value;
-  return cy.okapiRequest({
-    method: 'PATCH',
-    path: `instance-date-types/${dateTypeId}`,
-    body: patchBody,
-    isDefaultSearchParamsRequired: false,
-  });
-});
+Cypress.Commands.add(
+  'patchInstanceDateTypeViaAPI',
+  (dateTypeId, keyToUpdate, value, ignoreErrors = false) => {
+    const patchBody = {};
+    patchBody[keyToUpdate] = value;
+    return cy.okapiRequest({
+      method: 'PATCH',
+      path: `instance-date-types/${dateTypeId}`,
+      body: patchBody,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+    });
+  },
+);

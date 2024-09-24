@@ -30,7 +30,7 @@ export const holdingsFieldValues = {
 };
 export const instanceFieldValues = {
   instanceHrid: 'Instances — Instance — Instance HRID',
-  instanceResourceTitle: 'Instances — Instance — Title',
+  instanceResourceTitle: 'Instances — Instance — Resource title',
 };
 export const itemFieldValues = {
   instanceId: 'Items — Instances — Instance UUID',
@@ -157,8 +157,11 @@ export default {
   },
 
   selectField(selection, row = 0) {
-    cy.do(selectFieldButton.click());
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+  },
+
+  clickSelectFieldButton() {
+    cy.do(selectFieldButton.click());
   },
 
   typeInAndSelectField(string, row = 0) {
