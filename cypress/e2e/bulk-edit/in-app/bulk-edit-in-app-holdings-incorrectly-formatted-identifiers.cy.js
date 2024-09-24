@@ -22,13 +22,18 @@ const errorMessage =
 const getCalloutContent = (fileName) => {
   return `${fileName} is formatted incorrectly. Please correct the formatting and upload the file again.`;
 };
-const checkResponse = (alias, fileName) => {
-  cy.wait(alias).then((interception) => {
-    cy.log(interception);
-    console.log(interception);
-    expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
-    expect(interception.response.body.errorMessage).to.eq(errorMessage);
-  });
+const numberOfRequests = 5;
+const checkResponse = (alias, fileName, remainingRequests) => {
+  if (remainingRequests > 0) {
+    cy.wait(alias).then((interception) => {
+      if (interception.response.body.errorMessage) {
+        expect(interception.response.body.errorMessage).to.eq(errorMessage);
+        expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
+      } else {
+        checkResponse(alias, remainingRequests - 1);
+      }
+    });
+  }
 };
 
 describe('bulk-edit', () => {
@@ -69,28 +74,40 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         cy.intercept('GET', '*bulk-operations/*').as('bulkOperationHoldingsUUIDs');
         BulkEditSearchPane.uploadFile(fileNameInvalidHoldingsUUIDs);
-        checkResponse('@bulkOperationHoldingsUUIDs', fileNameInvalidHoldingsUUIDs);
+        checkResponse(
+          '@bulkOperationHoldingsUUIDs',
+          fileNameInvalidHoldingsUUIDs,
+          numberOfRequests,
+        );
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidHoldingsUUIDs));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidHoldingsUUIDs));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         cy.intercept('GET', '*bulk-operations/*').as('bulkOperationHoldingsHRIDs');
         BulkEditSearchPane.uploadFile(fileNameInvalidHoldingsHRIDs);
-        checkResponse('@bulkOperationHoldingsHRIDs', fileNameInvalidHoldingsHRIDs);
+        checkResponse(
+          '@bulkOperationHoldingsHRIDs',
+          fileNameInvalidHoldingsHRIDs,
+          numberOfRequests,
+        );
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidHoldingsHRIDs));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidHoldingsHRIDs));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
         cy.intercept('GET', '*bulk-operations/*').as('bulkOperationInstanceHRIDs');
         BulkEditSearchPane.uploadFile(fileNameInvalidInstanceHRIDs);
-        checkResponse('@bulkOperationInstanceHRIDs', fileNameInvalidInstanceHRIDs);
+        checkResponse(
+          '@bulkOperationInstanceHRIDs',
+          fileNameInvalidInstanceHRIDs,
+          numberOfRequests,
+        );
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidInstanceHRIDs));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidInstanceHRIDs));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
         cy.intercept('GET', '*bulk-operations/*').as('bulkOperationItemBarcodes');
         BulkEditSearchPane.uploadFile(fileNameInvalidItemBarcodes);
-        checkResponse('@bulkOperationItemBarcodes', fileNameInvalidItemBarcodes);
+        checkResponse('@bulkOperationItemBarcodes', fileNameInvalidItemBarcodes, numberOfRequests);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidItemBarcodes));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidItemBarcodes));
       },
