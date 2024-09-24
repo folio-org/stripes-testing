@@ -6,6 +6,7 @@ const routingListConfigurationSection = Section({ id: 'routing-list-configuratio
 const previewModal = Modal({ id: 'preview-modal' });
 const addTokenModal = Modal('Add token');
 const cancelEditingConfirmationModal = Modal({ id: 'cancel-editing-confirmation' });
+const cancelButton = Button('Cancel');
 
 export default {
   waitLoading() {
@@ -32,14 +33,14 @@ export default {
 
   cancel() {
     cy.wait(2000);
-    cy.do(Button('Cancel').click());
+    cy.do(cancelButton.click());
     cy.expect(cancelEditingConfirmationModal.exists());
     cy.do(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }).click());
   },
 
   cancelAndKeepEditing() {
     cy.wait(2000);
-    cy.do(Button('Cancel').click());
+    cy.do(cancelButton.click());
     cy.expect(cancelEditingConfirmationModal.exists());
     cy.do(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }).click());
   },
@@ -79,7 +80,7 @@ export default {
 
   cancelAddToken() {
     cy.wait(2000);
-    cy.do(addTokenModal.find(Button('Cancel')).click());
+    cy.do(addTokenModal.find(cancelButton).click());
   },
 
   clickOnLinkInPreview(linkName) {
