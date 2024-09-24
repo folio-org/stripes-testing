@@ -67,28 +67,28 @@ describe('bulk-edit', () => {
       { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
-        cy.intercept('GET', '/bulk-operations/*').as('bulkOperationHoldingsUUIDs');
+        cy.intercept('GET', '*bulk-operations/*').as('bulkOperationHoldingsUUIDs');
         BulkEditSearchPane.uploadFile(fileNameInvalidHoldingsUUIDs);
         checkResponse('@bulkOperationHoldingsUUIDs', fileNameInvalidHoldingsUUIDs);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidHoldingsUUIDs));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidHoldingsUUIDs));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
-        cy.intercept('GET', '/bulk-operations/*').as('bulkOperationHoldingsHRIDs');
+        cy.intercept('GET', '*bulk-operations/*').as('bulkOperationHoldingsHRIDs');
         BulkEditSearchPane.uploadFile(fileNameInvalidHoldingsHRIDs);
         checkResponse('@bulkOperationHoldingsHRIDs', fileNameInvalidHoldingsHRIDs);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidHoldingsHRIDs));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidHoldingsHRIDs));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
-        cy.intercept('GET', '/bulk-operations/*').as('bulkOperationInstanceHRIDs');
+        cy.intercept('GET', '*bulk-operations/*').as('bulkOperationInstanceHRIDs');
         BulkEditSearchPane.uploadFile(fileNameInvalidInstanceHRIDs);
         checkResponse('@bulkOperationInstanceHRIDs', fileNameInvalidInstanceHRIDs);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidInstanceHRIDs));
         InteractorsTools.dismissCallout(getCalloutContent(fileNameInvalidInstanceHRIDs));
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
-        cy.intercept('GET', '/bulk-operations/*').as('bulkOperationItemBarcodes');
+        cy.intercept('GET', '*bulk-operations/*').as('bulkOperationItemBarcodes');
         BulkEditSearchPane.uploadFile(fileNameInvalidItemBarcodes);
         checkResponse('@bulkOperationItemBarcodes', fileNameInvalidItemBarcodes);
         InteractorsTools.checkCalloutErrorMessage(getCalloutContent(fileNameInvalidItemBarcodes));
