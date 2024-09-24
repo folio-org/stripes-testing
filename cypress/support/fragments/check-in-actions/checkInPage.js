@@ -13,7 +13,7 @@ import DateTools from '../../utils/dateTools';
 const itemBarcodeField = TextField({ name: 'item.barcode' });
 const enterButton = Button({ id: 'clickable-add-item' });
 
-const checkInAppButton = Button('Check in');
+const checkInAppButton = Button('Check In');
 const endSessionButton = Button({ id: 'clickable-end-session-button' });
 
 const actionsButton = Button({ id: 'available-actions-button-0' });
