@@ -67,6 +67,7 @@ describe('Bulk-edit', () => {
   describe('In-app', () => {
     describe('Consortia', () => {
       before('create test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
 
         cy.createTempUser([
@@ -111,7 +112,7 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in member tenant
               cy.setTenant(Affiliations.College);
-              cy.getCollegeAdminToken();
+              // cy.getCollegeAdminToken();
 
               const collegeLocationData = Locations.getDefaultLocation({
                 servicePointId: ServicePoints.getDefaultServicePoint().id,
@@ -198,9 +199,9 @@ describe('Bulk-edit', () => {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-          // ConsortiumManager.checkCurrentTenantInTopMenuRegardlessAssignedServicePoint(
-          //   tenantNames.central,
-          // );
+          ConsortiumManager.checkCurrentTenantInTopMenuRegardlessAssignedServicePoint(
+            tenantNames.central,
+          );
         });
       });
 
@@ -212,7 +213,6 @@ describe('Bulk-edit', () => {
         InventoryHoldings.deleteHoldingRecordViaApi(marcInstance.holdingUuid);
         InventoryHoldings.deleteHoldingRecordViaApi(folioInstance.holdingUuid);
         Locations.deleteViaApi(collegeLocation);
-        cy.deleteLoanType(collegeLoanTypeId);
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
