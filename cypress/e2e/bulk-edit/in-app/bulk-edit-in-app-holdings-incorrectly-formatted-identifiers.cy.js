@@ -22,10 +22,16 @@ const errorMessage =
 const getCalloutContent = (fileName) => {
   return `${fileName} is formatted incorrectly. Please correct the formatting and upload the file again.`;
 };
-const numberOfRequests = 5;
+const numberOfRequests = 10;
 const checkResponse = (alias, fileName, remainingRequests) => {
   if (remainingRequests > 0) {
+    cy.log('Remaining requests', remainingRequests);
+    console.log('Remaining requests', remainingRequests);
+
     cy.wait(alias).then((interception) => {
+      cy.log('interception', interception);
+      console.log('interception', interception);
+
       if (interception.response.body.errorMessage) {
         expect(interception.response.body.errorMessage).to.eq(errorMessage);
         expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
