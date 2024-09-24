@@ -163,6 +163,8 @@ Cypress.Commands.add(
                 }
               });
 
+              if (permissions.length && !permissionNames.length) cy.log('Warning: permissions not found in list!');
+
               if (permissionNames.length) {
                 cy.okapiRequest({
                   path: 'capabilities',
@@ -182,13 +184,13 @@ Cypress.Commands.add(
                     capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
 
                     if (capabilitiesIds.length === 0) {
-                      cy.log('Capabilities not found ');
+                      cy.log('Warning: Capabilities not found!');
                     } else {
                       cy.addCapabilitiesToNewUserApi(userProperties.userId, capabilitiesIds);
                     }
 
                     if (capabilitySetsIds.length === 0) {
-                      cy.log('Capability sets not found ');
+                      cy.log('Warning: Capability sets not found!');
                     } else {
                       cy.addCapabilitySetsToNewUserApi(userProperties.userId, capabilitySetsIds);
                     }
