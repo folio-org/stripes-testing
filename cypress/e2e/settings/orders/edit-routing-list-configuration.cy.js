@@ -9,22 +9,22 @@ import SettingOrdersNavigationMenu from '../../../support/fragments/settings/ord
 Cypress.on('uncaught:exception', () => false);
 
 describe('orders: Settings', () => {
-  const listConfigurationDesription  = `LCD${getRandomPostfix()}`;
+  const listConfigurationDesription = `LCD${getRandomPostfix()}`;
   const routingAddressLink = 'routing-address';
   let user;
 
   before(() => {
     cy.getAdminToken();
 
-    cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.ordersListConfigurationPath,
-        waiter: ListConfiguration.waitLoading,
-      });
-    });
+    cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.ordersListConfigurationPath,
+          waiter: ListConfiguration.waitLoading,
+        });
+      },
+    );
   });
 
   after(() => {
@@ -42,10 +42,10 @@ describe('orders: Settings', () => {
       ListConfiguration.save();
       ListConfiguration.clickOnLinkInBody(routingAddressLink);
       RoutingAddress.waitLoading();
-SettingOrdersNavigationMenu.selectListConfiguration();
+      SettingOrdersNavigationMenu.selectListConfiguration();
       ListConfiguration.preview();
       ListConfiguration.clickOnLinkInPreview(routingAddressLink);
-RoutingAddress.waitLoading();
+      RoutingAddress.waitLoading();
     },
   );
 });

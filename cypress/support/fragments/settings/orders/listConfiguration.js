@@ -1,4 +1,4 @@
-import { Button, Link, Modal, Pane, Section, TextArea } from '../../../../../interactors';
+import { Button, Link, Modal, Section, TextArea } from '../../../../../interactors';
 import RichTextEditor from '../../../../../interactors/rich-text-editor';
 
 const routingListConfigurationSection = Section({ id: 'routing-list-configuration-template-pane' });
@@ -26,8 +26,8 @@ export default {
 
   fillInfoSectionFields(descripription, body) {
     cy.wait(2000);
-      cy.do(TextArea({ name: 'description' }).fillIn(descripription));
-      cy.do(RichTextEditor().fillIn(body));    
+    cy.do(TextArea({ name: 'description' }).fillIn(descripription));
+    cy.do(RichTextEditor().fillIn(body));
   },
 
   addLinkInBody: () => {
