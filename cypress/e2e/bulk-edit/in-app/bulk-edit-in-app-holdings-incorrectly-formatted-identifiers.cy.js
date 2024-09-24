@@ -24,6 +24,7 @@ const getCalloutContent = (fileName) => {
 };
 const checkResponse = (alias, fileName) => {
   cy.wait(alias).then((interception) => {
+    cy.log(interception);
     expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
     expect(interception.response.body.errorMessage).to.eq(errorMessage);
   });
