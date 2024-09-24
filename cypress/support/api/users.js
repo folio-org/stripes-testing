@@ -122,7 +122,6 @@ Cypress.Commands.add(
               id: uuid(),
               userId: newUserProperties.id,
             });
-            cy.wait(10000);
             cy.setUserPassword(userProperties);
             if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
               cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
@@ -182,6 +181,21 @@ Cypress.Commands.add(
                     isDefaultSearchParamsRequired: false,
                   }).then((responseSets) => {
                     capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+
+                    permissionNames.forEach((permissionName) => {
+                      if (
+                        !(
+                          responseCapabs.body.capabilities.filter(
+                            (capab) => capab.permission === permissionName,
+                          ).length > 0 ||
+                          responseSets.body.capabilitySets.filter(
+                            (set) => set.permission === permissionName,
+                          ).length > 0
+                        )
+                      ) {
+                        cy.log(`WARNING! No capabilities/sets found for "${permissionName}"`);
+                      }
+                    });
 
                     if (capabilitiesIds.length === 0) {
                       cy.log('Warning: Capabilities not found!');
