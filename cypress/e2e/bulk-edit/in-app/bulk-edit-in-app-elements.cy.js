@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  itemIdentifiers,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -19,6 +21,7 @@ const invalidBarcode = getRandomPostfix();
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
@@ -105,7 +108,9 @@ describe('bulk-edit', () => {
       'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.isItemsRadioChecked(true);
+        BulkEditSearchPane.verifyRecordIdentifiers(itemIdentifiers);
 
         [
           {

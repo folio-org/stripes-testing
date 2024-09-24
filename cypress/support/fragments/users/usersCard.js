@@ -20,6 +20,7 @@ import {
   TextArea,
   TextField,
   Spinner,
+  ProfilePictureCard,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -57,6 +58,7 @@ const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewcl
 const userRolesAccordion = rootSection.find(Accordion('User roles'));
 const userRolesEmptyText = 'No user roles found';
 const usersPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
+const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
 
 export default {
   errors,
@@ -591,5 +593,21 @@ export default {
 
   verifyUserRolesAccordionEmpty() {
     cy.expect(userRolesAccordion.find(HTML(userRolesEmptyText)).exists());
+  },
+
+  verifyProfilePictureIsPresent(url) {
+    cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
+  },
+
+  verifyProfilePictureRemoved() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyPlaceholderProfilePictureIsPresent() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyProfilePictureIsAbsent() {
+    cy.expect(profilePictureCard.absent());
   },
 };

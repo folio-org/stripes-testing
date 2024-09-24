@@ -162,16 +162,24 @@ describe('bulk-edit', () => {
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Dissertation note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+          'Dissertation note',
+          '',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Administrative note',
           notes.administrativeNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+          'Administrative note',
+          notes.administrativeNote,
+          1,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Data quality note',
           notes.dataQualityNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Exhibitions note',
           `${notes.exhibitionsNote} (staff only)`,
         );

@@ -34,3 +34,4 @@ import './tenant';
 import './specifications';
 import './serials';
 import './lists';
+import './profile-pictures';

@@ -22,11 +22,15 @@ import {
   ListItem,
   List,
   or,
+  not,
+  ProfilePictureCard,
+  DropdownMenu,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
+const rootPane = Pane('Edit');
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -34,6 +38,7 @@ const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const editButton = Button('Edit');
 const externalSystemIdTextfield = TextField('External system ID');
 const selectPermissionsModal = Modal('Select Permissions');
+const deleteProfilePicturesModal = Modal({ header: 'Delete profile picture' });
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const userInformationAccordion = Accordion('User information');
 const affiliationsAccordion = Accordion('Affiliations');
@@ -78,9 +83,22 @@ const noButton = Button('No');
 const lastNameField = TextField({ id: 'adduser_lastname' });
 const firstNameField = TextField({ id: 'adduser_firstname' });
 const emailField = TextField({ id: 'adduser_email' });
-let totalRows;
 const usersPath = Cypress.env('eureka') ? '/users-keycloak/users/*' : '/users/*';
 const userRoleDeleteIcon = Button({ id: including('clickable-remove-user-role') });
+const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
+let totalRows;
+const externalUrlButton = Button({ dataTestID: 'externalURL' });
+const deletePictureButton = Button({ dataTestID: 'delete' });
+const areYouSureForm = Modal('Are you sure?');
+const updateProfilePictureModal = Modal('Update profile picture');
+const keepEditingBtn = Button('Keep editing');
+const closeWithoutSavingButton = Button('Close without saving');
+const externalImageUrlTextField = updateProfilePictureModal.find(
+  TextField({ id: 'external-image-url' }),
+);
+const saveExternalLinkBtn = updateProfilePictureModal.find(
+  Button({ id: 'save-external-link-btn' }),
+);
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -100,6 +118,7 @@ export default {
   openEdit() {
     cy.wait(1000);
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.expect(rootPane.exists());
   },
 
   changeMiddleName(midName) {
@@ -194,19 +213,6 @@ export default {
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
-  verifyPermissionDoesNotExist(permission) {
-    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
-    cy.expect(userSearch.is({ value: permission }));
-    // wait is needed to avoid so fast robot clicks
-    cy.wait(1000);
-    cy.do(Button('Search').click());
-  },
-
-  verifyPermissionDoesNotExistInSelectPermissions(permission) {
-    this.searchForPermission(permission);
-    cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
-  },
-
   cancelSelectPermissionsModal() {
     cy.do(selectPermissionsModal.find(cancelButton).click());
   },
@@ -297,18 +303,6 @@ export default {
     });
   },
 
-  verifySaveAndColseIsDisabled: (status) => {
-    cy.expect(saveAndCloseBtn.has({ disabled: status }));
-  },
-
-  verifyCancelIsDisable: (status) => {
-    cy.expect(cancelButton.has({ disabled: status }));
-  },
-
-  verifyUserInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()));
-  },
-
   cancelChanges() {
     cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
   },
@@ -319,7 +313,9 @@ export default {
 
   saveAndClose() {
     cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
+    cy.expect(rootPane.absent());
   },
 
   saveEditedUser() {
@@ -365,6 +361,24 @@ export default {
       });
     }),
 
+  addProfilePictureViaApi(userId, url) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `users/${userId}`,
+      })
+      .then((response) => {
+        response.body.personal.profilePictureLink = url;
+
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `users/${userId}`,
+          body: response.body,
+          isDefaultSearchParamsRequired: false,
+        });
+      });
+  },
+
   updateExternalIdViaApi(user, externalSystemId) {
     cy.updateUser({
       ...user,
@@ -405,6 +419,119 @@ export default {
       customFieldsAccordion.find(TextArea({ label: customFieldName })).fillIn(customFieldText),
     ]);
     this.saveAndClose();
+  },
+
+  selectSingleSelectValue: ({ data }) => {
+    cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
+  },
+
+  chooseRequestType(requestType) {
+    cy.do(selectRequestType.choose(requestType));
+  },
+
+  resetAll() {
+    cy.do(resetAllButton.click());
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
+        expect(rowCount).to.equal(totalRows);
+      });
+    });
+  },
+
+  addAddress(type = 'Home') {
+    cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+  },
+
+  editUsername(username) {
+    cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
+  },
+
+  fillInExternalImageUrlTextField(url) {
+    cy.wait(1000);
+    cy.do(externalImageUrlTextField.fillIn(url));
+  },
+
+  clickSaveButton() {
+    cy.expect(saveExternalLinkBtn.has({ disabled: false }));
+    cy.do(saveExternalLinkBtn.click());
+  },
+
+  clearExternalImageUrlTextField() {
+    cy.get('#external-image-url').clear();
+    cy.expect([
+      externalImageUrlTextField.has({ value: '' }),
+      saveExternalLinkBtn.has({ disabled: true }),
+    ]);
+  },
+
+  setPictureFromExternalUrl(url, setNewUrl = true) {
+    cy.do(externalUrlButton.click({ force: true }));
+    if (setNewUrl) {
+      cy.expect([
+        externalImageUrlTextField.has({ value: '' }),
+        saveExternalLinkBtn.has({ disabled: true }),
+      ]);
+      this.fillInExternalImageUrlTextField(url);
+      this.clickSaveButton();
+    } else {
+      this.fillInExternalImageUrlTextField(url);
+      this.clickSaveButton();
+    }
+  },
+
+  deleteProfilePicture(user) {
+    cy.do(deletePictureButton.click({ force: true }));
+    cy.expect([
+      deleteProfilePicturesModal.exists(),
+      deleteProfilePicturesModal
+        .find(
+          HTML(
+            including(
+              `You are deleting the profile picture for ${user.lastName}, ${user.firstName}`,
+            ),
+          ),
+        )
+        .exists(),
+      deleteProfilePicturesModal.find(Button('Yes')).exists(),
+      deleteProfilePicturesModal.find(Button('No')).exists(),
+    ]);
+    cy.do(deleteProfilePicturesModal.find(Button('Yes')).click());
+    cy.expect(deleteProfilePicturesModal.absent());
+  },
+
+  expandUpdateDropDown() {
+    cy.do(Button('Update').click());
+  },
+
+  clickCloseWithoutSavingButton() {
+    cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+    cy.expect(rootPane.absent());
+  },
+
+  // checking
+  verifyPermissionDoesNotExist(permission) {
+    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
+  },
+
+  verifyPermissionDoesNotExistInSelectPermissions(permission) {
+    this.searchForPermission(permission);
+    cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
+  },
+
+  verifySaveAndColseIsDisabled: (status) => {
+    cy.expect(saveAndCloseBtn.has({ disabled: status }));
+  },
+
+  verifyCancelIsDisable: (status) => {
+    cy.expect(cancelButton.has({ disabled: status }));
+  },
+
+  verifyUserInformation: (allContentToCheck) => {
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()));
   },
 
   verifyTextFieldPresented(fieldData) {
@@ -477,14 +604,6 @@ export default {
     cy.expect(HTML(data.helpText).exists());
   },
 
-  selectSingleSelectValue: ({ data }) => {
-    cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
-  },
-
-  chooseRequestType(requestType) {
-    cy.do(selectRequestType.choose(requestType));
-  },
-
   verifyUserTypeItems() {
     cy.expect([
       selectRequestType.has({ content: including('Patron') }),
@@ -533,21 +652,51 @@ export default {
     });
   },
 
-  resetAll() {
-    cy.do(resetAllButton.click());
-    permissionsList.perform((el) => {
-      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
-        expect(rowCount).to.equal(totalRows);
-      });
+  verifyProfileCardIsPresented() {
+    cy.expect(profilePictureCard.exists());
+  },
+
+  verifyProfilePictureIsPresent(url) {
+    cy.expect(profilePictureCard.has({ src: including(url) }));
+  },
+
+  verifyPlaceholderProfilePictureIsPresent() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyPictureIsRemoved(url) {
+    cy.expect(profilePictureCard.has({ src: not(including(url)) }));
+  },
+
+  verifyButtonsStateForProfilePicture(buttonsToCheck) {
+    this.expandUpdateDropDown();
+    buttonsToCheck.forEach((button) => {
+      cy.expect(
+        DropdownMenu({ ariaLabel: 'profile picture action menu' })
+          .find(Button(button.value))
+          .exists(),
+      );
     });
   },
 
-  addAddress(type = 'Home') {
-    cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+  verifyAreYouSureForm(isOpen = false) {
+    if (isOpen) {
+      cy.expect([
+        areYouSureForm.find(HTML(including('There are unsaved changes'))).exists(),
+        areYouSureForm.find(keepEditingBtn).exists(),
+        areYouSureForm.find(closeWithoutSavingButton).exists(),
+      ]);
+    } else {
+      cy.expect(areYouSureForm.absent());
+    }
   },
 
-  editUsername(username) {
-    cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
+  verifyModalWithInvalidUrl(errorMessage) {
+    cy.expect([
+      externalImageUrlTextField.has({ error: errorMessage, errorTextRed: true }),
+      updateProfilePictureModal.exists(),
+      saveExternalLinkBtn.has({ disabled: true }),
+    ]);
   },
 
   fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
