@@ -89,6 +89,8 @@ export default {
   ordersInstanceStatusPath: 'settings/orders/instance-status',
   ordersInstanceTypePath: 'settings/orders/instance-type',
   ordersLoanTypePath: 'settings/orders/loan-type',
+  ordersRoutingAddressPath: 'settings/orders/routing-address',
+  ordersListConfigurationPath: 'settings/orders/list-configuration',
   // Users
   patronGroups: 'settings/users/groups',
   addressTypes: 'settings/users/addresstypes',
