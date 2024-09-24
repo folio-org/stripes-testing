@@ -28,6 +28,7 @@ const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const fileButton = Button('or choose file');
 const bulkEditPane = Pane(including('Bulk edit'));
+const bulkEditQueryPane = Pane(including('Bulk edit query'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
@@ -902,5 +903,9 @@ export default {
 
   verifyNextPaginationButtonDisabled(isDisabled = true) {
     cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyRecordsCountInBulkEditQueryPane(value) {
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
   },
 };

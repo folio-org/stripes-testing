@@ -123,4 +123,12 @@ export default {
         .exists(),
     );
   },
+
+  checkCurrentTenantInTopMenuRegardlessAssignedServicePoint(tenantName) {
+    cy.expect(
+      Dropdown({ id: 'profileDropdown' })
+        .find(Button(including(tenantName)))
+        .exists(),
+    );
+  },
 };
