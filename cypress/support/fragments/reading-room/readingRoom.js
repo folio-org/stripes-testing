@@ -27,6 +27,7 @@ export default {
   },
   scanUser(userBarcode) {
     fillInPatronCard(userBarcode);
+    cy.wait(1000);
     clickEnterButton();
   },
   clickNotAllowedButton() {
@@ -39,6 +40,7 @@ export default {
   },
 
   verifyUserIsScanned(userfirstName) {
+    cy.wait(5000);
     cy.get('[class^="borrowerDetails-"]').contains(userfirstName).should('be.visible');
   },
   verifyUserInformation(userInfo, allowed = true) {

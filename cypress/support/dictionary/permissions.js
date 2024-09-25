@@ -502,6 +502,15 @@ export default {
     internal: 'ui-users.financialTransactionReport',
     gui: 'Users: Create and download Financial transaction detail report',
   },
+  uiUserViewEditDeliteProfilePictores: {
+    internal: 'ui-users.profile-pictures.all',
+    gui: 'Users: Can view, edit, and delete profile pictures',
+  },
+  uiUserViewProfilePictores: {
+    internal: 'ui-users.profile-pictures.view',
+    gui: 'Users: Can view profile pictures',
+  },
+
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',

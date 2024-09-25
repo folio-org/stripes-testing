@@ -60,10 +60,16 @@ describe('Reading Room Access', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(userNotAllowedInReadingRoom.user.userId);
-    Users.deleteViaApi(userAllowedInReadingRoom.user.userId);
+    UserEdit.changeServicePointPreferenceViaApi(userNotAllowedInReadingRoom.user.userId, [
+      userNotAllowedInReadingRoom.servicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(userNotAllowedInReadingRoom.servicePoint.id);
+    Users.deleteViaApi(userNotAllowedInReadingRoom.user.userId);
+    UserEdit.changeServicePointPreferenceViaApi(userAllowedInReadingRoom.user.userId, [
+      userAllowedInReadingRoom.servicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(userAllowedInReadingRoom.servicePoint.id);
+    Users.deleteViaApi(userAllowedInReadingRoom.user.userId);
     SettingsReadingRoom.deleteReadingRoomViaApi(readingRoomId);
   });
 
