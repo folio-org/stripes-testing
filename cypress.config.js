@@ -146,7 +146,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-testing-sprint-cs00000int.ci.folio.org',
+    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
 });

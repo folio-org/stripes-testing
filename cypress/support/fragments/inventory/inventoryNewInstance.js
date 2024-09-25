@@ -79,7 +79,7 @@ export default {
     instanceStatus,
     statisticalCode,
     adminNote,
-    instnaceIdentifier: instanceIdentifier,
+    instanceIdentifier,
     edition,
     natureOfContent,
     format,
