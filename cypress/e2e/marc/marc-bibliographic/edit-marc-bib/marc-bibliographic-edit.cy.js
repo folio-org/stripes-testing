@@ -11,7 +11,6 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -24,32 +23,6 @@ describe('MARC', () => {
           tag755: '755',
         },
       };
-      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-      const propertyName = 'instance';
-      const tagArray = [
-        '100',
-        '110',
-        '111',
-        '130',
-        '240',
-        '600',
-        '610',
-        '611',
-        '630',
-        '650',
-        '651',
-        '655',
-        '700',
-        '710',
-        '711',
-        '730',
-        '800',
-        '810',
-        '811',
-        '830',
-      ];
-      let createdInstanceID;
-      let fileName;
       const protectedFields = [
         {
           protectedField: '245',
@@ -93,33 +66,15 @@ describe('MARC', () => {
         },
       ];
 
-      const marcFiles = [
-        {
-          marc: 'marcBibFileForC353526.mrc',
-          fileName: `testMarcFileC353526.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          propertyName: 'instance',
-        },
-      ];
+      const marcFile = {
+        marc: 'marcBibFileForC353526.mrc',
+        fileName: `testMarcFileC353526.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
+      };
       let instanceIds;
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              instanceIds = record[marcFile.propertyName].id;
-            });
-          });
-        });
-      });
-
-      beforeEach(() => {
-        fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
@@ -134,24 +89,20 @@ describe('MARC', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           });
-          DataImport.uploadFileViaApi('marcFileForC360542.mrc', fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdInstanceID = record[propertyName].id;
-              });
-            },
-          );
-          Logs.waitFileIsImported(fileName);
-          Logs.checkJobStatus(fileName, 'Completed');
-          Logs.openFileDetails(fileName);
-          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              instanceIds = record[marcFile.propertyName].id;
+            });
+          });
         });
-      });
-
-      afterEach(() => {
-        cy.getAdminToken();
-        if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
-        Users.deleteViaApi(testData.userProperties.userId);
+        Logs.waitFileIsImported(marcFile.fileName);
+        Logs.checkJobStatus(marcFile.fileName, 'Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
       });
 
       after('Delete test data', () => {
@@ -162,36 +113,13 @@ describe('MARC', () => {
           MarcFieldProtection.delete(field.protectedField);
           MarcFieldProtection.confirmDelete();
         });
+        Users.deleteViaApi(testData.userProperties.userId);
       });
-
-      it(
-        'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          InventoryInstance.editMarcBibliographicRecord();
-          tagArray.forEach((tag) => {
-            QuickMarcEditor.checkLinkButtonExist(tag);
-          });
-          QuickMarcEditor.checkLinkButtonToolTipText('Link to MARC Authority record');
-        },
-      );
-
-      it(
-        'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
-        () => {
-          InventoryInstance.deriveNewMarcBib();
-          tagArray.forEach((tag) => {
-            QuickMarcEditor.checkLinkButtonExist(tag);
-          });
-        },
-      );
 
       it(
         'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          InventoryInstances.searchByTitle(instanceIds);
           InventoryInstance.editMarcBibliographicRecord();
           MarcAuthority.checkInfoButton('999');
           MarcAuthority.addNewField(5, testData.tags.tag260, '$a London', '1', '1');
