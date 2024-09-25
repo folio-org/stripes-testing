@@ -132,7 +132,7 @@ describe('Inventory', () => {
         });
 
         InventoryNewInstance.clickSaveAndCloseButton();
-        InventoryInstance.checkInstanceDetails2(
+        InventoryInstance.checkAllInstanceDetails(
           [
             { key: 'Cataloged date', value: instanceData.today },
             { key: 'Instance status term', value: instanceData.instanceStatusTermUI },
@@ -167,7 +167,7 @@ describe('Inventory', () => {
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
 
-          InventoryInstance.checkInstanceDetails2(
+          InventoryInstance.checkAllInstanceDetails(
             [
               { key: 'Cataloged date', value: instanceData.today },
               { key: 'Instance status term', value: instanceData.instanceStatusTermUI },
@@ -197,7 +197,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          InventoryInstance.checkInstanceDetails2(
+          InventoryInstance.checkAllInstanceDetails(
             [
               { key: 'Cataloged date', value: instanceData.today },
               { key: 'Instance status term', value: instanceData.instanceStatusTermUI },

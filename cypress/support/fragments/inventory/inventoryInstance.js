@@ -1174,7 +1174,7 @@ export default {
       cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
   },
-  checkInstanceDetails2(
+  checkAllInstanceDetails(
     instanceInformation,
     statisticalCode,
     adminNote,
