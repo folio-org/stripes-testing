@@ -33,16 +33,15 @@
     "chromedriver": "107.0.0",
     "cypress": "12.0.0",
     "sharp": "0.32.6",
-    "tsx": "3.14.0"
+    "tsx": "3.14.0",
+    "@interactors/core": "1.0.0",
+    "@interactors/globals": "1.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
-    "@babel/preset-env": "^7.25.4",
     "@cypress/grep": "^4.0.1",
     "@cypress/request": "2.88.7",
-    "@cypress/webpack-batteries-included-preprocessor": "^3.0.5",
-    "@cypress/webpack-preprocessor": "^5.4.4",
     "@folio/eslint-config-stripes": "^7.1.0",
     "@interactors/html": "1.0.0",
     "@interactors/keyboard": "1.0.0",
@@ -51,7 +50,6 @@
     "@shelex/cypress-allure-plugin": "^2.40.0",
     "axe-core": "4.3.3",
     "axios": "^1.7.7",
-    "babel-loader": "^9.2.1",
     "bigtest": "^0.16.1",
     "cypress": "12.0.0",
     "cypress-cloud": "^1.9.6",
@@ -77,8 +75,7 @@
     "moment": "^2.29.3",
     "prettier": "^3.0.2",
     "tsx": "3.14.0",
-    "uuid": "^3.4.0",
-    "webpack": "^5.94.0"
+    "uuid": "^3.4.0"
   },
   "publishConfig": {
     "registry": "https://repository.folio.org/repository/npm-folio/"
@@ -90,6 +87,10 @@
     },
     "@folio/eslint-config-stripes": {
       "sharp": "0.32.6"
+    },
+    "@interactors/with-cypress": {
+      "@interactors/core": "1.0.0",
+      "@interactors/globals": "1.0.0"
     }
   }
 }
