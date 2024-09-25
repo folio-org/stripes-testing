@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 /* eslint-disable no-prototype-builtins */
 import * as fs from 'fs';
-// eslint-disable-next-line import/no-unresolved
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import permissions from './updatedPermissions.js';
 
 // File path with extracted permissions from source file
