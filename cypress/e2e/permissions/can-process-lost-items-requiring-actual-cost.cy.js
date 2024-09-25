@@ -18,7 +18,7 @@ describe('Permissions', () => {
       });
       cy.createTempUser([
         permissions.uiUserLostItemRequiringActualCost.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
       ]).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);

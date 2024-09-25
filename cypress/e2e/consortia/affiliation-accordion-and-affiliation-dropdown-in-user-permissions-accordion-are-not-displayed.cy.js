@@ -28,7 +28,7 @@ describe('Consortia', () => {
     cy.getAdminToken();
 
     cy.createTempUser([
-      Permissions.uiUsersPermissions.gui,
+      Permissions.uiUserCanAssignUnassignPermissions.gui,
       Permissions.uiUserEdit.gui,
       Permissions.uiUsersPermissionsView.gui,
       Permissions.uiUsersView.gui,

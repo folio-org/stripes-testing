@@ -436,7 +436,7 @@ export default {
     internal: 'ui-users.loans.renew-override',
     gui: 'Users: User loans renew through override',
   },
-  uiUsersPermissions: {
+  uiUserCanAssignUnassignPermissions: {
     internal: 'ui-users.editperms',
     gui: 'Users: Can assign and unassign permissions to users',
   },
