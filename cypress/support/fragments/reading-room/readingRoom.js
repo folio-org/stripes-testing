@@ -6,19 +6,20 @@ function fillInPatronCard(userBarcode) {
   cy.do(TextField({ id: 'patronBarcode' }).fillIn(userBarcode));
 }
 
-function clickenterButton() {
+function clickEnterButton() {
   cy.do(Button({ type: 'submit' }).click());
 }
 
 export default {
   fillInPatronCard,
-  clickenterButton,
+  clickEnterButton,
   waitLoading() {
     cy.expect(Pane({ id: 'reading-room' }).exists());
   },
   scanUser(userBarcode) {
     fillInPatronCard(userBarcode);
-    clickenterButton();
+    cy.wait(1000);
+    clickEnterButton();
   },
   clickNotAllowedButton() {
     cy.wait(1500);
@@ -26,6 +27,7 @@ export default {
   },
 
   verifyUserIsScanned(userfirstName) {
+    cy.wait(5000);
     cy.get('[class^="borrowerDetails-"]').contains(userfirstName).should('be.visible');
   },
   verifyUserInformation(userInfo) {
