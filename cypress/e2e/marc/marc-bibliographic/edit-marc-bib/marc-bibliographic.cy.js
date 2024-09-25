@@ -229,7 +229,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
               const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.deleteConfirmationPresented();
               QuickMarcEditor.confirmDelete();
