@@ -169,6 +169,7 @@ Cypress.Commands.add(
                   path: 'capabilities',
                   searchParams: {
                     query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+                    limit: 100,
                   },
                   isDefaultSearchParamsRequired: false,
                 }).then((responseCapabs) => {
@@ -177,6 +178,7 @@ Cypress.Commands.add(
                     path: 'capability-sets',
                     searchParams: {
                       query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+                      limit: 100,
                     },
                     isDefaultSearchParamsRequired: false,
                   }).then((responseSets) => {

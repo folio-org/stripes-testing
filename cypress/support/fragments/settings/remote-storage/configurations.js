@@ -263,6 +263,11 @@ export default {
     ]);
   },
 
+  clickCloseWithoutSavingButtonInAreYouSureForm() {
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+    cy.wait(1000);
+  },
+
   closeWithSaving() {
     return cy.do(Modal().find(Button('Save')).click());
   },
