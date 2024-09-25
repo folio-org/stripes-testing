@@ -320,8 +320,11 @@ export default {
 
   saveEditedUser() {
     cy.intercept('PUT', usersPath).as('updateUser');
-    this.saveAndClose();
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
     cy.wait('@updateUser', { timeout: 100000 });
+    cy.expect(rootPane.absent());
   },
 
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),

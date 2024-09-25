@@ -79,8 +79,6 @@ describe('Eureka', () => {
             `\\/roles\\/users\\?.+query=roleId==${testData.roleBId}`,
           );
 
-          cy.reload();
-          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleAName);
           AuthorizationRoles.clickOnRoleName(testData.roleAName);
           AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
