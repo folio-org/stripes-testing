@@ -55,6 +55,12 @@ describe('Reading Room Access', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.firstUser.userId);
     Users.deleteViaApi(testData.secondUser.userId);
+    UserEdit.changeServicePointPreferenceViaApi(testData.firstUser.userId, [
+      testData.servicePoint.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(testData.secondUser.userId, [
+      testData.servicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     SettingsReadingRoom.deleteReadingRoomViaApi(testData.readingRoomId);
   });
