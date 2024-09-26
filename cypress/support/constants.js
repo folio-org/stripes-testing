@@ -6,6 +6,7 @@ export const APPLICATION_NAMES = {
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
+  MARC_AUTHORITY: 'MARC authority',
 };
 
 export const REQUEST_METHOD = {

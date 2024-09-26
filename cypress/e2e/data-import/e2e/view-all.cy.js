@@ -16,7 +16,7 @@ describe('Data Import', () => {
     const filePath = 'oneMarcBib.mrc';
     const uniquePartOfFileName = getRandomPostfix();
     const uniqueFileName = `C11112 autotestFileName${uniquePartOfFileName}.mrc`;
-    const uniqueFileNameForSearch = `C11112 autotestFileName${uniquePartOfFileName}_1.mrc`;
+    const uniqueFileNameForSearch = uniqueFileName.replace('.mrc', '');
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
