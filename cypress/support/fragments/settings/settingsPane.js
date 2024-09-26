@@ -34,7 +34,7 @@ export default {
     cy.expect(Pane(header).exists());
   },
   waitSettingsPaneLoading() {
-    cy.get('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
+    cy.xpath('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
   },
   clickAddNewBtn() {
     cy.wait(500);

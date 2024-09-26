@@ -1,6 +1,6 @@
 export default {
   waitLoading() {
-    cy.get('//span[@id="platform-versions"]').should('be.visible');
+    cy.xpath('//span[@id="platform-versions"]').should('be.visible');
   },
 
   checkErrorNotDisplayed() {
