@@ -150,6 +150,22 @@ export default {
       });
   },
 
+  deleteProtectedFieldsViaApi(protectedFieldsSet) {
+    return this.getListViaApi({
+      query: 'cql.allRecords=1 sortby field',
+    }).then((list) => {
+      if (!list) return;
+      for (const protectedField of protectedFieldsSet) {
+        const fieldsToRemove = list.filter(({ field }) => {
+          return field === protectedField;
+        });
+        fieldsToRemove.forEach(({ id }) => {
+          this.deleteViaApi(id);
+        });
+      }
+    });
+  },
+
   // checks
   verifyListOfExistingSettingsIsDisplayed: () => cy.expect(fieldProtectionList.exists()),
   verifyFieldProtectionIsCreated: (data) => cy.expect(fieldProtectionList.find(MultiColumnListCell({ content: data })).exists()),
