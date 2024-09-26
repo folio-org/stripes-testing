@@ -21,8 +21,6 @@ const invalidHoldingUUIDsFileName = `InvalidHoldingUUIDs_${getRandomPostfix()}.c
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         Permissions.bulkEditView.gui,
         Permissions.bulkEditEdit.gui,
