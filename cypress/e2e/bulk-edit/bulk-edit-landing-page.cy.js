@@ -24,7 +24,7 @@ describe('bulk-edit', () => {
       permissions.uiInventoryViewInstances.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiInventoryViewCreateEditItems.gui,
-      permissions.uiUsersPermissions.gui,
+      permissions.uiUserCanAssignUnassignPermissions.gui,
       permissions.uiUserEdit.gui,
       permissions.uiUsersPermissionsView.gui,
       permissions.uiUsersView.gui,
