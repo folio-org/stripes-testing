@@ -86,7 +86,7 @@ describe('Reading Room Access', () => {
       ReadingRoom.verifyButtonsEnabled();
       ReadingRoom.clickAllowedButton();
       InteractorsTools.checkCalloutMessage(
-        `Permitted entry to ${SettingsReadingRoom.readingRoomName}.`,
+        `Permitted entry to ${SettingsReadingRoom.readingRoomName}`,
       );
       ReadingRoom.verifyInformationAfterAction();
     },
