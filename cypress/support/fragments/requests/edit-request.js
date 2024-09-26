@@ -164,7 +164,9 @@ export default {
   },
 
   saveAndClose() {
+    cy.wait(500);
     cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
     cy.expect(requestPreviewSection.exists());
   },
 
