@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
@@ -14,6 +14,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -128,11 +129,11 @@ describe('Inventory', () => {
         FilterItems.toggleItemStatusAccordion();
         FilterItems.toggleStatus(itemStatus);
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(itemData.barcode);
@@ -143,12 +144,12 @@ describe('Inventory', () => {
           user.username,
         );
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
         SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);

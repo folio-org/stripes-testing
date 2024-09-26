@@ -1,10 +1,10 @@
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -41,7 +41,7 @@ describe('Inventory', () => {
     });
 
     const searchAndOpenInstance = (parametr, title) => {
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       InventorySearchAndFilter.searchByParameter(parametr, title);
       InventoryInstances.selectInstance();
     };
