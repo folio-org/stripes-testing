@@ -904,3 +904,10 @@ export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
 };
+
+export const INVENTORY_DEFAULT_SORT_OPTIONS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  DATE: 'Date',
+  RELEVANCE: 'Relevance',
+};
