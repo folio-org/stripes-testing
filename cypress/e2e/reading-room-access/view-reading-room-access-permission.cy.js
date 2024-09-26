@@ -11,7 +11,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import { ReadingRoom } from '../../support/fragments/settings/tenant/general';
 
-describe('Permissions', () => {
+describe('Reading Room Access', () => {
   let userData;
   let servicePointId;
   const readingRoomId = uuid();
