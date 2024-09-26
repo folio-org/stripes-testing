@@ -9,12 +9,8 @@ describe('Requests', () => {
   let instanceData;
   let cancellationReason;
 
-  before(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
-  });
-
   beforeEach(() => {
+    cy.getAdminToken();
     Requests.createRequestApi().then(
       ({ createdUser, createdRequest, instanceRecordData, cancellationReasonId }) => {
         userId = createdUser.id;
@@ -42,7 +38,7 @@ describe('Requests', () => {
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       [
         EditRequest.requestStatuses.AWAITING_DELIVERY,
         EditRequest.requestStatuses.AWAITING_PICKUP,
