@@ -9,7 +9,9 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import {
+  APPLICATION_NAMES,
   electronicAccessRelationshipId,
   electronicAccessRelationshipName,
   LOCATION_IDS,
@@ -164,7 +166,7 @@ describe('bulk-edit', () => {
         BulkEditActions.checkStaffOnlyCheckbox(9);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
-        const suppressFromDiscovery = true;
+        const suppressFromDiscovery = 'true';
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10);
         BulkEditActions.checkApplyToItemsRecordsCheckbox();
         BulkEditActions.deleteRow(2);
@@ -209,8 +211,10 @@ describe('bulk-edit', () => {
           'Reproduction note',
           `${notes.reproduction} (staff only)`,
         );
-        // TODO: uncomment after UIBULKED-425
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Suppress from discovery', suppressFromDiscovery);
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Suppress from discovery',
+          suppressFromDiscovery,
+        );
 
         BulkEditActions.clickKeepEditingBtn();
         BulkEditActions.uncheckStaffOnlyCheckbox(7);
@@ -282,7 +286,7 @@ describe('bulk-edit', () => {
           `${notes.reproduction} (staff only)`,
         );
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();
