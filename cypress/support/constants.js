@@ -4,6 +4,7 @@ export const APPLICATION_NAMES = {
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
+  MARC_AUTHORITY: 'MARC authority',
 };
 
 export const REQUEST_METHOD = {
