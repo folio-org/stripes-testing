@@ -12,6 +12,7 @@ import {
   SelectionList,
   FieldSet,
   Selection,
+  RepeatableFieldItem,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -74,6 +75,19 @@ export default {
     mode,
     title,
     resourceType,
+    catalogedDate,
+    instanceStatus,
+    statisticalCode,
+    adminNote,
+    instanceIdentifier,
+    edition,
+    natureOfContent,
+    format,
+    frequency,
+    instanceNote,
+    electronicAccess,
+    subject,
+    classification,
   }) {
     if (contributor) {
       this.addContributor(contributor);
@@ -97,6 +111,119 @@ export default {
 
     if (mode) {
       cy.do(Select('Mode of issuance').choose(mode));
+    }
+
+    if (catalogedDate) {
+      cy.do(TextField({ name: 'catalogedDate' }).fillIn(catalogedDate));
+    }
+
+    if (instanceStatus) {
+      cy.do(Select({ name: 'statusId' }).choose(instanceStatus));
+    }
+
+    if (statisticalCode) {
+      cy.do(Button('Add statistical code').click());
+      cy.do([
+        FieldSet('Statistical code')
+          .find(RepeatableFieldItem({ index: 1 }))
+          .find(Selection())
+          .choose(including(statisticalCode)),
+      ]);
+    }
+
+    if (adminNote) {
+      cy.do(Button('Add administrative note').click());
+      cy.do(
+        FieldSet('Administrative note')
+          .find(RepeatableFieldItem({ index: 1 }))
+          .find(TextArea({ name: 'administrativeNotes[0]' }))
+          .fillIn(adminNote),
+      );
+    }
+
+    if (instanceIdentifier) {
+      for (let i = 0; i < instanceIdentifier.length; i++) {
+        cy.do([
+          Button('Add identifier').click(),
+          Select({ name: `identifiers[${i}].identifierTypeId` }).choose(instanceIdentifier[i].type),
+          TextField({ name: `identifiers[${i}].value` }).fillIn(instanceIdentifier[i].value),
+        ]);
+      }
+    }
+
+    if (edition) {
+      cy.do([Button('Add edition').click(), TextField({ name: 'editions[0]' }).fillIn(edition)]);
+    }
+
+    if (natureOfContent) {
+      for (let i = 0; i < natureOfContent.length; i++) {
+        cy.do([
+          Button('Add nature of content').click(),
+          Select({ name: `natureOfContentTermIds[${i}]` }).choose(natureOfContent[i]),
+        ]);
+      }
+    }
+
+    if (format) {
+      for (let i = 0; i < format.length; i++) {
+        cy.do([
+          Button('Add format').click(),
+          Select({ name: `instanceFormatIds[${i}]` }).choose(format[i]),
+        ]);
+      }
+    }
+
+    if (frequency) {
+      for (let i = 0; i < frequency.length; i++) {
+        cy.do([
+          Button('Add frequency').click(),
+          TextArea({ name: `publicationFrequency[${i}]` }).fillIn(frequency[i]),
+        ]);
+      }
+    }
+
+    if (instanceNote) {
+      for (let i = 0; i < instanceNote.length; i++) {
+        cy.do([
+          Button('Add note').click(),
+          Select({ name: `notes[${i}].instanceNoteTypeId` }).choose(instanceNote[i].type),
+          TextArea({ name: `notes[${i}].note` }).fillIn(instanceNote[i].value),
+        ]);
+      }
+    }
+
+    if (electronicAccess) {
+      cy.do([
+        Button('Add electronic access').click(),
+        Select({ name: 'electronicAccess[0].relationshipId' }).choose(
+          electronicAccess.relationship,
+        ),
+        TextArea({ name: 'electronicAccess[0].uri' }).fillIn(electronicAccess.uri),
+        TextArea({ name: 'electronicAccess[0].linkText' }).fillIn(electronicAccess.linkText),
+      ]);
+    }
+
+    if (subject) {
+      for (let i = 0; i < subject.length; i++) {
+        cy.do([
+          Button('Add subject').click(),
+          TextField({ name: `subjects[${i}].value` }).fillIn(subject[i]),
+        ]);
+      }
+    }
+
+    if (classification) {
+      for (let i = 0; i < classification.length; i++) {
+        cy.do([
+          Button('Add classification').click(),
+          Select({ name: `classifications[${i}].classificationTypeId` }).choose(
+            classification[i].type,
+          ),
+          TextField({ name: `classifications[${i}].classificationNumber` }).fillIn(
+            classification[i].value,
+          ),
+        ]);
+      }
     }
 
     this.fillRequiredValues(title, resourceType);
