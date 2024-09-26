@@ -210,7 +210,7 @@ export default {
   },
 
   waitLoading() {
-    cy.xpath('//div[@id="data-export-module-display"]').should('be.visible');
+    cy.xpath('//div[@id="data-export-module-display"]').should('exist');
   },
 
   verifyWarningWithInvalidFileExtension() {

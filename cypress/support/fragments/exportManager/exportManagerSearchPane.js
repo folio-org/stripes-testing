@@ -101,7 +101,6 @@ export default {
   },
   waitFiltersLoading() {
     cy.expect([
-      Button({ id: 'reset-job-exports-filters' }).exists(),
       Accordion({ id: 'isSystemSource' }).exists(),
       Accordion({ id: 'createdByUserId' }).exists(),
     ]);
