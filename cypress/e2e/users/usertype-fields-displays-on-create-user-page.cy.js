@@ -34,6 +34,7 @@ describe('Users', () => {
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
         servicePointId = servicePoints[0].id;
       });
+
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
         PatronGroups.getGroupViaApi({ query: `group="${patronGroup.name}"` }).then((resp) => {
@@ -42,6 +43,7 @@ describe('Users', () => {
           patronGroup.id = resp.id;
         });
       });
+
       cy.createTempUser(
         [
           Permissions.uiUserCanAssignUnassignPermissions.gui,
