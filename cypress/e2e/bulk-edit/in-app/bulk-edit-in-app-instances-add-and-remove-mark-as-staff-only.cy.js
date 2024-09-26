@@ -87,7 +87,7 @@ const marcInstanceBody = {
     {
       tag: '245',
       content: `$a ${marcFields[245]}`,
-      indicators: ['\\', '\\'],
+      indicators: ['0', '1'],
     },
     {
       tag: '533',

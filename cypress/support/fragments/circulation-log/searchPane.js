@@ -35,7 +35,7 @@ export default {
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
   waitLoading() {
-    cy.expect(Pane('Circulation log').exists());
+    cy.expect(Accordion({ id: 'loan' }).exists());
   },
 
   searchByCheckedOut() {
