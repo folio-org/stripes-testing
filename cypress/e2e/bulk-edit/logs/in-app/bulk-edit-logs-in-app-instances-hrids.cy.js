@@ -13,6 +13,8 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import SelectInstanceModal from '../../../../support/fragments/requests/selectInstanceModal';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import { APPLICATION_NAMES } from '../../../../support/constants';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const hridValues = {};
@@ -172,7 +174,7 @@ describe('bulk-edit', () => {
           ]);
 
           [folioItem.instanceName, marcInstances[0].instanceTitle].forEach((title) => {
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             SelectInstanceModal.filterByStaffSuppress('No');
             InventorySearchAndFilter.searchInstanceByTitle(title);
             InventoryInstances.selectInstance();

@@ -2,12 +2,15 @@ export const APPLICATION_NAMES = {
   BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
+  EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
   MARC_AUTHORITY: 'MARC authority',
+  ORDERS: 'Orders',
   CHECK_IN: 'Check in',
+  CHECK_OUT: 'Check out',
   REQUESTS: 'Requests',
 };
 
