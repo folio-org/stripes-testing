@@ -249,11 +249,11 @@ export default {
     cy.expect(listDescriptionTextArea.has({ value }));
   },
 
-  selectRecordType(option) {
+  selectRecordTypeOld(option) {
     cy.get('select[name=recordType]').select(option);
   },
 
-  selectRecordTypeOld(option) {
+  selectRecordType(option) {
     cy.get('button[name=recordType]')
       .click()
       .then(() => {
