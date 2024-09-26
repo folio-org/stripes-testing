@@ -60,7 +60,6 @@ const changedRecordsFileName = `*-Changed-Records-${validInstanceUUIDsFileName}`
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
         permissions.bulkEditEdit.gui,

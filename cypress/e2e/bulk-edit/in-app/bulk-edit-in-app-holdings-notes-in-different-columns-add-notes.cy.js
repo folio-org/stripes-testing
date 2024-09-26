@@ -64,8 +64,6 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.getAdminToken();
       InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
         newNoteTypeId = noteId;
