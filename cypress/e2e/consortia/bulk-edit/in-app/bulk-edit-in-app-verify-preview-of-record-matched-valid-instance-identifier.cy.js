@@ -32,8 +32,6 @@ describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
-        cy.clearLocalStorage();
-
         cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditView.gui,

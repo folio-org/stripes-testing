@@ -24,7 +24,7 @@ describe('bulk-edit', () => {
           permissions.bulkEditLogsView.gui,
           permissions.inventoryAll.gui,
           permissions.uiUserEdit.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
         ]).then((userProperties) => {
           user = userProperties;
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);

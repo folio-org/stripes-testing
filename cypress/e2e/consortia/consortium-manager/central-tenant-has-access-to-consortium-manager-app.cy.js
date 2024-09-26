@@ -1,12 +1,12 @@
+import { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
-import Arrays from '../../../support/utils/arrays';
-import Users from '../../../support/fragments/users/users';
 import ConsortiumManager, {
   settingsItems,
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { tenantNames } from '../../../support/dictionary/affiliations';
+import Users from '../../../support/fragments/users/users';
+import Arrays from '../../../support/utils/arrays';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {

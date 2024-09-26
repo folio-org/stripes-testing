@@ -39,7 +39,7 @@ describe('Users', () => {
       });
       cy.createTempUser(
         [
-          Permissions.uiUsersPermissions.gui,
+          Permissions.uiUserCanAssignUnassignPermissions.gui,
           Permissions.uiUsersPermissionsView.gui,
           Permissions.uiUsersCreate.gui,
           Permissions.uiUsersCreateResetPassword.gui,
