@@ -22,8 +22,6 @@ const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
         permissions.bulkEditCsvEdit.gui,

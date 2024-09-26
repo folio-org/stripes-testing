@@ -16,8 +16,6 @@ const changedRecordsFileName = `*-Changed-Records-${userUUIDsFileName}`;
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
