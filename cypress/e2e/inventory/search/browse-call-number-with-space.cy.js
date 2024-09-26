@@ -261,11 +261,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
         InventorySearchAndFilter.selectBrowseCallNumbers();
-        InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
-        InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
+        InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
+        InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
+        InventorySearchAndFilter.verifyShelvingOrder(item.itemCallNumber);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
-
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.clickResetAllButton();
       },

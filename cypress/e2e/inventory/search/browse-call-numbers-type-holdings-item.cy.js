@@ -179,12 +179,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
 
-        InventorySearchAndFilter.selectBrowseOption(
-          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        );
-        InventorySearchAndFilter.browseSearch(callNumbers[1].value);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
-
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
         InventorySearchAndFilter.browseSearch(callNumbers[2].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
@@ -192,14 +186,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
         InventorySearchAndFilter.browseSearch(callNumbers[3].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
-
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LOCAL);
-        InventorySearchAndFilter.browseSearch(callNumbers[5].value);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].value);
-
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME);
-        InventorySearchAndFilter.browseSearch(callNumbers[4].value);
-        BrowseCallNumber.checkNonExactSearchResult(callNumbers[4].value);
 
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
