@@ -33,6 +33,9 @@ export default {
   waitLoading(header = 'Settings') {
     cy.expect(Pane(header).exists());
   },
+  waitSettingsPaneLoading() {
+    cy.get('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
+  },
   clickAddNewBtn() {
     cy.wait(500);
     cy.do(addButton.click());

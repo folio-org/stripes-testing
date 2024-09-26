@@ -99,6 +99,13 @@ export default {
       HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
+  waitFiltersLoading() {
+    cy.expect([
+      Button({ id: 'reset-job-exports-filters' }).exists(),
+      Accordion({ id: 'isSystemSource' }).exists(),
+      Accordion({ id: 'createdByUserId' }).exists(),
+    ]);
+  },
   waitForJobs() {
     cy.expect(MultiColumnList().exists());
   },

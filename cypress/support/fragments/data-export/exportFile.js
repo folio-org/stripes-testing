@@ -210,7 +210,7 @@ export default {
   },
 
   waitLoading() {
-    cy.expect(Pane('Jobs').exists());
+    cy.get('input[type=file]').should('be.visible');
   },
 
   verifyWarningWithInvalidFileExtension() {
