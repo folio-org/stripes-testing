@@ -94,7 +94,6 @@ describe('Fees&Fines', () => {
               };
               NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
                 feeFineAccount.id = feeFineAccountId;
-                cy.login(userData.username, userData.password);
               });
             });
           });
@@ -123,8 +122,10 @@ describe('Fees&Fines', () => {
         // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(30000);
-        cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
-        FeeFinesDetails.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id),
+          waiter: FeeFinesDetails.waitLoading,
+        });
         FeeFinesDetails.openActions();
         FeeFinesDetails.openPayModal();
         PayFeeFine.checkAmount(feeFineAccount.amount);

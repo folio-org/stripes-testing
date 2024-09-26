@@ -7,6 +7,8 @@ export const APPLICATION_NAMES = {
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
   MARC_AUTHORITY: 'MARC authority',
+  CHECK_IN: 'Check in',
+  REQUESTS: 'Requests',
 };
 
 export const REQUEST_METHOD = {
