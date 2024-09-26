@@ -8,9 +8,9 @@ import SettingsOrders from '../../../support/fragments/settings/orders/settingsO
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -55,8 +55,6 @@ describe('orders: Settings', () => {
           organization.id = organizationsResponse;
           order.vendor = organizationsResponse;
         });
-
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
         });
@@ -101,7 +99,8 @@ describe('orders: Settings', () => {
     () => {
       SettingsOrders.setPurchaseOrderLinesLimit(5);
       SettingsOrders.setPurchaseOrderLinesLimit(2);
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrders();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();

@@ -164,6 +164,7 @@ export default {
   },
 
   tryToCreateFiscalYearWithoutMandatoryFields: (fiscalYearName) => {
+    cy.wait(4000);
     cy.do([
       newButton.click(),
       TextField('Name*').fillIn(fiscalYearName),
