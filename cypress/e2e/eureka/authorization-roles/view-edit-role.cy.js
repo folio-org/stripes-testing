@@ -62,6 +62,12 @@ describe('Eureka', () => {
             resource: 'Settings Notes Enabled',
             action: 'View',
           },
+          {
+            application: 'app-platform-full',
+            table: 'Settings',
+            resource: 'Settings Enabled',
+            action: 'View',
+          },
         ],
         originalCapabilities: [
           {
@@ -117,7 +123,7 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Settings: 2,
+            Settings: 3,
             Procedural: 1,
             Data: 4,
           },
