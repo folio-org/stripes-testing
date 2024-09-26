@@ -1,9 +1,11 @@
 export const APPLICATION_NAMES = {
+  BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
+  USERS: 'Users',
 };
 
 export const REQUEST_METHOD = {
