@@ -8,15 +8,16 @@ let user;
 
 describe('Data Export', () => {
   before('Create test data', () => {
-    cy.createTempUser([Permissions.uiUsersView.gui, Permissions.uiUsersPermissions.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
-      },
-    );
+    cy.createTempUser([
+      Permissions.uiUsersView.gui,
+      Permissions.uiUserCanAssignUnassignPermissions.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
+    });
   });
 
   after('Delete test data', () => {

@@ -15,7 +15,7 @@ describe('Export Manager', () => {
     cy.createTempUser([
       Permissions.settingsUsersCRUD.gui,
       Permissions.transferExports.gui,
-      Permissions.uiUsersPermissions.gui,
+      Permissions.uiUserCanAssignUnassignPermissions.gui,
     ]).then((userProperties) => {
       user = userProperties;
     });

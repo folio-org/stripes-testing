@@ -34,10 +34,7 @@ export default {
     FilterPackagesModal.clickSearchButton();
 
     if (packageName) {
-      cy.expect(
-        packagesSection
-          .find(ListItem({ h4Value: including(packageName) })).exists(),
-      );
+      cy.expect(packagesSection.find(ListItem({ h4Value: including(packageName) })).exists());
     }
   },
   openFilterPackagesModal() {
