@@ -126,10 +126,13 @@ export default {
   },
 
   goToTitleLink: (title) => {
-    // When you click on a link, it opens in a new tab. Because of this, a direct transition to the link is carried out.
     cy.do(
       searchResultList.find(Link(title)).perform((element) => {
-        cy.visit(element.href);
+        // Remove target="_blank" attribute so it doesn't open in new tab
+        if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+          element.removeAttribute('target');
+        }
+        element.click();
       }),
     );
   },
