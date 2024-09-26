@@ -475,6 +475,15 @@ export default {
     );
   },
 
+  verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(columnName, value, row = 0) {
+    cy.expect(
+      changesAccordion
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ column: columnName, content: value }))
+        .exists(),
+    );
+  },
+
   verifyExactChangesUnderColumnsByRowInPreview(columnName, value, row = 0) {
     cy.expect(
       MultiColumnListRow({ indexRow: `row-${row}` })
@@ -544,6 +553,23 @@ export default {
             `${fileName}: ${
               validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
+          ),
+        )
+        .exists(),
+    );
+  },
+
+  verifyErrorLabelInErrorAccordion(
+    fileName,
+    numberOfEntries,
+    numberOfRecordsChanged,
+    numberOfErrors,
+  ) {
+    cy.expect(
+      Accordion('Errors')
+        .find(
+          HTML(
+            `${fileName}: ${numberOfEntries} entries * ${numberOfRecordsChanged} records changed * ${numberOfErrors} errors`,
           ),
         )
         .exists(),
