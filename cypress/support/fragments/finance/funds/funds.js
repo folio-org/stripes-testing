@@ -289,7 +289,7 @@ export default {
       saveAndClose.click(),
       // try to navigate without saving
       Button('Agreements').click(),
-      Button('Keep editing').click,
+      Button('Keep editing').click(),
       cancelButton.click(),
       Button('Close without saving').click(),
     ]);
