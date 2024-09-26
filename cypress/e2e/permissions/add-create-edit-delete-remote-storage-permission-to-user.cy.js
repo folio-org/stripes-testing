@@ -28,7 +28,7 @@ describe('Permissions', () => {
             patronGroup.id = patronGroupResponse;
           });
           cy.createTempUser(
-            [permissions.uiUserEdit.gui, permissions.uiUsersPermissions.gui],
+            [permissions.uiUserEdit.gui, permissions.uiUserCanAssignUnassignPermissions.gui],
             patronGroup.name,
           ).then((userProperties) => {
             userData = userProperties;

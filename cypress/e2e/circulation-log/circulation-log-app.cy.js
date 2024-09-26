@@ -28,7 +28,10 @@ describe('Circulation log', () => {
         location,
       });
     });
-    cy.createTempUser([permissions.uiUserEdit.gui, permissions.uiUsersPermissions.gui])
+    cy.createTempUser([
+      permissions.uiUserEdit.gui,
+      permissions.uiUserCanAssignUnassignPermissions.gui,
+    ])
       .then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);

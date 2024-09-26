@@ -30,7 +30,7 @@ describe('Consortia', () => {
 
     cy.createTempUser([
       Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-      Permissions.uiUsersPermissions.gui,
+      Permissions.uiUserCanAssignUnassignPermissions.gui,
       Permissions.uiUsersCreate.gui,
       Permissions.uiUsersPermissionsView.gui,
       Permissions.uiUsersView.gui,
@@ -43,7 +43,7 @@ describe('Consortia', () => {
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(user.userId, [
           Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-          Permissions.uiUsersPermissions.gui,
+          Permissions.uiUserCanAssignUnassignPermissions.gui,
           Permissions.uiUsersCreate.gui,
           Permissions.uiUsersPermissionsView.gui,
           Permissions.uiUsersView.gui,
