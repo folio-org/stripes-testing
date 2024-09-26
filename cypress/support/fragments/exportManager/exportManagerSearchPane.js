@@ -289,9 +289,7 @@ export default {
 
   resetStartTime() {
     cy.do(
-      startTimeAccordion
-        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
-        .click(),
+      startTimeAccordion.find(Button({ ariaLabel: 'Clear selected Start time filters' })).click(),
     );
   },
 
@@ -306,11 +304,7 @@ export default {
   },
 
   resetEndTime() {
-    cy.do(
-      endTimeAccordion
-        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
-        .click(),
-    );
+    cy.do(endTimeAccordion.find(Button({ ariaLabel: 'Clear selected End time filters' })).click());
   },
 
   searchBySystemNo() {
