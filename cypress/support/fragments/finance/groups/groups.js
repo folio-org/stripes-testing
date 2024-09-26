@@ -129,7 +129,7 @@ export default {
     cy.do([
       // try to navigate without saving
       Button('Agreements').click(),
-      Button('Keep editing').click,
+      Button('Keep editing').click(),
       Button('Cancel').click(),
       Button('Close without saving').click(),
     ]);

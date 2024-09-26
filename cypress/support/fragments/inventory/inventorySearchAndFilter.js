@@ -731,7 +731,8 @@ export default {
   },
 
   selectFoundItem(callNumber, suffix) {
-    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+    const locator = suffix ? `${callNumber} ${suffix}` : `${callNumber}`;
+    cy.do(Button(including(locator)).click());
   },
 
   selectFoundItemFromBrowseResultList(value) {
@@ -891,6 +892,14 @@ export default {
 
   selectBrowseOptionFromCallNumbersGroup(option) {
     cy.get('optgroup[label="Call numbers (item)"]')
+      .contains('option', option)
+      .then((optionToSelect) => {
+        cy.get('select').select(optionToSelect.val());
+      });
+  },
+
+  selectBrowseOptionFromClassificationGroup(option) {
+    cy.get('optgroup[label="Classification (instance)"]')
       .contains('option', option)
       .then((optionToSelect) => {
         cy.get('select').select(optionToSelect.val());

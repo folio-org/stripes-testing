@@ -559,6 +559,23 @@ export default {
     );
   },
 
+  verifyErrorLabelInErrorAccordion(
+    fileName,
+    numberOfEntries,
+    numberOfRecordsChanged,
+    numberOfErrors,
+  ) {
+    cy.expect(
+      Accordion('Errors')
+        .find(
+          HTML(
+            `${fileName}: ${numberOfEntries} entries * ${numberOfRecordsChanged} records changed * ${numberOfErrors} errors`,
+          ),
+        )
+        .exists(),
+    );
+  },
+
   verifyReasonForError(errorText) {
     cy.expect(
       Accordion('Errors')
