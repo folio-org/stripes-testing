@@ -1,12 +1,15 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
 import Requests from '../../../support/fragments/requests/requests';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 
@@ -62,7 +65,10 @@ describe('Inventory', () => {
                 });
             });
           });
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 
@@ -86,7 +92,6 @@ describe('Inventory', () => {
       'C10930: Mark items as withdrawn (folijet)',
       { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
         markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         markItemAsMissing.getItemsToMarkAsMissing
           .call(markItemAsWithdrawn, createdItems)
@@ -112,14 +117,14 @@ describe('Inventory', () => {
             ItemRecordView.closeDetailView();
           });
 
-        cy.visit(TopMenu.requestsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
         markItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
           Requests.findCreatedRequest(item.barcode);
           Requests.selectFirstRequest(item.barcode);
           markItemAsMissing.verifyRequestStatus('Open - Not yet filled');
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         markItemAsMissing.getItemsNotToMarkAsMissing
           .call(markItemAsWithdrawn, createdItems)

@@ -27,7 +27,10 @@ const modalNoButton = Button('No, do not delete');
 const modalYesButton = Button('Yes, delete');
 
 const openNewJobProfileForm = () => {
+  cy.expect(Pane('Job profiles').exists());
+  cy.wait(1000);
   cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
+  cy.wait(1000);
   cy.expect(HTML({ className: including('form-'), id: 'job-profiles-form' }).exists());
 };
 

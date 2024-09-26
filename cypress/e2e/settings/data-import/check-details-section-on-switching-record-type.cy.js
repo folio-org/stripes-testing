@@ -81,7 +81,7 @@ describe('Data Import', () => {
       { tags: ['extendedPathBroken', 'folijet'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Open field mapping profile view for order record
         const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({

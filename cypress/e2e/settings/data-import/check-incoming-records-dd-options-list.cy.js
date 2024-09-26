@@ -39,7 +39,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // Go to Settings application-> Data import-> Match profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
 
         // Click "Actions" button, Select "New match profile" option
         const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
@@ -62,7 +62,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // Go to Settings application-> Data import-> Match profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
 
         const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
 
@@ -84,7 +84,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // Go to Settings application-> Data import-> Match profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
 
         const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
 
