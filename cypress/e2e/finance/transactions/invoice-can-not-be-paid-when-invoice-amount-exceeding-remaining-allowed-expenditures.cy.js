@@ -3,7 +3,7 @@ import permissions from '../../../support/dictionary/permissions';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices';
+import Invoices from '../../../support/fragments/invoices/invoices';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
@@ -108,8 +108,6 @@ describe('Finance: Transactions', () => {
               `$10.00 was successfully transferred to the budget ${secondBudget.name}`,
             );
             Funds.closeBudgetDetails();
-            cy.logout();
-            cy.getAdminToken();
             ServicePoints.getViaApi().then((servicePoint) => {
               servicePointId = servicePoint[0].id;
               NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
