@@ -2430,10 +2430,14 @@ export default {
   },
 
   openLinkingAuthorityByIndex(rowIndex) {
-    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(Link())
+        .perform((element) => {
+          element.removeAttribute('target');
+          element.click();
+        }),
+    );
   },
 
   checkSourceValue(firstName, lastName) {
