@@ -8,6 +8,7 @@ import {
   PaneHeader,
   Section,
   TextField,
+  Modal,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -20,6 +21,11 @@ const descriptionTextField = rootSection.find(TextField({ placeholder: 'desc' })
 const expirationOffsetInDaysTextField = rootSection.find(
   TextField({ placeholder: 'expirationOffsetInDays' }),
 );
+const deleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
+const cannotDeleteModal = Modal('Cannot delete Patron group');
+const deleteModalButton = deleteModal.find(Button('Delete'));
+const cancelModalButton = deleteModal.find(Button('Cancel'));
+const okayButton = cannotDeleteModal.find(Button('Okay'));
 
 const defaultPatronGroup = {
   group: `Patron_group_${getRandomPostfix()}`,
@@ -116,13 +122,24 @@ export default {
     );
   },
   clickTrashButtonForGroup(name) {
-    cy.do([
+    cy.do(
       MultiColumnListRow({ content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .find(Button({ icon: 'trash' }))
         .click(),
-      Button('Delete').click(),
-    ]);
+    );
+  },
+  clickModalDeleteButton() {
+    cy.do(deleteModalButton.click());
+    cy.expect(deleteModal.absent());
+  },
+  clickModalCancelButton() {
+    cy.do(cancelModalButton.click());
+    cy.expect(deleteModal.absent());
+  },
+  clickModalOkayButton() {
+    cy.do(okayButton.click());
+    cy.expect(cannotDeleteModal.absent());
   },
   createViaApi: (patronGroup = defaultPatronGroup.group) => cy
     .okapiRequest({
@@ -312,5 +329,19 @@ export default {
             expect(text).to.equal('');
           });
       });
+  },
+  verifyDeletePatronGroupModal() {
+    cy.expect([deleteModal.exists(), cancelModalButton.exists(), deleteModalButton.exists()]);
+  },
+  verifyCannotDeletePatronGroupModal() {
+    cy.expect([
+      cannotDeleteModal.exists(),
+      Modal({
+        content: including(
+          'This Patron group cannot be deleted, as it is in use by one or more records.',
+        ),
+      }).exists(),
+      okayButton.exists(),
+    ]);
   },
 };
