@@ -34,7 +34,7 @@ describe('Inventory', () => {
       before('Set display settings', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        // admin does not have required permissions by default - a new user with these permissions created
+        // admin does not have required permission by default - a new user with this permission created
         cy.createTempUser([Permissions.inventoryViewEditGeneralSettings.gui]).then(
           (userProperties) => {
             testData.settingsUserProperties = userProperties;
@@ -93,68 +93,68 @@ describe('Inventory', () => {
               cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
                 Permissions.uiInventoryViewInstances.gui,
               ]);
-
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              }).then(() => {
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              });
             });
           });
         });
       });
 
-      after('Delete users, data, reset settings', () => {
+      after('Reset settings, delete data, users', () => {
         cy.resetTenant();
-        cy.getAdminToken();
-        Users.deleteViaApi(testData.userProperties.userId);
-        createdInstanceIds.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
         cy.getToken(
           testData.settingsUserProperties.username,
           testData.settingsUserProperties.password,
           false,
         );
         cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE.toLowerCase());
+        cy.getAdminToken();
+        createdInstanceIds.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+        Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.settingsUserProperties.userId);
       });
 
       it(
         'C543872 Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
-          InventoryInstances.searchByTitle(titlePrefix);
-          InventoryInstances.checkResultListSortedByColumn(2);
-          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
-          InventoryInstances.clickActionsButton();
-          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
-          InventoryInstances.actionsSortBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-          InventoryInstances.checkResultListSortedByColumn(1);
-          InventorySearchAndFilter.resetAll();
-          InventorySearchAndFilter.verifyResultPaneEmpty();
-          InventorySearchAndFilter.verifySearchFieldIsEmpty();
-          InventoryInstances.searchByTitle(titlePrefix);
-          InventoryInstances.checkResultListSortedByColumn(2);
-          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
-          InventoryInstances.clickActionsButton();
-          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            InventoryInstances.searchByTitle(titlePrefix);
+            InventoryInstances.checkResultListSortedByColumn(2);
+            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+            InventoryInstances.clickActionsButton();
+            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+            InventoryInstances.actionsSortBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            InventoryInstances.checkResultListSortedByColumn(1);
+            InventorySearchAndFilter.resetAll();
+            InventorySearchAndFilter.verifyResultPaneEmpty();
+            InventorySearchAndFilter.verifySearchFieldIsEmpty();
+            InventoryInstances.searchByTitle(titlePrefix);
+            InventoryInstances.checkResultListSortedByColumn(2);
+            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+            InventoryInstances.clickActionsButton();
+            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          InventoryInstances.waitContentLoading();
-          InventoryInstances.searchByTitle(titlePrefix);
-          InventoryInstances.checkResultListSortedByColumn(1);
-          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-          InventoryInstances.clickActionsButton();
-          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-          InventorySearchAndFilter.resetAll();
-          InventorySearchAndFilter.verifyResultPaneEmpty();
-          InventorySearchAndFilter.verifySearchFieldIsEmpty();
-          InventoryInstances.searchByTitle(titlePrefix);
-          InventoryInstances.checkResultListSortedByColumn(1);
-          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-          InventoryInstances.clickActionsButton();
-          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            InventoryInstances.waitContentLoading();
+            InventoryInstances.searchByTitle(titlePrefix);
+            InventoryInstances.checkResultListSortedByColumn(1);
+            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            InventoryInstances.clickActionsButton();
+            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            InventorySearchAndFilter.resetAll();
+            InventorySearchAndFilter.verifyResultPaneEmpty();
+            InventorySearchAndFilter.verifySearchFieldIsEmpty();
+            InventoryInstances.searchByTitle(titlePrefix);
+            InventoryInstances.checkResultListSortedByColumn(1);
+            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            InventoryInstances.clickActionsButton();
+            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+          });
         },
       );
     });
