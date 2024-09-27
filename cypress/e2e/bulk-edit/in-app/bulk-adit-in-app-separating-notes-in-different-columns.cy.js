@@ -73,6 +73,7 @@ describe('bulk-edit', () => {
             instance.instanceName,
             instance.itemBarcode,
           );
+          cy.getAdminToken();
           cy.getHoldings({
             limit: 1,
             query: `"instanceId"="${instance.instanceId}"`,
