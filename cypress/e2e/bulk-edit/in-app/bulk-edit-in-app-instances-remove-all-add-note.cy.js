@@ -9,10 +9,11 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import { INSTANCE_NOTE_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_NOTE_IDS } from '../../../support/constants';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
@@ -21,11 +22,11 @@ const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `C468192 folio instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `C468192 marc instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const notes = {
@@ -165,9 +166,15 @@ describe('bulk-edit', () => {
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          folioItem.hrid,
           'Dissertation note',
           '',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          marcInstance.hrid,
+          'Dissertation note',
+          `${notes.dissertationNote} | ${notes.dissertationNoteStaffOnly}`,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Administrative note',
@@ -178,11 +185,13 @@ describe('bulk-edit', () => {
           notes.administrativeNote,
           1,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          folioItem.hrid,
           'Data quality note',
           notes.dataQualityNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          folioItem.hrid,
           'Exhibitions note',
           `${notes.exhibitionsNote} (staff only)`,
         );
@@ -210,7 +219,7 @@ describe('bulk-edit', () => {
           `${marcInstance.instanceId},${reasonForError}`,
         ]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -219,7 +228,7 @@ describe('bulk-edit', () => {
         InventoryInstance.checkInstanceNotes('Exhibitions note', notes.exhibitionsNote);
         ItemRecordView.verifyTextAbsent('Dissertation note');
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
