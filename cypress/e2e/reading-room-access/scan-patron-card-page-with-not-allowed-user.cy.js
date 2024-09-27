@@ -10,6 +10,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Reading Room Access', () => {
   const readingRoomId = uuid();
+  const allowedButtonState = false;
   const userAllowedInReadingRoom = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
   };
@@ -25,6 +26,7 @@ describe('Reading Room Access', () => {
         })
         .then(() => SettingsReadingRoom.createReadingRoomViaApi(
           userAllowedInReadingRoom.servicePoint.id,
+          userAllowedInReadingRoom.servicePoint.name,
           readingRoomId,
           false,
         ));
@@ -52,7 +54,10 @@ describe('Reading Room Access', () => {
         userAllowedInReadingRoom.servicePoint.id,
       );
 
-      cy.login(userAllowedInReadingRoom.user.username, userAllowedInReadingRoom.user.password);
+      cy.login(userAllowedInReadingRoom.user.username, userAllowedInReadingRoom.user.password, {
+        path: TopMenu.readingRoom,
+        waiter: ReadingRoom.waitLoading,
+      });
     });
   });
 
@@ -84,13 +89,11 @@ describe('Reading Room Access', () => {
         expirationDate: 'No value set-',
       };
 
-      cy.visit(TopMenu.readingRoom);
-      ReadingRoom.waitLoading();
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
       ReadingRoom.verifyUserIsScanned(userInfo.firstName);
-      ReadingRoom.verifyUserInformation(userInfo);
+      ReadingRoom.verifyUserInformation(userInfo, false);
       ReadingRoom.verifyWarningMessage('Not allowed');
-      ReadingRoom.verifyButtonsEnabled();
+      ReadingRoom.verifyButtonsEnabled(allowedButtonState);
       ReadingRoom.clickNotAllowedButton();
       InteractorsTools.checkCalloutMessage('Action was successfully saved');
       ReadingRoom.verifyInformationAfterAction();

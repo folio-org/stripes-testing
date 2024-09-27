@@ -12,6 +12,8 @@ import Locations from '../../../support/fragments/settings/tenant/location-setup
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import SelectInstanceModal from '../../../support/fragments/requests/selectInstanceModal';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const testData = {};
@@ -127,7 +129,7 @@ describe('bulk-edit', () => {
         ]);
 
         [folioItem.instanceName, marcInstances[0].instanceTitle].forEach((title) => {
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           SelectInstanceModal.filterByStaffSuppress('Yes');
           InventorySearchAndFilter.searchInstanceByTitle(title);
           InventoryInstances.selectInstance();
