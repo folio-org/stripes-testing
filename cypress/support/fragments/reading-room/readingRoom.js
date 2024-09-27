@@ -32,11 +32,10 @@ export default {
   },
   clickNotAllowedButton() {
     cy.wait(1500);
-    cy.do(notAllowedButton.click());
+    cy.do(rootSection.find(notAllowedButton).click());
   },
   clickAllowedButton() {
-    cy.wait(1500);
-    cy.do(allowedButton.click());
+    cy.get('#allow-access').click();
   },
 
   verifyUserIsScanned(userfirstName) {

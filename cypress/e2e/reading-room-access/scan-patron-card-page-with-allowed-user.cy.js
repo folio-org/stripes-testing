@@ -47,7 +47,10 @@ describe('Reading Room Access', () => {
         testData.servicePointId,
       );
 
-      cy.login(testData.firstUser.username, testData.firstUser.password);
+      cy.login(testData.firstUser.username, testData.firstUser.password, {
+        path: TopMenu.readingRoom,
+        waiter: ReadingRoom.waitLoading,
+      });
     });
   });
 
@@ -78,8 +81,6 @@ describe('Reading Room Access', () => {
         expirationDate: 'No value set-',
       };
 
-      cy.visit(TopMenu.readingRoom);
-      ReadingRoom.waitLoading();
       ReadingRoom.scanUser(testData.secondUser.barcode);
       ReadingRoom.verifyUserIsScanned(userInfo.preferredFirstName);
       ReadingRoom.verifyUserInformation(userInfo);

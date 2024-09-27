@@ -4,6 +4,7 @@ export const APPLICATION_NAMES = {
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
+  READING_ROOM_ACCESS: 'Reading room access',
 };
 
 export const REQUEST_METHOD = {

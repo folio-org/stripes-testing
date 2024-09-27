@@ -54,7 +54,10 @@ describe('Reading Room Access', () => {
         userAllowedInReadingRoom.servicePoint.id,
       );
 
-      cy.login(userAllowedInReadingRoom.user.username, userAllowedInReadingRoom.user.password);
+      cy.login(userAllowedInReadingRoom.user.username, userAllowedInReadingRoom.user.password, {
+        path: TopMenu.readingRoom,
+        waiter: ReadingRoom.waitLoading,
+      });
     });
   });
 
@@ -86,8 +89,6 @@ describe('Reading Room Access', () => {
         expirationDate: 'No value set-',
       };
 
-      cy.visit(TopMenu.readingRoom);
-      ReadingRoom.waitLoading();
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
       ReadingRoom.verifyUserIsScanned(userInfo.firstName);
       ReadingRoom.verifyUserInformation(userInfo, false);
