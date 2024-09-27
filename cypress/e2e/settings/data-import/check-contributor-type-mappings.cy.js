@@ -123,7 +123,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Click Actions button, Select New field mapping profile
         const FieldMappingProfileEditForm =
@@ -139,7 +139,7 @@ describe('Data Import', () => {
         FieldMappingProfileView.clickCloseButton();
 
         // Select "Action profiles" from the "Data import" pane
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
 
         // Click on "Actions" button, Select "New action profile" option
         const ActionProfileEditForm = ActionProfiles.createNewActionProfile();
@@ -151,7 +151,7 @@ describe('Data Import', () => {
         ActionProfileEditForm.clickSaveAndCloseButton();
 
         // Select "Job profiles" element from the "Data import" pane
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
 
         // Click on "Actions" button, Select "New job profile" option
         const JobProfileEditForm = JobProfiles.createNewJobProfile();
