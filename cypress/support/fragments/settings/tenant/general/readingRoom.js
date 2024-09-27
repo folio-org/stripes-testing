@@ -7,14 +7,13 @@ import {
   MultiColumnListRow,
   Checkbox,
 } from '../../../../../../interactors';
-import getRandomPostfix from '../../../../utils/stringTools';
 
 const readingRoomRecordCss = 'div[id=editList-reading-room-access-settings]';
 const settingsHeaderIconCss = 'a[id=ModuleMainHeading]';
 const tenantReadingRoomOptionCss = 'nav[data-test-nav-list] a[href$=tenant-settings]';
 const readingRoomPaneCss = 'nav[data-test-nav-list] a[href$=reading-room]';
 
-const readingRoomName = `Autotest_Reading_Room${getRandomPostfix()}`;
+const readingRoomName = 'Autotest_Room';
 const recordLoadRetries = 10;
 const recordLoadWait = 15000;
 

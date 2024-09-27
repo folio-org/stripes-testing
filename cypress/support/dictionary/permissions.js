@@ -293,6 +293,10 @@ export default {
     internal: 'inventory-storage.instance-date-types.collection.get',
     gui: 'inventory storage - get list of instance-date-types',
   },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {

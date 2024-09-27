@@ -1,7 +1,12 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import SettingsUsers, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -46,7 +51,9 @@ describe('Users', () => {
 
     it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris'] }, () => {
       UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-      cy.visit(SettingsMenu.patronGroups);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsUsers.goToSettingsUsers();
+      SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsSortingOrder();
       PatronGroups.verifyPatronGroupsPane(testData.isNewButtonDisabled);

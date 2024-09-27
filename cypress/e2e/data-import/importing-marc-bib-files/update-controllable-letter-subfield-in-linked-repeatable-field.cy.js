@@ -3,6 +3,7 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -30,6 +31,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -158,8 +160,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.loginAsAdmin().then(() => {
-          cy.visit(TopMenu.inventoryPath);
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -208,9 +212,8 @@ describe('Data Import', () => {
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-
         // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.exportedFileName = name;
 
@@ -225,7 +228,7 @@ describe('Data Import', () => {
           );
         });
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFile(testData.modifiedMarcFile, testData.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
@@ -240,8 +243,7 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
 
-        cy.visit(TopMenu.inventoryPath);
-
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);

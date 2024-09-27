@@ -2430,10 +2430,14 @@ export default {
   },
 
   openLinkingAuthorityByIndex(rowIndex) {
-    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(Link())
+        .perform((element) => {
+          element.removeAttribute('target');
+          element.click();
+        }),
+    );
   },
 
   checkSourceValue(firstName, lastName) {
@@ -2497,6 +2501,7 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
   },
   clickAuthorityLookUpButton() {
+    cy.wait(250);
     cy.do(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).click());
     cy.expect(selectAuthorityFileModal.exists());
   },
