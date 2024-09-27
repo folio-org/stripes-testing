@@ -304,4 +304,11 @@ export default {
     if (isOpened) cy.expect([createUserPane.exists(), contactInformationAccordion.exists()]);
     else cy.expect(createUserPane.absent());
   },
+
+  clickNewButton: () => {
+    cy.do([
+      Dropdown('Actions').find(Button()).click(),
+      Button({ id: 'clickable-newuser' }).click(),
+    ]);
+  },
 };

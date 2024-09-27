@@ -1,8 +1,13 @@
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -103,8 +108,8 @@ describe('Eureka', () => {
           false,
         );
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
-        AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
+        AuthorizationRoles.searchRole(testData.roleCName);
+        AuthorizationRoles.clickOnRoleName(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(
           testData.userA.lastName,
           testData.userA.firstName,
@@ -115,14 +120,18 @@ describe('Eureka', () => {
         AuthorizationRoles.clickSaveInAssignModal();
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
 
-        cy.visit(`${TopMenu.usersPath}/preview/${testData.userA.userId}`);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        Users.waitLoading();
+        UsersSearchPane.searchByKeywords(testData.userA.userId);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
-        AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleBName);
+        AuthorizationRoles.clickOnRoleName(testData.roleBName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(testData.userA.username, false);
@@ -133,8 +142,8 @@ describe('Eureka', () => {
           false,
         );
 
-        cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleCId}`);
-        AuthorizationRoles.verifyRoleViewPane(testData.roleCName);
+        AuthorizationRoles.searchRole(testData.roleCName);
+        AuthorizationRoles.clickOnRoleName(testData.roleCName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(testData.userA.username, false);
@@ -145,7 +154,9 @@ describe('Eureka', () => {
           false,
         );
 
-        cy.visit(`${TopMenu.usersPath}/preview/${testData.userA.userId}`);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        Users.waitLoading();
+        UsersSearchPane.searchByKeywords(testData.userA.userId);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('0');
         UsersCard.clickUserRolesAccordion();

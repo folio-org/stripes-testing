@@ -710,6 +710,7 @@ export default {
       Select({ id: 'adduser_group' }).choose(patronGroup),
       TextField({ id: 'adduser_email' }).fillIn(email),
     ]);
+    cy.wait(2000);
   },
 
   checkUserEditPaneOpened: (isOpened = true) => {

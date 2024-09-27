@@ -101,6 +101,8 @@ const getResultsListByColumn = (columnIndex) => {
     .then(() => cells);
 };
 
+export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
+
 export default {
   waitLoading: () => {
     cy.expect(rolesPane.exists());

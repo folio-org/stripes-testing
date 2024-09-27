@@ -133,8 +133,6 @@ describe('Eureka', () => {
         'C464313 Verify capabilities shown for a role created via API with only capability set assigned (eureka)',
         { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
         () => {
-          cy.reload();
-          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.clickOnCapabilitySetsAccordion();

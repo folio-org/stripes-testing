@@ -1,10 +1,14 @@
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../../support/fragments/topMenu';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UserEdit from '../../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
@@ -94,7 +98,7 @@ describe('Eureka', () => {
             testData.groupAName,
           );
 
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
           UsersSearchPane.searchByUsername(testData.userA.username);
           UsersSearchPane.selectUserFromList(testData.userA.username);
@@ -107,8 +111,13 @@ describe('Eureka', () => {
           UserEdit.saveEditedUser();
           UsersCard.waitLoading();
 
-          cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleBId}`);
-          AuthorizationRoles.verifyRoleViewPane(testData.roleBName);
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.roleBName);
+          AuthorizationRoles.clickOnRoleName(testData.roleBName);
           AuthorizationRoles.clickAssignUsersButton();
           AuthorizationRoles.selectUserInModal(testData.newUsername);
           cy.intercept(usersCallRegExpGetB).as('usersGetB');
@@ -126,7 +135,8 @@ describe('Eureka', () => {
           AuthorizationRoles.verifyAssignedUser(testData.newLastName, testData.newFirstName);
 
           cy.intercept(usersCallRegExpGetA).as('usersGetA1');
-          cy.visit(`${TopMenu.settingsAuthorizationRoles}/${testData.roleAId}`);
+          AuthorizationRoles.searchRole(testData.roleAName);
+          AuthorizationRoles.clickOnRoleName(testData.roleAName);
           cy.wait('@usersGetA1').then((call) => {
             expect(call.response.statusCode).to.eq(200);
             expect(

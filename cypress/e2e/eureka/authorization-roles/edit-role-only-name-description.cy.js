@@ -91,8 +91,6 @@ describe('Eureka', () => {
         'C424003 Editing existing authorization role (only name/description updated)',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
         () => {
-          cy.reload();
-          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.checkCapabilitiesAccordionCounter(

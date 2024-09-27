@@ -2,8 +2,12 @@ import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -107,7 +111,7 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRolesAccordionEmpty();
 
-        cy.visit(TopMenu.settingsAuthorizationRoles);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleAName);
         AuthorizationRoles.clickOnRoleName(testData.roleAName);
@@ -123,7 +127,7 @@ describe('Eureka', () => {
         AuthorizationRoles.clickSaveInAssignModal();
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByUsername(testData.userA.username);
         UsersSearchPane.selectUserFromList(testData.userA.username);

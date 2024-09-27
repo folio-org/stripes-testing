@@ -3,6 +3,7 @@ import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -21,7 +22,10 @@ describe('Eureka', () => {
         cy.createUserGroupApi().then((group) => {
           testData.userGroup = group;
         });
-        cy.loginAsAdmin();
+        cy.loginAsAdmin({
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
+        });
       });
     });
 
@@ -41,7 +45,7 @@ describe('Eureka', () => {
       { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
       () => {
         const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';
-        cy.visit('/users/create');
+        Users.clickNewButton();
         Users.checkCreateUserPaneOpened();
         UserEdit.fillRequiredFields(
           testData.lastName,
@@ -68,7 +72,6 @@ describe('Eureka', () => {
         Users.verifyLastNameOnUserDetailsPane(testData.tempUser.lastName);
         UsersCard.verifyUserPermissionsAccordion(false);
         UserEdit.openEdit();
-        cy.wait(10000);
         UserEdit.checkUserEditPaneOpened();
         UserEdit.verifyUserPermissionsAccordion(false);
       },

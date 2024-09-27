@@ -50,7 +50,6 @@ describe('Eureka', () => {
         'C446119 Delete a role without capabilities and users (eureka)',
         { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
         () => {
-          cy.reload();
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
