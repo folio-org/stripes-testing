@@ -114,8 +114,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        // TODO: uncomment after UIBULKED-425
-        // BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings permanent location');
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,

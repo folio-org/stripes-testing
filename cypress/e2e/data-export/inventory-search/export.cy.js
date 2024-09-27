@@ -5,12 +5,12 @@ import InventoryActions from '../../../support/fragments/inventory/inventoryActi
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import inventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES, LOCATION_IDS, APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -47,7 +47,7 @@ describe('Data Export', () => {
     });
 
     beforeEach('navigate to inventory', () => {
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
     });
 
     after('delete test data', () => {
@@ -123,7 +123,7 @@ describe('Data Export', () => {
           );
         });
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         DataExportResults.verifyQuickExportResult();
       },
     );

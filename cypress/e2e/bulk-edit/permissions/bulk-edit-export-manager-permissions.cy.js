@@ -23,7 +23,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
         permissions.exportManagerAll.gui,
       ])
@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();

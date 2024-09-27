@@ -92,6 +92,7 @@ function validateNumsAscendingOrder(prev) {
 }
 
 export default {
+  defaultPatronGroup,
   clickNewButton,
   clickCancelButton,
   clickSaveButton,

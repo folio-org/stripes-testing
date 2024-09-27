@@ -210,7 +210,7 @@ export default {
   },
 
   waitLoading() {
-    cy.expect(Pane('Jobs').exists());
+    cy.xpath('//div[@id="data-export-module-display"]').should('exist');
   },
 
   verifyWarningWithInvalidFileExtension() {

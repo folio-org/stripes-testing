@@ -12,7 +12,8 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../../../support/constants';
+import { LOCATION_IDS, LOCATION_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
@@ -179,7 +180,7 @@ describe('bulk-edit', () => {
           );
 
           // Go to inventory app and verify changes
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', instance.barcode);
           ItemRecordView.closeDetailView();
