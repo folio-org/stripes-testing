@@ -1,5 +1,5 @@
-import { 
-  EXISTING_RECORD_NAMES, 
+import {
+  EXISTING_RECORD_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   APPLICATION_NAMES,
 } from '../../../support/constants';
