@@ -19,7 +19,7 @@ export default {
   },
   openAppFromDropdown(appName) {
     cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
-    cy.wait(2000);
+    cy.wait(500);
     cy.do(Link(appName).click());
   },
 };

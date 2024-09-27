@@ -14,7 +14,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import Receiving from '../../support/fragments/receiving/receiving';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders: Inventory interaction', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -65,8 +64,7 @@ describe('Orders: Inventory interaction', () => {
       organization.id = responseOrganizations;
     });
     firstOrder.vendor = organization.name;
-    TopMenuNavigation.openAppFromDropdown('Orders');
-    Orders.selectOrders();
+    cy.visit(TopMenu.ordersPath);
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -111,8 +109,7 @@ describe('Orders: Inventory interaction', () => {
     Orders.deleteOrderViaApi(firstOrder.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    TopMenuNavigation.openAppFromDropdown('Finance');
-    FinanceHelp.selectFundsNavigation();
+    cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
