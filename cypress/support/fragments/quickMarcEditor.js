@@ -2501,6 +2501,7 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
   },
   clickAuthorityLookUpButton() {
+    cy.wait(250);
     cy.do(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).click());
     cy.expect(selectAuthorityFileModal.exists());
   },
