@@ -8,6 +8,10 @@ export const APPLICATION_NAMES = {
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
   MARC_AUTHORITY: 'MARC authority',
+  ORDERS: 'Orders',
+  CHECK_IN: 'Check in',
+  CHECK_OUT: 'Check out',
+  REQUESTS: 'Requests',
 };
 
 export const REQUEST_METHOD = {
