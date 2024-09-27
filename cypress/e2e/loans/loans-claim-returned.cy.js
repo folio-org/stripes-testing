@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInClaimedReturnedItemModal from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
@@ -13,6 +13,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
@@ -62,6 +63,7 @@ describe('Loans', () => {
     };
 
     before('Create user, open and closed loans', () => {
+      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       cy.getAdminToken().then(() => {
         UsersOwners.createViaApi({
           ...ownerData,
@@ -145,8 +147,10 @@ describe('Loans', () => {
         let selectedItem = folioInstances.find(
           (item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT,
         );
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.usersPath);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
         UsersSearchPane.openUserCard(userData.username);
         UsersCard.viewCurrentLoans({ openLoans: folioInstances.length });
         UserLoans.openLoanDetails(selectedItem.barcodes[0]);
@@ -278,7 +282,7 @@ describe('Loans', () => {
             ]);
             Loans.dismissPane();
           });
-          cy.visit(TopMenu.checkInPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         });
         cy.wrap(selectedItems).each((item) => {
           CheckInActions.checkInItemGui(item.barcodes[0]).then(() => {
@@ -292,10 +296,11 @@ describe('Loans', () => {
             }
           });
         });
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.openUserCard(userData.username);
         UsersCard.expandLoansSection(2, 1);
-        cy.visit(TopMenu.checkInPath).then(() => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN).then(() => {
           cy.wrap(folioInstances).each((item) => {
             if (
               item.barcodes[0] !== selectedItems[0].barcodes[0] &&

@@ -399,11 +399,12 @@ export default {
     cy.do(selectRequestType.choose(requestType));
   },
 
-  enterValidValueToCreateViaUi: (userData) => {
+  enterValidValueToCreateViaUi: (userData, patronGroup) => {
     return cy
       .do([
         TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+        Select({ id: 'adduser_group' }).choose(patronGroup),
+        Modal({ id: 'recalculate_expirationdate_modal' }).find(Button('Set')).click(),
         TextField({ name: 'barcode' }).fillIn(userData.barcode),
         TextField({ name: 'username' }).fillIn(userData.username),
         TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),

@@ -3,12 +3,16 @@ import { AppList } from '../../../interactors/applist';
 
 export default {
   navigateToApp(appName, subSection) {
-    cy.wait(2000);
-    cy.do(AppList().choose(appName));
+    return cy.wrap(true).then(() => {
+      cy.wait(2000);
+      cy.do(AppList().choose(appName));
+      cy.wait(1000);
 
-    if (subSection) {
-      cy.do(NavListItem(subSection).click());
-    }
+      if (subSection) {
+        cy.do(NavListItem(subSection).click());
+        cy.wait(1000);
+      }
+    });
   },
   isAbsent() {
     cy.expect(AppList().absent());
