@@ -10,6 +10,8 @@ import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../support/constants';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 let user;
 let servicePointId;
@@ -67,7 +69,7 @@ describe('Circulation log', () => {
       const ConfirmItemStatusModal = UserLoans.markAsMissing(item.barcode);
       ConfirmItemStatusModal.confirmItemStatus('this is a test');
 
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByMarkedAsMissing();
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch({
