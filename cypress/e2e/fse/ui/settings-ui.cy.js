@@ -16,7 +16,7 @@ describe('fse-settings - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'settings'] },
     () => {
       cy.visit(TopMenu.settingsPath);
-      Settings.waitLoading();
+      Settings.waitSettingsPaneLoading();
     },
   );
 

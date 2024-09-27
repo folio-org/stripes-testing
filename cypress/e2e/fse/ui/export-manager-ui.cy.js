@@ -14,7 +14,7 @@ describe('fse-export-manager - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'export-manager'] },
     () => {
       cy.visit(TopMenu.exportManagerPath);
-      ExportManager.waitLoading();
+      ExportManager.waitFiltersLoading();
     },
   );
 });
