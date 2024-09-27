@@ -210,7 +210,6 @@ describe('Data Import', () => {
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
-
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.getExportedFileNameViaApi().then((name) => {
@@ -243,7 +242,6 @@ describe('Data Import', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
