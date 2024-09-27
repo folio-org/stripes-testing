@@ -72,6 +72,7 @@ describe('Invoices', () => {
       path: SettingsMenu.expenseClassesPath,
       waiter: SettingsFinance.waitExpenseClassesLoading,
     });
+
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
