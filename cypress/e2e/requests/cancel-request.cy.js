@@ -1,4 +1,9 @@
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
@@ -10,6 +15,7 @@ import { Locations } from '../../support/fragments/settings/tenant';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
@@ -79,12 +85,12 @@ describe('Title Level Request', () => {
   });
 
   it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'shiftLeft'] }, () => {
-    cy.visit(TopMenu.checkInPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
     CheckInActions.checkInItemGui(itemData.barcodes[0]);
     AwaitingPickupForARequest.unselectCheckboxPrintSlip();
     AwaitingPickupForARequest.closeModal();
     CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-    cy.visit(TopMenu.requestsPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
     Requests.waitLoading();
     Requests.findCreatedRequest(itemData.instanceTitle);
     Requests.selectFirstRequest(itemData.instanceTitle);
@@ -105,10 +111,11 @@ describe('Title Level Request', () => {
     RequestDetail.confirmRequestCancellation();
     RequestDetail.checkRequestStatus('Closed - Cancelled');
 
-    cy.visit(TopMenu.checkInPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+
     CheckInActions.checkInItemGui(itemData.barcodes[0]);
     CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-    cy.visit(TopMenu.requestsPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
     Requests.waitLoading();
     Requests.findCreatedRequest(itemData.instanceTitle);
     Requests.selectFirstRequest(itemData.instanceTitle);

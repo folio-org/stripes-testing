@@ -55,7 +55,7 @@ describe('Data Import', () => {
         { tags: ['extendedPath', 'folijet'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view for item records
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({
@@ -95,7 +95,7 @@ describe('Data Import', () => {
         { tags: ['extendedPath', 'folijet'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view for item records
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({
@@ -169,7 +169,7 @@ describe('Data Import', () => {
         { tags: ['extendedPath', 'folijet'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view for Invoice record
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({

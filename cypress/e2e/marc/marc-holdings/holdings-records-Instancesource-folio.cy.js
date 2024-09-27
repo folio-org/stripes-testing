@@ -8,8 +8,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.inventoryPath);
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       const InventoryNewInstance = InventoryInstances.addNewInventory();
       InventoryNewInstance.fillRequiredValues();
       InventoryNewInstance.clickSaveAndCloseButton();

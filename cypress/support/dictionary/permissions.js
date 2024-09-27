@@ -285,6 +285,18 @@ export default {
     internal: 'ui-inventory.instance.view-staff-suppressed-records',
     gui: 'Inventory: Enable staff suppress facet',
   },
+  patchInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.item.patch',
+    gui: 'inventory storage - patch instance-date-type',
+  },
+  getInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.collection.get',
+    gui: 'inventory storage - get list of instance-date-types',
+  },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -436,7 +448,7 @@ export default {
     internal: 'ui-users.loans.renew-override',
     gui: 'Users: User loans renew through override',
   },
-  uiUsersPermissions: {
+  uiUserCanAssignUnassignPermissions: {
     internal: 'ui-users.editperms',
     gui: 'Users: Can assign and unassign permissions to users',
   },

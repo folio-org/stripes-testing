@@ -120,6 +120,7 @@ describe('Consortium manager', () => {
             name: testData.universityLocalPatronGroup.name,
           });
           PatronGroups.clickTrashButtonForGroup(testData.collegeLocalPatronGroup.name);
+          PatronGroups.clickModalDeleteButton();
 
           PatronGroups.verifyGroupAbsentInTheList({
             name: testData.collegeLocalPatronGroup.name,
@@ -158,6 +159,7 @@ describe('Consortium manager', () => {
           });
 
           PatronGroups.clickTrashButtonForGroup(testData.universityLocalPatronGroup.name);
+          PatronGroups.clickModalDeleteButton();
 
           PatronGroups.verifyGroupAbsentInTheList({
             name: testData.universityLocalPatronGroup.name,

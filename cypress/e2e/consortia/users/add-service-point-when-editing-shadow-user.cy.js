@@ -14,17 +14,21 @@ describe('Users', () => {
     cy.getAdminToken();
     ServicePoints.createViaApi(servicePoint);
     cy.resetTenant();
-    cy.createTempUser([
-      Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-      Permissions.uiUsersPermissions.gui,
-      Permissions.uiUsersEdituserservicepoints.gui,
-      Permissions.uiUserEdit.gui,
-    ], '', 'staff').then((userProperties) => {
+    cy.createTempUser(
+      [
+        Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
+        Permissions.uiUserCanAssignUnassignPermissions.gui,
+        Permissions.uiUsersEdituserservicepoints.gui,
+        Permissions.uiUserEdit.gui,
+      ],
+      '',
+      'staff',
+    ).then((userProperties) => {
       testData.user1 = userProperties;
       cy.assignAffiliationToUser(Affiliations.College, testData.user1.userId);
       cy.setTenant(Affiliations.College);
       cy.assignPermissionsToExistingUser(testData.user1.userId, [
-        Permissions.uiUsersPermissions.gui,
+        Permissions.uiUserCanAssignUnassignPermissions.gui,
         Permissions.uiUsersEdituserservicepoints.gui,
         Permissions.uiUserEdit.gui,
       ]);
@@ -39,9 +43,7 @@ describe('Users', () => {
   after('Delete test data', () => {
     cy.resetTenant();
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(testData.user2.userId, [
-      servicePoint.id,
-    ]);
+    UserEdit.changeServicePointPreferenceViaApi(testData.user2.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.user1.userId);
     Users.deleteViaApi(testData.user2.userId);

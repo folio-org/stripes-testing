@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -18,6 +19,7 @@ const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
@@ -26,7 +28,6 @@ const marcInstance = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-
 const notes = {
   dissertationNote: 'test instance note',
   dissertationNoteStaffOnly: 'test instance note staff only',
@@ -34,6 +35,7 @@ const notes = {
   exhibitionsNote: 'exhibitions note',
   administrativeNote: 'administrative note',
 };
+const reasonForError = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -97,6 +99,7 @@ describe('bulk-edit', () => {
         matchedRecordsFileName,
         previewFileName,
         changedRecordsFileName,
+        errorsFromCommittingFileName,
       );
     });
 
@@ -162,19 +165,31 @@ describe('bulk-edit', () => {
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Dissertation note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+          'Dissertation note',
+          '',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Administrative note',
           notes.administrativeNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+          'Administrative note',
+          notes.administrativeNote,
+          1,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Data quality note',
           notes.dataQualityNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Exhibitions note',
           `${notes.exhibitionsNote} (staff only)`,
         );
+
+        BulkEditSearchPane.verifyErrorLabelInErrorAccordion(instanceUUIDsFileName, 2, 2, 3);
+        BulkEditSearchPane.verifyNonMatchedResults(marcInstance.instanceId);
+        BulkEditSearchPane.verifyReasonForError(reasonForError);
 
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
@@ -187,6 +202,13 @@ describe('bulk-edit', () => {
           ],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
+
+        BulkEditActions.downloadErrors();
+        BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
+          `${marcInstance.instanceId},${reasonForError}`,
+          `${marcInstance.instanceId},${reasonForError}`,
+          `${marcInstance.instanceId},${reasonForError}`,
+        ]);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);

@@ -1,16 +1,19 @@
-import { Pane, Spinner } from '../../../../../../interactors';
-import getRandomPostfix from '../../../../utils/stringTools';
+import {
+  Button,
+  MultiColumnListHeader,
+  Pane,
+  Spinner,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Checkbox,
+} from '../../../../../../interactors';
 
 const readingRoomRecordCss = 'div[id=editList-reading-room-access-settings]';
 const settingsHeaderIconCss = 'a[id=ModuleMainHeading]';
 const tenantReadingRoomOptionCss = 'nav[data-test-nav-list] a[href$=tenant-settings]';
 const readingRoomPaneCss = 'nav[data-test-nav-list] a[href$=reading-room]';
-const newRoomButtoncss = 'button[id^="clickable-add-reading-room"]';
-const editRoomButtonCss = 'button[id^="clickable-edit-reading-room"]';
-const deleteRoomCss = 'button[id^="clickable-delete-reading-room"]';
 
-// const servicePoint = 'Circ Desk 1';
-const readingRoomName = `Autotest_Reading_Room${getRandomPostfix()}`;
+const readingRoomName = 'Autotest_Room';
 const recordLoadRetries = 10;
 const recordLoadWait = 15000;
 
@@ -38,18 +41,19 @@ export default {
     }
     verifyRecordLoad();
   },
-  verifyButtonsDisabled() {
-    cy.get(newRoomButtoncss).should('not.exist');
-    cy.get(editRoomButtonCss).should('not.exist');
-    cy.get(deleteRoomCss).should('not.exist');
-  },
-  createReadingRoomViaApi(servicePointId, servicePointName, readingRoomId, publicState = true) {
+  createReadingRoomViaApi(
+    servicePointId,
+    servicePointName,
+    readingRoomId,
+    publicState = true,
+    roomName = readingRoomName,
+  ) {
     return cy.okapiRequest({
       method: 'POST',
       path: 'reading-room',
       body: {
         isPublic: publicState,
-        name: `${readingRoomName}`,
+        name: roomName,
         servicePoints: [
           {
             value: servicePointId,
@@ -58,6 +62,7 @@ export default {
         ],
         id: readingRoomId,
       },
+      isDefaultSearchParamsRequired: false,
     });
   },
   deleteReadingRoomViaApi(readingRoomId) {
@@ -65,5 +70,33 @@ export default {
       method: 'DELETE',
       path: `reading-room/${readingRoomId}`,
     });
+  },
+  verifyColumns() {
+    cy.expect([
+      MultiColumnListHeader('Room name*').exists(),
+      MultiColumnListHeader('Public').exists(),
+      MultiColumnListHeader('Associated service points*').exists(),
+    ]);
+  },
+  verifyActionsButtonAbsent() {
+    cy.expect(Button('Actions').absent());
+  },
+  verifyNewButtonAbsent() {
+    cy.expect(Button('New').absent());
+  },
+  verifyPublicCheckboxIsDisabled(roomName) {
+    cy.do(
+      Pane('Reading room access')
+        .find(MultiColumnListCell({ content: roomName }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+          cy.expect(
+            MultiColumnListRow({ rowIndexInParent: rowNumber })
+              .find(Checkbox({ ariaLabel: 'Public' }))
+              .is({ disabled: true }),
+          );
+        }),
+    );
   },
 };
