@@ -11,6 +11,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Acquisition Units', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -79,7 +80,8 @@ describe('Acquisition Units', () => {
           invoice.accountingCode = organization.erpCode;
         });
         defaultOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrders();
         Orders.createApprovedOrderForRollover(defaultOrder, true).then((orderResponse) => {
           defaultOrder.id = orderResponse.id;
           orderNumber = orderResponse.poNumber;
@@ -92,7 +94,7 @@ describe('Acquisition Units', () => {
             '4',
           );
           OrderLines.backToEditingOrder();
-          cy.visit(TopMenu.invoicesPath);
+          TopMenuNavigation.openAppFromDropdown('Invoices');
           Invoices.createRolloverInvoice(invoice, organization.name);
           Invoices.createInvoiceLineFromPol(orderNumber);
         });
@@ -141,7 +143,8 @@ describe('Acquisition Units', () => {
     Orders.deleteOrderViaApi(defaultOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
 
-    cy.visit(TopMenu.fundPath);
+    TopMenuNavigation.openAppFromDropdown('Finance');
+    FinanceHelp.selectFundsNavigation();
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();

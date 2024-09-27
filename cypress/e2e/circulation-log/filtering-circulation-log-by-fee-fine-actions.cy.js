@@ -1,5 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
@@ -13,7 +14,7 @@ import RefundReasons from '../../support/fragments/settings/users/refundReasons'
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import CancelFeeFaine from '../../support/fragments/users/cancelFeeFaine';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
@@ -55,7 +56,7 @@ describe('Circulation log', () => {
     ],
   };
   const goToCircLogApp = (filterName) => {
-    cy.visit(TopMenu.circulationLogPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
     SearchPane.waitLoading();
     SearchPane.setFilterOptionFromAccordion('fee', filterName);
     SearchPane.searchByItemBarcode(testData.itemBarcode);
@@ -85,7 +86,7 @@ describe('Circulation log', () => {
       source: testData.adminSourceRecord,
       desc,
     };
-    cy.visit(TopMenu.circulationLogPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
     SearchPane.waitLoading();
     SearchPane.setFilterOptionFromAccordion('fee', filterName);
     SearchPane.findResultRowIndexByContent(filterName).then((rowIndex) => {
@@ -116,7 +117,7 @@ describe('Circulation log', () => {
   };
 
   before('Preconditions', () => {
-    cy.getAdminToken();
+    cy.loginAsAdmin();
     cy.getAdminSourceRecord().then((record) => {
       testData.adminSourceRecord = record.toLowerCase();
     });
@@ -165,10 +166,6 @@ describe('Circulation log', () => {
           testData.userServicePoint.id,
         );
       });
-  });
-
-  beforeEach('Login', () => {
-    cy.loginAsAdmin();
   });
 
   after('Deleting created entities', () => {

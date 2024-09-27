@@ -293,6 +293,10 @@ export default {
     internal: 'inventory-storage.instance-date-types.collection.get',
     gui: 'inventory storage - get list of instance-date-types',
   },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -444,7 +448,7 @@ export default {
     internal: 'ui-users.loans.renew-override',
     gui: 'Users: User loans renew through override',
   },
-  uiUsersPermissions: {
+  uiUserCanAssignUnassignPermissions: {
     internal: 'ui-users.editperms',
     gui: 'Users: Can assign and unassign permissions to users',
   },
@@ -1044,6 +1048,10 @@ export default {
     internal: 'ui-tenant-settings.settings.reading-room-access.view',
     gui: 'Settings (tenant): Can view reading room access',
     details: ['absentInEvrk'],
+  },
+  uiReadingRoomAll: {
+    internal: 'ui-reading-room.all',
+    gui: 'Reading room access: In app - track access',
   },
   // Timers
   okapiTimersPatch: {

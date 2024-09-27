@@ -7,7 +7,6 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
@@ -38,7 +37,7 @@ describe('Invoices', () => {
       Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
     });
     invoiceLine.subTotal = -subtotalValue;
-    cy.visit(TopMenu.invoicesPath);
+    TopMenuNavigation.openAppFromDropdown('Invoices');
   });
 
   it(
@@ -54,6 +53,7 @@ describe('Invoices', () => {
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');
+      Funds.closeBudgetDetails();
       Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);

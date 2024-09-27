@@ -58,12 +58,13 @@ describe('Invoices', () => {
     cy.getProductIdTypes({ query: 'name=="ISBN"' }).then((productIdType) => {
       orderLine.details.productIds[0].productIdType = productIdType.id;
     });
-    cy.loginAsAdmin();
-    cy.getAdminToken();
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
     });
-    cy.visit(TopMenu.invoicesPath);
+    cy.loginAsAdmin({
+      path: TopMenu.invoicesPath,
+      waiter: Invoices.waitLoading,
+    });
   });
 
   afterEach(() => {

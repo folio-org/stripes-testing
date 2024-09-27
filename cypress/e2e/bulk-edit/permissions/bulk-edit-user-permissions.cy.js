@@ -16,7 +16,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.uiUserEdit.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
       ]).then((userProperties) => {
         userWthViewEditPermissions = userProperties;
         cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password, {

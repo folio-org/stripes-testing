@@ -23,7 +23,7 @@ describe('Consortia', () => {
     () => {
       cy.createTempUser([
         Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-        Permissions.uiUsersPermissions.gui,
+        Permissions.uiUserCanAssignUnassignPermissions.gui,
         Permissions.uiUserEdit.gui,
         Permissions.uiUsersPermissionsView.gui,
         Permissions.uiUsersView.gui,

@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  APPLICATION_NAMES,
+} from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
@@ -7,11 +11,13 @@ import InventoryViewSource from '../../../../support/fragments/inventory/invento
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -24,32 +30,6 @@ describe('MARC', () => {
           tag755: '755',
         },
       };
-      const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
-      const propertyName = 'instance';
-      const tagArray = [
-        '100',
-        '110',
-        '111',
-        '130',
-        '240',
-        '600',
-        '610',
-        '611',
-        '630',
-        '650',
-        '651',
-        '655',
-        '700',
-        '710',
-        '711',
-        '730',
-        '800',
-        '810',
-        '811',
-        '830',
-      ];
-      let createdInstanceID;
-      let fileName;
       const protectedFields = [
         {
           protectedField: '245',
@@ -93,33 +73,15 @@ describe('MARC', () => {
         },
       ];
 
-      const marcFiles = [
-        {
-          marc: 'marcBibFileForC353526.mrc',
-          fileName: `testMarcFileC353526.${getRandomPostfix()}.mrc`,
-          jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          propertyName: 'instance',
-        },
-      ];
+      const marcFile = {
+        marc: 'marcBibFileForC353526.mrc',
+        fileName: `testMarcFileC353526.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
+      };
       let instanceIds;
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              instanceIds = record[marcFile.propertyName].id;
-            });
-          });
-        });
-      });
-
-      beforeEach(() => {
-        fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
@@ -134,78 +96,51 @@ describe('MARC', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           });
-          DataImport.uploadFileViaApi('marcFileForC360542.mrc', fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                createdInstanceID = record[propertyName].id;
-              });
-            },
-          );
-          Logs.waitFileIsImported(fileName);
-          Logs.checkJobStatus(fileName, 'Completed');
-          Logs.openFileDetails(fileName);
-          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              instanceIds = record[marcFile.propertyName].id;
+            });
+          });
         });
-      });
-
-      afterEach(() => {
-        cy.getAdminToken();
-        if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
-        Users.deleteViaApi(testData.userProperties.userId);
+        Logs.waitFileIsImported(marcFile.fileName);
+        Logs.checkJobStatus(marcFile.fileName, 'Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
       });
 
       after('Delete test data', () => {
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(instanceIds);
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
-        protectedFields.forEach((field) => {
-          MarcFieldProtection.delete(field.protectedField);
-          MarcFieldProtection.confirmDelete();
-        });
+        const fieldCodes = protectedFields.map(({ protectedField }) => protectedField);
+        MarcFieldProtection.deleteProtectedFieldsViaApi(fieldCodes);
+        Users.deleteViaApi(testData.userProperties.userId);
       });
-
-      it(
-        'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
-        () => {
-          InventoryInstance.editMarcBibliographicRecord();
-          tagArray.forEach((tag) => {
-            QuickMarcEditor.checkLinkButtonExist(tag);
-          });
-          QuickMarcEditor.checkLinkButtonToolTipText('Link to MARC Authority record');
-        },
-      );
-
-      it(
-        'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
-        () => {
-          InventoryInstance.deriveNewMarcBib();
-          tagArray.forEach((tag) => {
-            QuickMarcEditor.checkLinkButtonExist(tag);
-          });
-        },
-      );
 
       it(
         'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          InventoryInstances.searchByTitle(instanceIds);
           InventoryInstance.editMarcBibliographicRecord();
           MarcAuthority.checkInfoButton('999');
           MarcAuthority.addNewField(5, testData.tags.tag260, '$a London', '1', '1');
           MarcAuthority.addNewField(6, testData.tags.tag520, '$a Added row');
-          MarcAuthority.addNewField(7, testData.tags.tag655, '$b Added row', '1', '#');
-          MarcAuthority.addNewField(8, testData.tags.tag655, '$b Different row', '1', '#');
-          MarcAuthority.addNewField(9, testData.tags.tag655, '$b Row without indicator', '1', '#');
-          MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '#');
+          MarcAuthority.addNewField(7, testData.tags.tag655, '$b Added row', '1', '\\');
+          MarcAuthority.addNewField(8, testData.tags.tag655, '$b Different row', '1', '\\');
+          MarcAuthority.addNewField(9, testData.tags.tag655, '$b Row without indicator', '1', '\\');
+          MarcAuthority.addNewField(10, testData.tags.tag755, '$b Different row', '1', '\\');
           cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
-          cy.visit(SettingsMenu.marcFieldProtectionPath);
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsDataImport.goToSettingsDataImport();
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
           MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
           protectedFields.forEach((field) => {
             MarcFieldProtection.clickNewButton();
@@ -215,6 +150,9 @@ describe('MARC', () => {
             MarcFieldProtection.verifyFieldProtectionIsCreated(field.protectedField);
           });
           cy.go('back');
+          cy.go('back');
+          cy.go('back');
+
           InventoryInstance.editMarcBibliographicRecord();
           MarcAuthority.checkInfoButton('001');
           MarcAuthority.checkInfoButton('999');

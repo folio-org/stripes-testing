@@ -12,6 +12,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { Approvals } from '../../support/fragments/settings/invoices';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -58,7 +59,7 @@ describe('Invoices', () => {
                 invoiceLine.subTotal = -subtotalValue;
                 cy.getAdminToken();
                 Approvals.setApprovePayValue(isApprovePayEnabled);
-                cy.visit(TopMenu.invoicesPath);
+                TopMenuNavigation.openAppFromDropdown('Invoices');
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                 Invoices.createInvoiceLine(invoiceLine);
                 Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
@@ -99,7 +100,7 @@ describe('Invoices', () => {
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();
       // check transactions after payment
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       Helper.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();

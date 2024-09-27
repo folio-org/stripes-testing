@@ -6,8 +6,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Fiscal Year', () => {
   before(() => {
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.fiscalYearPath);
+    cy.loginAsAdmin({
+      path: TopMenu.fiscalYearPath,
+      waiter: FiscalYears.waitLoading,
+    });
   });
 
   it(

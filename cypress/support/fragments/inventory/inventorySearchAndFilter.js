@@ -901,6 +901,14 @@ export default {
       });
   },
 
+  selectBrowseOptionFromClassificationGroup(option) {
+    cy.get('optgroup[label="Classification (instance)"]')
+      .contains('option', option)
+      .then((optionToSelect) => {
+        cy.get('select').select(optionToSelect.val());
+      });
+  },
+
   checkSearchQueryText(text) {
     cy.expect(keywordInput.has({ value: text }));
   },

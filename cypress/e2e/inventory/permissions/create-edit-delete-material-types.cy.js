@@ -1,8 +1,13 @@
 import { Permissions } from '../../../support/dictionary';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsInventory, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Permissions', () => {
@@ -29,6 +34,9 @@ describe('Inventory', () => {
       'C505 Settings (Inventory): Create, edit, delete material types (folijet)',
       { tags: ['smoke', 'folijet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(SETTINGS_TABS.MATERIAL_TYPES);
         cy.visit(SettingsMenu.materialTypePath);
         MaterialTypes.checkAvailableOptions();
         MaterialTypes.createMaterialType(materialTypeName);

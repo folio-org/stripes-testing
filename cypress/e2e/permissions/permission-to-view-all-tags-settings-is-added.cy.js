@@ -36,7 +36,7 @@ describe('Permissions', () => {
               permissions.uiUserCanEnableDisableTags.gui,
               permissions.uiUserEdit.gui,
               permissions.uiUsersView.gui,
-              permissions.uiUsersPermissions.gui,
+              permissions.uiUserCanAssignUnassignPermissions.gui,
               permissions.uiViewTagsSettings.gui,
             ],
             patronGroup.name,

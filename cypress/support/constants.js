@@ -1,9 +1,18 @@
 export const APPLICATION_NAMES = {
+  BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
+  EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
+  USERS: 'Users',
+  MARC_AUTHORITY: 'MARC authority',
+  ORDERS: 'Orders',
+  CHECK_IN: 'Check in',
+  CHECK_OUT: 'Check out',
+  REQUESTS: 'Requests',
+  READING_ROOM_ACCESS: 'Reading room access',
 };
 
 export const REQUEST_METHOD = {
@@ -927,4 +936,11 @@ export const CAPABILITY_ACTIONS = {
   DELETE: 'Delete',
   EXECUTE: 'Execute',
   MANAGE: 'Manage',
+};
+
+export const INVENTORY_DEFAULT_SORT_OPTIONS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  DATE: 'Date',
+  RELEVANCE: 'Relevance',
 };

@@ -1,5 +1,9 @@
 import { MultiColumnListCell } from '../../../../interactors';
-import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -7,6 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -63,7 +68,7 @@ describe('Inventory', () => {
         // login as a different user
         cy.login(firstUser.username, firstUser.password);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

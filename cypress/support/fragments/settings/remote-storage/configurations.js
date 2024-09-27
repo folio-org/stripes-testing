@@ -328,6 +328,7 @@ export default {
   },
   closeEditConfiguration() {
     cy.do([editConfigurationPane.find(xButton).click()]);
+    cy.wait(1000);
   },
 
   clickDeleteRemoteStorage(name) {

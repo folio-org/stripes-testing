@@ -1488,8 +1488,8 @@ export default {
       acquisitionMethodButton.click(),
     ]);
     cy.wait(3000);
-    cy.do([SelectionOption(AUMethod).click()]);
     cy.do([
+      SelectionOption(AUMethod).click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),

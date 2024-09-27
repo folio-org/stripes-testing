@@ -6,6 +6,8 @@ import ExportManagerSearchPane from '../../../support/fragments/exportManager/ex
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 
@@ -36,7 +38,7 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         });
     });
 

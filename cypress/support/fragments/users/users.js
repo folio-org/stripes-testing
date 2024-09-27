@@ -37,6 +37,7 @@ const defaultUser = {
   // should be defined
   barcode: undefined,
   personal: {
+    preferredFirstName: 'preferredName',
     preferredContactTypeId: '002',
     firstName: 'testPermFirst',
     middleName: 'testMiddleName',
@@ -64,6 +65,7 @@ export default {
       lastName: response.body.personal.lastName,
       firstName: response.body.personal.firstName,
       middleName: response.body.personal.middleName,
+      preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
   deleteViaApi: (userId) => cy
