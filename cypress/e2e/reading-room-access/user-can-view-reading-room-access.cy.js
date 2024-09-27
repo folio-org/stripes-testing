@@ -1,9 +1,10 @@
 import uuid from 'uuid';
 import Permissions from '../../support/dictionary/permissions';
+import SettingsReadingRoom from '../../support/fragments/settings/tenant/general/readingRoom';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TenantPane from '../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
-import SettingsReadingRoom from '../../support/fragments/settings/tenant/general/readingRoom';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Reading Room Access', () => {
@@ -51,7 +52,10 @@ describe('Reading Room Access', () => {
     cy.createTempUser([Permissions.uiSettingsTenantReadingRoom.gui]).then((userProperties) => {
       testData.user = userProperties;
 
-      cy.login(testData.user.username, testData.user.password);
+      cy.login(testData.user.username, testData.user.password, {
+        path: SettingsMenu.tenantPath,
+        waiter: TenantPane.waitLoading,
+      });
     });
   });
 
@@ -67,7 +71,6 @@ describe('Reading Room Access', () => {
   });
 
   it('C466319 User can view reading room access (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-    cy.visit(SettingsMenu.tenantPath);
     SettingsReadingRoom.loadReadingRoomRecord();
     SettingsReadingRoom.verifyColumns();
     SettingsReadingRoom.verifyActionsButtonAbsent();
