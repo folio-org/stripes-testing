@@ -18,6 +18,11 @@ export default {
     cy.do(routingListConfigurationSection.find(Button('Edit')).click());
   },
 
+  editIsDisabled() {
+    cy.wait(2000);
+    cy.expect(routingListConfigurationSection.find(Button('Edit')).has({ disabled: true }));
+  },
+
   preview() {
     cy.wait(2000);
     cy.do(routingListConfigurationSection.find(Button('Preview')).click());
