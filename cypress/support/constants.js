@@ -12,6 +12,7 @@ export const APPLICATION_NAMES = {
   CHECK_IN: 'Check in',
   CHECK_OUT: 'Check out',
   REQUESTS: 'Requests',
+  READING_ROOM_ACCESS: 'Reading room access',
 };
 
 export const REQUEST_METHOD = {
