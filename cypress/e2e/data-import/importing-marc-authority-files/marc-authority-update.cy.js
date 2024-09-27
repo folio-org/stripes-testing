@@ -1,4 +1,8 @@
-import { EXISTING_RECORD_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { 
+  EXISTING_RECORD_NAMES, 
+  DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -23,6 +27,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -187,13 +192,13 @@ describe('Data Import', () => {
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy('Personal name', testData.authorityTitle);
         MarcAuthorities.selectAllRecords();
         MarcAuthorities.exportSelected();
         ExportFile.downloadCSVFile(testData.csvFile, 'QuickAuthorityExport*');
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -205,7 +210,7 @@ describe('Data Import', () => {
           ['c1926-2022', 'qQueen of G. Britain'],
         );
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
@@ -214,11 +219,11 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy('Keyword', 'Queen of G. Britain');
         MarcAuthority.contains('$a C374186 Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyRecordStatus('Automated linking update');

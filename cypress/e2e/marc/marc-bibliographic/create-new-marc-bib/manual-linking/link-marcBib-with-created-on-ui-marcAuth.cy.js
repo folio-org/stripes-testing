@@ -6,6 +6,8 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -112,7 +114,7 @@ describe('MARC', () => {
             MarcAuthority.contains(newFields[1].content);
 
             // Creating marc bib part and linking
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,

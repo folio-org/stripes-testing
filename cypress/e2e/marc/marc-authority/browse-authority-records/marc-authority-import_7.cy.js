@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
@@ -7,6 +7,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -62,7 +63,7 @@ describe('MARC', () => {
             },
           );
 
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
           MarcAuthorities.checkSearchOption('keyword');
           MarcAuthorities.searchByParameter(
             testData.searchOptionKeyword,

@@ -2,8 +2,9 @@ import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
@@ -41,7 +42,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
         testData.user = resUserProperties;
         cy.login(resUserProperties.username, resUserProperties.password);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       });
     });
 
