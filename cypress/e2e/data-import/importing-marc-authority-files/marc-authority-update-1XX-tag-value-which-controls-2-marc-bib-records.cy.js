@@ -4,6 +4,7 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -32,6 +33,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -245,7 +247,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record found');
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -256,7 +258,7 @@ describe('Data Import', () => {
           testData.marcFileForModify,
           testData.modifiedMarcFile,
         );
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
@@ -271,14 +273,14 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.verifyEmptyNumberOfTitles();
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthority.contains(testData.tag110);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkInstanceTitle(twoMarcBibsToLink[0].marcBibRecord);
