@@ -50,6 +50,7 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           invalidItemBarcodes,
         );
+        cy.wait(3000);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
