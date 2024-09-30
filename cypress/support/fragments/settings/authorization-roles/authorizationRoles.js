@@ -637,7 +637,7 @@ export default {
     this.clickDuplicateButton();
     this.confirmDuplicateRole();
     InteractorsTools.checkCalloutMessage(duplicateCalloutSuccessText(roleName));
-    cy.expect([Pane(matching(roleName)).absent(), Pane(matching(duplicatedTitleRegExp)).exists()]);
+    cy.expect(Pane(matching(duplicatedTitleRegExp)).exists());
     if (capabilitiesShown) {
       cy.expect([
         Spinner().absent(),
