@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -17,7 +18,10 @@ import NewFieldMappingProfile from '../../../support/fragments/settings/dataImpo
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
@@ -79,14 +83,16 @@ describe('Data Import', () => {
         const actionProfileErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;
         const mappingProfileErrorMessage = `New record not created: The field mapping profile '${mappingProfile.name}' already exists`;
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName(jobProfile.actionProfile);
         NewJobProfile.saveAndClose();
         NewJobProfile.checkPreviouslyPopulatedDataIsDisplayed(jobProfile, jobProfile.actionProfile);
         NewJobProfile.checkCalloutMessage(jobProfileErrorMessage);
 
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.search(matchProfile.name);
         MatchProfileView.duplicate();
         NewMatchProfile.verifyNewMatchProfileFormIsOpened();
@@ -100,7 +106,7 @@ describe('Data Import', () => {
         );
         NewMatchProfile.checkCalloutMessage(matchProfileErrorMessage);
 
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.search(actionProfile.name);
         ActionProfiles.selectActionProfileFromList(actionProfile.name);
         ActionProfileView.duplicate();
@@ -109,7 +115,7 @@ describe('Data Import', () => {
         NewActionProfile.verifyPreviouslyCreatedDataIsDisplayed(actionProfile);
         NewActionProfile.verifyCalloutMessage(actionProfileErrorMessage);
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);
         FieldMappingProfileView.duplicate();

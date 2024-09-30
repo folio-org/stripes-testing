@@ -74,7 +74,6 @@ describe('Data Import', () => {
       'C11113 Filter the "View all" log screen (folijet)',
       { tags: ['smokeFlaky', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
 

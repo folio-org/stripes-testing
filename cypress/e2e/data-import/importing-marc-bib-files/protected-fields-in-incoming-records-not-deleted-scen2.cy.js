@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, TARGET_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
@@ -9,7 +9,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
@@ -85,6 +85,7 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
+        cy.visit(SettingsMenu.marcFieldProtectionPath);
       });
     });
 
@@ -101,7 +102,6 @@ describe('Data Import', () => {
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
       { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated('NcD');
@@ -114,7 +114,7 @@ describe('Data Import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.importWithOclc(oclcForImport);
         InstanceRecordView.verifyInstancePaneExists();
         cy.wait(2000);

@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, TARGET_PROFILE_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  TARGET_PROFILE_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
@@ -7,8 +11,12 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -55,8 +63,8 @@ describe('Data Import', () => {
         );
 
         cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
         });
       });
     });
@@ -77,12 +85,13 @@ describe('Data Import', () => {
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 
-        cy.visit(SettingsMenu.targetProfilesPath);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
+
         Z3950TargetProfiles.openTargetProfile();
         Z3950TargetProfiles.editOclcWorldCat(
           OCLCAuthentication,
@@ -90,7 +99,7 @@ describe('Data Import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         cy.wait(1000);
         InventorySearchAndFilter.selectSearchResultItem();

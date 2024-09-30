@@ -76,6 +76,7 @@ function fillExistingRecordSections({ existingRecordFields }) {
 }
 
 function fillName(profileName) {
+  cy.wait(1500);
   cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
   cy.wait(7000);

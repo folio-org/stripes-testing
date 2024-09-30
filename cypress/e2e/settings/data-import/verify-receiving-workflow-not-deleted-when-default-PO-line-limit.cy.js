@@ -1,17 +1,22 @@
 import {
   ACQUISITION_METHOD_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
 
@@ -71,13 +76,15 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
-        cy.visit(SettingsMenu.ordersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
         SettingsOrders.waitLoadingOrderSettings();
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
         // #2 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
 
@@ -96,14 +103,16 @@ describe('Data Import', () => {
         FieldMappingProfileView.verifyMappingProfileOpened();
 
         // #6 Navigate to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit" -> Change value to any value different from defaulted -> Click "Save" button
-        cy.visit(SettingsMenu.ordersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
         SettingsOrders.waitLoadingOrderSettings();
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
         SettingsOrders.setPurchaseOrderLinesLimit(newPurchaseOrderLinesLimit);
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(newPurchaseOrderLinesLimit);
 
         // #7 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Find and select the field mapping profile from step 3
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(
           `"${newPurchaseOrderLinesLimit}"`,

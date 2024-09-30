@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -8,8 +8,11 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ReImportModal from '../../../support/fragments/inventory/reImportModal';
 import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -60,7 +63,9 @@ describe('Inventory', () => {
         );
       });
       cy.loginAsAdmin();
-      cy.visit(SettingsMenu.targetProfilesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsInventory.goToSettingsInventory();
+      SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
       Z3950TargetProfiles.openTargetProfile();
       ViewTargetProfile.verifyTargetProfileForm(
         targetProfile.name,
