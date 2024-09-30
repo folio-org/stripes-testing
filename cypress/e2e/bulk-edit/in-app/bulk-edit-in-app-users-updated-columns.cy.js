@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Patron group', newPatronGroup);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,${newEmail},,,,,002,,,${futureDatewithDashes}`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,${newEmail},,,,,002,,,${futureDatewithDashes}`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -86,7 +86,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,${newEmail},,,,,002,,,${futureDatewithDashes}`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,${newEmail},,,,,002,,,${futureDatewithDashes}`,
         ]);
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);

@@ -1078,7 +1078,7 @@ export default {
   },
   exportManagerDownloadAndResendFiles: {
     internal: 'ui-export-manager.jobs.downloadAndResend',
-    gui: 'Export manager: Download and re-send files',
+    gui: 'Export manager: Download and resend files',
   },
   exportManagerView: {
     internal: 'ui-export-manager.export-manager.view',
