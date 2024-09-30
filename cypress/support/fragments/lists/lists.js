@@ -579,7 +579,6 @@ export default {
       const fileRows = fileContent.split('\n');
 
       expect(fileRows[0].trim()).to.equal(header);
-      expect(fileRows[0].trim()).to.contain(header);
     });
   },
 
