@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('Add new list', () => {
+  describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C411693-${getTestEntityValue('test_list')}`,
-      description: `C411693-${getTestEntityValue('test_list_description')}`,
+      name: `C418651-${getTestEntityValue('test_list')}`,
+      description: `C418651-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -53,9 +53,10 @@ describe('lists', () => {
     });
 
     it('C418651 Lists (Enable): Can view lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.verifyNewButtonDoesNotExist();
       Lists.verifyListIsPresent(listData.name);
       Lists.selectActiveLists();
@@ -72,11 +73,6 @@ describe('lists', () => {
       Lists.verifyDuplicateListButtonDoesNotExist();
       Lists.verifyDeleteListButtonDoesNotExist();
       Lists.verifyExportListButtonDoesNotExist();
-
-      // Lists.editList();
-      // Lists.openActions();
-      // Lists.verifyDeleteListButtonIsActive();
-      // Lists.verifyExportListButtonIsActive();
     });
   });
 });

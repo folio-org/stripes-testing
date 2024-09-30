@@ -5,7 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('Add new list', () => {
+  describe('permissions', () => {
     const userData = {};
     const listData = {
       name: `C411693-${getTestEntityValue('test_list')}`,
@@ -56,9 +56,10 @@ describe('lists', () => {
       'C411694 C411693 Lists (Admin): All permissions (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.verifyNewButtonIsEnabled();
         Lists.verifyListIsPresent(listData.name);
         Lists.selectActiveLists();
