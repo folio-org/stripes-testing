@@ -14,6 +14,8 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import SettingOrdersNavigationMenu from '../../../support/fragments/settings/orders/settingOrdersNavigationMenu';
 
 describe('orders: Settings', () => {
   const order = {
@@ -111,11 +113,13 @@ describe('orders: Settings', () => {
       location.libraryId,
       location.id,
     );
-    cy.visit(SettingsMenu.ordersInstanceStatusPath);
+    TopMenuNavigation.openAppFromDropdown('Settings');
+    SettingsMenu.selectOrders();
+    SettingOrdersNavigationMenu.selectInstanceStatus();
     SettingsOrders.selectInstanceStatus(otherInstanceStatus);
-    cy.visit(SettingsMenu.ordersInstanceTypePath);
+    SettingOrdersNavigationMenu.selectInstanceType();
     SettingsOrders.selectInstanceType(otherInstanceType);
-    cy.visit(SettingsMenu.ordersLoanTypePath);
+    SettingOrdersNavigationMenu.selectLoanType();
     SettingsOrders.selectLoanType(selectedLoanType);
     Users.deleteViaApi(user.userId);
   });
@@ -125,11 +129,12 @@ describe('orders: Settings', () => {
     { tags: ['smoke', 'thunderjet'] },
     () => {
       SettingsOrders.selectInstanceStatus(instanceStatus);
-      cy.visit(SettingsMenu.ordersInstanceTypePath);
+      SettingOrdersNavigationMenu.selectInstanceType();
       SettingsOrders.selectInstanceType(instanceType);
-      cy.visit(SettingsMenu.ordersLoanTypePath);
+      SettingOrdersNavigationMenu.selectLoanType();
       SettingsOrders.selectLoanType(loanType);
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrders();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

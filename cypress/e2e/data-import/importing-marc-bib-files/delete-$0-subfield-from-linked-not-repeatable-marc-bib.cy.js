@@ -4,6 +4,7 @@ import {
   LOCATION_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -27,12 +28,14 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
+  SettingsDataImport,
 } from '../../../support/fragments/settings/dataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -168,7 +171,7 @@ describe('Data Import', () => {
             });
           })
           .then(() => {
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -201,7 +204,7 @@ describe('Data Import', () => {
                   mappingProfile.id = mappingProfileResponse.body.id;
                 });
                 // create Field mapping profile
-                cy.visit(SettingsMenu.mappingProfilePath);
+                SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
                 FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);
                 FieldMappingProfileView.edit();
                 NewFieldMappingProfile.addFieldToMarcBibUpdate(field);
@@ -262,7 +265,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -278,7 +281,7 @@ describe('Data Import', () => {
         );
 
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
@@ -289,7 +292,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();

@@ -1,3 +1,5 @@
+import { NavListItem } from '../../../interactors';
+
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
   // TODO: add separated scenarios related with SettingsMenu implementation
@@ -125,4 +127,8 @@ export default {
   tagsGeneralPath: 'settings/tags/general',
   // Software versions
   softwareVersionsPath: 'settings/about',
+
+  selectOrders() {
+    cy.do(NavListItem('Orders').click());
+  },
 };
