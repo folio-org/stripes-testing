@@ -1,9 +1,19 @@
 export const APPLICATION_NAMES = {
+  BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
+  EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
+  USERS: 'Users',
+  MARC_AUTHORITY: 'MARC authority',
+  ORDERS: 'Orders',
+  CHECK_IN: 'Check in',
+  CHECK_OUT: 'Check out',
+  REQUESTS: 'Requests',
+  READING_ROOM_ACCESS: 'Reading room access',
+  EHOLDINGS: 'eHoldings',
 };
 
 export const REQUEST_METHOD = {
@@ -900,4 +910,11 @@ export const HOLDING_NOTE_TYPES = {
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
+};
+
+export const INVENTORY_DEFAULT_SORT_OPTIONS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  DATE: 'Date',
+  RELEVANCE: 'Relevance',
 };

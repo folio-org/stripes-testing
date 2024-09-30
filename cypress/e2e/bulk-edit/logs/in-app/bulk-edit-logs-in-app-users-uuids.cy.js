@@ -8,6 +8,8 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 let userWithoutPermissions;
@@ -136,7 +138,7 @@ describe('bulk-edit', () => {
             false,
           );
 
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByUsername(user.username);
           Users.verifyPatronGroupOnUserDetailsPane('staff');
           UsersSearchPane.searchByUsername(userWithoutPermissions.username);

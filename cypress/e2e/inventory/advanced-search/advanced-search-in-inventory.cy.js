@@ -85,26 +85,28 @@ describe('Inventory', () => {
           });
         });
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            cy.getAdminToken();
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(createdRecordIDs[3]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.pressAddHoldingsButton();
-              InventoryNewHoldings.fillRequiredFields();
-              HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
-              InventoryNewHoldings.saveAndClose();
-              InventoryInstance.waitLoading();
-              // wait to make sure holdings created - otherwise added item might not be saved
-              cy.wait(1500);
-              InventoryInstance.addItem();
-              InventoryInstance.fillItemRequiredFields();
-              InventoryInstance.fillItemBarcode(testData.itemBarcode);
-              InventoryInstance.saveItemDataAndVerifyExistence('-');
-            });
-          },
-        );
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          InventoryInstances.searchByTitle(createdRecordIDs[3]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.pressAddHoldingsButton();
+          InventoryNewHoldings.fillRequiredFields();
+          HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
+          InventoryNewHoldings.saveAndClose();
+          InventoryInstance.waitLoading();
+          // wait to make sure holdings created - otherwise added item might not be saved
+          cy.wait(1500);
+          InventoryInstance.addItem();
+          InventoryInstance.fillItemRequiredFields();
+          InventoryInstance.fillItemBarcode(testData.itemBarcode);
+          InventoryInstance.saveItemDataAndVerifyExistence('-');
+        });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 

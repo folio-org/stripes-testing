@@ -76,6 +76,7 @@ const titleDataAccordion = Accordion('Title data');
 const contributorAccordion = Accordion('Contributor');
 const acquisitionAccordion = Accordion('Acquisition');
 const subjectAccordion = Accordion('Subject');
+const electronicAccessAccordion = Accordion('Electronic access');
 const listInstanceAcquisitions = acquisitionAccordion.find(
   MultiColumnList({ id: 'list-instance-acquisitions' }),
 );
@@ -349,6 +350,24 @@ const waitInstanceRecordViewOpened = (title) => {
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
+const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {
+  cy.expect(
+    electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
+      .exists(),
+  );
+  cy.expect(
+    electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists(),
+  );
+  cy.expect(
+    electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: linkText }))
+      .exists(),
+  );
+};
+
 export default {
   validOCLC,
   pressAddHoldingsButton,
@@ -368,6 +387,7 @@ export default {
   verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
+  checkElectronicAccessValues,
 
   waitInventoryLoading() {
     cy.expect(instanceDetailsSection.exists());
@@ -518,10 +538,16 @@ export default {
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
-    cy.wrap(QuickMarcEditorRow({ tagValue: tag }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   verifyAndClickUnlinkIcon(tag) {
@@ -531,17 +557,27 @@ export default {
   },
 
   clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {
-    cy.wrap(Accordion(accordion).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      Accordion(accordion)
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   clickViewAuthorityIconDisplayedInMarcViewPane() {
-    cy.wrap(marcViewPaneContent.find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.wrap(
+      marcViewPaneContent.find(Link()).perform((element) => {
+        if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+          element.removeAttribute('target');
+        }
+        element.click();
+      }),
+    );
   },
 
   marcAuthViewIconClickUsingId(id) {
@@ -740,11 +776,11 @@ export default {
     cy.expect([findAuthorityModal.absent(), quickMarcEditorPane.exists()]);
   },
 
-  checkElectronicAccess: () => {
+  checkElectronicAccess: (value = 'No value set-') => {
     cy.expect(
       Accordion('Electronic access')
         .find(MultiColumnList({ id: 'list-electronic-access' }))
-        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: 'No value set-' }))
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: value }))
         .exists(),
     );
   },
@@ -1154,6 +1190,65 @@ export default {
       cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
   },
+  checkAllInstanceDetails(
+    instanceInformation,
+    statisticalCode,
+    adminNote,
+    instanceTitle,
+    instanceIdentifiers,
+    contributor,
+    publication,
+    formatUI,
+    instanceNote,
+    subjects,
+    electronicAccess,
+    classifications,
+  ) {
+    instanceInformation.forEach(({ key, value }) => {
+      cy.expect(instanceDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+    instanceIdentifiers.forEach((ident) => {
+      this.checkIdentifier(ident.value);
+    });
+    this.verifyContributor(0, 0, contributor.nameType);
+    verifyInstancePublisher(publication);
+    checkInstanceNotes(instanceNote.type, instanceNote.value);
+    subjects.forEach((subject) => {
+      verifySubjectHeading(subject);
+    });
+    checkElectronicAccessValues(
+      electronicAccess.relationship,
+      electronicAccess.uri,
+      electronicAccess.linkText,
+    );
+    cy.expect([
+      Pane({ titleLabel: including(instanceTitle) }).exists(),
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: statisticalCode }))
+        .exists(),
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(MultiColumnListCell({ content: adminNote }))
+        .exists(),
+    ]);
+    formatUI.forEach((format) => {
+      cy.expect(
+        MultiColumnList({ id: 'list-formats' })
+          .find(MultiColumnListCell({ content: format }))
+          .exists(),
+      );
+    });
+    classifications.forEach((classification) => {
+      cy.expect([
+        MultiColumnList({ id: 'list-classifications' })
+          .find(MultiColumnListCell({ content: classification.type }))
+          .exists(),
+        MultiColumnList({ id: 'list-classifications' })
+          .find(MultiColumnListCell({ content: classification.value }))
+          .exists(),
+      ]);
+    });
+  },
+
   getId() {
     cy.url()
       .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
@@ -1330,15 +1425,14 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
-  overlayWithOclc: (
-    oclc,
-    defaultJobProfile = 'Inventory Single Record - Default Update Instance (Default)',
-  ) => {
-    cy.do([
-      Select({ name: 'selectedJobProfileId' }).choose(defaultJobProfile),
-      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
-      singleRecordImportModal.find(Button('Import')).click(),
-    ]);
+  overlayWithOclc: (oclc) => {
+    cy.do(
+      Select({ name: 'selectedJobProfileId' }).choose(
+        'Inventory Single Record - Default Update Instance (Default)',
+      ),
+    );
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
