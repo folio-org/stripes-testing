@@ -97,6 +97,10 @@ export default {
     cy.wait(500);
   },
 
+  verifyActionsButtonDoesNotExist() {
+    cy.expect(actions.absent());
+  },
+
   refreshList() {
     cy.do(refreshList.click());
     cy.wait(3000);
