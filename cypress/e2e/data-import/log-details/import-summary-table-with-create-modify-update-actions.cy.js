@@ -309,7 +309,7 @@ describe('Data Import', () => {
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitLoading,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
     });

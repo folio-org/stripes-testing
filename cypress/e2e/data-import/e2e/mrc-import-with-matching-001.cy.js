@@ -154,6 +154,8 @@ describe('Data Import', () => {
           });
 
           // create Match profile
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsDataImport.goToSettingsDataImport();
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(matchProfile);
 
@@ -189,7 +191,7 @@ describe('Data Import', () => {
             FileDetails.columnNameInResultList.instance,
           );
 
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           cy.wait(2000);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           // ensure the fields created in Field mapping profile exists in inventory

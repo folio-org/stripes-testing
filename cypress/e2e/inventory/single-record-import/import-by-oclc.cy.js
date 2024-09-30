@@ -16,6 +16,9 @@ const OCLCAuthentication = '100481406/PAOLF';
 describe('Inventory', () => {
   describe('Single record import', () => {
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.inventoryAll.gui,
@@ -29,9 +32,8 @@ describe('Inventory', () => {
     beforeEach('Login', () => {
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitLoading,
+        waiter: InventoryInstances.waitContentLoading,
       });
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
     });
 
     after('Delete test data', () => {

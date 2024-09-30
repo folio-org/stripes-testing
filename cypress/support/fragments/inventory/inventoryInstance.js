@@ -510,7 +510,9 @@ export default {
   },
 
   editInstance: () => {
+    cy.wait(1000);
     cy.do(actionsButton.click());
+    cy.wait(1000);
     cy.do(editInstanceButton.click());
     cy.expect(Pane({ id: 'instance-form' }).exists());
 

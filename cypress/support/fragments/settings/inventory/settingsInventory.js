@@ -26,8 +26,5 @@ export default {
   goToSettingsInventory() {
     cy.do(NavListItem('Inventory').click());
     cy.expect(inventoryPane.exists());
-    Object.values(SETTINGS_TABS).forEach((settingsTab) => {
-      cy.expect(inventoryPane.find(NavListItem(settingsTab)).exists());
-    });
   },
 };

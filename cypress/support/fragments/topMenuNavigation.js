@@ -18,6 +18,7 @@ export default {
     cy.expect(AppList().absent());
   },
   openAppFromDropdown(appName) {
+    cy.wait(2000);
     cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
     cy.wait(2000);
     cy.do(Link(appName).click());

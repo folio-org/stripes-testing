@@ -129,7 +129,7 @@ describe('Data Import', () => {
         });
 
         // create job profile
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create instance');
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);

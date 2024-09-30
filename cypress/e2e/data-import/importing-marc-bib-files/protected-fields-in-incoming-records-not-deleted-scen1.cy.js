@@ -89,7 +89,9 @@ describe('Data Import', () => {
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 
-        SettingsInventory.goToSettingsInventory(SETTINGS_TABS.TARGET_PROFILES);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
+
         Z3950TargetProfiles.openTargetProfile();
         Z3950TargetProfiles.editOclcWorldCat(
           OCLCAuthentication,

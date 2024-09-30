@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitLoading,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
     });

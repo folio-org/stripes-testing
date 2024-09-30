@@ -382,12 +382,13 @@ describe('Data Import', () => {
         });
 
         // create mapping and action profiles
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
         collectionOfProfiles.forEach((profile) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
           FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);

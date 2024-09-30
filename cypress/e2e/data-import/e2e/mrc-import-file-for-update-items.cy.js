@@ -385,7 +385,7 @@ describe('Data Import', () => {
           instanceHRID = initialInstanceHrId;
 
           // download .csv file
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InventorySearchAndFilter.saveUUIDs();
           // need to create a new file with instance UUID because tests are runing in multiple threads
@@ -400,10 +400,12 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+        ExportFieldMappingProfiles.verifyProfileNameOnTheList(exportMappingProfile.name);
 
         ExportJobProfiles.goToJobProfilesTab();
-        ExportJobProfiles.waitLoading();
+        cy.wait(1500);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
+        ExportJobProfiles.verifyJobProfileInTheTable(jobProfileNameForExport);
 
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
@@ -462,6 +464,7 @@ describe('Data Import', () => {
 
         // upload the exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);
