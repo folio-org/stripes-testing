@@ -1,10 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
 import ExportFileHelper from '../../../support/fragments/data-export/exportFile';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
@@ -16,7 +17,7 @@ describe('Data Export', () => {
         (userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password);
-          cy.visit(TopMenu.dataExportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           FileManager.createFile(`cypress/fixtures/${emptyFile}`);
         },
       );

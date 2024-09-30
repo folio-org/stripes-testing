@@ -10,17 +10,17 @@ import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
-    let preconditioUserId;
+    let preconditionUserId;
     let id;
     let instanceId;
     const filePath = 'oneMarcBib.mrc';
     const uniquePartOfFileName = getRandomPostfix();
     const uniqueFileName = `C11112 autotestFileName${uniquePartOfFileName}.mrc`;
-    const uniqueFileNameForSearch = `C11112 autotestFileName${uniquePartOfFileName}_1.mrc`;
+    const uniqueFileNameForSearch = uniqueFileName.replace('.mrc', '');
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-        preconditioUserId = userProperties.userId;
+        preconditionUserId = userProperties.userId;
 
         DataImport.uploadFileViaApi(
           filePath,
@@ -44,7 +44,7 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(preconditioUserId);
+      Users.deleteViaApi(preconditionUserId);
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 

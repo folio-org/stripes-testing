@@ -47,6 +47,7 @@ describe('remote-storage-configuration', () => {
         false,
       );
       Configurations.closeEditConfiguration();
+      Configurations.clickCloseWithoutSavingButtonInAreYouSureForm();
       Configurations.deleteRemoteStorage(newName);
     });
   });
@@ -72,6 +73,7 @@ describe('remote-storage-configuration', () => {
       Configurations.editConfiguration(name, { timingInput: timingToEdit });
       Configurations.closeWithoutSaving();
       Configurations.editConfiguration(name, { urlInput: urlToEdit, timingInput: '1' });
+      Configurations.closeWithSaving();
 
       // delete created configuration
       Configurations.deleteRemoteStorage(name);

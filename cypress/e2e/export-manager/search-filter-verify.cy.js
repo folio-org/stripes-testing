@@ -8,13 +8,14 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let userData = {};
 const testData = {};
@@ -89,7 +90,9 @@ describe('Export Manager', () => {
       });
 
     // Creating a bulk edit job
-    cy.visit(TopMenu.bulkEditPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+    BulkEditSearchPane.waitLoading();
+
     BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
     FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, userData.userId);
@@ -97,13 +100,15 @@ describe('Export Manager', () => {
     BulkEditSearchPane.waitFileUploading();
 
     // Creating a circulation log job
-    cy.visit(TopMenu.circulationLogPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+    SearchPane.waitLoading();
     SearchPane.searchByCheckedOut();
+    cy.wait(500);
     SearchPane.exportResults();
     InteractorsTools.checkCalloutMessage(exportRequestedCalloutMessage);
     InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);
 
-    cy.visit(TopMenu.exportManagerPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
   });
 
   after('check in item, delete instance, user and files', () => {

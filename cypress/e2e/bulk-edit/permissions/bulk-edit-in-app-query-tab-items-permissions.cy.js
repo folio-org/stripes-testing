@@ -17,7 +17,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
         UserEdit.addPermissions([
           permissions.bulkEditQueryView.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();

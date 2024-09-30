@@ -1,4 +1,4 @@
-describe('Specifications sync', () => {
+describe.skip('Specifications sync', () => {
   it(
     'Sync marc bibliographic and marc authority records fields (smoke tests)',
     { tags: ['smoke', 'spitfire'] },

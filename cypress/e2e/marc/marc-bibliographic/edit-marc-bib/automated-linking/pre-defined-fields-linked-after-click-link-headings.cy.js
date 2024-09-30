@@ -151,9 +151,7 @@ describe('MARC', () => {
 
         const createdRecordsIDs = [];
 
-        const autoLinkingEnabledFields = [
-          100, 240, 700, 710, 711, 730, 800, 810, 811, 830,
-        ];
+        const autoLinkingEnabledFields = [100, 240, 700, 710, 711, 730, 800, 810, 811, 830];
         const autoLinkingDisabledFields = [600, 610, 611, 630, 650, 651, 655];
         const rowIndexOfLinkedFields = [32, 33, 82, 84, 85, 86, 87, 88, 89, 90];
 
@@ -279,7 +277,7 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-            QuickMarcEditor.updateExistingField(fields[14].tag, '$a Delaware $0 n84745425C389486');
+            QuickMarcEditor.updateExistingField(fields[11].tag, '$a Delaware $0 n84745425C389486');
             cy.wait(1000);
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');

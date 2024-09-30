@@ -33,22 +33,22 @@ describe('Inventory', () => {
 
     const marcFiles = [
       {
-        marc: 'marcBibFileC400610.mrc',
-        fileName: `testMarcFileC400610.${getRandomPostfix()}.mrc`,
+        marc: 'marcBibFileC466156.mrc',
+        fileName: `C466156 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 2,
         propertyName: 'instance',
       },
       {
         marc: 'marcBibFileC400616.mrc',
-        fileName: `testMarcFileC400616.${getRandomPostfix()}.mrc`,
+        fileName: `C400616 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 4,
         propertyName: 'instance',
       },
       {
         marc: 'marcBibFileC414977.mrc',
-        fileName: `testMarcFileC414977.${getRandomPostfix()}.mrc`,
+        fileName: `C414977 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numberOfRecords: 9,
         propertyName: 'instance',
@@ -85,26 +85,28 @@ describe('Inventory', () => {
           });
         });
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            cy.getAdminToken();
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(createdRecordIDs[3]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.pressAddHoldingsButton();
-              InventoryNewHoldings.fillRequiredFields();
-              HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
-              InventoryNewHoldings.saveAndClose();
-              InventoryInstance.waitLoading();
-              // wait to make sure holdings created - otherwise added item might not be saved
-              cy.wait(1500);
-              InventoryInstance.addItem();
-              InventoryInstance.fillItemRequiredFields();
-              InventoryInstance.fillItemBarcode(testData.itemBarcode);
-              InventoryInstance.saveItemDataAndVerifyExistence('-');
-            });
-          },
-        );
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          InventoryInstances.searchByTitle(createdRecordIDs[3]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.pressAddHoldingsButton();
+          InventoryNewHoldings.fillRequiredFields();
+          HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
+          InventoryNewHoldings.saveAndClose();
+          InventoryInstance.waitLoading();
+          // wait to make sure holdings created - otherwise added item might not be saved
+          cy.wait(1500);
+          InventoryInstance.addItem();
+          InventoryInstance.fillItemRequiredFields();
+          InventoryInstance.fillItemBarcode(testData.itemBarcode);
+          InventoryInstance.saveItemDataAndVerifyExistence('-');
+        });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 

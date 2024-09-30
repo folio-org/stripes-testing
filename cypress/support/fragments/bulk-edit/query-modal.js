@@ -21,6 +21,7 @@ const runQueryButton = Button('Run query');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
+const selectFieldButton = Button(including('Select field'));
 
 const booleanValues = ['AND'];
 
@@ -29,12 +30,12 @@ export const holdingsFieldValues = {
 };
 export const instanceFieldValues = {
   instanceHrid: 'Instances — Instance — Instance HRID',
-  instanceResourceTitle: 'Instances — Instance — Title',
+  instanceResourceTitle: 'Instances — Instance — Resource title',
 };
 export const itemFieldValues = {
-  instanceId: 'Instances — Instance UUID',
+  instanceId: 'Items — Instances — Instance UUID',
   itemStatus: 'Items — Items — Status',
-  itemUuid: 'Items — Item UUID',
+  itemUuid: 'Items — Items — Item UUID',
   holdingsId: 'Items — Holdings — UUID',
   temporaryLocation: 'Items — Temporary location — Name',
 };
@@ -145,6 +146,7 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
+    cy.do(selectFieldButton.click());
     cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
@@ -156,6 +158,10 @@ export default {
 
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+  },
+
+  clickSelectFieldButton() {
+    cy.do(selectFieldButton.click());
   },
 
   typeInAndSelectField(string, row = 0) {

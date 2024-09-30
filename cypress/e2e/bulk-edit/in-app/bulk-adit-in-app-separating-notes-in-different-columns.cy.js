@@ -65,8 +65,6 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -75,6 +73,7 @@ describe('bulk-edit', () => {
             instance.instanceName,
             instance.itemBarcode,
           );
+          cy.getAdminToken();
           cy.getHoldings({
             limit: 1,
             query: `"instanceId"="${instance.instanceId}"`,

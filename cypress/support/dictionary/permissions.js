@@ -126,6 +126,10 @@ export default {
     internal: 'ui-marc-authorities.authority-record.create',
     gui: 'MARC Authority: Create new MARC authority record',
   },
+  marcRecordsEditorAll: {
+    internal: 'marc-records-editor.all',
+    gui: 'All marc-records-editor permissions',
+  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
@@ -281,6 +285,18 @@ export default {
     internal: 'ui-inventory.instance.view-staff-suppressed-records',
     gui: 'Inventory: Enable staff suppress facet',
   },
+  patchInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.item.patch',
+    gui: 'inventory storage - patch instance-date-type',
+  },
+  getInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.collection.get',
+    gui: 'inventory storage - get list of instance-date-types',
+  },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -432,7 +448,7 @@ export default {
     internal: 'ui-users.loans.renew-override',
     gui: 'Users: User loans renew through override',
   },
-  uiUsersPermissions: {
+  uiUserCanAssignUnassignPermissions: {
     internal: 'ui-users.editperms',
     gui: 'Users: Can assign and unassign permissions to users',
   },
@@ -462,7 +478,7 @@ export default {
     internal: 'ui-users.settings.usergroups.view',
     gui: 'Settings (Users): Can view patron groups',
   },
-  uiUsersCreatePatronGroups: {
+  uiUsersCreateEditRemovePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
@@ -498,6 +514,15 @@ export default {
     internal: 'ui-users.financialTransactionReport',
     gui: 'Users: Create and download Financial transaction detail report',
   },
+  uiUserViewEditDeliteProfilePictores: {
+    internal: 'ui-users.profile-pictures.all',
+    gui: 'Users: Can view, edit, and delete profile pictures',
+  },
+  uiUserViewProfilePictores: {
+    internal: 'ui-users.profile-pictures.view',
+    gui: 'Users: Can view profile pictures',
+  },
+
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
@@ -1037,6 +1062,10 @@ export default {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
     gui: 'Settings (tenant): Can create, edit and remove reading room access',
   },
+  uiReadingRoomAll: {
+    internal: 'ui-reading-room.all',
+    gui: 'Reading room access: In app - track access',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',
@@ -1134,6 +1163,11 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  listsEdit: {
+    internal: 'module.lists.refresh',
+    gui: 'Lists (Edit): Can create, edit, and refresh lists',
   },
 
   // Licenses

@@ -51,7 +51,7 @@ describe('Data Import', () => {
         { tags: ['extendedPath', 'folijet'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Click Actions button, Select New field mapping profile
           const FieldMappingProfileEditForm =
@@ -105,7 +105,7 @@ describe('Data Import', () => {
         { tags: ['extendedPath', 'folijet'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({

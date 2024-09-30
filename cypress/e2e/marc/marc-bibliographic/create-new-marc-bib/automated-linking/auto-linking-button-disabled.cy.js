@@ -22,7 +22,7 @@ describe('MARC', () => {
           fieldContents: {
             tag245Content: 'Test: created record with all linkable fields without linking',
           },
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C389484 testMarcFile.${getRandomPostfix()}.mrc`,
         };
 
         const newFields = [
@@ -69,14 +69,13 @@ describe('MARC', () => {
         let userData = {};
 
         const linkableFields = [
-          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
 
         const marcFiles = [
           {
             marc: 'marcAuthFileForC389484.mrc',
-            fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+            fileName: `C389484 testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 20,
           },
@@ -136,7 +135,7 @@ describe('MARC', () => {
 
         it(
           'C389484 "Link headings" button is NOT displayed in create "MARC bib" window when auto-link for all heading types is disabled (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

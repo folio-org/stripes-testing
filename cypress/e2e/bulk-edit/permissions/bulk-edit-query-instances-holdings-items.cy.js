@@ -18,7 +18,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewInstances.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         firstUser = userProperties;
@@ -29,7 +29,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         secondUser = userProperties;
@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423696 Verify Query tab permissions (In app Instances, Holdings, Items) (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.bulkEditPath,
@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
         UserEdit.addPermissions([
           permissions.bulkEditQueryView.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();
@@ -107,7 +107,7 @@ describe('bulk-edit', () => {
         UserEdit.addPermissions([
           permissions.bulkEditQueryView.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();

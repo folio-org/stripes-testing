@@ -108,6 +108,7 @@ describe('Inventory', () => {
           });
         });
 
+        cy.getAdminToken();
         ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
           (response) => {
             classificationIdentifierTypeId = response.body.id;

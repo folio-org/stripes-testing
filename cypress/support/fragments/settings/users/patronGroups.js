@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import {
   Button,
   EditableListRow,
@@ -9,6 +8,7 @@ import {
   PaneHeader,
   Section,
   TextField,
+  Modal,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -21,6 +21,11 @@ const descriptionTextField = rootSection.find(TextField({ placeholder: 'desc' })
 const expirationOffsetInDaysTextField = rootSection.find(
   TextField({ placeholder: 'expirationOffsetInDays' }),
 );
+const deleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
+const cannotDeleteModal = Modal('Cannot delete Patron group');
+const deleteModalButton = deleteModal.find(Button('Delete'));
+const cancelModalButton = deleteModal.find(Button('Cancel'));
+const okayButton = cannotDeleteModal.find(Button('Okay'));
 
 const defaultPatronGroup = {
   group: `Patron_group_${getRandomPostfix()}`,
@@ -93,6 +98,7 @@ function validateNumsAscendingOrder(prev) {
 }
 
 export default {
+  defaultPatronGroup,
   clickNewButton,
   clickCancelButton,
   clickSaveButton,
@@ -108,6 +114,7 @@ export default {
   clickEditButtonForGroup(name) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+
     cy.do(
       row
         .find(actionsCell)
@@ -116,13 +123,24 @@ export default {
     );
   },
   clickTrashButtonForGroup(name) {
-    cy.do([
+    cy.do(
       MultiColumnListRow({ content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .find(Button({ icon: 'trash' }))
         .click(),
-      Button('Delete').click(),
-    ]);
+    );
+  },
+  clickModalDeleteButton() {
+    cy.do(deleteModalButton.click());
+    cy.expect(deleteModal.absent());
+  },
+  clickModalCancelButton() {
+    cy.do(cancelModalButton.click());
+    cy.expect(deleteModal.absent());
+  },
+  clickModalOkayButton() {
+    cy.do(okayButton.click());
+    cy.expect(cannotDeleteModal.absent());
   },
   createViaApi: (patronGroup = defaultPatronGroup.group) => cy
     .okapiRequest({
@@ -130,8 +148,9 @@ export default {
       path: 'groups',
       isDefaultSearchParamsRequired: false,
       body: {
-        id: uuid(),
         group: patronGroup,
+        desc: `Patron_group_description${getRandomPostfix()}`,
+        expirationOffsetInDays: '10',
       },
     })
     .then((response) => response.body.id),
@@ -153,6 +172,43 @@ export default {
       .then((response) => {
         return response.body.usergroups[0].id;
       });
+  },
+  getGroupViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'groups',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.usergroups[0];
+      });
+  },
+  clearField(fieldName, patronGroup) {
+    if (fieldName === 'Patron group') {
+      cy.get(`input[value="${patronGroup.name}"]`)
+        .should('be.visible')
+        .focus()
+        .parent()
+        .find('button[icon="times-circle-solid"]')
+        .click();
+    }
+    if (fieldName === 'Description') {
+      cy.get(`input[value="${patronGroup.desc}"]`)
+        .should('be.visible')
+        .focus()
+        .parent()
+        .find('button[icon="times-circle-solid"]')
+        .click();
+    }
+    if (fieldName === 'Expiration date offset') {
+      cy.get(`input[value="${patronGroup.expirationOffsetInDays}"]`)
+        .should('be.visible')
+        .focus()
+        .parent()
+        .find('button[icon="times-circle-solid"]')
+        .click();
+    }
   },
 
   verifyGroupInTheList({ name, description = '', actions = [] }) {
@@ -198,6 +254,30 @@ export default {
       cy.expect(buttonSelector.exists());
     });
   },
+  verifyEditedGroupInTheList(patronGroup) {
+    cy.get(`input[value="${patronGroup.name}"]`).then(($input) => {
+      const rowElement = $input.closest('[data-row-index]');
+      const row = rowElement.attr('data-row-index');
+
+      cy.get(`[data-row-index="${row}"]`)
+        .find(`input[value="${patronGroup.name}"]`)
+        .should('be.focused');
+      cy.get(`[data-row-index="${row}"]`).find('input[placeholder="desc"]').should('be.enabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find('input[placeholder="expirationOffsetInDays"]')
+        .should('be.enabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find(`input[value="${including(`${patronGroup.date} by ${patronGroup.userName}`)}"]`)
+        .should('be.disabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find('[id*="clickable-cancel-patrongroups"]')
+        .should('be.enabled');
+      cy.get(`[data-row-index="${row}"]`)
+        .find('[id*="clickable-save-patrongroups"]')
+        .should('be.disabled');
+    });
+  },
+
   verifyGroupAbsentInTheList({ name }) {
     const row = MultiColumnListRow({ content: including(name) });
     cy.expect(row.absent());
@@ -250,5 +330,19 @@ export default {
             expect(text).to.equal('');
           });
       });
+  },
+  verifyDeletePatronGroupModal() {
+    cy.expect([deleteModal.exists(), cancelModalButton.exists(), deleteModalButton.exists()]);
+  },
+  verifyCannotDeletePatronGroupModal() {
+    cy.expect([
+      cannotDeleteModal.exists(),
+      Modal({
+        content: including(
+          'This Patron group cannot be deleted, as it is in use by one or more records.',
+        ),
+      }).exists(),
+      okayButton.exists(),
+    ]);
   },
 };

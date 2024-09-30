@@ -44,19 +44,17 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(firstUser.username, firstUser.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(firstUser.userId);
       Users.deleteViaApi(secondUser.userId);
     });
 
     it('C411733 Edit list: Make the list Private (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(firstUser.username, firstUser.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(firstUser.username, firstUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);
@@ -67,34 +65,41 @@ describe('lists', () => {
       Lists.verifyListIsSaved(listData.name);
       Lists.closeListDetailsPane();
       cy.wait(3000);
-      cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is visible
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      // User B logs in to make sure that 'Shared' list is visible
+      cy.login(secondUser.username, secondUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.selectSharedLists();
       Lists.verifyListIsPresent(listData.name);
       cy.wait(2000);
-      cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Private'
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      // User A logs in to make the list 'Private'
+      cy.login(firstUser.username, firstUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.selectSharedLists();
       Lists.selectList(listData.name);
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Private');
       Lists.saveList();
       Lists.closeListDetailsPane();
       cy.wait(3000);
-      cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Private' list is not visible
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      // User B logs in to make sure that 'Private' list is not visible
+      cy.login(secondUser.username, secondUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.selectPrivateLists();
       Lists.verifyListIsNotPresent(listData.name);
     });
 
     it('C411736 Edit list: Make the list Shared (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(firstUser.username, firstUser.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(firstUser.username, firstUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);
@@ -105,24 +110,30 @@ describe('lists', () => {
       cy.contains(`List ${listData.name} saved.`);
       Lists.closeListDetailsPane();
       cy.wait(3000);
-      cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is not visible
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      // User B logs in to make sure that 'Shared' list is not visible
+      cy.login(secondUser.username, secondUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.verifyListIsNotPresent(listData.name);
       cy.wait(2000);
-      cy.login(firstUser.username, firstUser.password); // User A logs in to make the list 'Shared'
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      // User A logs in to make the list 'Shared'
+      cy.login(firstUser.username, firstUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       cy.contains(listData.name).click();
-      Lists.actionButton();
+      Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Shared');
       Lists.saveList();
       Lists.closeListDetailsPane();
       cy.wait(3000);
-      cy.login(secondUser.username, secondUser.password); // User B logs in to make sure that 'Shared' list is visible
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      // User B logs in to make sure that 'Shared' list is visible
+      cy.login(secondUser.username, secondUser.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
       Lists.selectSharedLists();
       cy.contains(listData.name).should('be.visible');

@@ -111,6 +111,7 @@ Cypress.Commands.add(
             userProperties.barcode = newUserProperties.barcode;
             userProperties.firstName = newUserProperties.firstName;
             userProperties.lastName = newUserProperties.lastName;
+            userProperties.preferredFirstName = newUserProperties.preferredFirstName;
             cy.createRequestPreference({
               defaultDeliveryAddressTypeId: null,
               defaultServicePointId: null,

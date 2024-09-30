@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
@@ -12,6 +12,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -56,22 +57,24 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           Permissions.exportManagerAll.gui,
           Permissions.moduleDataImportEnabled.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-        });
-
-        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityID.push(record[marcFile.propertyName].id);
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+          })
+          .then(() => {
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdAuthorityID.push(record[marcFile.propertyName].id);
+                });
+              });
             });
           });
-        });
       });
 
       beforeEach('Login to the application', () => {
@@ -109,7 +112,7 @@ describe('MARC', () => {
           ];
 
           dataForC375231.forEach((value) => {
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.searchByTitle(value.recordTitle);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -124,7 +127,7 @@ describe('MARC', () => {
             InventoryInstance.waitLoading();
           });
 
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
           MarcAuthorities.searchBy(testData.searchOption, testData.title);
           MarcAuthorities.selectTitle(testData.title);
           MarcAuthority.edit();
@@ -147,7 +150,7 @@ describe('MARC', () => {
           cy.intercept('POST', '/data-export-spring/jobs').as('getId');
           cy.wait('@getId', { timeout: 10000 }).then((item) => {
             MarcAuthorities.checkCalloutAfterExport(item.response.body.name);
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
             ExportManagerSearchPane.searchByAuthorityControl();
             ExportManagerSearchPane.downloadLastCreatedJob(item.response.body.name);
             // Waiter needed for the job file to be downloaded.

@@ -34,6 +34,9 @@ export default {
   waitLoading(header = 'Settings') {
     cy.expect(Pane(header).exists());
   },
+  waitSettingsPaneLoading() {
+    cy.xpath('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
+  },
   clickAddNewBtn() {
     cy.wait(500);
     cy.do(addButton.click());
@@ -51,6 +54,7 @@ export default {
     clickActionBtn({ rowIndex, locator: { icon: 'edit' } });
   },
   clickDeleteBtn({ rowIndex, record } = {}) {
+    cy.wait(4000);
     if (record) {
       cy.then(() => rootPane.find(MultiColumnListCell(record)).row()).then((index) => {
         clickActionBtn({ rowIndex: index, locator: { icon: 'trash' } });
