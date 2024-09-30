@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Patron group', newPatronGroup);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,test@folio.org,,,,,002,,,,`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,test@folio.org,,,,,002,,,,`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -85,7 +85,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,test@folio.org,,,,,002,,,,`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,test@folio.org,,,,,002,,,,`,
         ]);
 
         cy.visit(TopMenu.usersPath);
