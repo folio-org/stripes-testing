@@ -3,8 +3,9 @@ import EHoldingsProviderEdit from '../../../support/fragments/eholdings/eHolding
 import EHoldingsProviderView from '../../../support/fragments/eholdings/eHoldingsProviderView';
 import EHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import EHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('eHoldings', () => {
   describe('Provider', () => {
@@ -17,7 +18,7 @@ describe('eHoldings', () => {
       ]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.eholdingsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
       });
     });
     it('C696 Edit proxy setting (spitfire)', { tags: ['smoke', 'spitfire', 'broken'] }, () => {
