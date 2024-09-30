@@ -147,7 +147,6 @@ describe('Title Level Request', () => {
     'C380544 Verify that the item information is not changed in "Item information" accordion after editing a request. (vega) (TaaS)',
     { tags: ['criticalPath', 'vega'] },
     () => {
-      Requests.waitLoading();
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage();
       NewRequest.enterHridInfo(instanceData.instanceHRID);
