@@ -48,6 +48,9 @@ export default {
     return TransactionDetails;
   },
   closeTransactionsPage() {
+    cy.wait(4000);
+
     cy.get('#finance-module-display button[icon=times]').first().click();
+    cy.wait(4000);
   },
 };

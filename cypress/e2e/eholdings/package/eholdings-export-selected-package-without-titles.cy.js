@@ -11,6 +11,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -79,7 +81,7 @@ describe('eHoldings', () => {
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
           const jobId = id;
 
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.searchByEHoldings();
           ExportManagerSearchPane.verifyResult(jobId);
           ExportManagerSearchPane.exportJob(jobId);

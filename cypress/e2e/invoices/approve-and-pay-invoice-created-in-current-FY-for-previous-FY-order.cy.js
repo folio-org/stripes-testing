@@ -15,6 +15,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -67,9 +68,11 @@ describe('Invoices', () => {
   let user;
 
   before(() => {
-    cy.getAdminToken();
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.expenseClassesPath);
+    cy.loginAsAdmin({
+      path: SettingsMenu.expenseClassesPath,
+      waiter: SettingsFinance.waitExpenseClassesLoading,
+    });
+
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -110,9 +113,10 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
           Funds.addExpensesClass(firstExpenseClass.name);
+          Funds.closeBudgetDetails();
         });
 
-        cy.visit(TopMenu.ledgerPath);
+        FinanceHelp.selectLedgersNavigation();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -121,7 +125,7 @@ describe('Invoices', () => {
           'None',
           'Allocation',
         );
-        cy.visit(TopMenu.fiscalYearPath);
+        FinanceHelp.selectFiscalYearsNavigation();
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
@@ -136,7 +140,7 @@ describe('Invoices', () => {
           periodStartForSecondFY,
           periodEndForSecondFY,
         );
-        cy.visit(TopMenu.ledgerPath);
+        FinanceHelp.selectLedgersNavigation();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -146,7 +150,7 @@ describe('Invoices', () => {
           'Allocation',
         );
 
-        cy.visit(TopMenu.fiscalYearPath);
+        FinanceHelp.selectFiscalYearsNavigation();
         FinanceHelp.searchByName(secondFiscalYear.name);
         FiscalYears.selectFY(secondFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
@@ -161,7 +165,7 @@ describe('Invoices', () => {
           periodStartForSecondFY,
           periodEndForSecondFY,
         );
-        cy.visit(TopMenu.ledgerPath);
+        FinanceHelp.selectLedgersNavigation();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -171,7 +175,7 @@ describe('Invoices', () => {
           'Allocation',
         );
 
-        cy.visit(TopMenu.fiscalYearPath);
+        FinanceHelp.selectFiscalYearsNavigation();
         FinanceHelp.searchByName(thirdFiscalYear.name);
         FiscalYears.selectFY(thirdFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
@@ -226,7 +230,7 @@ describe('Invoices', () => {
       Organizations.editOrganization();
       Organizations.changeOrganizationStatus(organization.status);
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.approveInvoice();
