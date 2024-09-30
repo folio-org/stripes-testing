@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C418651-${getTestEntityValue('test_list')}`,
-      description: `C418651-${getTestEntityValue('test_list_description')}`,
+      name: `C418650-${getTestEntityValue('test_list')}`,
+      description: `C418650-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -19,7 +19,7 @@ describe('lists', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsEnable.gui,
+        Permissions.listsEdit.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiOrdersCreate.gui,
         Permissions.inventoryAll.gui,
@@ -52,27 +52,24 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C418651 Lists (Enable): Can view lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C418650 Lists (Edit): Can create, edit, and refresh lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
       });
-      Lists.verifyNewButtonDoesNotExist();
       Lists.verifyListIsPresent(listData.name);
-      Lists.selectActiveLists();
-      Lists.selectInactiveLists();
-      Lists.selectPrivateLists();
-      Lists.selectSharedLists();
-      Lists.selectRecordTypeFilter(listData.recordType);
-      Lists.resetAllFilters();
-
       Lists.openList(listData.name);
       Lists.openActions();
-      Lists.verifyRefreshListButtonDoesNotExist();
-      Lists.verifyEditListButtonDoesNotExist();
-      Lists.verifyDuplicateListButtonDoesNotExist();
+      Lists.verifyRefreshListButtonIsActive();
+      Lists.verifyEditListButtonIsActive();
+      Lists.verifyDuplicateListButtonIsActive();
       Lists.verifyDeleteListButtonDoesNotExist();
       Lists.verifyExportListButtonDoesNotExist();
+      Lists.refreshList();
+      Lists.waitForCompilingToComplete();
+      Lists.openActions();
+      Lists.editList();
+      Lists.verifyActionsButtonDoesNotExist();
     });
   });
 });
