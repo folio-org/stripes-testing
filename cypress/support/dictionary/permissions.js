@@ -1165,6 +1165,11 @@ export default {
     gui: 'Lists (Admin): All permissions',
   },
 
+  listsView: {
+    internal: 'module.lists.enabled',
+    gui: 'Lists (Enable): Can view lists',
+  },
+
   listsEdit: {
     internal: 'module.lists.refresh',
     gui: 'Lists (Edit): Can create, edit, and refresh lists',
