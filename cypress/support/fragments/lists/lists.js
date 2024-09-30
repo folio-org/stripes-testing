@@ -165,6 +165,10 @@ export default {
     cy.expect(duplicateList.has({ disabled: true }));
   },
 
+  verifyDuplicateListButtonDoesNotExist() {
+    cy.expect(duplicateList.absent());
+  },
+
   deleteList() {
     cy.do(deleteList.click());
     cy.wait(1000);
@@ -179,8 +183,16 @@ export default {
     cy.expect(deleteList.has({ disabled: true }));
   },
 
+  verifyDeleteListButtonDoesNotExist() {
+    cy.expect(deleteList.absent());
+  },
+
   verifyEditListButtonIsDisabled() {
     cy.expect(editList.has({ disabled: true }));
+  },
+
+  verifyEditListButtonDoesNotExist() {
+    cy.expect(editList.absent());
   },
 
   verifyEditListButtonIsActive() {
@@ -195,6 +207,10 @@ export default {
 
   verifyExportListButtonIsDisabled() {
     cy.expect(exportList.has({ disabled: true }));
+  },
+
+  verifyExportListButtonDoesNotExist() {
+    cy.expect(exportList.absent());
   },
 
   verifyExportListButtonIsActive() {
@@ -223,6 +239,14 @@ export default {
 
   verifyNewButtonIsEnabled() {
     cy.expect(newLink.exists());
+  },
+
+  verifyNewButtonIsDisabled() {
+    cy.expect(newLink.has({ disabled: true }));
+  },
+
+  verifyNewButtonDoesNotExist() {
+    cy.expect(newLink.absent());
   },
 
   expiredPatronLoan() {
