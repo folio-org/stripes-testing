@@ -34,7 +34,6 @@ describe('Data Import', () => {
         const filePathWithBlockedFileExtension = 'fileForC2356.mrk';
         const fileNameWithBlockedFileExtension = `C2356 autotestFile${getRandomPostfix()}.mrk`;
 
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(
           filePathWithNotExistingFileExtension,
@@ -43,7 +42,6 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         DataImport.verifyFileIsImported(fileNameWithNotExistingFileExtension);
 
-        cy.visit(TopMenu.dataImportPath);
         DataImport.clickDeleteFilesButton();
         DataImport.uploadFile(filePathWithBlockedFileExtension, fileNameWithBlockedFileExtension);
         DataImport.verifyImportBlockedModal();

@@ -4,6 +4,7 @@ export const APPLICATION_NAMES = {
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
+  INVOICES: 'Invoices',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',

@@ -6,6 +6,10 @@ const inventoryPane = Pane('Inventory');
 export const SETTINGS_TABS = {
   FAST_ADD: 'Fast add',
   MATERIAL_TYPES: 'Material types',
+  TARGET_PROFILES: 'Z39.50 target profiles',
+  URL_RELATIONSHIP: 'URL relationship',
+  INSTANCE_STATUS_TYPE: 'Instance status types',
+  LOAN_TYPES: 'Loan types',
 };
 
 export default {

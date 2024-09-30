@@ -1,14 +1,16 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -46,7 +48,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
@@ -63,7 +68,6 @@ describe('Data Import', () => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 
         // import a file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
@@ -72,7 +76,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileName);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.waitLoading();
         InventoryInstance.startOverlaySourceBibRecord();
@@ -101,7 +105,8 @@ describe('Data Import', () => {
           updatedInstanceData.notes.noteContent,
         );
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.checkFileIsRunning(fileName);
       },
     );

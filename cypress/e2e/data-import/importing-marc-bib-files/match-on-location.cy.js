@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
@@ -30,8 +31,10 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -357,14 +360,16 @@ describe('Data Import', () => {
       );
 
       // create Match profile
-      cy.visit(SettingsMenu.matchProfilePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsDataImport.goToSettingsDataImport();
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
       collectionOfMatchProfiles.forEach((profile) => {
         MatchProfiles.createMatchProfile(profile.matchProfile);
         MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
       });
 
       // create Field mapping profiles
-      cy.visit(SettingsMenu.mappingProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
       NewFieldMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile, 5);
@@ -379,14 +384,14 @@ describe('Data Import', () => {
       FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
 
       // create Action profiles
-      cy.visit(SettingsMenu.actionProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(holdingsActionProfileForUpdate, holdingsMappingProfileForUpdate.name);
       ActionProfiles.checkActionProfilePresented(holdingsActionProfileForUpdate.name);
       ActionProfiles.create(itemActionProfileForUpdate, itemMappingProfileForUpdate.name);
       ActionProfiles.checkActionProfilePresented(itemActionProfileForUpdate.name);
 
       // create Job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfileForUpdate);
       NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
       NewJobProfile.linkMatchProfileForMatches(
@@ -402,7 +407,7 @@ describe('Data Import', () => {
       JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
       // upload a marc file
-      cy.visit(TopMenu.dataImportPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
       DataImport.verifyUploadState();
       DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
       JobProfiles.waitFileIsUploaded();
@@ -428,7 +433,7 @@ describe('Data Import', () => {
 
       // check updated items in Inventory
       instanceHrids.forEach((hrid) => {
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(hrid);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
@@ -436,6 +441,7 @@ describe('Data Import', () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
+        ItemRecordView.close();
       });
     });
   });

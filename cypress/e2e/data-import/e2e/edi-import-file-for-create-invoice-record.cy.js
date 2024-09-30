@@ -8,7 +8,7 @@ import {
   RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -60,11 +60,11 @@ describe('Data Import', () => {
 
     before('Create test user and login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        Permissions.dataImportUploadAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -126,7 +126,7 @@ describe('Data Import', () => {
         );
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
         FileDetails.getInvoiceNumber(vendorInvoiceNumber).then((invoiceNumber) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
           Invoices.searchByNumber(invoiceNumber);
           Invoices.selectInvoice(invoiceNumber);
 

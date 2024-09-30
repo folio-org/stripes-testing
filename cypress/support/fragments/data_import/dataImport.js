@@ -4,7 +4,6 @@ import {
   Button,
   Checkbox,
   Modal,
-  MultiColumnList,
   MultiColumnListCell,
   NavListItem,
   Pane,
@@ -30,7 +29,7 @@ import Logs from './logs/logs';
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
 const deleteLogsButton = Button('Delete selected logs');
-const jobLogsList = MultiColumnList({ id: 'job-logs-list' });
+const jobLogsList = Pane({ id: 'pane-logs-title' });
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const deleteLogsModal = Modal('Delete data import logs?');
 const deleteLogsModalCancelButton = deleteLogsModal.find(Button('No, do not delete'));
@@ -572,7 +571,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 9;
+    const hrIdColumnIndex = 8;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
