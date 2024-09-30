@@ -7,6 +7,8 @@ import {
   Pane,
 } from '../../../../../../interactors';
 
+export const identifierTypesSectionName = 'Classification identifier types';
+
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
@@ -91,8 +93,8 @@ export default {
   },
   choose() {
     cy.do([
-      NavListItem('Classification identifier types').click(),
-      Pane('Classification identifier types').exists(),
+      NavListItem(identifierTypesSectionName).click(),
+      Pane(identifierTypesSectionName).exists(),
     ]);
   },
 };
