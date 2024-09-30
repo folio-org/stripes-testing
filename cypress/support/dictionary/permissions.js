@@ -293,6 +293,10 @@ export default {
     internal: 'inventory-storage.instance-date-types.collection.get',
     gui: 'inventory storage - get list of instance-date-types',
   },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -1161,9 +1165,24 @@ export default {
     gui: 'Lists (Admin): All permissions',
   },
 
+  listsEnable: {
+    internal: 'module.lists.enabled',
+    gui: 'Lists (Enable): Can view lists',
+  },
+
   listsEdit: {
     internal: 'module.lists.refresh',
     gui: 'Lists (Edit): Can create, edit, and refresh lists',
+  },
+
+  listsDelete: {
+    internal: 'module.lists.delete',
+    gui: 'Lists (Delete): Can create, edit, refresh, and delete lists',
+  },
+
+  listsExport: {
+    internal: 'module.lists.export',
+    gui: 'Lists (Export): Can create, edit, refresh, and export lists',
   },
 
   // Licenses

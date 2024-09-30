@@ -93,15 +93,24 @@ export default {
     cy.do([Accordion({ id: 'loan' }).clickHeader(), Checkbox(loanType).click()]);
   },
 
+  expandFeeFineAccording() {
+    cy.do(Accordion({ id: 'fee' }).clickHeader());
+  },
+
+  selectOptionFromFeeFineAccordion(option) {
+    cy.do(Checkbox(option).click());
+  },
+
   setFilterOptionFromAccordion(accordion, checkboxOption) {
     // Check if it is already open
     cy.get(`#${accordion}`).then(($accordion) => {
       if (!$accordion.find('[class^="content-region"]').is(':visible')) {
-        cy.get(`#${accordion}`).click();
+        // cy.get(`#${accordion}`).click();
+        cy.do(Accordion({ id: accordion }).clickHeader());
       }
     });
     // Need to avoid robotic clicks
-    cy.wait(5000);
+    cy.wait(1000);
     cy.do(Checkbox(checkboxOption).click());
   },
 

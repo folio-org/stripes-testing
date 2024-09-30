@@ -252,12 +252,16 @@ export default {
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
-    cy.wrap(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).href()).as(
-      'link',
+    cy.do(
+      MultiColumnListCell({ columnIndex, content: linkValue })
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
     );
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
@@ -276,18 +280,20 @@ export default {
   },
 
   clickNumberOfTitlesByHeading(heading) {
-    cy.wrap(
+    cy.do(
       MultiColumnListRow({
         isContainer: true,
         content: including(heading),
       })
         .find(MultiColumnListCell({ column: 'Number of titles' }))
         .find(Link())
-        .href(),
-    ).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   verifyEmptyNumberOfTitlesForRowWithValue(value) {
@@ -302,18 +308,20 @@ export default {
   },
 
   clickOnNumberOfTitlesForRowWithValue(value, itemCount) {
-    cy.wrap(
+    cy.do(
       MultiColumnListRow({
         isContainer: true,
         content: including(value),
       })
         .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
         .find(Link())
-        .href(),
-    ).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {

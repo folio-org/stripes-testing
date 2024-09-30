@@ -5,6 +5,7 @@ import {
   Dropdown,
   Modal,
   MultiColumnListRow,
+  NavListItem,
   Pane,
   TextField,
 } from '../../../../../interactors';
@@ -18,6 +19,11 @@ const fieldLabel = TextField('Field label*');
 const helpText = TextField('Help text');
 
 export default {
+  openTabFromInventorySettingsList() {
+    cy.do(NavListItem('Users').click());
+    cy.do(NavListItem('Custom fields').click());
+  },
+
   waitLoading() {
     cy.expect(customFieldsPane.exists());
   },

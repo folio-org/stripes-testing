@@ -8,7 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Export', () => {
   describe('Authority records export', () => {
@@ -59,7 +60,7 @@ describe('Data Export', () => {
         MarcAuthoritiesDelete.clickDeleteButton();
         MarcAuthoritiesDelete.confirmDelete();
         MarcAuthoritiesDelete.checkDelete(searchHeading);
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFileHelper.uploadRecentlyDownloadedFile(downloadedFile);
         ExportFileHelper.exportWithDefaultJobProfile(downloadedFile, 'authority', 'Authorities');
         DataExportResults.verifyLastLog(downloadedFile, 'Fail');

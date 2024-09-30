@@ -10,6 +10,15 @@ const DEFAULT_INSTANCE = {
   previouslyHeld: false,
 };
 
+const displaySettingsBody = {
+  id: uuid(),
+  key: 'display-settings',
+  scope: 'ui-inventory.display-settings',
+  value: {
+    defaultSort: '',
+  },
+};
+
 Cypress.Commands.add('getInstanceById', (instanceId) => {
   return cy
     .okapiRequest({
@@ -508,3 +517,51 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add('getInventoryDisplaySettingsViaAPI', () => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'settings/entries',
+      searchParams: {
+        query: '(scope==ui-inventory.display-settings and key==display-settings)',
+      },
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      return body.items;
+    });
+});
+
+Cypress.Commands.add('updateInventoryDisplaySettingsViaAPI', (entryId, body) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `settings/entries/${entryId}`,
+    body,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('setInventoryDisplaySettingsViaAPI', (body) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'settings/entries',
+    body,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
+  cy.getInventoryDisplaySettingsViaAPI().then((entries) => {
+    let updatedBody;
+    if (entries.length) {
+      updatedBody = { ...entries[0] };
+      updatedBody.value.defaultSort = sortOption;
+      cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
+    } else {
+      updatedBody = { ...displaySettingsBody };
+      updatedBody.value.defaultSort = sortOption;
+      cy.setInventoryDisplaySettingsViaAPI(updatedBody);
+    }
+  });
+});

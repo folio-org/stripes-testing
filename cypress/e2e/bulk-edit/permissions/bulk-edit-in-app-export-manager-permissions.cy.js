@@ -7,6 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -61,7 +63,7 @@ describe('bulk-edit', () => {
       'C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        cy.visit(TopMenu.exportManagerPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.searchByBulkEdit();
         ExportManagerSearchPane.selectJob(user.username);
         ExportManagerSearchPane.clickJobIdInThirdPane(matchedRecordsFileName);

@@ -13,6 +13,8 @@ export const APPLICATION_NAMES = {
   CHECK_IN: 'Check in',
   CHECK_OUT: 'Check out',
   REQUESTS: 'Requests',
+  READING_ROOM_ACCESS: 'Reading room access',
+  EHOLDINGS: 'eHoldings',
 };
 
 export const REQUEST_METHOD = {
@@ -909,4 +911,11 @@ export const HOLDING_NOTE_TYPES = {
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
+};
+
+export const INVENTORY_DEFAULT_SORT_OPTIONS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  DATE: 'Date',
+  RELEVANCE: 'Relevance',
 };

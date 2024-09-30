@@ -34,9 +34,16 @@ describe('Users', () => {
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
         servicePointId = servicePoints[0].id;
       });
+
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
+        PatronGroups.getGroupViaApi({ query: `group="${patronGroup.name}"` }).then((resp) => {
+          patronGroup.desc = resp.desc;
+          patronGroup.expirationOffsetInDays = resp.expirationOffsetInDays;
+          patronGroup.id = resp.id;
+        });
       });
+
       cy.createTempUser(
         [
           Permissions.uiUserCanAssignUnassignPermissions.gui,
@@ -74,7 +81,10 @@ describe('Users', () => {
       UserEdit.verifyUserTypeItems();
       UserEdit.chooseRequestType('Staff');
       UserEdit.verifySaveAndColseIsDisabled(false);
-      UserEdit.enterValidValueToCreateViaUi(userOne).then((id) => {
+      UserEdit.enterValidValueToCreateViaUi(
+        userOne,
+        `${patronGroup.name} (${patronGroup.desc})`,
+      ).then((id) => {
         newUserId = id;
       });
       UsersSearchPane.waitLoading();

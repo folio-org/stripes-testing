@@ -117,8 +117,6 @@ describe('Title Level Request', () => {
               userData.userId,
               servicePoint1.id,
             );
-
-            cy.login(userData.username, userData.password);
           });
       });
   });
@@ -148,7 +146,10 @@ describe('Title Level Request', () => {
     'C350559 Check that the user can Edit request (Title level request) (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();

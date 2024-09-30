@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('Add new list', () => {
+  describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C411693-${getTestEntityValue('test_list')}`,
-      description: `C411693-${getTestEntityValue('test_list_description')}`,
+      name: `C418651-${getTestEntityValue('test_list')}`,
+      description: `C418651-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -19,7 +19,7 @@ describe('lists', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsAll.gui,
+        Permissions.listsEnable.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiOrdersCreate.gui,
         Permissions.inventoryAll.gui,
@@ -47,41 +47,32 @@ describe('lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getUserToken(userData.username, userData.password);
-      Lists.deleteViaApi(listData.id);
       cy.getAdminToken();
+      Lists.deleteViaApi(listData.id);
       Users.deleteViaApi(userData.userId);
     });
 
-    it(
-      '411694 C411693 Lists (Admin): All permissions (corsair)',
-      { tags: ['smoke', 'corsair'] },
-      () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
-        Lists.verifyNewButtonIsEnabled();
-        Lists.verifyListIsPresent(listData.name);
-        Lists.selectActiveLists();
-        Lists.selectInactiveLists();
-        Lists.selectPrivateLists();
-        Lists.selectSharedLists();
-        Lists.selectRecordTypeFilter(listData.recordType);
-        Lists.resetAllFilters();
+    it('C418651 Lists (Enable): Can view lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
+      Lists.verifyNewButtonDoesNotExist();
+      Lists.verifyListIsPresent(listData.name);
+      Lists.selectActiveLists();
+      Lists.selectInactiveLists();
+      Lists.selectPrivateLists();
+      Lists.selectSharedLists();
+      Lists.selectRecordTypeFilter(listData.recordType);
+      Lists.resetAllFilters();
 
-        Lists.openList(listData.name);
-        Lists.openActions();
-        Lists.verifyRefreshListButtonIsActive();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
-
-        Lists.editList();
-        Lists.openActions();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
-      },
-    );
+      Lists.openList(listData.name);
+      Lists.openActions();
+      Lists.verifyRefreshListButtonDoesNotExist();
+      Lists.verifyEditListButtonDoesNotExist();
+      Lists.verifyDuplicateListButtonDoesNotExist();
+      Lists.verifyDeleteListButtonDoesNotExist();
+      Lists.verifyExportListButtonDoesNotExist();
+    });
   });
 });

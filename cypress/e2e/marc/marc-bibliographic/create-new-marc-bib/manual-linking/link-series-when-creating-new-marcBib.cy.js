@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -12,6 +12,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -224,7 +225,7 @@ describe('MARC', () => {
               `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 http://id.loc.gov/authorities/names/n84704570 $9`,
             );
 
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchByParameter(newFields[1].searchOption, newFields[1].marcValue);
             MarcAuthorities.checkRow(newFields[1].marcValue);
             MarcAuthorities.verifyNumberOfTitles(5, '1');

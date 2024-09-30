@@ -8,6 +8,8 @@ import ExportManagerSearchPane from '../../../support/fragments/exportManager/ex
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -87,7 +89,7 @@ describe('eHoldings', () => {
 
           EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
             // Go to "Export manager" app.
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
 
             // Verify row with "Job ID" displayed at export jobs list.
             ExportManagerSearchPane.searchByEHoldings();
