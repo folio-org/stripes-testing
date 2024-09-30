@@ -67,6 +67,7 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName, false);
           AuthorizationRoles.clickActionsButton();
+          // TO DO: uncomment the next line after UIROLES-112 and UIROLES-58 implementation
           // AuthorizationRoles.checkDuplicateOptionShown(false);
           AuthorizationRoles.clickDuplicateButton();
           AuthorizationRoles.confirmDuplicateRole();
