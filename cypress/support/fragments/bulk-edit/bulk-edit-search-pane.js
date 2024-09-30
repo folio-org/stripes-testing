@@ -36,7 +36,7 @@ const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
 const setCriteriaPane = Pane('Set criteria');
-const saveAndClose = Button('Save and close');
+const saveAndClose = Button('Save & close');
 const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
@@ -910,8 +910,22 @@ export default {
       .should('have.text', expectedText);
   },
 
-  verifyRowHasEmptyElectronicAccess(index) {
-    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+  verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
+  },
+
+  verifyRowHasEmptyElectronicAccessInAreYouSureForm(identifier) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
+  },
+
+  verifyRowHasEmptyElectronicAccessInChangedAccordion(identifier) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
   },
 
   getNumberMatchedRecordsFromPaneHeader() {

@@ -119,7 +119,8 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.waitFileUploading();
         // Click the "Actions" menu => Select "Download changed records (CSV)" element
-        BulkEditActions.downloadMatchedResults();
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           item.barcode,
           locationName,

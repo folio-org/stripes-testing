@@ -331,9 +331,7 @@ export default {
   clickClearSelectedFiltersButton(accordion) {
     cy.do(
       Accordion(accordion)
-        .find(
-          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
-        )
+        .find(Button({ icon: 'times-circle-solid' }))
         .click(),
     );
   },
@@ -519,10 +517,12 @@ export default {
 
   applyStartDateFilters() {
     cy.do(logsStartDateAccordion.find(applyBtn).click());
+    cy.wait(2000);
   },
 
   applyEndDateFilters() {
     cy.do(logsEndDateAccordion.find(applyBtn).click());
+    cy.wait(2000);
   },
 
   verifyLogsStartedAccordionCollapsed() {
