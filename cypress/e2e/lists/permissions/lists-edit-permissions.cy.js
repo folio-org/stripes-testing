@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C411821-${getTestEntityValue('test_list')}`,
-      description: `C411821-${getTestEntityValue('test_list_description')}`,
+      name: `C418650-${getTestEntityValue('test_list')}`,
+      description: `C418650-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -52,16 +52,28 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411821 Refresh list: Not canned lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.verifyListIsPresent(listData.name);
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.refreshList();
-      Lists.waitForCompilingToComplete();
-    });
+    it(
+      'C418650 Lists (Edit): Can create, edit, and refresh lists (corsair)',
+      { tags: ['smoke', 'corsair'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.verifyRefreshListButtonIsActive();
+        Lists.verifyEditListButtonIsActive();
+        Lists.verifyDuplicateListButtonIsActive();
+        Lists.verifyDeleteListButtonDoesNotExist();
+        Lists.verifyExportListButtonDoesNotExist();
+        Lists.refreshList();
+        Lists.waitForCompilingToComplete();
+        Lists.openActions();
+        Lists.editList();
+        Lists.verifyActionsButtonDoesNotExist();
+      },
+    );
   });
 });

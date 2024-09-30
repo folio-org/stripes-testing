@@ -14,8 +14,8 @@ import { randomizeArray } from '../../../../support/utils/arrays';
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Consortia', () => {
-      const titlePrefix = `C543872Auto ${getRandomPostfix()}`;
-      const contributorPrefix = `C543872Contrib ${getRandomPostfix()}`;
+      const titlePrefix = `C543874Auto ${getRandomPostfix()}`;
+      const contributorPrefix = `C543874Contrib ${getRandomPostfix()}`;
       const testData = {};
       const instancesData = [];
       const createdInstanceIds = [];
@@ -55,10 +55,12 @@ describe('Inventory', () => {
               false,
             );
             cy.setupInventoryDefaultSortViaAPI(
-              INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS.toLowerCase(),
+              INVENTORY_DEFAULT_SORT_OPTIONS.RELEVANCE.toLowerCase(),
             );
             cy.setTenant(Affiliations.College);
-            cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE.toLowerCase());
+            cy.setupInventoryDefaultSortViaAPI(
+              INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS.toLowerCase(),
+            );
           },
         );
       });
@@ -107,6 +109,9 @@ describe('Inventory', () => {
           false,
         );
         cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE.toLowerCase());
+        cy.setTenant(Affiliations.College);
+        cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE.toLowerCase());
+        cy.resetTenant();
         cy.getAdminToken();
         createdInstanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
@@ -116,7 +121,7 @@ describe('Inventory', () => {
       });
 
       it(
-        'C543872 Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (spitfire)',
+        'C543874 Default sort changed on Member tenant does not impact Central tenant search result list (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -124,6 +129,9 @@ describe('Inventory', () => {
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            InventoryInstances.waitContentLoading();
+
             InventoryInstances.searchByTitle(titlePrefix);
             InventoryInstances.checkResultListSortedByColumn(2);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
@@ -140,21 +148,17 @@ describe('Inventory', () => {
             InventoryInstances.clickActionsButton();
             InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(titlePrefix);
-            InventoryInstances.checkResultListSortedByColumn(1);
-            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
             InventoryInstances.clickActionsButton();
-            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.RELEVANCE);
             InventorySearchAndFilter.resetAll();
             InventorySearchAndFilter.verifyResultPaneEmpty();
             InventorySearchAndFilter.verifySearchFieldIsEmpty();
             InventoryInstances.searchByTitle(titlePrefix);
-            InventoryInstances.checkResultListSortedByColumn(1);
-            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
             InventoryInstances.clickActionsButton();
-            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.RELEVANCE);
           });
         },
       );

@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('permissions', () => {
+  describe('export query', () => {
     const userData = {};
     const listData = {
-      name: `C411821-${getTestEntityValue('test_list')}`,
-      description: `C411821-${getTestEntityValue('test_list_description')}`,
+      name: `C552377-${getTestEntityValue('test_list')}`,
+      description: `C552377-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -19,7 +19,7 @@ describe('lists', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsEdit.gui,
+        Permissions.listsAll.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiOrdersCreate.gui,
         Permissions.inventoryAll.gui,
@@ -32,7 +32,7 @@ describe('lists', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+          Lists.buildQueryOnActiveUsersWithUsernames().then(({ query, fields }) => {
             Lists.createQueryViaApi(query).then((createdQuery) => {
               listData.queryId = createdQuery.queryId;
               listData.fqlQuery = createdQuery.fqlQuery;
@@ -50,18 +50,29 @@ describe('lists', () => {
       cy.getAdminToken();
       Lists.deleteViaApi(listData.id);
       Users.deleteViaApi(userData.userId);
+      Lists.deleteDownloadedFile(listData.name);
     });
 
-    it('C411821 Refresh list: Not canned lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.verifyListIsPresent(listData.name);
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.refreshList();
-      Lists.waitForCompilingToComplete();
-    });
+    it(
+      'C552377 Verify that "Export visible columns (CSV)" exports only the visible columns (corsair)',
+      { tags: ['smoke', 'corsair'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.exportListVisibleColumns();
+
+        Lists.verifyCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+        Lists.verifyCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
+        Lists.checkDownloadedFile(listData.name, 'users.active,users.id,users.username');
+      },
+    );
   });
 });

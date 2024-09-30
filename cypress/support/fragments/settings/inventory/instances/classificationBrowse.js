@@ -51,6 +51,7 @@ export {
   defaultClassificationBrowseNames,
   classificationIdentifierTypesDropdownDefaultOptions,
   defaultClassificationBrowseIdsAlgorithms,
+  classificationBrowseSectionName,
 };
 
 export default {

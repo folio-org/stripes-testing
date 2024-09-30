@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('permissions', () => {
+  describe('export query', () => {
     const userData = {};
     const listData = {
-      name: `C411693-${getTestEntityValue('test_list')}`,
-      description: `C411693-${getTestEntityValue('test_list_description')}`,
+      name: `C552378-${getTestEntityValue('test_list')}`,
+      description: `C552378-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -32,7 +32,7 @@ describe('lists', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+          Lists.buildQueryOnActiveUsersWithUsernames().then(({ query, fields }) => {
             Lists.createQueryViaApi(query).then((createdQuery) => {
               listData.queryId = createdQuery.queryId;
               listData.fqlQuery = createdQuery.fqlQuery;
@@ -50,37 +50,31 @@ describe('lists', () => {
       cy.getAdminToken();
       Lists.deleteViaApi(listData.id);
       Users.deleteViaApi(userData.userId);
+      Lists.deleteDownloadedFile(listData.name);
     });
 
     it(
-      'C411694 C411693 Lists (Admin): All permissions (corsair)',
+      'C552378 Verify that "Export all columns (CSV)" exports all the columns of the proper entity types (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,
         });
-        Lists.verifyNewButtonIsEnabled();
-        Lists.verifyListIsPresent(listData.name);
-        Lists.selectActiveLists();
-        Lists.selectInactiveLists();
-        Lists.selectPrivateLists();
-        Lists.selectSharedLists();
-        Lists.selectRecordTypeFilter(listData.recordType);
-        Lists.resetAllFilters();
 
+        Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
         Lists.openActions();
-        Lists.verifyRefreshListButtonIsActive();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
+        Lists.exportList();
 
-        Lists.editList();
-        Lists.openActions();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
+        Lists.verifyCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+        Lists.verifyCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
+        Lists.checkDownloadedFile(
+          listData.name,
+          '"groups.created_by_user_id","groups.created_by_username",groups.created_date,groups.desc,"groups.expiration_off_set_in_days",groups.group,groups.source,"groups.updated_by_user_id","groups.updated_by_username",groups.updated_date,groups.id,users.active,users.addresses,users.barcode,users.created_by_user_id,users.created_date,users.date_of_birth,users.departments,users.department_ids,users.email,users.enrollment_date,users.expiration_date,users.external_system_id,users.first_name,users.last_name,"users.last_name_first_name",users.middle_name,users.mobile_phone,users.patron_group,users.phone,"users.preferred_contact_type","users.preferred_first_name",users.proxy_for,users.tags_tag_list,users.type,users.updated_by_user_id,users.updated_date,users.user_created_date,users.user_updated_date,users.id,users.username',
+        );
       },
     );
   });
