@@ -8,6 +8,7 @@ const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
+const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 
 module.exports = defineConfig({
   retries: {
@@ -40,6 +41,8 @@ module.exports = defineConfig({
   },
   e2e: {
     async setupNodeEvents(on, config) {
+      on('file:preprocessor', webpackPreprocessor());
+
       allureWriter(on, config);
 
       on('task', {
