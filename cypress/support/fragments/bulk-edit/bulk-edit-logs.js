@@ -336,6 +336,12 @@ export default {
     );
   },
 
+  clickClearStartedFilter() {
+    cy.do(
+      logsStartDateAccordion.find(Button({ ariaLabel: 'Clear selected Started filters' })).click(),
+    );
+  },
+
   clickClearSelectedDateButton(accordion, textField) {
     cy.do(
       Accordion(accordion)
@@ -517,7 +523,6 @@ export default {
 
   applyStartDateFilters() {
     cy.do(logsStartDateAccordion.find(applyBtn).click());
-    cy.wait(2000);
   },
 
   applyEndDateFilters() {
