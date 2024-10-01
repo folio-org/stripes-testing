@@ -130,7 +130,6 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude(column);
         });
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', type);
-        // TODO: uncomment after MODBULKOPS-204
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
 
