@@ -129,7 +129,6 @@ describe('Data Import', () => {
         JsonScreenView.verifyContentInTab('"natureOfContentTermIds": []');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openJsonScreen(fifthTitle);
         JsonScreenView.verifyJsonScreenIsOpened();

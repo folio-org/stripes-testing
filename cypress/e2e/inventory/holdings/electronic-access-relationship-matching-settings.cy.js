@@ -6,7 +6,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -59,7 +59,7 @@ describe('Inventory', () => {
         HoldingsRecordEdit.clickAddElectronicAccessButton();
         HoldingsRecordEdit.getRelationshipsFromHoldings().then((relationshipNames) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsInventory.selectSettingsTab(SETTINGS_TABS.URL_RELATIONSHIP);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.URL_RELATIONSHIP);
           UrlRelationship.verifyListOfUrlRelationshipInHoldings(relationshipNames);
         });
       },

@@ -2,7 +2,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -35,7 +35,7 @@ describe('Inventory', () => {
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.MATERIAL_TYPES);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
         MaterialTypes.checkAvailableOptions();
         MaterialTypes.createMaterialType(materialTypeName);
         MaterialTypes.isPresented(materialTypeName);

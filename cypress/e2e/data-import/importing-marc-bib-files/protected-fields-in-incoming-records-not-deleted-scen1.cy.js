@@ -10,9 +10,12 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -85,12 +88,14 @@ describe('Data Import', () => {
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
 
         Z3950TargetProfiles.openTargetProfile();
         Z3950TargetProfiles.editOclcWorldCat(
