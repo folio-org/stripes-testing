@@ -33,8 +33,9 @@
     ]
   },
   "dependencies": {
-    "@interactors/html": "^1.0.0-rc1.4",
-    "@interactors/keyboard": "^1.0.0-rc1.5",
+    "@interactors/html": "1.0.0",
+    "@interactors/keyboard": "1.0.0",
+    "@interactors/with-cypress": "1.0.0",
     "axe-core": "4.3.3",
     "cypress": "12.0.0",
     "cypress-cloud": "^1.9.6",
