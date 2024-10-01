@@ -8,6 +8,7 @@ import {
   Pane,
   MultiColumnListCell,
   Modal,
+  NavListItem,
   KeyValue,
   HTML,
   Option,
@@ -150,6 +151,10 @@ const getDefaultConfiguration = ({ id = uuid(), providerName = 'CAIA_SOFT' } = {
 export default {
   configurations,
   openCreateConfigurationForm,
+  openConfigurationsTabFromSettings() {
+    cy.do(NavListItem('Remote storage').click());
+    cy.do(NavListItem('Configurations').click());
+  },
 
   waitLoading() {
     cy.expect(Pane('Configurations').exists());

@@ -8,7 +8,8 @@ import ExportManagerSearchPane from '../../../support/fragments/exportManager/ex
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -49,7 +50,6 @@ describe('eHoldings', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
-        EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName('Wiley Online Library');
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
 
@@ -89,7 +89,7 @@ describe('eHoldings', () => {
 
           EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
             // Go to "Export manager" app.
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
 
             // Verify row with "Job ID" displayed at export jobs list.
             ExportManagerSearchPane.searchByEHoldings();

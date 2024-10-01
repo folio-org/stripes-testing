@@ -1,4 +1,4 @@
-import { HTML, Link, NavListItem } from '../../../interactors';
+import { HTML, Link, NavListItem, Button } from '../../../interactors';
 import { AppList } from '../../../interactors/applist';
 
 export default {
@@ -18,8 +18,12 @@ export default {
     cy.expect(AppList().absent());
   },
   openAppFromDropdown(appName) {
+    cy.wait(2000);
     cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
-    cy.wait(500);
+    cy.wait(2000);
     cy.do(Link(appName).click());
+  },
+  clickToGoHomeButton() {
+    cy.do(Button({ id: 'ModuleMainHeading' }).click());
   },
 };

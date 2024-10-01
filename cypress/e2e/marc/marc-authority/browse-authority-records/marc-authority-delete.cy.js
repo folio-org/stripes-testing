@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -11,6 +11,7 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -53,13 +54,11 @@ describe('MARC', () => {
         () => {
           DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
           JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY);
-          JobProfiles.runImportFile();
-          Logs.waitFileIsImported(testData.fileName2);
-          Logs.checkJobStatus(testData.fileName2, 'Completed');
-
-          cy.visit(TopMenu.marcAuthorities);
+          DataImport.importFileForBrowse(
+            DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+            testData.fileName2,
+          );
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.searchOption, testData.recordForC357549);
           MarcAuthorities.selectItem(testData.recordForC357549);
@@ -83,7 +82,7 @@ describe('MARC', () => {
           Logs.waitFileIsImported(testData.fileName);
           Logs.checkJobStatus(testData.fileName, 'Completed');
 
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.recordForC350643);
           MarcAuthorities.selectItem(testData.recordForC350643);
           MarcAuthority.waitLoading();
@@ -92,7 +91,7 @@ describe('MARC', () => {
           MarcAuthoritiesDelete.checkDeleteModal();
           MarcAuthoritiesDelete.confirmDelete();
           MarcAuthoritiesDelete.checkDelete(testData.recordForC350643);
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.recordForC350643);
           MarcAuthoritiesDelete.checkEmptySearchResults(testData.recordForC350643);
         },

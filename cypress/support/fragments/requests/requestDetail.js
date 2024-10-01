@@ -68,16 +68,36 @@ export default {
   },
 
   checkTitleInformation: (data) => {
-    InteractorsTools.checkKeyValue(titleInformationSection, 'Title level requests', data.TLRs);
-    InteractorsTools.checkKeyValue(titleInformationSection, 'Title', data.title);
-    InteractorsTools.checkKeyValue(titleInformationSection, 'Contributor', data.contributor);
+    InteractorsTools.checkKeyValue(
+      titleInformationSection,
+      'Title level requests',
+      data.TLRs === '-' ? 'No value set-' : data.TLRs,
+    );
+    InteractorsTools.checkKeyValue(
+      titleInformationSection,
+      'Title',
+      data.title === '-' ? 'No value set-' : data.title,
+    );
+    InteractorsTools.checkKeyValue(
+      titleInformationSection,
+      'Contributor',
+      data.contributor === '-' ? 'No value set-' : data.contributor,
+    );
     InteractorsTools.checkKeyValue(
       titleInformationSection,
       'Publication date',
       data.publicationDate,
     );
-    InteractorsTools.checkKeyValue(titleInformationSection, 'Edition', data.edition);
-    InteractorsTools.checkKeyValue(titleInformationSection, 'ISBN(s)', data.ISBNs);
+    InteractorsTools.checkKeyValue(
+      titleInformationSection,
+      'Edition',
+      data.edition === '-' ? 'No value set-' : data.edition,
+    );
+    InteractorsTools.checkKeyValue(
+      titleInformationSection,
+      'ISBN(s)',
+      data.ISBNs === '-' ? 'No value set-' : data.ISBNs,
+    );
   },
 
   checkItemStatus: (status) => {

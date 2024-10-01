@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -6,8 +6,9 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { Locations } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import settingsMenu from '../../../support/fragments/settingsMenu';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -125,7 +126,9 @@ describe('Inventory', () => {
           );
         });
 
-        cy.visit(settingsMenu.tenantLocationsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TenantPane.goToTenantTab();
+        TenantPane.selectTenant(TENANTS.LOCATIONS);
         Locations.waitLoading();
         [...Array(3)].forEach((_, index) => {
           Locations.selectInstitution(itemData.instances[index].defaultLocation.institutionName);

@@ -45,7 +45,6 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileName);
         JobProfiles.waitFileIsUploaded();

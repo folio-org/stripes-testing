@@ -73,6 +73,7 @@ describe('bulk-edit', () => {
             instance.instanceName,
             instance.itemBarcode,
           );
+          cy.getAdminToken();
           cy.getHoldings({
             limit: 1,
             query: `"instanceId"="${instance.instanceId}"`,
@@ -123,7 +124,7 @@ describe('bulk-edit', () => {
                   ],
                 });
               });
-
+            cy.wait(3000);
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,

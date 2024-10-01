@@ -510,7 +510,9 @@ export default {
   },
 
   editInstance: () => {
+    cy.wait(1000);
     cy.do(actionsButton.click());
+    cy.wait(1000);
     cy.do(editInstanceButton.click());
     cy.expect(Pane({ id: 'instance-form' }).exists());
 
@@ -538,10 +540,16 @@ export default {
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
-    cy.wrap(QuickMarcEditorRow({ tagValue: tag }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   verifyAndClickUnlinkIcon(tag) {
@@ -551,17 +559,27 @@ export default {
   },
 
   clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {
-    cy.wrap(Accordion(accordion).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      Accordion(accordion)
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   clickViewAuthorityIconDisplayedInMarcViewPane() {
-    cy.wrap(marcViewPaneContent.find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.wrap(
+      marcViewPaneContent.find(Link()).perform((element) => {
+        if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+          element.removeAttribute('target');
+        }
+        element.click();
+      }),
+    );
   },
 
   marcAuthViewIconClickUsingId(id) {

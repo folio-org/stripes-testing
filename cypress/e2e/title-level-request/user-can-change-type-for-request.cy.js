@@ -84,13 +84,14 @@ describe('Title Level Request. Request detail', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-          cy.wait(3000);
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"id"=="${instanceData.instanceId}"`,
-          }).then((instance) => {
-            instanceHRID = instance.hrid;
+          cy.wait(3000).then(() => {
+            cy.getInstance({
+              limit: 1,
+              expandAll: true,
+              query: `"id"=="${instanceData.instanceId}"`,
+            }).then((instance) => {
+              instanceHRID = instance.hrid;
+            });
           });
         });
       })

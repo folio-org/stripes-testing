@@ -4,6 +4,7 @@ export const APPLICATION_NAMES = {
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
+  INVOICES: 'Invoices',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
@@ -13,6 +14,7 @@ export const APPLICATION_NAMES = {
   CHECK_OUT: 'Check out',
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
+  EHOLDINGS: 'eHoldings',
 };
 
 export const REQUEST_METHOD = {

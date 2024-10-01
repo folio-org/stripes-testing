@@ -34,6 +34,12 @@ const saveMappingProfile = () => {
 export default {
   openNewMappingProfileForm,
   saveMappingProfile,
+
+  openTabFromDataExportSettingsList() {
+    cy.do(NavListItem('Data export').click());
+    cy.do(NavListItem('Field mapping profiles').click());
+  },
+
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     exportNewFieldMappingProfile.fillMappingProfile(mappingProfile);

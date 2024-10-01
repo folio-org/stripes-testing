@@ -4,6 +4,8 @@ import {
 } from '../../../support/fragments/settings/remote-storage';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('remote-storage-configuration', () => {
   const rs = Configurations.configurations.CaiaSoft;
@@ -19,11 +21,12 @@ describe('remote-storage-configuration', () => {
       });
       Configurations.deleteRemoteStorage('RS2');
 
-      cy.visit(settingsMenu.remoteStorageAccTablesPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+      AccessionTables.openTabAccessionTablesFromSettings();
       Configurations.verifyCaiaSoftWarning();
 
       // returning remote storage conf
-      cy.visit(settingsMenu.remoteStorageConfigurationPath);
+      Configurations.openConfigurationsTabFromSettings();
       rs.create('RS2');
     },
   );
@@ -41,10 +44,10 @@ describe('remote-storage-configuration', () => {
       rs.create(testName);
       Configurations.verifyCreatedConfiguration(testName, rs);
 
-      cy.visit(settingsMenu.remoteStorageAccTablesPath);
+      AccessionTables.openTabAccessionTablesFromSettings();
       AccessionTables.verifyAccessionTablePane();
 
-      cy.visit(settingsMenu.remoteStorageConfigurationPath);
+      Configurations.openConfigurationsTabFromSettings();
       Configurations.deleteRemoteStorage(testName);
     },
   );

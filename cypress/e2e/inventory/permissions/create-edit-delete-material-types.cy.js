@@ -1,13 +1,12 @@
-import { Permissions } from '../../../support/dictionary';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Permissions', () => {
@@ -36,8 +35,7 @@ describe('Inventory', () => {
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.MATERIAL_TYPES);
-        cy.visit(SettingsMenu.materialTypePath);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
         MaterialTypes.checkAvailableOptions();
         MaterialTypes.createMaterialType(materialTypeName);
         MaterialTypes.isPresented(materialTypeName);

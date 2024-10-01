@@ -13,7 +13,10 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -27,7 +30,6 @@ describe('Data Import', () => {
       'C376008 Order field mapping profile: Confirm the list of Product identifier types (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.addFolioRecordType(FOLIO_RECORD_TYPE.ORDER);
         NewFieldMappingProfile.verifyProductIdTypeDropdown(

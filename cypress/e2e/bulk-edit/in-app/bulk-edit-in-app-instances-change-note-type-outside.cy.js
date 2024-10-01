@@ -7,12 +7,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { INSTANCE_NOTE_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_NOTE_IDS } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import inventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const notes = {
@@ -168,7 +169,7 @@ describe('bulk-edit', () => {
         ]);
         ExportFile.verifyFileIncludes(changedRecordsFileName, ['With note;adminNote;false']);
         ExportFile.verifyFileIncludes(changedRecordsFileName, ['Reproduction note'], false);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -183,7 +184,7 @@ describe('bulk-edit', () => {
         );
         ItemRecordView.verifyTextAbsent('Reproduction note');
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

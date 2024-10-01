@@ -67,7 +67,6 @@ describe('Inventory', () => {
 
         // login as a different user
         cy.login(firstUser.username, firstUser.password);
-
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         InventoryInstances.selectInstance();

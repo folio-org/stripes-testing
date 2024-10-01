@@ -1,4 +1,4 @@
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -9,11 +9,11 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 let holdingsHRID;
@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
         UrlRelationship.createNewRelationship(newRelationshipName);
         UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.FOLIO);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
@@ -73,11 +73,12 @@ describe('bulk-edit', () => {
         HoldingsRecordView.edit();
         HoldingsRecordEdit.addElectronicAccess(newRelationshipName);
 
-        cy.visit(SettingsMenu.urlRelationshipPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        UrlRelationship.openTabFromInventorySettingsList();
         UrlRelationship.deleteUrlRelationship(newRelationshipName);
         InteractorsTools.checkCalloutMessage(calloutMessage);
 
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
@@ -95,11 +96,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(holdingsHRID);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.searchByParameter('Holdings HRID', holdingsHRID);
-        InventorySearchAndFilter.selectSearchResultItem();
-        InventorySearchAndFilter.selectViewHoldings();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.reload();
         InventoryInstance.verifyHoldingsTemporaryLocation('Online');
       },
     );

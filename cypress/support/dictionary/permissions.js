@@ -1066,7 +1066,7 @@ export default {
   },
   exportManagerDownloadAndResendFiles: {
     internal: 'ui-export-manager.jobs.downloadAndResend',
-    gui: 'Export manager: Download and re-send files',
+    gui: 'Export manager: Download and resend files',
   },
   exportManagerView: {
     internal: 'ui-export-manager.export-manager.view',
@@ -1162,9 +1162,24 @@ export default {
     gui: 'Lists (Admin): All permissions',
   },
 
+  listsEnable: {
+    internal: 'module.lists.enabled',
+    gui: 'Lists (Enable): Can view lists',
+  },
+
   listsEdit: {
     internal: 'module.lists.refresh',
     gui: 'Lists (Edit): Can create, edit, and refresh lists',
+  },
+
+  listsDelete: {
+    internal: 'module.lists.delete',
+    gui: 'Lists (Delete): Can create, edit, refresh, and delete lists',
+  },
+
+  listsExport: {
+    internal: 'module.lists.export',
+    gui: 'Lists (Export): Can create, edit, refresh, and export lists',
   },
 
   // Licenses

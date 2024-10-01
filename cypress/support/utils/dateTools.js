@@ -143,8 +143,9 @@ export default {
 
   getPreviousDayDateForFiscalYear: () => {
     const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 1);
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 1,
+      currentDate.getDate(),
     )}`;
   },
 

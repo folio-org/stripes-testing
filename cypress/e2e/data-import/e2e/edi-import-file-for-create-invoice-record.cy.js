@@ -8,7 +8,7 @@ import {
   RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -60,11 +60,11 @@ describe('Data Import', () => {
 
     before('Create test user and login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        Permissions.dataImportUploadAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -99,10 +99,12 @@ describe('Data Import', () => {
 
         // create Action profile and link it to Field mapping profile
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Job profile
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
@@ -110,6 +112,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC343338.edi', fileName);
@@ -126,7 +129,7 @@ describe('Data Import', () => {
         );
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
         FileDetails.getInvoiceNumber(vendorInvoiceNumber).then((invoiceNumber) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
           Invoices.searchByNumber(invoiceNumber);
           Invoices.selectInvoice(invoiceNumber);
 
