@@ -51,6 +51,7 @@ const capabilitySetsAccordion = Accordion('Capability sets');
 const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
+const duplicateButton = Button('Duplicate');
 
 const capabilityTables = {
   Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
@@ -82,6 +83,7 @@ const recordLastUpdatedHeader = generalInformationAccordion.find(
   Button(including('Record last updated:')),
 );
 const unassignAllCapabilitiesButton = Button('Unassign all capabilities/sets');
+const duplicateModal = Modal('Duplicate role?');
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -229,15 +231,17 @@ export default {
     cy.expect(targetCheckbox.has({ checked: false, disabled: false }));
   },
 
-  clickOnRoleName: (roleName) => {
+  clickOnRoleName: (roleName, capabilitiesShown = true) => {
     cy.do(rolesPane.find(HTML(roleName, { className: including('root') })).click());
     cy.wait(2000);
-    cy.expect([
-      Pane(roleName).exists(),
-      Pane(roleName).find(Spinner()).absent(),
-      capabilitiesAccordion.has({ open: false }),
-      capabilitySetsAccordion.has({ open: false }),
-    ]);
+    cy.expect(Pane(roleName).exists());
+    if (capabilitiesShown) {
+      cy.expect([
+        Pane(roleName).find(Spinner()).absent(),
+        capabilitiesAccordion.has({ open: false }),
+        capabilitySetsAccordion.has({ open: false }),
+      ]);
+    }
   },
 
   clickOnCapabilitiesAccordion: (checkOpen = true) => {
@@ -592,5 +596,27 @@ export default {
   clickUnassignAllCapabilitiesButton: () => {
     cy.do(unassignAllCapabilitiesButton.click());
     cy.wait(3000);
+  },
+
+  clickActionsButton: () => {
+    cy.do(actionsButton.click());
+  },
+
+  checkDuplicateOptionShown: (isShown = true) => {
+    if (isShown) cy.expect(duplicateButton.exists());
+    else cy.expect(duplicateButton.absent());
+  },
+
+  clickDuplicateButton: () => {
+    cy.do(duplicateButton.click());
+    cy.expect([
+      duplicateModal.find(duplicateButton).exists(),
+      duplicateModal.find(cancelButton).exists(),
+    ]);
+  },
+
+  confirmDuplicateRole: () => {
+    cy.do(duplicateModal.find(duplicateButton).click());
+    cy.expect(duplicateModal.absent());
   },
 };
