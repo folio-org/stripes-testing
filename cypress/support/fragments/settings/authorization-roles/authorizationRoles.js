@@ -16,8 +16,8 @@ import {
   KeyValue,
   and,
   or,
-  matching,
   PaneHeader,
+  matching,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
