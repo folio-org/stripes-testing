@@ -16,9 +16,11 @@ import {
   KeyValue,
   and,
   or,
-  matching,
   PaneHeader,
+  matching,
 } from '../../../../../interactors';
+import DateTools from '../../../utils/dateTools';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const rolesPane = Pane('Authorization roles');
 const newButton = Button('+ New');
@@ -84,6 +86,7 @@ const recordLastUpdatedHeader = generalInformationAccordion.find(
 );
 const unassignAllCapabilitiesButton = Button('Unassign all capabilities/sets');
 const duplicateModal = Modal('Duplicate role?');
+const duplicateCalloutSuccessText = (roleName) => `The role ${roleName} has been successfully duplicated`;
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -618,5 +621,30 @@ export default {
   confirmDuplicateRole: () => {
     cy.do(duplicateModal.find(duplicateButton).click());
     cy.expect(duplicateModal.absent());
+  },
+
+  cancelDuplicateRole: () => {
+    cy.do(duplicateModal.find(cancelButton).click());
+    cy.expect(duplicateModal.absent());
+  },
+
+  duplicateRole(roleName, capabilitiesShown = true) {
+    const currentDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+    const duplicatedTitleRegExp = new RegExp(
+      `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
+    );
+    this.clickActionsButton();
+    this.clickDuplicateButton();
+    this.confirmDuplicateRole();
+    InteractorsTools.checkCalloutMessage(duplicateCalloutSuccessText(roleName));
+    cy.expect(Pane(matching(duplicatedTitleRegExp)).exists());
+    if (capabilitiesShown) {
+      cy.expect([
+        Spinner().absent(),
+        capabilitiesAccordion.has({ open: false }),
+        capabilitySetsAccordion.has({ open: false }),
+      ]);
+    }
+    this.checkUsersAccordion(0);
   },
 };
