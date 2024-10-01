@@ -1,7 +1,8 @@
-import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let userWithCsvViewPermission;
 let userWithCsvPermissions;
@@ -30,7 +31,7 @@ describe('bulk-edit', () => {
       { tags: ['smoke', 'firebird'] },
       () => {
         cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
 
         BulkEditSearchPane.verifyCsvViewPermission();
       },
@@ -42,7 +43,7 @@ describe('bulk-edit', () => {
       { tags: ['smoke', 'firebird'] },
       () => {
         cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
 
         BulkEditSearchPane.actionsIsAbsent();
       },
