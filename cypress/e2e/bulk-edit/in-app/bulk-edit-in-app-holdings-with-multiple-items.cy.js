@@ -9,7 +9,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
@@ -112,7 +113,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [instanceDetailsToCheck]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',
