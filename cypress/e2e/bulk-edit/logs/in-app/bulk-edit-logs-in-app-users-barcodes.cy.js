@@ -9,6 +9,8 @@ import DateTools from '../../../../support/utils/dateTools';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
@@ -119,7 +121,7 @@ describe('bulk-edit', () => {
             true,
           );
 
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByUsername(user.username);
           Users.verifyPatronGroupOnUserDetailsPane('graduate');
           Users.verifyExpirationDateOnUserDetailsPane(newExpirationDate.dateWithSlashes);
