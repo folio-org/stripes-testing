@@ -12,7 +12,7 @@ import {
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -232,7 +232,7 @@ describe('Inventory', () => {
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
         Z3950TargetProfiles.verifyTargetProfilesListDisplayed();
         Z3950TargetProfiles.openTargetProfile(profileId);
         Z3950TargetProfiles.verifyTargetProfileForm();

@@ -441,7 +441,7 @@ describe('Data Import', () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
-        ItemRecordView.close();
+        ItemRecordView.closeDetailView();
       });
     });
   });

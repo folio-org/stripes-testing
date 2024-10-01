@@ -6,7 +6,7 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -109,7 +109,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.MATERIAL_TYPES);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
         MaterialTypes.checkAvailableOptions();
         [...Array(3)].forEach((_, index) => {
           MaterialTypes.isPresented(itemData.materialTypes[index].materialType.name);

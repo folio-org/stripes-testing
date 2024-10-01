@@ -7,7 +7,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -56,7 +56,7 @@ describe('Inventory', () => {
         InstanceRecordEdit.waitLoading();
         InstanceRecordEdit.getStatusTermsFromInstance().then((statusNames) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsInventory.selectSettingsTab(SETTINGS_TABS.INSTANCE_STATUS_TYPE);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_STATUS_TYPE);
           InstanceStatusTypes.verifyListOfStatusTypesIsIdenticalToListInInstance(statusNames);
         });
       },
@@ -74,7 +74,7 @@ describe('Inventory', () => {
         InstanceRecordEdit.clickAddStatisticalCodeButton();
         InstanceRecordEdit.getStatisticalCodesFromInstance().then((codes) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsInventory.selectSettingsTab(SETTINGS_TABS.INSTANCE_STATUS_TYPE);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_STATUS_TYPE);
           StatisticalCodes.verifyListOfStatisticalCodesIsIdenticalToListInInstance(codes);
         });
       },

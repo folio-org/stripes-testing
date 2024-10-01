@@ -4,7 +4,7 @@ import EditTargetProfile from '../../../support/fragments/settings/inventory/int
 import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -35,7 +35,7 @@ describe('Inventory', () => {
         cy.login(user.username, user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
       });
     });
 
