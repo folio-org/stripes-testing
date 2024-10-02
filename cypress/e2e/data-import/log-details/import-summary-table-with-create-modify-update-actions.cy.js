@@ -45,7 +45,6 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -124,10 +123,10 @@ describe('Data Import', () => {
       name: `C430257 mapping profile ${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
       holdingsMarcField: '901',
-      subfieldForHoldings: '$h',
+      subfieldForHoldings: 'h',
       itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
       itemMarcField: '902',
-      subfieldForItem: '$i',
+      subfieldForItem: 'i',
     };
     const jobProfileNameForExport = `C430257 job profile.${getRandomPostfix()}`;
     // profiles for updating instance, holdings, item
@@ -360,11 +359,14 @@ describe('Data Import', () => {
           `${collectionOfProfilesForCreate[2].mappingProfile.pernanentLocationUI} >`,
         );
         InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.closeDetailView();
 
-        cy.visit(SettingsMenu.exportMappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
         cy.wait(10000);
-        cy.visit(SettingsMenu.exportJobProfilePath);
+        ExportJobProfiles.goToJobProfilesTab();
+        cy.wait(1500);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // download .csv file
