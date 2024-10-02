@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedRecordsAbsent();
         BulkEditActions.startBulkEditAbsent();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyFirstNameOnUserDetailsPane(newFirstName);
       },
