@@ -1,5 +1,4 @@
 import {
-  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
@@ -24,7 +23,6 @@ import ActionProfile from '../../../support/fragments/settings/dataImport/action
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -159,7 +157,6 @@ describe('Data Import', () => {
           );
         });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileNameForUpdate);

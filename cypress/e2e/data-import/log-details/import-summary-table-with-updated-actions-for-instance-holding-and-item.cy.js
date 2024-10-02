@@ -365,6 +365,7 @@ describe('Data Import', () => {
         HoldingsRecordView.close();
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.close();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
