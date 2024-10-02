@@ -147,7 +147,7 @@ export default {
 
   verifyFieldsSortedAlphabetically() {
     cy.do(selectFieldButton.click());
-    cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
+    cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
         const textArray = optionsText.get().map((el) => el.innerText);
@@ -234,22 +234,13 @@ export default {
   fillInValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
-    cy.do([
-      RepeatableFieldItem({ index: row })
-        .find(MultiSelectOption(including(text)))
-        .click(),
-    ]);
+    cy.do([MultiSelectOption(including(text)).click()]);
     cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.do([
-      RepeatableFieldItem({ index: row })
-        .find(MultiSelectOption(including(text)))
-        .click(),
-      buildQueryModal.click(),
-    ]);
+    cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
   },
 
   removeValueFromMultiselect(text) {

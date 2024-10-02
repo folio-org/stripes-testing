@@ -107,7 +107,7 @@ describe('MARC', () => {
         UsersSearchPane.openUser(user.userAProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${user.userAProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+          `User ${user.userAProperties.username}, ${user.userCProperties.preferredFirstName} deleted successfully.`,
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
@@ -149,7 +149,7 @@ describe('MARC', () => {
         UsersSearchPane.openUser(user.userCProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${user.userCProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+          `User ${user.userCProperties.username}, ${user.userCProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

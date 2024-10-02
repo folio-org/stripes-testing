@@ -14,9 +14,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -24,8 +21,14 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -118,14 +121,11 @@ describe('Data Import', () => {
         });
       });
 
-      cy.loginAsAdmin();
-      // craete match profile
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
       // create mapping profile
-      cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(
         collectionOfMappingAndActionProfiles[0].mappingProfile,
@@ -158,15 +158,20 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfiles[1].mappingProfile.name,
       );
 
+      // craete match profile
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+      MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+
       // create action profiles
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
-        cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
       // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfile);
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
       NewJobProfile.linkMatchProfile(matchProfile.profileName);
@@ -210,7 +215,6 @@ describe('Data Import', () => {
       'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, testData.fileName);
         JobProfiles.waitFileIsUploaded();

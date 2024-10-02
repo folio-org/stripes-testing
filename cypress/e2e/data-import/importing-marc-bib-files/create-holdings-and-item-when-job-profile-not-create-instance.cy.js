@@ -225,7 +225,6 @@ describe('Data Import', () => {
         HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        Logs.openFileDetails(fileNameForCreate);
         FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
         ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
         ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);

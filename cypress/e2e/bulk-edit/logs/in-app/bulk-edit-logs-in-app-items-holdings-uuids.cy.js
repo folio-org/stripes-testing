@@ -9,9 +9,10 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -163,7 +164,7 @@ describe('bulk-edit', () => {
             '',
           ]);
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.item.barcode);
           ItemRecordView.checkItemDetails(

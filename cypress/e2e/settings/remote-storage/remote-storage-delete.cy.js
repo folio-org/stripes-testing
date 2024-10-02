@@ -1,9 +1,9 @@
 import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import DeleteRemoteStorageModal from '../../../support/fragments/settings/remote-storage/madals/deleteRemoteStorageModal';
-import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('remote-storage-configuration', () => {
   const testData = {};
@@ -30,9 +30,9 @@ describe('remote-storage-configuration', () => {
     { tags: ['criticalPath', 'firebird'] },
     () => {
       // #1 - 2 Open **"Settings"** app and **"Remote Storage"** in "Settings"
-      cy.visit(SettingsMenu.remoteStoragePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       // #3 Click on **"Configurations"** option
-      RemoteStorage.goToConfigurations();
+      Configurations.openConfigurationsTabFromSettings();
       // #4 Click on row, which is configured in Precondition #2 (e.g. Test)
       Configurations.selectRemoteStorage(testData.configuration.name);
       // #6 Click **"Delete"** option

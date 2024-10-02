@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
@@ -139,7 +139,7 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyChangedResults(location);
         BulkEditActions.verifySuccessBanner(1);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingHRID);
         InventorySearchAndFilter.selectSearchResultItem();

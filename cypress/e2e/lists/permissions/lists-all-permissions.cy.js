@@ -32,11 +32,11 @@ describe('lists', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          Lists.buildQueryOnActiveUsers().then((query) => {
+          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
             Lists.createQueryViaApi(query).then((createdQuery) => {
               listData.queryId = createdQuery.queryId;
               listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = ['users.active', 'user.id'];
+              listData.fields = fields;
 
               Lists.createViaApi(listData).then((body) => {
                 listData.id = body.id;

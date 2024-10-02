@@ -19,7 +19,7 @@ describe('lists', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsCreateEditRefresh.gui,
+        Permissions.listsEdit.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiOrdersCreate.gui,
         Permissions.inventoryAll.gui,
@@ -32,11 +32,11 @@ describe('lists', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          Lists.buildQueryOnActiveUsers().then((query) => {
+          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
             Lists.createQueryViaApi(query).then((createdQuery) => {
               listData.queryId = createdQuery.queryId;
               listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = ['users.active', 'user.id'];
+              listData.fields = fields;
 
               Lists.createViaApi(listData).then((body) => {
                 listData.id = body.id;

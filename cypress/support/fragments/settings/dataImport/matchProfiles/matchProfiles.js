@@ -30,6 +30,7 @@ export default {
   ...ResultsPane,
   clickCreateNewMatchProfile() {
     ResultsPane.expandActionsDropdown();
+    cy.wait(1000);
     cy.do(Button('New match profile').click());
     MatchProfileEditForm.waitLoading();
     MatchProfileEditForm.verifyFormView();

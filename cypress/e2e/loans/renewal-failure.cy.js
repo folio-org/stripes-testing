@@ -23,7 +23,7 @@ describe('Renewal', () => {
   let loanId;
   let servicePointId;
   let sourceId;
-  const firstName = 'testPermFirst';
+  const firstName = 'preferredName testMiddleName';
   const renewUserData = {
     firstName,
     lastName: '',

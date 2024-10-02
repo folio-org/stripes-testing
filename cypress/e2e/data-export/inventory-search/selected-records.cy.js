@@ -1,12 +1,13 @@
 import InventoryModals from '../../../support/fragments/inventory/inventoryModals';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Data Export', () => {
   describe('Search in Inventory', () => {
     beforeEach('navigates to Inventory', () => {
       cy.loginAsAdmin();
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
     });
 
     it(

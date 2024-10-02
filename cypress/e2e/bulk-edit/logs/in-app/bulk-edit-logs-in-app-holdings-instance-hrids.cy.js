@@ -11,7 +11,8 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import { LOCATION_IDS, LOCATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_IDS, LOCATION_NAMES } from '../../../../support/constants';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const invalidInstanceHRID = `123-${getRandomPostfix()}`;
@@ -193,7 +194,7 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [instance.hrid]);
 
           // Go to inventory app and verify changes
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchByParameter('Instance HRID', instance.hrid);
           InventorySearchAndFilter.selectSearchResultItem();
           InventorySearchAndFilter.selectViewHoldings();
