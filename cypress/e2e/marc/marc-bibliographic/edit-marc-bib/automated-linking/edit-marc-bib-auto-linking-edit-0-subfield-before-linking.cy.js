@@ -119,8 +119,10 @@ describe('MARC', () => {
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
 
-            cy.loginAsAdmin().then(() => {
-              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();

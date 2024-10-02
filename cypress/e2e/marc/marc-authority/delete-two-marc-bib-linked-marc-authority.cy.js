@@ -104,27 +104,29 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        twoMarcBibsToLink.forEach((marcBib) => {
-          InventoryInstances.searchByTitle(marcBib.marcBibRecord);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          marcBib.linkingFields.forEach((linking) => {
-            cy.wait(2000);
-            QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(linking.value);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          twoMarcBibsToLink.forEach((marcBib) => {
+            InventoryInstances.searchByTitle(marcBib.marcBibRecord);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            marcBib.linkingFields.forEach((linking) => {
+              cy.wait(2000);
+              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+            });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
         });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {

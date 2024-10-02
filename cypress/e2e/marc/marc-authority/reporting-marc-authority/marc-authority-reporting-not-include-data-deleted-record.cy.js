@@ -120,23 +120,26 @@ describe('MARC', () => {
             });
           });
 
-          cy.loginAsAdmin();
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.searchByTitle(testData.createdAuthorityID[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          dataForC375230.forEach((field) => {
-            QuickMarcEditor.clickLinkIconInTagField(field.index);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResults(field.marcValue);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            InventoryInstances.searchByTitle(testData.createdAuthorityID[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            dataForC375230.forEach((field) => {
+              QuickMarcEditor.clickLinkIconInTagField(field.index);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.searchResults(field.marcValue);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
+            });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
