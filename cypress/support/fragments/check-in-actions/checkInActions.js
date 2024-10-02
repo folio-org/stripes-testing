@@ -120,9 +120,11 @@ export default {
   },
 
   checkInItemGui(barcode) {
-    cy.do([itemBarcodeField.exists(), itemBarcodeField.fillIn(barcode)]);
-    cy.wait(500);
-    cy.do(addItemButton.click());
+    return cy.wrap(true).then(() => {
+      cy.do([itemBarcodeField.exists(), itemBarcodeField.fillIn(barcode)]);
+      cy.wait(500);
+      cy.do(addItemButton.click());
+    });
   },
 
   checkInItemByBarcode(barcode) {

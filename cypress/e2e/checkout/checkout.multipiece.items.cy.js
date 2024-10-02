@@ -88,7 +88,6 @@ describe('Check out', () => {
         }).then((users) => {
           userBarcode = users[0].barcode;
         });
-        cy.login(user.username, user.password);
       });
   });
 
@@ -134,8 +133,10 @@ describe('Check out', () => {
     'C591 Check out: multipiece items (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
+      cy.login(user.username, user.password, {
+        path: TopMenu.checkOutPath,
+        waiter: Checkout.waitLoading,
+      });
       CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
       CheckOutActions.checkPatronInformation(user.username, userBarcode);
       cy.expect(CheckOutActions.modal.absent());
