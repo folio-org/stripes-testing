@@ -4,8 +4,8 @@ import {
   Button,
   Checkbox,
   Modal,
-  MultiColumnList,
   MultiColumnListCell,
+  MultiColumnList,
   NavListItem,
   Pane,
   PaneHeader,
@@ -30,7 +30,7 @@ import Logs from './logs/logs';
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
 const deleteLogsButton = Button('Delete selected logs');
-const jobLogsList = MultiColumnList({ id: 'job-logs-list' });
+const jobLogsList = Pane({ id: 'pane-logs-title' });
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const deleteLogsModal = Modal('Delete data import logs?');
 const deleteLogsModalCancelButton = deleteLogsModal.find(Button('No, do not delete'));
@@ -572,7 +572,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 9;
+    const hrIdColumnIndex = 8;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -607,7 +607,7 @@ export default {
     );
   },
 
-  checkMultiColumnListRowsCount: (count) => cy.expect(jobLogsList.has({ rowCount: count })),
+  checkMultiColumnListRowsCount: (count) => cy.expect(MultiColumnList().has({ rowCount: count })),
 
   checkIsLandingPageOpened: () => {
     cy.expect(sectionPaneJobsTitle.find(orChooseFilesButton).exists());

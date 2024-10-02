@@ -3,15 +3,16 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
   LOCATION_NAMES,
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -21,7 +22,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -42,12 +42,16 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -63,8 +67,8 @@ describe('Data Import', () => {
     let materialTypeId;
     let user = {};
     let servicePointId;
-    const uniqueFirstInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
-    const uniqueSecondInstanceTitle = `Evolution of the Earth /${getRandomPostfix()}`;
+    const uniqueFirstInstanceTitle = `${getRandomPostfix()}Agrarianism and capitalism in early Georgia, 1732-1743 /`;
+    const uniqueSecondInstanceTitle = `${getRandomPostfix()}Evolution of the Earth /`;
     const firstItem = {
       title: `${uniqueFirstInstanceTitle} Jay Jordan Butler.`,
       productId: '9782266111560',
@@ -224,6 +228,27 @@ describe('Data Import', () => {
 
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
+          (instance) => {
+            const itemId = instance.items[0].id;
+
+            cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
+              item.barcode = itemBarcode;
+              InventoryItems.editItemViaApi(item).then(() => {
+                CheckInActions.checkinItemViaApi({
+                  itemBarcode: item.barcode,
+                  servicePointId,
+                  checkInDate: new Date().toISOString(),
+                }).then(() => {
+                  cy.deleteItemViaApi(itemId);
+                  cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                  InventoryInstance.deleteInstanceViaApi(instance.id);
+                });
+              });
+            });
+          },
+        );
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` }).then(
           (order) => {
             Orders.deleteOrderViaApi(order[0].id);
@@ -246,27 +271,6 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
-          (instance) => {
-            const itemId = instance.items[0].id;
-
-            cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
-              item.barcode = itemBarcode;
-              InventoryItems.editItemViaApi(item).then(() => {
-                CheckInActions.checkinItemViaApi({
-                  itemBarcode: item.barcode,
-                  servicePointId,
-                  checkInDate: new Date().toISOString(),
-                }).then(() => {
-                  cy.deleteItemViaApi(itemId);
-                  cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                  InventoryInstance.deleteInstanceViaApi(instance.id);
-                });
-              });
-            });
-          },
-        );
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           location.institutionId,
           location.campusId,
@@ -284,7 +288,7 @@ describe('Data Import', () => {
     };
 
     const checkReceivedPiece = (number, title) => {
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.clearSearchField();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
@@ -347,7 +351,7 @@ describe('Data Import', () => {
           ).then((secondOrder) => {
             secondOrderNumber = secondOrder.poNumber;
 
-            cy.visit(TopMenu.ordersPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
             Orders.resetFilters();
             Orders.checkIsOrderCreated(secondOrderNumber);
             // open the second PO
@@ -378,24 +382,28 @@ describe('Data Import', () => {
         });
 
         // create mapping and action profiles
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
         collectionOfProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.mappingProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
           FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-          cy.visit(SettingsMenu.actionProfilePath);
+
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create match profiles
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
           MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+          cy.wait(3000);
         });
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
         NewJobProfile.linkMatchAndActionProfiles(
           collectionOfMatchProfiles[0].matchProfile.profileName,
@@ -414,7 +422,7 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);

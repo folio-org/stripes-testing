@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -8,6 +9,7 @@ import { Localization } from '../../../support/fragments/settings/tenant/general
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
@@ -47,7 +49,8 @@ describe('Settings', () => {
     });
 
     after('Delete test data', () => {
-      cy.visit(SettingsMenu.tenantPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      TenantPane.goToTenantTab();
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.clickChangeSessionLocalLanguage();
       TemporarySessionLocale.waitLoading();

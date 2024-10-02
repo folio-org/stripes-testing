@@ -157,7 +157,7 @@ describe('Data Import', () => {
           );
         });
 
-        cy.visit(TopMenu.dataImportPath);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

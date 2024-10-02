@@ -1,5 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -23,8 +24,12 @@ import {
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -93,19 +98,21 @@ describe('Data Import', () => {
     };
 
     before('Create test data', () => {
-      cy.loginAsAdmin();
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
       // create mapping profile
-      cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfile);
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
@@ -171,7 +178,8 @@ describe('Data Import', () => {
 
             orderNumbers.push(orderNumber);
           });
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(marcFileName);
         });
       },

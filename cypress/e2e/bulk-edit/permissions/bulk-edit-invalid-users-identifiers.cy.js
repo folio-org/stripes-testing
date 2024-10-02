@@ -6,6 +6,8 @@ import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -54,7 +56,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyNonMatchedResults();
 
         // Navigate to the "Export manager" app
-        cy.visit(TopMenu.exportManagerPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();
         ExportManagerSearchPane.getElementByTextAndVerify(user.username, 1, 0);

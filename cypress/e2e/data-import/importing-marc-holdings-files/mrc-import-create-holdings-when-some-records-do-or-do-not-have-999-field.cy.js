@@ -75,7 +75,6 @@ describe('Data Import', () => {
         );
 
         // upload a marc file for creating holdings
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

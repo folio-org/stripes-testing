@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
@@ -15,6 +16,9 @@ const OCLCAuthentication = '100481406/PAOLF';
 describe('Inventory', () => {
   describe('Single record import', () => {
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.inventoryAll.gui,
@@ -22,15 +26,14 @@ describe('Inventory', () => {
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
-
-        cy.login(user.username, user.password);
       });
     });
 
-    beforeEach('Navigate to inventory', () => {
-      cy.getAdminToken();
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-      cy.visit(TopMenu.inventoryPath);
+    beforeEach('Login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
 
     after('Delete test data', () => {

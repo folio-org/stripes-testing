@@ -6,6 +6,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let firstUser;
 let secondUser;
@@ -53,7 +55,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(firstUser.username);
         UsersSearchPane.openUser(firstUser.username);
         // Add bulkEditQueryView permission and remove next three
@@ -100,7 +102,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(secondUser.username);
         UsersSearchPane.openUser(secondUser.username);
         // Add bulkEditQueryView permission and remove next three

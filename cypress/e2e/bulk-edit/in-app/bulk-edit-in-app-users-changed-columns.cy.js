@@ -8,6 +8,8 @@ import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const futureDate = DateTools.getFutureWeekDateObj();
@@ -88,7 +90,7 @@ describe('bulk-edit', () => {
           `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,test@folio.org,,,,,002,,,,`,
         ]);
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyPatronGroupOnUserDetailsPane(newPatronGroup);
       },

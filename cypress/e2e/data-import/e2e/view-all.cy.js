@@ -1,12 +1,13 @@
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import { Permissions } from '../../../support/dictionary';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -39,7 +40,7 @@ describe('Data Import', () => {
         id = logId;
       });
       LogsViewAll.resetAllFilters();
-      cy.visit(TopMenu.dataImportPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
     });
 
     after('delete test data', () => {

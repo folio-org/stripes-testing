@@ -314,8 +314,10 @@ describe('Data Import', () => {
 
         // upload .mrc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.checkIsLandingPageOpened();
         DataImport.verifyUploadState();
+        FileDetails.close();
         DataImport.uploadFile(editedMarcFileName, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
