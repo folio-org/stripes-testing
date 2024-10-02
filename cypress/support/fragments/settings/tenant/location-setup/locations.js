@@ -75,6 +75,10 @@ const table = MultiColumnList({ id: 'locations-list' });
 
 export default {
   ...TenantPane,
+  openLTabFromSettingsList() {
+    cy.do(NavListItem('Tenant').click());
+    cy.do(NavListItem('Locations').click());
+  },
   waitLoading() {
     TenantPane.waitLoading('Locations');
   },

@@ -5,6 +5,8 @@ import Users from '../../../support/fragments/users/users';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -52,7 +54,7 @@ describe('bulk-edit', () => {
       'C366546 Verify filter for bulk edit jobs in Export Manager (firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
-        cy.visit(TopMenu.exportManagerPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.waitLoading();
 
         ExportManagerSearchPane.checkFilterOptions(jobTypeAccordionOptions);

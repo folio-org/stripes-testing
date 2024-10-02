@@ -1,9 +1,10 @@
 import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const name = `AutotestConfigurationName${getRandomPostfix()}`;
@@ -28,7 +29,8 @@ describe('remote-storage-configuration', () => {
     () => {
       // #1 Open the "Settings" app
       // #2 Select "Remote storage"
-      cy.visit(SettingsMenu.remoteStoragePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      Configurations.openConfigurationsTabFromSettings();
       // #3 Select "Configurations" in the "Remote storage" pane by clicking on it
       RemoteStorage.goToConfigurations();
       // #4 Select the "New" button
