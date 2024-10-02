@@ -71,7 +71,7 @@ const materialTypeSelect = Select({ name: 'physical.materialType' });
 const addLocationButton = Button({ text: 'Add location' });
 const locationSelect = Button({ id: 'field-locations[0].locationId' });
 const holdingSelect = Button({ id: 'field-locations[0].holdingId' });
-const onlineLocationOption = SelectionOption('Online (E)');
+const onlineLocationOption = SelectionOption('Annex (KU/CC/DI/A)');
 const quantityPhysicalLocationField = TextField({ name: 'locations[0].quantityPhysical' });
 const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
 const fundDistributionSelect = Button({ id: 'fundDistribution[0].fundId' });
@@ -1033,7 +1033,7 @@ export default {
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
-      SelectionOption('Main Library (KU/CC/DI/M)').click(),
+      onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn('2'),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),

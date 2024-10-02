@@ -68,7 +68,7 @@ const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-bu
 
 export default {
   defaultUiFund: {
-    name: `autotest_fund_${getRandomPostfix()}`,
+    name: `1autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',

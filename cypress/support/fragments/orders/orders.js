@@ -614,7 +614,7 @@ export default {
     cy.do([
       buttonFundCodeFilter.click(),
       Button({ id: 'fundCode-selection' }).click(),
-      SelectionOption('USHIST').click(),
+      SelectionOption('AFRICAHIST').click(),
       buttonFundCodeFilter.click(),
     ]);
   },

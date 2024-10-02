@@ -171,6 +171,7 @@ export default {
     // returns random 4 digit code for the Fiscal Year
     return (
       getRandomStringCode(4) +
+      1 +
       Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min)).toString()
     );
   },
