@@ -62,7 +62,7 @@ describe('Eureka', () => {
 
       it(
         'C554635 Eureka | User with insufficient capabilities can not duplicate an authorization role (thunderjet)',
-        { tags: ['extendedPath', 'thunderjet'] },
+        { tags: ['extendedPath', 'thunderjet', 'eureka'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName, false);

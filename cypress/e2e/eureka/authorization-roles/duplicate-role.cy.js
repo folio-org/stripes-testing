@@ -107,7 +107,7 @@ describe('Eureka', () => {
 
       it(
         'C554636 Eureka | Duplicate an authorization role (thunderjet)',
-        { tags: ['extendedPath', 'thunderjet'] },
+        { tags: ['extendedPath', 'thunderjet', 'eureka'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
