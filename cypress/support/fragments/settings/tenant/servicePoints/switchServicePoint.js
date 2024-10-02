@@ -19,7 +19,7 @@ export default {
   },
 
   switchServicePoint: (servicePoint) => {
-    cy.wait(2000);
+    cy.wait(4000);
     cy.do([Dropdown({ id: 'profileDropdown' }).open(), Button('Switch service point').click()]);
     cy.wait(2000);
     SelectServicePointModal.selectServicePoint(servicePoint);
