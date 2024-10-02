@@ -76,6 +76,8 @@ const deleteViaApi = (profileName) => {
       query: '(cql.allRecords=1) sortby name',
       limit: 1000,
     },
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   })
     .then(({ body: { mappingProfiles } }) => {
       // find profile to delete
@@ -85,6 +87,7 @@ const deleteViaApi = (profileName) => {
       cy.okapiRequest({
         method: 'DELETE',
         path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
+        isDefaultSearchParamsRequired: false,
       });
     })
     .then(({ status }) => {
