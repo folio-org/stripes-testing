@@ -5,6 +5,7 @@ import {
   Checkbox,
   Modal,
   MultiColumnListCell,
+  MultiColumnList,
   NavListItem,
   Pane,
   PaneHeader,
@@ -606,7 +607,7 @@ export default {
     );
   },
 
-  checkMultiColumnListRowsCount: (count) => cy.expect(jobLogsList.has({ rowCount: count })),
+  checkMultiColumnListRowsCount: (count) => cy.expect(MultiColumnList().has({ rowCount: count })),
 
   checkIsLandingPageOpened: () => {
     cy.expect(sectionPaneJobsTitle.find(orChooseFilesButton).exists());
