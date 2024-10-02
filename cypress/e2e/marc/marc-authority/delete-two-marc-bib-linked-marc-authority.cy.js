@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -104,28 +105,27 @@ describe('MARC', () => {
         });
 
         cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.waitContentLoading();
-          twoMarcBibsToLink.forEach((marcBib) => {
-            InventoryInstances.searchByTitle(marcBib.marcBibRecord);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            marcBib.linkingFields.forEach((linking) => {
-              cy.wait(2000);
-              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linking.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-            });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        twoMarcBibsToLink.forEach((marcBib) => {
+          InventoryInstances.searchByTitle(marcBib.marcBibRecord);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          marcBib.linkingFields.forEach((linking) => {
+            cy.wait(2000);
+            QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(linking.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
           });
-        });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+        });  
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
@@ -166,7 +166,7 @@ describe('MARC', () => {
         MarcAuthoritiesDelete.confirmDelete();
         MarcAuthoritiesDelete.checkAfterDeletion(testData.marcValue);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(twoMarcBibsToLink[1].marcBibRecord);
         InventoryInstances.selectInstance();
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
