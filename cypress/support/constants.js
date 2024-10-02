@@ -356,10 +356,7 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   CALL_NUMBERS_ALL: 'Call numbers (all)',
   DEWEY_DECIMAL: 'Dewey Decimal classification',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
-  LOCAL: 'Local',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
-  OTHER_SCHEME: 'Other scheme',
-  SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
 };
 
 export const CONDITION_AND_LIMIT_TYPES = {
