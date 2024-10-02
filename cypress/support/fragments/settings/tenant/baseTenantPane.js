@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import SettingsPane, { rootPane } from '../settingsPane';
-import { Select, including } from '../../../../../interactors';
+import { Select, NavListItem, including } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 export const getDefaultTenant = ({ id, name, code, ...props } = {}) => ({
@@ -13,6 +13,14 @@ export const getDefaultTenant = ({ id, name, code, ...props } = {}) => ({
 export default {
   ...SettingsPane,
   rootPane,
+  openLibrariesTabFromSettingsList() {
+    cy.do(NavListItem('Tenant').click());
+    cy.do(NavListItem('Libraries').click());
+  },
+  openCampusesTabFromSettingsList() {
+    cy.do(NavListItem('Tenant').click());
+    cy.do(NavListItem('Campuses').click());
+  },
   checkNoActionButtons() {
     SettingsPane.checkAddNewBtnAbsent();
     SettingsPane.checkColumnAbsent('Actions');

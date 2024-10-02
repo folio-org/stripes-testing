@@ -5,6 +5,7 @@ import CirculationRules from '../../support/fragments/circulation/circulation-ru
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import createPageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../support/fragments/requests/requests';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -79,7 +80,6 @@ describe('Requests', () => {
             addedRule = newRule;
           },
         );
-        cy.login(user.username, user.password);
       });
   });
 
@@ -107,7 +107,10 @@ describe('Requests', () => {
     'C546: Create new request for "Page" type (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.inventoryPath);
+      cy.login(user.username, user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
       createPageTypeRequest.clickNewRequest(createdItem.barcode);
       createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);
