@@ -3,7 +3,7 @@ import dateTools from '../../utils/dateTools';
 
 export default {
   mainLibraryLocation: 'Main Library',
-  onlineLibraryLocation: 'Online',
+  onlineLibraryLocation: 'Annex',
 
   verifyOrderDateOpened: () => {
     cy.do(

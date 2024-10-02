@@ -44,10 +44,6 @@ describe('orders: Settings', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
-    cy.wait(4000);
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
     cy.loginAsAdmin({
       path: SettingsMenu.ordersPONumberEditPath,
       waiter: SettingsOrders.waitLoadingEditPONumber,
@@ -57,6 +53,10 @@ describe('orders: Settings', () => {
     SettingsOrders.deletePrefix(poPreffix);
     cy.visit(SettingsMenu.ordersSuffixes);
     SettingsOrders.deleteSuffix(poSuffix);
+    cy.wait(4000);
+    Orders.deleteOrderViaApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
+
     Users.deleteViaApi(user.userId);
   });
 

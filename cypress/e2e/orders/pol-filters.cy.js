@@ -79,7 +79,7 @@ describe('orders: Test Po line filters', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.getFundsApi({ query: 'code="USHIST"' }).then((funds) => {
+    cy.getFundsApi({ query: 'code="AFRICAHIST"' }).then((funds) => {
       orderLine.fundDistribution[0].fundId = funds[0]?.id;
       cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
       cy.createOrderApi(order).then(() => {
