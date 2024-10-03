@@ -365,6 +365,7 @@ describe('Data Import', () => {
         HoldingsRecordView.close();
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.close();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
@@ -423,6 +424,7 @@ describe('Data Import', () => {
         collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
           MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+          cy.wait(3000);
         });
 
         // create job profile

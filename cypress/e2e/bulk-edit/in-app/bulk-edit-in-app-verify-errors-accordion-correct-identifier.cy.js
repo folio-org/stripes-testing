@@ -12,7 +12,8 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 // TODO: optimize creation of holdings
 
@@ -107,7 +108,7 @@ describe('bulk-edit', () => {
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 

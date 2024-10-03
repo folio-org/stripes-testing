@@ -366,6 +366,7 @@ describe('Data Import', () => {
       collectionOfMatchProfiles.forEach((profile) => {
         MatchProfiles.createMatchProfile(profile.matchProfile);
         MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+        cy.wait(3000);
       });
 
       // create Field mapping profiles
@@ -441,7 +442,7 @@ describe('Data Import', () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
-        ItemRecordView.close();
+        ItemRecordView.closeDetailView();
       });
     });
   });

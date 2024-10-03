@@ -182,7 +182,6 @@ describe('Data Import', () => {
 
         // upload a marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForMatch);
         JobProfiles.waitFileIsUploaded();

@@ -76,17 +76,20 @@ function fillExistingRecordSections({ existingRecordFields }) {
 }
 
 function fillName(profileName) {
-  cy.wait(1500);
+  cy.wait(2000);
+  cy.expect(nameTextField.exists());
   cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(7000);
+  cy.wait(5000);
 }
 
 function selectExistingRecordType(existingRecordType) {
+  cy.expect(matchProfileDetailsAccordion.exists());
   cy.do(matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click());
 }
 
 function selectIncomingRecordType(incomingRecordType) {
+  cy.expect(matchProfileDetailsAccordion.exists());
   cy.do(matchProfileDetailsAccordion.find(recordSelectorDropdown).choose(incomingRecordType));
 }
 

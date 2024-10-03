@@ -3,7 +3,7 @@ import FastAddNewRecord from '../../inventory/fastAddNewRecord';
 
 const inventoryPane = Pane('Inventory');
 
-export const SETTINGS_TABS = {
+export const INVENTORY_SETTINGS_TABS = {
   FAST_ADD: 'Fast add',
   MATERIAL_TYPES: 'Material types',
   TARGET_PROFILES: 'Z39.50 target profiles',
@@ -17,7 +17,7 @@ export default {
     cy.do(NavListItem(settingsTab).click());
 
     switch (settingsTab) {
-      case SETTINGS_TABS.FAST_ADD:
+      case INVENTORY_SETTINGS_TABS.FAST_ADD:
         return FastAddNewRecord;
       default:
         return this;

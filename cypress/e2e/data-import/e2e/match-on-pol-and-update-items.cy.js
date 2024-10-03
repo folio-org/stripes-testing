@@ -228,6 +228,27 @@ describe('Data Import', () => {
 
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
+          (instance) => {
+            const itemId = instance.items[0].id;
+
+            cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
+              item.barcode = itemBarcode;
+              InventoryItems.editItemViaApi(item).then(() => {
+                CheckInActions.checkinItemViaApi({
+                  itemBarcode: item.barcode,
+                  servicePointId,
+                  checkInDate: new Date().toISOString(),
+                }).then(() => {
+                  cy.deleteItemViaApi(itemId);
+                  cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                  InventoryInstance.deleteInstanceViaApi(instance.id);
+                });
+              });
+            });
+          },
+        );
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` }).then(
           (order) => {
             Orders.deleteOrderViaApi(order[0].id);
@@ -250,27 +271,6 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
-          (instance) => {
-            const itemId = instance.items[0].id;
-
-            cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
-              item.barcode = itemBarcode;
-              InventoryItems.editItemViaApi(item).then(() => {
-                CheckInActions.checkinItemViaApi({
-                  itemBarcode: item.barcode,
-                  servicePointId,
-                  checkInDate: new Date().toISOString(),
-                }).then(() => {
-                  cy.deleteItemViaApi(itemId);
-                  cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                  InventoryInstance.deleteInstanceViaApi(instance.id);
-                });
-              });
-            });
-          },
-        );
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           location.institutionId,
           location.campusId,
@@ -395,10 +395,11 @@ describe('Data Import', () => {
         });
 
         // create match profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
           MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+          cy.wait(3000);
         });
 
         // create job profile

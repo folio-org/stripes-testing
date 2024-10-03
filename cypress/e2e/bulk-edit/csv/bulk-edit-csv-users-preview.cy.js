@@ -6,6 +6,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
@@ -76,7 +78,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedRecordsAbsent();
         BulkEditActions.startBulkEditAbsent();
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyFirstNameOnUserDetailsPane(newFirstName);
       },

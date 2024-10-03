@@ -2,11 +2,12 @@ import permissions from '../../support/dictionary/permissions';
 import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 const item = {
@@ -29,7 +30,7 @@ describe('Data Export', () => {
         item.itemBarcode,
       );
       cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
       FileManager.createFile(`cypress/fixtures/${validFile}`, instanceID);
       FileManager.createFile(`cypress/fixtures/${invalidFile}`, 'not a valid id');
       FileManager.createFile(

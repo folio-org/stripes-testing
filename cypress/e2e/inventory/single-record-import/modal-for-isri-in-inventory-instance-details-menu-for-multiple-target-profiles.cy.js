@@ -9,7 +9,7 @@ import ReImportModal from '../../../support/fragments/inventory/reImportModal';
 import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -65,7 +65,7 @@ describe('Inventory', () => {
       cy.loginAsAdmin();
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       SettingsInventory.goToSettingsInventory();
-      SettingsInventory.selectSettingsTab(SETTINGS_TABS.TARGET_PROFILES);
+      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
       Z3950TargetProfiles.openTargetProfile();
       ViewTargetProfile.verifyTargetProfileForm(
         targetProfile.name,

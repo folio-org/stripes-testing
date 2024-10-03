@@ -671,6 +671,28 @@ export default {
     });
   },
 
+  verifyColumnsInTableInExactOrder(expectedHeadersOrder) {
+    cy.get('[role=columnheader]').then(($headers) => {
+      const actualHeadersOrder = $headers
+        .map((index, header) => Cypress.$(header).text().trim())
+        .get();
+
+      expect(actualHeadersOrder).to.deep.eq(expectedHeadersOrder);
+    });
+  },
+
+  verifyColumnsInAreYouSureFormInExactOrder(expectedHeadersOrder) {
+    cy.get('[aria-label=PreviewModal]')
+      .find('[role=columnheader]')
+      .then(($headers) => {
+        const actualHeadersOrder = $headers
+          .map((index, header) => Cypress.$(header).text().trim())
+          .get();
+
+        expect(actualHeadersOrder).to.deep.eq(expectedHeadersOrder);
+      });
+  },
+
   verifyActionsDropdownScrollable() {
     cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
       'bottom',

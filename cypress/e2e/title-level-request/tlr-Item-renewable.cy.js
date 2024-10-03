@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -16,6 +16,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -188,15 +189,17 @@ describe('TLR: Item renew', () => {
       })
       .then(() => {
         TitleLevelRequests.enableTLRViaApi();
-        cy.login(userForRenew.username, userForRenew.password);
       });
   });
 
   beforeEach('Checkout items', () => {
     cy.getAdminToken();
-    cy.wait(3000);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
-      (instance) => {
+    cy.wait(3000).then(() => {
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"id"=="${instanceData.instanceId}"`,
+      }).then((instance) => {
         instanceHRID = instance.hrid;
 
         if (instance.hrid === undefined) {
@@ -204,8 +207,8 @@ describe('TLR: Item renew', () => {
             throw new Error('Instance HRID is not generated');
           });
         }
-      },
-    );
+      });
+    });
     cy.wrap(instanceData.itemsData).as('items');
     cy.get('@items').each((item) => {
       Checkout.checkoutItemViaApi({
@@ -275,9 +278,10 @@ describe('TLR: Item renew', () => {
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
-      cy.getToken(userForRenew.username, userForRenew.password);
-      cy.visit(TopMenu.requestsPath);
-      Requests.waitLoading();
+      cy.login(userForRenew.username, userForRenew.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
         instanceHRID,
@@ -285,7 +289,7 @@ describe('TLR: Item renew', () => {
         requestType: REQUEST_TYPES.HOLD,
       });
 
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
@@ -294,7 +298,7 @@ describe('TLR: Item renew', () => {
       UserLoans.renewItem(instanceData.itemsData[0].barcode, true);
       LoanDetails.checkAction(0, 'Renewed');
 
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
@@ -308,9 +312,11 @@ describe('TLR: Item renew', () => {
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
     { tags: ['criticalPath', 'vega'] },
     () => {
-      cy.getToken(userForRenew.username, userForRenew.password);
-      cy.visit(TopMenu.requestsPath);
-      Requests.waitLoading();
+      cy.login(userForRenew.username, userForRenew.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
+
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
@@ -322,7 +328,7 @@ describe('TLR: Item renew', () => {
         cy.wrap(intercept.response.body.item.barcode).as('itemBarcode');
       });
 
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();

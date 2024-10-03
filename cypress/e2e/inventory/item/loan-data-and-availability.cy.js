@@ -7,7 +7,7 @@ import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecord
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import LoanTypesSection from '../../../support/fragments/settings/inventory/items/loanTypes';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -114,7 +114,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.LOAN_TYPES);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.LOAN_TYPES);
         LoanTypesSection.verifyLoanTypesOption();
         LoanTypesSection.waitLoading();
         [...Array(3)].forEach((_, index) => {
