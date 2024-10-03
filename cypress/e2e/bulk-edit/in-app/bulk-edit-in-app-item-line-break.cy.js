@@ -109,12 +109,8 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [note]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(
-          'Barcode',
-          `secondBarcode_${items[0].itemBarcode}`,
-        );
-        ItemRecordView.waitLoading();
+        cy.reload();
+        ItemRecordView.checkBarcode(`secondBarcode_${items[0].itemBarcode}`);
         ItemRecordView.verifyTemporaryLocation(location);
         InstanceRecordView.verifyAdministrativeNote(note);
       },
