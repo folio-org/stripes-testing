@@ -192,16 +192,21 @@ describe('eHoldings', () => {
             });
 
             const yesterday = DateTools.getPreviousDayDate();
+            const yesterdayPaddingZero = DateTools.clearPaddingZero(yesterday);
             const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+            const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
             EHoldingSearch.switchToPackages();
             // wait until package is created via API
-            cy.wait(10000);
+            cy.wait(15000);
             UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.editProxyActions();
             EHoldingsPackages.fillDateCoverage(yesterday, today);
             EHoldingsPackage.saveAndClose();
-            EHoldingsPackages.verifyCustomCoverageDates(yesterday, today);
+            EHoldingsPackages.verifyCustomCoverageDates(
+              yesterdayPaddingZero,
+              todayWithoutPaddingZero,
+            );
 
             cy.getAdminToken();
             EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);

@@ -159,7 +159,7 @@ describe('plug-in MARC authority | Browse', () => {
 
       // #16 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
       // eslint-disable-next-line no-tabs
-      MarcAuthority.contains('010	   	$a n');
+      MarcAuthority.contains('010	   	‡a n');
       // #17 Select "Not specified" facet option.
       MarcAuthorities.chooseAuthoritySourceOption('Not specified');
       // #18 - #19 Update the search box with a new query: "Stone, Robert B (not from pre-defined list)". Click on the "Search" button.
@@ -172,7 +172,7 @@ describe('plug-in MARC authority | Browse', () => {
       // #21 Verify that there is no prefix value displayed in the "010 $a" ("001") field, which matched to the prefix values from predefined.
       predefinedPrefixes.forEach((prefix) => {
         // eslint-disable-next-line no-tabs
-        MarcAuthority.notContains(`010	   	$a ${prefix}`);
+        MarcAuthority.notContains(`010	   	‡a ${prefix}`);
       });
     },
   );

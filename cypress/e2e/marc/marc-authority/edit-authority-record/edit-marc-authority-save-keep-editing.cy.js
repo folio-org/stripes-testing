@@ -38,7 +38,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const headerContent = {
     initialHeaderContent: {
-      source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },
+      source: { firstName: 'folio-aqa', name: 'folio-aqa' },
       marcData: {
         headingTypeFrom1XX: 'Jackson, Peter,',
         headingType: 'Personal name',
