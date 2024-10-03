@@ -979,6 +979,7 @@ export default {
       method: 'DELETE',
       path: `instance-storage/instances/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

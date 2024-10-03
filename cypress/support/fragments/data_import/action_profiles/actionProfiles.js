@@ -39,6 +39,8 @@ const deleteActionProfile = (profileName) => {
     cy.okapiRequest({
       method: 'DELETE',
       path: `data-import-profiles/actionProfiles/${profileToDelete.id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     }).then(({ status }) => {
       if (status === 204) cy.log('###DELETED ACTION PROFILE###');
     });

@@ -90,6 +90,7 @@ describe('data-import', () => {
         JobProfileView.edit();
         JobProfileEdit.unlinkMatchProfile(0);
         JobProfileEdit.saveAndClose();
+        cy.wait(2000);
         JobProfileView.verifyLinkedProfiles(
           [
             matchProfile.profileName,
