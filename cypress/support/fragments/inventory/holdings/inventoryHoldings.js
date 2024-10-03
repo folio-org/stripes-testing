@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import { Accordion } from '../../../../../interactors';
 import InventoryItems from '../item/inventoryItems';
 
