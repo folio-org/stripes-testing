@@ -182,7 +182,7 @@ describe('MARC', () => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
-  
+
               linkableFields.forEach((tag) => {
                 QuickMarcEditor.setRulesForField(tag, true);
               });
