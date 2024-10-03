@@ -32,7 +32,7 @@ describe('data-import', { retries: 3 }, () => {
       physicalDescription: 'XL, 892 S',
       subject: 'French language--Dialects--Louisiana--Dictionaries',
       notes: {
-        noteType: 'Bibliography note',
+        noteType: 'Bibliography Note',
         noteContent: 'Includes bibliographical references and index',
       },
     };
