@@ -1,7 +1,6 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   INSTANCE_SOURCE_NAMES,
-  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -12,7 +11,6 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -34,7 +32,24 @@ describe('MARC', () => {
     const recordIDs = [];
 
     beforeEach('Creating user, data', () => {
+      cy.getAdminToken();
       marcFile.fileName = `testMarcFile.editMarcHoldings.${getRandomPostfix()}.mrc`;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
+
+        cy.getUserToken(userProperties.username, userProperties.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            recordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
+      });
+
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
@@ -42,44 +57,35 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.createdUserProperties = createdUserProperties;
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                recordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          InventoryInstances.searchByTitle(recordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.goToMarcHoldingRecordAdding();
+          QuickMarcEditor.updateExistingField(
+            testData.tag852,
+            QuickMarcEditor.getExistingLocation(),
+          );
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
 
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.searchByTitle(recordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.goToMarcHoldingRecordAdding();
-            QuickMarcEditor.updateExistingField(
-              testData.tag852,
-              QuickMarcEditor.getExistingLocation(),
-            );
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveHoldings();
+          HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+            recordIDs.push(holdingsID);
+          });
 
-            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-              recordIDs.push(holdingsID);
-            });
-
-            cy.login(createdUserProperties.username, createdUserProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          },
-        );
+          cy.login(createdUserProperties.username, createdUserProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        });
       });
     });
 
     afterEach('Deleting created user, data', () => {
       cy.getAdminToken();
+      Users.deleteViaApi(testData.preconditionUserId);
       Users.deleteViaApi(testData.createdUserProperties.userId);
       cy.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);

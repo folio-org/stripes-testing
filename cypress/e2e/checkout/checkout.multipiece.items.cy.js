@@ -24,6 +24,7 @@ describe('Check out', () => {
   const defaultDescription = `autotest_description_${getRandomPostfix()}`;
 
   beforeEach(() => {
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
