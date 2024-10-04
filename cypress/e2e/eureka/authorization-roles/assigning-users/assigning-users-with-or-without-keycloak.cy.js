@@ -11,7 +11,7 @@ describe('Eureka', () => {
         const userIds = [];
         const userBodies = [];
         const testData = {
-          roleName: `Auto Role C451621 ${randomPostfix}`,
+          roleName: `Auto Role C499896 ${randomPostfix}`,
           promotePath: '/users-keycloak/auth-users',
         };
 
@@ -34,11 +34,11 @@ describe('Eureka', () => {
               userBodies.push({
                 type: 'staff',
                 active: true,
-                username: `user${i}c451621${randomPostfix}`,
+                username: `user${i}c499869${randomPostfix}`,
                 patronGroup: Cypress.env('userGroups')[i - 1].id,
                 personal: {
-                  lastName: `First ${i} c451621${randomPostfix}`,
-                  firstName: `Last ${i} c451621${randomPostfix}`,
+                  lastName: `First ${i} c499896${randomPostfix}`,
+                  firstName: `Last ${i} c499896${randomPostfix}`,
                   email: 'testuser@test.org',
                   preferredContactTypeId: '002',
                 },
@@ -91,7 +91,7 @@ describe('Eureka', () => {
         });
 
         it(
-          'C451621 Assigning users not having Keycloak records for an existing authorization role (eureka)',
+          'C499896 Assigning users with/without Keycloak record for an existing authorization role (eureka)',
           { tags: ['criticalPath', 'eureka'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleName);
@@ -103,34 +103,6 @@ describe('Eureka', () => {
             AuthorizationRoles.selectUserInModal(userBodies[2].username);
             AuthorizationRoles.clickSaveInAssignModal();
             AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId], true);
-            AuthorizationRoles.clickCancelInPromoteUsersModal();
-            AuthorizationRoles.checkUsersAccordion(1);
-            AuthorizationRoles.verifyAssignedUser(
-              userBodies[2].personal.lastName,
-              userBodies[2].personal.firstName,
-              true,
-              testData.userCGroupName,
-            );
-
-            AuthorizationRoles.clickAssignUsersButton();
-            AuthorizationRoles.selectUserInModal(userBodies[0].username);
-            AuthorizationRoles.selectUserInModal(userBodies[1].username);
-            AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId]);
-            AuthorizationRoles.closePromoteUsersModalWithEscapeKey();
-            AuthorizationRoles.checkUsersAccordion(1);
-            AuthorizationRoles.verifyAssignedUser(
-              userBodies[2].personal.lastName,
-              userBodies[2].personal.firstName,
-              true,
-              testData.userCGroupName,
-            );
-
-            AuthorizationRoles.clickAssignUsersButton();
-            AuthorizationRoles.selectUserInModal(userBodies[0].username);
-            AuthorizationRoles.selectUserInModal(userBodies[1].username);
-            AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId]);
             cy.intercept(`${testData.promotePath}/${testData.userAId}`).as('promoteA');
             cy.intercept(`${testData.promotePath}/${testData.userBId}`).as('promoteB');
             AuthorizationRoles.clickConfirmInPromoteUsersModal();
