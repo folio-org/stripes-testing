@@ -119,6 +119,7 @@ describe('bulk-edit', () => {
         items.forEach((item) => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.byKeywords(item.instanceName);
+          InventoryInstance.waitInventoryLoading();
           InventoryInstance.openHoldingView();
           InventoryInstance.verifyHoldingsTemporaryLocation(location);
           InventoryInstance.closeHoldingsView();

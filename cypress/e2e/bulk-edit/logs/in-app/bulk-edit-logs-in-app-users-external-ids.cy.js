@@ -113,7 +113,8 @@ describe('bulk-edit', () => {
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-          UsersSearchPane.searchByUsername(user.username);
+          cy.reload();
+          Users.verifyLastNameOnUserDetailsPane(user.username);
           Users.verifyEmailDomainOnUserDetailsPane(newEmailDomain);
         },
       );
