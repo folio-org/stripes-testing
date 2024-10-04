@@ -1,7 +1,6 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   INSTANCE_SOURCE_NAMES,
-  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -35,13 +34,10 @@ describe('MARC', () => {
     beforeEach('Creating user, data', () => {
       cy.getAdminToken();
       marcFile.fileName = `testMarcFile.editMarcHoldings.${getRandomPostfix()}.mrc`;
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-      ]).then((createdUserProperties) => {
-        testData.createdUserProperties = createdUserProperties;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
 
+        cy.getUserToken(userProperties.username, userProperties.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -51,6 +47,15 @@ describe('MARC', () => {
             recordIDs.push(record[marcFile.propertyName].id);
           });
         });
+      });
+
+      cy.getAdminToken();
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+      ]).then((createdUserProperties) => {
+        testData.createdUserProperties = createdUserProperties;
 
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
@@ -80,6 +85,7 @@ describe('MARC', () => {
 
     afterEach('Deleting created user, data', () => {
       cy.getAdminToken();
+      Users.deleteViaApi(testData.preconditionUserId);
       Users.deleteViaApi(testData.createdUserProperties.userId);
       cy.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
