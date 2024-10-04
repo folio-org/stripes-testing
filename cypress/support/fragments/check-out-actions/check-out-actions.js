@@ -53,10 +53,10 @@ export default {
     this.checkUserInfo({ barcode, personal: { lastname } }, patronGroup.name);
   },
   checkOutItem(itemBarcode) {
-    return cy.do([
-      TextField('Item ID').fillIn(itemBarcode),
-      Pane('Scan items').find(Button('Enter')).click(),
-    ]);
+    cy.do(TextField('Item ID').fillIn(itemBarcode));
+    cy.wait(500);
+    cy.do(Pane('Scan items').find(Button('Enter')).click());
+    cy.wait(2000);
   },
   checkItemInfo(itemBarcode, instanceTitle) {
     cy.expect([

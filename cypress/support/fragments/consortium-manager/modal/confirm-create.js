@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import { Button, Modal } from '../../../../../interactors';
 
 const confirmShareToAllModal = Modal({ id: 'create-controlled-vocab-entry-confirmation' });
