@@ -439,7 +439,7 @@ export default {
         .find(MultiColumnList({ columns: assignModalResultColumns }))
         .exists(),
     ]);
-    cy.wait(4000);
+    cy.wait(2000);
   },
 
   clickSaveInAssignModal: () => {
@@ -652,7 +652,9 @@ export default {
     this.checkUsersAccordion(0);
   },
 
-  checkPromoteUsersModal: (userIdsArray) => {
+  checkPromoteUsersModal(userIdsArray, checkReappeared = false) {
+    // TO DO: remove the check when UIROLES-116 is done
+    if (checkReappeared) this.waitUntilPromoteUsersModalReappears();
     cy.expect([
       promoteUsersModal.find(cancelButton).exists(),
       promoteUsersModal.find(confirmButton).exists(),
@@ -666,5 +668,19 @@ export default {
   clickConfirmInPromoteUsersModal: () => {
     cy.do(promoteUsersModal.find(confirmButton).click());
     cy.expect(promoteUsersModal.absent());
+  },
+
+  clickCancelInPromoteUsersModal: () => {
+    cy.do(promoteUsersModal.find(cancelButton).click());
+    cy.expect(promoteUsersModal.absent());
+  },
+
+  closePromoteUsersModalWithEscapeKey: () => {
+    cy.get('[class^="modal--"]').type('{esc}');
+    cy.expect(promoteUsersModal.absent());
+  },
+
+  waitUntilPromoteUsersModalReappears: () => {
+    cy.expect([promoteUsersModal.exists(), promoteUsersModal.absent(), promoteUsersModal.exists()]);
   },
 };
