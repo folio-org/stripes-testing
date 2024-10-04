@@ -110,7 +110,6 @@ describe('bulk-edit', () => {
           .then(() => {
             FileManager.createFile(`cypress/fixtures/${instanceHRIDsFileName}`, instance.hrid);
           });
-
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -201,7 +200,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
 
         const stringOfHeaders = checkedColumnHeaders.join(',');
-        // need to replace the date because in the .csv file format of date is 'YYYY-MM-DD'
+        // replace the date because in the .csv file format of date is 'YYYY-MM-DD'
         const stringOfValues = checkedColumnHeadersWithValues
           .map((headerValuePair) => headerValuePair[1])
           .join(',')
@@ -227,7 +226,7 @@ describe('bulk-edit', () => {
           }
           return item;
         });
-        // need to replace the date because in the .csv file format of date is 'YYYY-MM-DD'
+        // replace the date because in the .csv file format of date is 'YYYY-MM-DD'
         const stringOfEditedValues = checkedColumnHeadersWithEditedValues
           .map((headerValuePair) => headerValuePair[1])
           .join(',')
