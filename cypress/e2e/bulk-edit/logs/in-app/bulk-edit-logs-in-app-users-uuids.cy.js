@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
             user = userProperties;
           })
           .then(() => {
-            cy.wait(3000);
+            cy.wait(5000);
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,

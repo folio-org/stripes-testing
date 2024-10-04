@@ -595,7 +595,7 @@ export default {
       return {
         query: {
           entityTypeId: filteredEntityTypeId,
-          fqlQuery: '{"users.active":{"$eq":"true"}}',
+          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"3"}',
         },
         fields: ['users.active', 'user.id'],
       };

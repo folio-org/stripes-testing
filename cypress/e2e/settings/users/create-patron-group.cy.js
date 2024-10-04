@@ -28,8 +28,10 @@ describe('Users', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(SettingsMenu.usersPath);
+          cy.login(userProperties.username, userProperties.password, {
+            path: SettingsMenu.usersPath,
+            waiter: () => cy.wait(1000),
+          });
         },
       );
     });
@@ -46,6 +48,7 @@ describe('Users', () => {
     it('C514932 Create patron group (volaris)', { tags: ['smoke', 'volaris'] }, () => {
       UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       cy.visit(SettingsMenu.patronGroups);
+      cy.wait('@/authn/refresh', { timeout: 20000 });
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsPane();
       PatronGroups.clickNewButton();
