@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
 const axios = require('axios');
+const { glob } = require('glob');
+const fs = require('fs');
+const { getTestNames } = require('find-test-names');
 
 const TESTRAIL_HOST = 'https://foliotest.testrail.io/';
 const API_USER = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
@@ -35,6 +38,21 @@ const api = axios.create({
   },
 });
 
+function removeRootPath(path) {
+  return path.substring(path.indexOf('cypress\\e2e\\'));
+}
+function titleContainsId(title, testCaseIds) {
+  if (title === undefined) {
+    return false;
+  }
+  for (let i = 0; i < testCaseIds.length; i++) {
+    if (title.includes(testCaseIds[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Fetch test run results
 async function getTestRunResults(runId) {
   async function getTest(offset) {
@@ -68,7 +86,7 @@ async function getTestHistory(caseId) {
   try {
     const response = await api.get(`get_results_for_case/${RUN_ID}/${caseId}`, {
       params: {
-        limit: 10,
+        limit: 20,
       },
     });
     return response.data;
@@ -78,13 +96,52 @@ async function getTestHistory(caseId) {
   }
 }
 
+function getJoinedHistory(history) {
+  const historyByDay = history.reduce((acc, result) => {
+    const date = new Date(result.created_on * 1000).toISOString().split('T')[0];
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(result);
+    return acc;
+  }, {});
+
+  // eslint-disable-next-line no-unused-vars
+  const joinedHistory = Object.entries(historyByDay).map(([date, items]) => {
+    const dayStatus = items.some((item) => item.status_id === 1) ? status.Passed : status.Failed;
+    // reset defects if day status passed
+    const defects =
+      dayStatus === status.Passed ? null : items.find((item) => item.defects)?.defects || null;
+    return {
+      date,
+      status_id: dayStatus,
+      defects,
+    };
+  });
+  return joinedHistory;
+}
+
+async function isTestFlaky(history) {
+  let passed = 0;
+  for (const historyItem of history) {
+    if (historyItem.status_id === status.Passed) {
+      passed++;
+    }
+  }
+  const passRate = passed / history.length;
+  const isFlaky = passRate >= 0.2 && passRate <= 0.8;
+  return isFlaky;
+}
+
 // Update test result in TestRail
 // eslint-disable-next-line no-unused-vars
-async function updateTestResult(testId, statusId, comment) {
+async function updateTestResult(testId, statusId, comment, defects) {
+  // eslint-disable-next-line no-unreachable
   try {
     await api.post(`add_result/${testId}`, {
       status_id: statusId,
       comment,
+      defects,
     });
     console.log(`Test ${testId} updated successfully.`);
   } catch (error) {
@@ -100,59 +157,83 @@ async function analyzeTestResults(runId) {
     (test) => test.status_id === 5 && test.custom_dev_team === team.Spitfire,
   );
 
-  const resultsList = { rerun: [], regression: [], failed: [] };
+  /**
+   * Test categories:
+   * Regression - test that pass fail on the last run
+   * KnownIssue - failed test with known linked deffetc in the history
+   * Flaky - test that pass and fail several times for the last 5 runs
+   * UnknownFailed - failed test several times in a row for unknown reason
+   */
+  const resultsList = { regression: [], knownFailed: [], flaky: [], unknownFailed: [] };
 
   for (const test of failedTests) {
     const { case_id, id: testId, status_id } = test;
 
     // Get test history from 2 days ago
     const startDate =
-      Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 5) / 1000;
+      Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 4) / 1000;
     const endDate =
       Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) / 1000;
     const history = (await getTestHistory(case_id)).results.filter(
       (result) => result.created_on >= startDate && result.created_on <= endDate,
     );
 
-    const historyByDay = history.reduce((acc, result) => {
-      const date = new Date(result.created_on * 1000).toISOString().split('T')[0];
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(result);
-      return acc;
-    }, {});
-
-    // eslint-disable-next-line no-unused-vars
-    const joinedHistory = Object.entries(historyByDay).map(([date, items]) => {
-      const dayStatus = items.some((item) => item.status_id === 1) ? status.Passed : status.Failed;
-      return {
-        date,
-        status_id: dayStatus,
-        defects: items.find((item) => item.defects)
-          ? items.find((item) => item.defects).defects
-          : [],
-      };
-    });
+    const joinedHistory = getJoinedHistory(history);
 
     // Check the historical data for the current test
     const passedInHistory = joinedHistory[0].status_id === status.Passed;
-    const failedInHistory = history.some((result) => result.status_id === status.Failed);
+    const failedInHistory = joinedHistory.some((result) => result.status_id === status.Failed);
 
     if (status_id === status.Failed && passedInHistory) {
       // If current test failed but passed in the past, mark for re-execution
-      resultsList.rerun.push(testId);
-    } else if (status_id === 5 && failedInHistory) {
+      resultsList.regression.push({ testId, caseId: case_id });
+    } else if (status_id === status.Failed && failedInHistory) {
       // If current test failed and failed in the past, check for linked issues
-      const linkedIssue = history.find((result) => result.defects);
+      const linkedIssue = joinedHistory.find(({ defects }) => defects);
       if (linkedIssue) {
-        resultsList.failed.push({ testId, defects: linkedIssue.defects });
+        resultsList.knownFailed.push({ testId, caseId: case_id, defects: linkedIssue.defects });
+      } else if (isTestFlaky(joinedHistory)) {
+        resultsList.flaky.push({ testId, caseId: case_id });
       } else {
-        resultsList.regression.push(testId);
+        resultsList.unknownFailed.push({ testId, caseId: case_id });
       }
     }
   }
+
+  // Update the tests with linked defects TestRail
+  for (const test of resultsList.knownFailed) {
+    const { testId, defects } = test;
+    await updateTestResult(testId, status.Failed, `Linked issues: ${defects}`, defects);
+  }
+
+  // Collect files for re-execution
+  const ids = [];
+  for (const { caseId } of [...resultsList.regression, ...resultsList.flaky]) {
+    ids.push(`C${caseId}`);
+    console.log(`C${caseId}`);
+  }
   console.log(JSON.stringify(resultsList, null, 2));
+
+  const testFilesList = (await glob('cypress/e2e/**/*'))
+    .filter((file) => file.includes('.cy.js'))
+    .map((file) => removeRootPath(file).replace(/\\/g, '/'));
+
+  let filteredFiles = [];
+  testFilesList.forEach((file) => {
+    const fileContent = fs.readFileSync(file, { encoding: 'utf8' });
+    const names = getTestNames(fileContent).tests.filter(
+      (test) => test.type === 'test' && titleContainsId(test.name, ids),
+    );
+    if (names.length > 0) {
+      filteredFiles.push(file);
+    }
+  });
+  filteredFiles = Array.from(new Set(filteredFiles));
+  filteredFiles.sort();
+
+  console.log(filteredFiles);
+
+  fs.writeFileSync('./test-to-rerun.txt', filteredFiles.join(','));
 }
 
 // Run the analysis
