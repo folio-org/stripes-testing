@@ -274,6 +274,7 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfileForItemHrid(exportMappingProfile.name);
+        cy.wait(10000);
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
@@ -323,6 +324,7 @@ describe('Data Import', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        ItemRecordView.closeDetailView();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
         InventorySearchAndFilter.saveUUIDs();
