@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
@@ -16,6 +17,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -75,7 +77,10 @@ describe('Title Level Request', () => {
       }).then((createdRequest) => {
         requestId = createdRequest.body.id;
       });
-      cy.login(userData.username, userData.password);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
+      });
     });
   });
 
@@ -105,8 +110,6 @@ describe('Title Level Request', () => {
     'C350425 Check that request goes to "Fulfillment in progress" if the items status has changed to "In progress" (vega) (TaaS)',
     { tags: ['criticalPath', 'vega'] },
     () => {
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
       SwitchServicePoint.switchServicePoint(testData.servicePoint2.name);
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint2.name);
       CheckInActions.checkInItem(testData.folioInstances[0].barcodes[0]);
@@ -114,7 +117,8 @@ describe('Title Level Request', () => {
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       CheckInActions.endCheckInSessionAndCheckDetailsOfCheckInAreCleared();
-      cy.visit(TopMenu.requestsPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.findCreatedRequest(testData.folioInstances[0].barcodes[0]);
       Requests.selectFirstRequest(testData.folioInstances[0].barcodes[0]);
       RequestDetail.checkItemInformation({
