@@ -100,7 +100,7 @@ describe('orders: Settings', () => {
       SettingsOrders.setPurchaseOrderLinesLimit(5);
       SettingsOrders.setPurchaseOrderLinesLimit(2);
       TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrders();
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();

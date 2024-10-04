@@ -277,6 +277,7 @@ describe('Data Import', () => {
 
         // create match profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+        cy.wait(1500);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,
@@ -303,6 +304,7 @@ describe('Data Import', () => {
 
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByHRID(testData.secondHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -324,7 +326,6 @@ describe('Data Import', () => {
 
         // upload the exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdate);
         JobProfiles.search(jobProfileWithoutMatch.profileName);

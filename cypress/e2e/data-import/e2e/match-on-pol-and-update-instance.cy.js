@@ -286,6 +286,7 @@ describe('Data Import', () => {
 
         // create PO with POL
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
         Orders.createOrder(order, true).then((orderId) => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
@@ -317,7 +318,6 @@ describe('Data Import', () => {
         FileDetails.close();
         DataImport.checkIsLandingPageOpened();
         DataImport.verifyUploadState();
-        FileDetails.close();
         DataImport.uploadFile(editedMarcFileName, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);

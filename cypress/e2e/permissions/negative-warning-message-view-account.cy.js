@@ -82,7 +82,7 @@ describe('Permissions', () => {
       () => {
         Orders.verifyActiveBtnOrdersFilters(btnOrderLines);
 
-        Orders.selectOrders();
+        Orders.selectOrdersPane();
         Orders.verifyActiveBtnOrdersFilters(btnOrders);
 
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

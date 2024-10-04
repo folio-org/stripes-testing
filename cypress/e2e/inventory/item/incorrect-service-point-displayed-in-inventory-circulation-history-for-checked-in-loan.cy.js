@@ -128,12 +128,14 @@ describe('Inventory', () => {
         cy.wait(1000);
         FilterItems.toggleItemStatusAccordion();
         FilterItems.toggleStatus(itemStatus);
+        InventorySearchAndFilter.resetAll();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(itemData.barcode);
@@ -143,6 +145,7 @@ describe('Inventory', () => {
           firstServicePoint.name,
           user.username,
         );
+        ItemRecordView.closeDetailView();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
