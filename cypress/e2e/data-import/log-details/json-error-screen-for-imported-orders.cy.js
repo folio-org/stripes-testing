@@ -16,12 +16,15 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -99,12 +102,12 @@ describe('Data Import', () => {
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfile);
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
@@ -118,8 +121,8 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
       });
     });
@@ -137,7 +140,6 @@ describe('Data Import', () => {
       'C375202 Verify the JSON error screen for imported orders (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -12,7 +12,7 @@ import OtherSettings from '../../support/fragments/settings/circulation/otherSet
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -136,9 +136,10 @@ describe('Fees&Fines', () => {
           UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
         })
         .then(() => {
-          cy.login(user.username, user.password);
-
-          cy.visit(SettingsMenu.circulationOtherSettingsPath);
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.circulationOtherSettingsPath,
+            waiter: OtherSettings.waitLoading,
+          });
           OtherSettings.waitLoading();
           OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '5');
         });
@@ -201,7 +202,7 @@ describe('Fees&Fines', () => {
       'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft'] },
       () => {
-        cy.visit(TopMenu.checkOutPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
         CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
         CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
         testItems.forEach((item) => {

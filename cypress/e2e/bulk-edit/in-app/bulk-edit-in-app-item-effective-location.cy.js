@@ -8,6 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -70,7 +72,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangesUnderColumns('Item temporary location', '');
         BulkEditSearchPane.verifyChangesUnderColumns('Item effective location', newLocation);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();

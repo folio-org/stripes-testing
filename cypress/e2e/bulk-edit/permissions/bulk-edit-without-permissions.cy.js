@@ -2,6 +2,8 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let userWithQueryView;
@@ -36,7 +38,7 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.verifyNoPermissionWarning();
       },
     );

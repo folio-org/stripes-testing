@@ -1,8 +1,9 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import AppPaths from '../../support/fragments/app-paths';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -10,7 +11,7 @@ import ManualCharges from '../../support/fragments/settings/users/manualCharges'
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import topMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
@@ -28,6 +29,7 @@ describe('Fees&Fines', () => {
     const userData = { ...DefaultUser.defaultApiPatron };
     const itemBarcode = generateItemBarcode();
     beforeEach(() => {
+      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       cy.getAdminToken();
       PatronGroups.createViaApi().then((patronGroupId) => {
         testData.patronGroupId = patronGroupId;
@@ -60,9 +62,10 @@ describe('Fees&Fines', () => {
                       id: createdPaymentMethod.id,
                       name: createdPaymentMethod.name,
                     };
-                    cy.loginAsAdmin();
-                    cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
-                    UsersCard.waitLoading();
+                    cy.loginAsAdmin({
+                      path: AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id),
+                      waiter: UsersCard.waitLoading,
+                    });
                   });
                 });
               });
@@ -162,14 +165,19 @@ describe('Fees&Fines', () => {
         initialCheckNewFeeFineFragment(testData.owner.name);
         createFee();
         // Scenario 3: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM OPEN/CLOSED LOANS
-        // waiting cypress runner ti be able to get a command
+        // waiting cypress runner to be able to get a command
         // without wait, randomly doesn't redirecting browser to the checkin page
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(2000);
-        cy.visit(topMenu.checkOutPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
+        Checkout.waitLoading();
         cy.checkOutItem(testData.userProperties.barcode, itemBarcode);
         cy.verifyItemCheckOut();
+
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
+        cy.wait('@/authn/refresh', { timeout: 30000 });
+
         UsersCard.viewCurrentLoans();
         NewFeeFine.openFromLoanDetails();
         initialCheckNewFeeFineFragment(testData.owner.name);
@@ -179,7 +187,7 @@ describe('Fees&Fines', () => {
         // without wait, randomly doesn't redirecting browser to the checkin page
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(2000);
-        cy.visit(topMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemBarcode);
         CheckInActions.confirmMultipleItemsCheckin(itemBarcode);
@@ -189,6 +197,10 @@ describe('Fees&Fines', () => {
         createFee();
 
         // Checking created fees
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+        cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
+        cy.wait('@/authn/refresh', { timeout: 30000 });
+
         UsersCard.openFeeFines();
         UsersCard.viewAllFeesFines();
 

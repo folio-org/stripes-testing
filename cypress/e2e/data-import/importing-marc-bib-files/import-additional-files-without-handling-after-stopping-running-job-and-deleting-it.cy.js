@@ -39,7 +39,6 @@ describe('Data Import', () => {
       'C378883 Verify the ability to import additional files without hanging after stopping a running job and deleting it (folijet)',
       { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.waitLoading();
         DataImport.uploadFile('oneThousandMarcBib.mrc', bigFileName);

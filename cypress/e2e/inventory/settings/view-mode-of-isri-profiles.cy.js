@@ -1,8 +1,7 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   NewMatchProfile,
   ActionProfiles as SettingsActionProfiles,
@@ -10,8 +9,12 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -227,7 +230,9 @@ describe('Inventory', () => {
       'C374176 Verify the view mode of ISRI profiles (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.targetProfilesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
         Z3950TargetProfiles.verifyTargetProfilesListDisplayed();
         Z3950TargetProfiles.openTargetProfile(profileId);
         Z3950TargetProfiles.verifyTargetProfileForm();

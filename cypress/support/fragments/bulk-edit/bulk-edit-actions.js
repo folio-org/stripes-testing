@@ -1,5 +1,4 @@
-import { HTML, including } from '@interactors/html';
-import { not } from 'bigtest';
+import { HTML, including, not } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
 import {
   Accordion,
@@ -47,6 +46,7 @@ const oldEmail = TextField({ testid: 'input-email-0' });
 const newEmail = TextField({ testid: 'input-email-1' });
 const closeAreYouSureModalButton = areYouSureForm.find(Button({ icon: 'times' }));
 const selectNoteHoldingTypeDropdown = Select({ id: 'noteHoldingsType' });
+const saveAndCloseButton = Button('Save & close');
 
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -355,7 +355,7 @@ export default {
       Select({ label: 'Library' }).exists(),
       Selection('Location').exists(),
       locationLookupModal.find(cancelButton).has({ disabled: false }),
-      Button('Save and close').has({ disabled: true }),
+      Button(saveAndCloseButton).has({ disabled: true }),
     ]);
   },
 
@@ -363,7 +363,7 @@ export default {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
   locationLookupModalSaveAndClose() {
-    cy.do(locationLookupModal.find(Button('Save and close')).click());
+    cy.do(locationLookupModal.find(Button(saveAndCloseButton)).click());
   },
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
@@ -957,7 +957,7 @@ export default {
   },
 
   saveAndClose() {
-    cy.do(Button('Save & close').click());
+    cy.do(Button(saveAndCloseButton).click());
   },
 
   downloadMatchedResults() {

@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+  APPLICATION_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -8,6 +12,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -49,20 +54,19 @@ describe('MARC', () => {
               });
             });
 
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(recordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.goToMarcHoldingRecordAdding();
-              QuickMarcEditor.updateExistingField(
-                testData.tag852,
-                QuickMarcEditor.getExistingLocation(),
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveHoldings();
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.searchByTitle(recordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.goToMarcHoldingRecordAdding();
+            QuickMarcEditor.updateExistingField(
+              testData.tag852,
+              QuickMarcEditor.getExistingLocation(),
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveHoldings();
 
-              HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-                recordIDs.push(holdingsID);
-              });
+            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+              recordIDs.push(holdingsID);
             });
 
             cy.login(createdUserProperties.username, createdUserProperties.password, {

@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.checkItemsCheckbox();
           BulkEditLogs.verifyActionsRunBy(
-            `${user.username}, ${user.firstName} ${Users.defaultUser.personal.middleName}`,
+            `${user.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`,
           );
         },
       );

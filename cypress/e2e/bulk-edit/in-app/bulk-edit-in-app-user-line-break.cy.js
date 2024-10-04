@@ -9,6 +9,8 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const testUsers = [];
@@ -95,7 +97,7 @@ describe('bulk-edit', () => {
           `${customFieldName}:${customFieldText}`,
         );
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(testUsersBarcodes[0]);
         Users.verifyPatronGroupOnUserDetailsPane('faculty');
         Users.verifyCustomFieldOnUserDetailsPane(customFieldName, customFieldText);

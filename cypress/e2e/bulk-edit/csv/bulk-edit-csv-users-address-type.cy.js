@@ -9,6 +9,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let addressTypeId;
@@ -75,7 +77,7 @@ describe('bulk-edit', () => {
                 addressType = body.addressType;
               })
               .then(() => {
-                cy.visit(TopMenu.bulkEditPath);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
 
                 BulkEditSearchPane.checkUsersRadio();
                 BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -119,7 +121,7 @@ describe('bulk-edit', () => {
                 BulkEditLogs.downloadFileWithUpdatedRecords();
                 ExportFile.verifyFileIncludes(updatedRecordsFileName, [newFirstName]);
 
-                cy.visit(TopMenu.usersPath);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
                 UsersSearchPane.searchByUsername(user.username);
                 Users.verifyFirstNameOnUserDetailsPane(newFirstName);
               });

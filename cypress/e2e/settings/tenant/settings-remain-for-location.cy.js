@@ -7,7 +7,6 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -106,7 +105,8 @@ describe('Settings: Tenant', () => {
     { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
-      cy.visit(SettingsMenu.tenantLocationsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      Locations.openLTabFromSettingsList();
       // #1 Select **"Institution A"** from Preconditions #1 in "Institution" dropdown on "Locations" pane
       Locations.selectOption('Institution', testData.institutions[0]);
       Locations.checkEmptyTableContent();

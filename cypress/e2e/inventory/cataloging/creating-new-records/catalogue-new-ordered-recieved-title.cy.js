@@ -170,6 +170,7 @@ describe('Inventory', () => {
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.closeDetailView();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.checkInItem(barcode);
@@ -197,6 +198,7 @@ describe('Inventory', () => {
         InventoryInstance.openItemByBarcode(barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.closeDetailView();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         SwitchServicePoint.switchServicePoint(secondServicePoint.name);

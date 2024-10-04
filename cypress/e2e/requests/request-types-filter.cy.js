@@ -26,7 +26,6 @@ describe('Requests', () => {
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     cy.createLoanType({
       name: `type_${getRandomPostfix()}`,
@@ -77,7 +76,7 @@ describe('Requests', () => {
     'C540 Make sure that request type filters are working properly (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       // Apply filters and test that the appropriate results display
       requests.forEach(({ requestType }) => {
         // eslint-disable-next-line spaced-comment

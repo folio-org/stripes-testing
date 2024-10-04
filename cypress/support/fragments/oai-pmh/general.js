@@ -1,4 +1,4 @@
-import { matching } from 'bigtest';
+import { matching } from '@interactors/html';
 import { Checkbox, Pane, Select, TextArea, TextField, Button } from '../../../../interactors';
 
 const generalPane = Pane('General');
