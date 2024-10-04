@@ -10,13 +10,13 @@ Cypress.Commands.add('getInstance', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('getAlternativeTitlesTypes', (searchParams) => cy
-  .okapiRequest({
+Cypress.Commands.add('getAlternativeTitlesTypes', (searchParams) => {
+  cy.okapiRequest({
     path: 'alternative-title-types',
     searchParams,
     isDefaultSearchParamsRequired: false,
-  })
-  .then(({ body }) => body.alternativeTitleTypes));
+  }).then(({ body }) => body.alternativeTitleTypes);
+});
 
 Cypress.Commands.add('createAlternativeTitleTypes', (alternativeTitleType) => {
   cy.okapiRequest({
