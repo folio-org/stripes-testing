@@ -121,7 +121,9 @@ export default {
   renewalBlockMessage,
   checkLoansPage,
   renewWithoutOverrideAccess(loanId, userId, itemData) {
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.visit(generateInitialLink(userId, loanId));
+    cy.wait('@/authn/refresh', { timeout: 20000 });
 
     cy.wait(5000);
     checkLoansPage();
@@ -133,7 +135,9 @@ export default {
   },
 
   renewWithOverrideAccess(loanId, userId, itemData) {
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.visit(generateInitialLink(userId, loanId));
+    cy.wait('@/authn/refresh', { timeout: 20000 });
 
     cy.wait(5000);
     checkLoansPage();

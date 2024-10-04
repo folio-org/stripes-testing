@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -11,6 +11,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -118,24 +119,25 @@ describe('MARC', () => {
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
 
-            cy.loginAsAdmin().then(() => {
-              cy.visit(TopMenu.inventoryPath).then(() => {
-                InventoryInstances.searchByTitle(createdRecordIDs[0]);
-                InventoryInstances.selectInstance();
-                InventoryInstance.editMarcBibliographicRecord();
-                preLinkedFields.forEach((field) => {
-                  QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
-                  MarcAuthorities.switchToSearch();
-                  InventoryInstance.verifySelectMarcAuthorityModal();
-                  InventoryInstance.searchResults(field.value);
-                  InventoryInstance.clickLinkButton();
-                  QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
-                });
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(1500);
-                QuickMarcEditor.pressSaveAndClose();
-                QuickMarcEditor.checkAfterSaveAndClose();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              preLinkedFields.forEach((field) => {
+                QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
+                MarcAuthorities.switchToSearch();
+                InventoryInstance.verifySelectMarcAuthorityModal();
+                InventoryInstance.searchResults(field.value);
+                InventoryInstance.clickLinkButton();
+                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
               });
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveAndClose();
             });
 
             cy.login(userData.username, userData.password, {
@@ -217,7 +219,7 @@ describe('MARC', () => {
             BrowseSubjects.checkRowValueIsBold(5, authority.title);
             BrowseSubjects.checkRowValueIsBold(6, authority.title);
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.waitLoading();
             MarcAuthorities.searchBy(authority.searchOption, 'Lesbian activists');
             MarcAuthorities.selectTitle('Lesbian activists');

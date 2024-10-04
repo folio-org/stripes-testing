@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -7,8 +7,9 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import { Locations } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import settingsMenu from '../../../support/fragments/settingsMenu';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -109,9 +110,7 @@ describe('Inventory', () => {
 
     it(
       'C634 - Locations --> Temporary Location --> (Validate matching settings) (Folijet)(TaaS)',
-      {
-        tags: ['extendedPath', 'folijet'],
-      },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventorySearchAndFilter.clickAccordionByName(`Holdings: ${location.name} >`);
@@ -127,7 +126,9 @@ describe('Inventory', () => {
           ItemRecordEdit.verifyTemporaryLocationItemExists(itemData.instances[index].location.name);
         });
 
-        cy.visit(settingsMenu.tenantLocationsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TenantPane.goToTenantTab();
+        TenantPane.selectTenant(TENANTS.LOCATIONS);
         Locations.waitLoading();
         [...Array(3)].forEach((_, index) => {
           Locations.selectInstitution(itemData.instances[index].location.institutionName);

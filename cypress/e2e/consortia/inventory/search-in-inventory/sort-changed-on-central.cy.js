@@ -9,6 +9,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 import { INVENTORY_DEFAULT_SORT_OPTIONS } from '../../../../support/constants';
+import { randomizeArray } from '../../../../support/utils/arrays';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -18,18 +19,18 @@ describe('Inventory', () => {
       const testData = {};
       const instancesData = [];
       const createdInstanceIds = [];
-      const contributorIndexes = [2, 5, 8, 0, 3, 1, 9, 7, 8, 4];
+      const contributorIndexes = randomizeArray(Array.from(Array(10).keys()));
 
-      for (let i = 0; i < 10; i++) {
+      contributorIndexes.forEach((contributorIndex, index) => {
         instancesData.push({
-          title: `${titlePrefix} ${i}`,
+          title: `${titlePrefix} ${index}`,
           contributors: [
             {
-              name: `${contributorPrefix} ${contributorIndexes[i]}`,
+              name: `${contributorPrefix} ${contributorIndexes[contributorIndex]}`,
             },
           ],
         });
-      }
+      });
 
       before('Set display settings', () => {
         cy.resetTenant();

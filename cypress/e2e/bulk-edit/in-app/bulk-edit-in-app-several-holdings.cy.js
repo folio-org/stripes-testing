@@ -66,6 +66,7 @@ describe('bulk-edit', () => {
             `${item.holdingId}\r\n${item2.holdingId}`,
           );
         });
+        cy.wait(3000);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,

@@ -96,7 +96,7 @@ describe('Title Level Request', () => {
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
             userData.patronGroup = userProperties.userGroup.group;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -122,24 +122,19 @@ describe('Title Level Request', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    try {
-      cy.getAdminToken();
-      Requests.deleteRequestViaApi(requestId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
-      Users.deleteViaApi(userData.userId);
-      Location.deleteInstitutionCampusLibraryLocationViaApi(
-        defaultLocation.institutionId,
-        defaultLocation.campusId,
-        defaultLocation.libraryId,
-        defaultLocation.id,
-      );
-      ServicePoints.deleteViaApi(servicePoint1.id);
-      ServicePoints.deleteViaApi(servicePoint2.id);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-    }
+    cy.getAdminToken();
+    Requests.deleteRequestViaApi(requestId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
+    Users.deleteViaApi(userData.userId);
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
+      defaultLocation.institutionId,
+      defaultLocation.campusId,
+      defaultLocation.libraryId,
+      defaultLocation.id,
+    );
+    ServicePoints.deleteViaApi(servicePoint1.id);
+    ServicePoints.deleteViaApi(servicePoint2.id);
   });
 
   it(

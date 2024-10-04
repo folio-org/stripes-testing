@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -11,6 +12,7 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -68,7 +70,6 @@ describe('Data Import', () => {
       'C359245 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Holding" record type (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);
         JobProfiles.waitFileIsUploaded();
@@ -93,7 +94,8 @@ describe('Data Import', () => {
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessageForMarcAuthorityProfile);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -1,13 +1,13 @@
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -44,8 +44,10 @@ describe('Data Import', () => {
       );
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(SettingsMenu.matchProfilePath);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -60,7 +62,6 @@ describe('Data Import', () => {
       'C421998 - (NON-CONSORTIA) Verify the field mapping profile options (Folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.waitLoading();
 

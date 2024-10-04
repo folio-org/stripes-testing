@@ -12,6 +12,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -56,11 +58,10 @@ describe('bulk-edit', () => {
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         CustomFields.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
-        cy.reload();
         UserEdit.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -103,8 +104,9 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
 
-        cy.visit(TopMenu.usersPath);
-        UsersSearchPane.searchByUsername(user.username);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        cy.reload();
+        Users.verifyLastNameOnUserDetailsPane(user.username);
         Users.verifyPatronGroupOnUserDetailsPane('staff');
       },
     );
@@ -157,7 +159,8 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(customFieldData.fieldLabel);
       },
     );

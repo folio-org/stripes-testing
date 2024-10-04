@@ -33,7 +33,6 @@ describe('Data Import', () => {
       'C2357 Upload 2 files with different file extensions (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfFilesWithDifferentFileExtensions(
           'oneMarcBib.mrc',

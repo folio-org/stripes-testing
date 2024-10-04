@@ -19,11 +19,11 @@ describe('remote-storage-configuration', () => {
       });
       Configurations.deleteRemoteStorage('RS2');
 
-      cy.visit(settingsMenu.remoteStorageAccTablesPath);
+      AccessionTables.openTabAccessionTablesFromSettings();
       Configurations.verifyCaiaSoftWarning();
 
       // returning remote storage conf
-      cy.visit(settingsMenu.remoteStorageConfigurationPath);
+      Configurations.openConfigurationsTabFromSettings();
       rs.create('RS2');
     },
   );
@@ -41,10 +41,10 @@ describe('remote-storage-configuration', () => {
       rs.create(testName);
       Configurations.verifyCreatedConfiguration(testName, rs);
 
-      cy.visit(settingsMenu.remoteStorageAccTablesPath);
+      AccessionTables.openTabAccessionTablesFromSettings();
       AccessionTables.verifyAccessionTablePane();
 
-      cy.visit(settingsMenu.remoteStorageConfigurationPath);
+      Configurations.openConfigurationsTabFromSettings();
       Configurations.deleteRemoteStorage(testName);
     },
   );

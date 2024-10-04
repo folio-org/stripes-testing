@@ -8,6 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -76,7 +78,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(newLocation);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingHRID);
         InventorySearchAndFilter.selectSearchResultItem();

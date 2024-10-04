@@ -1,10 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -38,7 +39,7 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // Navigate to the Bulk edit app => Select Inventory-Items
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.waitLoading();
         //  Select "Item UUIDs" from the "Select record-identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();

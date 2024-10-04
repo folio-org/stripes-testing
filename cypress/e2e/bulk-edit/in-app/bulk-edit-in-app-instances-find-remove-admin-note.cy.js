@@ -14,6 +14,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
@@ -134,14 +135,14 @@ describe('bulk-edit', () => {
         ]);
 
         [folioItem.instanceName, marcInstance.instanceName].forEach((title) => {
-          TopMenuNavigation.navigateToApp('Inventory');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByTitle(title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           ItemRecordView.verifyTextAbsent(adminNote);
         });
 
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.checkInstancesCheckbox();
         BulkEditLogs.clickActionsRunBy(user.username);

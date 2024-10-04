@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -6,10 +6,13 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import LoanTypesSection from '../../../support/fragments/settings/inventory/items/loanTypes';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -97,9 +100,7 @@ describe('Inventory', () => {
 
     it(
       'C632 - Loan Data and Availability (incl. validate Loan type settings) (Folijet)(TaaS)',
-      {
-        tags: ['extendedPath', 'folijet'],
-      },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(location.name);
@@ -111,7 +112,9 @@ describe('Inventory', () => {
           ItemRecordEdit.chooseItemPermanentLoanType(itemData.loanType[index].title);
         });
 
-        cy.visit(SettingsMenu.loantypesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.LOAN_TYPES);
         LoanTypesSection.verifyLoanTypesOption();
         LoanTypesSection.waitLoading();
         [...Array(3)].forEach((_, index) => {
