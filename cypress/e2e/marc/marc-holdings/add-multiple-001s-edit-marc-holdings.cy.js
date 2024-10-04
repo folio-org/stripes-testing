@@ -34,6 +34,7 @@ describe('MARC', () => {
     const recordIDs = [];
 
     beforeEach('Creating user, data', () => {
+      cy.getAdminToken();
       marcFile.fileName = `testMarcFile.editMarcHoldings.${getRandomPostfix()}.mrc`;
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -42,39 +43,39 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.createdUserProperties = createdUserProperties;
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                recordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            recordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
 
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.searchByTitle(recordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.goToMarcHoldingRecordAdding();
-            QuickMarcEditor.updateExistingField(
-              testData.tag852,
-              QuickMarcEditor.getExistingLocation(),
-            );
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveHoldings();
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          InventoryInstances.searchByTitle(recordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.goToMarcHoldingRecordAdding();
+          QuickMarcEditor.updateExistingField(
+            testData.tag852,
+            QuickMarcEditor.getExistingLocation(),
+          );
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
 
-            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-              recordIDs.push(holdingsID);
-            });
+          HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+            recordIDs.push(holdingsID);
+          });
 
-            cy.login(createdUserProperties.username, createdUserProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          },
-        );
+          cy.login(createdUserProperties.username, createdUserProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        });
       });
     });
 
