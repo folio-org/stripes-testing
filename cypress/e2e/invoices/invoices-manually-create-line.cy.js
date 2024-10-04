@@ -24,8 +24,7 @@ describe('Invoices', () => {
     cy.getBatchGroups().then((batchGroup) => {
       invoice.batchGroup = batchGroup.name;
     });
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.invoicesPath);
+    cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
   });
 
   it(

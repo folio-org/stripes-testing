@@ -32,11 +32,11 @@ describe('lists', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          Lists.buildQueryOnActiveUsers().then((query) => {
+          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
             Lists.createQueryViaApi(query).then((createdQuery) => {
               listData.queryId = createdQuery.queryId;
               listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = ['users.active', 'user.id'];
+              listData.fields = fields;
 
               Lists.createViaApi(listData).then((body) => {
                 listData.id = body.id;
@@ -57,9 +57,10 @@ describe('lists', () => {
       'C423599 Duplicate action takes you to new list screen with some fields pre populated (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
 
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
