@@ -87,6 +87,10 @@ const recordLastUpdatedHeader = generalInformationAccordion.find(
 const unassignAllCapabilitiesButton = Button('Unassign all capabilities/sets');
 const duplicateModal = Modal('Duplicate role?');
 const duplicateCalloutSuccessText = (roleName) => `The role ${roleName} has been successfully duplicated`;
+const promoteUsersModal = Modal('Create user records in Keycloak');
+const confirmButton = Button('Confirm');
+const promoteUsersModalText =
+  'This operation will create new records in Keycloak for the following users:';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -646,5 +650,21 @@ export default {
       ]);
     }
     this.checkUsersAccordion(0);
+  },
+
+  checkPromoteUsersModal: (userIdsArray) => {
+    cy.expect([
+      promoteUsersModal.find(cancelButton).exists(),
+      promoteUsersModal.find(confirmButton).exists(),
+      promoteUsersModal.has({ message: including(promoteUsersModalText) }),
+    ]);
+    userIdsArray.forEach((userId) => {
+      cy.expect(promoteUsersModal.has({ message: including(userId) }));
+    });
+  },
+
+  clickConfirmInPromoteUsersModal: () => {
+    cy.do(promoteUsersModal.find(confirmButton).click());
+    cy.expect(promoteUsersModal.absent());
   },
 };

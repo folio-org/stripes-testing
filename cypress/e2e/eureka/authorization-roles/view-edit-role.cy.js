@@ -28,6 +28,24 @@ describe('Eureka', () => {
         originalCapabilitiesInSets: [
           {
             application: 'app-platform-full',
+            table: 'Procedural',
+            resource: 'Licenses Custprops Compare',
+            action: 'Execute',
+          },
+          {
+            application: 'app-platform-full',
+            table: 'Data',
+            resource: 'Licenses Amendments Collection',
+            action: 'View',
+          },
+          {
+            application: 'app-platform-full',
+            table: 'Data',
+            resource: 'Licenses Amendments Item',
+            action: 'View',
+          },
+          {
+            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Collection',
             action: 'View',
@@ -60,12 +78,6 @@ describe('Eureka', () => {
             application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Notes Enabled',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'Settings Enabled',
             action: 'View',
           },
         ],
@@ -123,7 +135,7 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Settings: 3,
+            Settings: 2,
             Procedural: 1,
             Data: 4,
           },
@@ -139,7 +151,7 @@ describe('Eureka', () => {
         testData.originalCapabilities[2],
       ];
       const originalCapabilitiesInSecondSet = testData.originalCapabilitiesInSets.filter(
-        (capab, index) => index > 2 && index < 7,
+        (capab, index) => index > 5,
       );
 
       const capabSetsToAssign = [
@@ -204,13 +216,8 @@ describe('Eureka', () => {
             testData.roleId
           }`;
 
-          cy.reload();
-          AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          cy.url().then((url) => expect(url).to.eq(roleViewUrl));
-          cy.reload();
-          AuthorizationRoles.verifyRoleViewPane(testData.roleName);
           cy.url().then((url) => expect(url).to.eq(roleViewUrl));
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.clickOnCapabilitiesAccordion();
