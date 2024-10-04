@@ -13,6 +13,8 @@ import DateTools from '../../../support/utils/dateTools';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -128,7 +130,7 @@ describe('bulk-edit', () => {
           'Item temporary location',
         ]);
         // Go to the "Inventory" app => Search for the updated Items
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

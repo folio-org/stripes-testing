@@ -84,6 +84,7 @@ export default {
     // need to wait until data to loaded
     cy.wait(1500);
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
+    cy.wait(500);
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
     cy.wait(1500);
