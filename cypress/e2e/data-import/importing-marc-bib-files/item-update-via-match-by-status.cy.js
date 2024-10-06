@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
@@ -19,9 +20,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -31,11 +29,17 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -158,8 +162,10 @@ describe('Data Import', () => {
         StatisticalCodes.createViaApi().then((resp) => {
           statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
         });
-        cy.login(user.username, user.password);
-        cy.visit(SettingsMenu.mappingProfilePath);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -233,19 +239,19 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfileItemHrid);
         MatchProfiles.checkMatchProfilePresented(matchProfileItemHrid.profileName);
         MatchProfiles.createMatchProfileWithStaticValue(matchProfileItemStatus);
         MatchProfiles.checkMatchProfilePresented(matchProfileItemStatus.profileName);
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(createJobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create instance');
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
@@ -265,14 +271,15 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
         // create Field mapping profile for export
-        cy.visit(SettingsMenu.exportMappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfileForItemHrid(exportMappingProfile.name);
-
-        cy.visit(SettingsMenu.exportJobProfilePath);
+        cy.wait(10000);
+        ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
         JobProfiles.waitFileIsUploaded();
@@ -311,24 +318,27 @@ describe('Data Import', () => {
           ItemRecordView.waitLoading();
           marker.markFunction();
           ItemRecordView.verifyItemStatusInPane(marker.status);
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(nameMarcFileForImportCreate);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        ItemRecordView.closeDetailView();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
         // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
         ExportFile.downloadExportedMarcFile(nameMarcFileForUpdate);
 
         // upload the exported marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForUpdate);
         JobProfiles.search(updateJobProfile.profileName);
@@ -342,7 +352,8 @@ describe('Data Import', () => {
           FileDetails.openItemInInventoryByTitle(title, 5);
           ItemRecordView.waitLoading();
           ItemRecordView.checkItemNote(itemNote);
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(nameMarcFileForUpdate);
         });
         // check items what statuses were changed have No action status

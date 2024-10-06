@@ -49,6 +49,7 @@ export default {
   },
 
   openFieldMappingProfileView: () => {
+    cy.wait(1000);
     cy.do(
       viewPane
         .find(Link({ href: including('/settings/data-import/mapping-profiles/view') }))

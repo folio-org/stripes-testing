@@ -1,19 +1,17 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
@@ -21,12 +19,18 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { Permissions } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -94,18 +98,18 @@ describe('Data Import', () => {
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, firstMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -122,7 +126,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(firstMarcFileName);
         });
         // check the second instance without Cataloged date
@@ -135,14 +140,16 @@ describe('Data Import', () => {
           InstanceRecordView.verifyCatalogedDate('-');
         });
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillCatalogedDate('###TODAY###');
         FieldMappingProfileEdit.save();
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, secondMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -159,7 +166,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(DateTools.getFormattedDate({ date: new Date() }));
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(secondMarcFileName);
         });
         // check the second instance without Cataloged date
@@ -172,14 +180,17 @@ describe('Data Import', () => {
           InstanceRecordView.verifyCatalogedDate(DateTools.getFormattedDate({ date: new Date() }));
         });
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillCatalogedDate('"2020-06-01"');
         FieldMappingProfileEdit.save();
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, thirdMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -196,7 +207,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-06-01');
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(thirdMarcFileName);
         });
         // check the second instance without Cataloged date
@@ -209,14 +221,17 @@ describe('Data Import', () => {
           InstanceRecordView.verifyCatalogedDate('2020-06-01');
         });
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillCatalogedDate('901$a; else ###TODAY###');
         FieldMappingProfileEdit.save();
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, forthMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -233,7 +248,8 @@ describe('Data Import', () => {
 
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate('2020-09-10');
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(forthMarcFileName);
         });
         // check the second instance without Cataloged date

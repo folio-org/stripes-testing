@@ -173,7 +173,7 @@ describe('Loans', () => {
           Loans.checkClaimReturnedDateTime();
           Loans.verifyResultsInTheRow([
             ITEM_STATUS_NAMES.CLAIMED_RETURNED,
-            userData.firstName,
+            userData.username,
             reasonWhyItemIsClaimedOut,
           ]);
           Loans.dismissPane().then(() => {
@@ -221,7 +221,7 @@ describe('Loans', () => {
         Loans.checkClaimReturnedDateTime();
         Loans.verifyResultsInTheRow([
           ITEM_STATUS_NAMES.CLAIMED_RETURNED,
-          userData.firstName,
+          userData.username,
           reasonWhyItemIsClaimedOut,
         ]);
         Loans.dismissPane().then(() => {
@@ -277,7 +277,7 @@ describe('Loans', () => {
             Loans.checkClaimReturnedDateTime();
             Loans.verifyResultsInTheRow([
               ITEM_STATUS_NAMES.CLAIMED_RETURNED,
-              userData.firstName,
+              userData.username,
               reasonWhyItemIsClaimedOut,
             ]);
             Loans.dismissPane();

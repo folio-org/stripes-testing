@@ -13,16 +13,19 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
-        (userProperties) => {
+      cy.clearLocalStorage();
+      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui])
+        .then((userProperties) => {
           user = userProperties;
+        })
+        .then(() => {
+          cy.wait(5000);
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
-        },
-      );
+        });
     });
 
     after('delete test data', () => {

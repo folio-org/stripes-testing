@@ -5,6 +5,8 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Inventory', () => {
   let userId;
@@ -78,7 +80,7 @@ describe('Inventory', () => {
       InventoryInstances.verifySelectAllInstancesCheckbox();
 
       InventorySearchAndFilter.exportInstanceAsMarc();
-      cy.visit(TopMenu.dataExportPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
       DataExportResults.verifyLastItemCount('99');
     },
   );

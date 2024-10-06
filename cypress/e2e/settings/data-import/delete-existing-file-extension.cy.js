@@ -1,7 +1,11 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
@@ -31,7 +35,9 @@ describe('Data Import', () => {
       () => {
         const calloutMessage = `The file extension "${fileExtensionName}" was successfully deleted`;
 
-        cy.visit(SettingsMenu.fileExtensionsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.select(fileExtensionName);
         FileExtensionView.verifyDetailsViewIsOpened();

@@ -100,7 +100,7 @@ describe('MARC', () => {
         UsersSearchPane.openUser(users.userAProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${users.userAProperties.lastName}, ${users.userAProperties.firstName} testMiddleName deleted successfully.`,
+          `User ${users.userAProperties.lastName}, ${users.userAProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

@@ -167,7 +167,6 @@ describe('Check in', () => {
             itemData.servicePoint = request.body.pickupServicePoint.name;
           });
         });
-        cy.login(userData.username, userData.password);
       });
   });
 
@@ -208,8 +207,10 @@ describe('Check in', () => {
     'C7148 Check In: item with at least one open request (vega)',
     { tags: ['criticalPath', 'vega'] },
     () => {
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
+      });
       SwitchServicePoint.switchServicePoint(testData.servicePointS.name);
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointS.name);
 

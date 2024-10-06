@@ -1,9 +1,10 @@
 import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const caiaSoft = Configurations.configurations.CaiaSoft;
@@ -30,7 +31,7 @@ describe('remote-storage-configuration', () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       // #1 Go to the "Settings" app
       // #2 Select "Remote storage"
-      cy.visit(SettingsMenu.remoteStoragePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Remote storage');
       // The "Remote storage" pane  is appears and contains of: "Configurations", "Accession tables"
       RemoteStorage.checkSettingItems();
 
@@ -84,7 +85,7 @@ describe('remote-storage-configuration', () => {
       };
       // #1 Go to the "Settings" app
       // #2 Select "Remote storage"
-      cy.visit(SettingsMenu.remoteStoragePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Remote storage');
 
       // #3 Select "Configurations" on the "Remote storage" pane by clicking on it
       RemoteStorage.goToConfigurations();

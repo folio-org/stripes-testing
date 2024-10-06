@@ -600,7 +600,7 @@ export default {
   selectOrderLines: () => {
     cy.do(Button('Order lines').click());
   },
-  selectOrders: () => {
+  selectOrdersPane: () => {
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {

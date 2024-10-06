@@ -1,4 +1,4 @@
-import { not } from 'bigtest';
+import { not } from '@interactors/html';
 import uuid from 'uuid';
 
 import {

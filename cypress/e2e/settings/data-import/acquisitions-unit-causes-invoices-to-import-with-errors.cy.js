@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
@@ -25,8 +26,11 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
@@ -106,25 +110,27 @@ describe('Data Import', () => {
         AcquisitionUnits.assignUser(user.username);
 
         // create Field mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileForUpload, fileName);
         JobProfiles.waitFileIsUploaded();
@@ -138,7 +144,7 @@ describe('Data Import', () => {
         FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
 
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.searchByNumber(invoiceNumber);
         Invoices.selectInvoice(invoiceNumber);
         InvoiceView.verifyAcquisitionUnits(defaultAcquisitionUnit.name);

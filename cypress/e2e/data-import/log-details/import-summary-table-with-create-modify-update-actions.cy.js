@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORD_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
@@ -41,8 +42,11 @@ import {
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -119,10 +123,10 @@ describe('Data Import', () => {
       name: `C430257 mapping profile ${getRandomPostfix()}`,
       holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
       holdingsMarcField: '901',
-      subfieldForHoldings: '$h',
+      subfieldForHoldings: 'h',
       itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
       itemMarcField: '902',
-      subfieldForItem: '$i',
+      subfieldForItem: 'i',
     };
     const jobProfileNameForExport = `C430257 job profile.${getRandomPostfix()}`;
     // profiles for updating instance, holdings, item
@@ -302,7 +306,10 @@ describe('Data Import', () => {
           instanceHrid = response[0].instance.hrid;
         });
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 
@@ -343,7 +350,6 @@ describe('Data Import', () => {
       'C430257 Check import summary table with "create + update" actions (folijet)',
       { tags: ['criticalPathFlaky', 'folijet'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(instanceId);
         InstanceRecordView.verifyInstanceSource('MARC');
         InstanceRecordView.openHoldingView();
@@ -353,15 +359,18 @@ describe('Data Import', () => {
           `${collectionOfProfilesForCreate[2].mappingProfile.pernanentLocationUI} >`,
         );
         InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.closeDetailView();
 
-        cy.visit(SettingsMenu.exportMappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
         cy.wait(10000);
-        cy.visit(SettingsMenu.exportJobProfilePath);
+        ExportJobProfiles.goToJobProfilesTab();
+        cy.wait(1500);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // download .csv file
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchByParameter('Subject', uniqueSubject);
         cy.wait(2000);
         InventorySearchAndFilter.saveUUIDs();
@@ -369,7 +378,7 @@ describe('Data Import', () => {
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
         ExportFile.downloadExportedMarcFile(exportedFileName);
@@ -382,7 +391,9 @@ describe('Data Import', () => {
         );
 
         // create mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.createInstanceMappingProfile(
           collectionOfProfilesForUpdate[0].mappingProfile,
         );
@@ -396,13 +407,13 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfProfilesForUpdate.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         });
 
         // create match profiles
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
           collectionOfMatchProfiles[0].matchProfile,
         );
@@ -414,7 +425,7 @@ describe('Data Import', () => {
         );
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
         NewJobProfile.linkMatchAndActionProfiles(
           collectionOfMatchProfiles[0].matchProfile.profileName,
@@ -444,7 +455,7 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
 
         // upload the exported marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(fileNameForUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);
@@ -473,7 +484,8 @@ describe('Data Import', () => {
         JsonScreenView.openMarcSrsTab();
         JsonScreenView.verifyContentInTab('"999"');
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(

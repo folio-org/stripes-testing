@@ -5,6 +5,7 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  NavListItem,
   Selection,
   SelectionOption,
   including,
@@ -15,6 +16,10 @@ const table = MultiColumnList();
 export default {
   waitLoading() {
     cy.expect(Pane('Accession tables').exists());
+  },
+  openTabAccessionTablesFromSettings() {
+    cy.do(NavListItem('Remote storage').click());
+    cy.do(NavListItem('Accession tables').click());
   },
   verifyAccessionTablePane() {
     cy.expect([
