@@ -8,7 +8,7 @@ import VendorAddress from '../../../support/fragments/invoices/vendorAddress';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import BatchGroups from '../../../support/fragments/settings/invoices/batchGroups';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -44,7 +44,7 @@ describe('Invoices', () => {
     };
 
     before(() => {
-      cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.getAdminToken();
       Organizations.createOrganizationViaApi(organization).then((response) => {
         organization.id = response;
       });
@@ -64,7 +64,7 @@ describe('Invoices', () => {
         Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
       });
       invoiceLine.subTotal = -subtotalValue;
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.openAppFromDropdown('Invoices');
     });
 
     after('Delete storage', () => {
