@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -11,8 +11,8 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/i
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -62,8 +62,10 @@ describe('Inventory', () => {
           },
         );
       });
-      cy.loginAsAdmin();
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      cy.loginAsAdmin({
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
       SettingsInventory.goToSettingsInventory();
       SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
       Z3950TargetProfiles.openTargetProfile();

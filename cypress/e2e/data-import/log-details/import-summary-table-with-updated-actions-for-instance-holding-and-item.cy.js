@@ -228,7 +228,7 @@ describe('Data Import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('Login', () => {
+    before('Create test data and login', () => {
       cy.getAdminToken();
       NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
         collectionOfProfilesForCreate[0].mappingProfile,
@@ -365,7 +365,7 @@ describe('Data Import', () => {
         HoldingsRecordView.close();
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.close();
+        ItemRecordView.closeDetailView();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
@@ -448,6 +448,7 @@ describe('Data Import', () => {
 
         // upload the exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);
@@ -491,7 +492,6 @@ describe('Data Import', () => {
         JsonScreenView.verifyContentInTab('"999"');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(

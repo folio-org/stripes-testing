@@ -387,6 +387,7 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+        cy.wait(10000);
 
         // create job profile for export
         ExportJobProfiles.goToJobProfilesTab();

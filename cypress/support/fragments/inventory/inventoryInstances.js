@@ -1493,6 +1493,7 @@ export default {
   },
 
   verifyRecordsMatchingViaApi() {
+    cy.wait(3000);
     cy.okapiRequest({
       method: 'POST',
       path: 'source-storage/records/matching',
