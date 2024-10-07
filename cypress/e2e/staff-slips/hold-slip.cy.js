@@ -1,9 +1,8 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 import Checkout from '../../support/fragments/checkout/checkout';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -17,6 +16,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -141,8 +141,6 @@ describe('Staff slips', () => {
           servicePointId: testData.userServicePoint.id,
           userBarcode: userData.barcode,
         });
-
-        cy.login(userData.username, userData.password);
       });
   });
 
@@ -179,17 +177,13 @@ describe('Staff slips', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega'] }, () => {
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    // without this waiter, the user will not be found
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
-    CheckOutActions.checkOutUser(userData.barcode, userData.username);
-    CheckOutActions.checkOutItem(itemData.barcode);
-    CheckOutActions.endCheckOutSession();
 
-    cy.visit(TopMenu.requestsPath);
+  it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega'] }, () => {
+    cy.login(userData.username, userData.password, {
+      path: TopMenu.requestsPath,
+      waiter: Requests.waitLoading,
+    });
+
     NewRequest.createNewRequest({
       requesterBarcode: requestUserData.barcode,
       itemBarcode: itemData.barcode,
@@ -197,7 +191,7 @@ describe('Staff slips', () => {
       requestType: REQUEST_TYPES.HOLD,
     });
 
-    cy.visit(TopMenu.checkInPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
     CheckInActions.checkInItemGui(itemData.barcode);
     AwaitingPickupForARequest.verifyModalTitle();
     AwaitingPickupForARequest.unselectCheckboxPrintSlip();

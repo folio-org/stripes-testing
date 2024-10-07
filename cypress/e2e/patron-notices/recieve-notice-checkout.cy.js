@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -21,6 +21,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
@@ -222,6 +223,7 @@ describe('Patron notices', () => {
 
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
         NewNoticePolicy.waitLoading();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
         NewNoticePolicy.fillGeneralInformation(noticePolicy);
@@ -242,8 +244,10 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(topMenu.checkOutPath);
+        cy.login(userData.username, userData.password, {
+          path: topMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {
@@ -252,7 +256,7 @@ describe('Patron notices', () => {
         });
         CheckOutActions.endCheckOutSession();
 
-        cy.visit(topMenu.circulationLogPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);
@@ -273,6 +277,7 @@ describe('Patron notices', () => {
 
         cy.visit(settingsMenu.circulationOtherSettingsPath);
         OtherSettings.waitLoading();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
         OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
 
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
@@ -297,8 +302,10 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(topMenu.checkOutPath);
+        cy.login(userData.username, userData.password, {
+          path: topMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {
@@ -307,7 +314,7 @@ describe('Patron notices', () => {
         });
         CheckOutActions.endCheckOutSessionAutomatically();
 
-        cy.visit(topMenu.circulationLogPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);

@@ -203,6 +203,7 @@ describe('Fees&Fines', () => {
       { tags: ['smoke', 'volaris', 'shiftLeft'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
+        cy.wait('@/authn/refresh', { timeout: 20000 });
         CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
         CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
         testItems.forEach((item) => {
