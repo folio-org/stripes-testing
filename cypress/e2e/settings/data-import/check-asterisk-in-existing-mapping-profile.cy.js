@@ -41,6 +41,7 @@ describe('Data Import', () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
         NewFieldMappingProfile.save();
+        FieldMappingProfileView.clickCloseButton();
       });
     });
 

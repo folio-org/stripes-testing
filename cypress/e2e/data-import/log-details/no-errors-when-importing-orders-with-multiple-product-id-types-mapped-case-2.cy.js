@@ -156,7 +156,6 @@ describe('Data Import', () => {
           orderNumber = number;
         });
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
