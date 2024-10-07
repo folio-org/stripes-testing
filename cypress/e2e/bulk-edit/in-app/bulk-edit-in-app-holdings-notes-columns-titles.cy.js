@@ -141,6 +141,7 @@ describe('bulk-edit', () => {
 
         initialValueSets.forEach((initialValueSet) => {
           BulkEditSearchPane.changeShowColumnCheckbox(initialValueSet[0]);
+          cy.wait(500);
         });
 
         initialValueSets.forEach((initialValueSet) => {

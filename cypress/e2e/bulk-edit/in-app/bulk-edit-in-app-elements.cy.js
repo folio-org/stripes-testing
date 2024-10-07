@@ -28,6 +28,7 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        cy.wait(3000);
 
         cy.login(user.username, user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

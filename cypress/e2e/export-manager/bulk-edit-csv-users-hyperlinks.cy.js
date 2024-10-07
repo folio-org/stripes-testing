@@ -8,6 +8,8 @@ import FileManager from '../../support/utils/fileManager';
 import BulkEditFiles from '../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 import ExportDetails from '../../support/fragments/exportManager/exportDetails';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
@@ -62,7 +64,7 @@ describe('Export Manager', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
-      cy.visit(TopMenu.exportManagerPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchByBulkEdit();
       ExportManagerSearchPane.selectJob(user.username);

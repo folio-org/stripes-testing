@@ -1,10 +1,11 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -18,7 +19,10 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         userId = userProperties.userId;
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
@@ -45,7 +49,6 @@ describe('Data Import', () => {
             quantityOfFiles: '15',
           },
         ].forEach((upload) => {
-          cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
           DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
           JobProfiles.search(jobProfileToRun);
@@ -60,6 +63,7 @@ describe('Data Import', () => {
           // TODO need to wait until files are filtered
           cy.wait(2000);
           LogsViewAll.verifyQuantityOfLogs(upload.quantityOfFiles);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         });
       },
     );

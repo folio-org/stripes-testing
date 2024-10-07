@@ -1,9 +1,10 @@
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -27,7 +28,7 @@ describe('Data Export', () => {
     });
 
     beforeEach('navigates to inventory', () => {
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
     });
 
     after('delete test data', () => {

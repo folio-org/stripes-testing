@@ -19,7 +19,7 @@ import {
 } from '../../../../interactors';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
-const resultsAccordion = Accordion('Preview of record matched');
+const matchedAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
 const bulkEditsAccordion = Accordion('Bulk edits');
@@ -36,7 +36,7 @@ const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
 const setCriteriaPane = Pane('Set criteria');
-const saveAndClose = Button('Save and close');
+const saveAndClose = Button('Save & close');
 const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
@@ -88,7 +88,7 @@ export default {
   },
 
   verifyPopulatedPreviewPage() {
-    cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
+    cy.expect([errorsAccordion.exists(), matchedAccordion.exists(), actions.exists()]);
   },
 
   actionsIsShown() {
@@ -404,14 +404,14 @@ export default {
 
   verifyMatchedResults(...values) {
     values.forEach((value) => {
-      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
+      cy.expect(matchedAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
-    cy.expect(resultsAccordion.has({ itemsAmount: values.length.toString() }));
+    cy.expect(matchedAccordion.has({ itemsAmount: values.length.toString() }));
   },
 
   verifySpecificItemsMatched(...values) {
     values.forEach((value) => {
-      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
+      cy.expect(matchedAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
     });
   },
 
@@ -420,7 +420,7 @@ export default {
   },
 
   matchedAccordionIsAbsent() {
-    cy.expect(resultsAccordion.absent());
+    cy.expect(matchedAccordion.absent());
   },
 
   verifyUserBarcodesResultAccordion() {
@@ -504,9 +504,9 @@ export default {
   },
 
   verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
-    cy.then(() => resultsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
-        resultsAccordion
+        matchedAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
           .find(MultiColumnListCell({ column: columnName, content: value }))
           .exists(),
@@ -671,6 +671,28 @@ export default {
     });
   },
 
+  verifyColumnsInTableInExactOrder(expectedHeadersOrder) {
+    cy.get('[role=columnheader]').then(($headers) => {
+      const actualHeadersOrder = $headers
+        .map((index, header) => Cypress.$(header).text().trim())
+        .get();
+
+      expect(actualHeadersOrder).to.deep.eq(expectedHeadersOrder);
+    });
+  },
+
+  verifyColumnsInAreYouSureFormInExactOrder(expectedHeadersOrder) {
+    cy.get('[aria-label=PreviewModal]')
+      .find('[role=columnheader]')
+      .then(($headers) => {
+        const actualHeadersOrder = $headers
+          .map((index, header) => Cypress.$(header).text().trim())
+          .get();
+
+        expect(actualHeadersOrder).to.deep.eq(expectedHeadersOrder);
+      });
+  },
+
   verifyActionsDropdownScrollable() {
     cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
       'bottom',
@@ -755,7 +777,7 @@ export default {
 
   verifyResultsUnderColumns(columnName, value) {
     cy.expect(
-      resultsAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists(),
+      matchedAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists(),
     );
   },
 
@@ -777,15 +799,23 @@ export default {
   },
 
   verifyResultColumnTitles(title) {
-    cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
+    cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
   verifyResultColumnTitlesDoNotInclude(title) {
-    cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
+    cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyAreYouSureColumnTitlesInclude(title) {
+    cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).exists());
   },
 
   verifyAreYouSureColumnTitlesDoNotInclude(title) {
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyChangedColumnTitlesInclude(title) {
+    cy.expect(changesAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
   verifyChangedColumnTitlesDoNotInclude(title) {
@@ -902,8 +932,22 @@ export default {
       .should('have.text', expectedText);
   },
 
-  verifyRowHasEmptyElectronicAccess(index) {
-    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+  verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
+  },
+
+  verifyRowHasEmptyElectronicAccessInAreYouSureForm(identifier) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
+  },
+
+  verifyRowHasEmptyElectronicAccessInChangedAccordion(identifier) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
   },
 
   getNumberMatchedRecordsFromPaneHeader() {

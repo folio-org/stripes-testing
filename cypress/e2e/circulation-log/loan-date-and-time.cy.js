@@ -13,6 +13,8 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Circulation log', () => {
   const testData = {
@@ -77,7 +79,7 @@ describe('Circulation log', () => {
 
   const navigateToCircLogAndSearchItem = (barcode) => {
     // Select the Circulation log app
-    cy.visit(TopMenu.circulationLogPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
     // "Loan" accordion => Expand "Loan" accordion and Select "Checked Out" and "Checked In" => Search for an item
     SearchPane.searchByCheckedOut();
     SearchPane.findResultRowIndexByContent(barcode).then((rowIndex) => {

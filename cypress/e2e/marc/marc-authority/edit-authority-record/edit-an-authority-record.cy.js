@@ -28,6 +28,7 @@ describe('MARC', () => {
       let createdAuthorityID;
 
       before('Creating data', () => {
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         cy.getAdminToken();
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,
@@ -78,6 +79,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
           MarcAuthority.contains(testData.authority.newField.tag);

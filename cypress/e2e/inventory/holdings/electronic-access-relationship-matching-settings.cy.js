@@ -1,11 +1,15 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
@@ -54,7 +58,8 @@ describe('Inventory', () => {
         HoldingsRecordEdit.waitLoading();
         HoldingsRecordEdit.clickAddElectronicAccessButton();
         HoldingsRecordEdit.getRelationshipsFromHoldings().then((relationshipNames) => {
-          cy.visit(SettingsMenu.urlRelationshipPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.URL_RELATIONSHIP);
           UrlRelationship.verifyListOfUrlRelationshipInHoldings(relationshipNames);
         });
       },

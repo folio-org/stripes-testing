@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import { APPLICATION_NAMES, JOB_STATUS_NAMES, ORDER_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import DataImportJobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,7 +13,7 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -163,7 +163,7 @@ describe('Data Import', () => {
         JobProfileEditForm.clickSaveAndCloseButton();
 
         // Go to the "Data Import" app
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
 
         // Click on the "or choose files" button,  Select file from the precondition, Click on the "Open" button
         DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
@@ -176,7 +176,7 @@ describe('Data Import', () => {
         Logs.checkJobStatus(testData.marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
 
         // Go to the "Orders" app, Click "Order lines"
-        cy.visit(TopMenu.orderLinesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
 
         // Fill in the search box with the value of Order lines for example: "original journals" -> Click "Search" button
         OrderLines.searchByParameter('Keyword', orderLineTitle);

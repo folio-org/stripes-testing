@@ -7,6 +7,8 @@ import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -59,7 +61,7 @@ describe('Settings: Tenant', () => {
       Addresses.openLastUpdated(testData.newAddress.name);
       Addresses.verifyNoPermissionWarning();
 
-      cy.visit(SettingsMenu.tenantPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Tenant');
       TenantPane.waitLoading();
       // Click on "Language and localization" in the General subsection.
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);

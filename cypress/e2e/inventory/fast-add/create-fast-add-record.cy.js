@@ -9,7 +9,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FastAdd from '../../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 import SettingsInventory, {
-  SETTINGS_TABS,
+  INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -40,7 +40,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.FAST_ADD);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
         FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
       });
     });
@@ -52,7 +52,7 @@ describe('Inventory', () => {
         );
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(SETTINGS_TABS.FAST_ADD);
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
         FastAdd.changeDefaultInstanceStatus('Select instance status');
         Users.deleteViaApi(userId);
       });

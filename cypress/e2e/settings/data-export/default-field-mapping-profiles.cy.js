@@ -2,9 +2,10 @@ import permissions from '../../../support/dictionary/permissions';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 
@@ -23,7 +24,8 @@ describe('Data Export', () => {
     });
 
     beforeEach('go to page', () => {
-      cy.visit(SettingsMenu.exportMappingProfilePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      ExportFieldMappingProfiles.openTabFromDataExportSettingsList();
     });
 
     after('delete user', () => {

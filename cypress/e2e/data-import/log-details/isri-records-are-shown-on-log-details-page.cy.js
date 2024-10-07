@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -7,7 +8,7 @@ import EditTargetProfile from '../../../support/fragments/settings/inventory/int
 import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
@@ -56,7 +57,7 @@ describe('Data Import', () => {
             EditTargetProfile.fillAuthentication(OCLCAuthentication);
             EditTargetProfile.save(targetProfileName);
             Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.importWithOclc(oclcNumber);
             InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
               instanceHrids.push(initialInstanceHrId);
@@ -66,7 +67,7 @@ describe('Data Import', () => {
             );
           } else {
             Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.importWithOclc(oclcNumber);
             InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
               instanceHrids.push(initialInstanceHrId);
@@ -77,7 +78,7 @@ describe('Data Import', () => {
           }
         });
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         Logs.verifyNoFileNameLogAbsent();
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
@@ -98,7 +99,7 @@ describe('Data Import', () => {
             EditTargetProfile.fillAuthentication(OCLCAuthentication);
             EditTargetProfile.save(targetProfileName);
             Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.importWithOclc(oclcNumber);
             InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
               instanceHrids.push(initialInstanceHrId);
@@ -108,7 +109,7 @@ describe('Data Import', () => {
             );
           } else {
             Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.importWithOclc(oclcNumber);
             InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
               instanceHrids.push(initialInstanceHrId);
@@ -118,7 +119,7 @@ describe('Data Import', () => {
             );
           }
         });
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.checkByReverseChronologicalOrder();

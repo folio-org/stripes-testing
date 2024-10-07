@@ -286,6 +286,7 @@ describe('Data Import', () => {
 
         // create PO with POL
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
         Orders.createOrder(order, true).then((orderId) => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
@@ -314,6 +315,7 @@ describe('Data Import', () => {
 
         // upload .mrc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.checkIsLandingPageOpened();
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileName);

@@ -8,6 +8,8 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 const newName = `testName_${getRandomPostfix()}`;
@@ -111,7 +113,7 @@ describe('bulk-edit', () => {
           );
 
           // Go to users app and verify changes
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByUsername(user.username);
           Users.verifyFirstNameOnUserDetailsPane(newName);
         },

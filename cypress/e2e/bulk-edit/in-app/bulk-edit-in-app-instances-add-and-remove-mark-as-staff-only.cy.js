@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import {
+  APPLICATION_NAMES,
   INSTANCE_NOTE_IDS,
   INSTANCE_RESOURCE_TYPE_IDS,
   INSTANCE_STATUS_TERM_IDS,
@@ -294,8 +295,7 @@ describe('bulk-edit', () => {
             note.noteText,
           );
         });
-
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.byKeywords(`${randomNumberForTitles} Test Instance notes`);
         InventoryInstances.selectInstance(1);
         InventoryInstance.waitLoading();
@@ -317,7 +317,7 @@ describe('bulk-edit', () => {
             note.noteText,
           );
         });
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.checkInstancesCheckbox();
         BulkEditLogs.clickActionsRunBy(user.username);

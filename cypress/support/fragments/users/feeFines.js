@@ -1,4 +1,4 @@
-import { matching } from 'bigtest';
+import { matching } from '@interactors/html';
 import { MultiColumnListRow, MultiColumnListCell, including } from '../../../../interactors';
 
 export default {

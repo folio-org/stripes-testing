@@ -6,6 +6,7 @@
 - Update `<MultiSelection>` interactor. Refs STCOM-1304.
 - Hide call number type options for Local, Other scheme, and SuDoc. Refs FAT-16052.
 - Change the labels of the Classification and Call number sections in Inventory browse options. Refs FAT-16040.
+- Migrate imports from `bigtest` to `@interactors/html`. Refs UITEST-120.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 

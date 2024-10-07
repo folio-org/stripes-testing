@@ -31,3 +31,7 @@ require('cypress-plugin-tab');
 Cypress.on('window:before:load', (window) => {
   Object.defineProperty(window.navigator, 'language', { value: 'en' });
 });
+
+before(() => {
+  cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+});

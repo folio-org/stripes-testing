@@ -16,6 +16,7 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
@@ -122,7 +123,7 @@ describe('Orders', () => {
             InventoryItems.closeItem();
           });
 
-          cy.visit(TopMenu.checkInPath);
+          TopMenuNavigation.navigateToApp('Check in');
           SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
           SwitchServicePoint.checkIsServicePointSwitched(effectiveLocationServicePoint.name);
           // Need to wait,while Checkin page will be loaded in same location
