@@ -57,6 +57,7 @@ describe('Eureka', () => {
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create role, user', () => {
+        cy.clearCookies({ domain: null });
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(

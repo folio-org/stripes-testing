@@ -10,6 +10,7 @@ import {
   PaneHeader,
   Select,
   TextField,
+  Section,
 } from '../../../../interactors';
 
 const resetAllButton = Button({ id: 'clickable-reset-all' });
@@ -82,6 +83,7 @@ export default {
 
   resetAllFilters() {
     cy.do(resetAllButton.click());
+    cy.expect(Section({ id: 'pane-userdetails' }).absent());
     cy.wait(1000);
   },
 };

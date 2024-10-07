@@ -122,8 +122,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByKeywords(testData.userA.userId);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
-        UsersCard.waitLoading();
+        UsersCard.varifyUserCardOpened();
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
@@ -156,9 +155,9 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(testData.userA.userId);
-        UsersSearchPane.selectUserFromList(testData.userA.username);
-        UsersCard.waitLoading();
+        UsersCard.varifyUserCardOpened();
         UsersCard.verifyUserRolesCounter('0');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRolesAccordionEmpty();
