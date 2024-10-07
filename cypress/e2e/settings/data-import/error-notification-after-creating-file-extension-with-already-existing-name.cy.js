@@ -1,7 +1,11 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import NewFileExtension from '../../../support/fragments/settings/dataImport/fileExtensions/newFileExtension';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
@@ -30,7 +34,9 @@ describe('Data Import', () => {
       'C410707 Verify error notification after creating file extension with already existing name (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.fileExtensionsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FileExtensions.openNewFileExtensionForm();
         NewFileExtension.verifyNewFileExtensionFormIsOpened();
         NewFileExtension.fill(testData);

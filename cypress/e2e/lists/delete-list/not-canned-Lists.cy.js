@@ -29,9 +29,10 @@ describe('lists', () => {
       });
     });
     it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
       Lists.openNewListPane();
       Lists.setName(listData.name);

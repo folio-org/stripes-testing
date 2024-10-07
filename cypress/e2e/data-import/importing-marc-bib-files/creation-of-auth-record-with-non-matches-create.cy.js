@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -17,8 +18,12 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
@@ -62,8 +67,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
-        cy.visit(SettingsMenu.matchProfilePath);
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
 
@@ -91,10 +98,12 @@ describe('Data Import', () => {
       'C423578 Verify the creation of Authority record with non-matches create (folijet)',
       { tags: ['smoke', 'folijet'] },
       () => {
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.openNewJobProfileForm();
         NewJobProfile.fillJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
@@ -104,7 +113,7 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(modifiedMarcFile, firstFileName);
         JobProfiles.waitFileIsUploaded();
@@ -124,7 +133,8 @@ describe('Data Import', () => {
         FileDetails.openAuthority();
         MarcAuthorities.waitLoading();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(modifiedMarcFile, secondFileName);
         JobProfiles.waitFileIsUploaded();

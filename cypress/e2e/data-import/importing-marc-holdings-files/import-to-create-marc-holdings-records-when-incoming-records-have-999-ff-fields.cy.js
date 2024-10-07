@@ -67,8 +67,8 @@ describe('Data Import', () => {
           ['intest1', 'intest2', 'intest3'],
           [instanceHrid, instanceHrid, instanceHrid],
         );
+
         // upload a marc file for creating holdings
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

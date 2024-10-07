@@ -21,7 +21,9 @@ const searchField = TextField({ id: 'input-search-action-profiles-field' });
 const openNewActionProfileForm = () => {
   cy.expect(Pane('Action profiles').exists());
   cy.wait(1500);
-  cy.do([resultsPane.find(actionsButton).click(), Button('New action profile').click()]);
+  cy.do(resultsPane.find(actionsButton).click());
+  cy.wait(1000);
+  cy.do(Button('New action profile').click());
 };
 const close = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
 
