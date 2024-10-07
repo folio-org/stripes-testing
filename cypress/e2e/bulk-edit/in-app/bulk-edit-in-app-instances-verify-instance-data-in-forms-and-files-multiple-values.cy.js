@@ -1,11 +1,8 @@
-/* eslint-disable quotes */
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import DateTools from '../../../support/utils/dateTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InstanceStatusType from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
@@ -18,18 +15,18 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
-const value = `françaisolé~1234567890!@#$%^&*()-_=+[{]};:'<.>/?ユ简ثю`;
+const values = ['Test value one', 'Test value two'];
 const instance = {
-  title: `C423676 ${value}-${getRandomPostfix()}`,
-  indexTitle: `Index title ${value}`,
+  title: `C423679 instance ${getRandomPostfix()}`,
+  languages: ['eng', 'fre'],
+  publicationFrequencies: ['daily', 'weekly'],
+  publicationRanges: ['4', '3'],
 };
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const todayDateLocalized = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 const staffSuppressOption = 'Staff suppress';
-const instanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instanceHRIDsFileName}`;
+const instancUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `*-Matched-Records-${instancUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-${instancUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${instancUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -50,49 +47,29 @@ describe('bulk-edit', () => {
           instance.statusTypeId = instanceStatusData[0].id;
           instance.statusTypeName = instanceStatusData[0].name;
         });
-        cy.getModesOfIssuance({ limit: 1 }).then((modeOfIssuanceData) => {
-          instance.modeOfIssuanceId = modeOfIssuanceData.id;
-          instance.modeOfIssuanceName = modeOfIssuanceData.name;
+        NatureOfContent.getViaApi({ limit: 2 }).then(({ natureOfContentTerms }) => {
+          instance.natureOfContentIds = natureOfContentTerms.map(({ id }) => id);
+          instance.natureOfContentNames = natureOfContentTerms.map(({ name }) => name);
         });
-        BrowseContributors.getContributorTypes().then((contributorTypeData) => {
-          instance.contributorTypeId = contributorTypeData[0].id;
-          instance.contributorTypeName = contributorTypeData[0].name;
-        });
-        NatureOfContent.getViaApi({ limit: 1 }).then(({ natureOfContentTerms }) => {
-          instance.natureOfContentId = natureOfContentTerms[0].id;
-          instance.natureOfContentName = natureOfContentTerms[0].name;
-        });
-        Formats.getViaApi()
+        Formats.getViaApi({ limit: 2 })
           .then((formatData) => {
-            instance.formatId = formatData[0].id;
-            instance.formatName = formatData[0].name;
+            instance.formatIds = formatData.map(({ id }) => id);
+            instance.formatNames = formatData.map(({ name }) => name);
           })
           .then(() => {
             cy.createInstance({
               instance: {
                 instanceTypeId: instance.instanceTypeId,
                 title: instance.title,
-                catalogedDate: todayDate,
-                statusId: instance.statusTypeId,
-                modeOfIssuanceId: instance.modeOfIssuanceId,
-                administrativeNotes: [value],
-                indexTitle: instance.indexTitle,
-                series: [{ value }],
-                contributors: [
-                  {
-                    name: value,
-                    contributorNameTypeId: instance.contributorTypeId,
-                    contributorTypeText: '',
-                    primary: false,
-                  },
-                ],
-                editions: [value],
-                physicalDescriptions: [value],
-                natureOfContentTermIds: [instance.natureOfContentId],
-                instanceFormatIds: [instance.formatId],
-                languages: ['eng'],
-                publicationFrequency: ['daily'],
-                publicationRange: ['4'],
+                administrativeNotes: values,
+                series: [{ value: values[0] }, { value: values[1] }],
+                editions: values,
+                physicalDescriptions: values,
+                natureOfContentTermIds: instance.natureOfContentIds,
+                instanceFormatIds: instance.formatIds,
+                languages: instance.languages,
+                publicationFrequency: instance.publicationFrequencies,
+                publicationRange: instance.publicationRanges,
               },
             }).then((instanceId) => {
               instance.id = instanceId;
@@ -101,14 +78,10 @@ describe('bulk-edit', () => {
           .then(() => {
             cy.getInstanceById(instance.id).then((instanceData) => {
               instance.hrid = instanceData.hrid;
-              instanceData.discoverySuppress = true;
-              instanceData.staffSuppress = true;
-              instanceData.previouslyHeld = true;
-              cy.updateInstance(instanceData);
             });
           })
           .then(() => {
-            FileManager.createFile(`cypress/fixtures/${instanceHRIDsFileName}`, instance.hrid);
+            FileManager.createFile(`cypress/fixtures/${instancUUIDsFileName}`, instance.id);
           });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -121,7 +94,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${instanceHRIDsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${instancUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         matchedRecordsFileName,
         previewFileName,
@@ -130,12 +103,12 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C423676 Verify rendering Instance record data in bulk edit forms and files (fields with single value) (firebird)',
+      'C423679 Verify rendering Instance record data in bulk edit forms and files (fields with multiple values) (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.verifyRecordIdentifiers(instanceIdentifiers);
-        BulkEditSearchPane.uploadFile(instanceHRIDsFileName);
+        BulkEditSearchPane.uploadFile(instancUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           instance.hrid,
@@ -145,39 +118,51 @@ describe('bulk-edit', () => {
 
         const checkedColumnHeadersWithValues = [
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID, instance.id],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY, 'true'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS, 'true'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD, 'true'],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY, 'false'],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS, 'false'],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD, 'false'],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID, instance.hrid],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE, 'FOLIO'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CATALOGED_DATE, todayDateLocalized],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CATALOGED_DATE, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_STATUS_TERM, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE, ''],
           [
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_STATUS_TERM,
-            instance.statusTypeName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+            values.join(' | '),
           ],
-          [
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE,
-            instance.modeOfIssuanceName,
-          ],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE, value],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE, instance.title],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE, instance.indexTitle],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT, value],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS, value],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION, value],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION, value],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT, values.join(' | ')],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION, values.join(' | ')],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION,
+            values.join(' | '),
+          ],
           [
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
             instance.instanceTypeName,
           ],
           [
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.NATURE_OF_CONTENT,
-            instance.natureOfContentName,
+            instance.natureOfContentNames.join(' | '),
           ],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS, instance.formatName],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGES, 'eng'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY, 'daily'],
-          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE, '4'],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS,
+            instance.formatNames.join(' | '),
+          ],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGES,
+            instance.languages.join(' | '),
+          ],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY,
+            instance.publicationFrequencies.join(' | '),
+          ],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE,
+            instance.publicationRanges.join(' | '),
+          ],
         ];
         const checkedColumnHeaders = checkedColumnHeadersWithValues.map(
           (headerValuePair) => headerValuePair[0],
@@ -200,37 +185,33 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
 
         const stringOfHeaders = checkedColumnHeaders.join(',');
-        // replace the date because in the .csv file format of date is 'YYYY-MM-DD'
         const stringOfValues = checkedColumnHeadersWithValues
           .map((headerValuePair) => headerValuePair[1])
-          .join(',')
-          .replace(todayDateLocalized, todayDate);
+          .join(',');
 
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [stringOfHeaders, stringOfValues]);
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.selectOption(staffSuppressOption);
         BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-        BulkEditActions.selectSecondAction('Set false');
+        BulkEditActions.selectSecondAction('Set true');
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
           instance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-          'false',
+          'true',
         );
 
         const checkedColumnHeadersWithEditedValues = checkedColumnHeadersWithValues.map((item) => {
           if (item[0] === BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS) {
-            return [item[0], 'false'];
+            return [item[0], 'true'];
           }
           return item;
         });
-        // replace the date because in the .csv file format of date is 'YYYY-MM-DD'
         const stringOfEditedValues = checkedColumnHeadersWithEditedValues
           .map((headerValuePair) => headerValuePair[1])
-          .join(',')
-          .replace(todayDateLocalized, todayDate);
+          .join(',');
 
         checkedColumnHeadersWithEditedValues.forEach((checkedColumnHeaderWithEditedValue) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
@@ -248,7 +229,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           instance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-          'false',
+          'true',
         );
 
         checkedColumnHeadersWithEditedValues.forEach((checkedColumnHeaderWithEditedValue) => {
