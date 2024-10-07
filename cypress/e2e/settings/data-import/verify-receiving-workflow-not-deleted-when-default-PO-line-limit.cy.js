@@ -108,7 +108,6 @@ describe('Data Import', () => {
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(newPurchaseOrderLinesLimit);
 
         // #7 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Find and select the field mapping profile from step 3
-        // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
