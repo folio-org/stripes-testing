@@ -67,6 +67,7 @@ export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
+    cy.wait(1000);
   },
 
   checkForUploading(fileName) {

@@ -44,11 +44,14 @@ export default {
       saveButton.exists(),
       saveButton.click(),
     ]);
-    cy.reload().then(() => cy.do([
-      timeoutDurationTextField.fillIn(''),
-      timeoutDurationTextField.fillIn(checkoutTimeoutDuration),
-      saveButton.click(),
-    ]));
+    cy.reload().then(() => {
+      cy.wait(2000);
+      cy.do([
+        timeoutDurationTextField.fillIn(''),
+        timeoutDurationTextField.fillIn(checkoutTimeoutDuration),
+        saveButton.click(),
+      ]);
+    });
   },
 
   setOtherSettingsViaApi(params) {

@@ -119,7 +119,7 @@ export default {
     cy.expect(HTML('Choose a filter or enter a search query to show results.').exists());
   },
   selectJob(content) {
-    return cy.do(MultiColumnListCell(including(content)).click());
+    cy.do(MultiColumnListCell(including(content)).click());
   },
 
   sortByJobID() {
