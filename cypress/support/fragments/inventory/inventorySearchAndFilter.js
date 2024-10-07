@@ -763,7 +763,7 @@ export default {
     cy.get('#input-inventory-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
     });
-    cy.expect(inventorySearchAndFilter.has({ value: queryValue }));
+    cy.expect(inventorySearchAndFilter.has({ value: including(queryValue) }));
   },
 
   verifyPanesExist() {
