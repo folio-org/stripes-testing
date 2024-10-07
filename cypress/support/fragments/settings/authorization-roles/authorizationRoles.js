@@ -91,6 +91,7 @@ const promoteUsersModal = Modal('Create user records in Keycloak');
 const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
+const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -641,6 +642,7 @@ export default {
     this.clickDuplicateButton();
     this.confirmDuplicateRole();
     InteractorsTools.checkCalloutMessage(duplicateCalloutSuccessText(roleName));
+    InteractorsTools.dismissCallout(duplicateCalloutSuccessText(roleName));
     cy.expect(Pane(matching(duplicatedTitleRegExp)).exists());
     if (capabilitiesShown) {
       cy.expect([
@@ -682,5 +684,10 @@ export default {
 
   waitUntilPromoteUsersModalReappears: () => {
     cy.expect([promoteUsersModal.exists(), promoteUsersModal.absent(), promoteUsersModal.exists()]);
+  },
+
+  checkNoUsernameErrorCallout: () => {
+    InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
+    InteractorsTools.dismissCallout(noUsernameCalloutText);
   },
 };
