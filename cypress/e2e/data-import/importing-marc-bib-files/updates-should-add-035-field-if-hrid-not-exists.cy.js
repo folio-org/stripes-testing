@@ -148,14 +148,9 @@ describe('Data Import', () => {
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(itemQuantity);
         FileDetails.checkInstanceQuantityInSummaryTable(itemQuantity);
+
         cy.wrap(fieldsContent)
           .each((row) => {
-            // need to wait until page will be opened in loop
-            cy.wait(8000);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-            FileDetails.close();
-            DataImport.waitLoading();
-            Logs.openFileDetails(marcFileNameForCreate);
             FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, row.rowNumber);
             cy.wait(8000);
             InventoryInstance.viewSource();
@@ -163,6 +158,12 @@ describe('Data Import', () => {
             InventoryViewSource.extructDataFrom999Field().then((uuid) => {
               arrayOf999Fields.push(uuid[0], uuid[1]);
             });
+            // need to wait until page will be opened in loop
+            cy.wait(8000);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+            FileDetails.close();
+            DataImport.waitLoading();
+            Logs.openFileDetails(marcFileNameForCreate);
           })
           .then(() => {
             // change file using uuid for 999 field
@@ -224,6 +225,7 @@ describe('Data Import', () => {
 
         // upload a marc file for updating already created instances
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.waitLoading();
         DataImport.uploadFile(marcFileNameForUpdate, fileNameAfterUpload);
         JobProfiles.waitFileIsUploaded();
@@ -250,11 +252,6 @@ describe('Data Import', () => {
 
         // open the instances in the Inventory and check 001, 003, 035 fields
         cy.wrap(fieldsContent).each((element) => {
-          // need to wait until page will be opened in loop
-          cy.wait(8000);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          FileDetails.close();
-          Logs.openFileDetails(fileNameAfterUpload);
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, element.rowNumber);
           cy.wait(8000);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
@@ -268,6 +265,11 @@ describe('Data Import', () => {
             InventoryViewSource.notContains('003\t');
             InventoryViewSource.contains('035\t');
             InventoryViewSource.contains(element.content);
+            // need to wait until page will be opened in loop
+            cy.wait(8000);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+            FileDetails.close();
+            Logs.openFileDetails(fileNameAfterUpload);
           });
         });
       },

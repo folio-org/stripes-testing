@@ -6,11 +6,11 @@ export default {
     return cy.wrap(true).then(() => {
       cy.wait(2000);
       cy.do(AppList().choose(appName));
-      cy.wait(1000);
+      cy.wait(2000);
 
       if (subSection) {
         cy.do(NavListItem(subSection).click());
-        cy.wait(1000);
+        cy.wait(2000);
       }
     });
   },
