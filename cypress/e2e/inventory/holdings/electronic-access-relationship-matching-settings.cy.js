@@ -59,6 +59,8 @@ describe('Inventory', () => {
         HoldingsRecordEdit.clickAddElectronicAccessButton();
         HoldingsRecordEdit.getRelationshipsFromHoldings().then((relationshipNames) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          HoldingsRecordEdit.closeCancelEditingModal();
+          SettingsInventory.goToSettingsInventory();
           SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.URL_RELATIONSHIP);
           UrlRelationship.verifyListOfUrlRelationshipInHoldings(relationshipNames);
         });

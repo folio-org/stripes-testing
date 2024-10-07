@@ -403,4 +403,12 @@ export default {
   openTitleLookUp() {
     cy.do(rootSection.find(Button({ id: 'find-instance-trigger' })).click());
   },
+
+  closeCancelEditingModal: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
+  },
 };
