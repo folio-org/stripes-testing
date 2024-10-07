@@ -5,7 +5,7 @@ const fs = require('fs');
 const TESTRAIL_HOST = 'https://foliotest.testrail.io/';
 const API_USER = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
 const API_KEY = 'Folio-lsp11';
-const RUN_ID = 2108; // Set your test run ID
+const RUN_ID = 2108;
 
 const api = axios.create({
   baseURL: `${TESTRAIL_HOST}/index.php?/api/v2/`,
@@ -72,12 +72,17 @@ async function generateReport(runId) {
     }
   }
 
-  const reportDefects = Object.entries(defectsCount)
-    .map(([defect, count]) => `${defect} - ${count}`)
-    .join('\n');
-  const reportFixes = Object.entries(fixesCount)
-    .map(([defect, count]) => `${defect} - ${count}`)
-    .join('\n');
+  const defectsList = Object.entries(defectsCount).map(([defect, count]) => {
+    return { defect, count };
+  });
+  const fixesList = Object.entries(fixesCount).map(([defect, count]) => {
+    return { defect, count };
+  });
+  defectsList.sort((a, b) => b.count - a.count);
+  fixesList.sort((a, b) => b.defect - a.defect);
+
+  const reportDefects = defectsList.map(({ defect, count }) => `${defect}\t${count}`).join('\n');
+  const reportFixes = fixesList.map(({ defect, count }) => `${defect}\t${count}`).join('\n');
 
   const summary = `Bugs caught by autotests: \n${reportDefects}\nTickets to fix autotests by AQA engineers: \n${reportFixes}`;
   console.log(summary);
