@@ -36,7 +36,6 @@ describe('Eureka', () => {
           capabsToAssign,
           capabSetsToAssign,
         );
-        if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {
         testData.userA = createdUserAProperties;
@@ -123,6 +122,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByKeywords(testData.userA.userId);
+        UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
@@ -157,6 +157,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByKeywords(testData.userA.userId);
+        UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.waitLoading();
         UsersCard.verifyUserRolesCounter('0');
         UsersCard.clickUserRolesAccordion();
