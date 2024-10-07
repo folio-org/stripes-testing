@@ -64,8 +64,8 @@ async function getTestRunResults(runId) {
     return response.data;
   }
 
+  const tests = [];
   try {
-    const tests = [];
     let offset = 0;
     let resp;
     do {
@@ -73,12 +73,10 @@ async function getTestRunResults(runId) {
       tests.push(...resp.tests);
       offset += resp.size;
     } while (resp._links.next != null);
-
-    return tests;
   } catch (error) {
     console.error('Error fetching test results:', error);
-    return [];
   }
+  return tests;
 }
 
 // Fetch test result history for a test case
@@ -96,45 +94,6 @@ async function getTestHistory(caseId) {
   }
 }
 
-function getJoinedHistory(history) {
-  const historyByDay = history.reduce((acc, result) => {
-    const date = new Date(result.created_on * 1000).toISOString().split('T')[0];
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(result);
-    return acc;
-  }, {});
-
-  // eslint-disable-next-line no-unused-vars
-  const joinedHistory = Object.entries(historyByDay).map(([date, items]) => {
-    const dayStatus = items.some((item) => item.status_id === 1) ? status.Passed : status.Failed;
-    // reset defects if day status passed
-    const defects =
-      dayStatus === status.Passed ? null : items.find((item) => item.defects)?.defects || null;
-    return {
-      date,
-      status_id: dayStatus,
-      defects,
-    };
-  });
-  return joinedHistory;
-}
-
-async function isTestFlaky(history) {
-  let passed = 0;
-  for (const historyItem of history) {
-    if (historyItem.status_id === status.Passed) {
-      passed++;
-    }
-  }
-  const passRate = passed / history.length;
-  const isFlaky = passRate >= 0.2 && passRate <= 0.8;
-  return isFlaky;
-}
-
-// Update test result in TestRail
-// eslint-disable-next-line no-unused-vars
 async function updateTestResult(testId, statusId, comment, defects) {
   // eslint-disable-next-line no-unreachable
   try {
@@ -149,7 +108,60 @@ async function updateTestResult(testId, statusId, comment, defects) {
   }
 }
 
-async function analyzeTestResults(runId) {
+function getJoinedHistory(history) {
+  const historyByDay = history.reduce((acc, result) => {
+    const date = new Date(result.created_on * 1000).toISOString().split('T')[0];
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(result);
+    return acc;
+  }, {});
+
+  const joinedHistory = Object.entries(historyByDay).map(([date, items]) => {
+    const dayStatus = items.some((item) => item.status_id === status.Passed)
+      ? status.Passed
+      : status.Failed;
+    // reset defects if day status passed
+    const defects =
+      dayStatus === status.Passed ? null : items.find((item) => item.defects)?.defects || null;
+    return {
+      date,
+      status_id: dayStatus,
+      defects,
+    };
+  });
+  return joinedHistory;
+}
+
+function isTestFlaky(history, threshold = 2) {
+  const hasFlakyPattern = (hist) => {
+    let patternChanged = 0;
+    if (hist.length < 1) return false;
+    for (let i = 1; i < hist.length; i++) {
+      if (hist[i].status_id !== hist[i - 1].status_id) {
+        patternChanged++;
+      }
+    }
+    const isFlaky = patternChanged > threshold;
+    return isFlaky;
+  };
+  const hasFlakyPassrate = (hist) => {
+    let passed = 0;
+    for (const historyItem of hist) {
+      if (historyItem.status_id === status.Passed) {
+        passed++;
+      }
+    }
+    const passRate = passed / hist.length;
+    const isFlaky = passRate > 0.2 && passRate < 0.8;
+    return isFlaky;
+  };
+
+  return hasFlakyPassrate(history) && hasFlakyPattern(history);
+}
+
+async function classifyTestResults(runId) {
   const allTests = await getTestRunResults(runId);
 
   // Get only Failed tests
@@ -185,7 +197,7 @@ async function analyzeTestResults(runId) {
     const failedInHistory = joinedHistory.some((result) => result.status_id === status.Failed);
 
     if (status_id === status.Failed && passedInHistory) {
-      // If current test failed but passed in the past, mark for re-execution
+      // If current test failed but passed in the past, mark as potential regression
       resultsList.regression.push({ testId, caseId: case_id });
     } else if (status_id === status.Failed && failedInHistory) {
       // If current test failed and failed in the past, check for linked issues
@@ -199,6 +211,11 @@ async function analyzeTestResults(runId) {
       }
     }
   }
+  return resultsList;
+}
+
+async function analyzeTestResults(runId) {
+  const resultsList = await classifyTestResults(runId);
 
   // Update the tests with linked defects TestRail
   for (const test of resultsList.knownFailed) {
@@ -210,9 +227,7 @@ async function analyzeTestResults(runId) {
   const ids = [];
   for (const { caseId } of [...resultsList.regression, ...resultsList.flaky]) {
     ids.push(`C${caseId}`);
-    console.log(`C${caseId}`);
   }
-  console.log(JSON.stringify(resultsList, null, 2));
 
   const testFilesList = (await glob('cypress/e2e/**/*'))
     .filter((file) => file.includes('.cy.js'))
@@ -231,8 +246,10 @@ async function analyzeTestResults(runId) {
   filteredFiles = Array.from(new Set(filteredFiles));
   filteredFiles.sort();
 
-  console.log(filteredFiles);
-
+  console.log(JSON.stringify(resultsList, null, 2));
+  console.log(
+    `To run tests use the following command: \n\n npx cypress run -b chrome --spec "${filteredFiles.join(',')}"`,
+  );
   fs.writeFileSync('./test-to-rerun.txt', filteredFiles.join(','));
 }
 
