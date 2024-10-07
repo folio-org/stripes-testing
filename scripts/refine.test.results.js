@@ -9,6 +9,9 @@ const TESTRAIL_HOST = 'https://foliotest.testrail.io/';
 const API_USER = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
 const API_KEY = 'Folio-lsp11';
 
+const JIRA_API_KEY =
+  'dmFkeW1feWVyZW1pY2hldkBlcGFtLmNvbTpBVEFUVDN4RmZHRjBKR2Nka0JmSEZpWUdLdXIzcE5TZXhhb1FjdWIycUJOVUU5TkhDQl95WlVVOEtLWjR2bkRrRFJQTnVWYkxZWi05VU5rX3JOLTA1SG8tNElKdVFfcFdnTE95OHhwc1dpR2dWVFJabUtDMjhXOFNmcG5JN0VHSXFETU0xZ05YcUo3bnNTd20tOW1hemZxaWZYR0ZWOEg3MVRFczlESU9VQ05najhkU3VCMnNJb0k9MDZGMDk3Q0U=';
+
 const RUN_ID = 2108; // Set your test run ID
 
 const status = {
@@ -37,6 +40,30 @@ const api = axios.create({
     password: API_KEY,
   },
 });
+
+// TestRail API client setup
+const jiraApi = axios.create({
+  baseURL: 'https://folio-org.atlassian.net/rest/api/2/',
+  headers: {
+    Authorization: `Basic ${JIRA_API_KEY}`,
+  },
+});
+
+async function getIssue(key) {
+  const response = await jiraApi.get(`issue/${key}`);
+  if (response.status !== 200) {
+    throw new Error('Error fetching issue: ' + key);
+  }
+  return response.data;
+}
+
+async function getIssueStatus(key) {
+  this.issues = this.issues || {};
+  if (!this.issues[key]) {
+    this.issues[key] = (await getIssue(key)).fields.status.name;
+  }
+  return this.issues[key];
+}
 
 function removeRootPath(path) {
   return path.substring(path.indexOf('cypress\\e2e\\'));
@@ -220,7 +247,12 @@ async function analyzeTestResults(runId) {
   // Update the tests with linked defects TestRail
   for (const test of resultsList.knownFailed) {
     const { testId, defects } = test;
-    await updateTestResult(testId, status.Failed, `Linked issues: ${defects}`, defects);
+    const defectStatus = await getIssueStatus(defects);
+    if (defectStatus !== 'Closed') {
+      await updateTestResult(testId, status.Failed, `Linked issues: ${defects}`, defects);
+    } else {
+      console.log(`Defect ${defects} is closed. Skipping...`);
+    }
   }
 
   // Collect files for re-execution
