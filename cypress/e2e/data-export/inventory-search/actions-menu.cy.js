@@ -37,7 +37,7 @@ describe('Data Export', () => {
 
     it(
       'C196752 verifies action menu options before any search is conducted (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         InventoryActions.open();
 
@@ -53,7 +53,7 @@ describe('Data Export', () => {
 
     it(
       'C196753 Verify Action menu options - search results pane populated (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.byKeywords(item.instanceName);
         InventorySearchAndFilter.selectResultCheckboxes(1);
