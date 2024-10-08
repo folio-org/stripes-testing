@@ -59,7 +59,7 @@ describe('Orders', () => {
     });
 
     it(
-      'C353977 "Renewal note"  field is added to .csv export file (thunderjet) (TaaS)',
+      'C353977 "Renewal note" field is added to .csv export file (thunderjet) (TaaS)',
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Search for the order from Preconditions
