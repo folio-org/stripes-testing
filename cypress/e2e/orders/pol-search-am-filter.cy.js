@@ -43,7 +43,6 @@ describe('Export Manager', () => {
       let user;
       let orderNumber = null;
 
-
       before(() => {
         cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
         Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
@@ -105,8 +104,10 @@ describe('Export Manager', () => {
       });
 
       after(() => {
-        cy.loginAsAdmin({ path: SettingsMenu.ordersPurchaseOrderLinesLimit, waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit });
-        cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+        cy.loginAsAdmin({
+          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+        });
         SettingsOrders.setPurchaseOrderLinesLimit(1);
         Orders.deleteOrderViaApi(order.id);
         Organizations.deleteOrganizationViaApi(organization.id);
