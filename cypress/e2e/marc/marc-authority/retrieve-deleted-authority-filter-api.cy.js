@@ -18,11 +18,11 @@ describe('MARC', () => {
       tag010: '010',
       authorityHeadings: [
         'Apple & Honey Productions (with "nr" in the 010 field) C432317Auto',
-        'C432317Music Auto',
+        'Music (for test) C432317Auto',
+        'Music C432317Auto',
         'Montessori method of education C432317Auto',
         'Hymnals C432317Auto',
         'Children (for test) C432317Auto',
-        'Music (for test) C432317Auto',
         'Chemistry, Organic C432317Auto',
         'Comparative Study C432317Auto',
         'Postcards (with "lcgtm" in 010) C432317Auto',
