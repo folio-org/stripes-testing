@@ -56,6 +56,7 @@ describe('Inventory', () => {
         InstanceRecordEdit.waitLoading();
         InstanceRecordEdit.getStatusTermsFromInstance().then((statusNames) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsInventory.goToSettingsInventory();
           SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_STATUS_TYPE);
           InstanceStatusTypes.verifyListOfStatusTypesIsIdenticalToListInInstance(statusNames);
         });
@@ -74,7 +75,9 @@ describe('Inventory', () => {
         InstanceRecordEdit.clickAddStatisticalCodeButton();
         InstanceRecordEdit.getStatisticalCodesFromInstance().then((codes) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_STATUS_TYPE);
+          InstanceRecordEdit.closeCancelEditingModal();
+          SettingsInventory.goToSettingsInventory();
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.STATISTICAL_CODES);
           StatisticalCodes.verifyListOfStatisticalCodesIsIdenticalToListInInstance(codes);
         });
       },

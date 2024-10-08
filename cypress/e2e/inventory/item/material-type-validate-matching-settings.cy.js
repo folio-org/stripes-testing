@@ -107,7 +107,7 @@ describe('Inventory', () => {
           ItemRecordView.verifyMaterialType(itemData.materialTypes[index].materialType.name);
         });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();
         SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
         MaterialTypes.checkAvailableOptions();
