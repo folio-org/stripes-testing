@@ -21,6 +21,7 @@ import {
 } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Finance', () => {
   describe('Transactions', () => {
@@ -175,15 +176,12 @@ describe('Finance', () => {
           `${defaultFund.name} (${defaultFund.code})`,
           'Released',
         );
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.navigateToApp('Invoices');
         Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
         Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
         Invoices.cancelInvoice();
-        cy.visit(TopMenu.fundPath);
-        FinanceHelp.searchByName(defaultFund.name);
-        Funds.selectFund(defaultFund.name);
-        Funds.selectBudgetDetails();
-        Funds.viewTransactions();
+        TopMenuNavigation.navigateToApp('Finance');
+        Funds.closeTransactionDetails();
         Funds.checkTransactionDetails(
           2,
           defaultFiscalYear.code,

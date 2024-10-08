@@ -128,7 +128,7 @@ describe('Inventory', () => {
           ItemRecordEdit.verifyTemporaryLocationItemExists(itemData.instances[index].location.name);
         });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         TenantPane.goToTenantTab();
         TenantPane.selectTenant(TENANTS.LOCATIONS);
         Locations.waitLoading();

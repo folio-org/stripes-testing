@@ -28,6 +28,7 @@ describe('bulk-edit', () => {
         cy.createTempUser([], 'faculty').then((userProperties) => {
           userWithoutPermissions = userProperties;
         });
+        cy.wait(3000);
         cy.createTempUser(
           [
             permissions.bulkEditLogsView.gui,
@@ -35,18 +36,21 @@ describe('bulk-edit', () => {
             permissions.uiUserEdit.gui,
           ],
           'staff',
-        ).then((userProperties) => {
-          user = userProperties;
-          cy.wait(3000);
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+        )
+          .then((userProperties) => {
+            user = userProperties;
+          })
+          .then(() => {
+            cy.wait(5000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
+            FileManager.createFile(
+              `cypress/fixtures/${invalidAndValidUserUUIDsFileName}`,
+              `${user.userId}\n${userWithoutPermissions.userId}\n${invalidUserUUID}`,
+            );
           });
-          FileManager.createFile(
-            `cypress/fixtures/${invalidAndValidUserUUIDsFileName}`,
-            `${user.userId}\n${userWithoutPermissions.userId}\n${invalidUserUUID}`,
-          );
-        });
       });
 
       after('delete test data', () => {
@@ -65,7 +69,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'shiftLeft'] },
+        { tags: ['smoke', 'firebird'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);

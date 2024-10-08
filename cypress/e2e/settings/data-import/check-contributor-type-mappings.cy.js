@@ -177,7 +177,6 @@ describe('Data Import', () => {
 
         // Go to the "Orders" app, Click "Order lines"
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-        cy.pause();
 
         // Fill in the search box with the value of Order lines for example: "original journals" -> Click "Search" button
         OrderLines.searchByParameter('Keyword', orderLineTitle);

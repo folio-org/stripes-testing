@@ -10,12 +10,12 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
@@ -92,13 +92,13 @@ describe('Invoices', () => {
             secondBudget.fundId = secondFundResponse.fund.id;
             Budgets.createViaApi(secondBudget);
           });
+          cy.createOrderApi(order).then((response) => {
+            orderNumber = response.body.poNumber;
+          });
         });
       });
     });
-    cy.loginAsAdmin();
 
-    cy.visit(SettingsMenu.approvalsPath);
-    SettingsOrders.selectApprovalRequired();
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
@@ -109,18 +109,16 @@ describe('Invoices', () => {
       permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Approvals.setApprovePayValue(false);
       cy.login(user.username, user.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
     });
   });
 
   after(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
-    cy.visit(SettingsMenu.approvalsPath);
-    SettingsOrders.selectApprovalRequired();
     Users.deleteViaApi(user.userId);
   });
 
@@ -128,32 +126,27 @@ describe('Invoices', () => {
     'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.getAdminToken();
-      cy.createOrderApi(order).then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.addPOLine();
-        OrderLines.fillInPOLineInfoWithFund(firstFund);
-        OrderLines.backToEditingOrder();
-        Orders.approveOrderbyActions();
-        Orders.openOrder();
-        cy.visit(TopMenu.invoicesPath);
-        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-        Invoices.createInvoiceLinePOLLookUp(orderNumber);
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.selectPOLInOrder(0);
-        OrderLines.editPOLInOrder();
-        OrderLines.changeFundInPOL(secondFund);
-        cy.visit(TopMenu.invoicesPath);
-        Invoices.searchByNumber(invoice.invoiceNumber);
-        Invoices.selectInvoice(invoice.invoiceNumber);
-        Invoices.approveInvoice();
-        Invoices.payInvoice();
-      });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.addPOLine();
+      OrderLines.fillInPOLineInfoWithFund(firstFund);
+      OrderLines.backToEditingOrder();
+      Orders.approveOrderbyActions();
+      Orders.openOrder();
+      TopMenuNavigation.navigateToApp('Invoices');
+      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+      Invoices.createInvoiceLinePOLLookUp(orderNumber);
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.editPOLInOrder();
+      OrderLines.changeFundInPOL(secondFund);
+      TopMenuNavigation.navigateToApp('Invoices');
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
     },
   );
 });

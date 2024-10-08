@@ -27,8 +27,6 @@ describe('orders: Test PO search', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.loginAsAdmin();
-    cy.getAdminToken();
   });
 
   afterEach(() => {
@@ -45,7 +43,7 @@ describe('orders: Test PO search', () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         orderNumber = poNumber;
         const today = new Date();
-        cy.visit(TopMenu.ordersPath);
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         Orders.checkPoSearch(
           Orders.getSearchParamsMap(
             orderNumber,

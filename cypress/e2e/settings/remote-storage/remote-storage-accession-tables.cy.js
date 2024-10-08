@@ -4,8 +4,6 @@ import {
 } from '../../../support/fragments/settings/remote-storage';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('remote-storage-configuration', () => {
   const rs = Configurations.configurations.CaiaSoft;
@@ -21,7 +19,6 @@ describe('remote-storage-configuration', () => {
       });
       Configurations.deleteRemoteStorage('RS2');
 
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
       AccessionTables.openTabAccessionTablesFromSettings();
       Configurations.verifyCaiaSoftWarning();
 

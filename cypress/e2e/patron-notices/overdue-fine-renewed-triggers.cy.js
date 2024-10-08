@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -25,6 +25,7 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
@@ -302,7 +303,9 @@ describe('Patron notices', () => {
           NewNoticePolicyTemplate.checkAfterSaving(template);
         });
 
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        cy.wait('@/authn/refresh', { timeout: 20000 });
         NewNoticePolicy.waitLoading();
 
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
@@ -319,8 +322,10 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(TopMenu.checkOutPath);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         CheckOutActions.checkOutItem(itemData.barcode);
@@ -330,9 +335,10 @@ describe('Patron notices', () => {
         cy.getAdminToken();
         UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(TopMenu.usersPath);
-        UsersSearchPane.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
         UsersSearchPane.searchByKeywords(userData.barcode);
         UsersCard.waitLoading();
         UsersCard.viewCurrentLoans();
@@ -340,17 +346,19 @@ describe('Patron notices', () => {
         UserLoans.renewItem(itemData.barcode, true);
         LoanDetails.checkAction(0, 'Renewed');
 
-        cy.visit(TopMenu.circulationLogPath);
         // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(200000);
-        cy.reload();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.circulationLogPath,
+          waiter: SearchPane.waitLoading,
+        });
 
         noticeTemplates.forEach((template) => {
           checkNoticeIsSent(searchResultsData(template.name));
         });
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.waitLoading();
         UsersSearchPane.searchByKeywords(userData.barcode);
         UsersCard.waitLoading();
@@ -361,7 +369,7 @@ describe('Patron notices', () => {
         PayFeeFaine.setPaymentMethod(testData.paymentMethod);
         PayFeeFaine.submitAndConfirm();
 
-        cy.visit(TopMenu.circulationLogPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(100000);

@@ -367,6 +367,7 @@ describe('Data Import', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
           ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
           ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+          cy.wait(10000);
 
           ExportJobProfiles.goToJobProfilesTab();
           ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
@@ -473,10 +474,11 @@ describe('Data Import', () => {
         });
 
         // create match profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FMATCH_PROFILES);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
           MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+          cy.wait(3000);
         });
 
         // create job profile

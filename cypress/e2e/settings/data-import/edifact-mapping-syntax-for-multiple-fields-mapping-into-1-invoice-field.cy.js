@@ -12,7 +12,6 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
@@ -167,6 +166,8 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(collectionOfProfiles[0].jobProfile.profileName);
 
+        JobProfiles.waitLoadingList();
+        cy.wait(2000);
         JobProfiles.createJobProfile(collectionOfProfiles[1].jobProfile);
         NewJobProfile.linkActionProfile(collectionOfProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
@@ -197,7 +198,7 @@ describe('Data Import', () => {
 
         // upload a marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
+        TopMenuNavigation.clickToGoHomeButton();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForSecondImport);
         JobProfiles.waitFileIsUploaded();

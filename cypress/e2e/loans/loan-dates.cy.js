@@ -1,7 +1,8 @@
-import { REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, REQUEST_TYPES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -11,6 +12,7 @@ import LoansPage from '../../support/fragments/loans/loansPage';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
@@ -61,8 +63,10 @@ describe('Loans', () => {
             });
           })
           .then(() => {
-            cy.login(checkOutUser.username, checkOutUser.password);
-            cy.visit(TopMenu.checkOutPath);
+            cy.login(checkOutUser.username, checkOutUser.password, {
+              path: TopMenu.checkOutPath,
+              waiter: Checkout.waitLoading,
+            });
             CheckOutActions.checkOutItemUser(
               Cypress.env('users')[0].barcode,
               folioInstances[0].barcodes[0],
@@ -105,7 +109,7 @@ describe('Loans', () => {
       'C566 Loan: Change due date warnings and alerts (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft'] },
       () => {
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         // show open loans
         UsersSearchPane.searchByKeywords(checkOutUser.username);
         UsersSearchPane.openUser(checkOutUser.userId);
@@ -132,7 +136,7 @@ describe('Loans', () => {
         LoansPage.closeLoanDetails();
 
         // create request
-        cy.visit(TopMenu.requestsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
         NewRequest.createNewRequest({
           itemBarcode: folioInstances[0].barcodes[0],
           itemTitle: folioInstances[0].instanceTitle,
@@ -142,9 +146,7 @@ describe('Loans', () => {
         });
 
         // go to changing due date and verify warning
-        cy.visit(TopMenu.usersPath);
-        UsersSearchPane.searchByKeywords(checkOutUser.username);
-        UsersSearchPane.openUser(checkOutUser.userId);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersCard.viewCurrentLoans();
         LoansPage.openChangeDueDateForm();
         ChangeDueDateForm.verifyRequestsCount('1');

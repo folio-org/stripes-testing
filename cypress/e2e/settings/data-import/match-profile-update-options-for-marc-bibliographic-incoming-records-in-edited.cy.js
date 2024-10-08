@@ -59,7 +59,7 @@ describe('Data Import', () => {
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
         SettingsDataImport.goToSettingsDataImport();
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
 
         // Click a match profile from the list
         MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);

@@ -135,7 +135,7 @@ describe('orders: Settings', () => {
       SettingOrdersNavigationMenu.selectLoanType();
       SettingsOrders.selectLoanType(loanType);
       TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrders();
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();

@@ -126,7 +126,7 @@ describe('Inventory', () => {
           );
         });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         TenantPane.goToTenantTab();
         TenantPane.selectTenant(TENANTS.LOCATIONS);
         Locations.waitLoading();

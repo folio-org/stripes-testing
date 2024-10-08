@@ -94,7 +94,6 @@ describe('Inventory', () => {
         ItemRecordNew.clickStatisticalCodeButton();
         ItemRecordNew.openStatisticalCodeDropdown();
         ItemRecordNew.verifyStatisticalCodeDropdown();
-
         ItemRecordNew.filterStatisticalCodeByName('ARL');
         ItemRecordNew.verifyStatisticalCodeListOptionsFilteredBy('ARL');
 

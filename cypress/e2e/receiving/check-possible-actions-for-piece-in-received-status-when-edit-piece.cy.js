@@ -66,7 +66,7 @@ describe('Orders: Inventory interaction', () => {
     });
     firstOrder.vendor = organization.name;
     TopMenuNavigation.openAppFromDropdown('Orders');
-    Orders.selectOrders();
+    Orders.selectOrdersPane();
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;

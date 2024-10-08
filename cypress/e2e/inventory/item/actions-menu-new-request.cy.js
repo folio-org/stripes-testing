@@ -14,6 +14,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('Inventory', () => {
   describe('Item', () => {
@@ -211,6 +212,10 @@ describe('Inventory', () => {
             itemStatus,
           );
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          NewRequest.closeCancelEditingModal();
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
         });
@@ -223,6 +228,7 @@ describe('Inventory', () => {
           ITEM_STATUS_NAMES.ORDER_CLOSED,
         ].forEach((itemStatus) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
           InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);

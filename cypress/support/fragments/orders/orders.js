@@ -133,6 +133,7 @@ export default {
   openOrder() {
     cy.wait(4000);
     expandActionsDropdown();
+    cy.wait(4000);
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
@@ -154,8 +155,10 @@ export default {
   },
 
   approveOrderbyActions() {
+    cy.wait(4000);
     expandActionsDropdown();
     cy.do(Button('Approve').click());
+    cy.wait(4000);
   },
 
   editOrderNumber: (poNumber) => {
@@ -412,6 +415,7 @@ export default {
     cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
+    cy.wait(4000);
   },
 
   checkAbsentExportDetails() {
@@ -597,7 +601,7 @@ export default {
   selectOrderLines: () => {
     cy.do(Button('Order lines').click());
   },
-  selectOrders: () => {
+  selectOrdersPane: () => {
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {

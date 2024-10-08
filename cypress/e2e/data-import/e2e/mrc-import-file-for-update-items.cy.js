@@ -441,6 +441,7 @@ describe('Data Import', () => {
         collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
           MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+          cy.wait(3000);
         });
 
         // create Job profile

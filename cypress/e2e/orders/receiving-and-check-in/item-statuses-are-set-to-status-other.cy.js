@@ -233,7 +233,7 @@ describe('Orders', () => {
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForFourItem,
-          `${ITEM_STATUS_NAMES.IN_TRANSIT} to Circ Desk 2`,
+          ITEM_STATUS_NAMES.ON_ORDER,
         );
         InventoryItems.closeItem();
         InventoryInstance.openHoldingsAccordion(location.name);

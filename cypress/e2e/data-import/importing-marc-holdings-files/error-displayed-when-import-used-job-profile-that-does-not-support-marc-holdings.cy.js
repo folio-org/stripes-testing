@@ -95,7 +95,6 @@ describe('Data Import', () => {
         JsonScreenView.verifyContentInTab(errorMessageForMarcAuthorityProfile);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

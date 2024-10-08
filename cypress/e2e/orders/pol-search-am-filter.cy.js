@@ -7,9 +7,11 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import SettingOrdersNavigationMenu from '../../support/fragments/settings/orders/settingOrdersNavigationMenu';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -61,7 +63,9 @@ describe('Export Manager', () => {
             'Purchase',
           );
           InteractorsTools.checkCalloutMessage('Integration was saved');
-          cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+          TopMenuNavigation.openAppFromDropdown('Settings');
+          SettingsMenu.selectOrders();
+          SettingOrdersNavigationMenu.selectCustomFieldsPurchaseOrderLines();
           SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
           SettingsOrders.setPurchaseOrderLinesLimit(3);
           cy.visit(TopMenu.ordersPath);

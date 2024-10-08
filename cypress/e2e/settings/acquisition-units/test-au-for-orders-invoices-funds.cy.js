@@ -81,7 +81,7 @@ describe('Acquisition Units', () => {
         });
         defaultOrder.vendor = organization.name;
         TopMenuNavigation.openAppFromDropdown('Orders');
-        Orders.selectOrders();
+        Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(defaultOrder, true).then((orderResponse) => {
           defaultOrder.id = orderResponse.id;
           orderNumber = orderResponse.poNumber;

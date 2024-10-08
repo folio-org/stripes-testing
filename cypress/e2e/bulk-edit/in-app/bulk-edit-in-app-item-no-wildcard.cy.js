@@ -9,6 +9,8 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 
@@ -118,7 +120,7 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, itemsToEdit);
 
         itemsToEdit.forEach((item) => {
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', item);
           ItemRecordView.waitLoading();

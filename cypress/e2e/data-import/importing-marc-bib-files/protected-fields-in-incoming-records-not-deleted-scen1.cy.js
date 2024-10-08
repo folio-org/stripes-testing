@@ -104,7 +104,7 @@ describe('Data Import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         cy.wait(1000);
         InventorySearchAndFilter.selectSearchResultItem();

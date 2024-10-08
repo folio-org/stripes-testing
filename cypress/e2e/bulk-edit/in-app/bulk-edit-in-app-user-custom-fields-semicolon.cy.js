@@ -60,7 +60,6 @@ describe('bulk-edit', () => {
         CustomFields.addMultiSelectCustomField(customFieldData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
-        cy.reload();
         UserEdit.addMultiSelectCustomField(customFieldData);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
@@ -106,7 +105,8 @@ describe('bulk-edit', () => {
         );
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-        UsersSearchPane.searchByUsername(user.username);
+        cy.reload();
+        Users.verifyLastNameOnUserDetailsPane(user.username);
         Users.verifyPatronGroupOnUserDetailsPane('staff');
       },
     );

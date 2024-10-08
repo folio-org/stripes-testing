@@ -41,57 +41,62 @@ describe('bulk-edit', () => {
           permissions.bulkEditView.gui,
           permissions.bulkEditEdit.gui,
           permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          user = userProperties;
-
-          cy.getAdminToken().then(() => {
-            instance.id = InventoryInstances.createInstanceViaApi(
-              instance.instanceName,
-              instance.barcode,
-            );
-            instance2.id = InventoryInstances.createInstanceViaApi(
-              instance2.instanceName,
-              instance2.barcode,
-            );
-            cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
-              (holdings) => {
-                instance.holdingUUID = holdings[0].id;
-                delete holdings[0].temporaryLocationId;
-                cy.updateHoldingRecord(holdings[0].id, {
-                  ...holdings[0],
-                  permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
-                });
-              },
-            );
-            cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
-              (holdings) => {
-                instance2.holdingUUID = holdings[0].id;
-                cy.updateHoldingRecord(holdings[0].id, {
-                  ...holdings[0],
-                  temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
-                  permanentLocationId: LOCATION_IDS.ONLINE,
-                });
-              },
-            );
-            cy.getInstanceById(instance.id).then((res) => {
-              instance.hrid = res.hrid;
-            });
-            cy.getInstanceById(instance2.id)
-              .then((res) => {
-                instance2.hrid = res.hrid;
-              })
-              .then(() => {
-                FileManager.createFile(
-                  `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
-                  `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
-                );
+        ])
+          .then((userProperties) => {
+            user = userProperties;
+          })
+          .then(() => {
+            cy.getAdminToken().then(() => {
+              instance.id = InventoryInstances.createInstanceViaApi(
+                instance.instanceName,
+                instance.barcode,
+              );
+              instance2.id = InventoryInstances.createInstanceViaApi(
+                instance2.instanceName,
+                instance2.barcode,
+              );
+              cy.getHoldings({ limit: 1, query: `"instanceId"="${instance.id}"` }).then(
+                (holdings) => {
+                  instance.holdingUUID = holdings[0].id;
+                  delete holdings[0].temporaryLocationId;
+                  cy.updateHoldingRecord(holdings[0].id, {
+                    ...holdings[0],
+                    permanentLocationId: LOCATION_IDS.POPULAR_READING_COLLECTION,
+                  });
+                },
+              );
+              cy.getHoldings({ limit: 1, query: `"instanceId"="${instance2.id}"` }).then(
+                (holdings) => {
+                  instance2.holdingUUID = holdings[0].id;
+                  cy.updateHoldingRecord(holdings[0].id, {
+                    ...holdings[0],
+                    temporaryLocationId: LOCATION_IDS.MAIN_LIBRARY,
+                    permanentLocationId: LOCATION_IDS.ONLINE,
+                  });
+                },
+              );
+              cy.getInstanceById(instance.id).then((res) => {
+                instance.hrid = res.hrid;
               });
+              cy.getInstanceById(instance2.id)
+                .then((res) => {
+                  instance2.hrid = res.hrid;
+                })
+                .then(() => {
+                  FileManager.createFile(
+                    `cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`,
+                    `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`,
+                  );
+                });
+            });
+          })
+          .then(() => {
+            cy.wait(5000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
           });
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-        });
       });
 
       after('delete test data', () => {

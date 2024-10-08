@@ -271,6 +271,7 @@ describe('Data Import', () => {
         MatchOnVRN.waitJSONSchemasLoad();
         matchProfiles.forEach((match) => {
           MatchOnVRN.createMatchProfileForVRN(match);
+          cy.wait(3000);
         });
 
         // create job profiles

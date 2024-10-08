@@ -1,6 +1,6 @@
 import { including } from '@interactors/html';
 
-import { REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, REQUEST_TYPES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -17,6 +17,7 @@ import { Locations } from '../../support/fragments/settings/tenant/location-setu
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -122,7 +123,8 @@ describe('Title Level Request', () => {
       // Check out the second item from the instance described in Preconditions to another Patron.
       CheckOutActions.checkOutItem(secondItemBarcode);
       Checkout.verifyResultsInTheRow([secondItemBarcode]);
-      cy.visit(TopMenu.requestsPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.waitLoading();
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);
@@ -146,7 +148,7 @@ describe('Title Level Request', () => {
       RequestDetail.checkItemBarcode(testData.requester.barcode);
       RequestDetail.checkRequestsCount('1');
 
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.waitLoading();
       SearchPane.searchByItemBarcode(firstItemBarcode);
       SearchPane.searchByLoanType('Recall requested');
@@ -155,7 +157,7 @@ describe('Title Level Request', () => {
         circAction: 'Recall requested',
       });
 
-      cy.visit(TopMenu.requestsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.waitLoading();
       EditRequest.findAndOpenCreatedRequest({
         instanceTitle: testData.folioInstances[0].instanceTitle,
