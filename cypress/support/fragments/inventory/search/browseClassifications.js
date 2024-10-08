@@ -1,11 +1,11 @@
 /* eslint-disable no-dupe-keys */
 import { including } from '@interactors/html';
 import {
-    MultiColumnListCell,
-    Pane,
-    MultiColumnListRow,
-    MultiColumnListHeader,
-    PaneContent,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListRow,
+  MultiColumnListHeader,
+  PaneContent,
 } from '../../../../../interactors';
 
 const browseInventoryPane = Pane('Browse inventory');
