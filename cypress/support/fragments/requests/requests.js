@@ -362,7 +362,7 @@ export default {
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
-  REQUEST_TYPE_CELL: { columnIndex: 6 },
+  REQUEST_TYPE_CELL: { columnIndex: 5 },
   verifyIsFilteredByRequestType(requestType) {
     const values = [];
     cy.get('[data-row-index]')
