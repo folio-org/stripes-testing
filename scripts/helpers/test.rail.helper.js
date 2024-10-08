@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const status = {
   Passed: 1,
   Blocked: 2,

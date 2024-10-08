@@ -4,15 +4,16 @@
 const { glob } = require('glob');
 const fs = require('fs');
 const { getTestNames } = require('find-test-names');
-const { createJiraClient, createTestRailClient } = require('./api.client');
+const { createJiraClient, createTestRailClient } = require('./helpers/api.client');
 const {
   getTestHistory,
   getTestRunResults,
   updateTestResult,
   team,
   status,
-} = require('./test.rail.helper');
-const { getIssueStatus } = require('./jira.helper');
+} = require('./helpers/test.rail.helper');
+const { getIssueStatus } = require('./helpers/jira.helper');
+const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
 const API_USER = process.env.TESTRAIL_API_USER;
@@ -31,21 +32,6 @@ const teams = [
   team.Vega,
   team.Volaris,
 ];
-
-function removeRootPath(path) {
-  return path.substring(path.indexOf('cypress\\e2e\\'));
-}
-function titleContainsId(title, testCaseIds) {
-  if (title === undefined) {
-    return false;
-  }
-  for (let i = 0; i < testCaseIds.length; i++) {
-    if (title.includes(testCaseIds[i])) {
-      return true;
-    }
-  }
-  return false;
-}
 
 function getJoinedHistory(history) {
   const historyByDay = history.reduce((acc, result) => {
@@ -120,7 +106,7 @@ async function classifyTestResults(runId) {
   for (const test of failedTests) {
     const { case_id, id: testId, status_id } = test;
 
-    // Get test history from 2 days ago
+    // Get test history from 4 days ago
     const startDate =
       Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 4) / 1000;
     const endDate =
@@ -169,6 +155,7 @@ async function analyzeTestResults(runId) {
         defects,
       );
     } else {
+      resultsList.unknownFailed.push({ testId, caseId: test.caseId });
       console.log(`Defect ${defects} is closed. Skipping...`);
     }
   }

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const fs = require('fs');
-const { createTestRailClient } = require('./api.client');
-const { getTestHistory, getTestRunResults, status } = require('./test.rail.helper');
+const { createTestRailClient } = require('./helpers/api.client');
+const { getTestHistory, getTestRunResults, status } = require('./helpers/test.rail.helper');
 require('dotenv').config();
 
 const API_USER = process.env.TESTRAIL_API_USER;
