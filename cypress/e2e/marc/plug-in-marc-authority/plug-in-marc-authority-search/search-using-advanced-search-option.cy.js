@@ -137,7 +137,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery, true);
-          MarcAuthorities.checkRowsCount(4);
+          MarcAuthorities.checkRowsCount(3);
           MarcAuthorities.selectItem(testData.authRows.interboroughAuth.title, false);
           MarcAuthorities.checkFieldAndContentExistence(
             testData.authRows.interboroughAuth.tag,
