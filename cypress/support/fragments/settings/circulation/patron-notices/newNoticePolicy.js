@@ -168,8 +168,10 @@ export default {
   },
 
   save() {
+    cy.wait(1000);
     cy.expect(saveButton.has({ disabled: false }));
     cy.do(saveButton.click());
+    cy.wait(2000);
   },
 
   choosePolicy: (patronNoticePolicy) => {

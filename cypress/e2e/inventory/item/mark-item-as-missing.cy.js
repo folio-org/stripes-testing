@@ -123,7 +123,6 @@ describe('Inventory', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach((item) => {
           MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
           MarkItemAsMissing.openItem(item.barcode);

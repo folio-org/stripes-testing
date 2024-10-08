@@ -277,10 +277,11 @@ describe('Patron notices', () => {
 
         cy.visit(settingsMenu.circulationOtherSettingsPath);
         OtherSettings.waitLoading();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
+        cy.wait(10000);
         OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
 
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+        cy.wait(10000);
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
@@ -312,6 +313,7 @@ describe('Patron notices', () => {
           CheckOutActions.checkOutItem(item.barcode);
           Checkout.verifyResultsInTheRow([item.barcode]);
         });
+
         CheckOutActions.endCheckOutSessionAutomatically();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
