@@ -327,8 +327,6 @@ export default {
   selectInstance: (rowNumber = 0) => {
     cy.do([inventoriesList.focus({ row: rowNumber }), inventoriesList.click({ row: rowNumber })]);
     InventoryInstance.waitInventoryLoading();
-
-    return InventoryInstance;
   },
 
   selectInstanceById(specialInternalId) {
@@ -1493,6 +1491,7 @@ export default {
   },
 
   verifyRecordsMatchingViaApi() {
+    cy.wait(3000);
     cy.okapiRequest({
       method: 'POST',
       path: 'source-storage/records/matching',

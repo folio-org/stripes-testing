@@ -169,7 +169,9 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkJobStatus(fileNameForCreateInstance, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameForCreateInstance);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+        InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(firstInstanceTitle);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[0].type,
@@ -181,9 +183,13 @@ describe('Data Import', () => {
           resourceIdentifiers[1].value,
           4,
         );
+
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(1, 3, RECORD_STATUSES.CREATED);
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameForCreateInstance);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
+        InventoryInstance.waitLoading();
         InventoryInstance.verifyInstanceTitle(secondInstaneTitle);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[2].type,

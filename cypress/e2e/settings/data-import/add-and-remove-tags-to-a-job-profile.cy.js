@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { APPLICATION_NAMES } from '../../../support/constants';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,7 +12,8 @@ import NewFieldMappingProfile from '../../../support/fragments/settings/dataImpo
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -49,7 +49,10 @@ describe('Data Import', () => {
           });
         },
       );
-      cy.loginAsAdmin();
+      cy.loginAsAdmin({
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
     });
 
     after('Delete test data', () => {
@@ -63,7 +66,6 @@ describe('Data Import', () => {
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.search(jobProfile.profileName);

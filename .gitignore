@@ -17,3 +17,4 @@ videos
 .vs
 
 /collect-failed-tests.js
+.env

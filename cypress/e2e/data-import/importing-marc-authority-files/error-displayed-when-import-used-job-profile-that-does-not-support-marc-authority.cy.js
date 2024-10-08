@@ -77,7 +77,6 @@ describe('Data Import', () => {
         JsonScreenView.verifyContentInTab(marcFiles[0].errorMessage);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFiles[1].fileName);
         JobProfiles.waitFileIsUploaded();

@@ -20,6 +20,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import {
@@ -215,7 +216,7 @@ describe('Data Import', () => {
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.inventoryPath,
-          waiter: InventoryInstance.waitLoading,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
     });
@@ -345,7 +346,7 @@ describe('Data Import', () => {
         );
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);

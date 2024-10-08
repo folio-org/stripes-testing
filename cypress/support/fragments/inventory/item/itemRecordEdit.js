@@ -11,6 +11,7 @@ import {
   SelectionList,
   SelectionOption,
   Checkbox,
+  Modal,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InstanceStates from '../instanceStates';
@@ -128,5 +129,12 @@ export default {
   verifyPermanentLocationItemExists: (permanentLocation) => {
     cy.expect(permanentLocationList.exists());
     cy.expect(permanentLocationList.find(SelectionOption(including(permanentLocation))).exists());
+  },
+  closeCancelEditingModal: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
   },
 };
