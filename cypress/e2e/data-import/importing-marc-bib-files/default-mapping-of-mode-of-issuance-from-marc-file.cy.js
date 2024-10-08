@@ -83,6 +83,7 @@ describe('Data Import', () => {
           });
           InstanceRecordView.verifyModeOfIssuance(instanceData.modeOfIssuance);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(fileName);
         });
       },
