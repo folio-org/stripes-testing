@@ -1,64 +1,24 @@
 /* eslint-disable no-console */
-const axios = require('axios');
 const fs = require('fs');
+const { createTestRailClient } = require('./api.client');
+const { getTestHistory, getTestRunResults, status } = require('./test.rail.helper');
+require('dotenv').config();
 
-const TESTRAIL_HOST = 'https://foliotest.testrail.io/';
-const API_USER = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
-const API_KEY = 'Folio-lsp11';
-const RUN_ID = 2108;
+const API_USER = process.env.TESTRAIL_API_USER;
+const API_KEY = process.env.TESTRAIL_API_KEY;
+const RUN_ID = process.env.TESTRAIL_RUN_ID;
 
-const api = axios.create({
-  baseURL: `${TESTRAIL_HOST}/index.php?/api/v2/`,
-  auth: {
-    username: API_USER,
-    password: API_KEY,
-  },
-});
-async function getTestHistory(caseId) {
-  try {
-    const response = await api.get(`get_results_for_case/${RUN_ID}/${caseId}`, {
-      params: {
-        limit: 20,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching test history:', error);
-    return [];
-  }
-}
-async function getTestRunResults(runId) {
-  async function getTest(offset) {
-    const response = await api.get(`get_tests/${runId}`, {
-      params: {
-        offset,
-      },
-    });
-    return response.data;
-  }
-
-  const tests = [];
-  try {
-    let offset = 0;
-    let resp;
-    do {
-      resp = await getTest(offset);
-      tests.push(...resp.tests);
-      offset += resp.size;
-    } while (resp._links.next != null);
-  } catch (error) {
-    console.error('Error fetching test results:', error);
-  }
-  return tests;
-}
+const api = createTestRailClient(API_USER, API_KEY);
 
 async function generateReport(runId) {
-  const results = (await getTestRunResults(runId)).filter((test) => test.status_id === 5);
+  const results = (await getTestRunResults(api, runId)).filter(
+    (test) => test.status_id === status.Failed,
+  );
 
   const defectsCount = {};
   const fixesCount = {};
   for (const result of results) {
-    const historyItem = (await getTestHistory(result.case_id)).results[0];
+    const historyItem = (await getTestHistory(api, result.case_id, RUN_ID)).results[0];
     if (historyItem.defects) {
       historyItem.defects.split(',').forEach((defect) => {
         if (/^FAT-/.test(defect)) {
@@ -72,12 +32,15 @@ async function generateReport(runId) {
     }
   }
 
-  const defectsList = Object.entries(defectsCount).map(([defect, count]) => {
-    return { defect, count };
-  });
-  const fixesList = Object.entries(fixesCount).map(([defect, count]) => {
-    return { defect, count };
-  });
+  const defectsList = Object.entries(defectsCount).map(([defect, count]) => ({
+    defect,
+    count,
+  }));
+  const fixesList = Object.entries(fixesCount).map(([defect, count]) => ({
+    defect,
+    count,
+  }));
+
   defectsList.sort((a, b) => b.count - a.count);
   fixesList.sort((a, b) => b.defect - a.defect);
 

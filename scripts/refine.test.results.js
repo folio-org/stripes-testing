@@ -1,69 +1,36 @@
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
-const axios = require('axios');
+
 const { glob } = require('glob');
 const fs = require('fs');
 const { getTestNames } = require('find-test-names');
+const { createJiraClient, createTestRailClient } = require('./api.client');
+const {
+  getTestHistory,
+  getTestRunResults,
+  updateTestResult,
+  team,
+  status,
+} = require('./test.rail.helper');
+const { getIssueStatus } = require('./jira.helper');
+require('dotenv').config();
 
-const TESTRAIL_HOST = 'https://foliotest.testrail.io/';
-const API_USER = 'SpecialEBS-FOLKaratetestsfailure@epam.com';
-const API_KEY = 'Folio-lsp11';
+const API_USER = process.env.TESTRAIL_API_USER;
+const API_KEY = process.env.TESTRAIL_API_KEY;
+const JIRA_API_KEY = process.env.JIRA_API_KEY;
+const RUN_ID = process.env.TESTRAIL_RUN_ID;
 
-const JIRA_API_KEY =
-  'dmFkeW1feWVyZW1pY2hldkBlcGFtLmNvbTpBVEFUVDN4RmZHRjBKR2Nka0JmSEZpWUdLdXIzcE5TZXhhb1FjdWIycUJOVUU5TkhDQl95WlVVOEtLWjR2bkRrRFJQTnVWYkxZWi05VU5rX3JOLTA1SG8tNElKdVFfcFdnTE95OHhwc1dpR2dWVFJabUtDMjhXOFNmcG5JN0VHSXFETU0xZ05YcUo3bnNTd20tOW1hemZxaWZYR0ZWOEg3MVRFczlESU9VQ05najhkU3VCMnNJb0k9MDZGMDk3Q0U=';
+const jiraClient = createJiraClient(JIRA_API_KEY);
+const testrailClient = createTestRailClient(API_USER, API_KEY);
 
-const RUN_ID = 2108; // Set your test run ID
-
-const status = {
-  Passed: 1,
-  Blocked: 2,
-  Untested: 3,
-  Retest: 4,
-  Failed: 5,
-};
-
-const team = {
-  Firebird: 3,
-  Folijet: 4,
-  Spitfire: 6,
-  Thunderjet: 8,
-  Vega: 9,
-  Volaris: 13,
-  Corsair: 19,
-};
-
-// TestRail API client setup
-const api = axios.create({
-  baseURL: `${TESTRAIL_HOST}/index.php?/api/v2/`,
-  auth: {
-    username: API_USER,
-    password: API_KEY,
-  },
-});
-
-// TestRail API client setup
-const jiraApi = axios.create({
-  baseURL: 'https://folio-org.atlassian.net/rest/api/2/',
-  headers: {
-    Authorization: `Basic ${JIRA_API_KEY}`,
-  },
-});
-
-async function getIssue(key) {
-  const response = await jiraApi.get(`issue/${key}`);
-  if (response.status !== 200) {
-    throw new Error('Error fetching issue: ' + key);
-  }
-  return response.data;
-}
-
-async function getIssueStatus(key) {
-  this.issues = this.issues || {};
-  if (!this.issues[key]) {
-    this.issues[key] = (await getIssue(key)).fields.status.name;
-  }
-  return this.issues[key];
-}
+const teams = [
+  team.Spitfire,
+  team.Firebird,
+  team.Folijet,
+  team.Thunderjet,
+  team.Vega,
+  team.Volaris,
+];
 
 function removeRootPath(path) {
   return path.substring(path.indexOf('cypress\\e2e\\'));
@@ -78,61 +45,6 @@ function titleContainsId(title, testCaseIds) {
     }
   }
   return false;
-}
-
-// Fetch test run results
-async function getTestRunResults(runId) {
-  async function getTest(offset) {
-    const response = await api.get(`get_tests/${runId}`, {
-      params: {
-        offset,
-      },
-    });
-    return response.data;
-  }
-
-  const tests = [];
-  try {
-    let offset = 0;
-    let resp;
-    do {
-      resp = await getTest(offset);
-      tests.push(...resp.tests);
-      offset += resp.size;
-    } while (resp._links.next != null);
-  } catch (error) {
-    console.error('Error fetching test results:', error);
-  }
-  return tests;
-}
-
-// Fetch test result history for a test case
-async function getTestHistory(caseId) {
-  try {
-    const response = await api.get(`get_results_for_case/${RUN_ID}/${caseId}`, {
-      params: {
-        limit: 20,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching test history:', error);
-    return [];
-  }
-}
-
-async function updateTestResult(testId, statusId, comment, defects) {
-  // eslint-disable-next-line no-unreachable
-  try {
-    await api.post(`add_result/${testId}`, {
-      status_id: statusId,
-      comment,
-      defects,
-    });
-    console.log(`Test ${testId} updated successfully.`);
-  } catch (error) {
-    console.error('Error updating test result:', error);
-  }
 }
 
 function getJoinedHistory(history) {
@@ -189,11 +101,11 @@ function isTestFlaky(history, threshold = 2) {
 }
 
 async function classifyTestResults(runId) {
-  const allTests = await getTestRunResults(runId);
+  const allTests = await getTestRunResults(testrailClient, runId);
 
   // Get only Failed tests
   const failedTests = allTests.filter(
-    (test) => test.status_id === 5 && test.custom_dev_team === team.Spitfire,
+    (test) => test.status_id === status.Failed && teams.includes(test.custom_dev_team),
   );
 
   /**
@@ -213,7 +125,7 @@ async function classifyTestResults(runId) {
       Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 4) / 1000;
     const endDate =
       Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) / 1000;
-    const history = (await getTestHistory(case_id)).results.filter(
+    const history = (await getTestHistory(testrailClient, case_id, RUN_ID)).results.filter(
       (result) => result.created_on >= startDate && result.created_on <= endDate,
     );
 
@@ -247,9 +159,15 @@ async function analyzeTestResults(runId) {
   // Update the tests with linked defects TestRail
   for (const test of resultsList.knownFailed) {
     const { testId, defects } = test;
-    const defectStatus = await getIssueStatus(defects);
+    const defectStatus = await getIssueStatus(jiraClient, defects);
     if (defectStatus !== 'Closed') {
-      await updateTestResult(testId, status.Failed, `Linked issues: ${defects}`, defects);
+      await updateTestResult(
+        testrailClient,
+        testId,
+        status.Failed,
+        `Linked issues: ${defects}`,
+        defects,
+      );
     } else {
       console.log(`Defect ${defects} is closed. Skipping...`);
     }
