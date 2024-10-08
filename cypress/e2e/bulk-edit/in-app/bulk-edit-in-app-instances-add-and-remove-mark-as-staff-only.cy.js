@@ -268,7 +268,7 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(fileName, [marcInstance.instanceId]);
         });
 
-        TopMenuNavigation.navigateToApp('Inventory');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -296,8 +296,8 @@ describe('bulk-edit', () => {
           );
         });
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.byKeywords(`${randomNumberForTitles} Test Instance notes`);
-        InventoryInstances.selectInstance(1);
+        InventorySearchAndFilter.byKeywords(marcInstance.instanceId);
+        cy.wait(1000);
         InventoryInstance.waitLoading();
         notesToCheck = [
           { rowIndex: 0, staffOnly: 'No', noteType: 'Action note', noteText: marcFields[583] },
