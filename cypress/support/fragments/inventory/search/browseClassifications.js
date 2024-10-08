@@ -1,10 +1,17 @@
 /* eslint-disable no-dupe-keys */
 import { including } from '@interactors/html';
-import { MultiColumnListCell, Pane, MultiColumnListRow } from '../../../../../interactors';
+import {
+    MultiColumnListCell,
+    Pane,
+    MultiColumnListRow,
+    MultiColumnListHeader,
+    PaneContent,
+} from '../../../../../interactors';
 
 const browseInventoryPane = Pane('Browse inventory');
 const inventoryPane = Pane('Inventory');
 const searchFilterPane = Pane('Search & filter');
+const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
 
 export default {
   verifyBrowseInventoryPane() {
@@ -48,5 +55,12 @@ export default {
         cy.expect(MultiColumnListCell(numberOfTitles, { row: rowNumber }).exists());
       }),
     );
+  },
+
+  verifySearchResultsTable() {
+    cy.expect([
+      paneIntanceDetails.find(MultiColumnListHeader('Classification')).exists(),
+      paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
+    ]);
   },
 };

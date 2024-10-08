@@ -71,6 +71,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
+        BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifySearchResultIncludingValue(testData.searchQuery);
         BrowseClassifications.verifyResultAndItsRow(5, testData.searchQuery);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.searchQuery);
@@ -81,7 +82,9 @@ describe('Inventory', () => {
           'classifications.classificationNumber=="ML410.P11 A3 2018"',
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
         InventorySearchAndFilter.switchToBrowseTab();
+        BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifySearchResultIncludingValue(testData.searchQuery);
         BrowseClassifications.verifyResultAndItsRow(5, testData.searchQuery);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.searchQuery);
