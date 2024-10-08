@@ -199,6 +199,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         thirdFiscalYear.code,
         'None',
         'Transfer',
+        'Initial encumbrance'
       );
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
