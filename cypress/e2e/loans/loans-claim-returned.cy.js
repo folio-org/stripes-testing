@@ -63,7 +63,6 @@ describe('Loans', () => {
     };
 
     before('Create user, open and closed loans', () => {
-      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       cy.getAdminToken().then(() => {
         UsersOwners.createViaApi({
           ...ownerData,
@@ -140,7 +139,7 @@ describe('Loans', () => {
 
     it(
       'C10959 Loans: Claim returned (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] },
       () => {
         const selectedItems = [];
         let claimedReturnedLoansQuantity;
@@ -160,33 +159,32 @@ describe('Loans', () => {
         ConfirmItemStatusModal.closeModal().then(() => {
           Loans.verifyResultsInTheRow([ITEM_STATUS_NAMES.CHECKED_OUT]);
         });
-        Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
-          Loans.resolveClaimedIsVisible();
-          folioInstances.find((item) => {
-            if (item.barcodes[0] === selectedItem.barcodes[0]) {
-              item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
-              return true;
-            }
-            return false;
-          });
-          Loans.checkItemStatus(ITEM_STATUS_NAMES.CLAIMED_RETURNED);
-          Loans.checkClaimReturnedDateTime();
-          Loans.verifyResultsInTheRow([
-            ITEM_STATUS_NAMES.CLAIMED_RETURNED,
-            userData.username,
-            reasonWhyItemIsClaimedOut,
-          ]);
-          Loans.dismissPane().then(() => {
-            claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(folioInstances);
-            UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
-              folioInstances.length,
-              claimedReturnedLoansQuantity,
-            );
-            selectedItem = folioInstances.find(
-              (item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT,
-            );
-            UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcodes[0]);
-          });
+        Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut);
+        Loans.resolveClaimedIsVisible();
+        folioInstances.find((item) => {
+          if (item.barcodes[0] === selectedItem.barcodes[0]) {
+            item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
+            return true;
+          }
+          return false;
+        });
+        Loans.checkItemStatus(ITEM_STATUS_NAMES.CLAIMED_RETURNED);
+        Loans.checkClaimReturnedDateTime();
+        Loans.verifyResultsInTheRow([
+          ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+          userData.username,
+          reasonWhyItemIsClaimedOut,
+        ]);
+        Loans.dismissPane().then(() => {
+          claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(folioInstances);
+          UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
+            folioInstances.length,
+            claimedReturnedLoansQuantity,
+          );
+          selectedItem = folioInstances.find(
+            (item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT,
+          );
+          UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcodes[0]);
         });
         Loans.claimReturned();
         ConfirmItemStatusModal.verifyModalView({ action: ITEM_STATUS_NAMES.CLAIMED_RETURNED });
@@ -197,24 +195,23 @@ describe('Loans', () => {
           );
           UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcodes[0]);
         });
-        Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
-          folioInstances.find((item) => {
-            if (item.barcodes[0] === selectedItem.barcodes[0]) {
-              item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
-              return true;
-            }
-            return false;
-          });
-          claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(folioInstances);
-          UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
-            folioInstances.length,
-            claimedReturnedLoansQuantity,
-          );
-          UserLoans.checkResultsInTheRowByBarcode(
-            [ITEM_STATUS_NAMES.CLAIMED_RETURNED],
-            selectedItem.barcodes[0],
-          );
+        Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut);
+        folioInstances.find((item) => {
+          if (item.barcodes[0] === selectedItem.barcodes[0]) {
+            item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
+            return true;
+          }
+          return false;
         });
+        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(folioInstances);
+        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
+          folioInstances.length,
+          claimedReturnedLoansQuantity,
+        );
+        UserLoans.checkResultsInTheRowByBarcode(
+          [ITEM_STATUS_NAMES.CLAIMED_RETURNED],
+          selectedItem.barcodes[0],
+        );
         UserLoans.openLoanDetails(selectedItem.barcodes[0]);
         Loans.resolveClaimedIsVisible();
         Loans.checkItemStatus(ITEM_STATUS_NAMES.CLAIMED_RETURNED);

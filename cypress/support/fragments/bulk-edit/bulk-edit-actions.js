@@ -271,6 +271,10 @@ export default {
     cy.do(actionsBtn.click());
   },
 
+  verifyActionsButtonDisabled(isDisabled = true) {
+    cy.expect(actionsBtn.has({ disabled: isDisabled }));
+  },
+
   openActionsIfNotYet() {
     cy.get('[class*="actionMenuToggle---"]').then(($element) => {
       if ($element.attr('aria-expanded') === 'false') {
