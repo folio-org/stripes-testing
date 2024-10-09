@@ -126,7 +126,9 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByUsername(testData.userA.username);
+        cy.wait(3000);
         UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
