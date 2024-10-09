@@ -213,6 +213,7 @@ describe('Data Import', () => {
 
         // upload a marc file for updating already created instance
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileName, fileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

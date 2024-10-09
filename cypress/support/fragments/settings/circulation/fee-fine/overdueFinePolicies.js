@@ -115,7 +115,8 @@ export default {
     this.waitLoading();
 
     // waiting the html form to be rendered
-    cy.wait(1000);
+    // wait for authn/refresh request to be finished
+    cy.wait(7000);
     this.fillMaxFine('1.00');
     this.checkAlert(alertOverdueAmount);
 
