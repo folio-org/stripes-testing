@@ -125,7 +125,6 @@ describe('Inventory', () => {
         });
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         markItemAsMissing.getItemsNotToMarkAsMissing
           .call(markItemAsWithdrawn, createdItems)
           .forEach((item) => {

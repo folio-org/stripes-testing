@@ -5,13 +5,13 @@ import NewFund from '../../support/fragments/finance/funds/newFund';
 import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -23,11 +23,6 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.invoiceApprovalsPath,
-      waiter: SettingsInvoices.waitApprovalsLoading,
-    });
-    SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
       (organization) => {
         invoice.accountingCode = organization.erpCode;
@@ -41,7 +36,7 @@ describe('Invoices', () => {
             Funds.addBudget(100);
             Funds.checkCreatedBudget(defaultFund.code, DateTools.getCurrentFiscalYearCode());
             invoiceLine.subTotal = -subtotalValue;
-            cy.visit(TopMenu.invoicesPath);
+            TopMenuNavigation.openAppFromDropdown('Invoices');
             Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
             Invoices.createInvoiceLine(invoiceLine);
             Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
@@ -55,6 +50,7 @@ describe('Invoices', () => {
       permissions.uiInvoicesApproveInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Approvals.setApprovePayValue(false);
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
@@ -72,7 +68,8 @@ describe('Invoices', () => {
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.approveInvoice();
     // check transactions after approve
-    cy.visit(TopMenu.fundPath);
+    TopMenuNavigation.navigateToApp('Finance');
+    Helper.selectFundsNavigation();
     Helper.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());

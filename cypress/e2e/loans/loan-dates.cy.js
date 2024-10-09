@@ -147,8 +147,6 @@ describe('Loans', () => {
 
         // go to changing due date and verify warning
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-        UsersSearchPane.searchByKeywords(checkOutUser.username);
-        UsersSearchPane.openUser(checkOutUser.userId);
         UsersCard.viewCurrentLoans();
         LoansPage.openChangeDueDateForm();
         ChangeDueDateForm.verifyRequestsCount('1');

@@ -57,6 +57,7 @@ describe('Data Import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, fileName);
         DataImport.verifyImportBlockedModal();
+        DataImport.cancelBlockedImportModal();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();

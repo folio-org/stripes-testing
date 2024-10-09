@@ -63,7 +63,7 @@ const orderDetails = {
 const orderLineDetails = {
   poLineDetails: orderDetails.orderLineInformation.find(Section({ id: 'po-line-details' })),
   costDetails: orderDetails.orderLineInformation.find(Section({ id: 'cost-details' })),
-  locationDetails: orderDetails.orderLineInformation.find(Section({ id: 'location' })),
+  locationDetails: orderDetails.orderLineInformation.find(Section(including('Location'))),
   physicalResourceDetails: orderDetails.orderLineInformation.find(
     Section({ id: 'physical-resource-details' }),
   ),

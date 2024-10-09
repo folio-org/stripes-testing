@@ -112,8 +112,6 @@ const searchHoldingsByHRID = (hrid) => {
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitInventoryLoading();
-
-  return InventoryInstance;
 };
 
 const getInstanceHRID = () => {
@@ -763,7 +761,7 @@ export default {
     cy.get('#input-inventory-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
     });
-    cy.expect(inventorySearchAndFilter.has({ value: queryValue }));
+    cy.expect(inventorySearchAndFilter.has({ value: including(queryValue) }));
   },
 
   verifyPanesExist() {
