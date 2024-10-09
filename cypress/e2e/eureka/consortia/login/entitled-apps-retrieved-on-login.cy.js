@@ -19,6 +19,7 @@ describe('Eureka', () => {
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create users, data', () => {
+        cy.clearCookies({ domain: null });
         cy.resetTenant();
         cy.getAdminToken();
         cy.getApplicationsForTenantApi(Affiliations.Consortia).then((appIds) => {
