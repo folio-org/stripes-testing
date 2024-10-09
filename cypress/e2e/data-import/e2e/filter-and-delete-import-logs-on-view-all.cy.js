@@ -10,6 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsJobProfile from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -19,7 +20,7 @@ describe('Data Import', () => {
     const formattedStart = DateTools.getFormattedDate({ date: startedDate });
     // api endpoint expects completedDate increased by 1 day
     completedDate.setDate(completedDate.getDate() + 1);
-    const jobProfileId = '6eefa4c6-bbf7-4845-ad82-de7fc5abd0e3';
+    let jobProfileId;
 
     const firstTestData = {
       instanceIds: [],
@@ -33,6 +34,12 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      SettingsJobProfile.getJobProfilesViaApi({
+        query: `name="${secondTestData.jobProfileName}"`,
+      }).then(({ jobProfiles }) => {
+        jobProfileId = jobProfiles[0].id;
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
@@ -44,7 +51,7 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 15; i++) {
           const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -68,7 +75,7 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
           const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -105,12 +112,10 @@ describe('Data Import', () => {
         LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
         const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
-
         LogsViewAll.checkByDateAndJobProfile(
           { from: formattedStart, end: formattedEnd },
           jobProfileId,
         ).then((count) => {
-          cy.wait(2000);
           LogsViewAll.selectAllLogs();
           LogsViewAll.checkIsLogsSelected(count);
           LogsViewAll.unmarcCheckbox(0);
