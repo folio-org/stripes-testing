@@ -172,6 +172,7 @@ describe('Data Import', () => {
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(testData.editedFileName, testData.fileNameForUpdate);
           JobProfiles.waitFileIsUploaded();

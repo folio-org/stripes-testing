@@ -84,31 +84,33 @@ describe('Export Manager', () => {
           servicePointId: testData.servicepointId,
           userBarcode: userData.barcode,
         });
+        cy.wait(3000);
 
         // Login and visit are separated, because otherwise user wasn't getting assigned permissions
         cy.login(userData.username, userData.password);
+      })
+      .then(() => {
+        // Creating a bulk edit job
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.waitLoading();
+
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, userData.userId);
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+
+        // Creating a circulation log job
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+        SearchPane.waitLoading();
+        SearchPane.searchByCheckedOut();
+        cy.wait(500);
+        SearchPane.exportResults();
+        InteractorsTools.checkCalloutMessage(exportRequestedCalloutMessage);
+        InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
       });
-
-    // Creating a bulk edit job
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-    BulkEditSearchPane.waitLoading();
-
-    BulkEditSearchPane.checkUsersRadio();
-    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-    FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, userData.userId);
-    BulkEditSearchPane.uploadFile(userUUIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
-
-    // Creating a circulation log job
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
-    SearchPane.waitLoading();
-    SearchPane.searchByCheckedOut();
-    cy.wait(500);
-    SearchPane.exportResults();
-    InteractorsTools.checkCalloutMessage(exportRequestedCalloutMessage);
-    InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);
-
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
   });
 
   after('check in item, delete instance, user and files', () => {

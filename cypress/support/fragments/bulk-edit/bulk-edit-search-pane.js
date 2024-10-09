@@ -17,6 +17,7 @@ import {
   MultiColumnListRow,
   Headline,
 } from '../../../../interactors';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
@@ -67,6 +68,7 @@ export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
+    cy.wait(1000);
   },
 
   checkForUploading(fileName) {
@@ -525,6 +527,17 @@ export default {
     });
   },
 
+  verifyReasonForErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason for error', content: errorText }))
+          .exists(),
+      );
+    });
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -701,44 +714,211 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Holdings UUID')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Former holdings Id')).has({ checked: false }),
       DropdownMenu()
-        .find(Checkbox('Instance (Title, Publisher, Publication date)'))
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID))
         .has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings permanent location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Holdings temporary location')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number type')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number prefix')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number suffix')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('ILL policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Action note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Binding note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Copy note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Electronic bookplate note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Provenance note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Reproduction note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Order format')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statement')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statement for indexes')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statement for supplements')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings copy number')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Source')).has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TYPE))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.FORMER_HOLDINGS_ID))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.INSTANCE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION),
+        )
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(
+          Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER_TYPE,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER_PREFIX,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER_SUFFIX,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SHELVING_TITLE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACQUISITION_METHOD))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.RECEIPT_STATUS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ILL_POLICY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.RETENTION_POLICY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ORDER_FORMAT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.DIGITIZATION_POLICY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_STATEMENT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_STATEMENT_FOR_INDEXES,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_STATEMENT_FOR_SUPPLEMENTS,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_COPY_NUMBER))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NUMBER_OF_ITEMS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.STATISTICAL_CODES))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.TAGS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SOURCE))
+        .has({ checked: true }),
+    ]);
+  },
+
+  verifyInstanceActionShowColumns() {
+    cy.expect([
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CATALOGED_DATE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_STATUS_TERM))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.NATURE_OF_CONTENT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGES))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE))
+        .has({ checked: false }),
     ]);
   },
 

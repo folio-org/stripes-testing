@@ -139,6 +139,7 @@ export default {
         .find(Button({ icon: 'trash' }))
         .exists(),
     ]);
+    cy.wait(1000);
   },
 
   clickAddAdministrativeNoteButton() {
@@ -197,22 +198,25 @@ export default {
   },
 
   openStatisticalCodeDropdown() {
-    cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
+    cy.do(statisticalCodeFieldSet.find(Selection()).find(Button()).click());
+    cy.wait(1000);
   },
 
   verifyStatisticalCodeDropdown() {
-    cy.expect([statisticalCodeSelectionList.has({ placeholder: 'Filter options list' })]);
+    cy.expect(statisticalCodeSelectionList.has({ placeholder: 'Filter options list' }));
     cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
       expect(count).to.greaterThan(0);
     });
   },
 
   filterStatisticalCodeByName(name) {
-    cy.do([statisticalCodeSelectionList.filter(name)]);
+    cy.do(statisticalCodeSelectionList.filter(name));
+    cy.wait(1000);
   },
 
   verifyStatisticalCodeListOptionsFilteredBy(name) {
     cy.then(() => statisticalCodeSelectionList.optionList()).then((list) => {
+      cy.wait(1000);
       list.forEach((option) => expect(option).to.include(name));
     });
   },

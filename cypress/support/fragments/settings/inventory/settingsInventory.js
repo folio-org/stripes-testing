@@ -10,6 +10,7 @@ export const INVENTORY_SETTINGS_TABS = {
   URL_RELATIONSHIP: 'URL relationship',
   INSTANCE_STATUS_TYPE: 'Instance status types',
   LOAN_TYPES: 'Loan types',
+  STATISTICAL_CODES: 'Statistical codes',
 };
 
 export default {

@@ -1,9 +1,8 @@
 import uuid from 'uuid';
-import { Button, Checkbox, Form, Label, Pane, TextField } from '../../../../../interactors';
+import { Checkbox, Form, Label, Pane, TextField } from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
-const saveButton = Button('Save');
 
 export default {
   waitLoading() {
@@ -40,15 +39,19 @@ export default {
     cy.do([
       timeoutDurationTextField.exists(),
       timeoutDurationTextField.fillIn(''),
-      timeoutDurationTextField.fillIn((+checkoutTimeoutDuration + 1).toString()),
-      saveButton.exists(),
-      saveButton.click(),
+      timeoutDurationTextField.fillIn(checkoutTimeoutDuration.toString()),
     ]);
-    cy.reload().then(() => cy.do([
-      timeoutDurationTextField.fillIn(''),
-      timeoutDurationTextField.fillIn(checkoutTimeoutDuration),
-      saveButton.click(),
-    ]));
+    cy.wait(1000);
+    cy.get('#clickable-savescanid').then(($saveButton) => {
+      if ($saveButton.prop('disabled') === false) {
+        cy.log('Save button is enabled');
+        cy.wait(500);
+        cy.wrap($saveButton).click();
+        cy.wait(2000);
+      } else {
+        cy.log('Save button is disabled');
+      }
+    });
   },
 
   setOtherSettingsViaApi(params) {

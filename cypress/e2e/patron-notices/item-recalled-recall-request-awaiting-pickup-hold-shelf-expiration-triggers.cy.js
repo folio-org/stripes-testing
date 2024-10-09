@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -24,6 +24,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -355,6 +356,8 @@ describe('Patron notices', () => {
 
         cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
         NewNoticePolicy.waitLoading();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
+
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
         NewNoticePolicy.fillGeneralInformation(noticePolicy);
@@ -379,15 +382,17 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userForRequest.username, userForRequest.password);
-        cy.visit(TopMenu.checkOutPath);
+        cy.login(userForRequest.username, userForRequest.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
         CheckOutActions.checkOutUser(userForCheckOut.barcode);
         CheckOutActions.checkUserInfo(userForCheckOut, patronGroup.name);
         CheckOutActions.checkOutItem(instanceData.itemBarcode);
         Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
         CheckOutActions.endCheckOutSession();
 
-        cy.visit(TopMenu.requestsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
         Requests.waitLoading();
         NewRequest.createNewRequest({
           itemBarcode: instanceData.itemBarcode,
@@ -398,18 +403,16 @@ describe('Patron notices', () => {
         });
         NewRequest.waitLoading();
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.checkInItemGui(instanceData.itemBarcode);
         AwaitingPickupForARequest.unselectCheckboxPrintSlip();
         AwaitingPickupForARequest.closeModal();
         CheckInActions.verifyLastCheckInItem(instanceData.itemBarcode);
         CheckInActions.endCheckInSession();
 
-        cy.visit(TopMenu.circulationLogPath);
         // wait for the hold shelf expires
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(200000);
-        cy.reload();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         checkNoticeIsSent({
           ...searchResultsData(noticeTemplates.itemRecaled.name),
           desc: `Template: ${noticeTemplates.itemRecaled.name}. Triggering event: Item recalled.`,

@@ -112,7 +112,8 @@ describe('Inventory', () => {
           ItemRecordEdit.chooseItemPermanentLoanType(itemData.loanType[index].title);
         });
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        ItemRecordEdit.closeCancelEditingModal();
         SettingsInventory.goToSettingsInventory();
         SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.LOAN_TYPES);
         LoanTypesSection.verifyLoanTypesOption();

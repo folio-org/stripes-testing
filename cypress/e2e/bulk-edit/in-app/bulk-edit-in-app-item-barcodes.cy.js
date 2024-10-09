@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
 
     it(
       'C358939 Verify that 10 records returned in preview of matched records after editing (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
