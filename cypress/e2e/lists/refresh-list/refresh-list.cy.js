@@ -34,7 +34,6 @@ describe('lists', () => {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
       });
-      Lists.waitLoading();
       Lists.resetAllFilters();
     });
 

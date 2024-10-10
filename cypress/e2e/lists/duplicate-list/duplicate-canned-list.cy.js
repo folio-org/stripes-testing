@@ -5,16 +5,21 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('Add new list', () => {
+  describe('duplicate list', () => {
     const userData = {};
+
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: `C423599-${getTestEntityValue('test_list')}`,
+      description: `C423599-${getTestEntityValue('test_list_description')}`,
+      recordType: 'Loans',
+      status: 'Active',
+      visibility: 'Private',
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsEdit.gui,
+        Permissions.listsAll.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiOrdersCreate.gui,
         Permissions.inventoryAll.gui,
@@ -28,32 +33,41 @@ describe('lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getUserToken(userData.username, userData.password);
       Lists.deleteListByNameViaApi(listData.name);
+      cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 
     it(
-      'C411705 Verify that created new list is visible on the "Lists" landing page (corsair)',
+      'C423604 Duplicate lists - Canned reports with modified data (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,
         });
-        Lists.openNewListPane();
+
+        Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
+        Lists.openList(Lists.cannedListInactivePatronsWithOpenLoans);
+        Lists.openActions();
+        Lists.duplicateList();
+
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
-        Lists.selectRecordType('Loans');
-        Lists.selectVisibility('Shared');
-        Lists.selectStatus('Active');
-        Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.selectVisibility(listData.visibility);
+
+        Lists.editQuery();
+        Lists.changeQueryBoolValue(true);
+        Lists.testQuery();
+        Lists.runQueryAndSave();
+
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
+        Lists.waitForCompilingToComplete();
+
         Lists.closeListDetailsPane();
-        cy.reload();
-        Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-          Lists.checkResultSearch(listData, rowIndex);
-        });
+        Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
+        Lists.verifyListIsPresent(listData.name);
       },
     );
   });
