@@ -19,7 +19,7 @@ import {
   TextArea,
   TextField,
   not,
-  ProfilePictureCard,
+  Image,
   DropdownMenu,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
@@ -59,7 +59,7 @@ const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
 const userSearch = TextField('User search');
-const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
+const profilePictureCard = Image({ alt: 'Profile picture' });
 let totalRows;
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
@@ -622,7 +622,8 @@ export default {
   },
 
   verifyProfileCardIsPresented() {
-    cy.expect(profilePictureCard.exists());
+    cy.get('[class*="profilePlaceholder-"]').should('exist');
+    // cy.expect(profilePictureCard.exists());
   },
 
   verifyProfilePictureIsPresent(url) {
