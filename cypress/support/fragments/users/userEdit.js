@@ -18,8 +18,8 @@ import {
   Select,
   TextArea,
   TextField,
-  not,
-  Image,
+  // not,
+  // Image,
   DropdownMenu,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
@@ -59,7 +59,7 @@ const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
 const userSearch = TextField('User search');
-const profilePictureCard = Image({ alt: 'Profile picture' });
+// const profilePictureCard = Image({ alt: 'Profile picture' });
 let totalRows;
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
@@ -628,17 +628,23 @@ export default {
   },
 
   verifyProfilePictureIsPresent(url) {
-    cy.expect(Accordion('User information').find(HTML(including(url))));
+    cy.get('#editUserInfo').find(`img[src="${url}"]`).should('exist');
+    // cy.expect(Accordion('User information').find(HTML(including(url))).exists());
     // cy.expect(profilePictureCard.has({ src: including(url) }));
   },
 
   verifyPlaceholderProfilePictureIsPresent() {
-    cy.expect(Accordion('User information').find(HTML(including('/./img/placeholderThumbnail'))));
+    cy.get('#editUserInfo')
+      .find('img[src*="/./img/placeholderThumbnail"]') // Select img where src contains the partial text
+      .should('exist');
+    // cy.expect(Accordion('User information').find(HTML(including('/./img/placeholderThumbnail'))).exists());
     // cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
   },
 
   verifyPictureIsRemoved(url) {
-    cy.expect(profilePictureCard.has({ src: not(including(url)) }));
+    cy.get('#editUserInfo').find(`img[src="${url}"]`).should('not.exist');
+    // cy.expect(Accordion('User information').find(HTML(including(url))).absent());
+    // cy.expect(profilePictureCard.has({ src: not(including(url)) }));
   },
 
   verifyButtonsStateForProfilePicture(buttonsToCheck) {
