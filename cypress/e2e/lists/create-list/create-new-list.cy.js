@@ -43,9 +43,10 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

@@ -35,7 +35,7 @@ describe('lists', () => {
       });
       Lists.waitLoading();
       Lists.resetAllFilters();
-      Lists.expiredPatronLoan();
+      Lists.openExpiredPatronLoanList();
       Lists.openActions();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find(
