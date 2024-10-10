@@ -94,6 +94,14 @@ export default {
     NewAgreement.save();
   },
 
+  createAndCheckFields: (specialAgreement) => {
+    cy.do(newButton.click());
+    NewAgreement.waitLoading();
+    NewAgreement.checkSelectFields();
+    NewAgreement.fill(specialAgreement);
+    NewAgreement.save();
+  },
+
   createViaApi: (agreement = defaultAgreement) => {
     return cy
       .okapiRequest({
@@ -139,5 +147,14 @@ export default {
   checkAgreementPresented: (name) => {
     SearchAndFilterAgreements.search(name);
     cy.expect(MultiColumnListCell(name).exists());
+  },
+
+  waitLoadingThirdPane() {
+    cy.expect(
+      or(
+        section.find(MultiColumnListRow()).exists(),
+        section.find(HTML(including('No results found. Please check your filters.'))).exists(),
+      ),
+    );
   },
 };
