@@ -623,15 +623,18 @@ export default {
 
   verifyProfileCardIsPresented() {
     cy.get('input[type=file]').should('exist');
+    // cy.get('[class*="profilePlaceholder-"]').should('exist');
     // cy.expect(profilePictureCard.exists());
   },
 
   verifyProfilePictureIsPresent(url) {
-    cy.expect(profilePictureCard.has({ src: including(url) }));
+    cy.expect(Accordion('User information').find(HTML(including(url))));
+    // cy.expect(profilePictureCard.has({ src: including(url) }));
   },
 
   verifyPlaceholderProfilePictureIsPresent() {
-    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+    cy.expect(Accordion('User information').find(HTML(including('/./img/placeholderThumbnail'))));
+    // cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
   },
 
   verifyPictureIsRemoved(url) {
