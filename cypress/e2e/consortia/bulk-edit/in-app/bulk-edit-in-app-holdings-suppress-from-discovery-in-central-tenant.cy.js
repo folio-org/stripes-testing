@@ -70,7 +70,6 @@ describe('Bulk-edit', () => {
           ]);
 
           cy.resetTenant();
-
           cy.getInstanceTypes({ limit: 1 })
             .then((instanceTypes) => {
               instanceTypeId = instanceTypes[0].id;
@@ -190,13 +189,8 @@ describe('Bulk-edit', () => {
         'C496118 Verify "Suppress from discovery" action for Holdings in Central tenant (consortia) (firebird)',
         { tags: ['smokeECS', 'firebird'] },
         () => {
-          // 1
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
-
-          // 2
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
-
-          // 3
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneRecordsCount(2);
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
@@ -213,8 +207,6 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-          // 4
           BulkEditActions.downloadMatchedResults();
 
           instances.forEach((instance) => {
@@ -227,28 +219,19 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 5
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 6
           BulkEditActions.selectOption(suppressFromDiscovery);
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
-
-          // 7
           BulkEditActions.verifyTheActionOptions(Object.values(actions));
-
-          // 8
           BulkEditActions.selectSecondAction(actions.setTrue);
           BulkEditActions.verifySecondActionSelected(actions.setTrue);
           BulkEditActions.applyToItemsRecordsCheckboxExists(true);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 9
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
@@ -261,8 +244,6 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(2);
-
-          // 10
           BulkEditActions.downloadPreview();
 
           instances.forEach((instance) => {
@@ -275,7 +256,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 11
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(2);
 
@@ -286,8 +266,6 @@ describe('Bulk-edit', () => {
               'true',
             );
           });
-
-          // 12
 
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
@@ -302,7 +280,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 13
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
           instances.forEach((instance) => {
@@ -319,10 +296,8 @@ describe('Bulk-edit', () => {
             ItemRecordView.suppressedAsDiscoveryIsPresent();
           });
 
-          // 14
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 
           // remove earlier downloaded files
@@ -331,11 +306,7 @@ describe('Bulk-edit', () => {
             previewFileName,
             changedRecordsFileName,
           );
-
-          // 2
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
-
-          // 3
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneRecordsCount(2);
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
@@ -350,8 +321,6 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-          // 4
           BulkEditActions.downloadMatchedResults();
 
           instances.forEach((instance) => {
@@ -371,25 +340,18 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 5
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 6
           BulkEditActions.selectOption(suppressFromDiscovery);
           BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
-
-          // 15
           BulkEditActions.selectSecondAction(actions.setFalse);
           BulkEditActions.verifySecondActionSelected(actions.setFalse);
           BulkEditActions.applyToItemsRecordsCheckboxExists(false);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 16
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
@@ -402,8 +364,6 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(2);
-
-          // 17
           BulkEditActions.downloadPreview();
 
           instances.forEach((instance) => {
@@ -416,7 +376,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 18
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(2);
 
@@ -428,7 +387,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 19
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
@@ -442,8 +400,8 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 20
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+
           instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToHoldings();
