@@ -22,6 +22,12 @@ export default {
     cy.expect(inventoryPane.exists());
   },
 
+  verifyRowExists(rowIndex) {
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists(),
+    );
+  },
+
   verifyResultAndItsRow(rowIndex, value) {
     cy.expect(
       MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
