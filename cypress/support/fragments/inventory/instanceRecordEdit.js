@@ -4,6 +4,8 @@ import {
   Button,
   Checkbox,
   FieldSet,
+  Modal,
+  Pane,
   PaneHeader,
   RepeatableFieldItem,
   Section,
@@ -12,7 +14,6 @@ import {
   SelectionList,
   TextArea,
   TextField,
-  Pane,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -376,6 +377,7 @@ export default {
       });
   },
   getStatisticalCodesFromInstance: () => {
+    cy.do(Button({ name: 'statisticalCodeIds[0]' }).click());
     return cy
       .get('[class^=overlay-]')
       .find('div[class^=optionSegment-]')
@@ -405,5 +407,12 @@ export default {
         }).absent(),
       );
     }
+  },
+  closeCancelEditingModal: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
   },
 };

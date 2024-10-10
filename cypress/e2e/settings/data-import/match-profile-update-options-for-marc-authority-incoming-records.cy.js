@@ -36,7 +36,7 @@ describe('Data Import', () => {
         // #1 Go to "Settings" application-> "Data import" section-> "Match profiles" section-> Click "Actions" button -> Click "New match profile" option
         // "New match profile" page opens
         SettingsDataImport.goToSettingsDataImport();
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.clickCreateNewMatchProfile();
 
         // #2 Click on "MARC Authority" option as the "Existing records" type

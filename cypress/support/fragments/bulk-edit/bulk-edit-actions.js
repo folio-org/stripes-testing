@@ -183,8 +183,10 @@ export default {
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(commitChanges).exists(),
-      areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
+    if (cellContent) {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(cellContent)).exists());
+    }
   },
 
   verifyChangesInAreYouSureForm(column, changes) {
@@ -267,6 +269,10 @@ export default {
 
   openActions() {
     cy.do(actionsBtn.click());
+  },
+
+  verifyActionsButtonDisabled(isDisabled = true) {
+    cy.expect(actionsBtn.has({ disabled: isDisabled }));
   },
 
   openActionsIfNotYet() {
@@ -1317,5 +1323,9 @@ export default {
         .find(selectNoteHoldingTypeDropdown)
         .has({ content: including(noteType) }),
     );
+  },
+
+  verifyAreYouSureFormAbsents() {
+    cy.expect(areYouSureForm.absent());
   },
 };

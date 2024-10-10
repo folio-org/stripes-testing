@@ -54,6 +54,8 @@ const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
 const sharedCheckbox = Checkbox({ id: 'clickable-filter-visibility-shared' });
 const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 
+const deleteConfirmationModal = Modal('Delete list');
+
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
@@ -131,11 +133,6 @@ export default {
     cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
   },
 
-  confirmDelete() {
-    cy.do(deleteButton.click());
-    cy.wait(1000);
-  },
-
   cancelRefresh() {
     cy.do(cancelRefresh.click());
     cy.wait(1000);
@@ -192,6 +189,23 @@ export default {
     cy.expect(deleteList.absent());
   },
 
+  confirmDelete() {
+    cy.wait(1000);
+    cy.do(deleteConfirmationModal.find(deleteButton).click());
+    cy.wait(2000);
+  },
+
+  cancelDelete() {
+    cy.wait(1000);
+    cy.do(deleteConfirmationModal.find(cancelButton).click());
+    cy.wait(1000);
+  },
+
+  exportList() {
+    cy.do(exportList.click());
+    cy.wait(1000);
+  },
+
   verifyEditListButtonIsDisabled() {
     cy.expect(editList.has({ disabled: true }));
   },
@@ -203,11 +217,6 @@ export default {
   verifyEditListButtonIsActive() {
     cy.expect(editList.exists());
     cy.expect(editList.has({ disabled: false }));
-  },
-
-  exportList() {
-    cy.do(exportList.click());
-    cy.wait(1000);
   },
 
   exportListVisibleColumns() {

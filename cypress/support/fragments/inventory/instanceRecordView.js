@@ -567,7 +567,7 @@ export default {
 
   verifyViewRequestOptionEnabled() {
     cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button('New request').exists());
+    cy.expect(Button(including('New request')).exists());
   },
 
   verifyNewOrderOptionAbsent() {

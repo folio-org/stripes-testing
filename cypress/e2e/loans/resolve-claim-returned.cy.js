@@ -11,6 +11,8 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
 
 describe('Loans', () => {
   describe('Loans: Claim returned', () => {
@@ -108,10 +110,10 @@ describe('Loans', () => {
           returnedLoans: testData.folioInstances.length,
         });
         let selectedItem = testData.folioInstances[0];
-        const LoansPage = UserLoans.openLoanDetails(selectedItem.barcodes[0]);
+        UserLoans.openLoanDetails(selectedItem.barcodes[0]);
 
         // Open resolve claim dropdown & Select "Declare lost" & Click "Cancel"
-        const ConfirmItemStatusModal = LoansPage.openDeclareLostModal();
+        LoansPage.openDeclareLostModal();
         ConfirmItemStatusModal.verifyModalView({
           action: ITEM_STATUS_NAMES.DECLARED_LOST,
           item: selectedItem.instanceTitle,

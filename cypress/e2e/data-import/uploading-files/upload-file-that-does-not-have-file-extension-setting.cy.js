@@ -1,7 +1,9 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -42,6 +44,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         DataImport.verifyFileIsImported(fileNameWithNotExistingFileExtension);
 
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.clickDeleteFilesButton();
         DataImport.uploadFile(filePathWithBlockedFileExtension, fileNameWithBlockedFileExtension);
         DataImport.verifyImportBlockedModal();
