@@ -622,7 +622,7 @@ export default {
   },
 
   verifyProfileCardIsPresented() {
-    cy.get('[class*="profilePlaceholder-"]').should('exist');
+    cy.get('input[type=file]').should('exist');
     // cy.expect(profilePictureCard.exists());
   },
 
