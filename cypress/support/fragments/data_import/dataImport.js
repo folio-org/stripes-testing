@@ -4,8 +4,8 @@ import {
   Button,
   Checkbox,
   Modal,
-  MultiColumnListCell,
   MultiColumnList,
+  MultiColumnListCell,
   NavListItem,
   Pane,
   PaneHeader,
@@ -572,7 +572,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 8;
+    const hrIdColumnIndex = 9;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {

@@ -1,6 +1,5 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import AppPaths from '../../support/fragments/app-paths';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -16,13 +15,16 @@ import NewNoticePolicyTemplate, {
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import SettingsPane from '../../support/fragments/settings/settingsPane';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
@@ -87,7 +89,7 @@ describe('Patron notices', () => {
     };
 
     const checkNoticeIsSent = (checkParams) => {
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.checkResultSearch(checkParams);
     };
@@ -245,7 +247,7 @@ describe('Patron notices', () => {
           NewNoticePolicyTemplate.checkAfterSaving(template);
         });
 
-        cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        SettingsPane.selectSettingsTab('Patron notice policies');
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
         NewNoticePolicy.checkPolicyName(noticePolicy);
@@ -261,8 +263,7 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(TopMenu.checkOutPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {
@@ -272,7 +273,10 @@ describe('Patron notices', () => {
         CheckOutActions.endCheckOutSession();
         checkNoticeIsSent(searchResultsData);
 
-        cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        Users.waitLoading();
+        UsersSearchPane.searchByKeywords(userData.userId);
+        UsersCard.viewCurrentLoans();
         LoansPage.checkAll();
         LoansPage.openChangeDueDate();
         ChangeDueDateForm.fillDate('10/07/2030');
@@ -280,7 +284,7 @@ describe('Patron notices', () => {
         searchResultsData.desc = `Template: ${noticeTemplates[1].name}. Triggering event: Manual due date change.`;
         checkNoticeIsSent(searchResultsData);
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         cy.get('@items').each((item) => {
           CheckInActions.checkInItem(item.barcode);
           CheckInActions.verifyLastCheckInItem(item.barcode);

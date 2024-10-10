@@ -19,7 +19,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
-  ProfilePictureCard,
+  Image,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -54,7 +54,7 @@ const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfine
 const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
-const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
+const profilePictureCard = Image({ alt: 'Profile picture' });
 
 export default {
   errors,

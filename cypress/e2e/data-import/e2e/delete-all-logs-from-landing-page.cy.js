@@ -97,8 +97,10 @@ describe('Data Import', () => {
           DataImport.openActionsMenu();
           DataImport.openDeleteImportLogsModal();
           DataImport.confirmDeleteImportLogs();
+          cy.wait(1000);
           InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
           DataImport.verifyLogsPaneSubtitleAbsent();
+          cy.wait(2000);
           DataImport.verifyDataImportLogsDeleted(logsHrIdsToBeDeleted);
           DataImport.verifyDeleteLogsButtonDisabled();
           cy.reload();
