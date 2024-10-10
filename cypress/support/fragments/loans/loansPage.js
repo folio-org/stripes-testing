@@ -11,6 +11,8 @@ import {
   DropdownMenu,
   PaneHeader,
   Link,
+  MultiColumnListHeader,
+  Checkbox,
 } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
@@ -34,7 +36,12 @@ export default {
     );
   },
   checkAll() {
-    cy.do(CheckboxInTable({ name: 'check-all' }).click());
+    cy.wait(1000);
+    cy.do(
+      MultiColumnListHeader({ id: 'list-column-' })
+        .find(Checkbox({ name: 'check-all' }))
+        .click(),
+    );
   },
   checkOneLoan() {
     cy.do(MultiColumnListRow({ index: 0 }).find(CheckboxInTable()).click());
