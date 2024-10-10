@@ -55,9 +55,10 @@ describe('lists', () => {
       "C411710 Verify that private list isn't visible for the other users (corsair)",
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(firstUser.username, firstUser.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(firstUser.username, firstUser.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -67,9 +68,10 @@ describe('lists', () => {
         cy.contains(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
         cy.wait(3000);
-        cy.login(secondUser.username, secondUser.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(secondUser.username, secondUser.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.verifyListIsNotPresent(listData.name);
       },
     );
