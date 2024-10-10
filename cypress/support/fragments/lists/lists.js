@@ -246,6 +246,11 @@ export default {
     cy.wait(1000);
   },
 
+  verifyExportListVisibleColumnsButtonIsActive() {
+    cy.expect(exportListVisibleColumns.exists());
+    cy.expect(exportListVisibleColumns.has({ disabled: false }));
+  },
+
   verifyExportListButtonIsDisabled() {
     cy.expect(exportList.has({ disabled: true }));
   },
