@@ -630,7 +630,6 @@ export default {
   },
 
   verifyPlaceholderProfilePictureIsPresent() {
-    cy.reload();
     cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
   },
 
