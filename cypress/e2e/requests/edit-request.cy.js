@@ -10,11 +10,7 @@ describe('Requests', () => {
   let cancellationReason;
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
-  });
-
-  beforeEach(() => {
     Requests.createRequestApi().then(
       ({ createdUser, createdRequest, instanceRecordData, cancellationReasonId }) => {
         userId = createdUser.id;
@@ -25,7 +21,7 @@ describe('Requests', () => {
     );
   });
 
-  afterEach(() => {
+  after(() => {
     cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,
@@ -42,15 +38,15 @@ describe('Requests', () => {
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       [
         EditRequest.requestStatuses.AWAITING_DELIVERY,
         EditRequest.requestStatuses.AWAITING_PICKUP,
         EditRequest.requestStatuses.IN_TRANSIT,
         EditRequest.requestStatuses.NOT_YET_FILLED,
       ].forEach((status) => {
+        cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
-        EditRequest.resetFiltersAndReloadPage();
+        // EditRequest.resetFiltersAndReloadPage();
       });
     },
   );

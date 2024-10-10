@@ -1,21 +1,29 @@
-import { HTML, Link, NavListItem } from '../../../interactors';
+import { HTML, Link, NavListItem, Button } from '../../../interactors';
 import { AppList } from '../../../interactors/applist';
 
 export default {
   navigateToApp(appName, subSection) {
-    cy.wait(2000);
-    cy.do(AppList().choose(appName));
+    return cy.wrap(true).then(() => {
+      cy.wait(2000);
+      cy.do(AppList().choose(appName));
+      cy.wait(2000);
 
-    if (subSection) {
-      cy.do(NavListItem(subSection).click());
-    }
+      if (subSection) {
+        cy.do(NavListItem(subSection).click());
+        cy.wait(2000);
+      }
+    });
   },
   isAbsent() {
     cy.expect(AppList().absent());
   },
   openAppFromDropdown(appName) {
+    cy.wait(2000);
     cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
-    cy.wait(500);
+    cy.wait(2000);
     cy.do(Link(appName).click());
+  },
+  clickToGoHomeButton() {
+    cy.do(Button({ id: 'ModuleMainHeading' }).click());
   },
 };

@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -19,6 +19,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
@@ -161,11 +162,6 @@ describe('Patron notices', () => {
               userData.userId,
               testData.userServicePoint.id,
             );
-
-            cy.login(userData.username, userData.password, {
-              path: settingsMenu.circulationPatronNoticePoliciesPath,
-              waiter: NewNoticePolicyTemplate.waitLoading,
-            });
           });
       });
     });
@@ -203,6 +199,10 @@ describe('Patron notices', () => {
       'C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
       { tags: ['smoke', 'volaris', 'shiftLeft'] },
       () => {
+        cy.login(userData.username, userData.password, {
+          path: settingsMenu.circulationPatronNoticePoliciesPath,
+          waiter: NewNoticePolicyTemplate.waitLoading,
+        });
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
         NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
@@ -212,6 +212,8 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+        cy.wait('@/authn/refresh', { timeout: 30000 });
+
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
@@ -233,8 +235,11 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(TopMenu.checkOutPath);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
+
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.checkUserInfo(userData, patronGroup.name);
         cy.get('@items').each((item) => {
@@ -243,14 +248,14 @@ describe('Patron notices', () => {
         });
         CheckOutActions.endCheckOutSession();
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         cy.get('@items').each((item) => {
           CheckInActions.checkInItem(item.barcode);
           CheckInActions.verifyLastCheckInItem(item.barcode);
         });
         CheckInActions.endCheckInSession();
 
-        cy.visit(TopMenu.circulationLogPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         SearchPane.searchByUserBarcode(userData.barcode);
         SearchPane.verifyResultCells();
         SearchPane.checkResultSearch(searchResultsData);

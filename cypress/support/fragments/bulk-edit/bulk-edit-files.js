@@ -234,4 +234,17 @@ export default {
       });
     });
   },
+
+  verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromCSVFile(actualContent);
+        const stringWithHeaders = values.shift();
+
+        columnHeaders.forEach((columnHeader) => {
+          expect(stringWithHeaders).to.include(columnHeader);
+        });
+      });
+    });
+  },
 };

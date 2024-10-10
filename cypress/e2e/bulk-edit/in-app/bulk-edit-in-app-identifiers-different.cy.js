@@ -33,6 +33,7 @@ describe('bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
+        cy.wait(2000);
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` }).then((holdings) => {
           holdingsHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${validHoldingsHRIDFileName}`, holdingsHRID);
@@ -50,6 +51,7 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           invalidItemBarcodes,
         );
+        cy.wait(3000);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,

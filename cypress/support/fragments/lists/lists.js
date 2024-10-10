@@ -37,6 +37,7 @@ const editList = Button('Edit list');
 const duplicateList = Button('Duplicate list');
 const deleteList = Button('Delete list');
 const exportList = Button('Export all columns (CSV)');
+const exportListVisibleColumns = Button('Export visible columns (CSV)');
 const testQuery = Button('Test query');
 const runQuery = Button('Run query & save');
 const filterPane = Pane('Filter');
@@ -53,6 +54,8 @@ const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
 const sharedCheckbox = Checkbox({ id: 'clickable-filter-visibility-shared' });
 const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 
+const deleteConfirmationModal = Modal('Delete list');
+
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
@@ -65,7 +68,7 @@ export default {
 
   waitForCompilingToComplete() {
     cy.wait(1000);
-    cy.get('[class^=compilerWrapper]').should('not.exist');
+    cy.get('[class^=compilerWrapper]', { timeout: 120000 }).should('not.exist');
     cy.wait(1000);
     cy.get('body').then(($body) => {
       if ($body.find('div[data-test-message-banner]').length > 0) {
@@ -97,6 +100,10 @@ export default {
     cy.wait(500);
   },
 
+  verifyActionsButtonDoesNotExist() {
+    cy.expect(actions.absent());
+  },
+
   refreshList() {
     cy.do(refreshList.click());
     cy.wait(3000);
@@ -124,11 +131,6 @@ export default {
     cy.get('[id^=selected-field-option]').contains(query.field);
     cy.get('[data-testid="operator-option-0"]').contains(query.operator);
     cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
-  },
-
-  confirmDelete() {
-    cy.do(deleteButton.click());
-    cy.wait(1000);
   },
 
   cancelRefresh() {
@@ -165,6 +167,10 @@ export default {
     cy.expect(duplicateList.has({ disabled: true }));
   },
 
+  verifyDuplicateListButtonDoesNotExist() {
+    cy.expect(duplicateList.absent());
+  },
+
   deleteList() {
     cy.do(deleteList.click());
     cy.wait(1000);
@@ -179,13 +185,20 @@ export default {
     cy.expect(deleteList.has({ disabled: true }));
   },
 
-  verifyEditListButtonIsDisabled() {
-    cy.expect(editList.has({ disabled: true }));
+  verifyDeleteListButtonDoesNotExist() {
+    cy.expect(deleteList.absent());
   },
 
-  verifyEditListButtonIsActive() {
-    cy.expect(editList.exists());
-    cy.expect(editList.has({ disabled: false }));
+  confirmDelete() {
+    cy.wait(1000);
+    cy.do(deleteConfirmationModal.find(deleteButton).click());
+    cy.wait(2000);
+  },
+
+  cancelDelete() {
+    cy.wait(1000);
+    cy.do(deleteConfirmationModal.find(cancelButton).click());
+    cy.wait(1000);
   },
 
   exportList() {
@@ -193,8 +206,30 @@ export default {
     cy.wait(1000);
   },
 
+  verifyEditListButtonIsDisabled() {
+    cy.expect(editList.has({ disabled: true }));
+  },
+
+  verifyEditListButtonDoesNotExist() {
+    cy.expect(editList.absent());
+  },
+
+  verifyEditListButtonIsActive() {
+    cy.expect(editList.exists());
+    cy.expect(editList.has({ disabled: false }));
+  },
+
+  exportListVisibleColumns() {
+    cy.do(exportListVisibleColumns.click());
+    cy.wait(1000);
+  },
+
   verifyExportListButtonIsDisabled() {
     cy.expect(exportList.has({ disabled: true }));
+  },
+
+  verifyExportListButtonDoesNotExist() {
+    cy.expect(exportList.absent());
   },
 
   verifyExportListButtonIsActive() {
@@ -223,6 +258,14 @@ export default {
 
   verifyNewButtonIsEnabled() {
     cy.expect(newLink.exists());
+  },
+
+  verifyNewButtonIsDisabled() {
+    cy.expect(newLink.has({ disabled: true }));
+  },
+
+  verifyNewButtonDoesNotExist() {
+    cy.expect(newLink.absent());
   },
 
   expiredPatronLoan() {
@@ -292,10 +335,10 @@ export default {
   },
 
   verifySuccessCalloutMessage(message) {
-    cy.expect(Callout({ type: calloutTypes.info }).is({ textContent: message }));
+    cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
   },
 
-  verifyCalloutMessage: (message) => {
+  verifyCalloutMessage(message) {
     cy.expect(Callout(including(message)).exists());
   },
 
@@ -537,14 +580,49 @@ export default {
       });
   },
 
+  checkDownloadedFile(fileName, header = '"Fee/fine owner","Fee/fine type"') {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}.csv`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(header);
+    });
+  },
+
+  deleteDownloadedFile(fileName) {
+    const filePath = `cypress\\downloads\\${fileName}.csv`;
+    cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+  },
+
   buildQueryOnActiveUsers() {
     return this.getTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
         (entityType) => entityType.label === 'Users',
       ).id;
       return {
-        entityTypeId: filteredEntityTypeId,
-        fqlQuery: '{"users.active":{"$eq":"true"}}',
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: '{"users.active":{"$eq":"true"},"_version":"3"}',
+        },
+        fields: ['users.active', 'user.id'],
+      };
+    });
+  },
+
+  buildQueryOnActiveUsersWithUsernames() {
+    return this.getTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery:
+            '{"$and":[{"users.active":{"$eq":"true"}},{"users.username":{"$empty":false}}],"_version":"3"}',
+        },
+        fields: ['users.active', 'users.id', 'users.username'],
       };
     });
   },

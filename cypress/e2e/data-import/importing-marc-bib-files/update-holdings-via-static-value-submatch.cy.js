@@ -1,5 +1,6 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -32,8 +33,11 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -236,14 +240,14 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForCreate.name);
 
         // create action profiles
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(instanceActionProfileForCreate, instanceMappingProfileForCreate.name);
         ActionProfiles.checkActionProfilePresented(instanceActionProfileForCreate.name);
         ActionProfiles.create(holdingsActionProfileForCreate, holdingsMappingProfileForCreate.name);
         ActionProfiles.checkActionProfilePresented(holdingsActionProfileForCreate.name);
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfileForCreate);
         NewJobProfile.linkActionProfile(instanceActionProfileForCreate);
         NewJobProfile.linkActionProfile(holdingsActionProfileForCreate);
@@ -251,7 +255,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
         // upload a marc file for creating
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -275,7 +279,7 @@ describe('Data Import', () => {
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.openHoldingView();
@@ -309,7 +313,9 @@ describe('Data Import', () => {
           );
 
           // create mapping profile
-          cy.visit(SettingsMenu.mappingProfilePath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsDataImport.goToSettingsDataImport();
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
           NewFieldMappingProfile.addFormerHoldings(
@@ -341,7 +347,7 @@ describe('Data Import', () => {
           FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForUpdate.name);
 
           // create action profile
-          cy.visit(SettingsMenu.actionProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
           ActionProfiles.create(
             holdingsActionProfileForUpdate,
             holdingsMappingProfileForUpdate.name,
@@ -349,14 +355,14 @@ describe('Data Import', () => {
           ActionProfiles.checkActionProfilePresented(holdingsActionProfileForUpdate.name);
 
           // create match profiles
-          cy.visit(SettingsMenu.matchProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(instanceMatchProfile);
           MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
           MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
           MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
 
           // create job profile
-          cy.visit(SettingsMenu.jobProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
           JobProfiles.createJobProfile(jobProfileForUpdate);
           NewJobProfile.linkMatchProfile(instanceMatchProfile.profileName);
           NewJobProfile.linkMatchProfileForMatches(holdingsMatchProfile.profileName);
@@ -365,7 +371,8 @@ describe('Data Import', () => {
           JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
           // upload .mrc file
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           DataImport.checkIsLandingPageOpened();
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, marcFileNameForUpdate);
@@ -381,7 +388,7 @@ describe('Data Import', () => {
           );
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.openHoldingView();

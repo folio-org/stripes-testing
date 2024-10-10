@@ -19,13 +19,15 @@ describe('Users', () => {
       testUser_C350674 = userProperties;
     });
 
-    cy.createTempUser([permissions.uiUsersPermissions.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
-      });
-    });
+    cy.createTempUser([permissions.uiUserCanAssignUnassignPermissions.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
+      },
+    );
   });
 
   after('delete test data', () => {

@@ -1,4 +1,4 @@
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { INSTANCE_SOURCE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -7,7 +7,7 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickmarcEditor from '../../../support/fragments/quickMarcEditor';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -21,7 +21,7 @@ describe('MARC', () => {
 
     beforeEach(() => {
       cy.loginAsAdmin();
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryActions.import();
       // TODO: redesign to api step
       InventorySteps.addMarcHoldingRecord();

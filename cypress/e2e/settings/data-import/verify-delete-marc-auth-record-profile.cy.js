@@ -4,10 +4,10 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { SettingsDataImport } from '../../../support/fragments/settings/dataImport';
+import { SETTINGS_TABS } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -25,8 +25,8 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportCanViewOnly.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
+          path: SettingsMenu.dataImportSettingsPath,
+          waiter: SettingsDataImport.waitLoading,
         });
       });
     });
@@ -40,27 +40,26 @@ describe('Data Import', () => {
       'C350645 Suppress the data import profiles, being used for deleting MARC Authority record, from the Data Import settings UI (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        cy.visit(SettingsMenu.dataImportSettingsPath);
         profiles.forEach((profile) => {
           DataImport.verifyDataImportProfiles(profile);
         });
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(profileName);
         JobProfiles.verifyJobProfileAbsent();
 
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(profileName);
         MatchProfiles.verifyMatchProfileAbsent();
 
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.search(profileName);
         ActionProfiles.verifyActionProfileAbsent();
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.search(profileName);
         FieldMappingProfiles.verifyMappingProfileAbsent();

@@ -21,7 +21,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 25; i++) {
           const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(

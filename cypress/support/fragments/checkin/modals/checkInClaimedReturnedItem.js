@@ -6,23 +6,23 @@ const returnedByPatronButton = Button('Returned by patron');
 const foundByLibraryButton = Button('Found by library');
 
 export default {
-  closeModal: () => {
-    cy.do(checkInModal.dismiss());
+  closeModal() {
+    cy.do(checkInModal.find(Button('Cancel')).click());
   },
-  verifyModalContent: (itemBarcode) => {
+  verifyModalContent(itemBarcode) {
     cy.expect(HTML(including(itemBarcode)).exists());
   },
-  chooseItemReturnedByPatron: () => {
+  chooseItemReturnedByPatron() {
     cy.do([returnedByPatronButton.exists(), returnedByPatronButton.click()]);
   },
-  chooseItemReturnedByLibrary: () => {
+  chooseItemReturnedByLibrary() {
     cy.do([foundByLibraryButton.exists(), foundByLibraryButton.click()]);
   },
   verifyModalIsClosed() {
     cy.expect(checkInModal.absent());
   },
   checkModalMessage: (item) => {
-    const message = `${item.title} (${item.materialType}) (Barcode: ${item.barcode}) has been claimed returned`;
+    const message = `${item.title} (${item.materialType}) (Barcode: ${item.barcode}) has been claimed returned.`;
     cy.expect([
       Modal({ content: including(message) }).exists(),
       checkInModal.find(cancelButton).is({ disabled: false }),

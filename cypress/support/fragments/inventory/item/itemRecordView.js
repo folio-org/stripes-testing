@@ -312,15 +312,37 @@ export default {
       .exists(),
   ),
 
-  verifyLoanAndAvailabilitySection: (data) => {
-    verifyPermanentLoanType(data.permanentLoanType);
-    verifyTemporaryLoanType(data.temporaryLoanType);
-    verifyItemStatus(data.itemStatus);
+  verifyLoanAndAvailabilitySection(data) {
+    verifyPermanentLoanType(
+      data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
+    );
+    verifyTemporaryLoanType(
+      data.temporaryLoanType === '-' ? 'No value set-' : data.temporaryLoanType,
+    );
+    verifyItemStatus(data.itemStatus === '-' ? 'No value set-' : data.itemStatus);
     cy.expect([
-      loanAccordion.find(KeyValue('Requests', { value: data.requestQuantity })).exists(),
-      loanAccordion.find(KeyValue('Borrower', { value: data.borrower })).exists(),
-      loanAccordion.find(KeyValue('Loan date', { value: data.loanDate })).exists(),
-      loanAccordion.find(KeyValue('Due date', { value: data.dueDate })).exists(),
+      loanAccordion
+        .find(
+          KeyValue('Requests', {
+            value: data.requestQuantity === '-' ? 'No value set-' : data.requestQuantity,
+          }),
+        )
+        .exists(),
+      loanAccordion
+        .find(
+          KeyValue('Borrower', { value: data.borrower === '-' ? 'No value set-' : data.borrower }),
+        )
+        .exists(),
+      loanAccordion
+        .find(
+          KeyValue('Loan date', { value: data.loanDate === '-' ? 'No value set-' : data.loanDate }),
+        )
+        .exists(),
+      loanAccordion
+        .find(
+          KeyValue('Due date', { value: data.dueDate === '-' ? 'No value set-' : data.dueDate }),
+        )
+        .exists(),
       loanAccordion.find(KeyValue('Staff only', { value: data.staffOnly })).exists(),
       loanAccordion.find(KeyValue('Note', { value: data.note })).exists(),
     ]);

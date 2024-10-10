@@ -289,7 +289,7 @@ export default {
       saveAndClose.click(),
       // try to navigate without saving
       Button('Agreements').click(),
-      Button('Keep editing').click,
+      Button('Keep editing').click(),
       cancelButton.click(),
       Button('Close without saving').click(),
     ]);
@@ -835,8 +835,10 @@ export default {
           ...ledger,
         });
         fund.ledgerName = ledger.name;
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.fundPath);
+        cy.loginAsAdmin({
+          path: TopMenu.fundPath,
+          waiter: this.waitLoading,
+        });
         this.createFund(fund);
         this.checkCreatedFund(fund.name);
         cy.wrap(ledger).as('createdLedger');

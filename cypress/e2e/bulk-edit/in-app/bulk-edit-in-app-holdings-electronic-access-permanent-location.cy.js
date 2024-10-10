@@ -2,12 +2,15 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import {
+  APPLICATION_NAMES,
   electronicAccessRelationshipId,
   electronicAccessRelationshipName,
   LOCATION_IDS,
@@ -15,6 +18,7 @@ import {
 } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -114,8 +118,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        // TODO: uncomment after UIBULKED-425
-        // BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings permanent location');
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,
@@ -139,7 +142,10 @@ describe('bulk-edit', () => {
           secondElectronicAccess.publicNote,
           2,
         );
-        BulkEditSearchPane.verifyRowHasEmptyElectronicAccess(1);
+
+        BulkEditSearchPane.verifyRowHasEmptyElectronicAccessInMatchAccordion(
+          secondItem.holdingsHRID,
+        );
         const matched = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,\n${secondItem.holdingsUUID},${secondItem.instanceName}.`;
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [matched]);
         const secondMatched = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
@@ -171,7 +177,9 @@ describe('bulk-edit', () => {
           secondElectronicAccess.publicNote,
           2,
         );
-        BulkEditSearchPane.verifyRowHasEmptyElectronicAccess(1);
+        BulkEditSearchPane.verifyRowHasEmptyElectronicAccessInAreYouSureForm(
+          secondItem.holdingsHRID,
+        );
         BulkEditActions.downloadPreview();
         const preview = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,`;
         ExportFile.verifyFileIncludes(previewFileName, [preview]);
@@ -202,7 +210,9 @@ describe('bulk-edit', () => {
           secondElectronicAccess.publicNote,
           2,
         );
-        BulkEditSearchPane.verifyRowHasEmptyElectronicAccess(1);
+        BulkEditSearchPane.verifyRowHasEmptyElectronicAccessInChangedAccordion(
+          secondItem.holdingsHRID,
+        );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         const changed = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,`;
@@ -235,15 +245,14 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(changedRecordsFileName, [changed]);
         ExportFile.verifyFileIncludes(previewFileName, [secondChanged]);
 
-        // TODO: uncomment after UIIN-2781
-        // [item.holdingsHRID, secondItem.holdingsHRID].forEach((hrid) => {
-        //   cy.visit(TopMenu.inventoryPath);
-        //   InventorySearchAndFilter.switchToHoldings();
-        //   InventorySearchAndFilter.searchByParameter('Holdings HRID', hrid);
-        //   InventorySearchAndFilter.selectSearchResultItem();
-        //   InventorySearchAndFilter.selectViewHoldings();
-        //   InventoryInstance.verifyHoldingsPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
-        // })
+        [item.holdingsHRID, secondItem.holdingsHRID].forEach((hrid) => {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.searchByParameter('Holdings HRID', hrid);
+          InventorySearchAndFilter.selectSearchResultItem();
+          InventorySearchAndFilter.selectViewHoldings();
+          InventoryInstance.verifyHoldingsPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        });
       },
     );
   });

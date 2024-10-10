@@ -55,6 +55,7 @@ describe('Users', () => {
         UserEdit.verifyButtonsStateForProfilePicture([{ value: 'Local file' }]);
         // steps 10-11 we can't automate
         UserEdit.setPictureFromExternalUrl(testData.externalPictureUrl);
+        UserEdit.verifyProfilePictureIsPresent(testData.externalPictureUrl);
         cy.wait(3000);
         UserEdit.saveAndClose();
         UsersCard.waitLoading();

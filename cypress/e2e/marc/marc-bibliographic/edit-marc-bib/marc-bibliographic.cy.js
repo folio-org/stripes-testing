@@ -15,6 +15,9 @@ describe('MARC', () => {
       const testData = {};
       const OCLCAuthentication = '100481406/PAOLF';
 
+      before(() => {
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+      });
       beforeEach(() => {
         cy.getAdminToken().then(() => {
           Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
@@ -53,7 +56,6 @@ describe('MARC', () => {
 
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
-          cy.reload();
           const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
           QuickMarcEditor.deletePenaltField().then((deletedTag) => {
             const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
@@ -61,6 +63,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
+
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.deleteConfirmationPresented();
             QuickMarcEditor.confirmDelete();
@@ -125,6 +128,7 @@ describe('MARC', () => {
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
           cy.reload();
+          cy.wait(3000);
           QuickMarcEditor.deletePenaltField().then((deletedTag) => {
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
@@ -229,7 +233,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
               const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.deleteConfirmationPresented();
               QuickMarcEditor.confirmDelete();

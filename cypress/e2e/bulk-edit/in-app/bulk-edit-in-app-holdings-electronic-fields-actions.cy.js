@@ -9,7 +9,9 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import {
+  APPLICATION_NAMES,
   electronicAccessRelationshipId,
   electronicAccessRelationshipName,
 } from '../../../support/constants';
@@ -216,7 +218,7 @@ describe('bulk-edit', () => {
         contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};;;${newElectronicAccessFields.materialsSpecification};${newElectronicAccessFields.publicNote}|${electronicAccessRelationshipName.RESOURCE};;;${secondElectronicAccess.materialsSpecification};${newElectronicAccessFields.publicNote}",`;
         ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();

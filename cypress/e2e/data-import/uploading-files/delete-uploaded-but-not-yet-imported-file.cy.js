@@ -1,8 +1,9 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -10,7 +11,7 @@ describe('Data Import', () => {
   describe('Uploading files', () => {
     let user;
     const quantityOfFiles = '2';
-    const fileName = `C2377 autotestFile${getRandomPostfix()}.mrc`;
+    const fileName = `C2377 autotestFile${getRandomPostfix()}`;
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
@@ -23,7 +24,6 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         DataImport.verifyUploadState();
-        cy.wait(2000);
         DataImport.uploadBunchOfFiles(filePathForUpload, quantityOfFiles, fileName);
       });
     });
@@ -37,10 +37,11 @@ describe('Data Import', () => {
       'C2377 Delete an uploaded (but not yet imported) file (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.clickResumeButton();
         JobProfiles.waitLoadingList();
-        cy.visit(TopMenu.dataImportPath);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.clickDeleteFilesButton();
         DataImport.verifyUploadSectionHasNoUplodedFiles();
         DataImport.uploadBunchOfFiles(filePathForUpload, quantityOfFiles, fileName);

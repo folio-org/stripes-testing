@@ -69,6 +69,7 @@ describe('Inventory', () => {
 
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,

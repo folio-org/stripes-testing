@@ -112,8 +112,6 @@ const searchHoldingsByHRID = (hrid) => {
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitInventoryLoading();
-
-  return InventoryInstance;
 };
 
 const getInstanceHRID = () => {
@@ -731,7 +729,8 @@ export default {
   },
 
   selectFoundItem(callNumber, suffix) {
-    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+    const locator = suffix ? `${callNumber} ${suffix}` : `${callNumber}`;
+    cy.do(Button(including(locator)).click());
   },
 
   selectFoundItemFromBrowseResultList(value) {
@@ -762,7 +761,7 @@ export default {
     cy.get('#input-inventory-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
     });
-    cy.expect(inventorySearchAndFilter.has({ value: queryValue }));
+    cy.expect(inventorySearchAndFilter.has({ value: including(queryValue) }));
   },
 
   verifyPanesExist() {
@@ -891,6 +890,14 @@ export default {
 
   selectBrowseOptionFromCallNumbersGroup(option) {
     cy.get('optgroup[label="Call numbers (item)"]')
+      .contains('option', option)
+      .then((optionToSelect) => {
+        cy.get('select').select(optionToSelect.val());
+      });
+  },
+
+  selectBrowseOptionFromClassificationGroup(option) {
+    cy.get('optgroup[label="Classification (instance)"]')
       .contains('option', option)
       .then((optionToSelect) => {
         cy.get('select').select(optionToSelect.val());

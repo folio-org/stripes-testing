@@ -90,7 +90,6 @@ describe('MARC', () => {
 
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          cy.pause();
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessage);
           MarcAuthority.contains(

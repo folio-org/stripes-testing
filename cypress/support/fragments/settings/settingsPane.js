@@ -13,6 +13,7 @@ import {
   HTML,
   including,
   or,
+  NavListItem,
 } from '../../../../interactors';
 import deleteModal from './tenant/modals/deleteModal';
 
@@ -32,6 +33,9 @@ const clickActionBtn = ({ rowIndex = startRowIndex, locator }) => {
 export default {
   waitLoading(header = 'Settings') {
     cy.expect(Pane(header).exists());
+  },
+  waitSettingsPaneLoading() {
+    cy.xpath('//div[@id="paneHeadersettings-nav-pane"]').should('be.visible');
   },
   clickAddNewBtn() {
     cy.wait(500);
@@ -161,5 +165,10 @@ export default {
 
   checkRecordIsAbsent: (record) => {
     cy.expect(MultiColumnListCell(record).absent());
+  },
+
+  checkOptionInSecondPaneExists: (optionName, isExisting = true) => {
+    if (isExisting) cy.expect(NavListItem(optionName).exists());
+    else cy.expect(NavListItem(optionName).absent());
   },
 };

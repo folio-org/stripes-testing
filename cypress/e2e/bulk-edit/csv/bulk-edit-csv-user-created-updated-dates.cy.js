@@ -1,4 +1,3 @@
-import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
@@ -8,6 +7,8 @@ import Users from '../../../support/fragments/users/users';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DateTools from '../../../support/utils/dateTools';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let updatedDate;
@@ -22,18 +23,18 @@ const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         permissions.bulkEditLogsView.gui,
         permissions.bulkEditCsvEdit.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        cy.wait(3000);
+
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.waitLoading();
+
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
         cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
           updatedDate = users[0].updatedDate;

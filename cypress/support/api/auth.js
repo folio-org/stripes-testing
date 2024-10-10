@@ -1,7 +1,7 @@
 import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
 
-Cypress.Commands.add('getToken', (username, password) => {
+Cypress.Commands.add('getToken', (username, password, getServicePoint = true) => {
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
@@ -15,13 +15,16 @@ Cypress.Commands.add('getToken', (username, password) => {
       'x-okapi-tenant': Tenant.get(),
     },
   }).then(({ body, headers }) => {
-    const defaultServicePoint = body.servicePointsUser.servicePoints.find(
-      ({ id }) => id === body.servicePointsUser.defaultServicePointId,
-    );
+    if (getServicePoint) {
+      const defaultServicePoint = body.servicePointsUser.servicePoints.find(
+        ({ id }) => id === body.servicePointsUser.defaultServicePointId,
+      );
+      Cypress.env('defaultServicePoint', defaultServicePoint);
+    }
+
     if (!Cypress.env('rtrAuth')) {
       Cypress.env('token', headers['x-okapi-token']);
     }
-    Cypress.env('defaultServicePoint', defaultServicePoint);
   });
 });
 

@@ -1,11 +1,14 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  itemIdentifiers,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -25,10 +28,12 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        cy.wait(3000);
+
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.waitLoading();
+
         FileManager.createFile(
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           `${item.itemBarcode}\r\n${invalidBarcode}`,
@@ -41,7 +46,7 @@ describe('bulk-edit', () => {
     });
 
     beforeEach('select item tab', () => {
-      cy.visit(TopMenu.bulkEditPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
     });
@@ -105,7 +110,9 @@ describe('bulk-edit', () => {
       'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
       { tags: ['smoke', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.isItemsRadioChecked(true);
+        BulkEditSearchPane.verifyRecordIdentifiers(itemIdentifiers);
 
         [
           {

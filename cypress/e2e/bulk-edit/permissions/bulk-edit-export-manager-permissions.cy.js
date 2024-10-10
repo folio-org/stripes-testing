@@ -7,6 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -23,7 +25,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
         permissions.exportManagerAll.gui,
       ])
@@ -54,19 +56,19 @@ describe('bulk-edit', () => {
       'C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        cy.visit(TopMenu.exportManagerPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.searchByBulkEdit();
         ExportManagerSearchPane.selectJob(user.username);
         ExportManagerSearchPane.clickJobIdInThirdPane();
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         UsersSearchPane.waitLoading();
         UserEdit.addPermissions([
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();

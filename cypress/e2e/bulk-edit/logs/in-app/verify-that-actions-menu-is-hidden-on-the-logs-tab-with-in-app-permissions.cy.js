@@ -24,7 +24,7 @@ describe('bulk-edit', () => {
           permissions.bulkEditLogsView.gui,
           permissions.inventoryAll.gui,
           permissions.uiUserEdit.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
         ]).then((userProperties) => {
           user = userProperties;
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.checkItemsCheckbox();
           BulkEditLogs.verifyActionsRunBy(
-            `${user.username}, ${user.firstName} ${Users.defaultUser.personal.middleName}`,
+            `${user.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`,
           );
         },
       );

@@ -1,9 +1,20 @@
 export const APPLICATION_NAMES = {
+  BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
+  EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
+  INVOICES: 'Invoices',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
+  USERS: 'Users',
+  MARC_AUTHORITY: 'MARC authority',
+  ORDERS: 'Orders',
+  CHECK_IN: 'Check in',
+  CHECK_OUT: 'Check out',
+  REQUESTS: 'Requests',
+  READING_ROOM_ACCESS: 'Reading room access',
+  EHOLDINGS: 'eHoldings',
 };
 
 export const REQUEST_METHOD = {
@@ -882,7 +893,24 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     INSTANCE_HRID: 'Instance HRID',
     SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
     STAFF_SUPPRESS: 'Staff suppress',
+    SOURCE: 'Source',
     RESOURCE_TITLE: 'Resource title',
+    PREVIOUSLY_HELD: 'Previously held',
+    CATALOGED_DATE: 'Cataloged date',
+    INSTANCE_STATUS_TERM: 'Instance status term',
+    MODE_OF_ISSUANCE: 'Mode of issuance',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    INDEX_TITLE: 'Index title',
+    SERIES_STATEMENT: 'Series statements',
+    CONTRIBUTORS: 'Contributors',
+    EDITION: 'Edition',
+    PHYSICAL_DESCRIPTION: 'Physical description',
+    RESOURCE_TYPE: 'Resource type',
+    NATURE_OF_CONTENT: 'Nature of content',
+    FORMATS: 'Formats',
+    LANGUAGES: 'Languages',
+    PUBLICATION_FREQUENCY: 'Publication frequency',
+    PUBLICATION_RANGE: 'Publication range',
   },
 };
 
@@ -900,4 +928,11 @@ export const HOLDING_NOTE_TYPES = {
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
+};
+
+export const INVENTORY_DEFAULT_SORT_OPTIONS = {
+  TITLE: 'Title',
+  CONTRIBUTORS: 'Contributors',
+  DATE: 'Date',
+  RELEVANCE: 'Relevance',
 };

@@ -93,8 +93,6 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -143,6 +141,7 @@ describe('bulk-edit', () => {
 
         initialValueSets.forEach((initialValueSet) => {
           BulkEditSearchPane.changeShowColumnCheckbox(initialValueSet[0]);
+          cy.wait(500);
         });
 
         initialValueSets.forEach((initialValueSet) => {

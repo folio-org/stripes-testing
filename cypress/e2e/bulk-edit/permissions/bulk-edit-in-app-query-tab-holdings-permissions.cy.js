@@ -5,6 +5,8 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import UsersCard from '../../../support/fragments/users/usersCard';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 
@@ -16,7 +18,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.inventoryCRUDHoldings.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -39,14 +41,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         UsersSearchPane.openUser(user.username);
         // Add bulkEditQueryView permission and remove next three
         UserEdit.addPermissions([
           permissions.bulkEditQueryView.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();

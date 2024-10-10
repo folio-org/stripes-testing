@@ -285,6 +285,18 @@ export default {
     internal: 'ui-inventory.instance.view-staff-suppressed-records',
     gui: 'Inventory: Enable staff suppress facet',
   },
+  patchInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.item.patch',
+    gui: 'inventory storage - patch instance-date-type',
+  },
+  getInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.collection.get',
+    gui: 'inventory storage - get list of instance-date-types',
+  },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -436,7 +448,7 @@ export default {
     internal: 'ui-users.loans.renew-override',
     gui: 'Users: User loans renew through override',
   },
-  uiUsersPermissions: {
+  uiUserCanAssignUnassignPermissions: {
     internal: 'ui-users.editperms',
     gui: 'Users: Can assign and unassign permissions to users',
   },
@@ -1050,6 +1062,10 @@ export default {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
     gui: 'Settings (tenant): Can create, edit and remove reading room access',
   },
+  uiReadingRoomAll: {
+    internal: 'ui-reading-room.all',
+    gui: 'Reading room access: In app - track access',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',
@@ -1062,7 +1078,7 @@ export default {
   },
   exportManagerDownloadAndResendFiles: {
     internal: 'ui-export-manager.jobs.downloadAndResend',
-    gui: 'Export manager: Download and re-send files',
+    gui: 'Export manager: Download and resend files',
   },
   exportManagerView: {
     internal: 'ui-export-manager.export-manager.view',
@@ -1149,9 +1165,24 @@ export default {
     gui: 'Lists (Admin): All permissions',
   },
 
+  listsEnable: {
+    internal: 'module.lists.enabled',
+    gui: 'Lists (Enable): Can view lists',
+  },
+
   listsEdit: {
     internal: 'module.lists.refresh',
     gui: 'Lists (Edit): Can create, edit, and refresh lists',
+  },
+
+  listsDelete: {
+    internal: 'module.lists.delete',
+    gui: 'Lists (Delete): Can create, edit, refresh, and delete lists',
+  },
+
+  listsExport: {
+    internal: 'module.lists.export',
+    gui: 'Lists (Export): Can create, edit, refresh, and export lists',
   },
 
   // Licenses

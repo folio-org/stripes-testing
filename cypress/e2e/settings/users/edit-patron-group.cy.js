@@ -1,8 +1,13 @@
 import moment from 'moment';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import SettingsUsers, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -40,8 +45,10 @@ describe('Users', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(SettingsMenu.usersPath);
+          cy.login(userProperties.username, userProperties.password, {
+            path: SettingsMenu.usersPath,
+            waiter: () => cy.wait(1000),
+          });
         },
       );
     });
@@ -49,17 +56,15 @@ describe('Users', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      PatronGroups.getGroupIdViaApi({ query: `group="${testData.newPatronGroup.name}"` }).then(
-        (id) => {
-          PatronGroups.deleteViaApi(id);
-        },
-      );
+      PatronGroups.deleteViaApi(testData.patronGroup.id);
     });
 
     // https://folio-org.atlassian.net/browse/UIU-3189
     it('C514937 Edit patron groups (volaris)', { tags: ['smoke', 'volaris'] }, () => {
       UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-      cy.visit(SettingsMenu.patronGroups);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsUsers.goToSettingsUsers();
+      SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsPane(testData.isButtonDisabled);
       PatronGroups.clickEditButtonForGroup(testData.patronGroup.name);

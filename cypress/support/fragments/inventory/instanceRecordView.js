@@ -110,7 +110,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1000);
+  cy.wait(1500);
   cy.do(viewSourceButton.click());
 };
 
@@ -567,7 +567,7 @@ export default {
 
   verifyViewRequestOptionEnabled() {
     cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button('New request').exists());
+    cy.expect(Button(including('New request')).exists());
   },
 
   verifyNewOrderOptionAbsent() {

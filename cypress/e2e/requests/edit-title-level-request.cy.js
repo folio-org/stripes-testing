@@ -96,7 +96,7 @@ describe('Title Level Request', () => {
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
             userData.patronGroup = userProperties.userGroup.group;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -117,38 +117,34 @@ describe('Title Level Request', () => {
               userData.userId,
               servicePoint1.id,
             );
-
-            cy.login(userData.username, userData.password);
           });
       });
   });
 
   after('Delete New Service point, Item and User', () => {
-    try {
-      cy.getAdminToken();
-      Requests.deleteRequestViaApi(requestId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
-      Users.deleteViaApi(userData.userId);
-      Location.deleteInstitutionCampusLibraryLocationViaApi(
-        defaultLocation.institutionId,
-        defaultLocation.campusId,
-        defaultLocation.libraryId,
-        defaultLocation.id,
-      );
-      ServicePoints.deleteViaApi(servicePoint1.id);
-      ServicePoints.deleteViaApi(servicePoint2.id);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-    }
+    cy.getAdminToken();
+    Requests.deleteRequestViaApi(requestId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
+    Users.deleteViaApi(userData.userId);
+    Location.deleteInstitutionCampusLibraryLocationViaApi(
+      defaultLocation.institutionId,
+      defaultLocation.campusId,
+      defaultLocation.libraryId,
+      defaultLocation.id,
+    );
+    ServicePoints.deleteViaApi(servicePoint1.id);
+    ServicePoints.deleteViaApi(servicePoint2.id);
   });
 
   it(
     'C350559 Check that the user can Edit request (Title level request) (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();

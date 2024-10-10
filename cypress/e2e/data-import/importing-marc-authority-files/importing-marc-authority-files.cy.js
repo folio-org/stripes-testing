@@ -50,7 +50,7 @@ describe('Data Import', () => {
     });
 
     beforeEach('Login to the application', () => {
-      fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+      fileName = `C350668 testMarcFile.${getRandomPostfix()}.mrc`;
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.dataImportPath,

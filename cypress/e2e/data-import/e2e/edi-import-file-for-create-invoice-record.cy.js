@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   INVOICE_STATUSES,
@@ -7,23 +8,26 @@ import {
   RECORD_STATUSES,
   VENDOR_NAMES,
 } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import { InvoiceView, Invoices } from '../../../support/fragments/invoices';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -56,11 +60,11 @@ describe('Data Import', () => {
 
     before('Create test user and login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        Permissions.dataImportUploadAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -94,19 +98,22 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC343338.edi', fileName);
         JobProfiles.waitFileIsUploaded();
@@ -122,7 +129,7 @@ describe('Data Import', () => {
         );
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
         FileDetails.getInvoiceNumber(vendorInvoiceNumber).then((invoiceNumber) => {
-          cy.visit(TopMenu.invoicesPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
           Invoices.searchByNumber(invoiceNumber);
           Invoices.selectInvoice(invoiceNumber);
 

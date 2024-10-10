@@ -78,6 +78,7 @@ const renewalBlockMessage = 'Patron blocked from renewing';
 const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
 
+  cy.wait(2000);
   cy.do(Button(buttonLabels.renew).click());
   cy.wait(2000);
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
@@ -122,8 +123,8 @@ export default {
   checkLoansPage,
   renewWithoutOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
+    cy.wait('@/authn/refresh', { timeout: 20000 });
 
-    cy.wait(5000);
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -134,8 +135,8 @@ export default {
 
   renewWithOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
+    cy.wait('@/authn/refresh', { timeout: 20000 });
 
-    cy.wait(5000);
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);

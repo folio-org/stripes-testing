@@ -24,7 +24,7 @@ describe('Users', () => {
           usersData.userSponsor = sponsorProperties;
           cy.getUsers({ limit: 1, query: `"username"="${usersData.userSponsor.username}"` }).then(
             (users) => {
-              usersData.userSponsor.firstName = users[0].personal.firstName;
+              usersData.userSponsor.firstName = users[0].personal.preferredFirstName;
               usersData.userSponsor.middleName = users[0].personal.middleName;
             },
           );

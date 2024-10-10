@@ -5,11 +5,11 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('Add new list', () => {
+  describe('export query', () => {
     const userData = {};
     const listData = {
-      name: `C411693-${getTestEntityValue('test_list')}`,
-      description: `C411693-${getTestEntityValue('test_list_description')}`,
+      name: `C552377-${getTestEntityValue('test_list')}`,
+      description: `C552377-${getTestEntityValue('test_list_description')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -32,11 +32,11 @@ describe('lists', () => {
           userData.userId = userProperties.userId;
         })
         .then(() => {
-          Lists.buildQueryOnActiveUsers().then((query) => {
+          Lists.buildQueryOnActiveUsersWithUsernames().then(({ query, fields }) => {
             Lists.createQueryViaApi(query).then((createdQuery) => {
               listData.queryId = createdQuery.queryId;
               listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = ['users.active', 'user.id'];
+              listData.fields = fields;
 
               Lists.createViaApi(listData).then((body) => {
                 listData.id = body.id;
@@ -47,40 +47,31 @@ describe('lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getUserToken(userData.username, userData.password);
-      Lists.deleteViaApi(listData.id);
       cy.getAdminToken();
+      Lists.deleteViaApi(listData.id);
       Users.deleteViaApi(userData.userId);
+      Lists.deleteDownloadedFile(listData.name);
     });
 
     it(
-      '411694 C411693 Lists (Admin): All permissions (corsair)',
+      'C552377 Verify that "Export visible columns (CSV)" exports only the visible columns (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
-        Lists.verifyNewButtonIsEnabled();
-        Lists.verifyListIsPresent(listData.name);
-        Lists.selectActiveLists();
-        Lists.selectInactiveLists();
-        Lists.selectPrivateLists();
-        Lists.selectSharedLists();
-        Lists.selectRecordTypeFilter(listData.recordType);
-        Lists.resetAllFilters();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
 
+        Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
         Lists.openActions();
-        Lists.verifyRefreshListButtonIsActive();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
+        Lists.exportListVisibleColumns();
 
-        Lists.editList();
-        Lists.openActions();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
+        Lists.verifyCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+        Lists.verifyCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
+        Lists.checkDownloadedFile(listData.name, 'users.active,users.id,users.username');
       },
     );
   });

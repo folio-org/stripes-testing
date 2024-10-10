@@ -1,24 +1,25 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
+import Checkout from '../../support/fragments/checkout/checkout';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import Loans from '../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Users from '../../support/fragments/users/users';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
-import Loans from '../../support/fragments/users/userDefaultObjects/loans';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UsersCard from '../../support/fragments/users/usersCard';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check in', () => {
   const userData = {};
@@ -129,8 +130,6 @@ describe('Check in', () => {
             );
           });
         });
-
-        cy.login(userData.username, userData.password);
       });
   });
 
@@ -154,9 +153,13 @@ describe('Check in', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
   it('C10974 Check In: claimed returned items (vega)', { tags: ['criticalPath', 'vega'] }, () => {
+    cy.login(userData.username, userData.password, {
+      path: TopMenu.checkInPath,
+      waiter: CheckInActions.waitLoading,
+    });
+
     const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
+
     CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
     ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
     ClaimedReturned.closeModal();
@@ -176,7 +179,8 @@ describe('Check in', () => {
     });
 
     const itemReturnedByPatron = itemsData.itemsWithSeparateInstance[1];
-    cy.visit(TopMenu.checkInPath);
+
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
     CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
     ClaimedReturned.checkModalMessage(itemReturnedByPatron);
     ClaimedReturned.chooseItemReturnedByPatron();

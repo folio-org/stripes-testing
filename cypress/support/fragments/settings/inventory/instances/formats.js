@@ -29,6 +29,17 @@ export default {
     path: `formats/${id}`,
     isDefaultSearchParamsRequired: false,
   }),
+  getViaApi: (searchParams = { limit: 1 }) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'instance-formats',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.instanceFormats;
+      });
+  },
   verifyConsortiumFormatsInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });

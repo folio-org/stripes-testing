@@ -1,6 +1,7 @@
 import moment from 'moment';
 import uuid from 'uuid';
 import {
+  APPLICATION_NAMES,
   CY_ENV,
   ITEM_STATUS_NAMES,
   LIBRARY_DUE_DATE_MANAGMENT,
@@ -18,7 +19,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import Loans from '../../../../support/fragments/loans/loansPage';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -54,8 +55,7 @@ const loanPolicyBody = {
 
 describe('ui-circulation-settings: Fixed due date schedules', () => {
   before(() => {
-    cy.login(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD));
-    cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
+    cy.getAdminToken()
       .then(() => {
         ServicePoints.getViaApi({ pickupLocation: true }).then((servicePoints) => {
           servicePointId = servicePoints[0].id;
@@ -171,7 +171,10 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
     'C641: Test renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] },
     () => {
-      cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
+      cy.loginAsAdmin({
+        path: SettingsMenu.circulationFixedDueDateSchedulesPath,
+        waiter: FixedDueDateSchedules.waitLoading,
+      });
       FixedDueDateSchedules.editSchedule(mySchedule.name, {
         description: mySchedule.description,
         schedules: [
@@ -182,7 +185,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           },
         ],
       });
-      cy.visit(TopMenu.checkOutPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.checkUserOpenLoans({ barcode: userData.barcode, id: userData.id });
       Loans.checkLoanPolicy(loanPolicyBody.name);
       Loans.renewalMessageCheck(dateFallsMessage);

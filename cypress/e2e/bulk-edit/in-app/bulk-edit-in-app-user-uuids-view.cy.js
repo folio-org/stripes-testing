@@ -4,6 +4,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -11,8 +13,6 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUsersView.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -36,7 +36,7 @@ describe('bulk-edit', () => {
     });
 
     afterEach('open new bulk-edit form', () => {
-      cy.visit(TopMenu.bulkEditPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
     });
 
     it(

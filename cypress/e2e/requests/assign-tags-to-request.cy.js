@@ -10,7 +10,6 @@ describe('Requests', () => {
   const tag = 'important';
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
       Requests.createRequestApi().then(({ createdUser, createdRequest, instanceRecordData }) => {
         userId = createdUser.id;
@@ -38,9 +37,9 @@ describe('Requests', () => {
 
   it(
     'C747 Assign Tags to Request (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(instanceData.instanceTitle);
       Requests.selectFirstRequest(instanceData.instanceTitle);
@@ -52,7 +51,7 @@ describe('Requests', () => {
       Requests.selectFirstRequest(instanceData.instanceTitle);
       Requests.openTagsPane();
       Requests.verifyAssignedTags(tag);
-      // cancel request for verifying tags can't be added or removed from a closed request
+      // cancel request for verifying tags can't be added or removed for a closed request
       Requests.cancelRequest();
       Requests.resetAllFilters();
       Requests.selectClosedCancelledRequest();

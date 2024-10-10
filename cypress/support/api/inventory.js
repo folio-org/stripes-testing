@@ -10,6 +10,15 @@ const DEFAULT_INSTANCE = {
   previouslyHeld: false,
 };
 
+const displaySettingsBody = {
+  id: uuid(),
+  key: 'display-settings',
+  scope: 'ui-inventory.display-settings',
+  value: {
+    defaultSort: '',
+  },
+};
+
 Cypress.Commands.add('getInstanceById', (instanceId) => {
   return cy
     .okapiRequest({
@@ -360,8 +369,27 @@ Cypress.Commands.add('createSimpleMarcBibViaAPI', (title) => {
       suppressDiscovery: false,
       marcFormat: 'BIBLIOGRAPHIC',
     },
-  }).then({ timeout: 80000 }, ({ body }) => cy.wrap(body).as('body'));
-  return cy.get('@body');
+  }).then(({ body }) => {
+    recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `records-editor/records/status?qmRecordId=${body.qmRecordId}`,
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => response.body.status === 'CREATED',
+      {
+        limit: 10,
+        timeout: 80000,
+        delay: 5000,
+      },
+    ).then((response) => {
+      cy.wrap(response.body.externalId).as('createdMarcBibliographicId');
+
+      return cy.get('@createdMarcBibliographicId');
+    });
+  });
 });
 
 Cypress.Commands.add(
@@ -477,4 +505,82 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body.holdingsNoteTypes[0].id);
+});
+
+Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: `instance-date-types?limit=${limit}`,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ status, body }) => {
+      return {
+        status,
+        instanceDateTypes: body.instanceDateTypes,
+      };
+    });
+});
+
+Cypress.Commands.add(
+  'patchInstanceDateTypeViaAPI',
+  (dateTypeId, keyToUpdate, value, ignoreErrors = false) => {
+    const patchBody = {};
+    patchBody[keyToUpdate] = value;
+    return cy.okapiRequest({
+      method: 'PATCH',
+      path: `instance-date-types/${dateTypeId}`,
+      body: patchBody,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+    });
+  },
+);
+
+Cypress.Commands.add('getInventoryDisplaySettingsViaAPI', () => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'settings/entries',
+      searchParams: {
+        query: '(scope==ui-inventory.display-settings and key==display-settings)',
+      },
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      return body.items;
+    });
+});
+
+Cypress.Commands.add('updateInventoryDisplaySettingsViaAPI', (entryId, body) => {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: `settings/entries/${entryId}`,
+    body,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('setInventoryDisplaySettingsViaAPI', (body) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'settings/entries',
+    body,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
+  cy.getInventoryDisplaySettingsViaAPI().then((entries) => {
+    let updatedBody;
+    if (entries.length) {
+      updatedBody = { ...entries[0] };
+      updatedBody.value.defaultSort = sortOption;
+      cy.updateInventoryDisplaySettingsViaAPI(updatedBody.id, updatedBody);
+    } else {
+      updatedBody = { ...displaySettingsBody };
+      updatedBody.value.defaultSort = sortOption;
+      cy.setInventoryDisplaySettingsViaAPI(updatedBody);
+    }
+  });
 });

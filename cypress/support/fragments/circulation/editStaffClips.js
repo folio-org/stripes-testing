@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import {
   Button,
   Checkbox,
@@ -94,6 +94,7 @@ export default {
       Button('Add token').click(),
       saveButton.click(),
     ]);
+    cy.wait(1000);
   },
   editDescription(description) {
     cy.do(staffClipsDescription.fillIn(description));
@@ -104,8 +105,10 @@ export default {
     cy.expect(richTextEditor().has({ value: including(content) }));
   },
   previewStaffClips: () => {
-    cy.do([Button('Preview').click(), Button('Close').click()]);
+    cy.do(Button('Preview').click());
+    cy.wait(1000);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
+    cy.do(Button('Close').click());
   },
   checkPreview: (staffSlipType, displayText) => {
     cy.do(Button('Preview').click());

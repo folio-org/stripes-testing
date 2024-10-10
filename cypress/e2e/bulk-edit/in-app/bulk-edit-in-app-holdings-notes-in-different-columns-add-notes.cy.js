@@ -64,13 +64,11 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.getAdminToken();
       InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
         newNoteTypeId = noteId;
       });
-      cy.wait(3000);
+      cy.wait(5000);
 
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {

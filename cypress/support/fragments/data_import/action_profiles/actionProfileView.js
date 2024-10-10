@@ -49,12 +49,15 @@ export default {
   },
 
   openFieldMappingProfileView: () => {
+    cy.wait(1000);
     cy.do(
       viewPane
         .find(Link({ href: including('/settings/data-import/mapping-profiles/view') }))
         .perform((elem) => {
-          const linkForVisit = elem.getAttribute('href');
-          cy.visit(linkForVisit);
+          if (elem.hasAttribute('target') && elem.getAttribute('target') === '_blank') {
+            elem.removeAttribute('target');
+          }
+          elem.click();
         }),
     );
   },

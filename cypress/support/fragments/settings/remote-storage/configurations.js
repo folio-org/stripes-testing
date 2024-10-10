@@ -8,6 +8,7 @@ import {
   Pane,
   MultiColumnListCell,
   Modal,
+  NavListItem,
   KeyValue,
   HTML,
   Option,
@@ -150,6 +151,10 @@ const getDefaultConfiguration = ({ id = uuid(), providerName = 'CAIA_SOFT' } = {
 export default {
   configurations,
   openCreateConfigurationForm,
+  openConfigurationsTabFromSettings() {
+    cy.do(NavListItem('Remote storage').click());
+    cy.do(NavListItem('Configurations').click());
+  },
 
   waitLoading() {
     cy.expect(Pane('Configurations').exists());
@@ -263,6 +268,11 @@ export default {
     ]);
   },
 
+  clickCloseWithoutSavingButtonInAreYouSureForm() {
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+    cy.wait(1000);
+  },
+
   closeWithSaving() {
     return cy.do(Modal().find(Button('Save')).click());
   },
@@ -323,6 +333,7 @@ export default {
   },
   closeEditConfiguration() {
     cy.do([editConfigurationPane.find(xButton).click()]);
+    cy.wait(1000);
   },
 
   clickDeleteRemoteStorage(name) {

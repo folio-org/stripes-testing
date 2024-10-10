@@ -12,6 +12,8 @@ import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let noteTypeId;
@@ -67,7 +69,7 @@ describe('bulk-edit', () => {
         HoldingsRecordView.edit();
         HoldingsRecordEdit.addHoldingsNotes(holdingsNote, noteType);
         HoldingsRecordEdit.saveAndClose();
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -105,7 +107,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(location);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -117,7 +119,7 @@ describe('bulk-edit', () => {
         InventoryInstances.deleteHoldingsNoteTypeViaApi(noteTypeId);
 
         cy.getToken(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
@@ -136,7 +138,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(newLocation);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

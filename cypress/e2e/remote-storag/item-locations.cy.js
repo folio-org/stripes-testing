@@ -19,7 +19,6 @@ describe('Remote Storage', () => {
     cy.createTempUser([Permissions.inventoryAll.gui, Permissions.remoteStorageCRUD.gui]).then(
       (userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -71,9 +70,12 @@ describe('Remote Storage', () => {
               ],
             });
           });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
       },
     );
-    cy.visit(TopMenu.inventoryPath);
   });
 
   after('Delete all data', () => {

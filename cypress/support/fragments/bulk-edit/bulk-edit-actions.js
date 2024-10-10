@@ -1,5 +1,4 @@
-import { HTML, including } from '@interactors/html';
-import { not } from 'bigtest';
+import { HTML, including, not } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
 import {
   Accordion,
@@ -46,6 +45,8 @@ const locationSelection = Selection({ name: 'locationId' });
 const oldEmail = TextField({ testid: 'input-email-0' });
 const newEmail = TextField({ testid: 'input-email-1' });
 const closeAreYouSureModalButton = areYouSureForm.find(Button({ icon: 'times' }));
+const selectNoteHoldingTypeDropdown = Select({ id: 'noteHoldingsType' });
+const saveAndCloseButton = Button('Save & close');
 
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
@@ -90,6 +91,16 @@ export default {
     );
     cy.wait(1000);
   },
+
+  verifyOptionSelected(optionName, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .has({ singleValue: optionName }),
+    );
+    cy.wait(1000);
+  },
+
   selectAction(actionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -172,8 +183,10 @@ export default {
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(commitChanges).exists(),
-      areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
+    if (cellContent) {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(cellContent)).exists());
+    }
   },
 
   verifyChangesInAreYouSureForm(column, changes) {
@@ -256,6 +269,10 @@ export default {
 
   openActions() {
     cy.do(actionsBtn.click());
+  },
+
+  verifyActionsButtonDisabled(isDisabled = true) {
+    cy.expect(actionsBtn.has({ disabled: isDisabled }));
   },
 
   openActionsIfNotYet() {
@@ -344,7 +361,7 @@ export default {
       Select({ label: 'Library' }).exists(),
       Selection('Location').exists(),
       locationLookupModal.find(cancelButton).has({ disabled: false }),
-      Button('Save and close').has({ disabled: true }),
+      Button(saveAndCloseButton).has({ disabled: true }),
     ]);
   },
 
@@ -352,7 +369,7 @@ export default {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
   locationLookupModalSaveAndClose() {
-    cy.do(locationLookupModal.find(Button('Save and close')).click());
+    cy.do(locationLookupModal.find(Button(saveAndCloseButton)).click());
   },
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
@@ -667,7 +684,7 @@ export default {
   verifyTheOptionsForChangingNoteType(expectedOptions, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ id: 'noteHoldingsType' }))
+        .find(selectNoteHoldingTypeDropdown)
         .allOptionsText()
         .then((actualOptions) => {
           const actualEnabledOptions = actualOptions.filter(
@@ -875,13 +892,11 @@ export default {
 
   selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ id: 'noteHoldingsType' }))
-        .choose(newType),
+      RepeatableFieldItem({ index: rowIndex }).find(selectNoteHoldingTypeDropdown).choose(newType),
     ]);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ id: 'noteHoldingsType' }))
+        .find(selectNoteHoldingTypeDropdown)
         .has({ checkedOptionText: newType }),
     );
   },
@@ -948,13 +963,13 @@ export default {
   },
 
   saveAndClose() {
-    cy.do(Button('Save & close').click());
+    cy.do(Button(saveAndCloseButton).click());
   },
 
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
     cy.wait(500);
-    cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
+    cy.do(Button('Download matched records (CSV)').click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
@@ -989,6 +1004,7 @@ export default {
   commitChanges() {
     cy.wait(2000);
     cy.do([Modal().find(commitChanges).click()]);
+    cy.wait(2000);
   },
 
   clickNext() {
@@ -1263,5 +1279,53 @@ export default {
         .find(Select('Actions select'))
         .has({ disabled: isDisabled }),
     );
+  },
+
+  verifySelectOptionsHoldingSortedAlphabetically() {
+    this.clickOptionsSelection();
+
+    const group = 'li[class*="groupLabel"]';
+    const option = '[class*="optionSegment"]';
+
+    // check that the group names are sorted alphabetically
+    cy.get('[class*="selectionList"] li:not([class*="groupedOption"])').then((groups) => {
+      const groupTexts = groups.get().map((el) => el.innerText);
+      const sortedGroupTexts = [...groupTexts].sort((a, b) => a.localeCompare(b));
+
+      expect(sortedGroupTexts).to.deep.equal(groupTexts);
+    });
+
+    // check that the option names in the group are sorted alphabetically
+    cy.get(group).each(($groupLabel) => {
+      const optionTexts = [];
+
+      cy.wrap($groupLabel)
+        .nextUntil(group)
+        .each(($option) => {
+          cy.wrap($option)
+            .find(option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          const sortedOptionTexts = [...optionTexts].sort((a, b) => a.localeCompare(b));
+
+          expect(sortedOptionTexts).to.deep.equal(optionTexts);
+        });
+    });
+  },
+
+  verifyNoteTypeInNoteHoldingTypeDropdown(noteType, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(selectNoteHoldingTypeDropdown)
+        .has({ content: including(noteType) }),
+    );
+  },
+
+  verifyAreYouSureFormAbsents() {
+    cy.expect(areYouSureForm.absent());
   },
 };

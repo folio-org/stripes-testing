@@ -6,11 +6,12 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Check out', () => {
   let testData;
@@ -51,7 +52,7 @@ describe('Check out', () => {
   });
 
   beforeEach('Create notes', () => {
-    cy.visit(TopMenu.usersPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
     UsersSearchPane.waitLoading();
     UsersSearchPane.searchByUsername(testData.username);
     UsersSearchPane.waitLoading();
@@ -64,7 +65,7 @@ describe('Check out', () => {
     // Create Note 2
     AgreementsDetails.createNote({ ...note2, checkoutApp: true });
     // Navigate to "Check out" app
-    cy.visit(TopMenu.checkOutPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
     Checkout.waitLoading();
   });
 
@@ -96,7 +97,7 @@ describe('Check out', () => {
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
       // Open user Details
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(testData.username);
       UsersSearchPane.waitLoading();
