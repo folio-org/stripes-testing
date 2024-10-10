@@ -28,12 +28,14 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
+    it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smokeBroken', 'corsair'] }, () => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.waitLoading();
       Lists.resetAllFilters();
-      Lists.expiredPatronLoan();
+      Lists.openExpiredPatronLoanList();
       Lists.openActions();
       Lists.getViaApi().then((response) => {
         const filteredItem = response.body.content.find(
