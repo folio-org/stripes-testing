@@ -41,9 +41,10 @@ describe('lists', () => {
       'C411770 Delete list: Refresh is in progress (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -67,9 +68,10 @@ describe('lists', () => {
       'C411771 Delete list: Export is in progress (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
