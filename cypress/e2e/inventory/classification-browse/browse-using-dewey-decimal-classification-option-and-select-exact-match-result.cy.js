@@ -19,6 +19,7 @@ describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
       classificationOption: 'Dewey Decimal classification',
+      querySearchOption: 'Query search',
       searchQuery: '974.7004975542',
       instanceTitle:
         'C468141 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
@@ -112,8 +113,8 @@ describe('Inventory', () => {
         verifySearchResult();
         InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          'classifications.classificationNumber=="974.7004975542"',
+          testData.querySearchOption,
+          `classifications.classificationNumber=="${testData.searchQuery}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
