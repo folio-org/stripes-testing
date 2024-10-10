@@ -2482,6 +2482,14 @@ export default {
     cy.do([TextField({ id: 'input-routing-list-name' }).fillIn(name), saveAndCloseButton.click()]);
   },
 
+  fillInRoutingListInfo: (name) => {
+    cy.do(TextField({ id: 'input-routing-list-name' }).fillIn(name));
+  },
+
+  saveRoutingList: () => {
+    cy.do(saveAndCloseButton.click());
+  },
+
   fillInRoutingListInfoWithNotesAndSave: (name, notes) => {
     cy.do([
       TextField({ id: 'input-routing-list-name' }).fillIn(name),
@@ -2537,6 +2545,10 @@ export default {
       Button({ id: 'clickable-remove-all-permissions' }).click(),
       Modal('Unassign all users').find(Button('Yes')).click(),
     ]);
+  },
+
+  unAssignUserFromRoutingList(userID) {
+    cy.do(Button({ id: `clickable-remove-user-${userID}` }).click());
   },
 
   deleteUserFromRoutingList(user) {
