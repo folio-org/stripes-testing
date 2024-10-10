@@ -29,11 +29,12 @@ describe('lists', () => {
     });
 
     it('C411731 Edit list: Canned reports (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
-      Lists.expiredPatronLoan();
+      Lists.openExpiredPatronLoanList();
       Lists.openActions();
       Lists.verifyEditListButtonIsDisabled();
       Lists.verifyEditListButtonIsDisabled();

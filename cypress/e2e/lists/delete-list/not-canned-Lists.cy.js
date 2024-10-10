@@ -50,9 +50,10 @@ describe('lists', () => {
       'C411772 Delete list: "Edit list" mode (corsair)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);

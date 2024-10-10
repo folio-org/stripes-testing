@@ -6,13 +6,11 @@ import {
   including,
   MultiColumnListRow,
   MultiColumnListCell,
-  CheckboxInTable,
+  Checkbox,
   Dropdown,
   DropdownMenu,
   PaneHeader,
   Link,
-  MultiColumnListHeader,
-  Checkbox,
 } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
@@ -36,15 +34,10 @@ export default {
     );
   },
   checkAll() {
-    cy.wait(1000);
-    cy.do(
-      MultiColumnListHeader({ id: 'list-column-' })
-        .find(Checkbox({ name: 'check-all' }))
-        .click(),
-    );
+    cy.do(Checkbox({ name: 'check-all' }).click());
   },
   checkOneLoan() {
-    cy.do(MultiColumnListRow({ index: 0 }).find(CheckboxInTable()).click());
+    cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
   },
   exportLoansToCSV() {
     cy.do(Button('Export to CSV').click());
