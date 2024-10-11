@@ -59,12 +59,12 @@ describe('fse-eholdings - UI for non-production tenants', () => {
   );
 
   it(
-    `TCXXXXX - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['non-live', 'fse', 'ui', 'eholdings'] },
     () => {
       const testNote = {
-        title: `autotest_TCXXXXX_${getRandomPostfix()}`,
-        details: `autotest_TCXXXXX_${getRandomPostfix()}`,
+        title: `autotest_TC195626_${getRandomPostfix()}`,
+        details: `autotest_TC195626_${getRandomPostfix()}`,
         getShortDetails() {
           return this.details.substring(0, 255);
         },
@@ -88,14 +88,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
       NewNote.chooseSelectTypeByTitle('General note');
       NewNote.fill(testNote);
       NewNote.save();
-      // assign created note
-      EHoldingsPackage.clickAssignNoteButton();
-      AssignNote.verifyModalIsShown();
-      AssignNote.searchForNote(testNote.title);
-      AssignNote.verifyDesiredNoteIsShown(testNote.title);
-      AssignNote.clickCheckboxForNote(testNote.title);
-      AssignNote.clickSaveButton();
-      // check assigned note
+      // check created and assigned note
       EHoldingsPackage.verifySpecialNotesRow({
         title: testNote.title,
         details: testNote.content,
