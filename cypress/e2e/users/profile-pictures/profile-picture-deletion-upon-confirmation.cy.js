@@ -15,9 +15,10 @@ describe('Users', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       cy.getConfigurationsEntry().then((respBody) => {
-        respBody.enabled = true;
-
-        cy.updateConfigurationsEntry(respBody.id, respBody);
+        if (respBody.enabled === false) {
+          respBody.enabled = true;
+          cy.updateConfigurationsEntry(respBody.id, respBody);
+        }
       });
 
       // create user B

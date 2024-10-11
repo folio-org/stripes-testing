@@ -160,8 +160,10 @@ describe('Patron notices', () => {
     const checkNoticeIsSent = (checkParams) => {
       SearchPane.searchByItemBarcode(instanceData.itemBarcode);
       SearchPane.findResultRowIndexByContent(checkParams.desc).then((rowIndex) => {
+        SearchPane.scroll();
         SearchPane.checkResultSearch(checkParams, rowIndex);
       });
+      SearchPane.resetFilters();
     };
     const noticePolicy = {
       name: getTestEntityValue('Overdue fine, returned'),
@@ -428,6 +430,7 @@ describe('Patron notices', () => {
         });
         checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfBeforeOnce.name));
         checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfBeforeRecurring.name));
+        cy.wait(25000);
         checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfUponAt.name));
       },
     );
