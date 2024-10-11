@@ -6,6 +6,7 @@ import {
   Section,
   or,
   including,
+  Accordion,
 } from '../../../../interactors';
 import NewAgreement from './newAgreement';
 import SearchAndFilterAgreements from './searchAndFilterAgreements';
@@ -14,7 +15,12 @@ import DateTools from '../../utils/dateTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 
 const section = Section({ id: 'pane-agreement-list' });
+const agreementsSection = Section({ id: 'agreements-tab-pane' });
+const agreementsViewSection = Section({ id: 'pane-view-agreement' });
 const newButton = Button('New');
+const editButton = Button('Edit');
+const actionsButton = Button('Actions');
+const controllingLicense = Accordion({ id: 'controllingLicense' });
 
 const waitLoading = () => {
   cy.expect(
@@ -22,8 +28,8 @@ const waitLoading = () => {
       section.find(MultiColumnListRow()).exists(),
       section.find(HTML(including('No results found. Please check your filters.'))).exists(),
     ),
+    agreementsSection.find(actionsButton).exists(),
   );
-  cy.expect(newButton.exists());
 };
 
 const defaultAgreement = {
@@ -88,10 +94,25 @@ export default {
   agreementWithLinkedUser,
 
   create: (specialAgreement) => {
+    cy.do(agreementsSection.find(actionsButton).click());
     cy.do(newButton.click());
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
+  },
+
+  createAndCheckFields: (specialAgreement) => {
+    cy.do(agreementsSection.find(actionsButton).click());
+    cy.do(newButton.click());
+    NewAgreement.waitLoading();
+    NewAgreement.checkSelectFields();
+    NewAgreement.fill(specialAgreement);
+    NewAgreement.save();
+  },
+
+  editAgreement() {
+    cy.do(agreementsViewSection.find(actionsButton).click());
+    cy.do(editButton.click());
   },
 
   createViaApi: (agreement = defaultAgreement) => {
@@ -131,7 +152,8 @@ export default {
   },
 
   selectRecord: (agreementTitle) => {
-    cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
+    cy.expect(agreementsSection.find(MultiColumnListCell(agreementTitle)).exists());
+    cy.do(agreementsSection.find(MultiColumnListCell(agreementTitle)).click());
   },
 
   agreementNotVisible: (agreementTitle) => cy.expect(section.find(MultiColumnListCell(agreementTitle)).absent()),
@@ -139,5 +161,9 @@ export default {
   checkAgreementPresented: (name) => {
     SearchAndFilterAgreements.search(name);
     cy.expect(MultiColumnListCell(name).exists());
+  },
+
+  checkControllingLicenseDisplayed() {
+    cy.expect(controllingLicense.exists());
   },
 };
