@@ -28,7 +28,6 @@ const zeroResultsFoundText = '0 records found';
 const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pane-subtitle"]';
 
 const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
-const deleteUsersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'bl-users/by-id';
 const createUserPane = Pane('Create User');
 
 const defaultUser = {
@@ -71,7 +70,7 @@ export default {
   deleteViaApi: (userId) => cy
     .okapiRequest({
       method: 'DELETE',
-      path: `${deleteUsersApiPath}/${userId}`,
+      path: `bl-users/by-id/${userId}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
     })
@@ -82,7 +81,7 @@ export default {
   getUsers: (searchParams) => {
     return cy
       .okapiRequest({
-        path: usersApiPath,
+        path: '/users',
         searchParams,
         isDefaultSearchParamsRequired: false,
       })
