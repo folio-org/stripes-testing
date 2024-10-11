@@ -343,7 +343,9 @@ export default {
     }
 
     this.checkPreview(template.previewText);
+    cy.wait(2000);
     this.saveAndClose();
+    cy.wait(4000);
     cy.expect(patronNoticeForm.absent());
   },
 

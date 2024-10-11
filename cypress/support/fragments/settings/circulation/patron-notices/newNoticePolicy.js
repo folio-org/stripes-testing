@@ -65,20 +65,30 @@ export default {
   },
 
   addNotice(patronNoticePolicy, index = 0) {
-    cy.do([
+    cy.do(
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` })
         .find(addNoticeButton)
         .click(),
+    );
+    cy.wait(1500);
+    cy.do(
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].templateId` }).choose(
         patronNoticePolicy.templateName,
       ),
+    );
+    cy.wait(1500);
+    cy.do(
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].format` }).choose(
         patronNoticePolicy.format,
       ),
+    );
+    cy.wait(1500);
+    cy.do(
       Select({
         name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen`,
       }).choose(patronNoticePolicy.action),
-    ]);
+    );
+    cy.wait(1500);
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
     if (patronNoticePolicy.send !== undefined) {
       cy.do(
