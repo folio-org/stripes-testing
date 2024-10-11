@@ -38,7 +38,7 @@ describe('MARC', () => {
         const linkingTagAndValues = [
           {
             rowIndex: 82,
-            value: 'C388642 Lee, Stan, 1922-2018,',
+            value: 'C388642 Lee, Stan, 1922-2018',
             tag: 700,
             boxFourth: '$a C388642 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
@@ -47,7 +47,7 @@ describe('MARC', () => {
           },
           {
             rowIndex: 84,
-            value: 'C388642 Robinson & Associates, Inc.',
+            value: 'C388642 Robinson and Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388642 Robinson & Associates, Inc.',
             boxFifth: '',
@@ -212,7 +212,7 @@ describe('MARC', () => {
           Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 

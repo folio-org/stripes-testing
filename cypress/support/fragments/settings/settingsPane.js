@@ -171,4 +171,9 @@ export default {
     if (isExisting) cy.expect(NavListItem(optionName).exists());
     else cy.expect(NavListItem(optionName).absent());
   },
+
+  selectSettingsTab(settingsTab) {
+    cy.wait(1000);
+    cy.do(NavListItem(settingsTab).click());
+  },
 };
