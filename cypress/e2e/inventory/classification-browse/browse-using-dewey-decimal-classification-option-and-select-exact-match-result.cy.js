@@ -1,4 +1,7 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  CLASSIFICATION_IDENTIFIER_TYPES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -15,17 +18,18 @@ import ClassificationBrowse, {
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
-      classificationOption: 'Classification (all)',
-      searchQuery: 'ML410.P11 A3 2018',
+      classificationOption: 'Dewey Decimal classification',
+      querySearchOption: 'Query search',
+      searchQuery: '974.7004975542',
       instanceTitle:
-        'C466323 My artistic memoirs / Giovanni Pacini ; edited and translated by Stephen Thompson Moore.',
-      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
-      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm,
+        'C468141 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC466323.mrc',
-      fileName: `testMarcFileC466323.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC468141.mrc',
+      fileName: `testMarcFileC468141.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -62,7 +66,6 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        // remove all identifier types from target classification browse, if any
         ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
           testData.classificationBrowseId,
         ).then((types) => {
@@ -71,7 +74,7 @@ describe('Inventory', () => {
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
-          [],
+          [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
         );
 
         cy.login(testData.user.username, testData.user.password, {
@@ -100,16 +103,18 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466323 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
+      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
+        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+          testData.classificationOption,
+        );
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
         verifySearchResult();
         InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          'classifications.classificationNumber=="ML410.P11 A3 2018"',
+          testData.querySearchOption,
+          `classifications.classificationNumber=="${testData.searchQuery}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);

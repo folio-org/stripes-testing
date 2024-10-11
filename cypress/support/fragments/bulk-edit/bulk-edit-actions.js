@@ -267,6 +267,10 @@ export default {
     cy.expect(closeAreYouSureModalButton.has({ disabled: isDisabled }));
   },
 
+  closeAreYouSureForm() {
+    cy.do(closeAreYouSureModalButton.click());
+  },
+
   openActions() {
     cy.do(actionsBtn.click());
   },
