@@ -17,5 +17,4 @@ Cypress.Commands.add('updateConfigurationsEntry', (entryId, updatedBody) => {
   }).then(({ body }) => {
     return body;
   });
-  cy.wait(10000);
 });
