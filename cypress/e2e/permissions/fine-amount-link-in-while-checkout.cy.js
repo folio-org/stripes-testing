@@ -31,79 +31,74 @@ describe('Permissions', () => {
       const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
       before('Users, owners, fee fines are created', () => {
-        // the login with admin, visiting the path and the waiter are separated to get the fetch request to get owners
-        cy.getAdminToken().then(() => {
-          cy.loginAsAdmin({
-            path: SettingsMenu.circulationOtherSettingsPath,
-            waiter: OtherSettings.waitLoading,
-          }).then(() => {
-            OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
-          });
-          ServicePoints.createViaApi(servicePoint);
-
-          UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
-            .then(({ id, owner }) => {
-              ownerData.name = owner;
-              ownerData.id = id;
-            })
-            .then(() => {
-              UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
-              ManualCharges.createViaApi({
-                ...ManualCharges.defaultFeeFineType,
-                ownerId: ownerData.id,
-              }).then((manualCharge) => {
-                feeFineType.id = manualCharge.id;
-                feeFineType.name = manualCharge.feeFineType;
-                feeFineType.amount = manualCharge.amount;
-              });
-              PaymentMethods.createViaApi(ownerData.id).then(({ name, id }) => {
-                paymentMethod.name = name;
-                paymentMethod.id = id;
-              });
-            });
-
-          cy.createTempUser([
-            permissions.checkoutCirculatingItems.gui,
-            permissions.checkoutViewFeeFines.gui,
-            permissions.uiUsersfeefinesView.gui,
-          ])
-            .then((userProperties) => {
-              userData.username = userProperties.username;
-              userData.password = userProperties.password;
-              userData.userId = userProperties.userId;
-              userData.barcode = userProperties.barcode;
-              userData.firstName = userProperties.firstName;
-            })
-            .then(() => {
-              UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
-              cy.getAdminSourceRecord().then((adminSourceRecord) => {
-                feeFineAccount = {
-                  id: uuid(),
-                  ownerId: ownerData.id,
-                  feeFineId: feeFineType.id,
-                  amount: 9,
-                  userId: userData.userId,
-                  feeFineType: feeFineType.name,
-                  feeFineOwner: ownerData.name,
-                  createdAt: servicePoint.id,
-                  dateAction: moment.utc().format(),
-                  source: adminSourceRecord,
-                };
-                NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                  feeFineAccount.id = feeFineAccountId;
-                });
-              });
-            });
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationOtherSettingsPath,
+          waiter: OtherSettings.waitLoading,
+        }).then(() => {
+          OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
         });
+        ServicePoints.createViaApi(servicePoint);
+
+        UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+          .then(({ id, owner }) => {
+            ownerData.name = owner;
+            ownerData.id = id;
+          })
+          .then(() => {
+            UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
+            ManualCharges.createViaApi({
+              ...ManualCharges.defaultFeeFineType,
+              ownerId: ownerData.id,
+            }).then((manualCharge) => {
+              feeFineType.id = manualCharge.id;
+              feeFineType.name = manualCharge.feeFineType;
+              feeFineType.amount = manualCharge.amount;
+            });
+            PaymentMethods.createViaApi(ownerData.id).then(({ name, id }) => {
+              paymentMethod.name = name;
+              paymentMethod.id = id;
+            });
+          });
+
+        cy.createTempUser([
+          permissions.checkoutCirculatingItems.gui,
+          permissions.checkoutViewFeeFines.gui,
+          permissions.uiUsersfeefinesView.gui,
+        ])
+          .then((userProperties) => {
+            userData.username = userProperties.username;
+            userData.password = userProperties.password;
+            userData.userId = userProperties.userId;
+            userData.barcode = userProperties.barcode;
+            userData.firstName = userProperties.firstName;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
+            cy.getAdminSourceRecord().then((adminSourceRecord) => {
+              feeFineAccount = {
+                id: uuid(),
+                ownerId: ownerData.id,
+                feeFineId: feeFineType.id,
+                amount: 9,
+                userId: userData.userId,
+                feeFineType: feeFineType.name,
+                feeFineOwner: ownerData.name,
+                createdAt: servicePoint.id,
+                dateAction: moment.utc().format(),
+                source: adminSourceRecord,
+              };
+              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                feeFineAccount.id = feeFineAccountId;
+              });
+            });
+          });
       });
 
       after('UserOwner is removed', () => {
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.checkOutPath);
-        Checkout.waitLoading();
+        cy.loginAsAdmin({ path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
         // without this waiter, the user will not be found by username
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(4000);
+        cy.wait(5000);
         CheckOutActions.checkOutUser(userData.barcode);
         CheckOutActions.openFeeFineLink('9.00', userData.userId);
         UserFeeFines.openFeeFine();
@@ -125,12 +120,13 @@ describe('Permissions', () => {
         'C388524 Check that User can click the fine amount as a link with necessary permissions (vega)',
         { tags: ['extendedPath', 'vega'] },
         () => {
-          cy.login(userData.username, userData.password);
-          cy.visit(TopMenu.checkOutPath);
-          Checkout.waitLoading();
+          cy.login(userData.username, userData.password, {
+            path: TopMenu.checkOutPath,
+            waiter: Checkout.waitLoading,
+          });
           // without this waiter, the user will not be found by username
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(4000);
+          cy.wait(5000);
           CheckOutActions.checkOutUser(userData.barcode);
           CheckOutActions.openFeeFineLink('9.00', userData.userId);
           UserFeeFines.checkResultsInTheRowByBarcode(

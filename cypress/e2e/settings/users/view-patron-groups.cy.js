@@ -37,8 +37,10 @@ describe('Users', () => {
       cy.createTempUser([Permissions.uiUsersViewPatronGroups.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(SettingsMenu.usersPath);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.usersPath,
+          waiter: () => cy.wait(1000),
+        });
       });
     });
 

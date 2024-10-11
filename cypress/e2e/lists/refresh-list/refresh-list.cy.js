@@ -30,9 +30,10 @@ describe('lists', () => {
     });
 
     beforeEach('Login', () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
     });
 

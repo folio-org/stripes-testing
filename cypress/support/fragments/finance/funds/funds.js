@@ -140,8 +140,9 @@ export default {
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
+    cy.do([saveAndCloseButton.click()]);
     this.waitForFundDetailsLoading();
   },
 

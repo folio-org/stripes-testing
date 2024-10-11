@@ -23,7 +23,7 @@ import {
   List,
   or,
   not,
-  ProfilePictureCard,
+  Image,
   DropdownMenu,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
@@ -85,7 +85,7 @@ const firstNameField = TextField({ id: 'adduser_firstname' });
 const emailField = TextField({ id: 'adduser_email' });
 const usersPath = Cypress.env('eureka') ? '/users-keycloak/users/*' : '/users/*';
 const userRoleDeleteIcon = Button({ id: including('clickable-remove-user-role') });
-const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
+const profilePictureCard = Image({ alt: 'Profile picture' });
 let totalRows;
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
