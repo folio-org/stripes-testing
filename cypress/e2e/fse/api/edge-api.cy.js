@@ -62,6 +62,89 @@ describe('fse-edge', () => {
   });
 
   it(
+    'TCxxxx - edge-orders gobi integration check',
+    { tags: ['fse', 'api', 'edge-orders', 'non-live'] },
+    () => {
+      // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
+
+      const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
+    <PurchaseOrder>
+  <CustomerDetail>
+    <BaseAccount>8910</BaseAccount>
+    <SubAccount>891010</SubAccount>
+  </CustomerDetail>
+  <Order>
+    <ListedPrintMonograph>
+      <collection>
+        <record>
+          <leader>00000nam a2200000u  4500</leader>
+          <controlfield tag="001">99974828471</controlfield>
+          <controlfield tag="003">NhCcYBP</controlfield>
+          <controlfield tag="005">20180905153857.0</controlfield>
+          <controlfield tag="008">180905t20112011xx ||||||||||||||   eng d</controlfield>
+          <datafield tag="020" ind1=" " ind2=" ">
+            <subfield code="a">9780547572482</subfield>
+            <subfield code="c">14.95</subfield>
+          </datafield>
+          <datafield tag="035" ind1=" " ind2=" ">
+            <subfield code="a">(OCoLC)717297695</subfield>
+          </datafield>
+          <datafield tag="100" ind1="1" ind2=" ">
+            <subfield code="a">DICK, PHILIP K</subfield>
+          </datafield>
+          <datafield tag="245" ind1="1" ind2="0">
+            <subfield code="a">MAN IN THE HIGH CASTLE.</subfield>
+          </datafield>
+          <datafield tag="260" ind1=" " ind2=" ">
+            <subfield code="a">BOSTON</subfield>
+            <subfield code="b">MARINER BOOKS</subfield>
+            <subfield code="c">2011</subfield>
+          </datafield>
+        </record>
+      </collection>
+      <OrderDetail>
+        <FundCode>USHIST</FundCode>
+        <Location>KU/CC/DI/A</Location>
+        <Quantity>2</Quantity>
+        <YBPOrderKey>99974828471</YBPOrderKey>
+        <OrderPlaced>2018-09-05T15:38:55</OrderPlaced>
+        <Initials>Mark</Initials>
+        <ListPrice>
+          <Amount>14.95</Amount>
+          <Currency>USD</Currency>
+        </ListPrice>
+        <NetPrice>
+          <Amount>13.16</Amount>
+          <Currency>USD</Currency>
+        </NetPrice>
+        <LocalData>
+          <Description>LocalData1</Description>
+          <Value>Book</Value>
+        </LocalData>
+        <LocalData>
+          <Description>LocalData2</Description>
+          <Value>Notify requester upon receipt</Value>
+        </LocalData>
+        <LocalData>
+          <Description>LocalData3</Description>
+          <Value>Anne Esterhazy</Value>
+        </LocalData>
+        <LocalData>
+          <Description>LocalData4</Description>
+          <Value>signed-edition,vip-order</Value>
+        </LocalData>
+      </OrderDetail>
+    </ListedPrintMonograph>
+  </Order>
+      </PurchaseOrder>`;
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeOrdersGobiIntegration(requestBody).then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
     `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-rtac'] },
     () => {
