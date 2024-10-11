@@ -33,7 +33,7 @@ describe('lists', () => {
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.resetAllFilters();
-      Lists.expiredPatronLoan();
+      Lists.openExpiredPatronLoanList();
       Lists.openActions();
       Lists.verifyEditListButtonIsDisabled();
       Lists.closeListDetailsPane();

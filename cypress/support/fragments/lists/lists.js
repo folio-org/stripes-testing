@@ -39,7 +39,7 @@ const deleteList = Button('Delete list');
 const exportList = Button('Export all columns (CSV)');
 const exportListVisibleColumns = Button('Export visible columns (CSV)');
 const testQuery = Button('Test query');
-const runQuery = Button('Run query & save');
+const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
 const newLink = new Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
@@ -56,7 +56,11 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 
 const deleteConfirmationModal = Modal('Delete list');
 
+const cannedListInactivePatronsWithOpenLoans = 'Inactive patrons with open loans';
+
 export default {
+  cannedListInactivePatronsWithOpenLoans,
+
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
     cy.wait(2000);
@@ -90,8 +94,26 @@ export default {
     cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
     cy.wait(1000);
-    cy.do(runQuery.click());
+    cy.do(runQueryAndSave.click());
     cy.wait(2000);
+  },
+
+  testQuery() {
+    cy.do(testQuery.click());
+    cy.wait(1000);
+  },
+
+  runQueryAndSave() {
+    cy.do(runQueryAndSave.click());
+    cy.wait(2000);
+  },
+
+  changeQueryBoolValue(value) {
+    let valueToSet = 'False';
+    if (value) {
+      valueToSet = 'True';
+    }
+    cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
   },
 
   openActions() {
@@ -224,6 +246,11 @@ export default {
     cy.wait(1000);
   },
 
+  verifyExportListVisibleColumnsButtonIsActive() {
+    cy.expect(exportListVisibleColumns.exists());
+    cy.expect(exportListVisibleColumns.has({ disabled: false }));
+  },
+
   verifyExportListButtonIsDisabled() {
     cy.expect(exportList.has({ disabled: true }));
   },
@@ -268,8 +295,8 @@ export default {
     cy.expect(newLink.absent());
   },
 
-  expiredPatronLoan() {
-    cy.do(Link('Inactive patrons with open loans').click());
+  openExpiredPatronLoanList() {
+    cy.do(Link(cannedListInactivePatronsWithOpenLoans).click());
   },
 
   missingItems() {
