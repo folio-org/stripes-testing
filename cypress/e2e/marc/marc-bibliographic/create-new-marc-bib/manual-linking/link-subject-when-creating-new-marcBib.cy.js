@@ -39,7 +39,7 @@ describe('MARC', () => {
             boxSixth: '$0 3052044',
             boxSeventh: '',
             searchOption: 'Personal name',
-            marcValue: 'C380728 Jackson, Peter, 1950-2022 Inspector Banks series ;',
+            marcValue: 'C380728 Jackson, Peter, 1950-2022',
             valueAfterSave: 'C380728 Jackson, Peter, Inspector Banks series ; 1950-2022 test123',
           },
           {

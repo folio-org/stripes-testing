@@ -32,7 +32,7 @@ export default {
   },
   clickNotAllowedButton() {
     cy.wait(1500);
-    cy.do(rootSection.find(notAllowedButton).click());
+    cy.do(notAllowedButton.click());
   },
   clickAllowedButton() {
     cy.get('#allow-access').click();
@@ -43,11 +43,9 @@ export default {
     cy.get('[class^="borrowerDetails-"]').contains(userfirstName).should('be.visible');
   },
   verifyUserInformation(userInfo, allowed = true) {
-    if (allowed) {
+    if (allowed === true) {
       cy.expect([
-        rootSection
-          .find(KeyValue('Preferred first name'))
-          .has({ value: userInfo.preferredFirstName }),
+        rootSection.find(KeyValue('First name')).has({ value: userInfo.firstName }),
         rootSection.find(lastNameKeyValue).has({ value: userInfo.lastName }),
         rootSection.find(patronGroupKeyValue).has({ value: userInfo.patronGroup }),
         rootSection.find(userTypeKeyValue).has({ value: userInfo.userType }),
@@ -56,7 +54,9 @@ export default {
       ]);
     } else {
       cy.expect([
-        rootSection.find(KeyValue('First name')).has({ value: userInfo.firstName }),
+        rootSection
+          .find(KeyValue('Preferred first name'))
+          .has({ value: userInfo.preferredFirstName }),
         rootSection.find(lastNameKeyValue).has({ value: userInfo.lastName }),
         rootSection.find(patronGroupKeyValue).has({ value: userInfo.patronGroup }),
         rootSection.find(userTypeKeyValue).has({ value: userInfo.userType }),
