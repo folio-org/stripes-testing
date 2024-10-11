@@ -53,13 +53,12 @@ describe('orders: Settings', () => {
           organization.id = organizationsResponse;
           order.vendor = organizationsResponse;
         });
-
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
         });
       });
     });
+
 
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
