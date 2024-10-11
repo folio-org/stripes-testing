@@ -19,7 +19,7 @@ describe('MARC', () => {
       authorityHeadings: [
         'Apple & Honey Productions (with "nr" in the 010 field) C432317Auto',
         'Music (for test) C432317Auto',
-        'Music C432317Auto',
+        'C432317Music Auto',
         'Montessori method of education C432317Auto',
         'Hymnals C432317Auto',
         'Children (for test) C432317Auto',
@@ -70,7 +70,7 @@ describe('MARC', () => {
     before('Creating user and data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*C432317Auto');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C432317');
 
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
