@@ -46,7 +46,7 @@ describe('MARC', () => {
         before('Create user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380726*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380726');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -79,7 +79,7 @@ describe('MARC', () => {
         after('Deleting created user and data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
+          MarcAuthority.deleteViaAPI(createdAuthorityIDs[0], true);
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
         });
 
