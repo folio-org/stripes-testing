@@ -195,6 +195,10 @@ export default {
     });
   },
 
+  scroll() {
+    cy.get('[id^="circulation-log-list"] div.mclScrollable---JvHuN').scrollTo('right');
+  },
+
   checkSearchResultByBarcode({ barcode, searchResults }) {
     this.searchByUserBarcode(barcode);
     this.findResultRowIndexByContent(searchResults.desc).then((rowIndex) => {

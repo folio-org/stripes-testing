@@ -5,6 +5,8 @@ import getRandomPostfix from '../../utils/stringTools';
 const saveButton = Button('Save & close');
 const nameField = TextField({ id: 'edit-agreement-name' });
 const startDateField = TextField({ id: 'period-start-date-0' });
+const renewalPrioritySelect = Select('Renewal priority');
+const isPerpetualSelect = Select('Is perpetual');
 
 const statusValue = {
   closed: 'Closed',
@@ -34,6 +36,12 @@ export default {
       Select('Status*').choose(specialAgreement.status),
       startDateField.fillIn(specialAgreement.startDate),
     ]);
+  },
+
+  checkSelectFields() {
+    cy.expect(Select('Status*').exists());
+    cy.expect(renewalPrioritySelect.exists());
+    cy.expect(isPerpetualSelect.exists());
   },
 
   save() {

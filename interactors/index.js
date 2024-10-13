@@ -92,7 +92,6 @@ export { AdvancedSearch, AdvancedSearchRow } from './advanced-search';
 export { FieldSet, FieldInFieldset } from './fieldset';
 export { default as ConfirmationModal } from './confirmation-modal';
 export { default as Warning } from './warning';
-export { default as ProfilePictureCard } from './profilePictureCard';
 
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';

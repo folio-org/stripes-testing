@@ -7,9 +7,12 @@ import {
   Section,
   Spinner,
   including,
+  MultiSelect,
+  MultiSelectOption,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
+import getRandomPostfix from '../../utils/stringTools';
 
 // eslint-disable-next-line import/no-cycle
 const resultSection = Section({ id: 'search-results' });
@@ -29,6 +32,7 @@ const providerAccordion = Button({
 const providerInfAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderInformation',
 });
+const tagsSection = Section({ id: 'providerShowTags' });
 
 export default {
   waitLoading: () => {
@@ -117,5 +121,20 @@ export default {
       providerAccordion.has({ ariaExpanded: open }),
       providerInfAccordion.has({ ariaExpanded: open }),
     ]);
+  },
+
+  addTag: () => {
+    const newTag = `tag${getRandomPostfix()}`;
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
+      cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
+      cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
+    });
+    return newTag;
+  },
+
+  removeTag(tag) {
+    cy.xpath(
+      `//div[contains(text(), '${tag}')]/../../button[contains(@class, 'iconButton')]`,
+    ).click();
   },
 };
