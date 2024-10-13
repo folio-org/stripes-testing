@@ -37,6 +37,18 @@ export default {
   clickAllowedButton() {
     cy.get('#allow-access').click();
   },
+  getReadingRoomViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'reading-room/access-log',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        expect(response.status).equals(200);
+        return response;
+      });
+  },
 
   verifyUserIsScanned(userfirstName) {
     cy.wait(5000);
