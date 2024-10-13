@@ -123,6 +123,7 @@ export default {
         .find(Select({ dataTestID: 'select-actions-1' }))
         .choose(actionName),
     );
+    cy.wait(500);
   },
 
   verifySecondActionSelected(option, rowIndex = 0) {
