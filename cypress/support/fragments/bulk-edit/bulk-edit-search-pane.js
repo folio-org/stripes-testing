@@ -926,6 +926,7 @@ export default {
     names.forEach((name) => {
       cy.do(DropdownMenu().find(Checkbox(name)).click());
     });
+    cy.wait(500);
   },
 
   changeShowColumnCheckboxIfNotYet(...names) {
@@ -1152,5 +1153,31 @@ export default {
 
   verifyNextPaginationButtonDisabled(isDisabled = true) {
     cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyInstanceNoteColumns(instanceNoteColumnNames) {
+    cy.get('[class*="DropdownMenu"] [class*="labelText"]').then((columns) => {
+      const columnNames = Cypress.$(columns)
+        .map((index, column) => {
+          return Cypress.$(column).text();
+        })
+        .get();
+      // get an array of instance note column name
+      const noteColumnNames = columnNames.slice(
+        columnNames.findIndex((item) => item === 'Publication range') + 1,
+      );
+      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort((a, b) => {
+        return a.localeCompare(b);
+      });
+
+      // verify alphabetical order
+      expect(noteColumnNames).to.deep.equal(noteColumnNamesInAlphabeticOrder);
+      // verify exact columns exist
+      instanceNoteColumnNames.forEach((instanceNoteColumnName) => {
+        expect(noteColumnNames).include(instanceNoteColumnName);
+        // verify that the checkbox for this column is unchecked
+        cy.expect(DropdownMenu().find(Checkbox(instanceNoteColumnName)).has({ checked: false }));
+      });
+    });
   },
 };
