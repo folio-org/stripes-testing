@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -7,6 +7,7 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
@@ -161,7 +162,8 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388536*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388536');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -184,8 +186,9 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.loginAsAdmin().then(() => {
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+              InventoryInstances.waitContentLoading();
               InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
