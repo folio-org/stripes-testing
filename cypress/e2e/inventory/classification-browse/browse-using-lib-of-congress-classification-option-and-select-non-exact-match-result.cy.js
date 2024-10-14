@@ -18,18 +18,19 @@ import ClassificationBrowse, {
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
-      classificationOption: 'Dewey Decimal classification',
+      classificationOption: 'Library of Congress classification',
       querySearchOption: 'Query search',
-      searchQuery: '974.7004975542',
+      negativeSearchQuery: 'N332.G33 B443913 2055',
+      positiveSearchQuery: 'N72.S3 R53 2018',
       instanceTitle:
-        'C468141 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
-      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
-      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
+        'C468146 Why science needs art : from historical to modern day perspectives / Richard AP Roche, Francesca R. Farina, Seán Commins.',
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[2].algorithm,
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC468141.mrc',
-      fileName: `testMarcFileC468141.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC468146.mrc',
+      fileName: `testMarcFileC468146.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -38,10 +39,14 @@ describe('Inventory', () => {
 
     const verifySearchResult = () => {
       BrowseClassifications.verifySearchResultsTable();
-      InventorySearchAndFilter.verifySearchResultIncludingValue(testData.searchQuery);
-      BrowseClassifications.verifyResultAndItsRow(5, testData.searchQuery);
-      BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.searchQuery);
-      BrowseClassifications.verifyNumberOfTitlesInRow(5, '1');
+      InventorySearchAndFilter.verifySearchResultIncludingValue(
+        `${testData.negativeSearchQuery}would be here`,
+      );
+      BrowseClassifications.verifyResultAndItsRow(
+        5,
+        `${testData.negativeSearchQuery}would be here`,
+      );
+      BrowseClassifications.verifyNumberOfTitlesInRow(5, '');
       BrowseClassifications.verifyRowExists(4);
       BrowseClassifications.verifyRowExists(6);
     };
@@ -49,7 +54,7 @@ describe('Inventory', () => {
     before(() => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      InventoryInstances.deleteInstanceByTitleViaApi('C468141*');
+      InventoryInstances.deleteInstanceByTitleViaApi('C468146*');
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
@@ -78,7 +83,7 @@ describe('Inventory', () => {
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
-          [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+          [CLASSIFICATION_IDENTIFIER_TYPES.LC],
         );
 
         cy.login(testData.user.username, testData.user.password, {
@@ -107,18 +112,19 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
+      'C468146 Select non-exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
         );
-        InventorySearchAndFilter.browseSearch(testData.searchQuery);
+        InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
         verifySearchResult();
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
+        BrowseClassifications.clickOnSearchResult(`${testData.negativeSearchQuery}would be here`);
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.positiveSearchQuery);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.searchQuery}"`,
+          `classifications.classificationNumber=="${testData.positiveSearchQuery}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
