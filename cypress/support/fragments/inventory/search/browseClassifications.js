@@ -69,4 +69,8 @@ export default {
       paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
     ]);
   },
+
+  clickOnSearchResult: (value) => {
+    cy.do(MultiColumnListCell({ content: including(value) }).click());
+  },
 };
