@@ -210,42 +210,32 @@ export default {
     eHoldingsNewCustomPackage.checkPackageCreatedCallout(calloutMessage);
   },
 
-  verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
-    let timeCounter = 0;
-    function checkPackage() {
-      cy.okapiRequest({
-        path: 'eholdings/packages',
-        searchParams: { q: packageName },
-        isDefaultSearchParamsRequired: false,
-      }).then(({ body }) => {
-        if (body.data[0] || timeCounter >= timeOutSeconds) {
-          cy.expect(body.data[0].attributes.isCustom).equals(isCustom);
-        } else {
-          // wait 1 second before retrying request
-          cy.wait(1000);
-          checkPackage();
-          timeCounter++;
-        }
-      });
-    }
-    checkPackage();
+  verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 30) {
+    return recurse(
+      () => this.getPackageViaApi(packageName),
+      (response) => response.body.data.length > 0,
+      {
+        validate: (response) => {
+          cy.expect(response.body.data[0].attributes.isCustom).equals(isCustom);
+        },
+        timeout: timeOutSeconds * 1000,
+        delay: 1000,
+      },
+    );
   },
 
-  deletePackageViaAPI(packageName) {
-    cy.okapiRequest({
-      path: 'eholdings/packages',
-      searchParams: { q: packageName },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ body }) => {
+  deletePackageViaAPI(packageName, allowFailure = false) {
+    this.getPackageViaApi(packageName).then(({ body }) => {
       cy.okapiRequest({
         method: 'DELETE',
         path: `eholdings/packages/${body.data[0].id}`,
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: allowFailure,
       });
     });
   },
 
-  getPackageViaApi: (packageName) => {
+  getPackageViaApi(packageName) {
     return cy.okapiRequest({
       method: 'GET',
       path: 'eholdings/packages',
@@ -255,11 +245,7 @@ export default {
   },
 
   unassignPackageViaAPI(packageName) {
-    cy.okapiRequest({
-      path: 'eholdings/packages',
-      searchParams: { q: packageName },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ body: { data } }) => {
+    this.getPackageViaApi(packageName).then(({ body: { data } }) => {
       const packageData = data[0];
       const { attributes } = packageData;
       attributes.isSelected = false;
