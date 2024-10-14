@@ -44,7 +44,8 @@ describe('MARC', () => {
             tagValue: '600',
             secondBox: '0',
             thirdBox: '0',
-            fourthBox: '$a C377026 Black Panther $b Numeration $c (Fictitious character) $c second title $d Dates associated with a name $g Miscellaneous information $j Attribution qualifier $q Fuller form of name $f Date of a work $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Black Panther $b Numeration $c (Fictitious character) $c second title $d Dates associated with a name $g Miscellaneous information $j Attribution qualifier $q Fuller form of name $f Date of a work $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '$i comics',
             sixthBox: '$0 http://id.loc.gov/authorities/names/n2016004082',
             seventhBox: '$4 .prt $2 test',
@@ -55,7 +56,8 @@ describe('MARC', () => {
             tagValue: '610',
             secondBox: '\\',
             thirdBox: '\\',
-            fourthBox: '$a C377026 Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $g Miscellaneous information $f Date of a work $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $g Miscellaneous information $f Date of a work $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 4510955',
             seventhBox: '',
@@ -66,7 +68,8 @@ describe('MARC', () => {
             tagValue: '611',
             secondBox: '\\',
             thirdBox: '\\',
-            fourthBox: '$a C377026 Roma Council $c Location of meeting $e Subordinate unit $q Name of meeting following jurisdiction name entry element $f Date of a work $h Medium $k Form subheading $l Language of a work $p Name of part/section of a work $s Version $t Title of a work $d Date of meeting or treaty signing $g Miscellaneous information $n Number of part/section/meeting $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Roma Council $c Location of meeting $e Subordinate unit $q Name of meeting following jurisdiction name entry element $f Date of a work $h Medium $k Form subheading $l Language of a work $p Name of part/section of a work $s Version $t Title of a work $d Date of meeting or treaty signing $g Miscellaneous information $n Number of part/section/meeting $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/names/n79084170',
             seventhBox: '',
@@ -77,7 +80,8 @@ describe('MARC', () => {
             tagValue: '630',
             secondBox: '\\',
             thirdBox: '\\',
-            fourthBox: '$a C377026 Marvel comics $d Date of treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Marvel comics $d Date of treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/names/n80026955',
             seventhBox: '',
@@ -88,7 +92,8 @@ describe('MARC', () => {
             tagValue: '650',
             secondBox: '\\',
             thirdBox: '\\',
-            fourthBox: '$a C377026 Speaking Oratory $b debating $g Miscellaneous information $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Speaking Oratory $b debating $g Miscellaneous information $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/subjects/sh85095298',
             seventhBox: '',
@@ -99,7 +104,8 @@ describe('MARC', () => {
             tagValue: '651',
             secondBox: '\\',
             thirdBox: '\\',
-            fourthBox: '$a C377026 Clear Creek (Tex.) $g Place in Texas $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Clear Creek (Tex.) $g Place in Texas $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/names/n79041363',
             seventhBox: '',
@@ -110,7 +116,8 @@ describe('MARC', () => {
             tagValue: '655',
             secondBox: '\\',
             thirdBox: '\\',
-            fourthBox: '$a C377026 Drama $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+            fourthBox:
+              '$a C377026 Drama $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
             seventhBox: '',
