@@ -90,19 +90,19 @@ describe('Orders', () => {
   });
 
   it(
-    'C468199 Set "Bindery active" flag true when creating a POL with Order format = "Physical" (thunderjet)',
+    'C468200 Set "Bindery active" flag true when creating a POL with Order format = "P/E Mix" (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.binderyActivePhysicalPOLineInfo(
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
+      OrderLines.binderyActivePEMixPOLineInfo(
         firstFund,
-        ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
-        '110',
+        ORDER_FORMAT_NAMES.PE_MIX,
+        '10',
         '1',
-        '110',
+        '20',
         location.name,
       );
       OrderLines.verifyPOLDetailsIsOpened();

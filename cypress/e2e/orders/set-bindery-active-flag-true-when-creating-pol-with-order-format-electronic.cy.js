@@ -90,19 +90,19 @@ describe('Orders', () => {
   });
 
   it(
-    'C468199 Set "Bindery active" flag true when creating a POL with Order format = "Physical" (thunderjet)',
+    'C468201 Set "Bindery active" flag true when changing Order format from "Electronic" to "Physical" in existing POL (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.binderyActivePhysicalPOLineInfo(
+      OrderLines.binderyIsNotActiveForElectronicPOLineInfo(
         firstFund,
-        ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
-        '110',
+        ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
+        '10',
         '1',
-        '110',
+        '10',
         location.name,
       );
       OrderLines.verifyPOLDetailsIsOpened();
