@@ -57,7 +57,6 @@ describe('lists', () => {
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -86,7 +85,6 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
