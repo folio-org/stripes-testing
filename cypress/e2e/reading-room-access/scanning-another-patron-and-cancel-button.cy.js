@@ -6,13 +6,10 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 // import Users from '../../support/fragments/users/users';
-// import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-// import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 
 describe('Reading Room Access', () => {
-  // let totalRecordsBefore;
-  // let totalRecordsAfter;
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
     servicePointId: '',
@@ -26,7 +23,7 @@ describe('Reading Room Access', () => {
       ServicePoints.createViaApi(testData.servicePoint)
         .then((servicePoint) => {
           testData.servicePointId = servicePoint.body.id;
-          console.log(testData.servicePoint.name);
+
           SettingsReadingRoom.createReadingRoomViaApi(
             testData.servicePointId,
             testData.servicePoint.name,
@@ -36,18 +33,29 @@ describe('Reading Room Access', () => {
           );
         })
         .then(() => {
-          //   cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
-          //     (users) => {
-          //       const adminId = users[0].id;
-          //       console.log(adminId);
-          //       console.log(testData.servicePointId);
-          //       UserEdit.addServicePointViaApi(
-          //         testData.servicePointId,
-          //         adminId,
-          //         testData.servicePointId,
-          //       );
-          //     },
-          //   );
+          cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
+            (users) => {
+              testData.adminId = users[0].id;
+
+              ReadingRoom.allowAccessForUser(
+                testData.readingRoomId,
+                testData.readingRoomName,
+                testData.servicePointId,
+                users[0].id,
+              );
+              console.log(testData.servicePoint.name);
+              console.log(users[0].id);
+              // ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+              //   .then((servicePoints) => {
+              UserEdit.addServicePointViaApi(
+                testData.servicePointId,
+                users[0].id,
+                // servicePoints[0].id,
+                testData.servicePointId,
+              );
+              // });
+            },
+          );
         });
     });
 
@@ -55,13 +63,11 @@ describe('Reading Room Access', () => {
     cy.createTempUser([]).then((userProperties) => {
       testData.patronUser = userProperties;
 
-      // PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
-      //   patronGroup.id = patronGroupResponse;
-      // });
-      UserEdit.addServicePointViaApi(
+      ReadingRoom.allowAccessForUser(
+        testData.readingRoomId,
+        testData.readingRoomName,
         testData.servicePointId,
         testData.patronUser.userId,
-        testData.servicePointId,
       );
     });
 
@@ -80,22 +86,62 @@ describe('Reading Room Access', () => {
       waiter: ReadingRoom.waitLoading,
     });
     cy.pause();
-    // SwitchServicePoint.switchServicePoint(testData.servicePoint.name);
+    SwitchServicePoint.switchServicePoint(testData.servicePoint.name);
   });
 
-  // after('Deleting created entities', () => {});
+  // after('Deleting created entities', () => {
+  //   cy.getAdminToken();
+  //   UserEdit.changeServicePointPreferenceViaApi(testData.adminId, [
+  //     testData.servicePoint.id,
+  //   ]);
+  //   ServicePoints.deleteViaApi(testData.servicePointId);
+  //   Users.deleteViaApi(testData.patronUser.userId);
+  //   Users.deleteViaApi(testData.firstUser.userId);
+  //   Users.deleteViaApi(testData.secondUser.userId);
+  //   SettingsReadingRoom.deleteReadingRoomViaApi(testData.readingRoomId);
+  // });
 
   it(
     'C494350 Validate Functionality of scanning another patron and cancel button on Reading room access app (volaris)',
     { tags: ['smoke', 'volaris'] },
     () => {
-      ReadingRoom.getReadingRoomViaApi({
-        query: `readingRoomName="${testData.readingRoomName}"`,
-      }).then((resp) => {
-        // ReadingRoom.getReadingRoomViaApi({ query: 'readingRoomName=<reading room 1 name>' }).then((resp) => {
-        console.log(resp);
-      });
-      // =<reading room 1 name>
+      // const firstUserInfo = {
+      //   preferredFirstName: testData.firstUser.preferredFirstName,
+      //   lastName: testData.firstUser.lastName,
+      //   patronGroup: testData.firstUser.userGroup.group,
+      //   userType: testData.firstUser.userGroup.group,
+      //   barcode: testData.firstUser.barcode,
+      //   expirationDate: 'No value set-',
+      // };
+      // const secondUserInfo = {
+      //   preferredFirstName: testData.secondUser.preferredFirstName,
+      //   lastName: testData.secondUser.lastName,
+      //   patronGroup: testData.secondUser.userGroup.group,
+      //   userType: testData.secondUser.userGroup.group,
+      //   barcode: testData.secondUser.barcode,
+      //   expirationDate: 'No value set-',
+      // };
+      // ReadingRoom.getReadingRoomViaApi({
+      //   query: `readingRoomName="${testData.readingRoomName}"`,
+      // }).then((resp) => {
+      //   const totalRecordsBefore = resp.body.accessLogs.length;
+      //   ReadingRoom.scanUser(testData.firstUser.barcode);
+      //   ReadingRoom.verifyUserIsScanned(testData.firstUser.preferredFirstName);
+      //   ReadingRoom.verifyUserInformation(firstUserInfo);
+      //   ReadingRoom.verifyButtonsEnabled();
+      //   ReadingRoom.scanUser(testData.secondUser.barcode);
+      //   ReadingRoom.verifyUserIsScanned(testData.secondUser.preferredFirstName);
+      //   ReadingRoom.verifyUserInformation(secondUserInfo);
+      //   ReadingRoom.verifyButtonsEnabled();
+      //   ReadingRoom.clickCancelButton();
+      //   ReadingRoom.verifyInformationAfterAction();
+      //   ReadingRoom.getReadingRoomViaApi({
+      //     query: `readingRoomName="${testData.readingRoomName}"`,
+      //   }).then((response) => {
+      //     const totalRecordsAfter = response.body.accessLogs.length;
+      //     cy.expect(totalRecordsAfter).to.eq(totalRecordsBefore);
+      //   });
+      // });
     },
   );
 });

@@ -1,4 +1,7 @@
 import { Permissions } from '../../../../support/dictionary';
+import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
+import holdingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
@@ -56,20 +59,18 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // Find the instance from precondition
-        const InventoryInstance = InventorySearchAndFilter.searchInstanceByTitle(
-          testData.folioInstances[0].instanceTitle,
-        );
+        InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
 
         // Click on the instance name -> Click on "View holdings"
-        const HoldingsRecordView = InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingView();
 
         // Click on "Actions" menu, Select "Edit"
-        const HoldingsRecordEdit = HoldingsRecordView.edit();
+        InventoryInstance.edit();
 
         // Change the Call number -> Click "Save & Close" button
         HoldingsRecordEdit.fillCallNumber(testData.callNumber);
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
-        HoldingsRecordView.close();
+        holdingsRecordView.close();
         InventoryInstance.checkIsHoldingsCreated([
           `${testData.location.name} >  ${testData.callNumber}`,
         ]);

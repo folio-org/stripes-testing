@@ -84,6 +84,7 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
     servicePointsIds: servicePointIds,
     defaultServicePointId: defaultServicePointId || servicePointIds[0],
   },
+  isDefaultSearchParamsRequired: false,
 });
 
 export default {
