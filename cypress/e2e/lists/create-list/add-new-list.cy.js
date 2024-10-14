@@ -48,9 +48,8 @@ describe('lists', () => {
         Lists.selectVisibility('Shared');
         Lists.selectStatus('Active');
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
