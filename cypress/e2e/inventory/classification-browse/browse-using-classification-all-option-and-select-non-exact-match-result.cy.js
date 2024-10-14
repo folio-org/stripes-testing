@@ -1,7 +1,4 @@
-import {
-  DEFAULT_JOB_PROFILE_NAMES,
-  CLASSIFICATION_IDENTIFIER_TYPES,
-} from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -18,18 +15,19 @@ import ClassificationBrowse, {
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
-      classificationOption: 'Dewey Decimal classification',
+      classificationOption: 'Classification (all)',
       querySearchOption: 'Query search',
-      searchQuery: '974.7004975542',
+      negativeSearchQuery: 'ML410.P11 A3 2055',
+      positiveSearchQuery: 'N332.G33 B443913 2018',
       instanceTitle:
-        'C468141 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
-      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
-      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
+        'C468142 The spirit of the Bauhaus / texts, Raphaèle Billé, Monique Blanc, Marie-Sophie Carron de la Carrière, Louise Curtis, Nicholas Fox Weber, Olivier Gabet, Jean-Louis Gaillemin, Anne Monier, Béatrice Quette ; translated from the French by Ruth Sharman.',
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm,
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC468141.mrc',
-      fileName: `testMarcFileC468141.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC468142.mrc',
+      fileName: `testMarcFileC468142.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -38,10 +36,14 @@ describe('Inventory', () => {
 
     const verifySearchResult = () => {
       BrowseClassifications.verifySearchResultsTable();
-      InventorySearchAndFilter.verifySearchResultIncludingValue(testData.searchQuery);
-      BrowseClassifications.verifyResultAndItsRow(5, testData.searchQuery);
-      BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.searchQuery);
-      BrowseClassifications.verifyNumberOfTitlesInRow(5, '1');
+      InventorySearchAndFilter.verifySearchResultIncludingValue(
+        `${testData.negativeSearchQuery}would be here`,
+      );
+      BrowseClassifications.verifyResultAndItsRow(
+        5,
+        `${testData.negativeSearchQuery}would be here`,
+      );
+      BrowseClassifications.verifyNumberOfTitlesInRow(5, '');
       BrowseClassifications.verifyRowExists(4);
       BrowseClassifications.verifyRowExists(6);
     };
@@ -49,7 +51,7 @@ describe('Inventory', () => {
     before(() => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      InventoryInstances.deleteInstanceByTitleViaApi('C468141*');
+      InventoryInstances.deleteInstanceByTitleViaApi('C468142*');
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
@@ -70,6 +72,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 
+        // remove all identifier types from target classification browse, if any
         ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
           testData.classificationBrowseId,
         ).then((types) => {
@@ -78,7 +81,7 @@ describe('Inventory', () => {
         ClassificationBrowse.updateIdentifierTypesAPI(
           testData.classificationBrowseId,
           testData.classificationBrowseAlgorithm,
-          [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+          [],
         );
 
         cy.login(testData.user.username, testData.user.password, {
@@ -107,18 +110,17 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
+      'C468142 Select non-exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
-          testData.classificationOption,
-        );
-        InventorySearchAndFilter.browseSearch(testData.searchQuery);
+        InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
+        InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
         verifySearchResult();
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
+        BrowseClassifications.clickOnSearchResult(`${testData.negativeSearchQuery}would be here`);
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.positiveSearchQuery);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.searchQuery}"`,
+          `classifications.classificationNumber=="${testData.positiveSearchQuery}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
