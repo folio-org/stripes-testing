@@ -24,10 +24,10 @@ describe('Users', () => {
       () => {
         cy.getAdminToken();
         cy.getConfigurationsEntry().then((respBody) => {
-          const id = respBody.id;
-          respBody.enabled = true;
-
-          cy.updateConfigurationsEntry(id, respBody);
+          if (respBody.enabled === false) {
+            respBody.enabled = true;
+            cy.updateConfigurationsEntry(respBody.id, respBody);
+          }
         });
         cy.loginAsAdmin({
           path: TopMenu.usersPath,

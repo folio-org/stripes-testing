@@ -19,8 +19,8 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  Image,
   Spinner,
-  ProfilePictureCard,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -58,7 +58,7 @@ const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewcl
 const userRolesAccordion = rootSection.find(Accordion('User roles'));
 const userRolesEmptyText = 'No user roles found';
 const usersPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
-const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
+const profilePictureCard = Image({ alt: 'Profile picture' });
 
 export default {
   errors,

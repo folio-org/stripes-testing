@@ -6,11 +6,11 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import SettingsJobProfile from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import SettingsJobProfile from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {

@@ -32,11 +32,13 @@ describe('lists', () => {
       'C411810 Export list: Canned lists (corsair)',
       { tags: ['smokeFlaky', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.waitLoading();
         Lists.resetAllFilters();
-        Lists.expiredPatronLoan();
+        Lists.openExpiredPatronLoanList();
         Lists.openActions();
         Lists.exportList();
         cy.contains(

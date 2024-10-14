@@ -36,9 +36,10 @@ describe('lists', () => {
       'C411709 Verify that the button "Cancel", cancels new list creation process. (corsair)',
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

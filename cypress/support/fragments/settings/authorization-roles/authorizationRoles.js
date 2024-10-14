@@ -448,9 +448,10 @@ export default {
     cy.expect(assignUsersModal.absent());
   },
 
-  verifyAssignedUser: (lastName, firstName, isAssigned = true, patronGroupName = '') => {
+  verifyAssignedUser: (lastName, firstName = null, isAssigned = true, patronGroupName = '') => {
+    const name = firstName ? `${lastName}, ${firstName}` : lastName;
     const userRow = usersAccordion.find(
-      MultiColumnListRow(and(including(`${lastName}, ${firstName}`), including(patronGroupName))),
+      MultiColumnListRow(and(including(name), including(patronGroupName))),
     );
     if (isAssigned) cy.expect(userRow.exists());
     else cy.expect(userRow.absent());

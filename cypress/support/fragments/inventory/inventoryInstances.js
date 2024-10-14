@@ -327,8 +327,6 @@ export default {
   selectInstance: (rowNumber = 0) => {
     cy.do([inventoriesList.focus({ row: rowNumber }), inventoriesList.click({ row: rowNumber })]);
     InventoryInstance.waitInventoryLoading();
-
-    return InventoryInstance;
   },
 
   selectInstanceById(specialInternalId) {

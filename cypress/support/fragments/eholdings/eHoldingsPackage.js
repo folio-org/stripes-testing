@@ -16,6 +16,8 @@ import {
   including,
   TextArea,
   PaneHeader,
+  MultiColumnList,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import { FILTER_STATUSES } from './eholdingsConstants';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -46,6 +48,9 @@ const waitTitlesLoading = () => cy.url().then((url) => {
 });
 const providerTokenField = TextArea({ name: 'providerTokenValue' });
 const providerTokenValue = KeyValue('Provider token');
+const newNoteButton = Button({ id: 'note-create-button' });
+const assignUnassignNoteButton = Button({ id: 'note-assign-button' });
+const notesList = MultiColumnList({ id: 'notes-list' });
 
 export default {
   waitLoading: (specialPackage) => {
@@ -212,5 +217,23 @@ export default {
   },
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
+  },
+  addNote() {
+    cy.do(newNoteButton.click());
+  },
+  clickAssignNoteButton() {
+    cy.do(assignUnassignNoteButton.click());
+  },
+  verifySpecialNotesRow({ title, details, type }) {
+    cy.expect([
+      notesList.exists(),
+      notesList
+        .find(MultiColumnListCell({ column: 'Title and details', content: including(title) }))
+        .exists(),
+      notesList
+        .find(MultiColumnListCell({ column: 'Title and details', content: including(details) }))
+        .exists(),
+      notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
+    ]);
   },
 };

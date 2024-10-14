@@ -110,26 +110,25 @@ describe('lists', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-
-        createdLists.forEach((list) => {
-          Lists.createViaApi(list);
+        cy.getUserToken(userData.username, userData.password).then(() => {
+          createdLists.forEach((list) => {
+            Lists.createViaApi(list);
+          });
         });
       });
     });
 
     beforeEach('Reset all filters', () => {
       // #1 Click on "Lists" in app navigation bar
-      cy.visit(TopMenu.listsPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.waitLoading();
       Lists.resetAllFilters();
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
       cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
         Lists.deleteListByNameViaApi(list.name);
