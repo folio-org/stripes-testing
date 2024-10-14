@@ -39,7 +39,6 @@ describe('lists', () => {
       Lists.verifyEditListButtonIsDisabled();
       Lists.verifyEditListButtonIsDisabled();
       Lists.closeListDetailsPane();
-      Lists.waitLoading();
       Lists.missingItems();
       Lists.openActions();
       Lists.verifyEditListButtonIsDisabled();
