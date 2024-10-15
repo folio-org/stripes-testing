@@ -77,9 +77,9 @@ Cypress.Commands.add('postEdgeOrdersGobiIntegration', (requestBody) => {
   cy.request({
     method: 'POST',
     url: `${Cypress.env('EDGE_HOST')}/orders?type=GOBI&apiKey=${Cypress.env('EDGE_API_KEY')}`,
-    contentTypeHeader: 'application/xml',
     headers: {
       'user-agent': 'FSE_AQA_Suite',
+      'Content-type': 'application/xml',
     },
     body: requestBody,
   });
