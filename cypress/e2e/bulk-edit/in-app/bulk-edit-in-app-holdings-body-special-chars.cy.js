@@ -146,9 +146,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(newLocation);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        // InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
-        // InventoryInstances.selectInstance();
-        // InventoryInstance.waitLoading();
         InventoryInstance.openHoldingView();
         InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
         HoldingsRecordView.edit();
