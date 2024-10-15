@@ -65,9 +65,8 @@ describe('lists', () => {
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.wait(3000);
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,

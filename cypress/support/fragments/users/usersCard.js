@@ -5,6 +5,7 @@ import {
   Badge,
   Button,
   Checkbox,
+  Image,
   KeyValue,
   ListItem,
   Modal,
@@ -17,17 +18,15 @@ import {
   Section,
   Selection,
   SelectionList,
+  Spinner,
   TextArea,
   TextField,
-  Image,
-  Spinner,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
-const requestsSection = rootSection.find(Accordion({ id: 'requestsSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const userInformationSection = Accordion({ id: 'userInformationSection' });
@@ -36,6 +35,7 @@ const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const affiliationsSection = Section({ id: 'affiliationsSection' });
 const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const requestsAccordion = Accordion({ id: 'requestsSection' });
+const readingRoomAccessAccordion = Accordion({ id: 'readingRoomAccessSection' });
 const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
 const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
 const notesSection = Accordion('Notes');
@@ -132,6 +132,27 @@ export default {
 
     return openRequests && this.verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests);
   },
+  expandReadingRoomAccessSection(readingRoomName, status, isRoomCreated = true) {
+    cy.do(readingRoomAccessAccordion.clickHeader());
+    if (isRoomCreated) {
+      cy.do(
+        MultiColumnListCell({ content: readingRoomName }).perform((element) => {
+          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+          cy.expect(
+            readingRoomAccessAccordion
+              .find(MultiColumnListRow({ indexRow: rowNumber }))
+              .find(MultiColumnListCell({ content: status }))
+              .exists(),
+          );
+        }),
+      );
+    } else {
+      cy.expect(
+        readingRoomAccessAccordion.find(MultiColumnListCell({ content: readingRoomName })).absent(),
+      );
+    }
+  },
   verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests) {
     cy.expect(
       openedRequestsLink.has({
@@ -204,7 +225,7 @@ export default {
   },
 
   expandRequestSection() {
-    cy.do(Accordion({ id: 'requestsSection' }).clickHeader());
+    cy.do(requestsAccordion.clickHeader());
     cy.expect([
       Link({ id: 'clickable-viewopenrequests' }).exists(),
       Link({ id: 'clickable-viewclosedrequests' }).exists(),
@@ -499,7 +520,7 @@ export default {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
   },
   startRequestAdding() {
-    cy.do(requestsSection.find(Button('Create request')).click());
+    cy.do(requestsAccordion.find(Button('Create request')).click());
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());

@@ -54,9 +54,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -80,9 +79,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -106,9 +104,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -132,10 +129,9 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
         Lists.waitLoading();
-        cy.reload();
         Lists.selectInactiveLists();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);

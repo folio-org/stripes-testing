@@ -9,6 +9,7 @@ export const TENANTS = {
   PREFERRED_PLUGINS: 'Preferred plugins',
   SSO_SETTINGS: 'SSO settings',
   SERVICE_POINTS: 'Service points',
+  READING_ROOM_ACCESS: 'Reading room access',
   // Location setup
   INSTITUTIONS: 'Institutions',
   CAMPUSES: 'Campuses',

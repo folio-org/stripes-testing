@@ -1049,6 +1049,10 @@ export default {
     gui: 'Settings (tenant): Can view reading room access',
     details: ['absentInEvrk'],
   },
+  uiCanViewReadingRoomAccess: {
+    internal: 'ui-users.view-reading-room-access',
+    gui: 'Users: Can view reading room access',
+  },
   uiReadingRoomAll: {
     internal: 'ui-reading-room.all',
     gui: 'Reading room access: In app - track access',
