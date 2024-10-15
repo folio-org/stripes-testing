@@ -72,3 +72,15 @@ Cypress.Commands.add('getEdgeOai', () => {
     },
   });
 });
+
+Cypress.Commands.add('postEdgeOrdersGobiIntegration', (requestBody) => {
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('EDGE_HOST')}/orders?type=GOBI&apiKey=${Cypress.env('EDGE_API_KEY')}`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+      'Content-type': 'application/xml',
+    },
+    body: requestBody,
+  });
+});

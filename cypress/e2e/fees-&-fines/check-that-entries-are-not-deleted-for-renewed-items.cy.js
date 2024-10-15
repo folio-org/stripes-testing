@@ -165,7 +165,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C375276 Check that entries are NOT deleted for renewed items (Declared lost items) when item is renewed after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C375276'] },
       () => {
         cy.visit(TopMenu.usersPath);
         // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

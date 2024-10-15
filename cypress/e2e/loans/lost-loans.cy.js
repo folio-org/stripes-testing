@@ -194,8 +194,8 @@ describe('Loans', () => {
     });
 
     it(
-      'C10949: Close declared lost loan (set cost lost item fees) (vega) (TaaS)',
-      { tags: ['criticalPath', 'vega'] },
+      'C10949 Close declared lost loan (set cost lost item fees) (vega) (TaaS)',
+      { tags: ['criticalPath', 'vega', 'C10949'] },
       () => {
         const comment = 'Declare lost';
         // Navigate to open loan "A".

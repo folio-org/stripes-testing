@@ -97,7 +97,7 @@ describe('Check in', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C9198 Check In: in-house use icon (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+  it('C9198 Check In: in-house use icon (vega) (TaaS)', { tags: ['extendedPath', 'vega', 'C9198'] }, () => {
     // #1 Navigate to Check In app. Check in checked out item A at service point X.
     CheckInActions.checkInItemGui(itemAData.barcode);
     CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);

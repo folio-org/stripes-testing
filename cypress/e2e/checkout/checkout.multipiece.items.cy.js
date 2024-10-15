@@ -132,7 +132,7 @@ describe('Check out', () => {
 
   it(
     'C591 Check out: multipiece items (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C591'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.checkOutPath,

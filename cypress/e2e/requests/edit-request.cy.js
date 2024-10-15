@@ -36,7 +36,7 @@ describe('Requests', () => {
 
   it(
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C556'] },
     () => {
       [
         EditRequest.requestStatuses.AWAITING_DELIVERY,

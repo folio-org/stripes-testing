@@ -139,7 +139,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350559 Check that the user can Edit request (Title level request) (vega)',
-    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C350559'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,

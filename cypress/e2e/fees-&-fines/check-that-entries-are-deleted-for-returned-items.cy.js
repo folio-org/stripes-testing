@@ -159,7 +159,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C375279 Check that entries are deleted for returned items (Declared lost items) (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C375279'] },
       () => {
         cy.visit(TopMenu.usersPath);
         // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

@@ -68,7 +68,7 @@ describe('Patron notices', () => {
 
     it(
       'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C650'] },
       () => {
         // Delete Circulation Rules
         CirculationRules.clearCirculationRules();
@@ -155,8 +155,8 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error) (vega)',
-      { tags: ['extendedPath', 'vega'] },
+      'C654 Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error) (vega)',
+      { tags: ['extendedPath', 'vega', 'C654'] },
       () => {
         CirculationRules.clearCirculationRules();
         CirculationRules.fillInPriority();
@@ -184,8 +184,8 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C656: Ensure interface alerts user of syntax errors in rules',
-      { tags: ['criticalPath', 'vega'] },
+      'C656 Ensure interface alerts user of syntax errors in rules',
+      { tags: ['criticalPath', 'vega', 'C656'] },
       () => {
         CirculationRules.clearCirculationRules();
         CirculationRules.fillInPriority();

@@ -98,7 +98,7 @@ describe('Title Level Request', () => {
           userData1.barcode = userProperties.barcode;
           userData1.firstName = userProperties.firstName;
           userData1.patronGroup = userProperties.patronGroup;
-          userData1.fullName = `${userData1.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+          userData1.fullName = `${userData1.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
         });
 
         cy.createTempUser([Permissions.uiRequestsAll.gui])
@@ -109,7 +109,7 @@ describe('Title Level Request', () => {
             userData2.barcode = userProperties.barcode;
             userData2.firstName = userProperties.firstName;
             userData2.patronGroup = userProperties.patronGroup;
-            userData2.fullName = `${userData2.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData2.fullName = `${userData2.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -130,7 +130,10 @@ describe('Title Level Request', () => {
               servicePoint1.id,
             );
 
-            cy.login(userData1.username, userData1.password);
+            cy.login(userData1.username, userData1.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
@@ -155,7 +158,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350561 Check that the user can Duplicate request (Title level request) (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350561'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

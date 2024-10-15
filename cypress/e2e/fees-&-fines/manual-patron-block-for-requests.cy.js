@@ -112,8 +112,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C481: Verify that manual patron block for "Requests" blocks requests by patron (vega)',
-      { tags: ['extendedPath', 'vega'] },
+      'C481 Verify that manual patron block for "Requests" blocks requests by patron (vega)',
+      { tags: ['extendedPath', 'vega', 'C481'] },
       () => {
         cy.login(userData.user1.username, userData.user1.password);
         cy.visit(TopMenu.usersPath);

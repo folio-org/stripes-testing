@@ -47,7 +47,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C374700 Verify buttons layout editing manual Patron blocks (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C374700'] },
       () => {
         const testDescription = `test ${getRandomPostfix()} description filter`;
         const newTestDescription = `test ${getRandomPostfix()} changed description filter`;

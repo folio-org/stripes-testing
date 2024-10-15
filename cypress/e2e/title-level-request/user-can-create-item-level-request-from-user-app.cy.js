@@ -75,7 +75,7 @@ describe('Title Level Request', () => {
 
     it(
       'C350423 Check that user can create Item level request from User app (use Request accordion) (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C350423'] },
       () => {
         // Click on the Request on User page
         UsersCard.expandRequestSection();

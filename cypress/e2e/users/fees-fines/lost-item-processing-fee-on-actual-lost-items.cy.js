@@ -190,7 +190,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C365133 Verify ACTUAL COST lost items are being billed the "Lost item processing fee" when declared lost (vega)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C365133'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.userId);
         UsersSearchPane.openUser(testData.userId);

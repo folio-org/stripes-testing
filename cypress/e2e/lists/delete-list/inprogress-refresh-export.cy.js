@@ -39,7 +39,7 @@ describe('lists', () => {
 
     it(
       'C411770 Delete list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411770'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -57,7 +57,6 @@ describe('lists', () => {
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -66,7 +65,7 @@ describe('lists', () => {
 
     it(
       'C411771 Delete list: Export is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411771'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -86,7 +85,6 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });

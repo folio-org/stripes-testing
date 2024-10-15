@@ -30,6 +30,10 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C468258*');
+
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
 

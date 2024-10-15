@@ -35,7 +35,7 @@ describe('lists', () => {
 
     it(
       'C411705 Verify that created new list is visible on the "Lists" landing page (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411705'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -48,9 +48,8 @@ describe('lists', () => {
         Lists.selectVisibility('Shared');
         Lists.selectStatus('Active');
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });

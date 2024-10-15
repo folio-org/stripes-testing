@@ -112,7 +112,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C365613 Verify additional information in "Patron" column on the "Lost items requiring actual cost" page (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C365613'] },
       () => {
         // Click on "Actions" dropdown => Click "Lost items requiring actual cost" action
         UsersSearchPane.openLostItemsRequiringActualCostPane();

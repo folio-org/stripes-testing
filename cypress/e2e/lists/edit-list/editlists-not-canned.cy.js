@@ -39,7 +39,7 @@ describe('lists', () => {
 
     it(
       'C411737 Edit list: Refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411737'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -58,13 +58,12 @@ describe('lists', () => {
         Lists.verifyEditListButtonIsDisabled();
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
-        cy.reload();
       },
     );
 
     it(
       'C411738 Edit list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411738'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -85,13 +84,12 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyEditListButtonIsDisabled();
         Lists.closeListDetailsPane();
-        cy.reload();
       },
     );
 
     it(
       'C411734 Edit list: Make the list Inactive (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411734'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -108,7 +106,7 @@ describe('lists', () => {
         Lists.queryBuilderActions();
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
-        cy.contains(listData.name).click();
+        Lists.openList(listData.name);
         Lists.openActions();
         Lists.editList();
         Lists.selectStatus('Inactive');
@@ -121,7 +119,7 @@ describe('lists', () => {
       },
     );
 
-    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair', 'C411735'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
@@ -136,9 +134,7 @@ describe('lists', () => {
       Lists.selectStatus(listData.status[1]);
       Lists.saveList();
       Lists.closeListDetailsPane();
-      cy.wait(2000);
-      cy.contains(listData.name).click();
-      cy.wait(2000);
+      Lists.openList(listData.name);
       Lists.openActions();
       Lists.editList();
       Lists.selectStatus('Active');
@@ -146,8 +142,7 @@ describe('lists', () => {
       cy.contains(`List ${listData.name} saved.`);
       cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
       Lists.closeListDetailsPane();
-      cy.wait(2000);
-      cy.contains(listData.name).click();
+      Lists.openList(listData.name);
     });
   });
 });
