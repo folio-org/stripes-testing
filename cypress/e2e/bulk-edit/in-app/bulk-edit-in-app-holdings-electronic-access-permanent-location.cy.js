@@ -112,7 +112,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423499 Verify rendering Holdings electronic access properties while bulk edit Holdings permanent location  (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423499'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);

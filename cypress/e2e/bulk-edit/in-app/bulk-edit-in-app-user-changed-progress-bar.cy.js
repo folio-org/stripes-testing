@@ -35,7 +35,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409432 Verify progressbar starting bulk edit by changed identifiers_Users (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C409432'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);

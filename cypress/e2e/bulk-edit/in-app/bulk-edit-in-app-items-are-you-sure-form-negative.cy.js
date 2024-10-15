@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357067 Negative: Verify populating preview on the "Are you sure" form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C357067'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

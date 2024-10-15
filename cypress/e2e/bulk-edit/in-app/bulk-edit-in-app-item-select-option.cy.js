@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
 
     it(
       'C365616 Verify that In app bulk edit form for items records contains "Select option" placeholder for Options dropdown (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C365616'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

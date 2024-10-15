@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
     // TODO: implement the steps fully
     it(
       'C353943 Negative: Verify Local updating records with invalid data (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353943'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

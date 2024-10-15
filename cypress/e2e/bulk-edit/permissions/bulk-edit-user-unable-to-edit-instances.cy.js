@@ -45,7 +45,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423644 User with "Bulk Edit: In app - View inventory records" and "Inventory: View instances, holdings, and items" permissions is NOT able to start bulk edit of Instances (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423644'] },
       () => {
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPanesBeforeImport();

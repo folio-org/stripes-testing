@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380575 Verify that Expiration Date in "Are you sure" form is accurate (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C380575'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359216 Verify selection expiration date in the past (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C359216'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

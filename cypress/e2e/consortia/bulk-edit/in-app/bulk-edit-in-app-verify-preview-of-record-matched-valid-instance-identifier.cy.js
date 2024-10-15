@@ -110,7 +110,7 @@ describe('Bulk-edit', () => {
 
       it(
         'C476785 Identifier - Verify "Preview of record matched" when uploading valid Instance identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird'] },
+        { tags: ['smokeECS', 'firebird', 'C476785'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(firstInstanceUUIDsFileName);

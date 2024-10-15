@@ -94,7 +94,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423684 Verify "Preview of record matched" in case of uploading valid and invalid Instance identifiers (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423684'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.verifyRecordIdentifiers(instanceIdentifiers);

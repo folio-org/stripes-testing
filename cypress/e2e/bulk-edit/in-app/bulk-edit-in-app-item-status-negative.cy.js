@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357068 Negative: Verify Items status update (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C357068'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

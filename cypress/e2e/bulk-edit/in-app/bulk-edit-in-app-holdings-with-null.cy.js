@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380588 Verify bulk edit of Holdings record that contains NULL values in reference data (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C380588'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

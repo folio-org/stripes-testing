@@ -31,7 +31,7 @@ describe('Data Export', () => {
 
     it(
       'C345410 Search mapping profiles (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C345410'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.openTabFromDataExportSettingsList();

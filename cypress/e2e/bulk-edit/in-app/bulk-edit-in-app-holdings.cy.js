@@ -67,7 +67,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C360089'] },
       () => {
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');
         holdingsIdentifiers.forEach((identifier) => {
@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356810 Verify uploading file with holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C356810'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
@@ -100,7 +100,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C360120'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
@@ -137,7 +137,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C367975'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);

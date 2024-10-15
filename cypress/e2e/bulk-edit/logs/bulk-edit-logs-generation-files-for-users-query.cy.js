@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436916 Verify generated Logs files for Users (Query) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C436916'] },
       () => {
         BulkEditLogs.checkUsersCheckbox();
         BulkEditLogs.verifyLogStatus(userForBuildQuery.username, 'Data modification');

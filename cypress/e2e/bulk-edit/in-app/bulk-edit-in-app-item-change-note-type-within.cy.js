@@ -79,7 +79,7 @@ describe('bulk-edit', () => {
 
     it(
       'C405540 Verify Bulk Edit actions for Items notes - preserve the "Staff only" flag when change note type within the group (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C405540'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
