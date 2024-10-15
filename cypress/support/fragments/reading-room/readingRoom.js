@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { Button, KeyValue, Pane, PaneContent, TextField } from '../../../../interactors';
 
 const rootSection = PaneContent({ id: 'reading-room-content' });
@@ -16,7 +17,7 @@ function fillInPatronCard(userBarcode) {
 }
 
 function clickEnterButton() {
-  cy.do(Button({ type: 'submit' }).click());
+  cy.do(rootSection.find(Button('Enter')).click());
 }
 
 export default {
@@ -36,6 +37,37 @@ export default {
   },
   clickAllowedButton() {
     cy.get('#allow-access').click();
+  },
+  clickCancelButton() {
+    cy.get('#cancel').click();
+  },
+  getReadingRoomViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'reading-room/access-log',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        expect(response.status).equals(200);
+        return response;
+      });
+  },
+  allowAccessForUser(readingRoomId, readingRoomName, servicePointId, userId) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `reading-room/${readingRoomId}/access-log`,
+      body: {
+        readingRoomId,
+        readingRoomName,
+        userId,
+        patronId: userId,
+        action: 'ALLOWED',
+        servicePointId,
+        id: uuid(),
+      },
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   verifyUserIsScanned(userfirstName) {
@@ -65,7 +97,6 @@ export default {
       cy.expect([notAllowedButton.exists(), cancelButton.exists()]);
     }
   },
-
   verifyInformationAfterAction() {
     cy.expect(patronBarcodeField.has({ value: '' }));
     cy.get('[class^="borrowerDetails-"]').should('not.exist');
