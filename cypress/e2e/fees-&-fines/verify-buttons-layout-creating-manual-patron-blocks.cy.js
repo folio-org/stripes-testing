@@ -65,7 +65,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C374699 Verify buttons layout creating manual Patron blocks (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C374699'] },
       () => {
         UsersSearchPane.searchByKeywords(userData.barcode);
         UsersCard.startBlock();

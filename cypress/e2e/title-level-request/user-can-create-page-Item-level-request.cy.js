@@ -133,7 +133,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350422 Check that user can create "Page" Item level request (vega)',
-    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C350422'] },
     () => {
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();

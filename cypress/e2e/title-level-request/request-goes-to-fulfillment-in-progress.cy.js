@@ -86,8 +86,8 @@ describe('Check in and Request handling', () => {
   });
 
   it(
-    'C350426: Check that request goes to "Fulfillment in progress" if the items status has changed to "Awaiting pickup" (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    'C350426 Check that request goes to "Fulfillment in progress" if the items status has changed to "Awaiting pickup" (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C350426'] },
     () => {
       // Open Request detail page
       Requests.findCreatedRequest(testData.user.barcode);

@@ -156,7 +156,7 @@ describe('Circulation log', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C645: Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+    it('C645 Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'C645'] }, () => {
       const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
       // Navigate to checkout page
       cy.visit(TopMenu.checkOutPath);
@@ -169,7 +169,7 @@ describe('Circulation log', () => {
       );
     });
 
-    it('C646: Test "Weeks" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+    it('C646 Test "Weeks" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega', 'C646'] }, () => {
       const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
       // Navigate to checkout page
       cy.visit(TopMenu.checkOutPath);
@@ -182,7 +182,7 @@ describe('Circulation log', () => {
       );
     });
 
-    it('C647: Test "Months" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+    it('C647 Test "Months" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega', 'C647'] }, () => {
       const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
       // Navigate to checkout page
       cy.visit(TopMenu.checkOutPath);

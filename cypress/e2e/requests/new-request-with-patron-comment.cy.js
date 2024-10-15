@@ -82,7 +82,7 @@ describe('Requests', () => {
 
   it(
     'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C199704'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();

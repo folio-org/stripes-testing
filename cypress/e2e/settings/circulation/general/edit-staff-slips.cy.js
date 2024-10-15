@@ -13,7 +13,7 @@ describe('ui-circulation-settings: Edit Staff slip settings', () => {
 
   it(
     'C347901 Staff clips settings (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C347901'] },
     () => {
       EditStaffClips.editHold(editStaffClipsHold);
       EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);

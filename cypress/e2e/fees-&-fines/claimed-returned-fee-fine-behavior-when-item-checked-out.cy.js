@@ -99,7 +99,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C367982 Check that "Confirm" button on "Confirm item status: Claimed returned" modal became disabled after clicking on it (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C367982'] },
       () => {
         const declareLostComments = getTestEntityValue('Some additional information');
 

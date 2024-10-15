@@ -65,11 +65,11 @@ describe('Permissions', () => {
           });
 
           cy.wait(5000);
-          ChangePassword.typeNewPassword('a');
+          ChangePassword.typeNewPassword('aA1!');
           ChangePassword.verifyCurrentPasswordMessage(ChangePassword.messages.enterValue);
           ChangePassword.verifyNewPasswordMessage(ChangePassword.messages.notEnoughSymbols);
 
-          ChangePassword.typeConfirmPassword('b');
+          ChangePassword.typeConfirmPassword('bB1!');
           ChangePassword.verifyConfirmPasswordMessage(ChangePassword.messages.mismatch);
         },
       );

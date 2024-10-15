@@ -84,7 +84,7 @@ describe('Title Level Request', () => {
     });
   });
 
-  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'shiftLeft'] }, () => {
+  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'shiftLeft', 'C3533'] }, () => {
     TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
     CheckInActions.checkInItemGui(itemData.barcodes[0]);
     AwaitingPickupForARequest.unselectCheckboxPrintSlip();

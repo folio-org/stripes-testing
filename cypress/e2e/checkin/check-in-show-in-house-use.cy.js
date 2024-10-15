@@ -97,7 +97,7 @@ describe('Check in', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C9182 Check In: show in-house use (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+  it('C9182 Check In: show in-house use (vega) (TaaS)', { tags: ['extendedPath', 'vega', 'C9182'] }, () => {
     // Check in an item that's loaned (item A)
     CheckInActions.checkInItemGui(itemAData.barcode);
     CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);

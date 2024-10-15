@@ -136,15 +136,23 @@ export default {
     ]);
   },
   openTags() {
+    cy.wait(500);
     cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());
+    cy.wait(500);
+  },
+  clearTagsInput() {
+    cy.get('#input-tag-input').clear();
   },
   addTag(tag) {
+    cy.wait(1000);
     cy.do([
       TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag),
       MultiSelect().open(),
       MultiSelectOption(including(tag)).click(),
     ]);
+    cy.wait(500);
     InteractorsTools.checkCalloutMessage('New tag created');
+    cy.wait(1000);
   },
   addHoldingsNotes: (text, type = 'Action note') => {
     cy.do([

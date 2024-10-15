@@ -52,7 +52,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C418651 Lists (Enable): Can view lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C418651 Lists (Enable): Can view lists (corsair)', { tags: ['smoke', 'corsair', 'C418651'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
