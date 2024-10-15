@@ -341,6 +341,7 @@ export default {
 
   checkItemsRadio() {
     cy.do(itemsRadio.click());
+    cy.wait(500);
   },
 
   itemsRadioIsDisabled(isDisabled) {
@@ -353,6 +354,7 @@ export default {
 
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
+    cy.wait(500);
   },
 
   holdingsRadioIsDisabled(isDisabled) {

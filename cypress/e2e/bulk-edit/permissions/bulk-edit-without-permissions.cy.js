@@ -38,8 +38,8 @@ describe('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(user.username, user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-        BulkEditSearchPane.verifyNoPermissionWarning();
+        cy.wait(1000);
+        TopMenuNavigation.verifyNavigationItemAbsentOnTheBar(APPLICATION_NAMES.BULK_EDIT);
       },
     );
 
