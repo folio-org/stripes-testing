@@ -43,7 +43,7 @@ describe('lists', () => {
       Lists.openActions();
       Lists.deleteList();
       Lists.confirmDelete();
-      cy.contains(`List ${listData.name} deleted.`);
+      Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
     });
 
     it(
@@ -66,7 +66,7 @@ describe('lists', () => {
         Lists.openActions();
         Lists.deleteList();
         Lists.confirmDelete();
-        cy.contains(`List ${listData.name} deleted.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
       },
     );
   });

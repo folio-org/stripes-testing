@@ -29,15 +29,15 @@ describe('lists', () => {
     });
 
     it('C411769 Delete list: Canned reports (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.resetAllFilters();
       Lists.openExpiredPatronLoanList();
       Lists.openActions();
       Lists.verifyEditListButtonIsDisabled();
       Lists.closeListDetailsPane();
-      cy.wait(2000);
       Lists.missingItems();
       Lists.verifyEditListButtonIsDisabled();
     });

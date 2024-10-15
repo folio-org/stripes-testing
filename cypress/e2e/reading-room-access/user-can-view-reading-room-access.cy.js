@@ -13,6 +13,7 @@ describe('Reading Room Access', () => {
     firstReadingRoomName: `Autotest_Reading_Room${getRandomPostfix()}`,
     secondReadingRoomId: uuid(),
     thirdReadingRoomId: uuid(),
+    isPublic: false,
   };
 
   before('Create test data', () => {
@@ -24,7 +25,7 @@ describe('Reading Room Access', () => {
         testData.firstServicePoint.id,
         testData.firstServicePoint.name,
         testData.firstReadingRoomId,
-        false,
+        testData.isPublic,
         testData.firstReadingRoomName,
       );
     });
