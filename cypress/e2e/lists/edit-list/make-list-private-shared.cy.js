@@ -107,7 +107,7 @@ describe('lists', () => {
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility('Private');
       Lists.saveList();
-      cy.contains(`List ${listData.name} saved.`);
+      Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
       Lists.closeListDetailsPane();
       cy.wait(3000);
       // User B logs in to make sure that 'Shared' list is not visible
@@ -122,7 +122,7 @@ describe('lists', () => {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
       });
-      cy.contains(listData.name).click();
+      Lists.openList(listData.name);
       Lists.openActions();
       Lists.editList();
       Lists.selectVisibility('Shared');
@@ -136,7 +136,7 @@ describe('lists', () => {
       });
       Lists.resetAllFilters();
       Lists.selectSharedLists();
-      cy.contains(listData.name).should('be.visible');
+      Lists.verifyListIsPresent(listData.name);
     });
   });
 });

@@ -20,16 +20,17 @@ describe('Inventory', () => {
     const testData = {
       classificationOption: 'Dewey Decimal classification',
       querySearchOption: 'Query search',
-      searchQuery: '974.7004975542',
+      negativeSearchQuery: '974.70049755423123',
+      positiveSearchQuery: '974.7004975542',
       instanceTitle:
-        'C468141 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
+        'C468145 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
       classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
     };
 
     const marcFile = {
-      marc: 'marcBibFileForC468141.mrc',
-      fileName: `testMarcFileC468141.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC468145.mrc',
+      fileName: `testMarcFileC468145.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
@@ -38,10 +39,14 @@ describe('Inventory', () => {
 
     const verifySearchResult = () => {
       BrowseClassifications.verifySearchResultsTable();
-      InventorySearchAndFilter.verifySearchResultIncludingValue(testData.searchQuery);
-      BrowseClassifications.verifyResultAndItsRow(5, testData.searchQuery);
-      BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.searchQuery);
-      BrowseClassifications.verifyNumberOfTitlesInRow(5, '1');
+      InventorySearchAndFilter.verifySearchResultIncludingValue(
+        `${testData.negativeSearchQuery}would be here`,
+      );
+      BrowseClassifications.verifyResultAndItsRow(
+        5,
+        `${testData.negativeSearchQuery}would be here`,
+      );
+      BrowseClassifications.verifyNumberOfTitlesInRow(5, '');
       BrowseClassifications.verifyRowExists(4);
       BrowseClassifications.verifyRowExists(6);
     };
@@ -49,7 +54,7 @@ describe('Inventory', () => {
     before(() => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      InventoryInstances.deleteInstanceByTitleViaApi('C468141*');
+      InventoryInstances.deleteInstanceByTitleViaApi('C468145*');
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
@@ -107,18 +112,19 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
+      'C468145 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
         );
-        InventorySearchAndFilter.browseSearch(testData.searchQuery);
+        InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
         verifySearchResult();
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
+        BrowseClassifications.clickOnSearchResult(`${testData.negativeSearchQuery}would be here`);
+        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.positiveSearchQuery);
         InventorySearchAndFilter.verifySearchOptionAndQuery(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.searchQuery}"`,
+          `classifications.classificationNumber=="${testData.positiveSearchQuery}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
