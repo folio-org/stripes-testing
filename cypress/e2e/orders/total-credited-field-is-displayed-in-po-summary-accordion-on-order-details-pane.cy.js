@@ -21,6 +21,7 @@ import {
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import OrderDetails from '../../support/fragments/orders/orderDetails';
 
 describe('Orders', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -43,27 +44,31 @@ describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const firstBudget = {
     ...Budgets.getDefaultBudget(),
-    allocated: 1000,
+    allocated: 100,
   };
   const secondBudget = {
     ...Budgets.getDefaultBudget(),
-    allocated: 1000,
+    allocated: 100,
   };
   let orderNumber;
   let user;
   let servicePointId;
   let location;
   let firstInvoice;
+  let secondInvoice;
 
   before(() => {
     cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       firstBudget.fiscalYearId = firstFiscalYearResponse.id;
+      secondBudget.fiscalYearId = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
@@ -77,6 +82,7 @@ describe('Orders', () => {
 
             ServicePoints.getViaApi().then((servicePoint) => {
               servicePointId = servicePoint[0].id;
+
               NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
                 (res) => {
                   location = res;
@@ -94,14 +100,15 @@ describe('Orders', () => {
                           const firstOrderLine = {
                             ...BasicOrderLine.defaultOrderLine,
                             cost: {
-                              listUnitPrice: 100.0,
+                              listUnitPrice: 15.0,
                               currency: 'USD',
                               discountType: 'percentage',
                               quantityPhysical: 1,
-                              poLineEstimatedPrice: 100.0,
+                              poLineEstimatedPrice: 15.0,
                             },
                             fundDistribution: [
-                              { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                              { code: firstFund.code, fundId: firstFund.id, value: 70 },
+                              { code: secondFund.code, fundId: secondFund.id, value: 30 },
                             ],
                             locations: [
                               { locationId: location.id, quantity: 1, quantityPhysical: 1 },
@@ -114,14 +121,33 @@ describe('Orders', () => {
                               volumes: [],
                             },
                           };
+
                           Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
                             firstOrder.id = firstOrderResponse.id;
                             firstOrderLine.purchaseOrderId = firstOrderResponse.id;
                             orderNumber = firstOrderResponse.poNumber;
                             OrderLines.createOrderLineViaApi(firstOrderLine);
+
                             Orders.updateOrderViaApi({
                               ...firstOrderResponse,
                               workflowStatus: ORDER_STATUSES.OPEN,
+                            });
+
+                            Invoices.createInvoiceWithInvoiceLineViaApi({
+                              vendorId: organization.id,
+                              fiscalYearId: firstFiscalYear.id,
+                              poLineId: firstOrderLine.id,
+                              fundDistributions: firstOrderLine.fundDistribution,
+                              accountingCode: organization.erpCode,
+                              releaseEncumbrance: true,
+                              subTotal: 10.5,
+                            }).then((invoiceRescponse) => {
+                              firstInvoice = invoiceRescponse;
+
+                              Invoices.changeInvoiceStatusViaApi({
+                                invoice: firstInvoice,
+                                status: INVOICE_STATUSES.PAID,
+                              });
                             });
                             Invoices.createInvoiceWithInvoiceLineViaApi({
                               vendorId: organization.id,
@@ -130,12 +156,12 @@ describe('Orders', () => {
                               fundDistributions: firstOrderLine.fundDistribution,
                               accountingCode: organization.erpCode,
                               releaseEncumbrance: true,
-                              subTotal: 100,
-                            }).then((invoiceRescponse) => {
-                              firstInvoice = invoiceRescponse;
+                              subTotal: -4.5,
+                            }).then((secondInvoiceRescponse) => {
+                              secondInvoice = secondInvoiceRescponse;
 
                               Invoices.changeInvoiceStatusViaApi({
-                                invoice: firstInvoice,
+                                invoice: secondInvoice,
                                 status: INVOICE_STATUSES.PAID,
                               });
                             });
@@ -172,6 +198,12 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
+      OrderDetails.checkOrderDetails({
+        summary: [
+          { key: 'Total expended', value: '$10.50' },
+          { key: 'Total credited', value: '$4.50' },
+        ],
+      });
     },
   );
 });
