@@ -168,8 +168,8 @@ describe('Request queue. TLR', () => {
     );
   });
   it(
-    'C350682 Check that item checked in fulfills the TLR recall at the top of the queue (vega) (Taas)',
-    { tags: ['criticalPath', 'vega'] },
+    'C350682 Check that item checked in fulfills the TLR recall at the top of the queue (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'C350682'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       InventoryInstance.checkNewRequestAtNewPane();

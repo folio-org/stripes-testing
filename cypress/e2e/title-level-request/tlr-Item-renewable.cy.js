@@ -275,8 +275,8 @@ describe('TLR: Item renew', () => {
   });
 
   it(
-    'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
-    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
+    'C360533 TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C360533'] },
     () => {
       cy.login(userForRenew.username, userForRenew.password, {
         path: TopMenu.requestsPath,
@@ -310,7 +310,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C360534'] },
     () => {
       cy.login(userForRenew.username, userForRenew.password, {
         path: TopMenu.requestsPath,

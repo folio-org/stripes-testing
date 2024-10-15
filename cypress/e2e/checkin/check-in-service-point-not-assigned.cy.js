@@ -86,8 +86,8 @@ describe('Check in', () => {
   });
 
   it(
-    "C588 Check in: at service point not assigned to item's effective location (vega) (TaaS)",
-    { tags: ['criticalPath', 'vega'] },
+    'C588 Check in: at service point not assigned to item\'s effective location (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'C588'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();

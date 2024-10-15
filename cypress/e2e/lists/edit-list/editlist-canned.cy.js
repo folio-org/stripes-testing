@@ -28,7 +28,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411731 Edit list: Canned reports (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
+    it('C411731 Edit list: Canned reports (corsair)', { tags: ['smokeFlaky', 'corsair', 'C411731'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,

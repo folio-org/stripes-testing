@@ -101,7 +101,7 @@ describe('Requests', () => {
 
   it(
     'C557 Complete request workflow steps to validate status change and filtering (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C557'] },
     () => {
       // Check in Item for which the request was created
       CheckInActions.checkInItemGui(itemData.barcodes[0]);

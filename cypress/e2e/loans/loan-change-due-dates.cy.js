@@ -102,7 +102,7 @@ describe('Loans', () => {
     });
     it(
       'C581 Loan Details: Test change due date (Vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C581'] },
       () => {
         const itemBarcode = folioInstances[0].barcodes[0];
         cy.visit(TopMenu.usersPath);

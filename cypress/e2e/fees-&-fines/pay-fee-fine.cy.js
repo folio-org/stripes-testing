@@ -101,7 +101,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C456 Verify behavior when "Pay" button pressed from Fee/Fine History page with 1 fee/fine selected (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C456'] },
       () => {
         // Go to User Information for your test patron
         UsersSearchPane.searchByKeywords(userData.username);
@@ -126,7 +126,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C457 Verify behavior when "Pay" ellipsis option selected from Fee/Fine History page (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C457'] },
       () => {
         // Go to User Information for your test patron
         cy.visit(TopMenu.usersPath);
@@ -153,7 +153,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C458 Verify behavior when "Pay" button pressed from Fee/Fine Details page (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C458'] },
       () => {
         //  Go to User Information for your test patron
         cy.visit(TopMenu.usersPath);
@@ -181,7 +181,7 @@ describe('Fees&Fines', () => {
     it(
       'C460 Verify "Pay fee/fine" behavior when comments not required (vega) (TaaS)',
       {
-        tags: ['extendedPath', 'vega'],
+        tags: ['extendedPath', 'vega', 'C460'],
       },
       () => {
         cy.visit(SettingsMenu.commentRequired);
@@ -213,7 +213,7 @@ describe('Fees&Fines', () => {
     it(
       'C461 Verify "Pay fee/fine" behavior when "Require comment when fee/fine fully/partially paid" is set to Yes (vega) (TaaS)',
       {
-        tags: ['extendedPath', 'vega'],
+        tags: ['extendedPath', 'vega', 'C461'],
       },
       () => {
         cy.visit(SettingsMenu.commentRequired);

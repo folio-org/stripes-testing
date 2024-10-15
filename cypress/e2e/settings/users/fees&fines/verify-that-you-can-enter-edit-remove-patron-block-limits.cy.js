@@ -25,7 +25,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C11079 Verify that you can enter/edit/remove patron block limits (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C11079'] },
       () => {
         Limits.selectGroup(patronGroup.name);
         Limits.verifyLimitTypes();

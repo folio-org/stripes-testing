@@ -178,7 +178,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350557 Check that the user directed to Request queue with correct number of requests displayed (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350557'] },
     () => {
       // From the Request detail page of last request, look at the Position in queue field
       Requests.findCreatedRequest(instanceData.instanceTitle);

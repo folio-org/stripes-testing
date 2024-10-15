@@ -99,7 +99,7 @@ describe('Accessibility', () => {
   it(
     'C8358 Verify checkin note is readable with screenreader (vega) (TaaS)',
     {
-      tags: ['criticalPath', 'vega'],
+      tags: ['criticalPath', 'vega', 'C8358'],
     },
     () => {
       // Checkin item

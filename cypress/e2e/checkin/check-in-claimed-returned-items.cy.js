@@ -152,7 +152,7 @@ describe('Check in', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it('C10974 Check In: claimed returned items (vega)', { tags: ['criticalPath', 'vega'] }, () => {
+  it('C10974 Check In: claimed returned items (vega)', { tags: ['criticalPath', 'vega', 'C10974'] }, () => {
     cy.login(userData.username, userData.password, {
       path: TopMenu.checkInPath,
       waiter: CheckInActions.waitLoading,

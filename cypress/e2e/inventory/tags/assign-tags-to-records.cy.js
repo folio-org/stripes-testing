@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -9,6 +9,7 @@ import Location from '../../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -56,8 +57,9 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.inventoryPath);
+      // cy.login(userData.username, userData.password);
+      // cy.visit(TopMenu.inventoryPath);
+      cy.login(userData.username, userData.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
     });
 
     after('Deleting created entities', () => {
@@ -88,15 +90,14 @@ describe('Inventory', () => {
         HoldingsRecordEdit.openTags();
         HoldingsRecordEdit.addTag(tagName);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.filterByTag(tagName);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         JobProfileView.removeTag(tagName);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToHoldings();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.verifyTagIsAbsent(tagName);
       },
     );
@@ -105,21 +106,22 @@ describe('Inventory', () => {
       'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
       { tags: ['extendedPath', 'volaris'] },
       () => {
-        const tags = [...Array(5)].map((_, index) => `tag${index + 1}${uuid()}`);
+        const tags = [...Array(5)].map(() => `tag${getRandomStringCode(10)}`.toLowerCase());
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
           cy.wait(2000);
+          HoldingsRecordEdit.clearTagsInput();
+          cy.wait(500);
           HoldingsRecordEdit.addTag(tag);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventoryInstance.openHoldingView();
-        HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
           cy.wait(2000);
           JobProfileView.removeTag(tag);
@@ -140,16 +142,14 @@ describe('Inventory', () => {
         HoldingsRecordEdit.openTags();
         HoldingsRecordEdit.addTag(tagName);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.filterByTag(tagName);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.folioInstances[0].barcodes[0]);
-        HoldingsRecordEdit.openTags();
         JobProfileView.removeTag(tagName);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToItem();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.verifyTagIsAbsent(tagName);
       },
     );

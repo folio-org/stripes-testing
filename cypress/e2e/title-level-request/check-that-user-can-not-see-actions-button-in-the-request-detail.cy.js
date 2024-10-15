@@ -86,7 +86,7 @@ describe('Title level Request', () => {
   // Tests changes TLR settings for the whole suite!
   it(
     'C350530 Check that user can not see Actions button in the Request detail if all request closed and Title level request option closed (vega) (TaaS)',
-    { tags: ['extendedPathBroken', 'vega'] },
+    { tags: ['extendedPathBroken', 'vega', 'C350530'] },
     () => {
       // Open Request detail page for Title level request
       Requests.findCreatedRequest(testData.user.barcode);

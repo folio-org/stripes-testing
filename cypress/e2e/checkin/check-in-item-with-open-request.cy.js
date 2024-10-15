@@ -205,7 +205,7 @@ describe('Check in', () => {
   });
   it(
     'C7148 Check In: item with at least one open request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C7148'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkInPath,
