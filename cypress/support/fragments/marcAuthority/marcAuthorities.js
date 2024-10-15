@@ -889,6 +889,26 @@ export default {
     ]);
   },
 
+  checkAuthoritySourceOptionsInPlugInModal() {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect([
+      MultiSelectOption(including('LC Name Authority file (LCNAF)')).exists(),
+      MultiSelectOption(including('LC Subject Headings (LCSH)')).exists(),
+      MultiSelectOption(including("LC Children's Subject Headings")).exists(),
+      MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')).exists(),
+      MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')).exists(),
+      MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')).exists(),
+      MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)')).exists(),
+      MultiSelectOption(including('Medical Subject Headings (MeSH)')).exists(),
+      MultiSelectOption(including('Thesaurus for Graphic Materials (TGM)')).exists(),
+      MultiSelectOption(including('Rare Books and Manuscripts Section (RBMS)')).exists(),
+      MultiSelectOption(including('Art & architecture thesaurus (AAT)')).exists(),
+      MultiSelectOption(including('GSAFD Genre Terms (GSAFD)')).exists(),
+      MultiSelectOption(including('Not specified')).exists(),
+      MultiSelectOption({ innerHTML: including('class="totalRecordsLabel') }).exists(),
+    ]);
+  },
+
   checkResultsListRecordsCountLowerThan(totalRecord) {
     this.waitLoading();
     cy.intercept('GET', '/search/authorities?*').as('getItems');
@@ -910,6 +930,10 @@ export default {
   },
 
   checkSelectedAuthoritySource(option) {
+    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
+  },
+
+  checkSelectedAuthoritySourceInPlugInModal(option) {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
   },
 
@@ -1252,6 +1276,11 @@ export default {
   checkTotalRecordsForOption(option, totalRecords) {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
+  },
+
+  checkTotalRecordsForOptionInPlugInModal(option, totalRecords) {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect(MultiSelectOption(including(option)).has({ totalRecords }));
   },
 
   verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
