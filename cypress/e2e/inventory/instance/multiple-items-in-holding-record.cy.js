@@ -1,6 +1,7 @@
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { InventoryInstances } from '../../../support/fragments/inventory';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -69,7 +70,7 @@ describe('Inventory', () => {
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.folioInstances[0].instanceTitle);
-        const InventoryInstance = InventoryInstances.selectInstance();
+        InventoryInstances.selectInstance();
 
         testData.locations.forEach((location) => {
           // Number of associated Item records indicated by a number
