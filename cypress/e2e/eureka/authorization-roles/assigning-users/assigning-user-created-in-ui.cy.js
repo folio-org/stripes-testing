@@ -66,7 +66,7 @@ describe('Eureka', () => {
 
         it(
           'C451629 Assigning new user created in UI for an existing authorization role (eureka)',
-          { tags: ['criticalPath', 'eureka'] },
+          { tags: ['criticalPath', 'eureka', 'C451629'] },
           () => {
             const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';
             Users.clickNewButton();

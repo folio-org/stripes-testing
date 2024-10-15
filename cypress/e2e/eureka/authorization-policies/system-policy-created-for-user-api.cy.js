@@ -40,7 +40,7 @@ describe('Eureka', () => {
 
       it(
         'C514999 Verify "system" policy is created for a user after capabilities assignment (eureka)',
-        { tags: ['criticalPath', 'eureka'] },
+        { tags: ['criticalPath', 'eureka', 'C514999'] },
         () => {
           cy.getToken(testData.userA.username, testData.userA.password);
           cy.getAuthorizationPoliciesForEntityApi(

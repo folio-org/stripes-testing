@@ -87,7 +87,7 @@ describe('Eureka', () => {
 
       it(
         'C431152 Assigning capabilities after role name edited (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C431152'] },
         () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);

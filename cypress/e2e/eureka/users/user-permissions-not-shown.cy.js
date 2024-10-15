@@ -42,7 +42,7 @@ describe('Eureka', () => {
 
     it(
       'C442842 "User permissions" accordion is NOT shown when viewing/creating/editing user profile (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C442842'] },
       () => {
         const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';
         Users.clickNewButton();

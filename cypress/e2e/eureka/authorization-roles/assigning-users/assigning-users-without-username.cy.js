@@ -97,7 +97,7 @@ describe('Eureka', () => {
 
         it(
           'C584420 Assigning users without username for an existing authorization role (eureka)',
-          { tags: ['criticalPath', 'eureka'] },
+          { tags: ['criticalPath', 'eureka', 'C584420'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleAName);
             AuthorizationRoles.clickOnRoleName(testData.roleAName, false);

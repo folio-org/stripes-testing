@@ -99,7 +99,7 @@ describe('Eureka', () => {
 
       it(
         'C423998 Creating new authorization role (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C423998'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);

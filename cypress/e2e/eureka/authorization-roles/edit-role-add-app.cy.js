@@ -164,7 +164,7 @@ describe('Eureka', () => {
 
       it(
         'C496128 Adding application when editing authorization role',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS', 'C496128'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

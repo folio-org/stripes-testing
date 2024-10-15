@@ -63,7 +63,7 @@ describe('Eureka', () => {
 
       it(
         'C514991 Verify "source" field for authorization policy cannot be updated (eureka)',
-        { tags: ['criticalPath', 'eureka'] },
+        { tags: ['criticalPath', 'eureka', 'C514991'] },
         () => {
           cy.getToken(testData.tempUser.username, testData.tempUser.password);
           cy.createAuthorizationPolicyApi(policyABody).then((response1) => {

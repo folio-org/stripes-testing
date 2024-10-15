@@ -181,7 +181,7 @@ describe('Eureka', () => {
 
       it(
         'C436929 Editing existing authorization role (not updating capabilities)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS', 'C436929'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

@@ -134,7 +134,7 @@ describe('Eureka', () => {
 
       it(
         'C436928 Creating new authorization role (adding only capability sets) (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C436928'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);

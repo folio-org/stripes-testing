@@ -131,7 +131,7 @@ describe('Eureka', () => {
 
       it(
         'C464313 Verify capabilities shown for a role created via API with only capability set assigned (eureka)',
-        { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C464313'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

@@ -64,7 +64,7 @@ describe('Eureka', () => {
 
     it(
       'C451631 Promoting a user without Keycloak record to AuthUser via API (eureka)',
-      { tags: ['criticalPath', 'eureka'] },
+      { tags: ['criticalPath', 'eureka', 'C451631'] },
       () => {
         cy.getAdminToken();
         cy.checkIfUserHasKeycloakApi(testData.userAId).then(({ status, body }) => {
@@ -100,7 +100,7 @@ describe('Eureka', () => {
 
     it(
       'C451632 Promoting a user already having a Keycloak record to AuthUser via API (eureka)',
-      { tags: ['criticalPath', 'eureka'] },
+      { tags: ['criticalPath', 'eureka', 'C451632'] },
       () => {
         cy.getAdminToken();
         cy.checkIfUserHasKeycloakApi(testData.userCId).then(({ status }) => {

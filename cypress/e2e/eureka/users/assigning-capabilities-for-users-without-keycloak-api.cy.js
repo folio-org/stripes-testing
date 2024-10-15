@@ -72,7 +72,7 @@ describe('Eureka', () => {
 
     it(
       'C451628 Assigning capabilities/sets for users not having Keycloak records via API (eureka)',
-      { tags: ['criticalPath', 'eureka'] },
+      { tags: ['criticalPath', 'eureka', 'C451628'] },
       () => {
         cy.getAdminToken();
         cy.addCapabilitiesToNewUserApi(testData.userAId, testData.capabilityIds).then(

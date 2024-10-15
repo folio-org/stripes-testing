@@ -49,7 +49,7 @@ describe('Eureka', () => {
 
       it(
         'C449377 List of entitled applications retrieved properly on Central and Member tenants (consortia) (eureka)',
-        { tags: ['smokeECS', 'eureka'] },
+        { tags: ['smokeECS', 'eureka', 'C449377'] },
         () => {
           cy.resetTenant();
           cy.intercept('GET', testData.appCallRegexpCentral).as('appCallCentral');

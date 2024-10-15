@@ -95,7 +95,7 @@ describe('Eureka', () => {
 
       it(
         'C430265 Selecting/deselecting applications when editing authorization role (no capabilities selected)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaSnapshotECS', 'C430265'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

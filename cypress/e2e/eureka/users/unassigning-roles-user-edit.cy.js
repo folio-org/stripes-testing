@@ -121,7 +121,7 @@ describe('Eureka', () => {
 
     it(
       'C466114 Unassigning roles when editing user (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C466114'] },
       () => {
         UsersCard.verifyUserRolesCounter('4');
         UserEdit.openEdit();

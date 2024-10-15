@@ -170,7 +170,7 @@ describe('Eureka', () => {
 
       it(
         'C553051 Unassign all capabilities/sets from existing role using dedicated button (eureka)',
-        { tags: ['criticalPath', 'eureka'] },
+        { tags: ['criticalPath', 'eureka', 'C553051'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleAName);
           AuthorizationRoles.clickOnRoleName(testData.roleAName);

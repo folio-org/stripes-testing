@@ -74,7 +74,7 @@ describe('Eureka', () => {
 
         it(
           'C451622 Assigning users not having Keycloak records for an existing authorization role via API (eureka)',
-          { tags: ['criticalPath', 'eureka'] },
+          { tags: ['criticalPath', 'eureka', 'C451622'] },
           () => {
             cy.getAdminToken();
             cy.addRolesToNewUserApi(testData.userAId, [testData.roleId]).then((response) => {

@@ -92,7 +92,7 @@ describe('Eureka', () => {
 
         it(
           'C499896 Assigning users with/without Keycloak record for an existing authorization role (eureka)',
-          { tags: ['criticalPath', 'eureka'] },
+          { tags: ['criticalPath', 'eureka', 'C499896'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName, false);

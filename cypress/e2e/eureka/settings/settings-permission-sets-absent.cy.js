@@ -16,7 +16,7 @@ describe('Eureka', () => {
 
     it(
       'C468196 "Permission sets" tab is NOT shown in "Settings" -> "Users" (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C468196'] },
       () => {
         tabsPresent.forEach((presentTab) => {
           UsersSettingsGeneral.checkUsersPaneTabPresent(presentTab);

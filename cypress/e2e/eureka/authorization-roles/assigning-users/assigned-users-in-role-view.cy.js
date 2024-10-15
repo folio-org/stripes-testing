@@ -67,7 +67,7 @@ describe('Eureka', () => {
 
       it(
         'C442816 Viewing authorization role with users assigned (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C442816'] },
         () => {
           const usersCallRegExp = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleId}`,

@@ -12,6 +12,7 @@ describe('Eureka - Clear All Cookies', () => {
         'smokeECS',
         'criticalPathECS',
         'extendedPathECS',
+        'eurekaPreTest',
       ],
     },
     () => {

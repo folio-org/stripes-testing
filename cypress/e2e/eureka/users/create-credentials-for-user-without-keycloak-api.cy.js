@@ -56,7 +56,7 @@ describe('Eureka', () => {
 
     it(
       'C451626 Creating credentials for a user not having Keycloak record via API (eureka)',
-      { tags: ['criticalPath', 'eureka'] },
+      { tags: ['criticalPath', 'eureka', 'C451626'] },
       () => {
         cy.getAdminToken();
         cy.setUserPassword({

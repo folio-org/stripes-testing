@@ -66,7 +66,7 @@ describe('Eureka', () => {
 
       it(
         'C464307 "General Information" accordion is properly populated when creating/updating a role (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C464307'] },
         () => {
           let createdDateTime;
           let updatedDateTime;

@@ -216,7 +216,7 @@ describe('Eureka', () => {
 
       it(
         'C424001 Viewing/editing existing authorization role',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C424001'] },
         () => {
           const roleViewUrl = `${Cypress.config().baseUrl}${TopMenu.settingsAuthorizationRoles}/${
             testData.roleId

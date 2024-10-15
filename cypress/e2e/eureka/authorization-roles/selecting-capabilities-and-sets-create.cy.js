@@ -106,7 +106,7 @@ describe('Eureka', () => {
 
       it(
         'C434129 Verify capabilities selected/deselected when selecting/deselecting a capability set when creating a role (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C434129'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.verifyEmptyCapabilitiesAccordion();

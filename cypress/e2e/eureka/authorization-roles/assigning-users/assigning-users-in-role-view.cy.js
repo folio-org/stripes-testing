@@ -70,7 +70,7 @@ describe('Eureka', () => {
 
       it(
         'C442836 Assigning user to an authorization role which does not have users assigned (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C442836'] },
         () => {
           const usersCallRegExpGet = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleAId}`,

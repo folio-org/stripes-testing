@@ -7,7 +7,7 @@ describe('Eureka', () => {
 
     it(
       'C423957 Access token not shown in request body when logging in (eureka)',
-      { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C423957'] },
       () => {
         cy.intercept('GET', tokenCallRegExp).as('tokenCall');
         cy.intercept('GET', samlCallRegExp).as('samlCall');

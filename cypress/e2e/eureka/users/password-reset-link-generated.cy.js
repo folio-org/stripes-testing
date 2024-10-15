@@ -54,7 +54,7 @@ describe('Eureka', () => {
 
     it(
       'C434077 Password reset link can be generated when editing user profile (eureka)',
-      { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C434077'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userA.username);
         UsersSearchPane.selectUserFromList(testData.userA.username);

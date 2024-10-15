@@ -43,7 +43,7 @@ describe('Eureka', () => {
 
       it(
         'C423999 Creating new authorization role (only name/description specified) (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C423999'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.verifyEmptyCapabilitiesAccordion();

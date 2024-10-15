@@ -144,7 +144,7 @@ describe('Eureka', () => {
 
       it(
         'C503019 Verify capabilities selected/deselected when selecting/deselecting a capability set when editing a role (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C503019'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

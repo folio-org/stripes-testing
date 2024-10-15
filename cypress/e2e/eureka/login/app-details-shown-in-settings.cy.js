@@ -37,7 +37,7 @@ describe('Eureka', () => {
 
     it(
       'C431150 Details for all available applications shown in "Settings" / "Software versions" (eureka)',
-      { tags: ['smoke', 'eureka'] },
+      { tags: ['smoke', 'eureka', 'C431150'] },
       () => {
         cy.login(tempUser.username, tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_ABOUT);

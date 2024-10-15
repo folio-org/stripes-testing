@@ -39,7 +39,7 @@ describe('Eureka', () => {
 
       it(
         'C523660 Assigning capabilities to a role/user via API (eureka)',
-        { tags: ['criticalPath', 'eureka'] },
+        { tags: ['criticalPath', 'eureka', 'C523660'] },
         () => {
           cy.getAdminToken();
           cy.addCapabilitiesToNewRoleApi(testData.roleAId, [
@@ -116,7 +116,7 @@ describe('Eureka', () => {
 
       it(
         'C523661 Assigning capability sets to a role/user via API (eureka)',
-        { tags: ['criticalPath', 'eureka'] },
+        { tags: ['criticalPath', 'eureka', 'C523661'] },
         () => {
           cy.getAdminToken();
           cy.addCapabilitySetsToNewRoleApi(testData.roleBId, testData.capabSetIds).then(

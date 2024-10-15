@@ -71,7 +71,7 @@ describe('Eureka', () => {
 
       it(
         'C442837 Assigning/unassigning users for an existing authorization role (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C442837'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

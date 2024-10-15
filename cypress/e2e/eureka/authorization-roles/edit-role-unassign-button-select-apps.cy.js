@@ -162,7 +162,7 @@ describe('Eureka', () => {
 
       it(
         'C553052 Unassign all capabilities/sets from existing role using dedicated button (selected and deselected applications) (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaSnapshotECS'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaSnapshotECS', 'C553052'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

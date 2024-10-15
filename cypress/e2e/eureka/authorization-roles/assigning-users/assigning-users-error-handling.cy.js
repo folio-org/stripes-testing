@@ -82,7 +82,7 @@ describe('Eureka', () => {
 
       it(
         'C491278 Error toast notifications shown upon errors when assigning/unassigning users for roles (eureka)',
-        { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C491278'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleAName);
           AuthorizationRoles.clickOnRoleName(testData.roleAName);

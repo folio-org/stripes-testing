@@ -57,7 +57,7 @@ describe('Eureka', () => {
 
       it(
         'C434130 Loading animation is shown when loading capabilities upon authorization role creation/editing (eureka)',
-        { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C434130'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);

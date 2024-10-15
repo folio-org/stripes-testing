@@ -95,7 +95,7 @@ describe('Eureka', () => {
 
     it(
       'C464314 Assigned roles shown in user detailed view (eureka)',
-      { tags: ['criticalPath', 'eureka', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C464314'] },
       () => {
         UsersSearchPane.selectUserFromList(testData.userB.username);
         UsersCard.verifyUserRolesCounter('1');

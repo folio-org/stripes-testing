@@ -74,7 +74,7 @@ describe('Eureka', () => {
 
       it(
         'C451613 Assigning/unassigning a user for a role after username changed (eureka)',
-        { tags: ['extendedPath', 'eureka', 'eurekaPhase1'] },
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C451613'] },
         () => {
           const usersCallRegExpGetA = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleAId}`,
