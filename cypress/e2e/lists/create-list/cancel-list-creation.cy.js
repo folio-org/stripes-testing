@@ -44,7 +44,7 @@ describe('lists', () => {
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.cancelList();
-        Lists.cancelListPopup();
+        Lists.verifyCancellationModal();
         Lists.keepEditing();
         cy.url().should('include', '/new');
         Lists.cancelList();

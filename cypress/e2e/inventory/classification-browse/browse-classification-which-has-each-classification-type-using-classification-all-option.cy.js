@@ -36,6 +36,9 @@ describe('Inventory', () => {
 
     before('Create user, test data', () => {
       cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C468178*');
+
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
