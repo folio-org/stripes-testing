@@ -91,7 +91,7 @@ describe('Reading Room Access', () => {
 
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
       ReadingRoom.verifyUserIsScanned(userInfo.preferredFirstName);
-      ReadingRoom.verifyUserInformation(userInfo, false);
+      ReadingRoom.verifyUserInformation(userInfo);
       ReadingRoom.verifyWarningMessage('Not allowed');
       ReadingRoom.verifyButtonsEnabled(allowedButtonState);
       ReadingRoom.clickNotAllowedButton();
