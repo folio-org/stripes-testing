@@ -63,7 +63,7 @@ describe('fse-edge', () => {
 
   it(
     'TCxxxx - edge-orders gobi integration check',
-    { tags: ['fse', 'api', 'edge-orders', 'non-live'] },
+    { tags: ['fse', 'api', 'edge-orders', 'nonProd'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
 
