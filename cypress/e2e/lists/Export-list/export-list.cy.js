@@ -51,11 +51,11 @@ describe('lists', () => {
       Lists.viewUpdatedList();
       Lists.openActions();
       Lists.exportList();
-      cy.contains(
+      Lists.verifySuccessCalloutMessage(
         `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
       );
       cy.wait(5000);
-      cy.contains(`List ${listData.name} was successfully exported to CSV.`);
+      Lists.verifySuccessCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
     });
 
     it('C411811 Export list: Inactive lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {

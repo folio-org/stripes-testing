@@ -42,28 +42,17 @@ export default {
     cy.wait(5000);
     cy.get('[class^="borrowerDetails-"]').contains(userfirstName).should('be.visible');
   },
-  verifyUserInformation(userInfo, allowed = true) {
-    if (allowed === true) {
-      cy.expect([
-        rootSection.find(KeyValue('First name')).has({ value: userInfo.firstName }),
-        rootSection.find(lastNameKeyValue).has({ value: userInfo.lastName }),
-        rootSection.find(patronGroupKeyValue).has({ value: userInfo.patronGroup }),
-        rootSection.find(userTypeKeyValue).has({ value: userInfo.userType }),
-        rootSection.find(barcodeKeyValue).has({ value: userInfo.barcode }),
-        rootSection.find(userExpirationKeyValue).has({ value: userInfo.expirationDate }),
-      ]);
-    } else {
-      cy.expect([
-        rootSection
-          .find(KeyValue('Preferred first name'))
-          .has({ value: userInfo.preferredFirstName }),
-        rootSection.find(lastNameKeyValue).has({ value: userInfo.lastName }),
-        rootSection.find(patronGroupKeyValue).has({ value: userInfo.patronGroup }),
-        rootSection.find(userTypeKeyValue).has({ value: userInfo.userType }),
-        rootSection.find(barcodeKeyValue).has({ value: userInfo.barcode }),
-        rootSection.find(userExpirationKeyValue).has({ value: userInfo.expirationDate }),
-      ]);
-    }
+  verifyUserInformation(userInfo) {
+    cy.expect([
+      rootSection
+        .find(KeyValue('Preferred first name'))
+        .has({ value: userInfo.preferredFirstName }),
+      rootSection.find(lastNameKeyValue).has({ value: userInfo.lastName }),
+      rootSection.find(patronGroupKeyValue).has({ value: userInfo.patronGroup }),
+      rootSection.find(userTypeKeyValue).has({ value: userInfo.userType }),
+      rootSection.find(barcodeKeyValue).has({ value: userInfo.barcode }),
+      rootSection.find(userExpirationKeyValue).has({ value: userInfo.expirationDate }),
+    ]);
   },
   verifyWarningMessage(message) {
     cy.get('[class^="notAllowed-"]').contains(`Autotest_Room: ${message}`).should('be.visible');
