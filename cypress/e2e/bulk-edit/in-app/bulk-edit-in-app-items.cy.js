@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350905 Negative uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'C350905'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350905'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -94,7 +94,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357030 Verify Matched records label cleanup -- In -app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'C357030'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C357030'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -122,7 +122,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356809 Verify uploading file with Item accession number (firebird)',
-      { tags: ['smoke', 'firebird', 'C356809'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C356809'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item accession number');
 
