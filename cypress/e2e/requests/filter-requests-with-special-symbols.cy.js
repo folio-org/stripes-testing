@@ -125,7 +125,7 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
 
   it(
     'C374173 Verify filtering Requests by Tags with one special symbol (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C374173'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

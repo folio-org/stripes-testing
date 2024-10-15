@@ -164,8 +164,8 @@ describe('Requests', () => {
   });
 
   it(
-    'C380518 - Verify user can use double quotes in search fields of Requests app (Vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    'C380518 Verify user can use double quotes in search fields of Requests app (Vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C380518'] },
     () => {
       instancesData.forEach((instance) => {
         Requests.findCreatedRequest(instance.title);

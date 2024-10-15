@@ -164,11 +164,12 @@ describe('Check In - Actions ', () => {
 
   it(
     'C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C398022'] },
     () => {
-      cy.login(userData[0].username, userData[0].password);
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      cy.login(userData[0].username, userData[0].password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
+      });
       CheckInActions.getSessionIdAfterCheckInItem(itemData.items[0].barcode).then(
         (responseSessionId) => {
           sessionId = responseSessionId;
@@ -188,11 +189,12 @@ describe('Check In - Actions ', () => {
 
   it(
     'C398005 Check sessionId field while check-in (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C398005'] },
     () => {
-      cy.login(userData[1].username, userData[1].password);
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      cy.login(userData[1].username, userData[1].password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
+      });
       CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode)
         .then((responseSessionId) => {
           sessionId = responseSessionId;

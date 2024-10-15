@@ -57,7 +57,7 @@ describe('Permissions -> Circulation', () => {
 
   it(
     'C1213 Can create, edit and remove fixed due date schedules (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1213'] },
     () => {
       // Create a new fixed due date schedule
       FixedDueDateSchedules.clickButtonNew();

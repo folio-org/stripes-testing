@@ -70,7 +70,7 @@ describe('Title level request for aged to lost item', () => {
 
   it(
     'C375946 Check that user can not create a TLR Recall for item with status Aged to lost',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C375946'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       // Open new request dialog

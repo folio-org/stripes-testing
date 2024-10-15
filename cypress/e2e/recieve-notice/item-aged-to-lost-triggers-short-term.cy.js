@@ -244,7 +244,7 @@ describe.skip('Patron notices', () => {
 
     it(
       'C347864: Loan due date/time triggers: short term (vega) (TaaS)',
-      { tags: ['criticalPathBroken', 'vega'] },
+      { tags: ['criticalPathBroken', 'vega', 'C347864'] },
       () => {
         noticeTemplates.forEach((template, index) => {
           NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

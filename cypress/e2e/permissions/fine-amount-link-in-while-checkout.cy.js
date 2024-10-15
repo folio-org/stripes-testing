@@ -118,7 +118,7 @@ describe('Permissions', () => {
 
       it(
         'C388524 Check that User can click the fine amount as a link with necessary permissions (vega)',
-        { tags: ['extendedPath', 'vega'] },
+        { tags: ['extendedPath', 'vega', 'C388524'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.checkOutPath,

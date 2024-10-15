@@ -82,12 +82,15 @@ describe('Find requester via user barcode', () => {
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
             userData.patronGroup = userProperties.userGroup.group;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
 
-            cy.login(userData.username, userData.password);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
@@ -107,8 +110,7 @@ describe('Find requester via user barcode', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C554 Find requester via user barcode (vega)', { tags: ['extendedPath', 'vega'] }, () => {
-    cy.visit(TopMenu.requestsPath);
+  it('C554 Find requester via user barcode (vega)', { tags: ['extendedPath', 'vega', 'C554'] }, () => {
     NewRequest.openNewRequestPane();
     NewRequest.enterItemInfo(itemData.barcode);
     NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);

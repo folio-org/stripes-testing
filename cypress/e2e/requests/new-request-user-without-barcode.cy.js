@@ -96,7 +96,7 @@ describe('Choose requester without a barcode', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C10956 Choose requester without a barcode (vega)', { tags: ['extendedPath', 'vega'] }, () => {
+  it('C10956 Choose requester without a barcode (vega)', { tags: ['extendedPath', 'vega', 'C10956'] }, () => {
     NewRequest.openNewRequestPane();
     NewRequest.enterItemInfo(itemData.barcode);
     NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);

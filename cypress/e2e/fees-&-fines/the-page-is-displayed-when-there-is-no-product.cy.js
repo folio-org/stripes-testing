@@ -123,8 +123,8 @@ describe('Fees&Fines', () => {
   });
 
   it(
-    'C358152 - Check that "Fee/fine details" page displayed if Item is missing (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    'C358152 Check that "Fee/fine details" page displayed if Item is missing (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C358152'] },
     () => {
       CheckOutActions.checkOutUser(testData.user.barcode);
       CheckOutActions.checkOutItem(itemBarcode);

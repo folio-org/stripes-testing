@@ -77,7 +77,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C443 Verify that you can create/edit/delete "Shared" manual charges for institution (Spitfire) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C443'] },
       () => {
         cy.visit(SettingsMenu.manualCharges);
         ManualCharges.waitLoading();

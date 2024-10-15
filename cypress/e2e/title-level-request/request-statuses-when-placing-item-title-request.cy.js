@@ -142,7 +142,7 @@ describe('Title Level Request', () => {
 
     it(
       'C350740 Check request statuses when placing item and title level requests (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C350740'] },
       () => {
         // From Action menu of request details, select Reorder queue
         RequestDetail.requestQueueOnInstance(instanceData.instanceTitle);

@@ -91,7 +91,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C464 Verify behavior when "Waive" button pressed from Fee/Fine Details page (Vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C464'] },
       () => {
         // Go to User Information for your test patro
         UsersSearchPane.searchByKeywords(userData.username);
