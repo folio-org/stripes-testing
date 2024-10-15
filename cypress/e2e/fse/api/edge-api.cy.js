@@ -1,18 +1,25 @@
 describe('fse-edge', () => {
   // all test steps are hidden from report in order to hide sensitive edge related data (api key). TODO: update to hide only api key
 
-  it('TC195410 - edge-erm verification', { tags: ['fse', 'api', 'edge-erm'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.postEdgeErm().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-erm'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeErm().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 
-  it('TC195411 - edge-ncip verification', { tags: ['fse', 'api', 'edge-ncip'] }, () => {
-    // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
-    // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
+  it(
+    `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-ncip'] },
+    () => {
+      // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
+      // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
 
-    const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
+      const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
     <NCIPMessage version="http://www.niso.org/schemas/ncip/v2_0/ncip_v2_0.xsd"
       xmlns="http://www.niso.org/2008/ncip">
       <LookupUser>
@@ -34,35 +41,48 @@ describe('fse-edge', () => {
         <UserElementType>User Id</UserElementType>
       </LookupUser>
     </NCIPMessage>`;
-    cy.allure().logCommandSteps(false);
-    cy.postEdgeNcip(requestBody).then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
-
-  it('TC195412 - edge-oai-pmh verification', { tags: ['fse', 'api', 'edge-oai'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.getEdgeOai().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
-
-  it('TC195413 - edge-patron verification', { tags: ['fse', 'api', 'edge-patron'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.getEdgePatron().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
-
-  it('TC195414 - edge-orders verification', { tags: ['fse', 'api', 'edge-orders'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.postEdgeOrders().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeNcip(requestBody).then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 
   it(
-    'TCxxxx - edge-orders gobi integration check',
+    `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-oai'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.getEdgeOai().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
+    `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-patron'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.getEdgePatron().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
+    `TC195414 - edge-orders verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-orders'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeOrders().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
+    `TC195633 - edge-orders gobi integration check for ${Cypress.env('EDGE_HOST')}`,
     { tags: ['fse', 'api', 'edge-orders', 'nonProd'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
@@ -139,7 +159,7 @@ describe('fse-edge', () => {
       </PurchaseOrder>`;
       cy.allure().logCommandSteps(false);
       cy.postEdgeOrdersGobiIntegration(requestBody).then((response) => {
-        cy.expect(response.status).to.eq(200);
+        cy.expect(response.status).to.eq(201);
       });
     },
   );
