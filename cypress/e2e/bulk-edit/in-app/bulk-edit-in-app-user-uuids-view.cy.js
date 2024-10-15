@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357578 Verify "In app - Edit user records" permission (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357578'] },
       () => {
         BulkEditSearchPane.verifyUsersUpdatePermission();
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C359197'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);

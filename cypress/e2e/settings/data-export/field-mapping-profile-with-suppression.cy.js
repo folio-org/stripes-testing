@@ -47,7 +47,7 @@ describe('Data Export', () => {
 
     it(
       'C468217 Verify field mapping profile with fields for suppression (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C468217'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportNewFieldMappingProfile.clickNewButton();

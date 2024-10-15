@@ -166,7 +166,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350647 Verify automated patron block "Maximum number of items charged out" removed after charged item returned (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C350647'] },
       () => {
         cy.visit(SettingsMenu.conditionsPath);
         Conditions.waitLoading();

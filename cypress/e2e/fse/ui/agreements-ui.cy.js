@@ -50,7 +50,7 @@ describe('fse-agreements - UI for non-production tenants', () => {
 
   it(
     `TC195629 - create new agreement, create new license - assign and delete ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['non-live', 'fse', 'ui', 'agreements'] },
+    { tags: ['nonProd', 'fse', 'ui', 'agreements'] },
     () => {
       defaultAgreement.name += 'FSE_TEST';
       defaultLicense.name += 'FSE_TEST';

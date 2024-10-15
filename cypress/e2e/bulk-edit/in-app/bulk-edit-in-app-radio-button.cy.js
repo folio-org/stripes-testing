@@ -31,7 +31,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350670 Verify radio buttons on the Record types accordion (Firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C350670'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');

@@ -49,7 +49,7 @@ describe('Data Export', () => {
 
     it(
       'C350536 Negative: Verify that a user cannot EXPORT HOLDINGS using invalid job profile (Firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C350536'] },
       () => {
         ExportFileHelper.uploadFile(holdingUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(holdingUUIDsFileName);

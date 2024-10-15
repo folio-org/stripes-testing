@@ -40,7 +40,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360090 Verify switching between Inventory record types radio buttons (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C360090'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347870 Verify that user with Bulk Edit: View and Edit permission can start bulk editing (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C347870'] },
       () => {
         cy.login(userCircAndLogsPermissions.username, userCircAndLogsPermissions.password, {
           path: TopMenu.bulkEditPath,

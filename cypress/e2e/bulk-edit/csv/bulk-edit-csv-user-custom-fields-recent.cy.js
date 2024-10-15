@@ -62,7 +62,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389569 Local | Verify bulk edit Users records with recently updated Custom fields (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C389569'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkUsersRadio();

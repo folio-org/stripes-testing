@@ -478,7 +478,11 @@ export default {
     cy.do(searchButton.click());
   },
   switchToItem: () => cy.do(itemToggleButton.click()),
-  switchToHoldings: () => cy.do(holdingsToggleButton.click()),
+  switchToHoldings() {
+    cy.wait(200);
+    cy.do(holdingsToggleButton.click());
+    cy.wait(500);
+  },
   switchToInstance: () => cy.do(navigationInstancesButton.click()),
 
   instanceTabIsDefault() {
@@ -606,6 +610,7 @@ export default {
 
   resetAll() {
     cy.do(resetAllBtn.click());
+    cy.wait(1000);
   },
 
   clickResetAllButton() {
@@ -656,6 +661,7 @@ export default {
   filterByTag(tag) {
     this.searchTag(tag);
     cy.do(instancesTagsSection.find(Checkbox(tag)).click());
+    cy.wait(1000);
   },
 
   verifyTagIsAbsent(tag) {

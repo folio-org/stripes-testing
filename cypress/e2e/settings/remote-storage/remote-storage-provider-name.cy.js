@@ -25,7 +25,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C365623 Verify that "Provider name" is renamed (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C365623'] },
     () => {
       // #1 Open the "Settings" app
       // #2 Select "Remote storage"

@@ -161,7 +161,7 @@ describe('Title Level Request. Request detail', () => {
 
   it(
     'C350385 Check that user can change type from "Item" level to "Title" and save the request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350385'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
@@ -190,7 +190,7 @@ describe('Title Level Request. Request detail', () => {
 
   it(
     'C350386 Check that user can change type from "Title" level to "Item" and save the request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350386'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);

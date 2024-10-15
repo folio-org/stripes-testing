@@ -53,6 +53,7 @@ export default {
     cy.do(Link(patronNoticePolicy.name).click());
   },
   fillGeneralInformation: (patronNoticePolicy) => {
+    cy.wait(500);
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
       activeCheckbox.click(),
@@ -186,6 +187,7 @@ export default {
 
   choosePolicy: (patronNoticePolicy) => {
     cy.do(NavListItem(patronNoticePolicy.name).click());
+    cy.wait(1000);
   },
 
   createPolicy({ noticePolicy, noticeTemplates = [] }) {
@@ -217,6 +219,7 @@ export default {
 
   duplicateAndFillPolicy(patronNoticePolicy) {
     cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-duplicate-item' }).click()]);
+    cy.wait(2000);
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
@@ -234,6 +237,7 @@ export default {
       actionsButton.click(),
       actionsButtons.edit.click(),
     ]);
+    cy.wait(2000);
   },
 
   getPatronNoticePoliciesByNameViaAPI() {

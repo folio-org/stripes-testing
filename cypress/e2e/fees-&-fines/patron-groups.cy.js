@@ -16,8 +16,8 @@ describe('Fees&Fines', () => {
   describe('Automated Patron Blocks', () => {
     const testData = {};
     it(
-      "C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (vega)",
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      'C11020 Verify user information display when automated patron block "Maximum outstanding fee/fine balance" exists for patron (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C11020'] },
       () => {
         testData.chargeAmount = 100;
 

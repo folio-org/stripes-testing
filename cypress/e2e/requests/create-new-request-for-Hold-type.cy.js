@@ -79,7 +79,7 @@ describe('Requests', () => {
 
   it(
     'C545 Create new request for "Hold" type and check links to/from user and item (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C545'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();

@@ -90,7 +90,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C451 Verify behavior when "New fee/fine" ellipsis option selected within Open/Closed Loans (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C451'] },
       () => {
         // Find active user in FOLIO
         UsersSearchPane.searchByKeywords(userData.username);
@@ -105,7 +105,10 @@ describe('Fees&Fines', () => {
         UserAllFeesFines.createFeeFine();
         // "New fee/fine" modal opened
         NewFeeFine.waitLoading();
-        NewFeeFine.checkInitialState({ ...userData, middleName: 'testMiddleName' }, ownerBody.name);
+        NewFeeFine.checkInitialState(
+          { lastName: userData.lastName, middleName: 'testMiddleName', firstName: userData.preferredFirstName, barcode: userData.barcode },
+          ownerBody.name,
+        );
       },
     );
   });

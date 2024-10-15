@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353561 Verify "Actions" menu elements with CSV and In app permissions (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353561'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

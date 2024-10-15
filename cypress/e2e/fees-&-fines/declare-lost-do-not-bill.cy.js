@@ -168,7 +168,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C375156 Verify ability do not bill patron for actual cost for item with "Declared to Lost" status (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C375156'] },
       () => {
         cy.visit(TopMenu.usersPath);
         // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

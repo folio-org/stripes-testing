@@ -140,7 +140,7 @@ describe('Requests', () => {
 
   it(
     'C343043 Search for Requests by Instance ISBN (Normalized) (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C343043'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

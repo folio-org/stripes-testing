@@ -61,7 +61,7 @@ describe('bulk-edit', () => {
     // test case is obsolete
     it.skip(
       'C380592 Verify that Holdings without "Source" populated can be updated (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C380592'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingHRID);

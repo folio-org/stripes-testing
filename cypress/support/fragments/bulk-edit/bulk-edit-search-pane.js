@@ -341,6 +341,7 @@ export default {
 
   checkItemsRadio() {
     cy.do(itemsRadio.click());
+    cy.wait(500);
   },
 
   itemsRadioIsDisabled(isDisabled) {
@@ -353,6 +354,7 @@ export default {
 
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
+    cy.wait(500);
   },
 
   holdingsRadioIsDisabled(isDisabled) {
@@ -1153,6 +1155,39 @@ export default {
 
   verifyNextPaginationButtonDisabled(isDisabled = true) {
     cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      matchedAccordion.find(previousPaginationButton).has({ disabled: true }),
+      matchedAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInAreYouSureForm(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      areYouSureForm.find(previousPaginationButton).has({ disabled: true }),
+      areYouSureForm.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[aria-label^="PreviewModal"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInChangedRecords(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      changesAccordion.find(previousPaginationButton).has({ disabled: true }),
+      changesAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
   },
 
   verifyInstanceNoteColumns(instanceNoteColumnNames) {

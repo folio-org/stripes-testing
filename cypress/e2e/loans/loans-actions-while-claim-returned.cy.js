@@ -93,7 +93,7 @@ describe('Loans', () => {
 
     it(
       'C10958 Loans: Actions while Claimed returned (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C10958'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.user.username);
         UsersSearchPane.openUser(testData.user.userId);

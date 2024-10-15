@@ -70,7 +70,7 @@ describe('Title Level Request', () => {
 
   it(
     'C411787 Check that user can create TLR Hold for Instance with no Items (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C411787'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(instanceHRID);

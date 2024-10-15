@@ -108,8 +108,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C478: Verify that manual patron block for "Borrowing" blocks checkouts by patron (vega)',
-      { tags: ['extendedPath', 'vega'] },
+      'C478 Verify that manual patron block for "Borrowing" blocks checkouts by patron (vega)',
+      { tags: ['extendedPath', 'vega', 'C478'] },
       () => {
         cy.login(userData.user1.username, userData.user1.password);
         cy.visit(TopMenu.checkOutPath);

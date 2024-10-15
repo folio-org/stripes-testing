@@ -79,7 +79,7 @@ describe('bulk-edit', () => {
 
     it(
       'C402336 Verify Bulk Edit actions for Items notes - change note type (firebird) (TaaS)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C402336'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

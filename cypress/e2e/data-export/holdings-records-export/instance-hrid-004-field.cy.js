@@ -53,7 +53,7 @@ describe('Data Export', () => {
 
     it(
       'C376962 Verify that Default mapping profile for holdings maps instance HRID to "004" field (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C376962'] },
       () => {
         ExportFile.uploadFile(fileName);
         ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

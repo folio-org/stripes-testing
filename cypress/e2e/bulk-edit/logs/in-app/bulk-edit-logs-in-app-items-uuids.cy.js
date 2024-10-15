@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)',
-        { tags: ['smoke', 'firebird'] },
+        { tags: ['smoke', 'firebird', 'C375273'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

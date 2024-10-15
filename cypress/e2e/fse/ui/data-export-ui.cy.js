@@ -44,7 +44,7 @@ describe('fse-data-export - check data export job for non-production tenants', (
 
   it(
     `TC195471 - verify data-export job for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['non-live', 'fse', 'ui', 'data-export'] },
+    { tags: ['nonProd', 'fse', 'ui', 'data-export'] },
     () => {
       cy.visit(TopMenu.dataExportPath);
       ExportFileHelper.waitLoading();

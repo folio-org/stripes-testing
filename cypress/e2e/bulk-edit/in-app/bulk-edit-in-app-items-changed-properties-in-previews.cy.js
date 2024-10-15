@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
 
     it(
       'C430261 Verify only changed properties columns appear on "Are you sure?" form and on Confirmation screen - Items (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C430261'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);

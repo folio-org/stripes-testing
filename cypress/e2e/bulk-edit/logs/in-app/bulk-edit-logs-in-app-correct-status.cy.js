@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
 
       it(
         'C380443 Verify the correctness of the Bulk Edit job status in Logs tab (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C380443'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item barcode');

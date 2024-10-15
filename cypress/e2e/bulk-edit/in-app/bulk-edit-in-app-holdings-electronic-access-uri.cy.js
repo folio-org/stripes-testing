@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422160 Verify Bulk Edit for Holding populated "URI" in electronic access (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C422160'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

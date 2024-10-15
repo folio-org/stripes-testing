@@ -1,18 +1,25 @@
 describe('fse-edge', () => {
   // all test steps are hidden from report in order to hide sensitive edge related data (api key). TODO: update to hide only api key
 
-  it('TC195410 - edge-erm verification', { tags: ['fse', 'api', 'edge-erm'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.postEdgeErm().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-erm'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeErm().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 
-  it('TC195411 - edge-ncip verification', { tags: ['fse', 'api', 'edge-ncip'] }, () => {
-    // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
-    // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
+  it(
+    `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-ncip'] },
+    () => {
+      // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
+      // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
 
-    const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
+      const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
     <NCIPMessage version="http://www.niso.org/schemas/ncip/v2_0/ncip_v2_0.xsd"
       xmlns="http://www.niso.org/2008/ncip">
       <LookupUser>
@@ -34,32 +41,128 @@ describe('fse-edge', () => {
         <UserElementType>User Id</UserElementType>
       </LookupUser>
     </NCIPMessage>`;
-    cy.allure().logCommandSteps(false);
-    cy.postEdgeNcip(requestBody).then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeNcip(requestBody).then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 
-  it('TC195412 - edge-oai-pmh verification', { tags: ['fse', 'api', 'edge-oai'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.getEdgeOai().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-oai'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.getEdgeOai().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 
-  it('TC195413 - edge-patron verification', { tags: ['fse', 'api', 'edge-patron'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.getEdgePatron().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-patron'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.getEdgePatron().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
 
-  it('TC195414 - edge-orders verification', { tags: ['fse', 'api', 'edge-orders'] }, () => {
-    cy.allure().logCommandSteps(false);
-    cy.postEdgeOrders().then((response) => {
-      cy.expect(response.status).to.eq(200);
-    });
-  });
+  it(
+    `TC195414 - edge-orders verification for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-orders'] },
+    () => {
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeOrders().then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
+    `TC195633 - edge-orders gobi integration check for ${Cypress.env('EDGE_HOST')}`,
+    { tags: ['fse', 'api', 'edge-orders', 'nonProd'] },
+    () => {
+      // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
+
+      const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
+    <PurchaseOrder>
+  <CustomerDetail>
+    <BaseAccount>8910</BaseAccount>
+    <SubAccount>891010</SubAccount>
+  </CustomerDetail>
+  <Order>
+    <ListedPrintMonograph>
+      <collection>
+        <record>
+          <leader>00000nam a2200000u  4500</leader>
+          <controlfield tag="001">99974828471</controlfield>
+          <controlfield tag="003">NhCcYBP</controlfield>
+          <controlfield tag="005">20180905153857.0</controlfield>
+          <controlfield tag="008">180905t20112011xx ||||||||||||||   eng d</controlfield>
+          <datafield tag="020" ind1=" " ind2=" ">
+            <subfield code="a">9780547572482</subfield>
+            <subfield code="c">14.95</subfield>
+          </datafield>
+          <datafield tag="035" ind1=" " ind2=" ">
+            <subfield code="a">(OCoLC)717297695</subfield>
+          </datafield>
+          <datafield tag="100" ind1="1" ind2=" ">
+            <subfield code="a">DICK, PHILIP K</subfield>
+          </datafield>
+          <datafield tag="245" ind1="1" ind2="0">
+            <subfield code="a">MAN IN THE HIGH CASTLE.</subfield>
+          </datafield>
+          <datafield tag="260" ind1=" " ind2=" ">
+            <subfield code="a">BOSTON</subfield>
+            <subfield code="b">MARINER BOOKS</subfield>
+            <subfield code="c">2011</subfield>
+          </datafield>
+        </record>
+      </collection>
+      <OrderDetail>
+        <FundCode>USHIST</FundCode>
+        <Location>KU/CC/DI/A</Location>
+        <Quantity>2</Quantity>
+        <YBPOrderKey>99974828471</YBPOrderKey>
+        <OrderPlaced>2018-09-05T15:38:55</OrderPlaced>
+        <Initials>Mark</Initials>
+        <ListPrice>
+          <Amount>14.95</Amount>
+          <Currency>USD</Currency>
+        </ListPrice>
+        <NetPrice>
+          <Amount>13.16</Amount>
+          <Currency>USD</Currency>
+        </NetPrice>
+        <LocalData>
+          <Description>LocalData1</Description>
+          <Value>Book</Value>
+        </LocalData>
+        <LocalData>
+          <Description>LocalData2</Description>
+          <Value>Notify requester upon receipt</Value>
+        </LocalData>
+        <LocalData>
+          <Description>LocalData3</Description>
+          <Value>Anne Esterhazy</Value>
+        </LocalData>
+        <LocalData>
+          <Description>LocalData4</Description>
+          <Value>signed-edition,vip-order</Value>
+        </LocalData>
+      </OrderDetail>
+    </ListedPrintMonograph>
+  </Order>
+      </PurchaseOrder>`;
+      cy.allure().logCommandSteps(false);
+      cy.postEdgeOrdersGobiIntegration(requestBody).then((response) => {
+        cy.expect(response.status).to.eq(201);
+      });
+    },
+  );
 
   it(
     `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,

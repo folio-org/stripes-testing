@@ -52,7 +52,7 @@ describe('Permissions -> Circulation', () => {
 
   it(
     'C1218 Can create, edit and remove request policies (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1218'] },
     () => {
       // Create a new request policy
       RequestPolicy.clickNewPolicy();

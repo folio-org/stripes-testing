@@ -87,7 +87,7 @@ describe('Circulation log', () => {
 
   it(
     'C17005 Filter circulation log by renewed (firebird) (TaaS)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17005'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,

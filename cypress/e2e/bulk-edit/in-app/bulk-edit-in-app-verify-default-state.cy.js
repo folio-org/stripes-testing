@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C375095 Verify default state of Bulk edit landing page (In app - inventory approach) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C375095'] },
       () => {
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');

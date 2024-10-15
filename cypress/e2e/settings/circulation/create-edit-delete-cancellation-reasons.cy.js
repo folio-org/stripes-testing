@@ -45,7 +45,7 @@ describe('Permissions -> Circulation', () => {
 
   it(
     'C1211 Can create, edit and remove cancelling reasons (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1211'] },
     () => {
       // Create a new cancellation reason
       CancellationReason.clickNewButton();

@@ -130,7 +130,7 @@ describe('bulk-edit', () => {
 
     it(
       'C430210 Verify Bulk Edit actions for Holdings notes - columns titles (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C430210'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
