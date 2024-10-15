@@ -1,6 +1,6 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  HTML,
   Modal,
   MultiColumnList,
   MultiSelect,
@@ -10,7 +10,6 @@ import {
   Selection,
   Spinner,
   TextField,
-  including,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
