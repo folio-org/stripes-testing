@@ -59,7 +59,7 @@ describe('bulk-edit', () => {
 
     it(
       'C408810 Verify that "addressType" is shown in the Previews _ Locals (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C408810'] },
       () => {
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.openEdit();
@@ -122,6 +122,7 @@ describe('bulk-edit', () => {
                 ExportFile.verifyFileIncludes(updatedRecordsFileName, [newFirstName]);
 
                 TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+                UsersSearchPane.resetAllFilters();
                 UsersSearchPane.searchByUsername(user.username);
                 Users.verifyFirstNameOnUserDetailsPane(newFirstName);
               });

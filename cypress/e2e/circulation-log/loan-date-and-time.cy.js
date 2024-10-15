@@ -96,7 +96,7 @@ describe('Circulation log', () => {
 
   it(
     'C350710 Check date and time -- loans (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C350710'] },
     () => {
       navigateToCircLogAndSearchItem(ITEM_BARCODE);
       cy.wait(1000);

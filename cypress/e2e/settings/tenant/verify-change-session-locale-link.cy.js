@@ -29,7 +29,7 @@ describe('Tenant', () => {
 
   it(
     'C365610 Verify that "Change session locale" is rendered as a link (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C365610'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.checkPaneContent();

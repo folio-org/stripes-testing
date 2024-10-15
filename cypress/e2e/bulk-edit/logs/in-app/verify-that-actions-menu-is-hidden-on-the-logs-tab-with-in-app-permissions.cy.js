@@ -45,7 +45,7 @@ describe('bulk-edit', () => {
 
       it(
         'C367996 Verify that "Actions" menu is hidden on the "Logs" tab with In-app permissions (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C367996'] },
         () => {
           BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
           BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');

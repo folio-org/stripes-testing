@@ -63,7 +63,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389567 Local | Verify bulk edit Users records with Custom fields with semicolon (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C389567'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

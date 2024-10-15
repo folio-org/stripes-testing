@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       "C365590 Verify that User's Email can be edited partially (firebird) (TaaS)",
-      { tags: ['extendedPathBroken', 'firebird'] },
+      { tags: ['extendedPathBroken', 'firebird', 'C365590'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

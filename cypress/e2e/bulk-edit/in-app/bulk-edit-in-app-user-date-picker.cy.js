@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359215 Verify date picker plugin for "Expiration date" option (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C359215'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

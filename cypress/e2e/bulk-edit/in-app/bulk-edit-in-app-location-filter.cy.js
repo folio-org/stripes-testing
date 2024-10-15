@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357053 Negative: Verify enable type ahead in location look-up (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357053'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356787 Verify enable type ahead in location look-up (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C356787'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 

@@ -110,7 +110,7 @@ describe('bulk-edit', () => {
 
       it(
         'C409495 Filters section: Users filter (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C409495'] },
         () => {
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.verifyLogsPane();
@@ -131,7 +131,7 @@ describe('bulk-edit', () => {
           BulkEditLogs.resetAllBtnIsDisabled(false);
           BulkEditLogs.verifyCellsValues(
             8,
-            `${users[1].username}, ${users[1].firstName} ${Users.defaultUser.personal.middleName}`,
+            `${users[1].username}, ${users[1].preferredFirstName} ${Users.defaultUser.personal.middleName}`,
           );
 
           BulkEditLogs.clickChooseUserUnderUserAccordion();
@@ -141,7 +141,7 @@ describe('bulk-edit', () => {
           BulkEditLogs.resetAllBtnIsDisabled(false);
           BulkEditLogs.verifyCellsValues(
             8,
-            `${users[2].username}, ${users[2].firstName} ${Users.defaultUser.personal.middleName}`,
+            `${users[2].username}, ${users[2].preferredFirstName} ${Users.defaultUser.personal.middleName}`,
           );
 
           BulkEditLogs.clickClearSelectedButton(tastData.usersAccordion);
@@ -155,7 +155,7 @@ describe('bulk-edit', () => {
           BulkEditLogs.resetAllBtnIsDisabled(false);
           BulkEditLogs.verifyCellsValues(
             8,
-            `${users[1].username}, ${users[1].firstName} ${Users.defaultUser.personal.middleName}`,
+            `${users[1].username}, ${users[1].preferredFirstName} ${Users.defaultUser.personal.middleName}`,
           );
 
           BulkEditLogs.clickChooseUserUnderUserAccordion();

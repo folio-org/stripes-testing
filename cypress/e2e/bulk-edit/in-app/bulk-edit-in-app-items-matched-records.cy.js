@@ -56,7 +56,7 @@ describe('bulk-edit', () => {
     // TODO actually check the list of items in matched file
     it(
       'C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357052'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

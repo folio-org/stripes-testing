@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375215 Verify generated Logs files for Users CSV - with errors (firebird)',
-        { tags: ['smoke', 'firebird'] },
+        { tags: ['smoke', 'firebird', 'C375215'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
           BulkEditSearchPane.uploadFile(invalidAndValidUserBarcodesFileName);

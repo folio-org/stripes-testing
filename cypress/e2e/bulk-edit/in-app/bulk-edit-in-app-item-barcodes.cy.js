@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
 
     it(
       'C358939 Verify that 10 records returned in preview of matched records after editing (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C358939'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -93,7 +93,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359210 Verify the in-app bulk edit permanent loan type (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359210'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -124,7 +124,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359225 Verify the in-app bulk edit temporary loan type (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359225'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -153,7 +153,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359226 Verify user can clear temporary loan type value (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359226'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -183,7 +183,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360530 Verify that User cannot clear permanent loan type (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C360530'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -197,7 +197,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359208 Verify Loan types options in Bulk Edit (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C359208'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
