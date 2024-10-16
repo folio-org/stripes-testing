@@ -213,7 +213,7 @@ describe('Inventory', () => {
           search(folioInstance.classificationValue);
         });
         testData.marcRecordsTitlesAndClassifications.forEach((marcInstance) => {
-          if (marcInstance.classificationValue == '598.0994') {
+          if (marcInstance.classificationValue === '598.0994') {
             search(marcInstance.classificationValue, false);
           } else {
             search(marcInstance.classificationValue);
