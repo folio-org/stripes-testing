@@ -36,7 +36,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388492 Verify that User with "Bulk Edit: Local View" and "Bulk edit: In app - Edit user records" permissions can edit user records (in app) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C388492'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.isUsersRadioChecked(false);

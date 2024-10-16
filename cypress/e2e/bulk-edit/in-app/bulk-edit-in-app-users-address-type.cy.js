@@ -57,7 +57,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409410 Verify that "addressType" is shown in the Previews _ In app (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C409410'] },
       () => {
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.openEdit();

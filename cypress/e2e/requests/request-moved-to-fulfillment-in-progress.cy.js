@@ -108,7 +108,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350425 Check that request goes to "Fulfillment in progress" if the items status has changed to "In progress" (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350425'] },
     () => {
       SwitchServicePoint.switchServicePoint(testData.servicePoint2.name);
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint2.name);

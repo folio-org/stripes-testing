@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359248 Verify "Email" option in bulk edit (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359248'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359592 Verify updating Email in Bulk edit (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C359592'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359606 Negative -- Verify bulk edit Users emails (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C359606'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

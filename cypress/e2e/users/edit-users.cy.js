@@ -65,13 +65,13 @@ describe('Users', () => {
       userData.middleName = newMiddleName;
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.openEdit();
-      UserEdit.verifySaveAndColseIsDisabled(true);
+      UserEdit.verifySaveAndCloseIsDisabled(true);
       UserEdit.changeMiddleName(getTestEntityValue('newName'));
-      UserEdit.verifySaveAndColseIsDisabled(false);
+      UserEdit.verifySaveAndCloseIsDisabled(false);
       UserEdit.cancelChanges();
       Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
       Users.verifyFullNameIsDisplayedCorrectly(
-        `${userData.lastName}, ${userData.firstName} ${userData.middleName}`,
+        `${userData.lastName}, ${userData.preferredFirstName} ${userData.middleName}`,
       );
     },
   );

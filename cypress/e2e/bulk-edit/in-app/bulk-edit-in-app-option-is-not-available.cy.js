@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360115 Verify that "Start bulk edit" option is not available after uploading the  file with invalid Holdings UUIDs (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C360115'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 

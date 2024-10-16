@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
 
     it(
       'C398010 Verify "Suppress from discovery" (Set true) option in Bulk Editing Holdings (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C398010'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

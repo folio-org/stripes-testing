@@ -39,7 +39,7 @@ describe('lists', () => {
 
     it(
       'C411737 Edit list: Refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'corsair', 'C411737', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -63,7 +63,7 @@ describe('lists', () => {
 
     it(
       'C411738 Edit list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'corsair', 'C411738', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -89,7 +89,7 @@ describe('lists', () => {
 
     it(
       'C411734 Edit list: Make the list Inactive (corsair)',
-      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      { tags: ['smoke', 'corsair', 'C411734', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -119,30 +119,34 @@ describe('lists', () => {
       },
     );
 
-    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.resetAllFilters();
-      Lists.selectInactiveLists();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status[1]);
-      Lists.saveList();
-      Lists.closeListDetailsPane();
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.editList();
-      Lists.selectStatus('Active');
-      Lists.saveList();
-      cy.contains(`List ${listData.name} saved.`);
-      cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
-      Lists.closeListDetailsPane();
-      Lists.openList(listData.name);
-    });
+    it(
+      'C411735 Edit list: Make the list Active (corsair)',
+      { tags: ['smoke', 'corsair', 'C411735'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.resetAllFilters();
+        Lists.selectInactiveLists();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status[1]);
+        Lists.saveList();
+        Lists.closeListDetailsPane();
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.editList();
+        Lists.selectStatus('Active');
+        Lists.saveList();
+        cy.contains(`List ${listData.name} saved.`);
+        cy.contains(`${listData.name} is active. Refresh ${listData.name} to see list contents`);
+        Lists.closeListDetailsPane();
+        Lists.openList(listData.name);
+      },
+    );
   });
 });

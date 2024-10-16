@@ -82,12 +82,15 @@ describe('Find requester via user barcode', () => {
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
             userData.patronGroup = userProperties.userGroup.group;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
 
-            cy.login(userData.username, userData.password);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
@@ -107,44 +110,47 @@ describe('Find requester via user barcode', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C554 Find requester via user barcode (vega)', { tags: ['extendedPath', 'vega'] }, () => {
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.openNewRequestPane();
-    NewRequest.enterItemInfo(itemData.barcode);
-    NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
-    NewRequest.enterRequesterBarcode(userData.barcode);
-    NewRequest.verifyRequesterInformation(userData.username, userData.barcode);
-    NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-    NewRequest.choosePickupServicePoint(servicePoint.name);
-    NewRequest.saveRequestAndClose();
-    cy.intercept('POST', 'circulation/requests').as('createRequest');
-    cy.wait('@createRequest').then((intercept) => {
-      requestId = intercept.response.body.id;
-      cy.location('pathname').should('eq', `/requests/view/${requestId}`);
-    });
-    RequestDetail.waitLoading('no staff');
-    RequestDetail.checkTitleInformation({
-      TLRs: '0',
-      title: itemData.instanceTitle,
-    });
-    RequestDetail.checkItemInformation({
-      itemBarcode: itemData.barcode,
-      title: itemData.instanceTitle,
-      effectiveLocation: defaultLocation.name,
-      itemStatus: ITEM_STATUS_NAMES.PAGED,
-      requestsOnItem: '1',
-    });
-    RequestDetail.checkRequestInformation({
-      type: REQUEST_TYPES.PAGE,
-      status: EditRequest.requestStatuses.NOT_YET_FILLED,
-      level: REQUEST_LEVELS.ITEM,
-    });
-    RequestDetail.checkRequesterInformation({
-      lastName: userData.fullName,
-      barcode: userData.barcode,
-      group: userData.patronGroup,
-      preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-      pickupSP: servicePoint.name,
-    });
-  });
+  it(
+    'C554 Find requester via user barcode (vega)',
+    { tags: ['extendedPath', 'vega', 'C554'] },
+    () => {
+      NewRequest.openNewRequestPane();
+      NewRequest.enterItemInfo(itemData.barcode);
+      NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
+      NewRequest.enterRequesterBarcode(userData.barcode);
+      NewRequest.verifyRequesterInformation(userData.username, userData.barcode);
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
+      NewRequest.choosePickupServicePoint(servicePoint.name);
+      NewRequest.saveRequestAndClose();
+      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      cy.wait('@createRequest').then((intercept) => {
+        requestId = intercept.response.body.id;
+        cy.location('pathname').should('eq', `/requests/view/${requestId}`);
+      });
+      RequestDetail.waitLoading('no staff');
+      RequestDetail.checkTitleInformation({
+        TLRs: '0',
+        title: itemData.instanceTitle,
+      });
+      RequestDetail.checkItemInformation({
+        itemBarcode: itemData.barcode,
+        title: itemData.instanceTitle,
+        effectiveLocation: defaultLocation.name,
+        itemStatus: ITEM_STATUS_NAMES.PAGED,
+        requestsOnItem: '1',
+      });
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
+        level: REQUEST_LEVELS.ITEM,
+      });
+      RequestDetail.checkRequesterInformation({
+        lastName: userData.fullName,
+        barcode: userData.barcode,
+        group: userData.patronGroup,
+        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        pickupSP: servicePoint.name,
+      });
+    },
+  );
 });

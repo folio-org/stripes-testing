@@ -42,13 +42,17 @@ describe('Data Export', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C345411 Search job profiles (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
-      ExportJobProfiles.goToJobProfilesTab();
+    it(
+      'C345411 Search job profiles (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C345411'] },
+      () => {
+        ExportJobProfiles.goToJobProfilesTab();
 
-      [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
-        ExportJobProfiles.searchJobProfile(element);
-        ExportJobProfiles.verifyJobProfileSearchResult(element);
-      });
-    });
+        [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
+          ExportJobProfiles.searchJobProfile(element);
+          ExportJobProfiles.verifyJobProfileSearchResult(element);
+        });
+      },
+    );
   });
 });

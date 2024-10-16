@@ -1,6 +1,8 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -22,7 +24,7 @@ describe('Permissions', () => {
           );
           cy.createTempUser([
             permissions.uiUserLostItemRequiringActualCost.gui,
-            permissions.uiUsersPermissions.gui,
+            permissions.uiUserCanAssignUnassignPermissions.gui,
           ]).then((userProperties) => {
             userData = userProperties;
             UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
@@ -41,12 +43,12 @@ describe('Permissions', () => {
 
       it(
         'C359587 Test permission: Users: Can process lost items requiring actual cost (vega) (TaaS)',
-        { tags: ['extendedPath', 'vega'] },
+        { tags: ['extendedPath', 'vega', 'C359587'] },
         () => {
           UsersSearchPane.openLostItemsRequiringActualCostPane();
           LostItemsRequiringActualCostPage.waitLoading();
 
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.waitLoading();
           UsersSearchPane.searchByUsername(userData.username);
           UsersSearchPane.waitLoading();
@@ -54,14 +56,14 @@ describe('Permissions', () => {
           UserEdit.saveAndClose();
           UsersCard.verifyPermissionsNotExist([permissions.uiUserLostItemRequiringActualCost.gui]);
 
-          cy.logout();
           cy.login(userData.username, userData.password, {
             path: TopMenu.usersPath,
             waiter: UsersSearchPane.waitLoading,
           });
+
           UsersSearchPane.verifyLostItemsRequiringActualCostOptionNotDisplayed();
           cy.visit(TopMenu.lostItemsRequiringActualCost);
-          LostItemsRequiringActualCostPage.verifyUserNotHavePermmissionToAccess();
+          LostItemsRequiringActualCostPage.verifyUserNotHavePermissionToAccess();
         },
       );
     });

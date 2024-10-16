@@ -43,7 +43,7 @@ describe('Data Export', () => {
 
     it(
       'C345415 Job triggered with invalid data fails (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C345415'] },
       () => {
         ExportFileHelper.uploadFile(emptyFile);
         ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');

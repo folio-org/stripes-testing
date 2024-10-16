@@ -63,7 +63,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423649 User with "Bulk Edit: In app - View inventory records" and "Inventory: View, create, edit instances" permissions is able to view Holdings, Items in "Bulk edit" (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423649'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

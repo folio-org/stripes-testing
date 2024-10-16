@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
 
     it(
       'C400670 Verify Bulk Edit actions for Items notes - mark Staff only (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C400670'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

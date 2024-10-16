@@ -28,27 +28,31 @@ describe('lists', () => {
         userData.userId = userProperties.userId;
       });
     });
-    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.resetAllFilters();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.saveList();
-      Lists.openActions();
-      Lists.deleteList();
-      Lists.confirmDelete();
-      Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
-    });
+    it(
+      'C411768 Delete list: Positive case (corsair)',
+      { tags: ['smoke', 'corsair', 'C411768'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.resetAllFilters();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.saveList();
+        Lists.openActions();
+        Lists.deleteList();
+        Lists.confirmDelete();
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
+      },
+    );
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'corsair', 'C411772', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

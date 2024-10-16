@@ -96,7 +96,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399065 Verify that special characters in Item Barcode are NOT treated as wildcards for Bulk Edit (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C399065'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

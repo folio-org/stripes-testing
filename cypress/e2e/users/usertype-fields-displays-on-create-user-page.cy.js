@@ -75,12 +75,12 @@ describe('Users', () => {
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       usersSearchResultsPane.openNewUser();
-      UserEdit.verifySaveAndColseIsDisabled(true);
+      UserEdit.verifySaveAndCloseIsDisabled(true);
       UserEdit.verifyCancelIsDisable(false);
       UserEdit.verifyUserInformation(['User type', 'Select user type']);
       UserEdit.verifyUserTypeItems();
       UserEdit.chooseRequestType('Staff');
-      UserEdit.verifySaveAndColseIsDisabled(false);
+      UserEdit.verifySaveAndCloseIsDisabled(false);
       UserEdit.enterValidValueToCreateViaUi(
         userOne,
         `${patronGroup.name} (${patronGroup.desc})`,

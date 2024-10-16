@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409430 Verify Bulk Edit app landing page without functional permissions (Firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C409430'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
         BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');

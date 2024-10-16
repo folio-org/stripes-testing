@@ -87,7 +87,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C440 Verify that you can create/edit/delete fee/fine owners (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C440'] },
       () => {
         UsersOwners.startNewLineAdding();
         UsersOwners.trySave();
@@ -128,7 +128,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C441'] },
       () => {
         createRegularUser().then((firstUserProperties) => {
           testUsers.push(firstUserProperties);

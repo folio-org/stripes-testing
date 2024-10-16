@@ -156,43 +156,55 @@ describe('Circulation log', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C645: Test "Days" loan period (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
-      const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
-      // Navigate to checkout page
-      cy.visit(TopMenu.checkOutPath);
-      // Enter patron and item that meet the criteria of the circulation rule
-      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
-      const itemDueDate = new Date(DateTools.getTomorrowDay());
-      // Check due date/time
-      CheckOutActions.checkItemDueDate(
-        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
-      );
-    });
+    it(
+      'C645 Test "Days" loan period (vega) (TaaS)',
+      { tags: ['criticalPath', 'vega', 'C645'] },
+      () => {
+        const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
+        // Navigate to checkout page
+        cy.visit(TopMenu.checkOutPath);
+        // Enter patron and item that meet the criteria of the circulation rule
+        CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+        const itemDueDate = new Date(DateTools.getTomorrowDay());
+        // Check due date/time
+        CheckOutActions.checkItemDueDate(
+          DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+        );
+      },
+    );
 
-    it('C646: Test "Weeks" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-      const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
-      // Navigate to checkout page
-      cy.visit(TopMenu.checkOutPath);
-      // Enter patron and item that meet the criteria of the circulation rule
-      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
-      const itemDueDate = new Date(DateTools.getFutureWeekDateObj());
-      // Check due date/time
-      CheckOutActions.checkItemDueDate(
-        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
-      );
-    });
+    it(
+      'C646 Test "Weeks" loan period (vega) (TaaS)',
+      { tags: ['extendedPath', 'vega', 'C646'] },
+      () => {
+        const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
+        // Navigate to checkout page
+        cy.visit(TopMenu.checkOutPath);
+        // Enter patron and item that meet the criteria of the circulation rule
+        CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+        const itemDueDate = new Date(DateTools.getFutureWeekDateObj());
+        // Check due date/time
+        CheckOutActions.checkItemDueDate(
+          DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+        );
+      },
+    );
 
-    it('C647: Test "Months" loan period (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-      const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
-      // Navigate to checkout page
-      cy.visit(TopMenu.checkOutPath);
-      // Enter patron and item that meet the criteria of the circulation rule
-      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
-      const itemDueDate = new Date(DateTools.getAfterThreeMonthsDateObj());
-      // Check due date/time
-      CheckOutActions.checkItemDueDate(
-        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
-      );
-    });
+    it(
+      'C647 Test "Months" loan period (vega) (TaaS)',
+      { tags: ['extendedPath', 'vega', 'C647'] },
+      () => {
+        const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
+        // Navigate to checkout page
+        cy.visit(TopMenu.checkOutPath);
+        // Enter patron and item that meet the criteria of the circulation rule
+        CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+        const itemDueDate = new Date(DateTools.getAfterThreeMonthsDateObj());
+        // Check due date/time
+        CheckOutActions.checkItemDueDate(
+          DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+        );
+      },
+    );
   });
 });

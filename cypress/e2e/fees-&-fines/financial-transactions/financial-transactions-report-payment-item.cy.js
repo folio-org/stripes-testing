@@ -194,7 +194,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C343332 Check that the user can create "Financial Transactions Detail Report" for item (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C343332'] },
       () => {
         UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
         FinancialTransactionDetailReportModal.fillInRequiredFields({

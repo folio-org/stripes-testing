@@ -225,8 +225,8 @@ describe('Loans', () => {
     });
 
     it(
-      'C569: renewal failure because loan has reached maximum renewals (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'eurekaPhase1'] },
+      'C569 renewal failure because loan has reached maximum renewals (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C569', 'eurekaPhase1'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: AppPaths.getOpenLoansPath(firstUser.userId),

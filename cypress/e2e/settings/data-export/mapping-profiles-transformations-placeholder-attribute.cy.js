@@ -34,7 +34,7 @@ describe('Data Export', () => {
 
     it(
       'C345342 Hide placeholder attribute once user populates the first row (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C345342'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();

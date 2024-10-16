@@ -139,7 +139,7 @@ describe('lists', () => {
 
     it(
       'C411804 Filter section: Statuses (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'corsair', 'C411804', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Status" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(statusFilters.accordionName);
@@ -161,7 +161,7 @@ describe('lists', () => {
 
     it(
       'C411805 Filter section: Visibility (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'corsair', 'C411805', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Visibility" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
@@ -200,7 +200,7 @@ describe('lists', () => {
 
     it(
       'C411806 Filter section: Record types (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'corsair', 'C411806', 'eurekaPhase1'] },
       () => {
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);

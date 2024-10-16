@@ -35,7 +35,7 @@ describe('Data Export', () => {
 
     it(
       'C410765 Verify "Data export -> Job profiles" settings HTML page title format (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C410765'] },
       () => {
         TopMenuNavigation.navigateToApp('Settings');
         SettingsDataExport.verifyPageTitle('Settings - FOLIO');

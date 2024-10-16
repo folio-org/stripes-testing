@@ -185,7 +185,7 @@ describe('Request Detail.TLR', () => {
 
   it(
     'C350563 Check that the user can click on the "Reorder queue" option (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350563'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

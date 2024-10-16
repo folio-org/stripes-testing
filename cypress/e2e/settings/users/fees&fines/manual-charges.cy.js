@@ -40,7 +40,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C442 Verify that you can create/edit/delete manual charges for a fee/fine owner (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C442'] },
       () => {
         ManualCharges.selectOwner(owners[0]);
         ManualCharges.createViaUi(manualCharge);

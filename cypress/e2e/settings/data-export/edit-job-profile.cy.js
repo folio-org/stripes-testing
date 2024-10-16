@@ -55,7 +55,7 @@ describe('Data Export', () => {
 
     it(
       'C350671 Verify Job profile - edit existing profile (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C350671'] },
       () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();

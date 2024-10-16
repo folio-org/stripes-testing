@@ -37,7 +37,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195624 - eholdings: search by provider, add tags for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['non-live', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
     () => {
       const expanded = 'true';
       cy.visit(TopMenu.eholdingsPath);
@@ -60,7 +60,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['non-live', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
     () => {
       const testNote = {
         title: `autotest_TC195626_${getRandomPostfix()}`,

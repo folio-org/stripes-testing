@@ -80,7 +80,7 @@ describe('bulk-edit', () => {
 
     it(
       'C402355 Verify Bulk Edit actions for Items notes - Find-Remove (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C402355'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');

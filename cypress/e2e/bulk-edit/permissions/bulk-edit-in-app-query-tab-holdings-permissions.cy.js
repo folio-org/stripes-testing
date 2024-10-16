@@ -36,7 +36,7 @@ describe('bulk-edit', () => {
 
     it(
       'C413373 Verify Query tab permissions (In app holdings) (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C413373'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');

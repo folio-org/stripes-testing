@@ -68,7 +68,7 @@ describe('Inventory', () => {
 
     it(
       'C367931 Verify that missing holdings source is not populated in the UI with instances source (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'firebird', 'C367931', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);

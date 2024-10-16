@@ -37,7 +37,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C375150 Verify that user can save new Service point (firebird)',
-    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
+    { tags: ['smoke', 'firebird', 'C375150', 'eurekaPhase1'] },
     () => {
       ServicePoints.createNewServicePoint(newServicePoint);
       ServicePoints.servicePointExists(newServicePoint.name);
@@ -46,7 +46,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C375151 Verify that user can edit existing Service point (firebird)',
-    { tags: ['smoke', 'firebird', 'eurekaPhase1'] },
+    { tags: ['smoke', 'firebird', 'C375151', 'eurekaPhase1'] },
     () => {
       ServicePoints.editServicePoint({
         name: newServicePoint.name,

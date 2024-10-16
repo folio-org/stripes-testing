@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
 
     it(
       'C366592 Verify uploading the same file twice  but  selecting  different record identifiers (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C366592'] },
       () => {
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToHoldings();

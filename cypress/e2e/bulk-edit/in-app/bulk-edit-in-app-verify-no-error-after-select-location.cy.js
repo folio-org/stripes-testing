@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359152 Verify that no error after "Select location" option selected in Bulk Edit appeared (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C359152'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
 
