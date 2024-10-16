@@ -22,7 +22,6 @@ describe('Users', () => {
         name: `b_groupName ${getRandomPostfix()}`,
         id: null,
       },
-      isNewButtonDisabled: true,
     };
 
     before('Create user and login', () => {
@@ -58,7 +57,7 @@ describe('Users', () => {
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsSortingOrder();
-      PatronGroups.verifyPatronGroupsPane(testData.isNewButtonDisabled);
+      PatronGroups.verifyPatronGroupsPane();
       PatronGroups.verifyActionsCells();
     });
   });

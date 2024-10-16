@@ -74,8 +74,9 @@ describe('Data Import', () => {
           receivingWorkflow: 'Synchronized',
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
           currency: 'USD',
-          locationName: '"Main Library (KU/CC/DI/M)"',
+          locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
         },
         actionProfile: {
