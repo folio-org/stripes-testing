@@ -14,7 +14,7 @@ describe('Inventory', () => {
 
     it(
       'C347902 Verify "Browse call numbers" option on the Instances tab (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C347902'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -27,7 +27,7 @@ describe('Inventory', () => {
 
     it(
       'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C347903'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.browseCallNumberIsAbsent();
@@ -38,7 +38,7 @@ describe('Inventory', () => {
 
     it(
       'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C347923'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToItem();

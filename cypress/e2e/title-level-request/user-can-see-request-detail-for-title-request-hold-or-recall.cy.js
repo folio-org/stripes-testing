@@ -220,7 +220,7 @@ describe('Request Detail. TLR', () => {
 
   it(
     'C350516 Check that the user can see "Request Detail" for Title request (Hold or Recall) (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350516'] },
     () => {
       Requests.selectTitleRequestLevel();
       Requests.findCreatedRequest(itemsData.itemsWithSeparateInstance[0].instanceTitle);

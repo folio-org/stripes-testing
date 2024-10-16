@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380394 Verify that bulk edit jobs run by correct user in case deleting one of them (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C380394'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.bulkEditPath,
@@ -87,6 +87,7 @@ describe('bulk-edit', () => {
         });
         cy.getAdminToken();
         Users.deleteViaApi(user1.userId);
+        cy.wait(5000);
 
         cy.login(user2.username, user2.password, {
           path: TopMenu.bulkEditPath,
@@ -110,8 +111,8 @@ describe('bulk-edit', () => {
         cy.wait('@confirmChanges2', getLongDelay()).then((res) => {
           expect(res.response.body.userId).to.eq(user2.userId);
         });
-        BulkEditActions.commitChanges();
         cy.intercept('/bulk-operations/*').as('commitChanges2');
+        BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         cy.wait('@commitChanges2', getLongDelay()).then((res) => {
           expect(res.response.body.userId).to.eq(user2.userId);

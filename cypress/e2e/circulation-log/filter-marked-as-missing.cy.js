@@ -61,7 +61,7 @@ describe('Circulation log', () => {
 
   it(
     'C17001 Filter circulation log by marked as missing (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17001'] },
     () => {
       UsersSearchPane.searchByKeywords(user.userId);
       UsersSearchPane.openUser(user.userId);
@@ -88,7 +88,7 @@ describe('Circulation log', () => {
 
   it(
     'C17002 Check the Actions button from filtering Circulation log by marked as missing (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17002'] },
     () => {
       SearchPane.searchByMarkedAsMissing();
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);

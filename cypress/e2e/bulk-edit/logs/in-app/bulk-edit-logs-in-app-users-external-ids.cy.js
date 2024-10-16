@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375247 Verify genetated Logs files for Users In app -- only valid External IDs (firebird)',
-        { tags: ['smoke', 'firebird'] },
+        { tags: ['smoke', 'firebird', 'C375247'] },
         () => {
           UsersSearchPane.searchByStatus('Active');
           UsersSearchPane.searchByUsername(user.username);

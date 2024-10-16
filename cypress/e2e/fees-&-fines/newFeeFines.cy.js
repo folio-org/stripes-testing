@@ -124,7 +124,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)',
-      { tags: ['smoke', 'feeFine', 'vega'] },
+      { tags: ['smoke', 'feeFine', 'vega', 'C455'] },
       () => {
         const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
         const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];
@@ -174,7 +174,6 @@ describe('Fees&Fines', () => {
         cy.checkOutItem(testData.userProperties.barcode, itemBarcode);
         cy.verifyItemCheckOut();
 
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
         cy.wait('@/authn/refresh', { timeout: 30000 });
 
@@ -191,13 +190,13 @@ describe('Fees&Fines', () => {
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemBarcode);
         CheckInActions.confirmMultipleItemsCheckin(itemBarcode);
-        CheckInActions.openNewfeefinesPane();
+        CheckInActions.openNewFeeFinesPane();
 
         initialCheckNewFeeFineFragment(testData.owner.name);
         createFee();
 
         // Checking created fees
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+        cy.wait(5000);
         cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
         cy.wait('@/authn/refresh', { timeout: 30000 });
 

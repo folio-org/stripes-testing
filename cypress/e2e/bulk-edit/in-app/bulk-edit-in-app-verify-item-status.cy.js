@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353652 Verify item status to In-app bulk edit form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353652'] },
       () => {
         // #1 * Select the "Inventory - items", "Item barcode"
         BulkEditSearchPane.checkItemsRadio();

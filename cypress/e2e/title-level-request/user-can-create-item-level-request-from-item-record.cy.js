@@ -140,7 +140,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350421 Check that user can create Item level request from Item record (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350421'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       FilterItems.toggleAccordionItemsButton(testData.holdingId);

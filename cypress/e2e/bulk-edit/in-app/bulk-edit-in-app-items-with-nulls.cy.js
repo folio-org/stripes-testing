@@ -56,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380583 Verify bulk edit of Item record that contains NULL values in reference data (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380583'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

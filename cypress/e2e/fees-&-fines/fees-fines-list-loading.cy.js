@@ -118,7 +118,7 @@ describe('Fees&Fines', () => {
 
   it(
     'C368476 Check that Fees/fines list loading if user have any Fees/fines (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C368476'] },
     () => {
       // Click on "Fees/fines" accordion
       UsersCard.openFeeFines(1, 1);

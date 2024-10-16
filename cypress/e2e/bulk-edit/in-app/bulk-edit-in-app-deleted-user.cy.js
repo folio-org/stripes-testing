@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C378102 Verify that items updated by a user account that no longer exists are bulk editing (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C378102'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.inventoryPath,

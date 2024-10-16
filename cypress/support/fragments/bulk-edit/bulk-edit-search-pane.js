@@ -342,6 +342,7 @@ export default {
 
   checkItemsRadio() {
     cy.do(itemsRadio.click());
+    cy.wait(500);
   },
 
   itemsRadioIsDisabled(isDisabled) {
@@ -354,6 +355,7 @@ export default {
 
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
+    cy.wait(500);
   },
 
   holdingsRadioIsDisabled(isDisabled) {
@@ -927,6 +929,7 @@ export default {
     names.forEach((name) => {
       cy.do(DropdownMenu().find(Checkbox(name)).click());
     });
+    cy.wait(500);
   },
 
   changeShowColumnCheckboxIfNotYet(...names) {
@@ -1157,5 +1160,64 @@ export default {
 
   verifyRecordsCountInBulkEditQueryPane(value) {
     cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      matchedAccordion.find(previousPaginationButton).has({ disabled: true }),
+      matchedAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInAreYouSureForm(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      areYouSureForm.find(previousPaginationButton).has({ disabled: true }),
+      areYouSureForm.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[aria-label^="PreviewModal"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInChangedRecords(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      changesAccordion.find(previousPaginationButton).has({ disabled: true }),
+      changesAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyInstanceNoteColumns(instanceNoteColumnNames) {
+    cy.get('[class*="DropdownMenu"] [class*="labelText"]').then((columns) => {
+      const columnNames = Cypress.$(columns)
+        .map((index, column) => {
+          return Cypress.$(column).text();
+        })
+        .get();
+      // get an array of instance note column name
+      const noteColumnNames = columnNames.slice(
+        columnNames.findIndex((item) => item === 'Publication range') + 1,
+      );
+      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort((a, b) => {
+        return a.localeCompare(b);
+      });
+
+      // verify alphabetical order
+      expect(noteColumnNames).to.deep.equal(noteColumnNamesInAlphabeticOrder);
+      // verify exact columns exist
+      instanceNoteColumnNames.forEach((instanceNoteColumnName) => {
+        expect(noteColumnNames).include(instanceNoteColumnName);
+        // verify that the checkbox for this column is unchecked
+        cy.expect(DropdownMenu().find(Checkbox(instanceNoteColumnName)).has({ checked: false }));
+      });
+    });
   },
 };

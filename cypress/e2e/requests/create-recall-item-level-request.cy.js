@@ -107,7 +107,7 @@ describe('Create Recall Item level request', () => {
 
   it(
     'C350418 Check that user can create "Recall" Item level request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350418'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,

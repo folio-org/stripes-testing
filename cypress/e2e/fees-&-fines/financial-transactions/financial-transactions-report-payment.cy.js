@@ -136,7 +136,7 @@ describe('Fees&Fines', () => {
     );
     it(
       'C343323 Check that "Financial-transactions-detail.csv" report is available for download (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C343323'] },
       () => {
         UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
         FinancialTransactionDetailReportModal.fillInRequiredFields({
@@ -153,7 +153,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C343327 Check that the user can create "Financial Transactions Detail Report" for payment (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C343327'] },
       () => {
         UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
         FinancialTransactionDetailReportModal.fillInRequiredFields({

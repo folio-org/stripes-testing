@@ -35,7 +35,7 @@ describe('Data Export', () => {
 
     it(
       'C410768 Verify "Data export -> Field mapping profiles" settings HTML page title format (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C410768'] },
       () => {
         TopMenuNavigation.navigateToApp('Settings');
         SettingsDataExport.verifyPageTitle('Settings - FOLIO');

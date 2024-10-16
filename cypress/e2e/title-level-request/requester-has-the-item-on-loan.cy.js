@@ -93,7 +93,7 @@ describe('Create Item or Title level request', () => {
   it(
     'C1286 Check error message when item already checked out (vega) (TaaS)',
     {
-      tags: ['extendedPath', 'vega'],
+      tags: ['extendedPath', 'vega', 'C1286'],
     },
     () => {
       // Navigate to new request page

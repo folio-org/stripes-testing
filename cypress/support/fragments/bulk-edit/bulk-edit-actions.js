@@ -123,6 +123,7 @@ export default {
         .find(Select({ dataTestID: 'select-actions-1' }))
         .choose(actionName),
     );
+    cy.wait(500);
   },
 
   verifySecondActionSelected(option, rowIndex = 0) {
@@ -267,6 +268,10 @@ export default {
     cy.expect(closeAreYouSureModalButton.has({ disabled: isDisabled }));
   },
 
+  closeAreYouSureForm() {
+    cy.do(closeAreYouSureModalButton.click());
+  },
+
   openActions() {
     cy.do(actionsBtn.click());
   },
@@ -361,7 +366,7 @@ export default {
       Select({ label: 'Library' }).exists(),
       Selection('Location').exists(),
       locationLookupModal.find(cancelButton).has({ disabled: false }),
-      Button(saveAndCloseButton).has({ disabled: true }),
+      saveAndCloseButton.has({ disabled: true }),
     ]);
   },
 
@@ -369,7 +374,7 @@ export default {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
   locationLookupModalSaveAndClose() {
-    cy.do(locationLookupModal.find(Button(saveAndCloseButton)).click());
+    cy.do(locationLookupModal.find(saveAndCloseButton).click());
   },
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
@@ -963,7 +968,7 @@ export default {
   },
 
   saveAndClose() {
-    cy.do(Button(saveAndCloseButton).click());
+    cy.do(saveAndCloseButton.click());
   },
 
   downloadMatchedResults() {

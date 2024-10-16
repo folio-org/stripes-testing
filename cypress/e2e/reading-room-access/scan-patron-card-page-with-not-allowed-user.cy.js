@@ -81,17 +81,17 @@ describe('Reading Room Access', () => {
     { tags: ['smoke', 'volaris'] },
     () => {
       const userInfo = {
-        firstName: userNotAllowedInReadingRoom.user.firstName,
+        preferredFirstName: userNotAllowedInReadingRoom.user.preferredFirstName,
         lastName: userNotAllowedInReadingRoom.user.lastName,
         patronGroup: userNotAllowedInReadingRoom.user.userGroup.group,
-        userType: userNotAllowedInReadingRoom.user.userGroup.group,
+        userType: 'staff',
         barcode: userNotAllowedInReadingRoom.user.barcode,
         expirationDate: 'No value set-',
       };
 
       ReadingRoom.scanUser(userNotAllowedInReadingRoom.user.barcode);
-      ReadingRoom.verifyUserIsScanned(userInfo.firstName);
-      ReadingRoom.verifyUserInformation(userInfo, false);
+      ReadingRoom.verifyUserIsScanned(userInfo.preferredFirstName);
+      ReadingRoom.verifyUserInformation(userInfo);
       ReadingRoom.verifyWarningMessage('Not allowed');
       ReadingRoom.verifyButtonsEnabled(allowedButtonState);
       ReadingRoom.clickNotAllowedButton();

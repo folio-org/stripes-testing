@@ -153,7 +153,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422058 Verify Bulk Edit actions for Holdings notes - Find-Remove (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C422058'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);

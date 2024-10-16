@@ -22,15 +22,13 @@ import ArrayUtils from '../../utils/arrays';
 
 const listNameTextField = TextField({ name: 'listName' });
 const listDescriptionTextArea = TextArea({ name: 'description' });
-const closeModal = Modal();
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
 const deleteButton = Button('Delete');
 const cancelRefresh = Button('Cancel refresh');
 const buildQueryButton = Button('Build query');
 const closeWithoutSavingButton = Button('Close without saving');
-// const keepEditingButton = Button('Keep editing');
-const keepEditingButton = closeModal.find(Button('Keep editing'));
+const keepEditingButton = Button('Keep editing');
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
 const editList = Button('Edit list');
@@ -39,7 +37,7 @@ const deleteList = Button('Delete list');
 const exportList = Button('Export all columns (CSV)');
 const exportListVisibleColumns = Button('Export visible columns (CSV)');
 const testQuery = Button('Test query');
-const runQuery = Button('Run query & save');
+const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
 const newLink = new Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
@@ -55,8 +53,13 @@ const sharedCheckbox = Checkbox({ id: 'clickable-filter-visibility-shared' });
 const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 
 const deleteConfirmationModal = Modal('Delete list');
+const cancelConfirmationModal = Modal('Are you sure?');
+
+const cannedListInactivePatronsWithOpenLoans = 'Inactive patrons with open loans';
 
 export default {
+  cannedListInactivePatronsWithOpenLoans,
+
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
     cy.wait(2000);
@@ -90,8 +93,26 @@ export default {
     cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
     cy.wait(1000);
-    cy.do(runQuery.click());
+    cy.do(runQueryAndSave.click());
     cy.wait(2000);
+  },
+
+  testQuery() {
+    cy.do(testQuery.click());
+    cy.wait(1000);
+  },
+
+  runQueryAndSave() {
+    cy.do(runQueryAndSave.click());
+    cy.wait(2000);
+  },
+
+  changeQueryBoolValue(value) {
+    let valueToSet = 'False';
+    if (value) {
+      valueToSet = 'True';
+    }
+    cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
   },
 
   openActions() {
@@ -224,6 +245,11 @@ export default {
     cy.wait(1000);
   },
 
+  verifyExportListVisibleColumnsButtonIsActive() {
+    cy.expect(exportListVisibleColumns.exists());
+    cy.expect(exportListVisibleColumns.has({ disabled: false }));
+  },
+
   verifyExportListButtonIsDisabled() {
     cy.expect(exportList.has({ disabled: true }));
   },
@@ -238,18 +264,42 @@ export default {
   },
 
   cancelList() {
+    cy.wait(500);
     cy.do(cancelButton.click());
-    cy.wait(3000);
+    cy.wait(500);
+  },
+
+  verifyCancelButtonIsActive() {
+    cy.expect(cancelButton.exists());
+    cy.expect(cancelButton.has({ disabled: false }));
+  },
+
+  verifySaveButtonIsActive() {
+    cy.expect(saveButton.exists());
+    cy.expect(saveButton.has({ disabled: false }));
+  },
+
+  verifySaveButtonIsDisabled() {
+    cy.expect(saveButton.has({ disabled: true }));
+  },
+
+  verifyCancellationModal() {
+    cy.expect(cancelConfirmationModal.exists());
+    cy.expect(cancelConfirmationModal.find(HTML('There are unsaved changes')).exists());
+    cy.expect(cancelConfirmationModal.find(Button('Close without saving')).exists());
+    cy.expect(cancelConfirmationModal.find(Button('Keep editing')).exists());
   },
 
   closeWithoutSaving() {
-    cy.do(closeWithoutSavingButton.click());
-    cy.wait(3000);
+    cy.wait(500);
+    cy.do(cancelConfirmationModal.find(closeWithoutSavingButton).click());
+    cy.wait(1000);
   },
 
   keepEditing() {
-    cy.do(keepEditingButton.click());
-    cy.wait(3000);
+    cy.wait(500);
+    cy.do(cancelConfirmationModal.find(keepEditingButton).click());
+    cy.wait(1000);
   },
 
   openNewListPane() {
@@ -268,8 +318,8 @@ export default {
     cy.expect(newLink.absent());
   },
 
-  expiredPatronLoan() {
-    cy.do(Link('Inactive patrons with open loans').click());
+  openExpiredPatronLoanList() {
+    cy.do(Link(cannedListInactivePatronsWithOpenLoans).click());
   },
 
   missingItems() {
@@ -278,14 +328,25 @@ export default {
 
   setName(value) {
     cy.do(listNameTextField.fillIn(value));
+    cy.wait(500);
+  },
+
+  clearName() {
+    cy.do(listNameTextField.clear());
+    cy.wait(500);
   },
 
   verifyListName(value) {
     cy.expect(listNameTextField.has({ value }));
   },
 
+  verifyEmptyListNameErrorMessage() {
+    cy.contains('Please fill this in to continue').should('be.visible');
+  },
+
   setDescription(value) {
     cy.do(listDescriptionTextArea.fillIn(value));
+    cy.wait(500);
   },
 
   verifyListDescription(value) {
@@ -294,6 +355,7 @@ export default {
 
   selectRecordTypeOld(option) {
     cy.get('select[name=recordType]').select(option);
+    cy.wait(500);
   },
 
   selectRecordType(option) {
@@ -304,6 +366,7 @@ export default {
         cy.get('li[role=option]').contains(option).click();
         cy.wait(500);
       });
+    cy.wait(500);
   },
 
   checkKeyValue(label, value) {
@@ -342,13 +405,10 @@ export default {
     cy.expect(Callout(including(message)).exists());
   },
 
-  cancelListPopup: () => {
-    cy.expect(Modal({ header: 'Are you sure?' }).exists());
-    cy.expect(Modal({ message: 'There are unsaved changes' }).exists());
-  },
-
   closeListDetailsPane() {
+    cy.wait(500);
     cy.get('button[icon=times]').click({ multiple: true });
+    cy.wait(1000);
   },
 
   verifyListIsNotPresent(listName) {
@@ -688,7 +748,9 @@ export default {
   deleteListByNameViaApi(listName) {
     this.getViaApi().then((response) => {
       const filteredItem = response.body.content.find((item) => item.name === listName);
-      this.deleteViaApi(filteredItem.id);
+      if (filteredItem) {
+        this.deleteViaApi(filteredItem.id);
+      }
     });
   },
 };

@@ -45,7 +45,7 @@ describe('Requests', () => {
 
   it(
     'C367969 Check that User can save changes while edit "Request policy" without changing "Request policy name *" field (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C367969'] },
     () => {
       RequestPolicy.selectRequestPolicy(requestPolicyBody.name);
       RequestPolicy.editRequestPolicy();

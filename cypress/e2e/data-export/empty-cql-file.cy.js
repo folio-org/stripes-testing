@@ -46,7 +46,7 @@ describe('Data Export', () => {
 
   it(
     'C399097 Verify trigger Data export with an empty .cql file (firebird) (Taas)',
-    { tags: ['firebird', 'extendedPath'] },
+    { tags: ['firebird', 'extendedPath', 'C399097'] },
     () => {
       DataExportLogs.waitLoading();
       ExportFileHelper.uploadFile(emptyFile);

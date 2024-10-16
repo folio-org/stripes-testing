@@ -59,7 +59,7 @@ export {
   MultiSelectOption,
   ValueChipRoot,
 } from './multi-select';
-export { default as NavList, NavListItem } from './navlist';
+export { default as NavList, NavListItem, NavItemList } from './navlist';
 export { default as NoValue } from './no-value';
 export { default as Option, OptionGroup } from './option';
 export { default as Pane, PaneHeader, PaneSet, PaneContent } from './pane';
@@ -92,7 +92,6 @@ export { AdvancedSearch, AdvancedSearchRow } from './advanced-search';
 export { FieldSet, FieldInFieldset } from './fieldset';
 export { default as ConfirmationModal } from './confirmation-modal';
 export { default as Warning } from './warning';
-export { default as ProfilePictureCard } from './profilePictureCard';
 
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';

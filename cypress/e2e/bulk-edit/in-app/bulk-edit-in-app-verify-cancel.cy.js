@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C397355 Verify CANCEL during Bulk edit Users In app  (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C397355'] },
       () => {
         // Select the "Users" radio button on  the "Record types" accordion
         BulkEditSearchPane.checkUsersRadio();

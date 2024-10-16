@@ -69,32 +69,38 @@ describe('Check in backdate', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C587 Check in: backdate check ins (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    const itemEditedReturnTime = '2:00 AM';
-    const today = new Date();
-    const itemEditedReturnDateWithoutZero = DateTools.getFormattedDateWithSlashes({ date: today });
-    const itemEditedReturnDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
+  it(
+    'C587 Check in: backdate check ins (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C587'] },
+    () => {
+      const itemEditedReturnTime = '2:00 AM';
+      const today = new Date();
+      const itemEditedReturnDateWithoutZero = DateTools.getFormattedDateWithSlashes({
+        date: today,
+      });
+      const itemEditedReturnDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
 
-    // Find an open loan that is not overdue
-    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-    UserLoans.openLoanDetails(itemBarcode);
+      // Find an open loan that is not overdue
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      UserLoans.openLoanDetails(itemBarcode);
 
-    // Edit Date returned and Time returned
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.editDateAndTimeReturned(itemEditedReturnDate, itemEditedReturnTime);
-    // Enter barcode of item being checked in
-    CheckInActions.checkInItemGui(itemBarcode);
-    // Time returned is time entered
-    CheckInActions.checkTimeReturned(0, itemEditedReturnTime);
-    // Under Actions click on loan details
-    CheckInActions.openLoanDetails(userData.username);
-    // Return date/time are the values entered at check in
-    LoanDetails.checkKeyValue(
-      'Return date',
-      `${itemEditedReturnDateWithoutZero}, ${itemEditedReturnTime}`,
-    );
-    // Item status is available
-    LoanDetails.checkKeyValue('Item status', 'Available');
-  });
+      // Edit Date returned and Time returned
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      CheckInActions.editDateAndTimeReturned(itemEditedReturnDate, itemEditedReturnTime);
+      // Enter barcode of item being checked in
+      CheckInActions.checkInItemGui(itemBarcode);
+      // Time returned is time entered
+      CheckInActions.checkTimeReturned(0, itemEditedReturnTime);
+      // Under Actions click on loan details
+      CheckInActions.openLoanDetails(userData.username);
+      // Return date/time are the values entered at check in
+      LoanDetails.checkKeyValue(
+        'Return date',
+        `${itemEditedReturnDateWithoutZero}, ${itemEditedReturnTime}`,
+      );
+      // Item status is available
+      LoanDetails.checkKeyValue('Item status', 'Available');
+    },
+  );
 });

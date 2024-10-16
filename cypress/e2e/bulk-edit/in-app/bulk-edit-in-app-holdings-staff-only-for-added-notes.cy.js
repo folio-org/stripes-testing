@@ -103,7 +103,7 @@ describe('bulk-edit', () => {
 
     it(
       'C466271 Verify Staff only checkbox for Added notes - holdings (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C466271'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

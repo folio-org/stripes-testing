@@ -22,7 +22,6 @@ describe('Users', () => {
         name: `b_groupName ${getRandomPostfix()}`,
         id: null,
       },
-      isNewButtonDisabled: true,
     };
 
     before('Create user and login', () => {
@@ -37,8 +36,10 @@ describe('Users', () => {
       cy.createTempUser([Permissions.uiUsersViewPatronGroups.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(SettingsMenu.usersPath);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.usersPath,
+          waiter: () => cy.wait(1000),
+        });
       });
     });
 
@@ -56,7 +57,7 @@ describe('Users', () => {
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsSortingOrder();
-      PatronGroups.verifyPatronGroupsPane(testData.isNewButtonDisabled);
+      PatronGroups.verifyPatronGroupsPane();
       PatronGroups.verifyActionsCells();
     });
   });

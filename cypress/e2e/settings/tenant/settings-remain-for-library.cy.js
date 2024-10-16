@@ -101,7 +101,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399077 Verify that selected settings remain for "Libraries" (firebird) (TaaS)',
-    { tags: ['extendedPathBroken', 'firebird'] },
+    { tags: ['extendedPathBroken', 'firebird', 'C399077'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       // Select "Institution AB" in "Institution" dropdown on "Libraries" pane
