@@ -50,6 +50,7 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
+        cy.wait(3000);
       });
     });
 
