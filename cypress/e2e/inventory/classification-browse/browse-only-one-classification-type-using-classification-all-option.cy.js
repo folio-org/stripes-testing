@@ -94,9 +94,11 @@ describe('Inventory', () => {
     const search = (query, isNegative = true) => {
       InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
       InventorySearchAndFilter.browseSearch(query);
-      isNegative
-        ? InventorySearchAndFilter.verifySearchResult(`${query}would be here`)
-        : InventorySearchAndFilter.verifySearchResult(query);
+      if(isNegative) {
+        InventorySearchAndFilter.verifySearchResult(`${query}would be here`)
+      } else {
+        InventorySearchAndFilter.verifySearchResult(query);
+      }
       InventorySearchAndFilter.clickResetAllButton();
     };
 
