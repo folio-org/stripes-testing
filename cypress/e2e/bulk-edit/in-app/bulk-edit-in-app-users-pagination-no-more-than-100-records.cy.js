@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436880 Verify pagination with no more than 100 records - Identifier tab (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C436880'] },
       () => {
         BulkEditSearchPane.verifyPaginatorInMatchedRecords(recordsNumber);
         BulkEditActions.openActions();
