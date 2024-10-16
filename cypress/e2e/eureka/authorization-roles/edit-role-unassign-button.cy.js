@@ -43,6 +43,11 @@ describe('Eureka', () => {
           {
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Links Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Links Collection',
             action: CAPABILITY_ACTIONS.EDIT,
           },
           {
@@ -59,11 +64,6 @@ describe('Eureka', () => {
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Collection',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Domain',
-            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
             table: CAPABILITY_TYPES.DATA,

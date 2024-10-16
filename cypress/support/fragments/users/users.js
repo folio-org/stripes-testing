@@ -279,7 +279,7 @@ export default {
   saveCreatedUser() {
     cy.intercept('POST', '/users').as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
-    cy.wait('@createUser', { timeout: 120000 });
+    cy.wait('@createUser', { timeout: 130000 });
   },
 
   checkZeroSearchResultsHeader: () => {

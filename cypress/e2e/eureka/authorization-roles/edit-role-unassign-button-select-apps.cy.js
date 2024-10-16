@@ -46,6 +46,18 @@ describe('Eureka', () => {
           {
             application: applications[1],
             table: CAPABILITY_TYPES.DATA,
+            resource: 'Inventory-Storage Authorities Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            application: applications[1],
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Links Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            application: applications[1],
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Note Links Collection',
             action: CAPABILITY_ACTIONS.EDIT,
           },
@@ -66,12 +78,6 @@ describe('Eureka', () => {
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Collection',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Domain',
-            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
             application: applications[1],

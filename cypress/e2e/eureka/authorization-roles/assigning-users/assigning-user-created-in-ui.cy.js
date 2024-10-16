@@ -37,8 +37,8 @@ describe('Eureka', () => {
 
         before('Create user, role, login', () => {
           cy.getAdminToken();
-          cy.getUserGroups({ limit: 1 }).then(() => {
-            testData.userGroup = Cypress.env('userGroups')[0];
+          cy.createUserGroupApi().then((group) => {
+            testData.userGroup = group;
           });
           cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
             testData.roleId = role.id;
@@ -110,7 +110,7 @@ describe('Eureka', () => {
                 testData.lastName,
                 null,
                 true,
-                testData.userCGroupName,
+                testData.userGroup.group,
               );
             });
           },
