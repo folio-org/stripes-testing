@@ -36,8 +36,6 @@ describe('MARC', () => {
             content: '',
             boxFourth:
               '$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english',
-            boxFourthLinked:
-              '$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $v no. 19. $z England',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84801249',
             boxSeventh: '',
@@ -52,7 +50,6 @@ describe('MARC', () => {
             tag: '240',
             content: '$9 test123',
             boxFourth: '$a C380727 Hosanna Bible',
-            boxFourthLinked: '$a C380727 Hosanna Bible',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n99036055',
             boxSeventh: '',
@@ -151,7 +148,7 @@ describe('MARC', () => {
                 newField.tag,
                 '\\',
                 '\\',
-                `${newField.boxFourthLinked}`,
+                `${newField.boxFourth}`,
                 `${newField.boxFifth}`,
                 `${newField.boxSixth}`,
                 `${newField.boxSeventh}`,
@@ -182,7 +179,7 @@ describe('MARC', () => {
                 newField.tag,
                 '\\',
                 '\\',
-                `${newField.boxFourthLinked}`,
+                `${newField.boxFourth}`,
                 `${newField.boxFifth}`,
                 `${newField.boxSixth}`,
                 `${newField.boxSeventh}`,
@@ -192,7 +189,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $v no. 19. $z England $0 http://id.loc.gov/authorities/names/n84801249 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $0 http://id.loc.gov/authorities/names/n84801249 $9`,
             );
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380727 Hosanna Bible $0 http://id.loc.gov/authorities/names/n99036055 $9`,
