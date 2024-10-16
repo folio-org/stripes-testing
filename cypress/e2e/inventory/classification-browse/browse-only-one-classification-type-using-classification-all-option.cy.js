@@ -31,18 +31,18 @@ describe('Inventory', () => {
         },
         {
           instanceTitle: 'C468155 Search by Classification Instance 6 - LC (local)',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
           classificationValue: 'DD259.4 .B527 1973',
         },
         {
           instanceTitle:
             'C468155 Search by Classification Instance 7 - National Agricultural Library',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.GDC,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.NATIONAL_AGRICULTURAL_LIBRARY,
           classificationValue: 'HD3492.H8',
         },
         {
           instanceTitle: 'C468155 Search by Classification Instance 9 - SUDOC',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.SUDOC,
           classificationValue: 'L37.s:Oc1/2/991',
         },
       ],
@@ -94,8 +94,8 @@ describe('Inventory', () => {
     const search = (query, isNegative = true) => {
       InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
       InventorySearchAndFilter.browseSearch(query);
-      if(isNegative) {
-        InventorySearchAndFilter.verifySearchResult(`${query}would be here`)
+      if (isNegative) {
+        InventorySearchAndFilter.verifySearchResult(`${query}would be here`);
       } else {
         InventorySearchAndFilter.verifySearchResult(query);
       }
