@@ -43,7 +43,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360963 Verify behavior when uploading only invalid Users identifiers  (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C360963'] },
       () => {
         // Navigate to the "Bulk edit" app => Select "Users" App => Select "Users UUIDs" from "Records identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

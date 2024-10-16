@@ -25,7 +25,7 @@ describe('OAI-PMH', () => {
 
   it(
     'C376937 Verify "Sets" configuration option is hidden in "OAI-PMH" pane of "OAI-PMH" settings (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C376937'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings', 'OAI-PMH');
       OaiPmh.checkSectionListItems();

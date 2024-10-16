@@ -57,7 +57,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350938 Verify "Are you sure?" form in the in-app Items bulk edit form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C350938'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -68,8 +68,7 @@ describe('bulk-edit', () => {
 
         const newLocation = 'Online';
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        // TODO: uncomment line
-        // BulkEditActions.verifyItemOptions();
+        BulkEditActions.verifyItemOptions();
         BulkEditActions.replacePermanentLocation(newLocation);
         BulkEditActions.clickLocationLookup();
         BulkEditActions.verifyLocationLookupModal();

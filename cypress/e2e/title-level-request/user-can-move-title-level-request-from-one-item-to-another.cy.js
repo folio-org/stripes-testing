@@ -85,8 +85,8 @@ describe('Title Level Request', () => {
   });
 
   it(
-    'C353976: Check that user can move Title Level Request from one Item to another (vega)(TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    'C353976 Check that user can move Title Level Request from one Item to another (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'C353976'] },
     () => {
       testData.folioInstances.forEach((item) => {
         item.barcodes.forEach((barcode) => {

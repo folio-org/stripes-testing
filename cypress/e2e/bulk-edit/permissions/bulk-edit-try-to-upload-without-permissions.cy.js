@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388491 Verify that User with "Bulk Edit: Local View" and "Bulk Edit: In app - Edit inventory" permissions CAN\'T edit user records (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C388491'] },
       () => {
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

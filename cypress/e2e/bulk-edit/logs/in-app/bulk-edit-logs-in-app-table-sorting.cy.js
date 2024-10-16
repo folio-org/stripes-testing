@@ -32,7 +32,7 @@ describe('bulk-edit', () => {
 
       it(
         'C380770 Verify sorting in "Bulk edit logs" table (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C380770'] },
         () => {
           cy.viewport(2560, 1440);
           BulkEditSearchPane.openLogsSearch();

@@ -102,7 +102,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C374115 Verify ability to bill actual cost for item with "Declared lost" status (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C374115'] },
       () => {
         const staffInfo = `staff ${getRandomPostfix()}`;
         const patronInfo = `patron ${getRandomPostfix()}`;

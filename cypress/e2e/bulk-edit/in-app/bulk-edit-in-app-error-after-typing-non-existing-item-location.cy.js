@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359001 Error after typing non existing item location form in Bulk Edit (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C359001'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
 

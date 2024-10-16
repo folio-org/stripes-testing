@@ -509,7 +509,7 @@ export default {
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
   },
 
-  verifySaveAndColseIsDisabled: (status) => {
+  verifySaveAndCloseIsDisabled: (status) => {
     cy.expect(saveAndCloseBtn.has({ disabled: status }));
   },
 

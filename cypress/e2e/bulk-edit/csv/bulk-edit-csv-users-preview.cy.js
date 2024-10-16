@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357066 Verify populating preview records changed (Local approach) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C357066'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);

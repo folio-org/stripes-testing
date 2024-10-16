@@ -28,7 +28,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C343288 Data synchronization settings section must be present only for Dematic StagingDirector provider (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C343288'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
@@ -53,7 +53,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C343287'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 

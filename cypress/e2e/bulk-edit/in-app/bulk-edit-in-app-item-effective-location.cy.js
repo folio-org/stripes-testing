@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380559 Verify updating Item "Effective location" in case of clearing Item "Temporary location" and updating Item "Permanent location" (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C380559'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

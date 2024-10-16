@@ -59,7 +59,7 @@ describe('bulk-edit', () => {
 
     it(
       'C358942 Verify that number of records matched for file with less than 10 item barcodes (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C358942'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

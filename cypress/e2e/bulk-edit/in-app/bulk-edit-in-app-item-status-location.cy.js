@@ -56,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C358135 Verify that user can bulk edit item status and temporary location at once (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C358135'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

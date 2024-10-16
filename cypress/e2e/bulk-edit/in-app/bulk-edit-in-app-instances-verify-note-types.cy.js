@@ -143,7 +143,7 @@ describe('bulk-edit', () => {
 
     it(
       'C468183 Verify Instance note types (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C468183'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.verifyRecordIdentifiers(instanceIdentifiers);

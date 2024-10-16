@@ -21,7 +21,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C448 Verify that you can turn on/turn off comment required flags (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C448'] },
       () => {
         CommentRequired.verifySaveButtonDisabled();
         CommentRequired.verifyRequireCommentForPaidFeeOptions();

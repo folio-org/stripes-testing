@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
 
     it(
       'C365124 Verify that preview of records matched is populated if Items call number contains semicolon (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C365124'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

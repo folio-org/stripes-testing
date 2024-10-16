@@ -71,7 +71,8 @@ describe('MARC', () => {
         before('Creating test data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380746*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380746');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374142');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,

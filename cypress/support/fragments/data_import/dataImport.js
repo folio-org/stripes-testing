@@ -889,6 +889,10 @@ export default {
     cy.do(dataImportNavSection.find(NavListItem(profile)).click());
   },
 
+  cancelBlockedImportModal() {
+    cy.do(importBlockedModal.find(Button('Cancel')).click());
+  },
+
   verifyImportBlockedModal() {
     cy.expect([
       importBlockedModal.exists(),

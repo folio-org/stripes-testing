@@ -104,8 +104,8 @@ describe('Requests', () => {
   });
 
   it(
-    'C546: Create new request for "Page" type (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    'C546 Create new request for "Page" type (vega)',
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C546'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,

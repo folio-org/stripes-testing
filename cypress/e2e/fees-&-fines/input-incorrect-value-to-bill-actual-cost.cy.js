@@ -165,7 +165,7 @@ describe('Fees&Fines', () => {
     it(
       'C374123 Verify ability to input incorrect value to bill actual cost for item with "Declared lost" status (vega) (TaaS)',
       {
-        tags: ['extendedPath', 'vega'],
+        tags: ['extendedPath', 'vega', 'C374123'],
       },
       () => {
         const firstValue = '0.00';

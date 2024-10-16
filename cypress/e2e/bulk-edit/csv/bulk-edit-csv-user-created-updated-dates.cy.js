@@ -57,7 +57,7 @@ describe('bulk-edit', () => {
 
     it(
       'C411714 Verify that "Created date" and "Updated date" fields are system updated in User Bulk edit (Local approach) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C411714'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

@@ -132,7 +132,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
 
   it(
     'C1283 Check that "This requester already has an open request for this item" message appears (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1283'] },
     () => {
       // second requester's request for same item
       NewRequest.openNewRequestPane();

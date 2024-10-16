@@ -40,7 +40,7 @@ describe('Data Export', () => {
 
     it(
       'C10983 Create a new mapping profile for MARC bib record with holdings data included - Instance record (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C10983'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [

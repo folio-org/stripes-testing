@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+import { APPLICATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
@@ -9,6 +10,7 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
@@ -87,18 +89,15 @@ describe('Circulation log', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       ItemRecordView.waitLoading();
       // Click on the "Circulation history" accordion to expand it => Check the "Most recent check in"
-      ItemRecordView.checkItemCirculationHistory('-', '-', '-');
+      ItemRecordView.checkItemCirculationHistory('-', 'No value set-', 'No value set-');
       // Navigate to the "Check in" app and check in that Item by pasting the copied Items barcode to the input filled => Hit "Enter" button
-      cy.visit(TopMenu.checkInPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(itemBarcode);
       ConfirmItemInModal.confirmInTransitModal();
       // Go to the "Inventory" => Search for that Item by pasting the copied Items barcode to the input filled => Click "Search"
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByStatus('In transit');
-      InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
-      ItemRecordView.waitLoading();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
       // The Item has status "In transit"
       ItemRecordView.verifyItemStatus(`In transit to ${testData.secondServicePoint.name}`);
       // Click on the "Circulation history" accordion to expand it => Check the "Most recent check in"

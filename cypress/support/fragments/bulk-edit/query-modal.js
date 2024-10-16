@@ -1,6 +1,6 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  HTML,
   Modal,
   MultiColumnList,
   MultiSelect,
@@ -10,7 +10,6 @@ import {
   Selection,
   Spinner,
   TextField,
-  including,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
@@ -43,7 +42,7 @@ export const usersFieldValues = {
   expirationDate: 'Users — User — Expiration date',
   firstName: 'Users — User — First name',
   lastName: 'Users — User — Last name',
-  patronGroup: 'Users — Group — Group',
+  patronGroup: 'Users — Group — Name',
   preferredContactType: 'Users — User — Preferred contact type',
   userActive: 'Users — User — Active',
   userBarcode: 'Users — User — Barcode',

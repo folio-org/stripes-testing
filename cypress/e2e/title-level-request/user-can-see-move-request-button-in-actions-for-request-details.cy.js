@@ -125,7 +125,7 @@ describe('Title Level Request', () => {
 
   it(
     'C353975 Check that user can see Move request action in Action dropdown for request with connected item (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C353975'] },
     () => {
       Requests.waitContentLoading();
       Requests.findCreatedRequest(testData.itemBarcode);

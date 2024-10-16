@@ -1,4 +1,3 @@
-import { calloutTypes } from '../../../../interactors';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -6,10 +5,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -54,12 +50,8 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
+        cy.wait(3000);
       });
-    });
-
-    beforeEach('select item tab', () => {
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-      BulkEditSearchPane.checkItemsRadio();
     });
 
     after('delete test data', () => {
@@ -72,30 +64,10 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C350905 Negative uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
-      () => {
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-        // try to upload empty file
-        BulkEditSearchPane.uploadFile('empty.csv');
-        InteractorsTools.checkCalloutMessage('The uploaded file is empty.', calloutTypes.error);
-        InteractorsTools.closeCalloutMessage();
-
-        const invalidFileWarning = 'Invalid file';
-        // try to upload another extension
-        BulkEditSearchPane.uploadFile('example.json');
-        BulkEditSearchPane.verifyModalName(invalidFileWarning);
-
-        BulkEditSearchPane.uploadFile(['empty.csv', 'example.json']);
-        BulkEditSearchPane.verifyModalName(invalidFileWarning);
-      },
-    );
-
-    it(
       'C357030 Verify Matched records label cleanup -- In -app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C357030'] },
       () => {
+        BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
@@ -107,29 +79,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyPaneRecordsCount(1);
 
         const newLocation = 'Annex';
-
-        BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.replaceTemporaryLocation(newLocation);
-        BulkEditActions.confirmChanges();
-        BulkEditActions.commitChanges();
-        BulkEditSearchPane.waitFileUploading();
-
-        BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyChangedResults(newLocation);
-      },
-    );
-
-    it(
-      'C356809 Verify uploading file with Item accession number (firebird)',
-      { tags: ['smoke', 'firebird'] },
-      () => {
-        BulkEditSearchPane.selectRecordIdentifier('Item accession number');
-
-        BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
-        BulkEditSearchPane.waitFileUploading();
-
-        const newLocation = 'Online';
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();

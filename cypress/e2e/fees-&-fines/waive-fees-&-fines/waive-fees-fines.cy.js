@@ -90,7 +90,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C462 Verify behavior when "Waive" button pressed from Fee/Fine History page with 1 fee/fine selected (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C462'] },
       () => {
         // Go to User Information for your test patron
         UsersSearchPane.searchByKeywords(userData.username);
@@ -110,7 +110,7 @@ describe('Fees&Fines', () => {
     );
     it(
       'C463 Verify behavior when "Waive" ellipsis option selected from Fee/Fine History page (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C463'] },
       () => {
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.waitLoading();

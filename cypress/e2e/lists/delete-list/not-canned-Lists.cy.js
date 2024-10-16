@@ -28,7 +28,7 @@ describe('lists', () => {
         userData.userId = userProperties.userId;
       });
     });
-    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair', 'C411768'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,
@@ -43,12 +43,12 @@ describe('lists', () => {
       Lists.openActions();
       Lists.deleteList();
       Lists.confirmDelete();
-      cy.contains(`List ${listData.name} deleted.`);
+      Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
     });
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411772'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -66,7 +66,7 @@ describe('lists', () => {
         Lists.openActions();
         Lists.deleteList();
         Lists.confirmDelete();
-        cy.contains(`List ${listData.name} deleted.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
       },
     );
   });

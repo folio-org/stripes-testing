@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -93,25 +94,24 @@ describe('MARC', () => {
           ]).then((userProperties) => {
             testData.user = userProperties;
 
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValue.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linkingTagAndValue.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                linkingTagAndValue.tag,
-                linkingTagAndValue.rowIndex,
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
-            });
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValue.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(linkingTagAndValue.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              linkingTagAndValue.tag,
+              linkingTagAndValue.rowIndex,
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
@@ -152,8 +152,6 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(32, testData.tag100);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245content);
             QuickMarcEditor.checkButtonSaveAndCloseEnable();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Record created.');
             InstanceRecordView.verifyInstancePaneExists();

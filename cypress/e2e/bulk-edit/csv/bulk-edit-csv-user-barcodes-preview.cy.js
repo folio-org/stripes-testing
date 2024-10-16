@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347872 Populating preview of matched records (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C347872'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360556 Populating preview of matched records in case no matches (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C360556'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

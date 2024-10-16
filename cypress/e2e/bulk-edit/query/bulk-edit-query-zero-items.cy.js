@@ -35,7 +35,7 @@ describe('bulk-edit', () => {
 
     it(
       'C446066 Verify the "Run query" button, when the query returns 0 - items (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C446066'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
