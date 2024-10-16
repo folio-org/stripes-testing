@@ -28,7 +28,7 @@ const testData = {
     'Sleeping in the ground (Test record 4 with linked 830 field)',
   ],
   searchAuthorityQueries: [
-    'Robinson, Peter, 1950-2022 Inspector Banks series ;',
+    'Robinson, Peter, 1950-2022',
     'Robinson & Associates, Inc.',
     '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers (1988 : Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',
@@ -39,7 +39,7 @@ const testData = {
     'series == "Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, Inspector Banks series ; 1950-2022 24.',
+    'Robinson, Peter, Inspector Banks series ; 1950-2022',
     'Robinson & Associates, Inc.',
     '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',
@@ -159,7 +159,7 @@ describe('Inventory', () => {
         InventoryInstance.deleteInstanceViaApi(testData.recordIDs[i]);
       }
       for (let i = 4; i < 8; i++) {
-        MarcAuthority.deleteViaAPI(testData.recordIDs[i]);
+        MarcAuthority.deleteViaAPI(testData.recordIDs[i], true);
       }
     });
 

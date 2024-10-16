@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
@@ -9,6 +9,7 @@ import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/m
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
+import topMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
@@ -179,7 +180,7 @@ describe('MARC', () => {
               endDate: todayWithoutPaddingZero,
             };
             MarcAuthorities.checkCalloutAfterExport(jobID);
-            cy.visit(TopMenu.exportManagerPath);
+            topMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
             ExportManagerSearchPane.waitLoading();
             ExportManagerSearchPane.searchByAuthorityControl();
             ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);
