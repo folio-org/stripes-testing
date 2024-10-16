@@ -211,8 +211,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   });
 
   it(
-    'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: ['vega', 'smoke'] },
+    'C5557 Verify that you can create/edit/delete overdue fine policies (vega)',
+    { tags: ['vega', 'smoke', 'C5557'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationOverdueFinePoliciesPath,
@@ -243,7 +243,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (vega)',
-    { tags: ['vega', 'smoke', 'broken'] },
+    { tags: ['vega', 'smoke', 'broken', 'C9267'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkOutPath,

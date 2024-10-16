@@ -63,7 +63,7 @@ describe('Circulation log', () => {
 
   it(
     'C16999 Filter circulation log by Closed loan(firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C16999'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,

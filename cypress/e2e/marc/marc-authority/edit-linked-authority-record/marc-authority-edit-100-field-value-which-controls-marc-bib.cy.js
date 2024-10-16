@@ -6,7 +6,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -23,6 +22,7 @@ describe('MARC', () => {
           '$aC374156 Beethoven, Ludwig van,$d1770-1827.$tVariation:,$nop. 44,$rE♭ major$s ver. 5',
         authorityIconText: 'Linked to MARC authority',
         updatedFieldContent: '$a Variation:, $n op. 44, $r E♭ major $s ver. 5',
+        updated1XXFieldValue: 'C374156 Beethoven, Ludwig van,',
       };
       const marcFiles = [
         {
@@ -38,7 +38,7 @@ describe('MARC', () => {
           fileName: `testMarcFileC374156${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading:
-            'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+            'C374156Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
           updatedAuthorityHeading:
             'C374156 Beethoven, Ludwig van, 1770-1827. Variation:, op. 44, E♭ major ver. 5',
           propertyName: 'authority',
@@ -46,7 +46,7 @@ describe('MARC', () => {
       ];
       const linkingTagAndValue = {
         rowIndex: 17,
-        value: 'Beethoven, Ludwig van,',
+        value: 'C374156Beethoven, Ludwig van,',
         tag: '240',
       };
       const hotKeys = InventoryHotkeys.hotKeys;
@@ -80,8 +80,10 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -89,7 +91,6 @@ describe('MARC', () => {
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySelectMarcAuthorityModal();
             InventoryInstance.searchResults(linkingTagAndValue.value);
-            MarcAuthoritiesSearch.selectAuthorityByIndex(0);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               linkingTagAndValue.tag,
@@ -143,7 +144,7 @@ describe('MARC', () => {
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();
-          MarcAuthorities.searchBy('Keyword', marcFiles[1].updatedAuthorityHeading);
+          MarcAuthorities.searchBy('Keyword', testData.updated1XXFieldValue);
           MarcAuthorities.checkResultList([marcFiles[1].updatedAuthorityHeading]);
           MarcAuthorities.verifyNumberOfTitles(5, '1');
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');

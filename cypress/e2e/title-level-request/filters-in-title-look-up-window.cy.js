@@ -166,7 +166,7 @@ describe('Title Level Request', () => {
 
     it(
       'C353601 Verify filters in title look-up window (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPathBroken', 'vega', 'C353601'] },
       () => {
         NewRequest.openNewRequestPane();
         NewRequest.waitLoadingNewRequestPage();

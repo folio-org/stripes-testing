@@ -30,7 +30,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368033 Filters section: Statuses (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368033'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifySetCriteriaPaneExists();
@@ -64,7 +64,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368034 Filters section: Record types (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368034'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifySetCriteriaPaneExists();
@@ -90,7 +90,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368035 Filters section: Started, Ended (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368035'] },
       () => {
         const currentDate = DateTools.getCurrentDateForFiscalYear();
         const yesterday = DateTools.getPreviousDayDateForFiscalYear();
@@ -169,7 +169,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368037 Verify that after clicking on "Reset all" button, all filters resets (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368037'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifySetCriteriaPaneExists();

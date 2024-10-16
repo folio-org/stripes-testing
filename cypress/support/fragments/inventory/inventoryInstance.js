@@ -851,9 +851,10 @@ export default {
   },
 
   openHoldingView: () => {
+    cy.wait(500);
     cy.do(viewHoldingsButton.click());
-
     HoldingsRecordView.waitLoading();
+    cy.wait(2000);
 
     return HoldingsRecordView;
   },

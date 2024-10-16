@@ -135,7 +135,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399079 Verify that hyperlink  "# of Locations"  navigates to a list of Locations (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C399079'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

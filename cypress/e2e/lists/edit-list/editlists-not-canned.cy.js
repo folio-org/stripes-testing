@@ -39,7 +39,7 @@ describe('lists', () => {
 
     it(
       'C411737 Edit list: Refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411737'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -63,7 +63,7 @@ describe('lists', () => {
 
     it(
       'C411738 Edit list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411738'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -89,7 +89,7 @@ describe('lists', () => {
 
     it(
       'C411734 Edit list: Make the list Inactive (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411734'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -119,7 +119,7 @@ describe('lists', () => {
       },
     );
 
-    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411735 Edit list: Make the list Active (corsair)', { tags: ['smoke', 'corsair', 'C411735'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,

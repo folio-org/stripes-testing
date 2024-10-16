@@ -38,64 +38,70 @@ describe('Data Export', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C15819 Transformation form (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
-      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-      ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
-      ModalSelectTransformations.verifySearchAndFilterPane();
-      ModalSelectTransformations.searchText('text');
-      ModalSelectTransformations.verifySearchResultIncludes(['text']);
-      ModalSelectTransformations.clickResetAll();
-      ModalSelectTransformations.searchText('TEXT');
-      ModalSelectTransformations.verifySearchResultIncludes(['text']);
+    it(
+      'C15819 Transformation form (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C15819'] },
+      () => {
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [
+          'Item',
+        ]);
+        ModalSelectTransformations.verifySearchAndFilterPane();
+        ModalSelectTransformations.searchText('text');
+        ModalSelectTransformations.verifySearchResultIncludes(['text']);
+        ModalSelectTransformations.clickResetAll();
+        ModalSelectTransformations.searchText('TEXT');
+        ModalSelectTransformations.verifySearchResultIncludes(['text']);
 
-      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-      ModalSelectTransformations.verifySearchResultIncludes(['Item']);
-      ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
+        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+        ModalSelectTransformations.verifySearchResultIncludes(['Item']);
+        ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
 
-      ModalSelectTransformations.uncheckItemRecordTypeChechbox();
-      ModalSelectTransformations.checkInstanceRecordTypeChechbox();
-      ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.verifySearchResultIncludes(['Holdings', 'Instance']);
-      ModalSelectTransformations.verifySearchResultDoesNotInclude(['Item']);
-      ModalSelectTransformations.clickResetAll();
+        ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+        ModalSelectTransformations.checkInstanceRecordTypeChechbox();
+        ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.verifySearchResultIncludes(['Holdings', 'Instance']);
+        ModalSelectTransformations.verifySearchResultDoesNotInclude(['Item']);
+        ModalSelectTransformations.clickResetAll();
 
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.verifyTotalSelected('1');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.verifyTotalSelected('1');
 
-      ModalSelectTransformations.uncheckUnselectedStatusChechbox();
-      ModalSelectTransformations.checkUnselectedStatusChechbox();
-      ModalSelectTransformations.uncheckSelectedStatusChechbox();
-      ModalSelectTransformations.checkSelectedStatusChechbox();
+        ModalSelectTransformations.uncheckUnselectedStatusChechbox();
+        ModalSelectTransformations.checkUnselectedStatusChechbox();
+        ModalSelectTransformations.uncheckSelectedStatusChechbox();
+        ModalSelectTransformations.checkSelectedStatusChechbox();
 
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.verifyTotalSelected('0');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.verifyTotalSelected('0');
 
-      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-      ModalSelectTransformations.verifySearchResultIncludes(['Item']);
-      ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
-      ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+        ModalSelectTransformations.verifySearchResultIncludes(['Item']);
+        ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
+        ModalSelectTransformations.clickNthCheckbox();
 
-      ModalSelectTransformations.fillInTransformationsTextfieldsByFieldName(
-        'Item - Barcode',
-        '456',
-        '1',
-        '',
-        'a',
-      );
-      ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-      InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
-      ExportNewFieldMappingProfile.verifyAddedTransformationTable(
-        'Item - Barcode',
-        '456',
-        '1',
-        '\\',
-        'a',
-      );
+        ModalSelectTransformations.fillInTransformationsTextfieldsByFieldName(
+          'Item - Barcode',
+          '456',
+          '1',
+          '',
+          'a',
+        );
+        ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+        InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Item - Barcode',
+          '456',
+          '1',
+          '\\',
+          'a',
+        );
 
-      ExportFieldMappingProfiles.saveMappingProfile();
-      InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-    });
+        ExportFieldMappingProfiles.saveMappingProfile();
+        InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+      },
+    );
   });
 });

@@ -40,7 +40,7 @@ describe('Cancel item level request', () => {
 
   it(
     'C359160 Check that user can not create duplicate "Cancellation reasons" (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C359160'] },
     () => {
       CancellationReason.clickNewButton();
       CancellationReason.setCancellationReasonName(cancellationReason.name);

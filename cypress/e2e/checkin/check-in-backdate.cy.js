@@ -69,7 +69,7 @@ describe('Check in backdate', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C587 Check in: backdate check ins (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+  it('C587 Check in: backdate check ins (vega) (TaaS)', { tags: ['extendedPath', 'vega', 'C587'] }, () => {
     const itemEditedReturnTime = '2:00 AM';
     const today = new Date();
     const itemEditedReturnDateWithoutZero = DateTools.getFormattedDateWithSlashes({ date: today });

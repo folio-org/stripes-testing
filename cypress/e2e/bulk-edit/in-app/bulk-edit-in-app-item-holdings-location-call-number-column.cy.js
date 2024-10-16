@@ -141,7 +141,7 @@ describe('bulk-edit', () => {
 
     it(
       'C446017 Verify "Holdings (Location, Call number)" column can be selected for item records (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C446017'] },
       () => {
         const identifier = 'Item UUIDs';
 

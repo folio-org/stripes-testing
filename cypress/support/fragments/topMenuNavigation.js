@@ -1,4 +1,4 @@
-import { HTML, Link, NavListItem, Button } from '../../../interactors';
+import { HTML, Link, NavListItem, NavItemList, Button } from '../../../interactors';
 import { AppList } from '../../../interactors/applist';
 
 export default {
@@ -21,9 +21,12 @@ export default {
     cy.wait(2000);
     cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
     cy.wait(2000);
-    cy.do(Link(appName).click());
+    cy.do(AppList().find(Link(appName)).click());
   },
   clickToGoHomeButton() {
     cy.do(Button({ id: 'ModuleMainHeading' }).click());
+  },
+  verifyNavigationItemAbsentOnTheBar(appName) {
+    cy.expect(NavItemList({ label: appName }).absent());
   },
 };

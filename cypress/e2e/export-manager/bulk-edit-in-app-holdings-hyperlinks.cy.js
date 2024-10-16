@@ -62,7 +62,7 @@ describe('Export Manager', () => {
 
   it(
     'C365104 Verify hyperlink on the "JobID" column -- Holdings in app approach (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C365104'] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

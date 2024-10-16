@@ -101,7 +101,7 @@ describe('Duplicate item level request', () => {
           userData1.barcode = userProperties.barcode;
           userData1.firstName = userProperties.firstName;
           userData1.patronGroup = userProperties.patronGroup;
-          userData1.fullName = `${userData1.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+          userData1.fullName = `${userData1.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
         });
 
         cy.createTempUser([Permissions.uiRequestsAll.gui])
@@ -112,7 +112,7 @@ describe('Duplicate item level request', () => {
             userData2.barcode = userProperties.barcode;
             userData2.firstName = userProperties.firstName;
             userData2.patronGroup = userProperties.patronGroup;
-            userData2.fullName = `${userData2.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData2.fullName = `${userData2.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -131,7 +131,10 @@ describe('Duplicate item level request', () => {
               servicePoint1.id,
             );
 
-            cy.login(userData1.username, userData1.password);
+            cy.login(userData1.username, userData1.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
@@ -163,9 +166,8 @@ describe('Duplicate item level request', () => {
 
   it(
     'C350560 C782 Check that the user can Duplicate request (Item level request) (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350560'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();

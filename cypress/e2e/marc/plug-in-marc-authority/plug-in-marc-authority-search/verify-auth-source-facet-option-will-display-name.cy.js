@@ -123,16 +123,16 @@ describe('MARC', () => {
         'C360551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
-          MarcAuthorities.checkAuthoritySourceOptions();
+          MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
           MarcAuthorities.chooseAuthoritySourceOption(testData.authSourceOptions.NOT_SPECIFIED);
-          MarcAuthorities.checkSelectedAuthoritySource(testData.authSourceOptions.NOT_SPECIFIED);
+          MarcAuthorities.checkSelectedAuthoritySourceInPlugInModal(testData.authSourceOptions.NOT_SPECIFIED);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
 
           MarcAuthorities.searchByParameter(testData.authSearchOption.GENRE, 'Europe');
           MarcAuthorities.verifySearchResultTabletIsAbsent(true);
 
           MarcAuthorities.checkNoResultsMessage(testData.absenceMessage);
-          MarcAuthorities.checkTotalRecordsForOption(testData.authSourceOptions.NOT_SPECIFIED, 0);
+          MarcAuthorities.checkTotalRecordsForOptionInPlugInModal(testData.authSourceOptions.NOT_SPECIFIED, 0);
         },
       );
     });

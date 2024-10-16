@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422230 Verify Bulk Edit for Holding populated with "Link text" in electronic access (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C422230'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

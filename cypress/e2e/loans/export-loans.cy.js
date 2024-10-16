@@ -87,7 +87,7 @@ describe('Loans', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C721 Export patron*s loans to CSV (vega)', { tags: ['smoke', 'vega', 'shiftLeft'] }, () => {
+  it('C721 Export patron*s loans to CSV (vega)', { tags: ['smoke', 'vega', 'shiftLeft', 'C721'] }, () => {
     const fileNameMask = 'export*';
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);

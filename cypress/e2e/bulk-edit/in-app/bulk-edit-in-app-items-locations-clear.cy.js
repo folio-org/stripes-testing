@@ -56,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353636 Verify in-app bulk edit clear location option (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353636'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
