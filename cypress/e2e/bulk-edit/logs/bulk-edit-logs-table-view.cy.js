@@ -30,7 +30,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368015 Verify that displays a table in the main logs page (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C368015'] },
       () => {
         const tomorrowDate = DateTools.getFormattedDate(
           { date: DateTools.getTomorrowDay() },

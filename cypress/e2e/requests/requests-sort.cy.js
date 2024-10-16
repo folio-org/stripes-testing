@@ -49,7 +49,7 @@ describe('Requests', () => {
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega', 'C2379'] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

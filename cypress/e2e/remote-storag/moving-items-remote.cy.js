@@ -79,7 +79,7 @@ describe('Remote Storage', () => {
 
   it(
     'C163927 Move an item with remote effective location from remote storage locations to non-remote storage holding (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C163927'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);

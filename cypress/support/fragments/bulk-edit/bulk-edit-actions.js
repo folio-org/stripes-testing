@@ -366,7 +366,7 @@ export default {
       Select({ label: 'Library' }).exists(),
       Selection('Location').exists(),
       locationLookupModal.find(cancelButton).has({ disabled: false }),
-      Button(saveAndCloseButton).has({ disabled: true }),
+      saveAndCloseButton.has({ disabled: true }),
     ]);
   },
 
@@ -374,7 +374,7 @@ export default {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
   locationLookupModalSaveAndClose() {
-    cy.do(locationLookupModal.find(Button(saveAndCloseButton)).click());
+    cy.do(locationLookupModal.find(saveAndCloseButton).click());
   },
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
@@ -968,7 +968,7 @@ export default {
   },
 
   saveAndClose() {
-    cy.do(Button(saveAndCloseButton).click());
+    cy.do(saveAndCloseButton.click());
   },
 
   downloadMatchedResults() {

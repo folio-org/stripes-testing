@@ -43,7 +43,7 @@ describe('bulk-edit', () => {
 
     it(
       'C358973 Verify request to /bulk-edit/{UUID}/start (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C358973'] },
       () => {
         // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();

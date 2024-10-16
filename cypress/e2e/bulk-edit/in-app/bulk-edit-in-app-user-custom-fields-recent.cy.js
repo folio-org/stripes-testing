@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C389570'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkUsersRadio();

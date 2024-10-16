@@ -68,7 +68,7 @@ describe('ui-requests: Filter requests by tags', () => {
     });
   });
 
-  it('C9320 Filter requests by tags (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+  it('C9320 Filter requests by tags (vega) (TaaS)', { tags: ['extendedPath', 'vega', 'C9320'] }, () => {
     cy.visit(TopMenu.requestsPath);
     instances.forEach((instance, index) => {
       Requests.findCreatedRequest(instance.instanceTitle);

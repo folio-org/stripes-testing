@@ -112,7 +112,7 @@ describe('Title Level Request', () => {
 
   it(
     'C359154 Check that user can choose request type when placing request ("Hold", "Recall") (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C359154'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(testData.instanceHRID);

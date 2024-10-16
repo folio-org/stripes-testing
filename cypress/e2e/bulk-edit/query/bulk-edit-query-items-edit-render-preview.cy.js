@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
 
     it(
       'C440063 Render preview after query executed (Items - Edit) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C440063'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();

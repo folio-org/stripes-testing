@@ -158,7 +158,7 @@ describe('Loans', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C561 Loan details: test links (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+  it('C561 Loan details: test links (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'C561'] }, () => {
     const itemBarcode = testData.folioInstances[0].barcodes[0];
     cy.visit(AppPaths.getOpenLoansPath(userData.userId));
     UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);

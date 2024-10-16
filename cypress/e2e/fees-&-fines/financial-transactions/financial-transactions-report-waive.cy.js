@@ -128,7 +128,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C343328 Check that the user can create "Financial Transactions Detail Report" for waive (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C343328'] },
       () => {
         UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
         FinancialTransactionDetailReportModal.fillInRequiredFields({

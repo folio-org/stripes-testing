@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368480 Verify that there no errors during bulk editing if ITEMS body has special characters (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368480'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
@@ -97,6 +97,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(location);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        ItemRecordView.closeDetailView();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
@@ -108,6 +109,7 @@ describe('bulk-edit', () => {
 
         cy.getToken(user.username, user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
         BulkEditSearchPane.uploadFile(itemHRIDsFileName);
@@ -127,6 +129,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(newLocation);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        ItemRecordView.closeDetailView();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

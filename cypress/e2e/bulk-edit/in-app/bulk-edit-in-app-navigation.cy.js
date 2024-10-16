@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
 
     it(
       'C374149 Verify Bulk edit state when navigating to another app and back -- In app approach (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C374149'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

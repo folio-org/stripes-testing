@@ -59,7 +59,7 @@ export {
   MultiSelectOption,
   ValueChipRoot,
 } from './multi-select';
-export { default as NavList, NavListItem } from './navlist';
+export { default as NavList, NavListItem, NavItemList } from './navlist';
 export { default as NoValue } from './no-value';
 export { default as Option, OptionGroup } from './option';
 export { default as Pane, PaneHeader, PaneSet, PaneContent } from './pane';

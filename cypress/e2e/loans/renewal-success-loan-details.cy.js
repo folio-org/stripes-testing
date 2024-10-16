@@ -88,7 +88,7 @@ describe('Loans', () => {
 
     it(
       'C580 Renewal: success, from loan details (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C580'] },
       () => {
         // #1 Go to Users app. Find user with open loan. Click on "x open loan(s)" to open loans table.
         UsersSearchPane.searchByKeywords(testData.user.username);

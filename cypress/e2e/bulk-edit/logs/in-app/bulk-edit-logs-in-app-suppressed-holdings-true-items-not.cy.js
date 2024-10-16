@@ -83,7 +83,7 @@ describe('bulk-edit', () => {
 
       it(
         'C402321 Verify "Suppress from discovery" option is set True in when Holdings are suppressed and associated Items are not (firebird)',
-        { tags: ['criticalPath', 'firebird'] },
+        { tags: ['criticalPath', 'firebird', 'C402321'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');

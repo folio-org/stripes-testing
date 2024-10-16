@@ -27,7 +27,7 @@ describe('Data Export', () => {
 
   it(
     'C389473 Verify that "Settings (Data export): Can view only" permission is searchable and renamed (firebird) (Taas)',
-    { tags: ['firebird', 'extendedPath'] },
+    { tags: ['firebird', 'extendedPath', 'C389473'] },
     () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByUsername(user.username);

@@ -44,7 +44,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411822  Refresh list: Inactive lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+    it('C411822  Refresh list: Inactive lists (corsair)', { tags: ['smoke', 'corsair', 'C411822'] }, () => {
       Lists.openNewListPane();
       Lists.setName(listData.name);
       Lists.setDescription(listData.name);
@@ -58,8 +58,8 @@ describe('lists', () => {
     });
 
     it(
-      "C411823 Refresh list: The list doesn't contain query (corsair)",
-      { tags: ['criticalPath', 'corsair'] },
+      'C411823 Refresh list: The list doesn\'t contain query (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411823'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -75,7 +75,7 @@ describe('lists', () => {
 
     it(
       'C411824 Refresh list: Edit is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411824'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -93,7 +93,7 @@ describe('lists', () => {
 
     it(
       'C411833 Refresh list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411833'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -113,7 +113,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - less than 500 records (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411834'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -131,7 +131,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - more than 500 records (corsair)',
-      { tags: ['criticalPathFlaky', 'corsair'] },
+      { tags: ['criticalPathFlaky', 'corsair', 'C411834'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);

@@ -182,8 +182,8 @@ describe('Title Level Request. Request detail', () => {
   });
 
   it(
-    'C347891 Check that user can see Open - Not yet filled accordion (vega) (Taas)',
-    { tags: ['extendedPath', 'vega'] },
+    'C347891 Check that user can see Open - Not yet filled accordion (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C347891'] },
     () => {
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);

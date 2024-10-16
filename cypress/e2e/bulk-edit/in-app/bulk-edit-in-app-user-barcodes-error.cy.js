@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359586 Negative --Verify populating "Errors" accordion (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C359586'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347883 Error messages in submitted identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C347883'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
         BulkEditSearchPane.waitFileUploading();

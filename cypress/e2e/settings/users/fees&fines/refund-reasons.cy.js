@@ -24,7 +24,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C447 Verify that you can create/edit/delete refund reasons (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C447'] },
       () => {
         RefundReasons.createViaUi(refundReason);
         RefundReasons.verifyRefundReasonRecord(refundReason);

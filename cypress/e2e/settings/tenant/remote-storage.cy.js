@@ -63,7 +63,7 @@ describe('Settings: Tenant', () => {
   it(
     'C163925 View remote storage details in settings > tenant > location (firebird) (TaaS)',
     {
-      tags: ['criticalPathBroken', 'firebird'],
+      tags: ['criticalPathBroken', 'firebird', 'C163925'],
     },
     () => {
       // Navigate to Settings > Tenant > Locations

@@ -56,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C440080 Verify Error while uploading file with incorrectly formatted identifiers - Instances (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C440080'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         cy.intercept('GET', '*bulk-operations/*').as('uuid');

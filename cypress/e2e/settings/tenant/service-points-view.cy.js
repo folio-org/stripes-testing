@@ -66,7 +66,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C359588 Verify view of services points on the view page (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C359588'] },
     () => {
       Locations.viewLocations(testData.locations[0]);
 

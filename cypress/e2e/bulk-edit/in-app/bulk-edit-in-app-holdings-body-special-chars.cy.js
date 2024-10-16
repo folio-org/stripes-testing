@@ -30,6 +30,7 @@ const item = {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -48,28 +49,33 @@ describe('bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
+
+        InventoryInstances.createHoldingsNoteTypeViaApi(noteType).then((noteId) => {
+          noteTypeId = noteId;
+        });
+        cy.wait(2000);
         cy.getHoldings({
           limit: 1,
           query: `"instanceId"="${instanceId}"`,
         }).then((holdings) => {
           item.holdingHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingHRID);
-        });
-        InventoryInstances.createHoldingsNoteTypeViaApi(noteType).then((noteId) => {
-          noteTypeId = noteId;
+
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            notes: [
+              {
+                holdingsNoteTypeId: noteTypeId,
+                note: holdingsNote,
+                staffOnly: false,
+              },
+            ],
+          });
         });
         cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
-        InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.edit();
-        HoldingsRecordEdit.addHoldingsNotes(holdingsNote, noteType);
-        HoldingsRecordEdit.saveAndClose();
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -82,7 +88,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368479 Verify that there no errors during bulk editing if entry HOLDINGS body has special characters (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368479'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
@@ -120,6 +126,7 @@ describe('bulk-edit', () => {
 
         cy.getToken(user.username, user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
@@ -139,9 +146,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(newLocation);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
         InventoryInstance.openHoldingView();
         InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
         HoldingsRecordView.edit();

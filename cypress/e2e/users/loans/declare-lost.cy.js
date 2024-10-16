@@ -190,7 +190,7 @@ describe('Loans', () => {
 
       it(
         'C9191 Loans: Declare lost (vega)',
-        { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+        { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C9191'] },
         () => {
           UsersCard.getApi(testData.userId).then((user) => {
             Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);

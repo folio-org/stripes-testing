@@ -28,7 +28,7 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smokeBroken', 'corsair'] }, () => {
+    it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smokeBroken', 'corsair', 'C411820'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,

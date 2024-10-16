@@ -61,7 +61,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: ['criticalPathBroken', 'firebird'] },
+      { tags: ['criticalPathBroken', 'firebird', 'C380393'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.bulkEditPath,

@@ -117,7 +117,7 @@ describe('MARC', () => {
           MarcAuthorities.searchByParameter('Keyword', '*');
           MarcAuthorities.checkResultsExistance('Authorized');
           // #4 Click on the multiselect element titled "Authority source" and check dropdown options
-          MarcAuthorities.checkAuthoritySourceOptions();
+          MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
 
           // #5 Click on any facet option. (Not "Not specified") and check results
           MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
@@ -150,8 +150,6 @@ describe('MARC', () => {
           // #11 Delete the selected at step 6 "Authority source" facet option from multiselect box by clicking on the "X" icon placed in the tag.
           MarcAuthorities.removeAuthoritySourceOption(testData.facetOptions.optionA);
           cy.wait(1000);
-          // #12 Click on any "Heading/Reference" value from the search result pane.
-          MarcAuthorities.selectTitle(testData.facetValues.valueB);
           // #13 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
           MarcAuthority.contains(testData.prefixValues.prefixValB);
 

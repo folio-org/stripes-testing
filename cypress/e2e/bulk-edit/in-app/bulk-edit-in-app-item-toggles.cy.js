@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388543 Verify preview of records switching between toggles (Items) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C388543'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
