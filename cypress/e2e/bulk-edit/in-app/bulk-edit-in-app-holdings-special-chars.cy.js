@@ -94,7 +94,7 @@ describe('bulk-edit', () => {
 
     it(
       'C366548 Verify that Holdings with special characters in title can be bulk edited (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C366548'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
@@ -119,7 +119,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368481 Verify that there no errors during bulk editing Holdings with special characters (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368481'] },
       () => {
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.checkHoldingsRadio();

@@ -262,7 +262,7 @@ describe('Fees&Fines', () => {
     });
     it(
       'C350650 Verify automated patron block "Maximum number of overdue recalls" removed after overdue recalled item returned (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C350650'] },
       () => {
         cy.visit(SettingsMenu.conditionsPath);
         Conditions.waitLoading();

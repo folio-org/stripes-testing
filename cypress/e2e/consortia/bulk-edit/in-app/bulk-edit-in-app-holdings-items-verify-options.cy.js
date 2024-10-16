@@ -49,7 +49,7 @@ describe('Bulk-edit', () => {
 
       it(
         'C553004 ECS | Verify options for holdings and items on Central and member tenants (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird'] },
+        { tags: ['smokeECS', 'firebird', 'C553004'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.isHoldingsRadioChecked(true);

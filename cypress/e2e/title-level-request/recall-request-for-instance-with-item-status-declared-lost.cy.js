@@ -70,7 +70,7 @@ describe('Title level request for declared lost item', () => {
 
   it(
     'C375947 Check that user can not create a TLR Recall for item with status Declared lost',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C375947'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       // Open new request dialog

@@ -110,7 +110,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C356793 Verify that library staff can cancel a fee/fine as an error for a patron if fee/fine has been fully paid and then fully refunded (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C356793'] },
       () => {
         // Click on "Fees/fines" accordion
         UsersCard.openFeeFines();

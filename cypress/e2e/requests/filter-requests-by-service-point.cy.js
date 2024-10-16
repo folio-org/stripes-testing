@@ -47,7 +47,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
 
   it(
     'C15178 Filter requests by pickup service point (vega) (TaaS)',
-    { tags: ['criticalPathFlaky', 'vega'] },
+    { tags: ['criticalPathFlaky', 'vega', 'C15178'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.filterRequestsByServicePoints(servicePointName);

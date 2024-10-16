@@ -127,7 +127,7 @@ describe('Check out', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C356772'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();

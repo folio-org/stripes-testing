@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380491 Verify that User can bulk edit items with "Checked Out" or "Paged" status (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C380491'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

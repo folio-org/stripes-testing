@@ -131,7 +131,7 @@ describe('Loans', () => {
 
     it(
       'C15492 Renewal: failure because loan was not loanable (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C15492'] },
       () => {
         const firstItemInfo = {
           itemBarcode: firstItemBarcode,

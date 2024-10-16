@@ -32,7 +32,7 @@ describe('Permissions -> Circulation', () => {
 
   it(
     'C1219 Settings (Circ): Can create, edit and remove staff slips (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1219'] },
     () => {
       EditStaffClips.editHold();
       EditStaffClips.editDescription(description);

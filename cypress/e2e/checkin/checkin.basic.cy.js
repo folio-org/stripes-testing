@@ -120,7 +120,7 @@ describe('Check in', () => {
 
     it(
       'C347631 Check in: Basic check in (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C347631'] },
       () => {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(10000);
@@ -136,7 +136,7 @@ describe('Check in', () => {
         CheckInActions.openCheckInPane();
         CheckInActions.openItemDetails(itemData.barcode);
         CheckInActions.openCheckInPane();
-        CheckInActions.openNewfeefinesPane();
+        CheckInActions.openNewFeeFinesPane();
         CheckInActions.openCheckInPane();
       },
     );

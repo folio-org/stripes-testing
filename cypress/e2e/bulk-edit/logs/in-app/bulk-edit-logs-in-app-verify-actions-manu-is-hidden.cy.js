@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
 
       it(
         'C367997 Verify that "Actions"  menu is hidden on the "Logs" tab-- Local approach (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C367997'] },
         () => {
           BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
           BulkEditSearchPane.verifyPanesBeforeImport();

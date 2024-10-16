@@ -227,7 +227,7 @@ describe('Permissions', () => {
 
       it(
         'C380503 Verify that user with permission can view fees/fines for payment (vega) (TaaS)',
-        { tags: ['extendedPath', 'vega'] },
+        { tags: ['extendedPath', 'vega', 'C380503'] },
         () => {
           CheckOutActions.checkOutUser(userData.barcode);
           CheckOutActions.checkOutItem(instanceData.itemBarcode);

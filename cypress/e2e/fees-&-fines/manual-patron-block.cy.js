@@ -48,8 +48,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C476: Scenario#1&Scenario#2 (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      'C476 Scenario#1&Scenario#2 (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.patronBlocksAccordionCovered();
@@ -63,8 +63,8 @@ describe('Fees&Fines', () => {
       },
     );
     it(
-      'C476: Scenario#3&Scenario#4 (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      'C476 Scenario#3&Scenario#4 (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.openPatronBlocks();
@@ -77,8 +77,8 @@ describe('Fees&Fines', () => {
       },
     );
     it(
-      'C476: Scenario#5,6,7,8,9 (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      'C476 Scenario#5,6,7,8,9 (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
         // scenario#5
         UsersSearchPane.searchByKeywords(userName);
@@ -100,8 +100,8 @@ describe('Fees&Fines', () => {
       },
     );
     it(
-      'C476: Scenario#10,11,12,13,14,15,16 (vega)',
-      { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+      'C476 Scenario#10,11,12,13,14,15,16 (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.patronBlocksAccordionCovered();
@@ -121,7 +121,7 @@ describe('Fees&Fines', () => {
         UsersCard.deletePatronBlock();
       },
     );
-    it('C476: Scenario#17,18 (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft'] }, () => {
+    it('C476 Scenario#17,18 (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] }, () => {
       UsersSearchPane.searchByKeywords(userName);
       UsersCard.openPatronBlocks();
       UsersCard.createPatronBlock();

@@ -107,7 +107,7 @@ describe('Loans', () => {
 
     it(
       'C9192 Loans: Actions while declared lost (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C9192'] },
       () => {
         const firstItemBarcode = testData.folioInstances[0].barcodes[0];
         const secondItemBarcode = testData.folioInstances[1].barcodes[0];

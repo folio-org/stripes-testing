@@ -44,7 +44,7 @@ describe('fse-organizations - UI for non-production tenants', () => {
 
   it(
     `TC195623 - create organization and assign interfase for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['non-live', 'fse', 'ui', 'organizations'] },
+    { tags: ['nonProd', 'fse', 'ui', 'organizations'] },
     () => {
       // create new organization via UI
       cy.visit(TopMenu.organizationsPath);

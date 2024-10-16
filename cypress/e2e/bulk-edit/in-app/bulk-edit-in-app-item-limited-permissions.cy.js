@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359006 Verify populating Item records in "Preview of records matched" using limited permissions(firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C359006'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);

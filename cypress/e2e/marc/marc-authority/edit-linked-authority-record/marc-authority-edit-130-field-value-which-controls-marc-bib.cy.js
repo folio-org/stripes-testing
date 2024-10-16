@@ -31,7 +31,7 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 130 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         errorMessageAfterSaving: 'Record cannot be saved without 1XX field.',
         errorMessageAfterAddingSubfield:
-          'Cannot add a $t to the $130 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
+          'Cannot add a $t to the 130 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
       };
       const marcFiles = [
         {
@@ -81,8 +81,10 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

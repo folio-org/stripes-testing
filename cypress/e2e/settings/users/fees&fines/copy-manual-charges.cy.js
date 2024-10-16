@@ -39,7 +39,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C444 Verify that you can copy manual charges of another fee/fine owner (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C444'] },
       () => {
         // add manual charges to first owner
         ManualCharges.selectOwner(owners[0]);

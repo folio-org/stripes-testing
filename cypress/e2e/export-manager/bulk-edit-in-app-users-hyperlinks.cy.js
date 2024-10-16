@@ -43,7 +43,7 @@ describe('Export Manager', () => {
 
   it(
     'C365103 Verify hyperlink on the "JobID" column -- Users in app approach (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C365103'] },
     () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

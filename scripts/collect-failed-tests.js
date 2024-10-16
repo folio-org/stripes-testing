@@ -70,6 +70,7 @@ function parseCommand() {
         .then(() => {
           const parsedCommand = `--spec "${filteredFiles.join(',')}"`;
           console.log(parsedCommand);
+          return parsedCommand;
         });
     });
 }

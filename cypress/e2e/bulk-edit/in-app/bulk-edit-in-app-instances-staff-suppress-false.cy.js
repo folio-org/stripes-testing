@@ -88,7 +88,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423980 Verify "Staff suppress" (Set false) option in Bulk Editing - Instances (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423980'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

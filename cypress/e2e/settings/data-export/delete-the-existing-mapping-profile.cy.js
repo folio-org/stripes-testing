@@ -29,7 +29,7 @@ describe('Data Export', () => {
 
     it(
       'C15828 Delete the existing mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C15828'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();

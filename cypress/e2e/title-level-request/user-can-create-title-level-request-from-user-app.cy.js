@@ -118,7 +118,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C347888 Check that user can create Title level request from User app (use Actions) (vega) (Taas)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C347888'] },
     () => {
       UsersSearchPane.searchByKeywords(userData.username);
       UsersSearchPane.selectUserFromList(userData.username);

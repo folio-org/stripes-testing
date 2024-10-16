@@ -86,7 +86,7 @@ describe('Loans', () => {
 
     it(
       'C565 Single loan: Test change due date (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C565'] },
       () => {
         const FIRST_ACTION_ROW_INDEX = 0;
         const itemData = {
