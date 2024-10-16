@@ -47,11 +47,13 @@ const marcInstance = {
   title: `C496118 marc instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
+const instances = [folioInstance, marcInstance];
 
 describe('Bulk-edit', () => {
   describe('In-app', () => {
     describe('Consortia', () => {
       before('create test data', () => {
+        cy.clearLocalStorage();
         cy.resetTenant();
         cy.getAdminToken();
 
@@ -103,8 +105,6 @@ describe('Bulk-edit', () => {
                   holdingSource = holdingSources.id;
                 })
                 .then(() => {
-                  const instances = [folioInstance, marcInstance];
-
                   instances.forEach((instance) => {
                     InventoryHoldings.createHoldingRecordViaApi({
                       instanceId: instance.id,
@@ -134,7 +134,6 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
-              const instances = [folioInstance, marcInstance];
               instances.forEach((instance) => {
                 InventoryItems.createItemViaApi({
                   barcode: instance.itemBarcode,
@@ -187,7 +186,7 @@ describe('Bulk-edit', () => {
 
       it(
         'C496118 Verify "Suppress from discovery" action for Holdings in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird'] },
+        { tags: ['smokeECS', 'firebird', 'C496118'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
@@ -195,13 +194,11 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPaneRecordsCount(2);
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
-          const instances = [folioInstance, marcInstance];
-
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               instance.holdingHrid,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.INSTANCE,
-              instance.title,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              instance.holdingHrid,
             );
           });
 
@@ -314,8 +311,8 @@ describe('Bulk-edit', () => {
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               instance.holdingHrid,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.INSTANCE,
-              instance.title,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              instance.holdingHrid,
             );
           });
 
