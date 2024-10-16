@@ -33,3 +33,4 @@ import './tenant';
 import './specifications';
 import './profile-pictures';
 import './z3950';
+import './serials';
