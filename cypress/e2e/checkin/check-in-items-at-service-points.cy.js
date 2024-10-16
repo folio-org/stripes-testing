@@ -82,7 +82,7 @@ describe('Check in', () => {
 
   it(
     'C589 Check in items at service points for effective location (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C589'] },
     () => {
       // In FOLIO UI, set user's service point to service point A.
       // Service point displays in upper right corner of screen with service point A display name.

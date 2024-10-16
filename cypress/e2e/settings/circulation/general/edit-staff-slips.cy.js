@@ -4,13 +4,16 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 describe('ui-circulation-settings: Edit Staff slip settings', () => {
   const editStaffClipsHold = { ...EditStaffClips.defaultUiEditStaffClips };
   beforeEach('login', () => {
-    cy.loginAsAdmin();
-    cy.visit(`${SettingsMenu.circulationStaffSlipsPath}`);
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationStaffSlipsPath,
+      waiter: EditStaffClips.waitLoading,
+    });
   });
 
   it(
     'C347901 Staff clips settings (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C347901'] },
     () => {
       EditStaffClips.editHold(editStaffClipsHold);
       EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);

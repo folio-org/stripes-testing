@@ -140,8 +140,9 @@ export default {
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
+    cy.do([saveAndCloseButton.click()]);
     this.waitForFundDetailsLoading();
   },
 
@@ -211,6 +212,7 @@ export default {
   },
 
   cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
+    cy.wait(4000);
     cy.do([
       newButton.click(),
       nameField.fillIn(defaultFund.name),
@@ -288,7 +290,7 @@ export default {
       saveAndClose.click(),
       // try to navigate without saving
       Button('Agreements').click(),
-      Button('Keep editing').click,
+      Button('Keep editing').click(),
       cancelButton.click(),
       Button('Close without saving').click(),
     ]);
@@ -369,6 +371,10 @@ export default {
 
   viewTransactions: () => {
     cy.do(Link('View transactions').click());
+  },
+
+  viewTransactionsForCurrentBudget: () => {
+    cy.do([actionsButton.click(), Button('View transactions for current budget').click()]);
   },
 
   checkTransactionList: (fundCode) => {
@@ -478,18 +484,18 @@ export default {
     });
   },
 
-  doesTransactionWithAmountExist: (transactionType, amount) => {
-    let transactionExists = false;
-    cy.get('div[class*=mclRow-]').each(($row) => {
-      const transactionTypeCell = $row.find(`div[class*=mclCell-]:contains("${transactionType}")`);
+  verifyTransactionWithAmountExist: (transactionType, amount) => {
+    cy.get('div[class*=mclRow-]').then(($rows) => {
+      const matchFound = Array.from($rows).some((row) => {
+        const transactionTypeCell = Cypress.$(row).find(
+          `div[class*=mclCell-]:contains("${transactionType}")`,
+        );
+        const amountCell = Cypress.$(row).find(`div[class*=mclCell-]:contains("${amount}")`);
+        return transactionTypeCell.length > 0 && amountCell.length > 0;
+      });
 
-      const amountCell = $row.find(`div[class*=mclCell-]:contains("${amount}")`);
-
-      if (transactionTypeCell.length > 0 && amountCell.length > 0) {
-        transactionExists = true;
-      }
+      cy.wrap(matchFound).should('be.true');
     });
-    return transactionExists;
   },
 
   checkNoTransactionOfType: (transactionType) => {
@@ -830,8 +836,10 @@ export default {
           ...ledger,
         });
         fund.ledgerName = ledger.name;
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.fundPath);
+        cy.loginAsAdmin({
+          path: TopMenu.fundPath,
+          waiter: this.waitLoading,
+        });
         this.createFund(fund);
         this.checkCreatedFund(fund.name);
         cy.wrap(ledger).as('createdLedger');
@@ -878,6 +886,7 @@ export default {
   },
 
   selectBudgetDetails(rowNumber = 0) {
+    cy.wait(4000);
     cy.do(currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click());
     cy.expect(budgetPane.exists());
   },

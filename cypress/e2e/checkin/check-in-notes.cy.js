@@ -105,29 +105,33 @@ describe('Check in', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C776 Check in: check in notes (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    // Scan item with at least two check in notes in Check In app
-    CheckInActions.checkInItemGui(itemBarcode);
-    // Check in note modal appears
-    CheckInModal.verifyModalTitle();
-    CheckInModal.verifyNotesInfo([note2, note1]);
-    // Click cancel on check in note modal
-    CheckInModal.closeModal();
-    CheckInModal.verifyModalIsClosed();
-    CheckInPane.checkItemIsNotCheckedIn(itemBarcode);
-    // Scan item in Check In app
-    CheckInActions.checkInItemGui(itemBarcode);
-    // Check in note modal appears
-    CheckInModal.verifyModalTitle();
-    CheckInModal.verifyNotesInfo([note2, note1]);
-    // Click confirm on check in note modal
-    CheckInModal.confirmModal();
-    // Item is checked in
-    CheckInPane.checkResultsInTheRow([itemBarcode]);
-    // Check in notes appears in menu
-    CheckInActions.checkActionsMenuOptions(['checkInNotes']);
-    // Click check in notes
-    CheckInActions.openCheckInNotes([note2, note1]);
-    CheckInModal.verifyModalIsClosed();
-  });
+  it(
+    'C776 Check in: check in notes (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C776'] },
+    () => {
+      // Scan item with at least two check in notes in Check In app
+      CheckInActions.checkInItemGui(itemBarcode);
+      // Check in note modal appears
+      CheckInModal.verifyModalTitle();
+      CheckInModal.verifyNotesInfo([note2, note1]);
+      // Click cancel on check in note modal
+      CheckInModal.closeModal();
+      CheckInModal.verifyModalIsClosed();
+      CheckInPane.checkItemIsNotCheckedIn(itemBarcode);
+      // Scan item in Check In app
+      CheckInActions.checkInItemGui(itemBarcode);
+      // Check in note modal appears
+      CheckInModal.verifyModalTitle();
+      CheckInModal.verifyNotesInfo([note2, note1]);
+      // Click confirm on check in note modal
+      CheckInModal.confirmModal();
+      // Item is checked in
+      CheckInPane.checkResultsInTheRow([itemBarcode]);
+      // Check in notes appears in menu
+      CheckInActions.checkActionsMenuOptions(['checkInNotes']);
+      // Click check in notes
+      CheckInActions.openCheckInNotes([note2, note1]);
+      CheckInModal.verifyModalIsClosed();
+    },
+  );
 });

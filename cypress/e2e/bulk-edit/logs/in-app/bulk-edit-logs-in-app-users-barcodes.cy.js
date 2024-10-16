@@ -9,6 +9,8 @@ import DateTools from '../../../../support/utils/dateTools';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
@@ -55,7 +57,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
-        { tags: ['smoke', 'firebird'] },
+        { tags: ['smoke', 'firebird', 'C375244'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
           BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
@@ -119,7 +121,7 @@ describe('bulk-edit', () => {
             true,
           );
 
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByUsername(user.username);
           Users.verifyPatronGroupOnUserDetailsPane('graduate');
           Users.verifyExpirationDateOnUserDetailsPane(newExpirationDate.dateWithSlashes);

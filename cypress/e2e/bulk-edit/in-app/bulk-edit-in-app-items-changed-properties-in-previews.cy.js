@@ -9,6 +9,8 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -58,7 +60,7 @@ describe('bulk-edit', () => {
 
     it(
       'C430261 Verify only changed properties columns appear on "Are you sure?" form and on Confirmation screen - Items (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C430261'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
@@ -128,9 +130,8 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyAreYouSureColumnTitlesDoNotInclude(column);
         });
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', type);
-        // TODO: uncomment after MODBULKOPS-204
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -138,10 +139,10 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyChangedColumnTitlesDoNotInclude(column);
         });
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', type);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

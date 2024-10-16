@@ -15,7 +15,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Check Out - Actions ', () => {
+describe('Check out', () => {
   const userData = {
     group: getTestEntityValue('staff$'),
     personal: {},
@@ -127,7 +127,7 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C356772'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();

@@ -13,6 +13,8 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let noteTypeId;
@@ -62,7 +64,7 @@ describe('bulk-edit', () => {
         InventoryItems.edit();
         ItemRecordEdit.addItemsNotes(itemNote, noteType);
         ItemRecordEdit.saveAndClose({ itemSaved: true });
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -74,7 +76,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368480 Verify that there no errors during bulk editing if ITEMS body has special characters (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C368480'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
@@ -94,7 +96,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(location);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        ItemRecordView.closeDetailView();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
@@ -105,7 +108,8 @@ describe('bulk-edit', () => {
         ItemNoteTypes.deleteItemNoteTypeViaApi(noteTypeId);
 
         cy.getToken(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
         BulkEditSearchPane.uploadFile(itemHRIDsFileName);
@@ -124,7 +128,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(newLocation);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        ItemRecordView.closeDetailView();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

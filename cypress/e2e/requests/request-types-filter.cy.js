@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('ui-requests: Make sure that request type filters are working properly', () => {
+describe('Requests', () => {
   const requests = [];
   const instances = [];
   const userIds = [];
@@ -26,7 +26,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     cy.createLoanType({
       name: `type_${getRandomPostfix()}`,
@@ -75,9 +74,9 @@ describe('ui-requests: Make sure that request type filters are working properly'
 
   it(
     'C540 Make sure that request type filters are working properly (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C540'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       // Apply filters and test that the appropriate results display
       requests.forEach(({ requestType }) => {
         // eslint-disable-next-line spaced-comment

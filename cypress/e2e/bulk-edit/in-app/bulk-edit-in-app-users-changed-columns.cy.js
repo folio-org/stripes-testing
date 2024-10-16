@@ -8,6 +8,8 @@ import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const futureDate = DateTools.getFutureWeekDateObj();
@@ -50,7 +52,7 @@ describe('bulk-edit', () => {
 
     it(
       'C430215 Verify only changed properties columns appear on "Are you sure?" form and on Confirmation screen - users (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C430215'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -75,7 +77,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Patron group', newPatronGroup);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,test@folio.org,,,,,002,,,,`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,test@folio.org,,,,,002,,,,`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -85,10 +87,10 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,,test@folio.org,,,,,002,,,,`,
+          `,${newPatronGroup},,,${user.username},testPermFirst,testMiddleName,preferredName,test@folio.org,,,,,002,,,,`,
         ]);
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyPatronGroupOnUserDetailsPane(newPatronGroup);
       },

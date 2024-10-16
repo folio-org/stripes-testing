@@ -8,7 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 let holdingHRID;
@@ -62,7 +63,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360114 Verify that User can upload file with Holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C360114'] },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -89,9 +90,9 @@ describe('bulk-edit', () => {
 
     it(
       'C367984 Verify that visual clue on the "Are you sure?" form does not provide 0 records (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C367984'] },
       () => {
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
@@ -115,7 +116,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(permLocation);
         BulkEditActions.verifySuccessBanner(1);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', holdingHRID);
         InventorySearchAndFilter.selectSearchResultItem();

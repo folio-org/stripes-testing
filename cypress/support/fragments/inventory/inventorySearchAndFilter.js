@@ -112,8 +112,6 @@ const searchHoldingsByHRID = (hrid) => {
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitInventoryLoading();
-
-  return InventoryInstance;
 };
 
 const getInstanceHRID = () => {
@@ -355,14 +353,14 @@ export default {
     Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Call numbers'))
+          .find(OptionGroup('Call numbers (item)'))
           .has({ text: including(value) }),
       );
     });
     Object.values(BROWSE_CLASSIFICATION_OPTIONS).forEach((value) => {
       cy.expect(
         browseSearchAndFilterInput
-          .find(OptionGroup('Classification'))
+          .find(OptionGroup('Classification (instance)'))
           .has({ text: including(value) }),
       );
     });
@@ -480,7 +478,11 @@ export default {
     cy.do(searchButton.click());
   },
   switchToItem: () => cy.do(itemToggleButton.click()),
-  switchToHoldings: () => cy.do(holdingsToggleButton.click()),
+  switchToHoldings() {
+    cy.wait(200);
+    cy.do(holdingsToggleButton.click());
+    cy.wait(500);
+  },
   switchToInstance: () => cy.do(navigationInstancesButton.click()),
 
   instanceTabIsDefault() {
@@ -521,9 +523,9 @@ export default {
     else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
   },
 
-  verifySearchResultIncludingValue: ((value) => {
+  verifySearchResultIncludingValue: (value) => {
     cy.expect(MultiColumnListCell({ content: including(value) }).exists());
-  }),
+  },
 
   verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 
@@ -608,6 +610,7 @@ export default {
 
   resetAll() {
     cy.do(resetAllBtn.click());
+    cy.wait(1000);
   },
 
   clickResetAllButton() {
@@ -658,6 +661,7 @@ export default {
   filterByTag(tag) {
     this.searchTag(tag);
     cy.do(instancesTagsSection.find(Checkbox(tag)).click());
+    cy.wait(1000);
   },
 
   verifyTagIsAbsent(tag) {
@@ -731,12 +735,17 @@ export default {
   },
 
   selectFoundItem(callNumber, suffix) {
-    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+    const locator = suffix ? `${callNumber} ${suffix}` : `${callNumber}`;
+    cy.do(Button(including(locator)).click());
   },
 
   selectFoundItemFromBrowseResultList(value) {
     cy.do(Button(including(value)).click());
     cy.expect(instanceDetailsSection.exists());
+  },
+
+  selectFoundItemFromBrowse(value) {
+    cy.do(Button(including(value)).click());
   },
 
   verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
@@ -752,6 +761,13 @@ export default {
       expect(elem.text()).to.include('Effective call number (item), shelving order');
     });
     cy.expect(inventorySearchAndFilter.has({ value: val }));
+  },
+
+  verifySearchOptionAndQuery(searchOption, queryValue) {
+    cy.get('#input-inventory-search-qindex').then((elem) => {
+      expect(elem.text()).to.include(searchOption);
+    });
+    cy.expect(inventorySearchAndFilter.has({ value: including(queryValue) }));
   },
 
   verifyPanesExist() {
@@ -879,7 +895,15 @@ export default {
   },
 
   selectBrowseOptionFromCallNumbersGroup(option) {
-    cy.get('optgroup[label="Call numbers"]')
+    cy.get('optgroup[label="Call numbers (item)"]')
+      .contains('option', option)
+      .then((optionToSelect) => {
+        cy.get('select').select(optionToSelect.val());
+      });
+  },
+
+  selectBrowseOptionFromClassificationGroup(option) {
+    cy.get('optgroup[label="Classification (instance)"]')
       .contains('option', option)
       .then((optionToSelect) => {
         cy.get('select').select(optionToSelect.val());

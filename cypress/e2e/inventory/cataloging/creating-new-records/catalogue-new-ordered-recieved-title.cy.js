@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import ConfirmItemInModal from '../../../../support/fragments/check-in-actions/confirmItemInModal';
@@ -19,6 +19,7 @@ import NewServicePoint from '../../../../support/fragments/settings/tenant/servi
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
@@ -123,7 +124,8 @@ describe('Inventory', () => {
         Receiving.selectFromResultsList(instanceTitle);
         Receiving.receivePieceWithoutBarcode();
         Receiving.checkReceivedPiece(0, 'No value set-');
-        cy.visit(TopMenu.inventoryPath);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
       });
     });
@@ -161,18 +163,18 @@ describe('Inventory', () => {
         InventoryInstance.verifyItemBarcode('No barcode');
         InventoryInstance.verifyLoan('Can circulate');
         InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode('-');
+        ItemRecordView.checkBarcode('No value set-');
         InventoryItems.edit();
         ItemRecordEdit.waitLoading(instanceTitle);
         ItemRecordEdit.addBarcode(barcode);
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.closeDetailView();
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.checkInItem(barcode);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(
@@ -196,12 +198,13 @@ describe('Inventory', () => {
         InventoryInstance.openItemByBarcode(barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.closeDetailView();
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         CheckInActions.checkInItem(barcode);
         ConfirmItemInModal.confirmInTransitModal();
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',

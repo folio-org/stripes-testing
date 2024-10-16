@@ -1,7 +1,8 @@
-import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let userWithCsvViewPermission;
 let userWithCsvPermissions;
@@ -27,10 +28,10 @@ describe('bulk-edit', () => {
 
     it(
       'C350903 Verify "Bulk Edit: Local - View user records" permissions (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C350903'] },
       () => {
         cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
 
         BulkEditSearchPane.verifyCsvViewPermission();
       },
@@ -39,10 +40,10 @@ describe('bulk-edit', () => {
     // TODO: think about dragging file without dropping
     it(
       'C353537 Verify label to the Drag and drop area -- Local approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C353537'] },
       () => {
         cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
 
         BulkEditSearchPane.actionsIsAbsent();
       },

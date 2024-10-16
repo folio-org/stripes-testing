@@ -13,6 +13,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const items = [];
@@ -59,7 +61,7 @@ describe('bulk-edit', () => {
         InventoryItems.edit();
         ItemRecordEdit.addAdministrativeNote(note);
         ItemRecordEdit.saveAndClose({ itemSaved: true });
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -79,7 +81,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399086 Verify Previews for the number of Items records if the record has a field with line breaks (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C399086'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
@@ -106,13 +108,9 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [note]);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(
-          'Barcode',
-          `secondBarcode_${items[0].itemBarcode}`,
-        );
-        ItemRecordView.waitLoading();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.reload();
+        ItemRecordView.checkBarcode(`secondBarcode_${items[0].itemBarcode}`);
         ItemRecordView.verifyTemporaryLocation(location);
         InstanceRecordView.verifyAdministrativeNote(note);
       },

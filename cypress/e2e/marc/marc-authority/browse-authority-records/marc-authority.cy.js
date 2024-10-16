@@ -5,6 +5,7 @@ import {
   AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
   AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
   AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+  APPLICATION_NAMES,
 } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -20,6 +21,7 @@ import { JobProfiles as SettingsJobProfiles } from '../../../../support/fragment
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -111,7 +113,7 @@ describe('MARC', () => {
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
         { tags: ['smoke', 'spitfire', 'shiftLeft'] },
         () => {
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
@@ -205,7 +207,10 @@ describe('MARC', () => {
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(9, 'Record cannot be saved. A MARC tag must contain three characters.');
+          QuickMarcEditor.checkErrorMessage(
+            9,
+            'Tag must contain three characters and can only accept numbers 0-9.',
+          );
         },
       );
 

@@ -12,6 +12,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { Approvals } from '../../support/fragments/settings/invoices';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -24,7 +25,11 @@ describe('Invoices', () => {
   const allocatedQuantity = '100';
   const isApprovePayEnabled = false;
   let user;
-
+  const setApprovePayValue = (isEnabled = false) => {
+    cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValue(isEnabled);
+    });
+  };
   before(() => {
     cy.getAdminToken();
 
@@ -53,7 +58,7 @@ describe('Invoices', () => {
                 Funds.addBudget(allocatedQuantity);
                 invoiceLine.subTotal = -subtotalValue;
                 Approvals.setApprovePayValue(isApprovePayEnabled);
-                cy.visit(TopMenu.invoicesPath);
+                TopMenuNavigation.openAppFromDropdown('Invoices');
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                 Invoices.createInvoiceLine(invoiceLine);
                 Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
@@ -73,6 +78,7 @@ describe('Invoices', () => {
             path: TopMenu.invoicesPath,
             waiter: Invoices.waitLoading,
           });
+          setApprovePayValue(isApprovePayEnabled);
         });
       },
     );
@@ -90,7 +96,7 @@ describe('Invoices', () => {
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.payInvoice();
     // check transactions after payment
-    cy.visit(TopMenu.fundPath);
+    TopMenuNavigation.navigateToApp('Finance');
     Helper.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();

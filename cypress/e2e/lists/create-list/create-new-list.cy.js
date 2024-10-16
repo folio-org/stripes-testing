@@ -7,12 +7,13 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 describe('lists', () => {
   describe('Add new list', () => {
     const userData = {};
-    const listData = {
-      name: getTestEntityValue('test_list'),
-      recordType: 'Loans',
-    };
+    let listData = {};
 
     beforeEach('Create a user', () => {
+      listData = {
+        name: getTestEntityValue('test_list'),
+        recordType: 'Loans',
+      };
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsAll.gui,
@@ -30,24 +31,22 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 
     it(
       'C411704 Create new lists: Private list (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411704'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -55,9 +54,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -66,7 +64,7 @@ describe('lists', () => {
 
     it(
       'C411706 Create new lists: Shared lists (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411706'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -81,9 +79,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -92,7 +89,7 @@ describe('lists', () => {
 
     it(
       'C411707 Create new lists: Active lists (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411707'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -107,9 +104,8 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -118,7 +114,7 @@ describe('lists', () => {
 
     it(
       'C411708 Create new lists: Inactive lists (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411708'] },
       () => {
         listData.status = 'Inactive';
         listData.visibility = 'Shared';
@@ -133,10 +129,9 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
         Lists.waitLoading();
-        cy.reload();
         Lists.selectInactiveLists();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);

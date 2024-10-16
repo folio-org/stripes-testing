@@ -2,6 +2,7 @@ import {
   EXISTING_RECORD_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -29,6 +30,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -112,14 +114,14 @@ describe('Data Import', () => {
     const marcFiles = [
       {
         marc: 'marcBibFileForC377006.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C377006 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
         propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC377006.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C377006 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 2,
         propertyName: 'authority',
@@ -141,9 +143,78 @@ describe('Data Import', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user and test data', () => {
-      cy.getAdminToken();
-      // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377006*');
+      cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ])
+        .then((createdUserProperties) => {
+          testData.preconditionUserId = createdUserProperties.userId;
+
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377006*');
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
+            });
+            cy.wait(2000);
+          });
+
+          // create Match profile
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
+            .then((matchProfileResponse) => {
+              matchProfile.id = matchProfileResponse.body.id;
+            })
+            .then(() => {
+              // create Field mapping profile
+              NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(
+                mappingProfile,
+              ).then((mappingProfileResponse) => {
+                mappingProfile.id = mappingProfileResponse.body.id;
+              });
+            })
+            .then(() => {
+              // create Action profile and link it to Field mapping profile
+              NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
+                (actionProfileResponse) => {
+                  actionProfile.id = actionProfileResponse.body.id;
+                },
+              );
+            })
+            .then(() => {
+              // create Job profile
+              NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                jobProfile.profileName,
+                matchProfile.id,
+                actionProfile.id,
+              );
+            });
+        })
+        .then(() => {
+          cy.loginAsAdmin();
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
+          linkingTagAndValues.forEach((fields) => {
+            QuickMarcEditor.clickLinkIconInTagField(fields.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(fields.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
+          });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+        });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -152,85 +223,22 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        cy.loginAsAdmin()
-          .then(() => {
-            marcFiles.forEach((marcFile) => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdAuthorityIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-            });
-          })
-          .then(() => {
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            linkingTagAndValues.forEach((fields) => {
-              QuickMarcEditor.clickLinkIconInTagField(fields.rowIndex);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(fields.value);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
-            });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
-          });
-      });
 
-      // create Match profile
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
-        .then((matchProfileResponse) => {
-          matchProfile.id = matchProfileResponse.body.id;
-        })
-        .then(() => {
-          // create Field mapping profile
-          NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
-            (mappingProfileResponse) => {
-              mappingProfile.id = mappingProfileResponse.body.id;
-            },
-          );
-        })
-        .then(() => {
-          // create Action profile and link it to Field mapping profile
-          NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
-            (actionProfileResponse) => {
-              actionProfile.id = actionProfileResponse.body.id;
-            },
-          );
-        })
-        .then(() => {
-          // create Job profile
-          NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-            jobProfile.profileName,
-            matchProfile.id,
-            actionProfile.id,
-          );
-        })
-        .then(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
+      });
     });
 
     after('Delete user and test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
+      Users.deleteViaApi(testData.preconditionUserId);
       if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
         if (index) MarcAuthority.deleteViaAPI(id);
@@ -256,7 +264,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -272,7 +280,7 @@ describe('Data Import', () => {
         );
 
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
@@ -283,7 +291,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();

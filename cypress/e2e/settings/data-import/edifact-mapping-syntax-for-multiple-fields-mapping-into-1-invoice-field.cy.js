@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
@@ -22,8 +23,11 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -149,26 +153,28 @@ describe('Data Import', () => {
         );
 
         // create Action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profiles
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(collectionOfProfiles[0].jobProfile);
         NewJobProfile.linkActionProfile(collectionOfProfiles[0].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(collectionOfProfiles[0].jobProfile.profileName);
 
+        JobProfiles.waitLoadingList();
+        cy.wait(2000);
         JobProfiles.createJobProfile(collectionOfProfiles[1].jobProfile);
         NewJobProfile.linkActionProfile(collectionOfProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(collectionOfProfiles[1].jobProfile.profileName);
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForFirstImport);
         JobProfiles.waitFileIsUploaded();
@@ -180,7 +186,7 @@ describe('Data Import', () => {
         Logs.checkImportFile(collectionOfProfiles[0].jobProfile.profileName);
         LogsViewAll.verifyJobStatus(fileNameForFirstImport, JOB_STATUS_NAMES.COMPLETED);
 
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.searchByNumber(invoiceNumber);
         Invoices.selectInvoice(invoiceNumber);
         InvoiceView.verifyInvoiceNote(invoiceData[0].invoiceNote);
@@ -191,7 +197,8 @@ describe('Data Import', () => {
         cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.clickToGoHomeButton();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForSecondImport);
         JobProfiles.waitFileIsUploaded();
@@ -202,7 +209,7 @@ describe('Data Import', () => {
         Logs.checkImportFile(collectionOfProfiles[1].jobProfile.profileName);
         LogsViewAll.verifyJobStatus(fileNameForSecondImport, JOB_STATUS_NAMES.COMPLETED);
 
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.searchByNumber(invoiceNumber);
         Invoices.selectInvoice(invoiceNumber);
         InvoiceView.verifyInvoiceNote(invoiceData[1].invoiceNote);

@@ -25,7 +25,7 @@ describe('Data Export', () => {
 
   it(
     'C380470 Verify that Default Data export profiles are present (firebird)',
-    { tags: ['smoke', 'firebird', 'shiftLeft'] },
+    { tags: ['smoke', 'firebird', 'shiftLeft', 'C380470'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.verifyDefaultProfiles();

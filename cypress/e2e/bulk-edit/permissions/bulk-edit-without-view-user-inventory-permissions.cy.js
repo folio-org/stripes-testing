@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewInstances.gui,
         permissions.uiInventoryViewCreateEditHoldings.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUsersPermissionsView.gui,
         permissions.uiUsersView.gui,
         permissions.uiUserEdit.gui,
@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
 
     it(
       'C404389 Verify Bulk edit app without permissions for view Users and Inventory records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C404389'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');

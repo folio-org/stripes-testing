@@ -110,7 +110,7 @@ const verifyImportedFieldExists = (field) => {
 const viewSource = () => {
   cy.wait(1000);
   cy.do(rootSection.find(actionsButton).click());
-  cy.wait(1000);
+  cy.wait(1500);
   cy.do(viewSourceButton.click());
 };
 
@@ -263,6 +263,7 @@ export default {
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
   verifyPrecedingTitle: (title) => {
+    cy.wait(1500);
     cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)').eq(0).should('include.text', title);
   },
   verifyPrecedingTitleSearchIcon: (title) => {
@@ -282,6 +283,12 @@ export default {
   },
   verifyPrecedingTitleSearchIconAbsent() {
     cy.get('#precedingTitles [class*="mclCell-"]:nth-child(1)')
+      .eq(0)
+      .find('button[ariaLabel="search"]')
+      .should('not.exist');
+  },
+  verifySucceedingTitleSearchIconAbsent() {
+    cy.get('#succeedingTitles [class*="mclCell-"]:nth-child(1)')
       .eq(0)
       .find('button[ariaLabel="search"]')
       .should('not.exist');
@@ -560,7 +567,7 @@ export default {
 
   verifyViewRequestOptionEnabled() {
     cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button('New request').exists());
+    cy.expect(Button(including('New request')).exists());
   },
 
   verifyNewOrderOptionAbsent() {
@@ -623,5 +630,36 @@ export default {
 
   verifyInstanceSubjectAbsent: () => {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
+  },
+
+  checkNotesByType(
+    noteTypeRowIndex,
+    columnHeader,
+    noteValue,
+    staffOnlyValue = 'No',
+    noteRecordRowIndexInNoteType = 0,
+  ) {
+    cy.expect(
+      MultiColumnList({ id: `list-instance-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: 'Staff only',
+            content: staffOnlyValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
+    );
+    cy.expect(
+      MultiColumnList({ id: `list-instance-notes-${noteTypeRowIndex}` })
+        .find(
+          MultiColumnListCell({
+            column: columnHeader,
+            content: noteValue,
+            row: noteRecordRowIndexInNoteType,
+          }),
+        )
+        .exists(),
+    );
   },
 };

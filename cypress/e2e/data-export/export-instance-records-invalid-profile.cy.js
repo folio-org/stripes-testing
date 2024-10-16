@@ -23,8 +23,7 @@ describe('Data Export', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.dataExportEnableApp.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
         const instanceID = InventoryInstances.createInstanceViaApi(
@@ -46,7 +45,7 @@ describe('Data Export', () => {
 
     it(
       'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-      { tags: ['criticalPathBroken', 'firebird'] },
+      { tags: ['criticalPathBroken', 'firebird', 'C350407'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

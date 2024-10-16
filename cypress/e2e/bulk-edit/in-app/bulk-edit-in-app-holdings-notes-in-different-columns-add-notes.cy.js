@@ -64,7 +64,11 @@ function verifyFileContent(fileName, headerValuePairs) {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
+      cy.getAdminToken();
+      InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
+        newNoteTypeId = noteId;
+      });
+      cy.wait(5000);
 
       cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryAll.gui]).then(
         (userProperties) => {
@@ -103,10 +107,6 @@ describe('bulk-edit', () => {
                 });
               });
 
-            InventoryInstances.createHoldingsNoteTypeViaApi(newNoteType).then((noteId) => {
-              newNoteTypeId = noteId;
-            });
-
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
@@ -131,7 +131,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422220 Verify separating notes in different columns - add notes (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C422220'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

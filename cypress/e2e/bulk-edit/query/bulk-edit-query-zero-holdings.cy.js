@@ -35,13 +35,14 @@ describe('bulk-edit', () => {
 
     it(
       'C446067 Verify the "Run query" button, when the query returns 0 - holdings (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C446067'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(holdingsFieldValues.instanceUuid);
         QueryModal.verifySelectedField(holdingsFieldValues.instanceUuid);
         QueryModal.verifyQueryAreaContent('(holdings.instance_id  )');

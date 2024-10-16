@@ -84,13 +84,14 @@ describe('Title Level Request. Request detail', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-          cy.wait(3000);
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"id"=="${instanceData.instanceId}"`,
-          }).then((instance) => {
-            instanceHRID = instance.hrid;
+          cy.wait(3000).then(() => {
+            cy.getInstance({
+              limit: 1,
+              expandAll: true,
+              query: `"id"=="${instanceData.instanceId}"`,
+            }).then((instance) => {
+              instanceHRID = instance.hrid;
+            });
           });
         });
       })
@@ -160,7 +161,7 @@ describe('Title Level Request. Request detail', () => {
 
   it(
     'C350385 Check that user can change type from "Item" level to "Title" and save the request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350385'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
@@ -189,7 +190,7 @@ describe('Title Level Request. Request detail', () => {
 
   it(
     'C350386 Check that user can change type from "Title" level to "Item" and save the request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350386'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);

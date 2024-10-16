@@ -46,7 +46,7 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
       userGroupIdx =
         response.body.usergroups.findIndex(({ group }) => group === patronGroupName) || 0;
     }
-    return response.body.usergroups[userGroupIdx].id;
+    return response.body.usergroups[userGroupIdx];
   });
 });
 
@@ -86,7 +86,7 @@ Cypress.Commands.add(
     }
 
     cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
-      (userGroupdId) => {
+      (userGroup) => {
         const queryField = 'displayName';
         cy.getPermissionsApi({
           query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
@@ -96,7 +96,7 @@ Cypress.Commands.add(
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
           const userBody = {
             ...Users.defaultUser,
-            patronGroup: userGroupdId,
+            patronGroup: userGroup.id,
             type: userType,
             username: userProperties.username,
             personal: { ...Users.defaultUser.personal, lastName: userProperties.username },
@@ -111,6 +111,7 @@ Cypress.Commands.add(
             userProperties.barcode = newUserProperties.barcode;
             userProperties.firstName = newUserProperties.firstName;
             userProperties.lastName = newUserProperties.lastName;
+            userProperties.preferredFirstName = newUserProperties.preferredFirstName;
             cy.createRequestPreference({
               defaultDeliveryAddressTypeId: null,
               defaultServicePointId: null,
@@ -129,6 +130,7 @@ Cypress.Commands.add(
                 ),
               ],
             });
+            userProperties.userGroup = userGroup;
             cy.overrideLocalSettings(userProperties.userId);
             cy.wrap(userProperties).as('userProperties');
           });

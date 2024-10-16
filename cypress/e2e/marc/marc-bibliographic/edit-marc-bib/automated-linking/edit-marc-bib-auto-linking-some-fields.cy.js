@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -17,37 +18,33 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         let userData;
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
         const instanceTitle =
           'Black Panther (Test: with all eligible for linking fields with and without valid subfield 0)';
         const fields = [
           { rowIndex: 32, tag: '100', subfield0: 'n2008001084', isLinked: true },
-          { rowIndex: 36, tag: '240', subfield0: 'no2020024230', isLinked: true },
-          { rowIndex: 64, tag: '600', subfield0: 'n2016004081', isLinked: true },
-          { rowIndex: 61, tag: '630', subfield0: 'no2023006889', isLinked: true },
-          { rowIndex: 72, tag: '655', subfield0: 'gf2014026266', isLinked: true },
-          { rowIndex: 87, tag: '710', subfield0: 'no2008081921', isLinked: true },
-          { rowIndex: 88, tag: '711', subfield0: 'n84745425', isLinked: true },
-          { rowIndex: 90, tag: '800', subfield0: 'n79023811', isLinked: true },
-          { rowIndex: 93, tag: '830', subfield0: 'no2018018754', isLinked: true },
-          { rowIndex: 33, tag: '110', subfield0: 'no20061082779', isLinked: false },
-          { rowIndex: 34, tag: '111', subfield0: 'no20091764299', isLinked: false },
-          { rowIndex: 35, tag: '130', subfield0: 'n 800269809', isLinked: false },
-          { rowIndex: 59, tag: '610', subfield0: 'nb20090244889', isLinked: false },
-          { rowIndex: 60, tag: '611', subfield0: 'n 822167579', isLinked: false },
-          { rowIndex: 66, tag: '650', subfield0: 'sh20091259899', isLinked: false },
-          { rowIndex: 70, tag: '651', subfield0: 'sh 850015319', isLinked: false },
+          { rowIndex: 33, tag: '240', subfield0: 'no2020024230', isLinked: true },
+          { rowIndex: 61, tag: '600', subfield0: 'n2016004081', isLinked: true },
+          { rowIndex: 58, tag: '630', subfield0: 'no2023006889', isLinked: true },
+          { rowIndex: 69, tag: '655', subfield0: 'gf2014026266', isLinked: true },
+          { rowIndex: 84, tag: '710', subfield0: 'no2008081921', isLinked: true },
+          { rowIndex: 85, tag: '711', subfield0: 'n84745425', isLinked: true },
+          { rowIndex: 87, tag: '800', subfield0: 'n79023811', isLinked: true },
+          { rowIndex: 90, tag: '830', subfield0: 'no2018018754', isLinked: true },
+          { rowIndex: 56, tag: '610', subfield0: 'nb20090244889', isLinked: false },
+          { rowIndex: 57, tag: '611', subfield0: 'n 822167579', isLinked: false },
+          { rowIndex: 63, tag: '650', subfield0: 'sh20091259899', isLinked: false },
+          { rowIndex: 67, tag: '651', subfield0: 'sh 850015319', isLinked: false },
           {
-            rowIndex: 85,
+            rowIndex: 82,
             tag: '700',
             subfield0: 'http://id.loc.gov/authorities/names/n831692679',
             isLinked: false,
           },
-          { rowIndex: 89, tag: '730', subfield0: 'n790660959 ', isLinked: false },
-          { rowIndex: 91, tag: '810', subfield0: 'n 800955859', isLinked: false },
-          { rowIndex: 92, tag: '811', subfield0: 'no20181255879', isLinked: false },
+          { rowIndex: 86, tag: '730', subfield0: 'n790660959 ', isLinked: false },
+          { rowIndex: 88, tag: '810', subfield0: 'n 800955859', isLinked: false },
+          { rowIndex: 89, tag: '811', subfield0: 'no20181255879', isLinked: false },
         ];
         const createdRecordIDs = [];
         const naturalIds = [
@@ -170,7 +167,7 @@ describe('MARC', () => {
               'Field 100, 240, 600, 630, 655, 710, 711, 800, and 830 has been linked to MARC authority record(s).',
             );
             QuickMarcEditor.checkCallout(
-              'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
+              'Field 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );
             fields.forEach((field) => {
               if (field.isLinked) {
@@ -183,7 +180,7 @@ describe('MARC', () => {
             // #4 Click on the "Link headings" button again
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
-              'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
+              'Field 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // #5 Click on the "Save & keep editing" button.
@@ -191,7 +188,7 @@ describe('MARC', () => {
             cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             // #6 Go to "MARC authority" app.
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.waitLoading();
             // #7 * Fill in the search box with contributor name value which was auto-linked (ex. from "710" field).
             // * Click on the "Search" button.

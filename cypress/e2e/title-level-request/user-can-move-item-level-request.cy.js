@@ -141,7 +141,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350523 Check that user can move Item level request (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350523'] },
     () => {
       cy.wrap(instanceData.itemBarcodes).each((barcode) => {
         Requests.findCreatedRequest(instanceData.title);

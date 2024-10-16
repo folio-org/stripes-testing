@@ -34,11 +34,9 @@ describe('Data Export', () => {
           holdingsUUID = holdings[0].id;
           FileManager.createFile(`cypress/fixtures/${fileName}`, holdingsUUID);
         });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
-          (instance) => {
-            instanceHRID = instance.hrid;
-          },
-        );
+        cy.getInstanceById(instanceId).then((instance) => {
+          instanceHRID = instance.hrid;
+        });
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
@@ -55,7 +53,7 @@ describe('Data Export', () => {
 
     it(
       'C376962 Verify that Default mapping profile for holdings maps instance HRID to "004" field (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C376962'] },
       () => {
         ExportFile.uploadFile(fileName);
         ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

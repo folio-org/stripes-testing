@@ -14,6 +14,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
@@ -78,14 +79,15 @@ describe('Invoices', () => {
 
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.openAppFromDropdown('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
       OrderLines.fillInPOLineInfoWithFund(firstFund);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLinePOLLookUp(orderNumber);
     });
@@ -121,7 +123,7 @@ describe('Invoices', () => {
       Invoices.approveInvoice();
       Invoices.payInvoice();
 
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();

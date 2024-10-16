@@ -35,13 +35,14 @@ describe('bulk-edit', () => {
 
     it(
       'C446074 Verify the "Run query" button, when the query returns 0 - users (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C446074'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.userBarcode);
         QueryModal.verifySelectedField(usersFieldValues.userBarcode);
         QueryModal.verifyQueryAreaContent('(users.barcode  )');

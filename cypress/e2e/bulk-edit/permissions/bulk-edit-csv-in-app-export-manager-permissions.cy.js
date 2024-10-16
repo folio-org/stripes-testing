@@ -7,6 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 
@@ -48,13 +50,12 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.waitFileUploading();
         })
         .then(() => {
-          cy.visit(TopMenu.bulkEditPath);
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         });
     });
 
@@ -72,7 +73,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C353972'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

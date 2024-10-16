@@ -40,7 +40,7 @@ describe('Data Export', () => {
 
     it(
       'C196758 Create a new mapping profile for MARC bib record with holdings data included - Source record storage (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C196758'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [
@@ -51,18 +51,34 @@ describe('Data Export', () => {
         ModalSelectTransformations.verifyCheckboxDisabled('Instance');
         ModalSelectTransformations.uncheckItemRecordTypeChechbox();
         ModalSelectTransformations.searchItemTransformationsByName('Holdings - ID');
+        ModalSelectTransformations.verifyValueInSearchField('Holdings - ID');
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
 
         ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
         ModalSelectTransformations.checkItemRecordTypeChechbox();
         ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
+        ModalSelectTransformations.verifyValueInSearchField('Item - ID');
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', 'a');
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Holdings - ID',
+          '123',
+          '1',
+          '2',
+          'a',
+        );
+        ExportNewFieldMappingProfile.verifyAddedTransformationTable(
+          'Item - ID',
+          '245',
+          '3',
+          '4',
+          'a',
+          1,
+        );
         InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
-
         ExportFieldMappingProfiles.saveMappingProfile();
         InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
 

@@ -21,8 +21,6 @@ const invalidHoldingUUIDsFileName = `InvalidHoldingUUIDs_${getRandomPostfix()}.c
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         Permissions.bulkEditView.gui,
         Permissions.bulkEditEdit.gui,
@@ -61,7 +59,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423558 Verify "Search column name" search box for Holdings records. (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C423558'] },
       () => {
         cy.viewport(1920, 1080);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

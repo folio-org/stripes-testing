@@ -4,6 +4,7 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -31,6 +32,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -47,7 +49,7 @@ describe('Data Import', () => {
       modifiedMarcFile: `C374184 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C374184 testMarcFile${getRandomPostfix()}.mrc`,
       updated630Field: [
-        23,
+        22,
         '630',
         '0',
         '0',
@@ -95,6 +97,7 @@ describe('Data Import', () => {
         fileName: `C374184 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374184.mrc',
@@ -102,10 +105,11 @@ describe('Data Import', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         authorityHeading: 'C374184 Marvel comics',
+        propertyName: 'authority',
       },
     ];
     const linkingTagAndValue = {
-      rowIndex: 23,
+      rowIndex: 22,
       value: 'C374184 Marvel comics',
       tag: '630',
     };
@@ -145,17 +149,21 @@ describe('Data Import', () => {
           );
         });
 
-      marcFiles.forEach((marcFile) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
+      cy.loginAsAdmin({
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
+      }).then(() => {
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          cy.wait(2000);
         });
       });
 
@@ -166,17 +174,17 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
         cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIconByIndex(23);
+        InventoryInstance.verifyAndClickLinkIconByIndex(22);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(linkingTagAndValue.value);
@@ -229,7 +237,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record found');
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -241,7 +249,7 @@ describe('Data Import', () => {
           testData.modifiedMarcFile,
         );
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
@@ -256,7 +264,7 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.verifyNumberOfTitles(5, '1');
         MarcAuthorities.selectTitle(testData.marcValue);
@@ -269,7 +277,7 @@ describe('Data Import', () => {
         InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(23);
+        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(22);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated630Field);
       },
     );

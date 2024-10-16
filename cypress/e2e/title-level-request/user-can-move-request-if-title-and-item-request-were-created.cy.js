@@ -132,7 +132,7 @@ describe('Title Level Request', () => {
 
     it(
       'C350521 Check that user can move request if Title and Item requests were previously created (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C350521'] },
       () => {
         // Click on the Actions option
         RequestDetail.openActions();
@@ -149,7 +149,7 @@ describe('Title Level Request', () => {
 
     it(
       'C350427 Check that the request has disappeared from the queue after changing the "Close-Cancelled" status (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C350427'] },
       () => {
         // Pay attention on the Request status and Item status
         RequestDetail.checkRequestInformation({

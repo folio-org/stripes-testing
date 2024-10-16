@@ -50,7 +50,7 @@ describe('MARC', () => {
           field650: {
             tag650: '650',
             rowIndex: 40,
-            content: '$a Man-woman relationships $v Drama. $0 sh85095299',
+            content: '$a Man-woman relationships $v Drama. $0 sh85095291',
           },
           field711: {
             tag711: '711',
@@ -141,9 +141,10 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.user = createdUserProperties;
 
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.waitContentLoading();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -181,6 +182,7 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.deriveNewMarcBib();
+            cy.wait('@/authn/refresh', { timeout: 30000 });
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(

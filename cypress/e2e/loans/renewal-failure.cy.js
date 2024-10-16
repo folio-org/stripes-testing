@@ -23,7 +23,7 @@ describe('Renewal', () => {
   let loanId;
   let servicePointId;
   let sourceId;
-  const firstName = 'testPermFirst';
+  const firstName = 'preferredName testMiddleName';
   const renewUserData = {
     firstName,
     lastName: '',
@@ -176,7 +176,7 @@ describe('Renewal', () => {
 
   it(
     'C568 Renewal: failure because loan is not renewable (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C568'] },
     () => {
       cy.login(renewUserData.username, renewUserData.password);
       cy.wait(2000);

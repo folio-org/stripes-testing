@@ -12,6 +12,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -56,11 +58,10 @@ describe('bulk-edit', () => {
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         CustomFields.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
-        cy.reload();
         UserEdit.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -76,7 +77,7 @@ describe('bulk-edit', () => {
 
     it(
       "C389568 In app | Verify that User's Custom fields with semicolons are updated correctly (firebird)",
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C389568'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -103,15 +104,16 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
 
-        cy.visit(TopMenu.usersPath);
-        UsersSearchPane.searchByUsername(user.username);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+        cy.reload();
+        Users.verifyLastNameOnUserDetailsPane(user.username);
         Users.verifyPatronGroupOnUserDetailsPane('staff');
       },
     );
 
     it(
       'C380731 Verify that User\'s Custom fields with special characters are displayed consistently through "Previews" and downloaded Bulk edit files (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C380731'] },
       () => {
         const today = new Date();
         cy.login(secondUser.username, secondUser.password, {
@@ -133,12 +135,12 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
         BulkEditActions.commitChanges();
+        BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
-        BulkEditActions.openActions();
         cy.wait(500);
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
@@ -157,7 +159,8 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         ]);
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(customFieldData.fieldLabel);
       },
     );

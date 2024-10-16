@@ -5,7 +5,7 @@ import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-requests: Sort requests', () => {
+describe('Requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];
@@ -49,7 +49,7 @@ describe('ui-requests: Sort requests', () => {
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega', 'C2379'] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

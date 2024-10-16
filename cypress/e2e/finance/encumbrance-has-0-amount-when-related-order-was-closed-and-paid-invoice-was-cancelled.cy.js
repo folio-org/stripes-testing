@@ -147,7 +147,7 @@ describe('Finance', () => {
                               Orders.updateOrderViaApi({
                                 ...firstOrderResponse,
                                 workflowStatus: ORDER_STATUSES.CLOSED,
-                                closeReason: { reason: 'Ceased', note: '' },
+                                closeReason: { reason: 'Cancelled', note: '' },
                               });
                               cy.wait(4000);
 

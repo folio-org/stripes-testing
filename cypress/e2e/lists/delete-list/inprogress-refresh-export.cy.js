@@ -32,22 +32,19 @@ describe('lists', () => {
 
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
-      cy.getAdminToken();
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 
     it(
       'C411770 Delete list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411770'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -56,13 +53,10 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(1000);
-        Lists.actionButton();
+        Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
-        cy.wait(7000);
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -71,11 +65,12 @@ describe('lists', () => {
 
     it(
       'C411771 Delete list: Export is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'C411771'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -84,14 +79,12 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         Lists.queryBuilderActions();
-        cy.wait(10000);
         Lists.viewUpdatedList();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.exportList();
-        Lists.actionButton();
+        Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });

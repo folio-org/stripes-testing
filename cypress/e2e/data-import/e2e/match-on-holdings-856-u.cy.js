@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -30,8 +31,11 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -104,7 +108,6 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
@@ -179,16 +182,16 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfiles[2].mappingProfile.name,
       );
 
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
-        cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
-      cy.visit(SettingsMenu.matchProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
       MatchProfiles.createMatchProfile(matchProfile);
 
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
@@ -205,7 +208,7 @@ describe('Data Import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
-      cy.visit(TopMenu.dataImportPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
       DataImport.verifyUploadState();
       DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
       JobProfiles.waitFileIsUploaded();
@@ -221,7 +224,8 @@ describe('Data Import', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkURIIsNotEmpty();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -230,8 +234,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
         Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.selectYesfilterStaffSuppress();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.openHoldingView();

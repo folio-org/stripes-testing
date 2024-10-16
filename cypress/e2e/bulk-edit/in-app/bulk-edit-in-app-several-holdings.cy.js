@@ -66,6 +66,7 @@ describe('bulk-edit', () => {
             `${item.holdingId}\r\n${item2.holdingId}`,
           );
         });
+        cy.wait(3000);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -83,7 +84,7 @@ describe('bulk-edit', () => {
 
     it(
       'C365126 Verify confirmation page after bulk editing holdings locations (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C365126'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

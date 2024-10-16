@@ -1,15 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
+import { FiscalYears, Funds, Ledgers } from '../../../support/fragments/finance';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import { Invoices, NewInvoice } from '../../../support/fragments/invoices';
+import { NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -17,8 +11,9 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('ui-acquisition units: Acquisition Units', () => {
+describe('Acquisition Units', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -85,7 +80,8 @@ describe('ui-acquisition units: Acquisition Units', () => {
           invoice.accountingCode = organization.erpCode;
         });
         defaultOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(defaultOrder, true).then((orderResponse) => {
           defaultOrder.id = orderResponse.id;
           orderNumber = orderResponse.poNumber;
@@ -98,7 +94,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
             '4',
           );
           OrderLines.backToEditingOrder();
-          cy.visit(TopMenu.invoicesPath);
+          TopMenuNavigation.openAppFromDropdown('Invoices');
           Invoices.createRolloverInvoice(invoice, organization.name);
           Invoices.createInvoiceLineFromPol(orderNumber);
         });
@@ -147,7 +143,8 @@ describe('ui-acquisition units: Acquisition Units', () => {
     Orders.deleteOrderViaApi(defaultOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
 
-    cy.visit(TopMenu.fundPath);
+    TopMenuNavigation.openAppFromDropdown('Finance');
+    FinanceHelp.selectFundsNavigation();
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
@@ -206,7 +203,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
-      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
       cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
       FinanceHelp.searchByName(defaultFund.name);

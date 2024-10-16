@@ -18,15 +18,16 @@ describe('Inventory', () => {
         InventoryInstances.createInstanceViaApi(testData.instanceTitle, testData.barcode);
       });
 
-      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.dataExportEnableApp.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-        },
-      );
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+      });
     });
 
     after('Delete test data', () => {
@@ -38,7 +39,7 @@ describe('Inventory', () => {
 
     it(
       'C366119 Verify select all option for quick instances export is reset (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C366119'] },
       () => {
         InventorySearchAndFilter.byKeywords();
         InventoryInstances.clickSelectAllInstancesCheckbox();

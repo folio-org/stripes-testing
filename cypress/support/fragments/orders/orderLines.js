@@ -625,6 +625,131 @@ export default {
     submitOrderLine();
   },
 
+  binderyActivePhysicalPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
+    cy.do([orderFormatSelect.choose(resource), acquisitionMethodButton.click()]);
+    cy.wait(2000);
+    cy.do([
+      Checkbox({ name: 'details.isBinderyActive' }).click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+    ]);
+    cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  binderyIsNotActiveForElectronicPOLineInfo(
+    fund,
+    resource,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do(orderFormatSelect.choose(resource));
+    cy.wait(2000);
+    cy.get('label:contains("Bindery active")').within(() => {
+      cy.get('input[type="checkbox"]').should('be.disabled');
+    });
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      Checkbox({ name: 'details.isBinderyActive' }).click(),
+    ]);
+    cy.get('select[name="orderFormat"]')
+      .find('option')
+      .then((options) => {
+        const actualOptions = [...options].map((option) => option.text.trim());
+        const expectedOptions = ['Physical resource', 'P/E mix'];
+        const unexpectedOptions = ['Other', 'Electronic'];
+
+        expectedOptions.forEach((option) => {
+          expect(actualOptions).to.include(option);
+        });
+
+        unexpectedOptions.forEach((option) => {
+          expect(actualOptions).not.to.include(option);
+        });
+      });
+    cy.do([
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+    ]);
+    cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  binderyActivePEMixPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
+    cy.do([orderFormatSelect.choose(resource), acquisitionMethodButton.click()]);
+    cy.wait(2000);
+    cy.do([
+      Checkbox({ name: 'details.isBinderyActive' }).click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      electronicUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      quantityElectronicTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+    ]);
+    cy.do([
+      quantityPhysicalLocationField.fillIn(quantity),
+      quantityElectronicField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
   rolloverPOLineInfoforPhysicalMaterialWithFundInPercents(
     fund,
     unitPrice,
@@ -885,6 +1010,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -929,6 +1057,9 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -954,9 +1085,11 @@ export default {
       addFundDistributionButton.click(),
       Button({ id: 'fundDistribution[1].fundId' }).click(),
       SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
-      TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
+    cy.do(TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage));
+    cy.wait(4000);
+    cy.do(saveAndCloseButton.click());
     cy.wait(4000);
     submitOrderLine();
   },
@@ -1079,7 +1212,7 @@ export default {
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
@@ -1142,7 +1275,7 @@ export default {
       Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
     cy.do([TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value)]);
   },
 
@@ -1481,8 +1614,8 @@ export default {
       acquisitionMethodButton.click(),
     ]);
     cy.wait(3000);
-    cy.do([SelectionOption(AUMethod).click()]);
     cy.do([
+      SelectionOption(AUMethod).click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -1766,6 +1899,7 @@ export default {
   },
 
   saveOrderLine() {
+    cy.wait(4000);
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
     this.submitOrderLine();
@@ -2553,5 +2687,11 @@ export default {
 
   checkUserIsAbsent(user) {
     cy.expect(MultiColumnListCell(including(user)).absent());
+  },
+
+  checkBinderyActiveStatus(status) {
+    cy.get('label:contains("Bindery active")').within(() => {
+      cy.get('input[type="checkbox"]').should('have.prop', 'checked', status);
+    });
   },
 };

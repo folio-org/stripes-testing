@@ -34,7 +34,7 @@ describe('Inventory', () => {
 
   it(
     'C368489 Verify the new option added to the "App context menu" dropdown (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C368489'] },
     () => {
       // #1 Select  the "Inventory" app
       // *  Opens "Inventory" main page with "Search & filter" left pane

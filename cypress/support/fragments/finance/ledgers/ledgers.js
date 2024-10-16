@@ -556,7 +556,7 @@ export default {
       saveAndClose.click(),
       // try to navigate without saving
       Button('Agreements').click(),
-      Button('Keep editing').click,
+      Button('Keep editing').click(),
       Button('Cancel').click(),
       Button('Close without saving').click(),
     ]);
@@ -647,7 +647,7 @@ export default {
   },
 
   exportRollover: (dataFile) => {
-    cy.wait(4000);
+    cy.wait(6000);
     cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-result`).click();
   },
 
@@ -725,13 +725,13 @@ export default {
     available,
   ) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000); // wait for the file to load
+    cy.wait(6000); // wait for the file to load
     cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
       // Split the contents of a file into lines
       const fileRows = fileContent.split('\n');
 
       expect(fileRows[0].trim()).to.equal(
-        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Credited (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Credited (Exp Class)","Percentage of total expended"',
       );
 
       const actualData = fileRows[1].trim().split(',');
@@ -750,11 +750,11 @@ export default {
       expect(actualData[20]).to.equal(encumberedBudget);
       expect(actualData[21]).to.equal(awaitingPaymentBudget);
       expect(actualData[22]).to.equal(expendedBudget);
-      expect(actualData[23]).to.equal(unavailable);
-      expect(actualData[24]).to.equal(overEncumbered);
-      expect(actualData[25]).to.equal(overExpended);
-      expect(actualData[26]).to.equal(cashBalance);
-      expect(actualData[27]).to.equal(available);
+      expect(actualData[24]).to.equal(unavailable);
+      expect(actualData[25]).to.equal(overEncumbered);
+      expect(actualData[26]).to.equal(overExpended);
+      expect(actualData[27]).to.equal(cashBalance);
+      expect(actualData[28]).to.equal(available);
     });
   },
 
@@ -778,6 +778,7 @@ export default {
   },
 
   deleteDownloadedFile(fileName) {
+    cy.wait(6000);
     const filePath = `cypress\\downloads\\${fileName}`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
   },
@@ -1130,6 +1131,19 @@ export default {
     });
   },
 
+  checkColumnNamesInDownloadedLedgerExportFileForNone(fileName) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Credited (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available"',
+      );
+    });
+  },
+
   checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(fileName) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000); // wait for the file to load
@@ -1138,7 +1152,7 @@ export default {
       const fileRows = fileContent.split('\n');
 
       expect(fileRows[0].trim()).to.equal(
-        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Credited (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Credited (Exp Class)","Percentage of total expended"',
       );
     });
   },
@@ -1195,6 +1209,58 @@ export default {
     });
   },
 
+  checkColumnContentInDownloadedLedgerExportFileForNone(
+    fileName,
+    fileRow,
+    fund,
+    secondFiscalYear,
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect(actualData[12]).to.equal(allowableEncumbrance);
+      expect(actualData[13]).to.equal(allowableExpenditure);
+      expect(actualData[16]).to.equal(initialAllocation);
+      expect(actualData[17]).to.equal(increase);
+      expect(actualData[18]).to.equal(decrease);
+      expect(actualData[19]).to.equal(totalAllocation);
+      expect(actualData[20]).to.equal(transfers);
+      expect(actualData[21]).to.equal(totalFunding);
+      expect(actualData[22]).to.equal(encumberedBudget);
+      expect(actualData[23]).to.equal(awaitingPaymentBudget);
+      expect(actualData[24]).to.equal(expendedBudget);
+      expect(actualData[26]).to.equal(unavailable);
+      expect(actualData[27]).to.equal(overEncumbered);
+      expect(actualData[28]).to.equal(overExpended);
+      expect(actualData[29]).to.equal(cashBalance);
+      expect(actualData[30]).to.equal(available);
+    });
+  },
+
   checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
     fileName,
     fileRow,
@@ -1245,17 +1311,17 @@ export default {
       expect(actualData[22]).to.equal(encumberedBudget);
       expect(actualData[23]).to.equal(awaitingPaymentBudget);
       expect(actualData[24]).to.equal(expendedBudget);
-      expect(actualData[25]).to.equal(unavailable);
-      expect(actualData[26]).to.equal(overEncumbered);
-      expect(actualData[27]).to.equal(overExpended);
-      expect(actualData[28]).to.equal(cashBalance);
-      expect(actualData[29]).to.equal(available);
-      expect(actualData[30]).to.equal(`"${expClassName}"`);
-      expect(actualData[31]).to.equal(`"${expClassCode}"`);
-      expect(actualData[32]).to.equal(`"${expClassStatus}"`);
-      expect(actualData[33]).to.equal(expClassEncumbered);
-      expect(actualData[34]).to.equal(expClassAwaitingPayment);
-      expect(actualData[35]).to.equal(expClassExpended);
+      expect(actualData[26]).to.equal(unavailable);
+      expect(actualData[27]).to.equal(overEncumbered);
+      expect(actualData[28]).to.equal(overExpended);
+      expect(actualData[29]).to.equal(cashBalance);
+      expect(actualData[30]).to.equal(available);
+      expect(actualData[31]).to.equal(`"${expClassName}"`);
+      expect(actualData[32]).to.equal(`"${expClassCode}"`);
+      expect(actualData[33]).to.equal(`"${expClassStatus}"`);
+      expect(actualData[34]).to.equal(expClassEncumbered);
+      expect(actualData[35]).to.equal(expClassAwaitingPayment);
+      expect(actualData[36]).to.equal(expClassExpended);
     });
   },
 

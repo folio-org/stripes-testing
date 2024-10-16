@@ -17,7 +17,7 @@ import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../suppo
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 
-describe('Orders > Receiving and Check-in ', () => {
+describe('Receiving', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };

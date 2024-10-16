@@ -29,7 +29,7 @@ describe('Data Export', () => {
 
     it(
       'C15828 Delete the existing mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C15828'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
@@ -38,10 +38,10 @@ describe('Data Export', () => {
           name: `autoTestMappingProf.${getRandomPostfix()}`,
           holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
           holdingsMarcField: '901',
-          subfieldForHoldings: '$a',
+          subfieldForHoldings: 'a',
           itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
           itemMarcField: '902',
-          subfieldForItem: '$a',
+          subfieldForItem: 'a',
         };
         ExportFieldMappingProfiles.createMappingProfile(testProfile);
         ExportFieldMappingProfiles.deleteMappingProfile(testProfile.name);

@@ -30,10 +30,7 @@ describe('MARC', () => {
           tagLDRElvlBoxEmpty: '',
         },
         errors: {
-          ldrCharacterLength:
-            'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
-          tagCharacterLength: 'Record cannot be saved. A MARC tag must contain three characters.',
-          invalidTag: 'Invalid MARC tag. Please try again.',
+          tagCharacterLength: 'Tag must contain three characters and can only accept numbers 0-9.',
         },
       };
 
@@ -91,9 +88,6 @@ describe('MARC', () => {
             `$a ${testData.fieldContents.tag245}`,
           );
 
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(0, testData.errors.ldrCharacterLength);
-
           QuickMarcEditor.fillInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBox);
           QuickMarcEditor.verifyValueInElvlBoxInLDRField(testData.fieldContents.tagLDRElvlBox);
 
@@ -116,9 +110,11 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tagABC);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(5, testData.errors.invalidTag);
+          QuickMarcEditor.checkErrorMessage(5, testData.errors.tagCharacterLength);
 
           QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag100);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {

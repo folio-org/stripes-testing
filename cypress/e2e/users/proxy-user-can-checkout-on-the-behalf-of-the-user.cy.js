@@ -24,7 +24,7 @@ describe('Users', () => {
           usersData.userSponsor = sponsorProperties;
           cy.getUsers({ limit: 1, query: `"username"="${usersData.userSponsor.username}"` }).then(
             (users) => {
-              usersData.userSponsor.firstName = users[0].personal.firstName;
+              usersData.userSponsor.firstName = users[0].personal.preferredFirstName;
               usersData.userSponsor.middleName = users[0].personal.middleName;
             },
           );
@@ -75,6 +75,8 @@ describe('Users', () => {
     cy.deleteProxyApi(proxyBody.id);
     Users.deleteViaApi(usersData.userSponsor.userId);
     Users.deleteViaApi(usersData.userProxy.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
+    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(

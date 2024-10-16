@@ -3,23 +3,20 @@
   "version": "4.8.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
-  "publishConfig": {
-    "registry": "https://repository.folio.org/repository/npm-folio/"
-  },
   "license": "Apache-2.0",
   "scripts": {
-    "test": "echo 'Not implemented'",
-    "test:cypress:snapshot": "cypress run --config baseUrl=https://folio-snapshot.dev.folio.org",
-    "test:cypress:running-service": "cypress run",
-    "test:cypress:local": "stripes serve --port 3001 & wait-on http://localhost:3001 && cypress run && kill $!",
-    "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
-    "regenerate": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && rm -rf tapes && yakbak-proxy -v -i https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
     "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json ",
     "lint": "eslint . --ext=js",
     "lint:fix": "eslint --fix --quiet",
+    "prepare": "husky install",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write",
-    "prepare": "husky install"
+    "regenerate": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && rm -rf tapes && yakbak-proxy -v -i https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
+    "test": "echo 'Not implemented'",
+    "test:cypress:local": "stripes serve --port 3001 & wait-on http://localhost:3001 && cypress run && kill $!",
+    "test:cypress:running-service": "cypress run",
+    "test:cypress:snapshot": "cypress run --config baseUrl=https://folio-snapshot.dev.folio.org",
+    "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2"
   },
   "husky": {
     "hooks": {
@@ -32,50 +29,60 @@
       "npm run lint:fix"
     ]
   },
-  "dependencies": {
-    "@interactors/html": "^1.0.0-rc1.4",
-    "@interactors/keyboard": "^1.0.0-rc1.5",
-    "axe-core": "4.3.3",
+  "resolutions": {
+    "chromedriver": "107.0.0",
     "cypress": "12.0.0",
-    "cypress-cloud": "^1.9.6",
-    "cypress-testrail-simple": "^3.1.0",
-    "date-fns": "^2.16.1",
-    "debug": "^4.0.1",
-    "element-is-visible": "^1.0.0",
-    "moment": "^2.29.3"
+    "sharp": "0.32.6",
+    "tsx": "3.14.0"
   },
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.25.4",
     "@cypress/grep": "^4.0.1",
     "@cypress/request": "2.88.7",
-    "@folio/eslint-config-stripes": "^6.4.0",
-    "@interactors/with-cypress": "^1.0.0-rc1.3",
+    "@cypress/webpack-batteries-included-preprocessor": "^3.0.5",
+    "@cypress/webpack-preprocessor": "^5.4.4",
+    "@folio/eslint-config-stripes": "^7.1.0",
+    "@interactors/html": "1.0.0",
+    "@interactors/keyboard": "1.0.0",
+    "@interactors/with-cypress": "1.0.0",
     "@reportportal/agent-js-cypress": ">=5.3.1 <6.0.0",
     "@shelex/cypress-allure-plugin": "^2.40.0",
-    "bigtest": "^0.14.0",
+    "axe-core": "4.3.3",
+    "axios": "^1.7.7",
+    "babel-loader": "^9.2.1",
+    "cypress": "12.0.0",
+    "cypress-cloud": "^1.9.6",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
     "cypress-plugin-tab": "^1.0.5",
     "cypress-recurse": "^1.13.1",
+    "cypress-testrail-simple": "^3.1.0",
     "cypress-xpath": "^1.6.2",
+    "date-fns": "^2.16.1",
+    "debug": "^4.0.1",
+    "dotenv": "^16.4.5",
+    "element-is-visible": "^1.0.0",
     "eslint": "^7.32.0",
+    "eslint-import-resolver-webpack": "^0.13.9",
     "eslint-plugin-cypress": "^2.11.2",
+    "find-test-names": "^1.28.28",
     "fs-extra": "7.0.1",
+    "glob": "^10.4.5",
     "globby": "^11.1.0",
     "husky": "^8.0.3",
     "json-2-csv": "^5.0.1",
     "lint-staged": "^14.0.1",
     "localforage": "^1.9.0",
+    "moment": "^2.29.3",
     "prettier": "^3.0.2",
     "tsx": "3.14.0",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "webpack": "^5.94.0"
   },
-  "resolutions": {
-    "cypress": "12.0.0",
-    "chromedriver": "107.0.0",
-    "sharp": "0.32.6",
-    "tsx": "3.14.0"
+  "publishConfig": {
+    "registry": "https://repository.folio.org/repository/npm-folio/"
   },
   "overrides": {
     "bigtest": {
@@ -85,5 +92,6 @@
     "@folio/eslint-config-stripes": {
       "sharp": "0.32.6"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

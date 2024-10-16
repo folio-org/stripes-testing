@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
     it(
       "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C15186'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.byKeywords(item.instanceName);

@@ -2,6 +2,7 @@ import {
   EXISTING_RECORD_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -28,6 +29,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -97,22 +99,10 @@ describe('Data Import', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
-          });
-        });
 
         // create Match profile
         NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)
@@ -143,6 +133,19 @@ describe('Data Import', () => {
               actionProfile.id,
             );
           });
+
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+        });
 
         // link MARC Bib field to MARC Authority
         cy.loginAsAdmin({
@@ -202,7 +205,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -218,7 +221,7 @@ describe('Data Import', () => {
         );
 
         // upload the updated MARC file with 999 subfields and without 100 field
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
@@ -231,7 +234,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcBibFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkValueAbsenceInDetailView(
@@ -241,7 +244,7 @@ describe('Data Import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkFieldAbsense(testData.tag100);
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
         MarcAuthorities.verifyEmptyNumberOfTitles();
       },

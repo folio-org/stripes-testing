@@ -9,6 +9,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const customFieldData = {
@@ -38,7 +40,7 @@ describe('bulk-edit', () => {
           waiter: CustomFields.waitLoading,
         });
         CustomFields.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.addMultiSelectCustomField(customFieldData);
 
@@ -61,7 +63,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389567 Local | Verify bulk edit Users records with Custom fields with semicolon (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C389567'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -88,7 +90,7 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyFirstNameOnUserDetailsPane(newFirstName);
       },

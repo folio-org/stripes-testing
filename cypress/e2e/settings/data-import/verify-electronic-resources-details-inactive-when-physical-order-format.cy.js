@@ -6,11 +6,11 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -216,7 +216,6 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
         // #2 Populate following fields
@@ -347,7 +346,6 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
         // #2 Populate following fields

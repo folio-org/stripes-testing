@@ -53,6 +53,7 @@ export default {
     cy.do(Link(patronNoticePolicy.name).click());
   },
   fillGeneralInformation: (patronNoticePolicy) => {
+    cy.wait(500);
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
       activeCheckbox.click(),
@@ -65,20 +66,30 @@ export default {
   },
 
   addNotice(patronNoticePolicy, index = 0) {
-    cy.do([
+    cy.do(
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` })
         .find(addNoticeButton)
         .click(),
+    );
+    cy.wait(1500);
+    cy.do(
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].templateId` }).choose(
         patronNoticePolicy.templateName,
       ),
+    );
+    cy.wait(1500);
+    cy.do(
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].format` }).choose(
         patronNoticePolicy.format,
       ),
+    );
+    cy.wait(1500);
+    cy.do(
       Select({
         name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen`,
       }).choose(patronNoticePolicy.action),
-    ]);
+    );
+    cy.wait(1500);
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
     if (patronNoticePolicy.send !== undefined) {
       cy.do(
@@ -168,12 +179,15 @@ export default {
   },
 
   save() {
+    cy.wait(1000);
     cy.expect(saveButton.has({ disabled: false }));
     cy.do(saveButton.click());
+    cy.wait(2000);
   },
 
   choosePolicy: (patronNoticePolicy) => {
     cy.do(NavListItem(patronNoticePolicy.name).click());
+    cy.wait(1000);
   },
 
   createPolicy({ noticePolicy, noticeTemplates = [] }) {
@@ -205,6 +219,7 @@ export default {
 
   duplicateAndFillPolicy(patronNoticePolicy) {
     cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-duplicate-item' }).click()]);
+    cy.wait(2000);
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
@@ -222,6 +237,7 @@ export default {
       actionsButton.click(),
       actionsButtons.edit.click(),
     ]);
+    cy.wait(2000);
   },
 
   getPatronNoticePoliciesByNameViaAPI() {

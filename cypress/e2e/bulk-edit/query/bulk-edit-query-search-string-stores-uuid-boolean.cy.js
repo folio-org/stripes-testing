@@ -45,13 +45,14 @@ describe('bulk-edit', () => {
 
     it(
       'C436741 Query builder - Search users that has preferred contact type and have "Active" status ("String stores UUID" and "Boolean" property types) ("String stores UUID" and "Boolean" property types) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C436741'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.preferredContactType);
         QueryModal.verifySelectedField(usersFieldValues.preferredContactType);
         QueryModal.verifyQueryAreaContent('(users.preferred_contact_type  )');

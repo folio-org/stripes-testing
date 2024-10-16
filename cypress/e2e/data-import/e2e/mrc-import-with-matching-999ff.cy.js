@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -25,8 +26,11 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -96,7 +100,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -123,17 +130,16 @@ describe('Data Import', () => {
       { tags: ['smoke', 'folijet'] },
       () => {
         // create Field mapping profile for export
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileForExport.name);
 
         // create Action profile for export and link it to Field mapping profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
         ActionProfiles.checkActionProfilePresented(actionProfileForExport.name);
 
         // create job profile for export
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfileWithLinkingProfiles(
           jobProfileForExport,
           actionProfileForExport.name,
@@ -141,7 +147,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileForExport.profileName);
 
         // upload a marc file for export
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -160,7 +166,7 @@ describe('Data Import', () => {
           const instanceHRID = initialInstanceHrId;
 
           // download .csv file
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.saveUUIDs();
@@ -173,7 +179,7 @@ describe('Data Import', () => {
           });
 
           // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           cy.getAdminToken().then(() => {
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -190,21 +196,23 @@ describe('Data Import', () => {
           });
 
           // create Match profile
-          cy.visit(SettingsMenu.matchProfilePath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsDataImport.goToSettingsDataImport();
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(matchProfile);
 
           // create Field mapping profile
-          cy.visit(SettingsMenu.mappingProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.createMappingProfile(mappingProfile);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
           // create Action profile and link it to Field mapping profile
-          cy.visit(SettingsMenu.actionProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
           ActionProfiles.create(actionProfile, mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
           // create Job profile
-          cy.visit(SettingsMenu.jobProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
           JobProfiles.createJobProfileWithLinkingProfiles(
             jobProfile,
             actionProfile.name,
@@ -213,7 +221,8 @@ describe('Data Import', () => {
           JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
           // upload the exported marc file with 999.f.f.s fields
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           DataImport.verifyUploadState();
           DataImport.uploadExportedFile(nameForExportedMarcFile);
           JobProfiles.search(jobProfile.profileName);
@@ -225,7 +234,7 @@ describe('Data Import', () => {
             FileDetails.columnNameInResultList.instance,
           );
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InstanceRecordView.verifyInstancePaneExists();
           // ensure the fields created in Field mapping profile exists in inventory

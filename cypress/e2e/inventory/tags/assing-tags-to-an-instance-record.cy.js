@@ -37,8 +37,13 @@ describe('Inventory', () => {
       cy.createTagApi(tag).then((tagId) => {
         tag.id = tagId;
       });
+    });
 
-      cy.loginAsAdmin();
+    beforeEach('Login', () => {
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
 
     after('Delete test data', () => {
@@ -52,7 +57,6 @@ describe('Inventory', () => {
       'C196769 Assign tags to an Instance record (folijet)',
       { tags: ['smoke', 'folijet', 'shiftLeft'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.addTag(tag.label);
@@ -61,6 +65,25 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstance.checkAddedTag(tag.label, instanceTitle);
         InventoryInstance.deleteTag(tag.label);
+      },
+    );
+
+    it(
+      'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
+      { tags: ['extendedPath', 'volaris'] },
+      () => {
+        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        InventoryInstances.selectInstance();
+        InventoryInstance.addTag(tag.label);
+        InventoryInstances.resetAllFilters();
+        InventoryInstances.searchByTag(tag.label);
+        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        InventoryInstance.checkAddedTag(tag.label, instanceTitle);
+        InventoryInstance.deleteTag(tag.label);
+        InventorySearchAndFilter.verifyTagCount();
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+        cy.reload();
+        InventorySearchAndFilter.verifyTagIsAbsent(tag.label);
       },
     );
   });

@@ -1,9 +1,10 @@
 import { Permissions } from '../../../support/dictionary';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Data Export', () => {
   describe('Mapping profile - setup', () => {
@@ -30,9 +31,10 @@ describe('Data Export', () => {
 
     it(
       'C345410 Search mapping profiles (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C345410'] },
       () => {
-        cy.visit(SettingsMenu.exportMappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        ExportFieldMappingProfiles.openTabFromDataExportSettingsList();
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
         ExportFieldMappingProfiles.searchFieldMappingProfile(searchText);
         ExportFieldMappingProfiles.verifySearchButtonEnabled(true);

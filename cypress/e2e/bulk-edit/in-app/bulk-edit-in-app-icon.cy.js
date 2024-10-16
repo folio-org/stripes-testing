@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C396401 Verify reset state after clicking "Bulk edit" icon from the bulk edit In app form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C396401'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

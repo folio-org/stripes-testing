@@ -5,12 +5,12 @@ import InventoryActions from '../../../support/fragments/inventory/inventoryActi
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import inventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { LOCATION_NAMES, LOCATION_IDS, APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -47,7 +47,7 @@ describe('Data Export', () => {
     });
 
     beforeEach('navigate to inventory', () => {
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
     });
 
     after('delete test data', () => {
@@ -67,7 +67,7 @@ describe('Data Export', () => {
 
     it(
       'C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C9284'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);
         InventorySearchAndFilter.saveUUIDs();
@@ -86,26 +86,30 @@ describe('Data Export', () => {
       },
     );
 
-    it('C9287 Export CQL query (firebird)', { tags: ['smoke', 'firebird', 'shiftLeft'] }, () => {
-      InventorySearchAndFilter.byLanguage();
-      InventorySearchAndFilter.searchByParameter(
-        'Keyword (title, contributor, identifier, HRID, UUID)',
-        item.instanceName,
-      );
-      InventorySearchAndFilter.byEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
-      InventorySearchAndFilter.saveCQLQuery();
+    it(
+      'C9287 Export CQL query (firebird)',
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C9287'] },
+      () => {
+        InventorySearchAndFilter.byLanguage();
+        InventorySearchAndFilter.searchByParameter(
+          'Keyword (title, contributor, identifier, HRID, UUID)',
+          item.instanceName,
+        );
+        InventorySearchAndFilter.byEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        InventorySearchAndFilter.saveCQLQuery();
 
-      FileManager.verifyFile(
-        InventoryActions.verifySaveCQLQueryFileName,
-        'SearchInstanceCQLQuery*',
-        InventoryActions.verifySaveCQLQuery,
-        [LOCATION_IDS.MAIN_LIBRARY, item.instanceName, 'eng'],
-      );
-    });
+        FileManager.verifyFile(
+          InventoryActions.verifySaveCQLQueryFileName,
+          'SearchInstanceCQLQuery*',
+          InventoryActions.verifySaveCQLQuery,
+          [LOCATION_IDS.MAIN_LIBRARY, item.instanceName, 'eng'],
+        );
+      },
+    );
 
     it(
       'C196757 Export selected records (MARC) (firebird)',
-      { tags: ['smoke', 'firebird', 'broken'] },
+      { tags: ['smoke', 'firebird', 'broken', 'C196757'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);
         cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());
@@ -123,7 +127,7 @@ describe('Data Export', () => {
           );
         });
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         DataExportResults.verifyQuickExportResult();
       },
     );

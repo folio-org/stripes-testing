@@ -28,7 +28,10 @@ describe('Staff slips', () => {
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        cy.login(userData.username, userData.password);
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationStaffSlipsPath,
+          waiter: EditStaffClips.waitLoading,
+        });
       });
     });
   });
@@ -41,9 +44,8 @@ describe('Staff slips', () => {
 
   it(
     'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['smoke', 'volaris'] },
     () => {
-      cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.chooseStaffClip('Hold');
       EditStaffClips.checkLastUpdateInfo();
       EditStaffClips.collapseAll();

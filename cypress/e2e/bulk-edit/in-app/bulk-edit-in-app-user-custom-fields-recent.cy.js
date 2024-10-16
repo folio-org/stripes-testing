@@ -10,6 +10,8 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -48,7 +50,7 @@ describe('bulk-edit', () => {
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         CustomFields.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.addMultiSelectCustomField(customFieldData);
       });
@@ -63,9 +65,9 @@ describe('bulk-edit', () => {
 
     it(
       'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C389570'] },
       () => {
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
@@ -92,7 +94,9 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
+        CustomFields.waitLoading();
         CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -123,11 +127,13 @@ describe('bulk-edit', () => {
           `${updatedCustomFieldData.fieldLabel}:${updatedCustomFieldData.label1};${updatedCustomFieldData.label2}`,
         );
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyPatronGroupOnUserDetailsPane('graduate');
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
+        CustomFields.waitLoading();
         CustomFields.deleteCustomField(updatedCustomFieldData.fieldLabel);
       },
     );

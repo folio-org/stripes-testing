@@ -10,6 +10,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 let addressTypeId;
@@ -55,7 +57,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409410 Verify that "addressType" is shown in the Previews _ In app (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C409410'] },
       () => {
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.openEdit();
@@ -73,7 +75,7 @@ describe('bulk-edit', () => {
                 addressType = body.addressType;
               })
               .then(() => {
-                cy.visit(TopMenu.bulkEditPath);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
 
                 BulkEditSearchPane.checkUsersRadio();
                 BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -111,7 +113,7 @@ describe('bulk-edit', () => {
                 BulkEditLogs.downloadFileWithUpdatedRecords();
                 ExportFile.verifyFileIncludes(updatedRecordsFileName, ['graduate']);
 
-                cy.visit(TopMenu.usersPath);
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
                 UsersSearchPane.searchByKeywords(user.username);
                 UsersSearchPane.openUser(user.username);
                 UsersCard.verifyExpirationDate(todayDate);

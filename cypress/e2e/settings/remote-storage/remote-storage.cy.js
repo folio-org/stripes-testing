@@ -27,33 +27,38 @@ describe('remote-storage-configuration', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C163919 Configure remote storage (firebird)', { tags: ['smoke', 'firebird'] }, () => {
-    // parametrized providers
-    [
-      Configurations.configurations.CaiaSoft,
-      Configurations.configurations.DematicEMS,
-      Configurations.configurations.DematicStagingDirector,
-    ].forEach((configuration) => {
-      const name = `AutotestConfigurationName${getRandomPostfix()}`;
-      configuration.create(name);
-      Configurations.verifyCreatedConfiguration(name, configuration);
-      const newName = `newAutotestConfigurationName${getRandomPostfix()}`;
-      Configurations.editConfiguration(name, { nameInput: newName });
-      Configurations.confirmCreateRemoteStorage();
-      Configurations.verifyCreatedConfiguration(name, configuration);
-      Configurations.editConfiguration(
-        name,
-        { nameInput: `shouldnotbesaved${getRandomPostfix()}` },
-        false,
-      );
-      Configurations.closeEditConfiguration();
-      Configurations.deleteRemoteStorage(newName);
-    });
-  });
+  it(
+    'C163919 Configure remote storage (firebird)',
+    { tags: ['smoke', 'firebird', 'C163919'] },
+    () => {
+      // parametrized providers
+      [
+        Configurations.configurations.CaiaSoft,
+        Configurations.configurations.DematicEMS,
+        Configurations.configurations.DematicStagingDirector,
+      ].forEach((configuration) => {
+        const name = `AutotestConfigurationName${getRandomPostfix()}`;
+        configuration.create(name);
+        Configurations.verifyCreatedConfiguration(name, configuration);
+        const newName = `newAutotestConfigurationName${getRandomPostfix()}`;
+        Configurations.editConfiguration(name, { nameInput: newName });
+        Configurations.confirmCreateRemoteStorage();
+        Configurations.verifyCreatedConfiguration(name, configuration);
+        Configurations.editConfiguration(
+          name,
+          { nameInput: `shouldnotbesaved${getRandomPostfix()}` },
+          false,
+        );
+        Configurations.closeEditConfiguration();
+        Configurations.clickCloseWithoutSavingButtonInAreYouSureForm();
+        Configurations.deleteRemoteStorage(newName);
+      });
+    },
+  );
 
   it(
     'C163920 Edit remote storage configuration  (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'C163920'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const configuration = Configurations.configurations.DematicStagingDirector;
@@ -72,6 +77,7 @@ describe('remote-storage-configuration', () => {
       Configurations.editConfiguration(name, { timingInput: timingToEdit });
       Configurations.closeWithoutSaving();
       Configurations.editConfiguration(name, { urlInput: urlToEdit, timingInput: '1' });
+      Configurations.closeWithSaving();
 
       // delete created configuration
       Configurations.deleteRemoteStorage(name);

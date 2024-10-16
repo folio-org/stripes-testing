@@ -27,7 +27,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   const userData = {};
   const requestUserData = {};
   const patronGroup = {
@@ -167,7 +167,6 @@ describe('Check In - Actions', () => {
             itemData.servicePoint = request.body.pickupServicePoint.name;
           });
         });
-        cy.login(userData.username, userData.password);
       });
   });
 
@@ -206,10 +205,12 @@ describe('Check In - Actions', () => {
   });
   it(
     'C7148 Check In: item with at least one open request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C7148'] },
     () => {
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
+      });
       SwitchServicePoint.switchServicePoint(testData.servicePointS.name);
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointS.name);
 

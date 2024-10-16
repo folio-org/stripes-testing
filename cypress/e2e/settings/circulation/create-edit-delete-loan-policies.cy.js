@@ -65,7 +65,7 @@ describe('Permissions -> Circulation', () => {
 
   it(
     'C1214 Can create, edit and remove loan policies (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1214'] },
     () => {
       // Create a new loan policies
       LoanPolicy.clickNewButton();

@@ -17,7 +17,11 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -151,7 +155,10 @@ describe('Data Import', () => {
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
 
@@ -179,7 +186,8 @@ describe('Data Import', () => {
         const calloutMessage = `The job profile "${jobProfileNameForChanging}" was successfully created`;
 
         // create Job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
         NewJobProfile.linkMatchProfileForMatches(
@@ -222,8 +230,8 @@ describe('Data Import', () => {
         cy.wait(2000);
         JobProfileView.duplicate();
         NewJobProfile.fillProfileName(jobProfileNameForChanging);
+        cy.wait(7000);
         NewJobProfile.unlinkProfile(1);
-        cy.wait(5000);
         NewJobProfile.saveAndClose();
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyJobProfileOpened();

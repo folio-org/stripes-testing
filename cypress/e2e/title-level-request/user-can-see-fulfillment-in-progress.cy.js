@@ -183,7 +183,7 @@ describe('Request queue. TLR', () => {
 
   it(
     'C347887 Check that user can see Fulfillment in progress accordion (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C347887'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

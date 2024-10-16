@@ -48,7 +48,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C1287 Check that user can see Title level request in Circulation (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C1287'] },
     () => {
       cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
       TitleLevelRequests.waitLoading();

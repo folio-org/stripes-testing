@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423407 Verify Bulk Edit actions for Items notes - duplicate check in note to check out note (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423407'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

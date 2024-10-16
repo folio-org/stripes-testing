@@ -100,8 +100,8 @@ describe('Cancel item level request', () => {
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.patronGroup = userProperties.userGroup.group;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -120,8 +120,10 @@ describe('Cancel item level request', () => {
   });
 
   beforeEach('Login', () => {
-    cy.login(userData.username, userData.password);
-    cy.visit(TopMenu.requestsPath);
+    cy.login(userData.username, userData.password, {
+      path: TopMenu.requestsPath,
+      waiter: Requests.waitLoading,
+    });
   });
 
   after('Delete test data', () => {
@@ -143,7 +145,7 @@ describe('Cancel item level request', () => {
 
   it(
     'C358999 Check user is able to see all "Cancellation reasons" in dropdown (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C358999'] },
     () => {
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();
@@ -156,7 +158,7 @@ describe('Cancel item level request', () => {
 
   it(
     'C350562 Check that the user can Cancel request (Item level request) (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350562'] },
     () => {
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();

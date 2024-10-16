@@ -164,7 +164,9 @@ export default {
   },
 
   saveAndClose() {
+    cy.wait(500);
     cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
     cy.expect(requestPreviewSection.exists());
   },
 
@@ -184,7 +186,7 @@ export default {
     // the error might be coming from the below
     // see: https://github.com/folio-org/ui-requests/blob/ba8f70d89a23601f8c888a6e664f2ecd8cada239/src/ViewRequest.js#L211
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1200);
+    cy.wait(2000);
   },
 
   resetFiltersAndReloadPage() {
@@ -193,6 +195,7 @@ export default {
     // since changes doesn't show up automatically
     // after updating request via API, reloading page is necessary
     cy.reload();
+    cy.wait(2000);
     cy.expect(paneResultsSection.exists());
   },
 

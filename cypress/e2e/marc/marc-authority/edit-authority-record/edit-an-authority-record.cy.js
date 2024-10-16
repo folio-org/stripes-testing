@@ -13,8 +13,8 @@ describe('MARC', () => {
     describe('Edit Authority record', () => {
       const testData = {
         authority: {
-          title: 'C350572 Congress and foreign policy series',
-          searchOption: 'Uniform title',
+          title: 'C350572 Sprouse, Chris',
+          searchOption: 'Keyword',
           newField: {
             title: `Test authority ${getRandomPostfix()}`,
             tag: '901',
@@ -28,6 +28,7 @@ describe('MARC', () => {
       let createdAuthorityID;
 
       before('Creating data', () => {
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         cy.getAdminToken();
         cy.createTempUser([
           Permissions.settingsDataImportEnabled.gui,
@@ -67,17 +68,18 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
           MarcAuthority.edit();
+          cy.reload();
           MarcAuthority.addNewField(
             5,
             testData.authority.newField.tag,
             `$a ${testData.authority.newField.content}`,
           );
           cy.wait(1000);
-          MarcAuthority.changeField('130', testData.authority.newField.title);
-          cy.wait(1000);
+          MarcAuthority.changeField('100', testData.authority.newField.title);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           MarcAuthority.clicksaveAndCloseButton();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
           MarcAuthority.contains(testData.authority.newField.tag);

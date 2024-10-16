@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES, LOCATION_IDS } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_IDS, APPLICATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstancesMovement from '../../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
@@ -11,10 +11,10 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
 import users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -48,7 +48,7 @@ describe('MARC', () => {
       ]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -100,7 +100,7 @@ describe('MARC', () => {
             });
             cy.wait(5000);
             cy.login(userProperties.username, userProperties.password);
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           });
       });
     });
@@ -122,7 +122,7 @@ describe('MARC', () => {
 
     it(
       'C15185 Move multiple items from one holdings to another holdings within an instance (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C15185'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.byKeywords(instanceTitle);

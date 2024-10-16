@@ -60,8 +60,9 @@ export default {
       DeclareLostModal.find(TextArea('Additional information*')).fillIn(additionalInformation),
       DeclareLostModal.find(Button('Confirm')).click(),
     ]);
-    cy.wait(500);
+    cy.wait(2000);
     this.checkDeclareLostModalAbsent();
+    cy.wait(3000);
   },
   checkDeclareLostModalAbsent() {
     cy.expect(DeclareLostModal.absent());

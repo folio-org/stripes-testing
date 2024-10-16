@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -14,6 +14,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
@@ -86,7 +87,7 @@ describe('Circulation log', () => {
 
   it(
     'C17005 Filter circulation log by renewed (firebird) (TaaS)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17005'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,
@@ -105,7 +106,7 @@ describe('Circulation log', () => {
       UserLoans.renewItem(ITEM_BARCODE, true);
       LoanDetails.checkAction(0, 'Renewed');
       // Open the Circulation log app
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.waitLoading();
       // Check Renewed checkbox from "Loan" filter
       SearchPane.setFilterOptionFromAccordion('loan', 'Renewed');

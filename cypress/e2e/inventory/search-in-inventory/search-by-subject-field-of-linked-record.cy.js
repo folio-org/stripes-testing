@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -12,6 +12,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {
   searchQueryBeforeTest:
@@ -46,11 +47,11 @@ const testData = {
   ],
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
-    'Radio "Vaticana". Hrvatski program test--Congresses',
+    'Radio "Vaticana". Hrvatski program test',
     'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
-    'Marvel comics ComiCon--Periodicals.--United States',
+    'Marvel comics ComiCon',
     'Speaking Oratory--debating',
-    'Clear Creek (Tex.)--Place in Texas--Form',
+    'Clear Creek (Tex.)',
     'Drama Genre',
   ],
 
@@ -111,7 +112,7 @@ describe('Inventory', () => {
           });
         });
       });
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();

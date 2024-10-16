@@ -12,7 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('Request', () => {
+describe('Requests', () => {
   let userData = {};
   let requestId;
   let itemBarcode;
@@ -78,7 +78,7 @@ describe('Request', () => {
 
   it(
     'C547 Create new request for "Recall" type (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C547'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();

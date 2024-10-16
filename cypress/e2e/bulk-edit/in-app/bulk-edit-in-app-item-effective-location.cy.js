@@ -8,6 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -45,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380559 Verify updating Item "Effective location" in case of clearing Item "Temporary location" and updating Item "Permanent location" (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C380559'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -70,7 +72,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangesUnderColumns('Item temporary location', '');
         BulkEditSearchPane.verifyChangesUnderColumns('Item effective location', newLocation);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();

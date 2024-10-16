@@ -45,34 +45,32 @@ describe('lists', () => {
 
     after('Delete a user', () => {
       cy.getUserToken(firstUser.username, firstUser.password);
-      Lists.getViaApi().then((response) => {
-        const filteredItem = response.body.content.find((item) => item.name === listData.name);
-        Lists.deleteViaApi(filteredItem.id);
-      });
+      Lists.deleteListByNameViaApi(listData.name);
       cy.getAdminToken();
       Users.deleteViaApi(firstUser.userId);
       Users.deleteViaApi(secondUser.userId);
     });
 
     it(
-      "C411710 Verify that private list isn't visible for the other users",
-      { tags: ['smoke', 'corsair'] },
+      "C411710 Verify that private list isn't visible for the other users (corsair)",
+      { tags: ['smoke', 'corsair', 'C411710'] },
       () => {
-        cy.login(firstUser.username, firstUser.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(firstUser.username, firstUser.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.wait(3000);
-        cy.login(secondUser.username, secondUser.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(secondUser.username, secondUser.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.verifyListIsNotPresent(listData.name);
       },
     );

@@ -66,7 +66,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C359588 Verify view of services points on the view page (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C359588'] },
     () => {
       Locations.viewLocations(testData.locations[0]);
 
@@ -81,6 +81,7 @@ describe('Settings: Tenant', () => {
         servicePoint: testData.servicePoints[1].name,
       });
       LocationDetails.checkLocationDetails({ servicePoints: testData.servicePoints[1].name });
+      cy.wait(1000);
 
       // Select the secondlocation, Open Edit form, Check "Service point" dropdown
       LocationDetails.openEditLocationForm();

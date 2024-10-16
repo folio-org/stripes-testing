@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
@@ -16,6 +16,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
@@ -210,16 +211,16 @@ describe('Title level Request', () => {
   });
   it(
     'C380488 Verify that user can create TLR: Recall request for instance with item statuses "Awaiting pickup" and "Checked out" (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C380488'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
 
-      cy.visit(TopMenu.checkInPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       ConfirmItemInModal.confirmAvaitingPickUpModal();
 
-      cy.visit(TopMenu.checkOutPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);
       CheckOutActions.checkOutItem(instanceData.item2Barcode);
@@ -227,13 +228,13 @@ describe('Title level Request', () => {
 
       createTLR(users[3], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.CHECKED_OUT);
 
-      cy.visit(TopMenu.checkOutPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[1].barcode);
       CheckOutActions.checkOutItem(instanceData.item1Barcode);
       CheckOutActions.checkItemInfo(instanceData.item1Barcode, instanceData.title);
 
-      cy.visit(TopMenu.checkInPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item2Barcode);
       ConfirmItemInModal.confirmAvaitingPickUpModal();

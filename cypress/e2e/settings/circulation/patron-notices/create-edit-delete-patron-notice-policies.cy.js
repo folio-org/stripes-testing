@@ -47,7 +47,7 @@ describe('Permissions -> Circulation', () => {
 
   it(
     'C1215 Can create, edit and remove notice policies (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C1215'] },
     () => {
       // Create a new patron notice policy
       PatronNoticePolicy.startAdding();

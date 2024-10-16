@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
 
     it(
       'C365125 Verify that User CANNOT bulk edit Holdings that have source "MARC"  (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C365125'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);

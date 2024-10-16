@@ -188,7 +188,7 @@ describe('Title Level Request. Request detail', () => {
   });
   it(
     'C350415 Check that the user can see "Request Detail" for Item request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350415'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
@@ -226,7 +226,7 @@ describe('Title Level Request. Request detail', () => {
 
   it(
     'C350416 Check that the user can see "Request Detail" for Title request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350416'] },
     () => {
       Requests.selectTitleRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

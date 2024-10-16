@@ -19,7 +19,7 @@ import {
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
     servicePointX: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -97,44 +97,48 @@ describe('Check In - Actions', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C9198 Check In: in-house use icon (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    // #1 Navigate to Check In app. Check in checked out item A at service point X.
-    CheckInActions.checkInItemGui(itemAData.barcode);
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
-    // Check in succeeds. In-house use column is not populated
-    CheckInPane.checkInHouseUseIcon(false);
-    // #2 Switch user's service point to service point Y. Check in item A.
-    SwitchServicePoint.switchServicePoint(testData.servicePointY.name);
-    SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointY.name);
-    CheckInActions.checkInItemGui(itemAData.barcode);
-    InTransit.verifyModalTitle();
-    InTransit.unselectCheckboxPrintSlip();
-    InTransit.closeModal();
-    CheckInPane.checkResultsInTheRow([
-      `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${testData.servicePointX.name}`,
-      itemAData.barcode,
-    ]);
-    // Check in succeeds. In-house use column is not populated
-    CheckInPane.checkInHouseUseIcon(false);
-    // #3 Switch user's service point to service point X. Check in item A.
-    SwitchServicePoint.switchServicePoint(testData.servicePointX.name);
-    SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointX.name);
-    CheckInActions.checkInItemGui(itemAData.barcode);
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
-    // Check in succeeds. In-house use column is not populated
-    CheckInPane.checkInHouseUseIcon(false);
-    // #4 Still using service point X, check in item A.
-    CheckInActions.checkInItemGui(itemAData.barcode);
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
-    // Check in succeeds. In-house use column is populated with house icon.
-    CheckInPane.checkInHouseUseIcon(true);
-    // #5 Still using service point X, check in item B (available, with at least one open request).
-    CheckInActions.checkInItemGui(itemBData.barcode);
-    AwaitingPickupForARequest.verifyModalTitle();
-    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-    AwaitingPickupForARequest.closeModal();
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AWAITING_PICKUP, itemBData.barcode]);
-    // Check in succeeds. In-house use column is not populated
-    CheckInPane.checkInHouseUseIcon(false);
-  });
+  it(
+    'C9198 Check In: in-house use icon (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C9198'] },
+    () => {
+      // #1 Navigate to Check In app. Check in checked out item A at service point X.
+      CheckInActions.checkInItemGui(itemAData.barcode);
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
+      // Check in succeeds. In-house use column is not populated
+      CheckInPane.checkInHouseUseIcon(false);
+      // #2 Switch user's service point to service point Y. Check in item A.
+      SwitchServicePoint.switchServicePoint(testData.servicePointY.name);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointY.name);
+      CheckInActions.checkInItemGui(itemAData.barcode);
+      InTransit.verifyModalTitle();
+      InTransit.unselectCheckboxPrintSlip();
+      InTransit.closeModal();
+      CheckInPane.checkResultsInTheRow([
+        `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${testData.servicePointX.name}`,
+        itemAData.barcode,
+      ]);
+      // Check in succeeds. In-house use column is not populated
+      CheckInPane.checkInHouseUseIcon(false);
+      // #3 Switch user's service point to service point X. Check in item A.
+      SwitchServicePoint.switchServicePoint(testData.servicePointX.name);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointX.name);
+      CheckInActions.checkInItemGui(itemAData.barcode);
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
+      // Check in succeeds. In-house use column is not populated
+      CheckInPane.checkInHouseUseIcon(false);
+      // #4 Still using service point X, check in item A.
+      CheckInActions.checkInItemGui(itemAData.barcode);
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
+      // Check in succeeds. In-house use column is populated with house icon.
+      CheckInPane.checkInHouseUseIcon(true);
+      // #5 Still using service point X, check in item B (available, with at least one open request).
+      CheckInActions.checkInItemGui(itemBData.barcode);
+      AwaitingPickupForARequest.verifyModalTitle();
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.closeModal();
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AWAITING_PICKUP, itemBData.barcode]);
+      // Check in succeeds. In-house use column is not populated
+      CheckInPane.checkInHouseUseIcon(false);
+    },
+  );
 });

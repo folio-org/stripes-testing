@@ -27,7 +27,10 @@ const modalNoButton = Button('No, do not delete');
 const modalYesButton = Button('Yes, delete');
 
 const openNewJobProfileForm = () => {
+  cy.expect(Pane('Job profiles').exists());
+  cy.wait(1000);
   cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
+  cy.wait(1000);
   cy.expect(HTML({ className: including('form-'), id: 'job-profiles-form' }).exists());
 };
 
@@ -95,7 +98,17 @@ export default {
 
   waitFileIsImported: (fileName) => {
     const newFileName = fileName.replace('/.mrc/i', '');
-    // wait until uploaded file is displayed in the list
+
+    cy.expect(
+      MultiColumnList({ id: 'job-logs-list' })
+        .find(Button(including(newFileName)))
+        .exists(),
+    );
+  },
+
+  waitFileIsImportedForConsortia: (fileName) => {
+    const newFileName = fileName.replace('.mrc', '');
+
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })
         .find(Button(including(newFileName)))

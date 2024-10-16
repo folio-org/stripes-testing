@@ -1,9 +1,12 @@
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -21,21 +24,31 @@ describe('Inventory', () => {
         'C451459 (MSEARCH672 test linking ISSN lower case, record 6) Time.',
       ],
     };
-    // create an array of file names
-    const mrkFiles = Array.from({ length: 6 }, (_, i) => `marcBibFileForC451459_${i + 1}.mrk`);
+    const marcFile = {
+      marc: 'marcBibFileForC451459.mrc',
+      fileName: `testMarcFileC451459.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+      propertyName: 'instance',
+    };
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
-        mrkFiles.forEach((mrkFile) => {
-          InventoryInstances.createMarcBibliographicRecordViaApiByReadingFromMrkFile(mrkFile).then(
-            (createdMarcBibliographicId) => {
-              createdRecordIDs.push(createdMarcBibliographicId);
-            },
-          );
+        cy.getUserToken(testData.user.username, testData.user.password);
+
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
+          });
         });
 
         cy.login(testData.user.username, testData.user.password, {

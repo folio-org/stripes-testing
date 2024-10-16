@@ -142,6 +142,7 @@ export default {
     // need to synchronize actions before click
     cy.wait(3000);
     cy.do(titleLevelRequest.click());
+    cy.wait(2000);
   },
 
   waitLoadingNewRequestPage(TLR = false) {
@@ -401,5 +402,13 @@ export default {
 
   openTitleLookUp() {
     cy.do(rootSection.find(Button({ id: 'find-instance-trigger' })).click());
+  },
+
+  closeCancelEditingModal: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
   },
 };

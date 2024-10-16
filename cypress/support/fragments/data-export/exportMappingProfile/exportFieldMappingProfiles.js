@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import {
   Button,
   Pane,
@@ -34,6 +34,12 @@ const saveMappingProfile = () => {
 export default {
   openNewMappingProfileForm,
   saveMappingProfile,
+
+  openTabFromDataExportSettingsList() {
+    cy.do(NavListItem('Data export').click());
+    cy.do(NavListItem('Field mapping profiles').click());
+  },
+
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     exportNewFieldMappingProfile.fillMappingProfile(mappingProfile);
@@ -114,7 +120,7 @@ export default {
       searchButton.has({ disabled: true }),
     ]);
     cy.do(cy.get('[class^=mclEndOfListContainer--]').should('have.text', 'End of list'));
-    cy.wait(2000);
+    cy.wait(3000);
     this.verifyFieldMappingProfilesCount();
     this.verifyColumnTitles();
   },

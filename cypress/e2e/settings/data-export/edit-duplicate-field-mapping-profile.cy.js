@@ -5,11 +5,12 @@ import ExportNewFieldMappingProfile from '../../../support/fragments/data-export
 import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
 import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const profileNames = [
@@ -43,7 +44,8 @@ describe('Data Export', () => {
     });
 
     beforeEach('go to page', () => {
-      cy.visit(SettingsMenu.exportMappingProfilePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      ExportFieldMappingProfiles.openTabFromDataExportSettingsList();
     });
 
     after('delete test data', () => {
@@ -62,7 +64,7 @@ describe('Data Export', () => {
 
     it(
       'C15826 Editing the existing mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15826'] },
       () => {
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
         SingleFieldMappingProfilePane.verifyActionOptions();
@@ -74,7 +76,7 @@ describe('Data Export', () => {
         SingleFieldMappingProfilePane.clickEditTransformations();
         ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
         ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', '$a');
+        ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', 'a');
 
         ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         InteractorsTools.checkCalloutMessage(updatedTransformationCalloutMessage);
@@ -88,7 +90,7 @@ describe('Data Export', () => {
 
     it(
       'C15827 Duplicate the existing mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15827'] },
       () => {
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
         SingleFieldMappingProfilePane.verifyActionOptions();

@@ -1,4 +1,4 @@
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -16,6 +16,7 @@ import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -32,8 +33,6 @@ describe('Circulation log', () => {
     ]).then((userProperties) => {
       userId = userProperties.userId;
       firstName = userProperties.firstName;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.circulationLogPath);
       cy.getAdminToken()
         .then(() => {
           cy.getLoanTypes({ limit: 1 });
@@ -122,27 +121,31 @@ describe('Circulation log', () => {
 
   it(
     'C16979 Check item details from filtering Circulation log by checked-out (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C16979'] },
     () => {
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchResults.clickOnCell(ITEM_BARCODE, 0);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
     },
   );
 
-  it('C16976 Filter circulation log by date (firebird)', { tags: ['smoke', 'firebird'] }, () => {
-    const verifyDate = true;
+  it(
+    'C16976 Filter circulation log by date (firebird)',
+    { tags: ['smoke', 'firebird', 'C16976'] },
+    () => {
+      const verifyDate = true;
 
-    SearchPane.filterByLastWeek();
-    SearchPane.verifyResultCells(verifyDate);
-    SearchPane.resetResults();
-  });
+      SearchPane.filterByLastWeek();
+      SearchPane.verifyResultCells(verifyDate);
+      SearchPane.resetResults();
+    },
+  );
 
   it(
     'C16978 Filter circulation log by checked-out (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C16978'] },
     () => {
       SearchPane.searchByCheckedOut();
       SearchPane.verifyResult(ITEM_BARCODE);
@@ -158,11 +161,11 @@ describe('Circulation log', () => {
 
   it(
     'C15853 Filter circulation log on description (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'C15853'] },
     () => {
       // login with user that has all permissions
       cy.loginAsAdmin();
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
 
       // find user
       UsersSearchPane.searchByStatus('Active');
@@ -179,7 +182,7 @@ describe('Circulation log', () => {
       UsersCard.saveAndClose();
 
       // verify circulation logs result
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByDescription(searchString);
       SearchPane.verifyResultCells();
     },
@@ -187,7 +190,7 @@ describe('Circulation log', () => {
 
   it(
     'C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C16975'] },
     () => {
       SearchPane.goToUserDetails();
       SearchPane.userDetailIsOpen();
@@ -196,10 +199,10 @@ describe('Circulation log', () => {
 
   it(
     'C16980 Filter circulation log by changed due date (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C16980'] },
     () => {
       cy.loginAsAdmin();
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
 
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(userId);
@@ -210,7 +213,7 @@ describe('Circulation log', () => {
       ChangeDueDateForm.fillDate('04/19/2030');
       ChangeDueDateForm.saveAndClose();
 
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByChangedDueDate();
       SearchPane.verifyResultCells();
     },
@@ -218,7 +221,7 @@ describe('Circulation log', () => {
 
   it(
     'C17010 Filter circulation log by service points (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17010'] },
     () => {
       SearchPane.searchByServicePoint('Circ Desk 2');
       SearchPane.verifyResultCells();
@@ -227,9 +230,9 @@ describe('Circulation log', () => {
 
   it(
     'C16981 Check the Actions button from filtering Circulation log by changed due date (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C16981'] },
     () => {
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByChangedDueDate();
       SearchPane.checkActionButtonAfterFiltering(firstName, ITEM_BARCODE);
     },

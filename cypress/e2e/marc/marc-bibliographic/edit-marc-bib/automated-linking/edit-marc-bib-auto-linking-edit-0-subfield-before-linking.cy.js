@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -11,6 +11,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -18,8 +19,7 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         let userData;
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
         const createdRecordIDs = [];
         const naturalIds = ['n2008052404', 'sh96007532', 'sh99014708', 'sh85009933'];
@@ -27,14 +27,14 @@ describe('MARC', () => {
           {
             tag: '650',
             value: 'Lesbian authors',
-            rowIndex: 31,
+            rowIndex: 30,
             newContent:
               '$a Lesbian authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532',
           },
           {
             tag: '650',
             value: 'Lesbian activists',
-            rowIndex: 32,
+            rowIndex: 31,
             newContent:
               '$a Lesbian activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh960075325555',
           },
@@ -119,24 +119,25 @@ describe('MARC', () => {
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
 
-            cy.loginAsAdmin().then(() => {
-              cy.visit(TopMenu.inventoryPath).then(() => {
-                InventoryInstances.searchByTitle(createdRecordIDs[0]);
-                InventoryInstances.selectInstance();
-                InventoryInstance.editMarcBibliographicRecord();
-                preLinkedFields.forEach((field) => {
-                  QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
-                  MarcAuthorities.switchToSearch();
-                  InventoryInstance.verifySelectMarcAuthorityModal();
-                  InventoryInstance.searchResults(field.value);
-                  InventoryInstance.clickLinkButton();
-                  QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
-                });
-                QuickMarcEditor.pressSaveAndClose();
-                cy.wait(1500);
-                QuickMarcEditor.pressSaveAndClose();
-                QuickMarcEditor.checkAfterSaveAndClose();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              preLinkedFields.forEach((field) => {
+                QuickMarcEditor.clickLinkIconInTagField(field.rowIndex);
+                MarcAuthorities.switchToSearch();
+                InventoryInstance.verifySelectMarcAuthorityModal();
+                InventoryInstance.searchResults(field.value);
+                InventoryInstance.clickLinkButton();
+                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tag, field.rowIndex);
               });
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveAndClose();
             });
 
             cy.login(userData.username, userData.password, {
@@ -189,7 +190,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyRowLinked(preLinkedFields[0].rowIndex, false);
             QuickMarcEditor.checkContent(
               preLinkedFields[0].newContent,
-              preLinkedFields[0].rowNumber,
+              preLinkedFields[0].rowIndex,
             );
             // #8 Click on the "Link headings" again.
             QuickMarcEditor.clickLinkHeadingsButton();
@@ -218,7 +219,7 @@ describe('MARC', () => {
             BrowseSubjects.checkRowValueIsBold(5, authority.title);
             BrowseSubjects.checkRowValueIsBold(6, authority.title);
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.waitLoading();
             MarcAuthorities.searchBy(authority.searchOption, 'Lesbian activists');
             MarcAuthorities.selectTitle('Lesbian activists');

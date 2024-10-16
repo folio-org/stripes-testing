@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
 
-        const fieldToBuildQuery = 'User — User UUID';
+        const fieldToBuildQuery = 'Users — User — User UUID';
 
         QueryModal.selectField(fieldToBuildQuery);
         QueryModal.verifySelectedField(fieldToBuildQuery);
@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436916 Verify generated Logs files for Users (Query) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C436916'] },
       () => {
         BulkEditLogs.checkUsersCheckbox();
         BulkEditLogs.verifyLogStatus(userForBuildQuery.username, 'Data modification');

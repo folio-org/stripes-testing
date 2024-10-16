@@ -20,7 +20,7 @@ describe('MARC', () => {
           tag811: '811',
           authorityMarkedValue: 'C375086 Delaware Symposium on Language Studies.',
           seriesValue:
-            'C375086 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies 4.',
+            'C375086 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };
@@ -54,7 +54,7 @@ describe('MARC', () => {
           testData.tag811,
           '2',
           '\\',
-          '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies $v 4. $0 http://id.loc.gov/authorities/names/n84745425',
+          '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies $0 http://id.loc.gov/authorities/names/n84745425',
         ];
         const bib811LinkedFieldValues = [
           25,
@@ -62,7 +62,7 @@ describe('MARC', () => {
           '2',
           '\\',
           '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
-          '$v 4.',
+          '',
           '$0 http://id.loc.gov/authorities/names/n84745425',
           '',
         ];
@@ -124,6 +124,8 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag811);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib811LinkedFieldValues);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(

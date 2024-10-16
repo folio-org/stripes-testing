@@ -1,26 +1,27 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
+import Checkout from '../../support/fragments/checkout/checkout';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import Loans from '../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Users from '../../support/fragments/users/users';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
-import Loans from '../../support/fragments/users/userDefaultObjects/loans';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UsersCard from '../../support/fragments/users/usersCard';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   const userData = {};
   const patronGroup = {
     name: `groupCheckIn ${getRandomPostfix()}`,
@@ -129,8 +130,6 @@ describe('Check In - Actions', () => {
             );
           });
         });
-
-        cy.login(userData.username, userData.password);
       });
   });
 
@@ -153,43 +152,52 @@ describe('Check In - Actions', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it('C10974 Check In: claimed returned items (vega)', { tags: ['criticalPath', 'vega'] }, () => {
-    const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
-    ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
-    ClaimedReturned.closeModal();
-    CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
-    ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
-    ClaimedReturned.chooseItemReturnedByLibrary();
-    CheckInActions.openLoanDetails(userData.username);
-    UsersCard.getApi(userData.userId).then((user) => {
-      Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
-        cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
-          LoanDetails.checkAction('Checked in (found by library)');
-          LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-          LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
-          LoanDetails.checkSource(0, user);
-        });
+  it(
+    'C10974 Check In: claimed returned items (vega)',
+    { tags: ['criticalPath', 'vega', 'C10974'] },
+    () => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
       });
-    });
 
-    const itemReturnedByPatron = itemsData.itemsWithSeparateInstance[1];
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
-    ClaimedReturned.checkModalMessage(itemReturnedByPatron);
-    ClaimedReturned.chooseItemReturnedByPatron();
-    CheckInActions.openLoanDetails(userData.username);
-    UsersCard.getApi(userData.userId).then((user) => {
-      Loans.getApi(userData.userId).then(([returnedByPatron]) => {
-        cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
-          LoanDetails.checkAction('Checked in (returned by patron)');
-          LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-          LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
-          LoanDetails.checkSource(0, user);
+      const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
+
+      CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
+      ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
+      ClaimedReturned.closeModal();
+      CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
+      ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
+      ClaimedReturned.chooseItemReturnedByLibrary();
+      CheckInActions.openLoanDetails(userData.username);
+      UsersCard.getApi(userData.userId).then((user) => {
+        Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
+          cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
+            LoanDetails.checkAction('Checked in (found by library)');
+            LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
+            LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
+            LoanDetails.checkSource(0, user);
+          });
         });
       });
-    });
-  });
+
+      const itemReturnedByPatron = itemsData.itemsWithSeparateInstance[1];
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+      CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
+      ClaimedReturned.checkModalMessage(itemReturnedByPatron);
+      ClaimedReturned.chooseItemReturnedByPatron();
+      CheckInActions.openLoanDetails(userData.username);
+      UsersCard.getApi(userData.userId).then((user) => {
+        Loans.getApi(userData.userId).then(([returnedByPatron]) => {
+          cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
+            LoanDetails.checkAction('Checked in (returned by patron)');
+            LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
+            LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
+            LoanDetails.checkSource(0, user);
+          });
+        });
+      });
+    },
+  );
 });

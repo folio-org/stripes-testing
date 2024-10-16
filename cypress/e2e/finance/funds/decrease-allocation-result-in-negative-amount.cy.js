@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import { Budgets, Funds } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -47,7 +48,7 @@ describe('Finance', () => {
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);
-        const FundDetails = Funds.selectFund(testData.fund.name);
+        Funds.selectFund(testData.fund.name);
         FundDetails.checkFundDetails({
           currentBudget: { name: testData.budget.name, allocated: '$0.00' },
         });
@@ -73,16 +74,20 @@ describe('Finance', () => {
         BudgetDetails.checkBudgetDetails({
           summary: [
             { key: 'Decrease in allocation', value: '$10.00' },
-            { key: 'Total allocated', value: '-$10.00' },
-            { key: 'Total funding', value: '-$10.00' },
+            { key: 'Total allocated', value: '($10.00)' },
+            { key: 'Total funding', value: '($10.00)' },
           ],
-          balance: { cash: '-$10.00', available: '-$10.00' },
+          balance: { cash: '($10.00)', available: '($10.00)' },
         });
 
         // Close "Budget details" page by clicking "X" button
         BudgetDetails.closeBudgetDetails();
         FundDetails.checkFundDetails({
-          currentBudget: { name: testData.budget.name, allocated: '-$10.00', available: '-$10.00' },
+          currentBudget: {
+            name: testData.budget.name,
+            allocated: '($10.00)',
+            available: '($10.00)',
+          },
         });
       },
     );

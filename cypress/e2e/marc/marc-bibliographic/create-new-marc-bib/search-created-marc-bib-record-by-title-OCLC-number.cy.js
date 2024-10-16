@@ -15,6 +15,7 @@ const testData = {
   searchText1: '(OCoLC)607TST001',
   searchText2: 'Sophisticated title #1',
   instanceTitle: 'Sophisticated title #1',
+  tag245: '245',
 };
 const createdInstanceIDs = [];
 
@@ -48,7 +49,9 @@ describe('MARC', () => {
           QuickMarcEditor.checkSubfieldsAbsenceInTag008();
           QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.check008FieldContent();
-          QuickMarcEditor.updateExistingField('245', testData.instanceTitle);
+          QuickMarcEditor.updateExistingField(testData.tag245, testData.instanceTitle);
+          QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 1);
           QuickMarcEditor.addNewField('035', '$a (OCoLC)ocn607TST001', 4);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();

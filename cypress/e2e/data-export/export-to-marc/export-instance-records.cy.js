@@ -21,8 +21,7 @@ describe('Data Export', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
-        permissions.dataExportAll.gui,
-        permissions.dataExportEnableModule.gui,
+        permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
         const instanceID = InventoryInstances.createInstanceViaApi(
@@ -44,7 +43,7 @@ describe('Data Export', () => {
 
     it(
       'C9288 Export small number of instance records - default instance mapping profile (firebird)',
-      { tags: ['smokeBroken', 'firebird'] },
+      { tags: ['smokeBroken', 'firebird', 'C9288'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName);

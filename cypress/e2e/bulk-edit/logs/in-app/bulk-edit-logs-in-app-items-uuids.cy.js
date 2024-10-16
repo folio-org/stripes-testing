@@ -10,8 +10,9 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
@@ -74,7 +75,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)',
-        { tags: ['smoke', 'firebird'] },
+        { tags: ['smoke', 'firebird', 'C375273'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
@@ -134,7 +135,7 @@ describe('bulk-edit', () => {
             true,
           );
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
           ItemRecordView.waitLoading();

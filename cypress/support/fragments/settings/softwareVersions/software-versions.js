@@ -1,8 +1,6 @@
-import { PaneHeader } from '../../../../../interactors';
-
 export default {
   waitLoading() {
-    cy.expect(PaneHeader('Software versions').exists());
+    cy.xpath('//span[@id="platform-versions"]').should('exist');
   },
 
   checkErrorNotDisplayed() {

@@ -14,26 +14,25 @@ describe('Data Import', () => {
     const instanceIds = [];
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      for (let i = 0; i < 15; i++) {
-        const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
-
-        DataImport.uploadFileViaApi(
-          'oneMarcBib.mrc',
-          fileName,
-          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-        ).then((response) => {
-          instanceIds.push(response[0].instance.id);
-        });
-        cy.wait(2000);
-      }
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        for (let i = 0; i < 25; i++) {
+          const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
+
+          DataImport.uploadFileViaApi(
+            'oneMarcBib.mrc',
+            fileName,
+            DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+          ).then((response) => {
+            instanceIds.push(response[0].instance.id);
+          });
+          cy.wait(2000);
+        }
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,

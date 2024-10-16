@@ -1,6 +1,6 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  HTML,
   Modal,
   MultiColumnList,
   MultiSelect,
@@ -10,7 +10,6 @@ import {
   Selection,
   Spinner,
   TextField,
-  including,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
@@ -21,31 +20,32 @@ const runQueryButton = Button('Run query');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
+const selectFieldButton = Button(including('Select field'));
 
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holding — Instance UUID',
+  instanceUuid: 'Holdings — Holding — Instance UUID',
 };
 export const instanceFieldValues = {
-  instanceHrid: 'Instance — Instance HRID',
-  instanceResourceTitle: 'Instance — Title',
+  instanceHrid: 'Instances — Instance — Instance HRID',
+  instanceResourceTitle: 'Instances — Instance — Resource title',
 };
 export const itemFieldValues = {
-  instanceId: 'Instances — Instance UUID',
-  itemStatus: 'Items — Status',
-  itemUuid: 'Items — Item UUID',
-  holdingsId: 'Holdings — UUID',
-  temporaryLocation: 'Temporary location — Name',
+  instanceId: 'Items — Instances — Instance UUID',
+  itemStatus: 'Items — Items — Status',
+  itemUuid: 'Items — Items — Item UUID',
+  holdingsId: 'Items — Holdings — UUID',
+  temporaryLocation: 'Items — Temporary location — Name',
 };
 export const usersFieldValues = {
-  expirationDate: 'User — Expiration date',
-  firstName: 'User — First name',
-  lastName: 'User — Last name',
-  patronGroup: 'Group — Group',
-  preferredContactType: 'User — Preferred contact type',
-  userActive: 'User — Active',
-  userBarcode: 'User — Barcode',
+  expirationDate: 'Users — User — Expiration date',
+  firstName: 'Users — User — First name',
+  lastName: 'Users — User — Last name',
+  patronGroup: 'Users — Group — Name',
+  preferredContactType: 'Users — User — Preferred contact type',
+  userActive: 'Users — User — Active',
+  userBarcode: 'Users — User — Barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -145,7 +145,8 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
-    cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
+    cy.do(selectFieldButton.click());
+    cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
         const textArray = optionsText.get().map((el) => el.innerText);
@@ -156,6 +157,10 @@ export default {
 
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+  },
+
+  clickSelectFieldButton() {
+    cy.do(selectFieldButton.click());
   },
 
   typeInAndSelectField(string, row = 0) {
@@ -228,23 +233,13 @@ export default {
   fillInValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
-    cy.do([
-      RepeatableFieldItem({ index: row })
-        .find(MultiSelectOption(including(text)))
-        .click(),
-    ]);
-    cy.focused().type('{selectAll}{backspace}');
+    cy.do([MultiSelectOption(including(text)).click()]);
     cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.do([
-      RepeatableFieldItem({ index: row })
-        .find(MultiSelectOption(including(text)))
-        .click(),
-      buildQueryModal.click(),
-    ]);
+    cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
   },
 
   removeValueFromMultiselect(text) {

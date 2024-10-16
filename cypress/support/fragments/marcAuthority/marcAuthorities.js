@@ -240,6 +240,8 @@ export default {
 
   selectTitle: (title) => cy.do(Button(title).click()),
 
+  selectIncludingTitle: (title) => cy.do(Button(including(title)).click()),
+
   selectItem: (item, partName = true) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
     if (partName) {
@@ -250,12 +252,16 @@ export default {
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
-    cy.wrap(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).href()).as(
-      'link',
+    cy.do(
+      MultiColumnListCell({ columnIndex, content: linkValue })
+        .find(Link())
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
     );
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
@@ -274,18 +280,20 @@ export default {
   },
 
   clickNumberOfTitlesByHeading(heading) {
-    cy.wrap(
+    cy.do(
       MultiColumnListRow({
         isContainer: true,
         content: including(heading),
       })
         .find(MultiColumnListCell({ column: 'Number of titles' }))
         .find(Link())
-        .href(),
-    ).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   verifyEmptyNumberOfTitlesForRowWithValue(value) {
@@ -300,18 +308,20 @@ export default {
   },
 
   clickOnNumberOfTitlesForRowWithValue(value, itemCount) {
-    cy.wrap(
+    cy.do(
       MultiColumnListRow({
         isContainer: true,
         content: including(value),
       })
         .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
         .find(Link())
-        .href(),
-    ).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+        .perform((element) => {
+          if (element.hasAttribute('target') && element.getAttribute('target') === '_blank') {
+            element.removeAttribute('target');
+          }
+          element.click();
+        }),
+    );
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -552,6 +562,16 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Keyword') }),
+      searchResults.find(HTML(including(emptyResultsMessage))).exists(),
+    ]);
+  },
+
+  clickResetAndCheckBrowse: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Select a browse option') }),
       searchResults.find(HTML(including(emptyResultsMessage))).exists(),
     ]);
   },
@@ -869,6 +889,26 @@ export default {
     ]);
   },
 
+  checkAuthoritySourceOptionsInPlugInModal() {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect([
+      MultiSelectOption(including('LC Name Authority file (LCNAF)')).exists(),
+      MultiSelectOption(including('LC Subject Headings (LCSH)')).exists(),
+      MultiSelectOption(including("LC Children's Subject Headings")).exists(),
+      MultiSelectOption(including('LC Genre/Form Terms (LCGFT)')).exists(),
+      MultiSelectOption(including('LC Demographic Group Terms (LCFGT)')).exists(),
+      MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)')).exists(),
+      MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)')).exists(),
+      MultiSelectOption(including('Medical Subject Headings (MeSH)')).exists(),
+      MultiSelectOption(including('Thesaurus for Graphic Materials (TGM)')).exists(),
+      MultiSelectOption(including('Rare Books and Manuscripts Section (RBMS)')).exists(),
+      MultiSelectOption(including('Art & architecture thesaurus (AAT)')).exists(),
+      MultiSelectOption(including('GSAFD Genre Terms (GSAFD)')).exists(),
+      MultiSelectOption(including('Not specified')).exists(),
+      MultiSelectOption({ innerHTML: including('class="totalRecordsLabel') }).exists(),
+    ]);
+  },
+
   checkResultsListRecordsCountLowerThan(totalRecord) {
     this.waitLoading();
     cy.intercept('GET', '/search/authorities?*').as('getItems');
@@ -890,6 +930,10 @@ export default {
   },
 
   checkSelectedAuthoritySource(option) {
+    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
+  },
+
+  checkSelectedAuthoritySourceInPlugInModal(option) {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
   },
 
@@ -1232,6 +1276,11 @@ export default {
   checkTotalRecordsForOption(option, totalRecords) {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
+  },
+
+  checkTotalRecordsForOptionInPlugInModal(option, totalRecords) {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect(MultiSelectOption(including(option)).has({ totalRecords }));
   },
 
   verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {

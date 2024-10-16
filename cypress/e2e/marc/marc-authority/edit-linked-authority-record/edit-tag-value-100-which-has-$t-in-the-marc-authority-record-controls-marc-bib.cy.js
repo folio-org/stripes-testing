@@ -27,7 +27,7 @@ describe('MARC', () => {
         calloutMessage:
           'Cannot change the saved MARC authority field 100 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         calloutMessageAfterDeleteingSubfield:
-          'Cannot remove $t from the $100 field because it controls a bibliographic field(s) that requires  this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
+          'Cannot remove $t from the 100 field because it controls a bibliographic field(s) that requires this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
         calloutMessageAfterDeleting1XXField: 'Record cannot be saved without 1XX field.',
         searchOption: 'Keyword',
       };
@@ -35,14 +35,14 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC374138.mrc',
-          fileName: `testMarcFileC374138${getRandomPostfix()}.mrc`,
+          fileName: `C374138 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC374138.mrc',
-          fileName: `testMarcFileC374138${getRandomPostfix()}.mrc`,
+          fileName: `C374138 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'C374138 Beethoven, Ludwig van,',
           numOfRecords: 1,
@@ -60,20 +60,22 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user and data', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374138*');
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
 
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374138*');
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -85,8 +87,10 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin().then(() => {
-            cy.visit(TopMenu.inventoryPath);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -116,6 +120,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.userProperties.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           createdAuthorityIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -152,8 +157,8 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag119);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageAfterDeleting1XXField);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.checkErrorMessage(7, testData.calloutMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag119, testData.tag100);
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100content);

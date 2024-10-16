@@ -48,6 +48,16 @@ export default {
     });
   },
 
+  getNoteTypesViaApi() {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'note-types',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.noteTypes);
+  },
+
   waitLoading: () => {
     cy.expect(noteTypePane.exists());
   },

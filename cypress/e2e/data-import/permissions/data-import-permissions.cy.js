@@ -1,12 +1,19 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -17,20 +24,19 @@ describe('Data Import', () => {
     const fileName = `C492 marcFileName${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        'oneMarcBib.mrc',
-        fileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        instanceId = response[0].instance.id;
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          fileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          instanceId = response[0].instance.id;
+        });
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
@@ -52,7 +58,9 @@ describe('Data Import', () => {
         RECORD_STATUSES.CREATED,
         FileDetails.columnNameInResultList.instance,
       );
-      cy.visit(SettingsMenu.marcFieldProtectionPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsDataImport.goToSettingsDataImport();
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
       MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
       MarcFieldProtection.clickNewButton();
       MarcFieldProtection.cancel();

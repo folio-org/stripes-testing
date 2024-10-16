@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -8,25 +9,26 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import { INSTANCE_NOTE_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_NOTE_IDS } from '../../../support/constants';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `C468192 folio instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `C468192 marc instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-
 const notes = {
   dissertationNote: 'test instance note',
   dissertationNoteStaffOnly: 'test instance note staff only',
@@ -34,6 +36,7 @@ const notes = {
   exhibitionsNote: 'exhibitions note',
   administrativeNote: 'administrative note',
 };
+const reasonForError = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -97,12 +100,13 @@ describe('bulk-edit', () => {
         matchedRecordsFileName,
         previewFileName,
         changedRecordsFileName,
+        errorsFromCommittingFileName,
       );
     });
 
     it(
       'C468192 Verify Bulk Edit actions for Instance notes - remove all and add note (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C468192'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
@@ -162,19 +166,39 @@ describe('bulk-edit', () => {
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Dissertation note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          folioItem.hrid,
+          'Dissertation note',
+          '',
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          marcInstance.hrid,
+          'Dissertation note',
+          `${notes.dissertationNote} | ${notes.dissertationNoteStaffOnly}`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Administrative note',
           notes.administrativeNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
+          'Administrative note',
+          notes.administrativeNote,
+          1,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          folioItem.hrid,
           'Data quality note',
           notes.dataQualityNote,
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+          folioItem.hrid,
           'Exhibitions note',
           `${notes.exhibitionsNote} (staff only)`,
         );
+
+        BulkEditSearchPane.verifyErrorLabelInErrorAccordion(instanceUUIDsFileName, 2, 2, 3);
+        BulkEditSearchPane.verifyNonMatchedResults(marcInstance.instanceId);
+        BulkEditSearchPane.verifyReasonForError(reasonForError);
 
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
@@ -188,7 +212,14 @@ describe('bulk-edit', () => {
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
 
-        cy.visit(TopMenu.inventoryPath);
+        BulkEditActions.downloadErrors();
+        BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
+          `${marcInstance.instanceId},${reasonForError}`,
+          `${marcInstance.instanceId},${reasonForError}`,
+          `${marcInstance.instanceId},${reasonForError}`,
+        ]);
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -197,7 +228,7 @@ describe('bulk-edit', () => {
         InventoryInstance.checkInstanceNotes('Exhibitions note', notes.exhibitionsNote);
         ItemRecordView.verifyTextAbsent('Dissertation note');
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

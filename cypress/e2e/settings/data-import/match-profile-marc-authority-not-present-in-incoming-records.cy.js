@@ -1,8 +1,9 @@
 import { Permissions } from '../../../support/dictionary';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -34,7 +35,7 @@ describe('Data Import', () => {
       () => {
         // #1 Go to "Settings" application-> "Data import" section-> "Match profiles" section-> Click "Actions" button -> Click "New match profile" option
         SettingsDataImport.goToSettingsDataImport();
-        DataImport.selectDataImportProfile('Match profiles');
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.clickCreateNewMatchProfile();
 
         // #2 Click on "Instance" in "Details" accordion

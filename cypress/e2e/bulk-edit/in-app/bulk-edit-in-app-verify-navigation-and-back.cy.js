@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
 
     it(
       'C374150 Verify Bulk edit state when navigating to another app and back-- In app + Local (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C374150'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.isDragAndDropAreaDisabled(false);

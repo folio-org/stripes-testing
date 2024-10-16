@@ -49,7 +49,10 @@ describe('Check In', () => {
           .then(() => {
             UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
           });
-        cy.login(userData.username, userData.password);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.checkInPath,
+          waiter: CheckInActions.waitLoading,
+        });
       });
     });
   });
@@ -76,43 +79,43 @@ describe('Check In', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C590 Check in: multipiece items (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    // Open check in interface
-    cy.visit(TopMenu.checkInPath);
-    // "Scan items" section appears
-    CheckInActions.waitLoading();
-    // Enter barcode for item A (number of pieces set to 1, and description of pieces, number of missing pieces, and description of missing pieces left blank)
-    CheckInActions.checkInItem(itemBarcodes[0]);
-    // Confirm multipiece check in modal does not appear.
-    MultipieceCheckIn.verifyMultipieceCheckInModalIsAbsent();
-    // Enter barcode for item B (number of pieces set to a number greater than 1 and/or some value for description of pieces; number of missing pieces and description of missing pieces left blank)
-    CheckInActions.waitLoading();
-    CheckInActions.checkInItem(itemBarcodes[1]);
-    // Confirm multipiece check in modal appears: <Title of item> (<material type of item>) (Barcode: <barcode of item>) will be checked in.
-    MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
-    MultipieceCheckIn.checkContent(testItems[1]);
-    // Click Cancel and Item is not checked in.
-    MultipieceCheckIn.cancelMultipieceCheckInModal(itemBarcodes[1]);
-    // Enter barcode for item B again.
-    CheckInActions.checkInItem(itemBarcodes[1]);
-    // Same modal from step 3 displays.
-    MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
-    // Click check in.
-    // Item is checked in.
-    CheckInActions.confirmMultipleItemsCheckin(itemBarcodes[1]);
-    // Enter barcode for item C (number of pieces set to a number greater than 1 and/or some value for description of pieces, and some value for number of missing pieces and/or description of missing pieces)
-    CheckInActions.checkInItem(itemBarcodes[2]);
-    // Confirm multipiece check in modal appears.
-    MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
-    MultipieceCheckIn.checkContent(testItems[2]);
-    // Click check in.Item is checked in.
-    CheckInActions.confirmMultipleItemsCheckin(itemBarcodes[2]);
-    // Enter barcode for item D (number of pieces left blank, description of pieces left blank, and some value for number of missing pieces and/or description of missing pieces)
-    CheckInActions.checkInItem(itemBarcodes[3]);
-    // Confirm multipiece check in modal appears.
-    MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
-    MultipieceCheckIn.checkContent(testItems[3]);
-    // Click check in. Item is checked in.
-    CheckInActions.confirmMultipleItemsCheckin(itemBarcodes[3]);
-  });
+  it(
+    'C590 Check in: multipiece items (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C590'] },
+    () => {
+      // Enter barcode for item A (number of pieces set to 1, and description of pieces, number of missing pieces, and description of missing pieces left blank)
+      CheckInActions.checkInItem(itemBarcodes[0]);
+      // Confirm multipiece check in modal does not appear.
+      MultipieceCheckIn.verifyMultipieceCheckInModalIsAbsent();
+      // Enter barcode for item B (number of pieces set to a number greater than 1 and/or some value for description of pieces; number of missing pieces and description of missing pieces left blank)
+      CheckInActions.waitLoading();
+      CheckInActions.checkInItem(itemBarcodes[1]);
+      // Confirm multipiece check in modal appears: <Title of item> (<material type of item>) (Barcode: <barcode of item>) will be checked in.
+      MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
+      MultipieceCheckIn.checkContent(testItems[1]);
+      // Click Cancel and Item is not checked in.
+      MultipieceCheckIn.cancelMultipieceCheckInModal(itemBarcodes[1]);
+      // Enter barcode for item B again.
+      CheckInActions.checkInItem(itemBarcodes[1]);
+      // Same modal from step 3 displays.
+      MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
+      // Click check in.
+      // Item is checked in.
+      CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(itemBarcodes[1]);
+      // Enter barcode for item C (number of pieces set to a number greater than 1 and/or some value for description of pieces, and some value for number of missing pieces and/or description of missing pieces)
+      CheckInActions.checkInItem(itemBarcodes[2]);
+      // Confirm multipiece check in modal appears.
+      MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
+      MultipieceCheckIn.checkContent(testItems[2]);
+      // Click check in.Item is checked in.
+      CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(itemBarcodes[2]);
+      // Enter barcode for item D (number of pieces left blank, description of pieces left blank, and some value for number of missing pieces and/or description of missing pieces)
+      CheckInActions.checkInItem(itemBarcodes[3]);
+      // Confirm multipiece check in modal appears.
+      MultipieceCheckIn.verifyMultipieceCheckInModalIsDisplayed();
+      MultipieceCheckIn.checkContent(testItems[3]);
+      // Click check in. Item is checked in.
+      CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(itemBarcodes[3]);
+    },
+  );
 });

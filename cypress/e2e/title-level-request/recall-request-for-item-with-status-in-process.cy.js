@@ -75,12 +75,11 @@ describe('Title level request', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
-    TitleLevelRequests.disableTLRViaApi();
   });
 
   it(
     'C375939 Check that user can create a TLR Recall for Item with status In process (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C375939'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       InventoryInstance.checkNewRequestAtNewPane();

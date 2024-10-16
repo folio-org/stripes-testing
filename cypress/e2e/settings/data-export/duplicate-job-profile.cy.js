@@ -20,23 +20,21 @@ const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has 
 describe('Data Export', () => {
   describe('Job profile - setup', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.dataExportEnableSettings.gui,
-        permissions.dataExportEnableApp.gui,
-        permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName).then(
-          (response) => {
-            fieldMappingProfileId = response.body.id;
-            ExportNewJobProfile.createNewJobProfileViaApi(jobProfileName, response.body.id);
-          },
-        );
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
-      });
+      cy.createTempUser([permissions.dataExportViewAddUpdateProfiles.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName).then(
+            (response) => {
+              fieldMappingProfileId = response.body.id;
+              ExportNewJobProfile.createNewJobProfileViaApi(jobProfileName, response.body.id);
+            },
+          );
+          cy.login(user.username, user.password, {
+            path: TopMenu.settingsPath,
+            waiter: SettingsPane.waitLoading,
+          });
+        },
+      );
     });
 
     after('delete test data', () => {
@@ -52,7 +50,7 @@ describe('Data Export', () => {
 
     it(
       'C350672 Verify Job profile - duplicate existing profile (firebird)',
-      { tags: ['criticalPathBroken', 'firebird'] },
+      { tags: ['criticalPathBroken', 'firebird', 'C350672'] },
       () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();

@@ -9,7 +9,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { LOCATION_IDS } from '../../../support/constants';
+import { APPLICATION_NAMES, LOCATION_IDS } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -55,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353636 Verify in-app bulk edit clear location option (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353636'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -73,12 +74,12 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyPermanentLocation('-');
-        ItemRecordView.verifyTemporaryLocation('-');
+        ItemRecordView.verifyPermanentLocation('No value set-');
+        ItemRecordView.verifyTemporaryLocation('No value set-');
       },
     );
   });

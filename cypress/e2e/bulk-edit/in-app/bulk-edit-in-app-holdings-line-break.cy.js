@@ -11,6 +11,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const items = [];
@@ -67,7 +69,7 @@ describe('bulk-edit', () => {
           HoldingsRecordEdit.saveAndClose(true);
           InventoryInstance.closeHoldingsView();
         });
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -87,7 +89,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C399093'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
@@ -113,10 +115,11 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [holdingsNote]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         items.forEach((item) => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.byKeywords(item.instanceName);
+          InventoryInstance.waitInventoryLoading();
           InventoryInstance.openHoldingView();
           InventoryInstance.verifyHoldingsTemporaryLocation(location);
           InventoryInstance.closeHoldingsView();

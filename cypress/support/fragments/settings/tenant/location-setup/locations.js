@@ -1,23 +1,23 @@
 import uuid from 'uuid';
-import TenantPane from '../baseTenantPane';
-import Libraries from './libraries';
-import Campuses from './campuses';
-import Institutions from './institutions';
-import LocationDetails from '../locations/locationDetails';
-import LocationEditForm from '../locations/locationEditForm';
-import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Button,
   HTML,
+  including,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  NavListItem,
   Pane,
   Select,
-  including,
-  NavListItem,
 } from '../../../../../../interactors';
+import getRandomPostfix from '../../../../utils/stringTools';
+import TenantPane from '../baseTenantPane';
+import LocationDetails from '../locations/locationDetails';
+import LocationEditForm from '../locations/locationEditForm';
+import Campuses from './campuses';
+import Institutions from './institutions';
+import Libraries from './libraries';
 
 const pane = Pane('Locations');
 const actionsButton = Button('Actions');
@@ -75,6 +75,10 @@ const table = MultiColumnList({ id: 'locations-list' });
 
 export default {
   ...TenantPane,
+  openLTabFromSettingsList() {
+    cy.do(NavListItem('Tenant').click());
+    cy.do(NavListItem('Locations').click());
+  },
   waitLoading() {
     TenantPane.waitLoading('Locations');
   },
@@ -87,12 +91,15 @@ export default {
   },
   selectInstitution(content = 'KU') {
     cy.do(Select('Institution').choose(including(content)));
+    cy.wait(500);
   },
   selectCampus(content = 'E)') {
     cy.do(Select('Campus').choose(including(content)));
+    cy.wait(500);
   },
   selectLibrary(content = 'E)') {
     cy.do(Select('Library').choose(including(content)));
+    cy.wait(500);
   },
   viewLocations(location) {
     TenantPane.selectOptions([

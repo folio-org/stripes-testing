@@ -54,13 +54,14 @@ describe('bulk-edit', () => {
 
     it(
       'C436764 Query builder - Search items records associated with a given instance ("String - stores UUID but match could return millions of records" property type) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C436764'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.instanceId);
         QueryModal.verifySelectedField(itemFieldValues.instanceId);
         QueryModal.verifyQueryAreaContent('(instances.id  )');

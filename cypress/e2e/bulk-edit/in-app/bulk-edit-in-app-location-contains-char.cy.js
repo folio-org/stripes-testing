@@ -13,6 +13,8 @@ import DateTools from '../../../support/utils/dateTools';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -66,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357064 Verify Items bulk edit if the location name contains "/" (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C357064'] },
       () => {
         cy.viewport(2560, 1440);
         // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
@@ -119,7 +121,8 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.waitFileUploading();
         // Click the "Actions" menu => Select "Download changed records (CSV)" element
-        BulkEditActions.downloadMatchedResults();
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           item.barcode,
           locationName,
@@ -127,7 +130,7 @@ describe('bulk-edit', () => {
           'Item temporary location',
         ]);
         // Go to the "Inventory" app => Search for the updated Items
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

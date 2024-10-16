@@ -101,32 +101,28 @@ describe('lists', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-
-        createdLists.forEach((list) => {
-          Lists.createViaApi(list);
+        cy.getUserToken(userData.username, userData.password).then(() => {
+          createdLists.forEach((list) => {
+            Lists.createViaApi(list);
+          });
         });
       });
     });
 
     beforeEach('Reset all filters', () => {
       // #1 Click on "Lists" in app navigation bar
-      cy.visit(TopMenu.listsPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.waitLoading();
       Lists.resetAllFilters();
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
       cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
-        Lists.getViaApi().then((response) => {
-          const filteredItem = response.body.content.find((item) => item.name === list.name);
-          Lists.deleteViaApi(filteredItem.id);
-        });
+        Lists.deleteListByNameViaApi(list.name);
       });
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
@@ -134,7 +130,7 @@ describe('lists', () => {
 
     it(
       'C411804 Filter section: Statuses (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411804'] },
       () => {
         // #2 Click on "Status" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(statusFilters.accordionName);
@@ -156,7 +152,7 @@ describe('lists', () => {
 
     it(
       'C411805 Filter section: Visibility (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411805'] },
       () => {
         // #2 Click on "Visibility" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
@@ -195,50 +191,20 @@ describe('lists', () => {
 
     it(
       'C411806 Filter section: Record types (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411806'] },
       () => {
-        // #2 Click on "Record types" accordion on the 'Filter' pane
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
-        // #3 Click on "Record types" accordion again
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
-        // #4 Check the list of record types
-        Lists.verifyRecordTypesAccordionDefaultContent();
-        // #5 Select all record types by marking the checkboxes as active
         recordTypesFilters.filters.forEach((filter) => {
-          Lists.clickOnCheckbox(filter);
+          Lists.selectRecordTypeFilter(filter);
+          Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+          Lists.verifyResetAllButtonEnabled();
+          Lists.verifyListsFilteredByRecordType(filter);
+          Lists.resetAllFilters();
+          Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
         });
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFilteredByRecordType(recordTypesFilters.filters);
-        // #6 Click on "x"
-        Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyRecordTypesAccordionDefaultContent();
-        Lists.verifyListsFilteredByRecordType(recordTypesFilters.filters);
-        // #7 Click on "Loans" checkbox
-        Lists.clickOnCheckbox('Loans');
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFilteredByRecordType(['Loans']);
-        // #8 Click on "Items" checkbox
-        Lists.clickOnCheckbox('Loans');
-        Lists.verifyCheckboxUnchecked('Loans');
-        Lists.clickOnCheckbox('Items');
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFilteredByRecordType(['Items']);
-        // #9 Click on "Users" checkbox
-        Lists.clickOnCheckbox('Items');
-        Lists.verifyCheckboxUnchecked('Items');
-        Lists.clickOnCheckbox('Users');
-        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        Lists.verifyListsFilteredByRecordType(['Users']);
-        // #10 Click on "Reset all"
-        Lists.resetAllFilters();
-        Lists.verifyRecordTypesAccordionDefaultContent();
-        Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
       },
     );
   });
