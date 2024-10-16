@@ -84,49 +84,53 @@ describe('Title Level Request', () => {
     });
   });
 
-  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'shiftLeft', 'C3533'] }, () => {
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
-    CheckInActions.checkInItemGui(itemData.barcodes[0]);
-    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-    AwaitingPickupForARequest.closeModal();
-    CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
-    Requests.waitLoading();
-    Requests.findCreatedRequest(itemData.instanceTitle);
-    Requests.selectFirstRequest(itemData.instanceTitle);
-    RequestDetail.checkRequestStatus('Open - Awaiting pickup');
-    RequestDetail.checkItemStatus('Awaiting pickup');
-    RequestDetail.openActions();
-    RequestDetail.verifyCancelRequestOptionDisplayed();
+  it(
+    'C3533 Cancel request (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C3533'] },
+    () => {
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+      CheckInActions.checkInItemGui(itemData.barcodes[0]);
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.closeModal();
+      CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
+      Requests.findCreatedRequest(itemData.instanceTitle);
+      Requests.selectFirstRequest(itemData.instanceTitle);
+      RequestDetail.checkRequestStatus('Open - Awaiting pickup');
+      RequestDetail.checkItemStatus('Awaiting pickup');
+      RequestDetail.openActions();
+      RequestDetail.verifyCancelRequestOptionDisplayed();
 
-    RequestDetail.openCancelRequest();
-    RequestDetail.verifyCancelRequestModalDisplayed();
+      RequestDetail.openCancelRequest();
+      RequestDetail.verifyCancelRequestModalDisplayed();
 
-    RequestDetail.clickOnBackButton();
+      RequestDetail.clickOnBackButton();
 
-    RequestDetail.openActions();
-    RequestDetail.openCancelRequest();
-    RequestDetail.checkRequestCancellationModalInfo();
+      RequestDetail.openActions();
+      RequestDetail.openCancelRequest();
+      RequestDetail.checkRequestCancellationModalInfo();
 
-    RequestDetail.confirmRequestCancellation();
-    RequestDetail.checkRequestStatus('Closed - Cancelled');
+      RequestDetail.confirmRequestCancellation();
+      RequestDetail.checkRequestStatus('Closed - Cancelled');
 
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
 
-    CheckInActions.checkInItemGui(itemData.barcodes[0]);
-    CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
-    Requests.waitLoading();
-    Requests.findCreatedRequest(itemData.instanceTitle);
-    Requests.selectFirstRequest(itemData.instanceTitle);
-    RequestDetail.checkItemStatus('Available');
+      CheckInActions.checkInItemGui(itemData.barcodes[0]);
+      CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
+      Requests.findCreatedRequest(itemData.instanceTitle);
+      Requests.selectFirstRequest(itemData.instanceTitle);
+      RequestDetail.checkItemStatus('Available');
 
-    RequestDetail.verifyEditButtonAbsent();
+      RequestDetail.verifyEditButtonAbsent();
 
-    RequestDetail.checkRequestInformation({
-      type: REQUEST_TYPES.PAGE,
-      status: 'Closed - Cancelled',
-      level: REQUEST_LEVELS.TITLE,
-    });
-  });
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: 'Closed - Cancelled',
+        level: REQUEST_LEVELS.TITLE,
+      });
+    },
+  );
 });

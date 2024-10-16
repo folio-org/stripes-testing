@@ -125,14 +125,19 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
           MarcAuthorities.chooseAuthoritySourceOption(testData.authSourceOptions.NOT_SPECIFIED);
-          MarcAuthorities.checkSelectedAuthoritySourceInPlugInModal(testData.authSourceOptions.NOT_SPECIFIED);
+          MarcAuthorities.checkSelectedAuthoritySourceInPlugInModal(
+            testData.authSourceOptions.NOT_SPECIFIED,
+          );
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
 
           MarcAuthorities.searchByParameter(testData.authSearchOption.GENRE, 'Europe');
           MarcAuthorities.verifySearchResultTabletIsAbsent(true);
 
           MarcAuthorities.checkNoResultsMessage(testData.absenceMessage);
-          MarcAuthorities.checkTotalRecordsForOptionInPlugInModal(testData.authSourceOptions.NOT_SPECIFIED, 0);
+          MarcAuthorities.checkTotalRecordsForOptionInPlugInModal(
+            testData.authSourceOptions.NOT_SPECIFIED,
+            0,
+          );
         },
       );
     });

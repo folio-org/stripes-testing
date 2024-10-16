@@ -106,7 +106,12 @@ describe('Fees&Fines', () => {
         // "New fee/fine" modal opened
         NewFeeFine.waitLoading();
         NewFeeFine.checkInitialState(
-          { lastName: userData.lastName, middleName: 'testMiddleName', firstName: userData.preferredFirstName, barcode: userData.barcode },
+          {
+            lastName: userData.lastName,
+            middleName: 'testMiddleName',
+            firstName: userData.preferredFirstName,
+            barcode: userData.barcode,
+          },
           ownerBody.name,
         );
       },

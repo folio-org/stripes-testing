@@ -96,25 +96,29 @@ describe('Choose requester without a barcode', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C10956 Choose requester without a barcode (vega)', { tags: ['extendedPath', 'vega', 'C10956'] }, () => {
-    NewRequest.openNewRequestPane();
-    NewRequest.enterItemInfo(itemData.barcode);
-    NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
-    NewRequest.addRequester(userData.username);
-    NewRequest.verifyRequesterInformationWithBarcode(userData.username);
-    NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-    NewRequest.choosePickupServicePoint(servicePoint.name);
-    NewRequest.saveRequestAndClose();
-    cy.intercept('POST', 'circulation/requests').as('createRequest');
-    cy.wait('@createRequest').then((intercept) => {
-      requestId = intercept.response.body.id;
-      // Request is created
-      cy.location('pathname').should('eq', `/requests/view/${requestId}`);
-    });
-    RequestDetail.checkRequestInformation({
-      type: REQUEST_TYPES.PAGE,
-      status: 'Open - Not yet filled',
-      level: REQUEST_LEVELS.ITEM,
-    });
-  });
+  it(
+    'C10956 Choose requester without a barcode (vega)',
+    { tags: ['extendedPath', 'vega', 'C10956'] },
+    () => {
+      NewRequest.openNewRequestPane();
+      NewRequest.enterItemInfo(itemData.barcode);
+      NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
+      NewRequest.addRequester(userData.username);
+      NewRequest.verifyRequesterInformationWithBarcode(userData.username);
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
+      NewRequest.choosePickupServicePoint(servicePoint.name);
+      NewRequest.saveRequestAndClose();
+      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      cy.wait('@createRequest').then((intercept) => {
+        requestId = intercept.response.body.id;
+        // Request is created
+        cy.location('pathname').should('eq', `/requests/view/${requestId}`);
+      });
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: 'Open - Not yet filled',
+        level: REQUEST_LEVELS.ITEM,
+      });
+    },
+  );
 });

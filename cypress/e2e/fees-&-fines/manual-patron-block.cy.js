@@ -121,14 +121,18 @@ describe('Fees&Fines', () => {
         UsersCard.deletePatronBlock();
       },
     );
-    it('C476 Scenario#17,18 (vega)', { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] }, () => {
-      UsersSearchPane.searchByKeywords(userName);
-      UsersCard.openPatronBlocks();
-      UsersCard.createPatronBlock();
-      UsersCard.selectTemplate(templateName);
-      UsersCard.saveAndClose();
-      UsersCard.selectPatronBlock(testDescription);
-      UsersCard.deletePatronBlock();
-    });
+    it(
+      'C476 Scenario#17,18 (vega)',
+      { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
+      () => {
+        UsersSearchPane.searchByKeywords(userName);
+        UsersCard.openPatronBlocks();
+        UsersCard.createPatronBlock();
+        UsersCard.selectTemplate(templateName);
+        UsersCard.saveAndClose();
+        UsersCard.selectPatronBlock(testDescription);
+        UsersCard.deletePatronBlock();
+      },
+    );
   });
 });

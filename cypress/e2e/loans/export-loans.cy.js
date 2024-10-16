@@ -87,47 +87,51 @@ describe('Loans', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C721 Export patron*s loans to CSV (vega)', { tags: ['smoke', 'vega', 'shiftLeft', 'C721'] }, () => {
-    const fileNameMask = 'export*';
-    cy.wait(10000);
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-    Loans.exportLoansToCSV();
-    FileManager.verifyFile(
-      Loans.verifyExportFileName,
-      fileNameMask,
-      Loans.verifyContentOfExportFileName,
-      [
-        itemsData.itemsWithSeparateInstance[2].instanceId,
-        itemsData.itemsWithSeparateInstance[3].instanceId,
-        'checkedout',
-        itemsData.itemsWithSeparateInstance[2].barcodes[0],
-        itemsData.itemsWithSeparateInstance[3].barcodes[0],
-        itemsData.itemsWithSeparateInstance[2].instanceTitle,
-        itemsData.itemsWithSeparateInstance[3].instanceTitle,
-        itemsData.itemsWithSeparateInstance[2].holdings[0].id,
-        itemsData.itemsWithSeparateInstance[3].holdings[0].id,
-      ],
-    );
-    FileManager.renameFile('export*', 'ExportOpenLoans.csv');
-    cy.visit(AppPaths.getClosedLoansPath(userData.userId));
-    Loans.exportLoansToCSV();
-    FileManager.verifyFile(
-      Loans.verifyExportFileName,
-      fileNameMask,
-      Loans.verifyContentOfExportFileName,
-      [
-        itemsData.itemsWithSeparateInstance[0].instanceId,
-        itemsData.itemsWithSeparateInstance[1].instanceId,
-        'checkedin',
-        itemsData.itemsWithSeparateInstance[0].barcodes[0],
-        itemsData.itemsWithSeparateInstance[1].barcodes[0],
-        itemsData.itemsWithSeparateInstance[0].instanceTitle,
-        itemsData.itemsWithSeparateInstance[1].instanceTitle,
-        itemsData.itemsWithSeparateInstance[0].holdings[0].id,
-        itemsData.itemsWithSeparateInstance[1].holdings[0].id,
-      ],
-    );
-  });
+  it(
+    'C721 Export patron*s loans to CSV (vega)',
+    { tags: ['smoke', 'vega', 'shiftLeft', 'C721'] },
+    () => {
+      const fileNameMask = 'export*';
+      cy.wait(10000);
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      Loans.exportLoansToCSV();
+      FileManager.verifyFile(
+        Loans.verifyExportFileName,
+        fileNameMask,
+        Loans.verifyContentOfExportFileName,
+        [
+          itemsData.itemsWithSeparateInstance[2].instanceId,
+          itemsData.itemsWithSeparateInstance[3].instanceId,
+          'checkedout',
+          itemsData.itemsWithSeparateInstance[2].barcodes[0],
+          itemsData.itemsWithSeparateInstance[3].barcodes[0],
+          itemsData.itemsWithSeparateInstance[2].instanceTitle,
+          itemsData.itemsWithSeparateInstance[3].instanceTitle,
+          itemsData.itemsWithSeparateInstance[2].holdings[0].id,
+          itemsData.itemsWithSeparateInstance[3].holdings[0].id,
+        ],
+      );
+      FileManager.renameFile('export*', 'ExportOpenLoans.csv');
+      cy.visit(AppPaths.getClosedLoansPath(userData.userId));
+      Loans.exportLoansToCSV();
+      FileManager.verifyFile(
+        Loans.verifyExportFileName,
+        fileNameMask,
+        Loans.verifyContentOfExportFileName,
+        [
+          itemsData.itemsWithSeparateInstance[0].instanceId,
+          itemsData.itemsWithSeparateInstance[1].instanceId,
+          'checkedin',
+          itemsData.itemsWithSeparateInstance[0].barcodes[0],
+          itemsData.itemsWithSeparateInstance[1].barcodes[0],
+          itemsData.itemsWithSeparateInstance[0].instanceTitle,
+          itemsData.itemsWithSeparateInstance[1].instanceTitle,
+          itemsData.itemsWithSeparateInstance[0].holdings[0].id,
+          itemsData.itemsWithSeparateInstance[1].holdings[0].id,
+        ],
+      );
+    },
+  );
 });

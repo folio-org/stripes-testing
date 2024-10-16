@@ -1,7 +1,4 @@
-import {
-  DEFAULT_JOB_PROFILE_NAMES,
-  INSTANCE_SOURCE_NAMES,
-} from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';

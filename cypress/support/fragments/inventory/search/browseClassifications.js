@@ -23,9 +23,7 @@ export default {
   },
 
   verifyRowExists(rowIndex) {
-    cy.expect(
-      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists(),
-    );
+    cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists());
   },
 
   verifyResultAndItsRow(rowIndex, value) {

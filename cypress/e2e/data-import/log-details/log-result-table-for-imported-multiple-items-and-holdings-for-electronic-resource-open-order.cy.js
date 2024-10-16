@@ -45,7 +45,7 @@ describe('Data Import', () => {
     let user;
     let orderNumber;
     let instanceHRID;
-    const filePathForCreate = 'marcFileForC388571.mrc';
+    const filePathForCreate = 'marcBibFileForC388571.mrc';
     const marcFileName = `C388571 autotestFileName${getRandomPostfix()}.mrc`;
     const arrayOfHoldingsStatuses = ['Created (E)', 'Created (KU/CC/DI/M)', 'Created (KU/CC/DI/A)'];
     const quantityOfCreatedHoldings = 3;
@@ -94,7 +94,7 @@ describe('Data Import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C388571 Test multiple items.${getRandomPostfix()}`,
-          materialType: '945$a',
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.ON_ORDER,
         },
