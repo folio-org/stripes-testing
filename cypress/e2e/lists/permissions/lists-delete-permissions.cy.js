@@ -54,7 +54,7 @@ describe('lists', () => {
 
     it(
       'C418649 Lists (Delete): Can create, edit, refresh, and delete lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C418649'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C418649'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
