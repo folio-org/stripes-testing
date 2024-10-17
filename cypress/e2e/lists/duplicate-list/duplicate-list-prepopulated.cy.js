@@ -55,7 +55,7 @@ describe('lists', () => {
 
     it(
       'C423599 Duplicate action takes you to new list screen with some fields pre populated (corsair)',
-      { tags: ['smoke', 'corsair', 'C423599'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423599'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
