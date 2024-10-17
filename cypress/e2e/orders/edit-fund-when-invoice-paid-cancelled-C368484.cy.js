@@ -12,6 +12,7 @@ import { Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders', () => {
   const testData = {
@@ -115,6 +116,11 @@ describe('Orders', () => {
                 invoice: testData.invoice,
                 status: INVOICE_STATUSES.PAID,
               });
+              cy.wait(4000);
+              Invoices.changeInvoiceStatusViaApi({
+                invoice: testData.invoice,
+                status: INVOICE_STATUSES.CANCELLED,
+              });
             });
           },
         );
@@ -137,13 +143,6 @@ describe('Orders', () => {
     'C368484: Editing fund distribution in PO line when related Cancelled from paid invoice exists (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      cy.getAdminToken().then(() => {
-        Invoices.changeInvoiceStatusViaApi({
-          invoice: testData.invoice,
-          status: INVOICE_STATUSES.CANCELLED,
-        });
-      });
-
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
@@ -194,7 +193,7 @@ describe('Orders', () => {
       });
 
       // Go to "Invoices" app
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.waitLoading();
 
       // Click "Vendor invoice number" link for Invoice from Preconditions
