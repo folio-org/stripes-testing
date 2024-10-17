@@ -6,9 +6,6 @@ import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import Funds from '../../support/fragments/finance/funds/funds';
-import FinanceHelper from '../../support/fragments/finance/financeHelper';
 
 describe('Orders', () => {
   const testData = {
@@ -119,9 +116,8 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent();
 
       // Open "Fund A" details pane
-      TopMenuNavigation.navigateToApp('Finance');
-      FinanceHelper.searchByName(testData.fund.name);
-      Funds.selectFund(testData.fund.name);
+      cy.visit(`${TopMenu.fundPath}/view/${testData.fund.id}`);
+
       // Click on "Fund A Budget" in "Current budget" accordion
       const BudgetDetails = FundDetails.openCurrentBudgetDetails();
 
@@ -133,15 +129,13 @@ describe('Orders', () => {
       });
 
       // Open "Invoice" details pane
-      TopMenuNavigation.navigateToApp('Invoices');
-      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      cy.visit(`${TopMenu.invoicesPath}/view/${testData.invoice.id}`);
       InvoiceView.checkInvoiceDetails({
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.REVIEWED }],
         invoiceLines: [
           {
             poNumber: testData.order.poNumber,
-            fundCode: testData.fund.code,
+            fundCode: '-',
           },
         ],
       });

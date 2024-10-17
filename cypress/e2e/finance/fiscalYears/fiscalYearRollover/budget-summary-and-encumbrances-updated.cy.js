@@ -24,7 +24,6 @@ import {
 } from '../../../../support/constants';
 import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
-import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -267,8 +266,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       );
       Funds.checkStatusInTransactionDetails('Released');
 
-      TopMenuNavigation.navigateToApp('Finance');
-      FinanceHelp.selectLedgersNavigation();
+      cy.visit(TopMenu.ledgerPath);
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
@@ -278,7 +276,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         'Transfer',
       );
       Ledgers.closeRolloverInfo();
-      FinanceHelp.selectFiscalYearsNavigation();
+      cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
@@ -293,7 +291,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
-      FinanceHelp.selectFundsNavigation();
+      cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();

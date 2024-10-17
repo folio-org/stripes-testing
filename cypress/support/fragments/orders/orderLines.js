@@ -1052,9 +1052,6 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${firstFund.name} (${firstFund.code})`).click(),
-    ]);
-    cy.wait(4000);
-    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(firstFundValue),
       addFundDistributionButton.click(),
@@ -1083,9 +1080,6 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${firstFund.name} (${firstFund.code})`).click(),
-    ]);
-    cy.wait(4000);
-    cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(firstFundValue),
       addFundDistributionButton.click(),

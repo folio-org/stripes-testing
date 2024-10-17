@@ -431,7 +431,7 @@ export default {
 
   fillInCopyNumberInAddPieceModal: (copynumber) => {
     cy.wait(4000);
-    cy.do(TextField({ name: 'copyNumber' }).fillIn(copynumber));
+    cy.do(TextField({ name: 'copyNumber' })).fillIn(copynumber);
   },
 
   receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {

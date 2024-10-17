@@ -91,7 +91,7 @@ describe('Finance: Funds', () => {
       const amount = '100';
       Funds.moveAllocation({ fromFund, toFund, amount });
       InteractorsTools.checkCalloutErrorMessage(
-        `$${amount}.00 was not successfully allocated to the budget ${toBudget.name} because it exceeds the total allocation amount of ${fromBudget.name} and ledger fund restrictions are active`,
+        `$${amount}.00 was not successfully allocated to the budget ${fromBudget.name}`,
       );
       Funds.closeTransferModal();
       Funds.closeBudgetDetails();

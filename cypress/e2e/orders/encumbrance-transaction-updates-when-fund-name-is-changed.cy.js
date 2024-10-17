@@ -13,7 +13,6 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -83,8 +82,7 @@ describe('Orders', () => {
         Funds.createViaApi(secondFund).then((fundResponse) => {
           secondFund.id = fundResponse.fund.id;
 
-          Funds.closeBudgetDetails();
-          Funds.closeFundDetails();
+          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(secondFund.name);
           Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -94,8 +92,7 @@ describe('Orders', () => {
         Funds.createViaApi(thirdFund).then((fundResponse) => {
           thirdFund.id = fundResponse.fund.id;
 
-          Funds.closeBudgetDetails();
-          Funds.closeFundDetails();
+          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(thirdFund.name);
           Funds.selectFund(thirdFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -105,8 +102,7 @@ describe('Orders', () => {
         Funds.createViaApi(forthFund).then((fundResponse) => {
           forthFund.id = fundResponse.fund.id;
 
-          Funds.closeBudgetDetails();
-          Funds.closeFundDetails();
+          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(forthFund.name);
           Funds.selectFund(forthFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -130,8 +126,7 @@ describe('Orders', () => {
       });
     });
     firstOrder.vendor = organization.name;
-    cy.logout();
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.visit(TopMenu.ordersPath);
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -207,13 +202,13 @@ describe('Orders', () => {
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
 
-      TopMenuNavigation.navigateToApp('Finance');
+      cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
       Funds.checkNoTransactionOfType('Encumbrance');
-      TopMenuNavigation.navigateToApp('Finance');
+      cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();

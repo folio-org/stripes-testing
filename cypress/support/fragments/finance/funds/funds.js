@@ -467,7 +467,6 @@ export default {
   },
 
   selectTransactionInList: (transactionType) => {
-    cy.wait(4000);
     cy.get(`div[class*=mclCell-]:contains("${transactionType}")`)
       .siblings('div[class*=mclCell-]')
       .eq(0)
@@ -1140,7 +1139,6 @@ export default {
   },
 
   varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
-    cy.wait(4000);
     cy.expect(
       transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
