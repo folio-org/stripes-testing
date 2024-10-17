@@ -51,10 +51,10 @@ export const dateTimeOperators = [
   'Select operator',
   'equals',
   'not equal to',
-  '>',
-  '<',
-  '>=',
-  '<=',
+  'greater than',
+  'less than',
+  'greater than or equal to',
+  'less than or equal to',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
