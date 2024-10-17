@@ -1,16 +1,16 @@
-describe('fse-receiving', () => {
+describe('fse-serials', () => {
   beforeEach(() => {
-    // hide sensitive data from the report
+    // hide sensitive data from the allure report
     cy.allure().logCommandSteps(false);
     cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.allure().logCommandSteps();
   });
 
   it(
-    `TC195379 - Get by title for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'receiving'] },
+    `TC195523 - Get serials by status for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['sanity', 'fse', 'api', 'serials', 'loc'] },
     () => {
-      cy.getReceivingTitlesByOrderStatus('Pending').then((response) => {
+      cy.getserialsByStatus().then((response) => {
         cy.expect(response.status).to.eq(200);
       });
     },
