@@ -238,7 +238,7 @@ describe('Create Item or Title level request', () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item2Barcode);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);
