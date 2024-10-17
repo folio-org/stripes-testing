@@ -1,21 +1,27 @@
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import {
+  APPLICATION_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import InTransit from '../../support/fragments/checkin/modals/inTransit';
+import Checkout from '../../support/fragments/checkout/checkout';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
 import { Locations } from '../../support/fragments/settings/tenant';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
-import InTransit from '../../support/fragments/checkin/modals/inTransit';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Requests from '../../support/fragments/requests/requests';
-import Checkout from '../../support/fragments/checkout/checkout';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 
 describe('Requests', () => {
   let itemData;
@@ -123,12 +129,13 @@ describe('Requests', () => {
       CheckInActions.openRequestDetails(itemData.barcodes[0]);
       RequestDetail.checkRequestStatus('Open - Awaiting pickup');
       // Check the item out to the requester
-      cy.visit(TopMenu.checkOutPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(testData.user.barcode);
       CheckOutActions.checkOutItem(itemData.barcodes[0]);
       CheckOutActions.checkItemInfo(itemData.barcodes[0], itemData.instanceTitle);
-      cy.visit(TopMenu.requestsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.findCreatedRequest(testData.user.barcode);
       Requests.selectFirstRequest(itemData.instanceTitle);
       RequestDetail.waitLoading();

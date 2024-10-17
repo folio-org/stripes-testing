@@ -250,7 +250,7 @@ describe.skip('Inventory', () => {
       checkIn(
         itemBarcode,
         ItemRecordView.itemStatuses.awaitingPickup,
-        ConfirmItemInModal.confirmAvaitingPickUpModal,
+        ConfirmItemInModal.confirmAwaitingPickUpModal,
       );
 
       // check out item to user for whom page request was created
@@ -258,7 +258,7 @@ describe.skip('Inventory', () => {
         userName,
         itemBarcode,
         ItemRecordView.itemStatuses.checkedOut,
-        ConfirmItemInModal.confirmAvaitingPickupCheckInModal,
+        ConfirmItemInModal.confirmAwaitingPickupCheckInModal,
       );
 
       // declare item lost
