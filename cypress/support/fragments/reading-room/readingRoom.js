@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { Button, KeyValue, Pane, PaneContent, TextField } from '../../../../interactors';
 
 const rootSection = PaneContent({ id: 'reading-room-content' });
@@ -53,6 +54,22 @@ export default {
       rootSection.find(barcodeKeyValue).has({ value: userInfo.barcode }),
       rootSection.find(userExpirationKeyValue).has({ value: userInfo.expirationDate }),
     ]);
+  },
+  allowAccessForUser(readingRoomId, readingRoomName, servicePointId, userId) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: `reading-room/${readingRoomId}/access-log`,
+      body: {
+        readingRoomId,
+        readingRoomName,
+        userId,
+        patronId: userId,
+        action: 'ALLOWED',
+        servicePointId,
+        id: uuid(),
+      },
+      isDefaultSearchParamsRequired: false,
+    });
   },
   verifyWarningMessage(message) {
     cy.get('[class^="notAllowed-"]').contains(`Autotest_Room: ${message}`).should('be.visible');
