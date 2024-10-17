@@ -177,7 +177,7 @@ describe('Orders', () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
-      Invoices.checkFundListIsEmpty();
+      Invoices.checkFundInInvoiceLine(defaultFund);
     },
   );
 });

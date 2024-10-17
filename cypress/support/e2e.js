@@ -32,6 +32,6 @@ Cypress.on('window:before:load', (window) => {
   Object.defineProperty(window.navigator, 'language', { value: 'en' });
 });
 
-before(() => {
+beforeEach(() => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
 });

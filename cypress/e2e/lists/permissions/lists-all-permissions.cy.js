@@ -54,7 +54,7 @@ describe('lists', () => {
 
     it(
       'C411694 C411693 Lists (Admin): All permissions (corsair)',
-      { tags: ['smoke', 'corsair', 'C411694', 'C411693'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411694', 'C411693'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

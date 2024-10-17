@@ -232,6 +232,7 @@ export default {
       'Restricted',
       'Unavailable',
       'Unknown',
+      'In process',
     ];
     cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).click()]);
     this.verifyPossibleActions(options);

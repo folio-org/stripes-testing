@@ -1,17 +1,17 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
+import SettingsPane from '../../support/fragments/settings/settingsPane';
 import SettingsReadingRoom from '../../support/fragments/settings/tenant/general/readingRoom';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import SettingsPane from '../../support/fragments/settings/settingsPane';
 import SettingsTenantPane, { TENANTS } from '../../support/fragments/settings/tenant/tenantPane';
-import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../support/constants';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Reading Room Access', () => {
   const testData = {
@@ -72,6 +72,7 @@ describe('Reading Room Access', () => {
       UsersCard.expandReadingRoomAccessSection(readingRoom.name, 'Allowed');
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsTenantPane.goToTenantTab();
       SettingsTenantPane.selectTenant(TENANTS.READING_ROOM_ACCESS);
       SettingsReadingRoom.edit(readingRoom.name);
       SettingsReadingRoom.verifyPublicCheckboxIsDisabled(readingRoom.name);
@@ -80,6 +81,7 @@ describe('Reading Room Access', () => {
       UsersCard.expandReadingRoomAccessSection(readingRoom.name, 'Not allowed');
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsTenantPane.goToTenantTab();
       SettingsTenantPane.selectTenant(TENANTS.READING_ROOM_ACCESS);
       SettingsReadingRoom.delete(readingRoom.name);
 

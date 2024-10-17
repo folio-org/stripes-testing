@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -15,13 +14,17 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  INVOICE_STATUSES,
+  ORDER_STATUSES,
+} from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import OrderDetails from '../../support/fragments/orders/orderDetails';
 
-describe('ui-orders: Orders', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+describe('Orders', () => {
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -31,33 +34,37 @@ describe('ui-orders: Orders', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
+  const firstOrder = {
+    ...NewOrder.getDefaultOngoingOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const firstBudget = {
     ...Budgets.getDefaultBudget(),
-    allocated: 1000,
+    allocated: 100,
   };
   const secondBudget = {
     ...Budgets.getDefaultBudget(),
-    allocated: 1000,
+    allocated: 100,
   };
-  let firstInvoice;
-  let user;
   let orderNumber;
+  let user;
   let servicePointId;
   let location;
+  let firstInvoice;
+  let secondInvoice;
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
       firstBudget.fiscalYearId = firstFiscalYearResponse.id;
       secondBudget.fiscalYearId = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
@@ -75,6 +82,7 @@ describe('ui-orders: Orders', () => {
 
             ServicePoints.getViaApi().then((servicePoint) => {
               servicePointId = servicePoint[0].id;
+
               NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
                 (res) => {
                   location = res;
@@ -85,22 +93,22 @@ describe('ui-orders: Orders', () => {
                     cy.getAcquisitionMethodsApi({
                       query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
                     }).then((params) => {
-                      // Prepare 2 Open Orders for Rollover
                       Organizations.createOrganizationViaApi(organization).then(
                         (responseOrganizations) => {
                           organization.id = responseOrganizations;
-                          defaultOrder.vendor = organization.id;
+                          firstOrder.vendor = organization.id;
                           const firstOrderLine = {
                             ...BasicOrderLine.defaultOrderLine,
                             cost: {
-                              listUnitPrice: 50.0,
+                              listUnitPrice: 15.0,
                               currency: 'USD',
                               discountType: 'percentage',
                               quantityPhysical: 1,
-                              poLineEstimatedPrice: 50.0,
+                              poLineEstimatedPrice: 15.0,
                             },
                             fundDistribution: [
-                              { code: firstFund.code, fundId: firstFund.id, value: 100 },
+                              { code: firstFund.code, fundId: firstFund.id, value: 70 },
+                              { code: secondFund.code, fundId: secondFund.id, value: 30 },
                             ],
                             locations: [
                               { locationId: location.id, quantity: 1, quantityPhysical: 1 },
@@ -113,26 +121,49 @@ describe('ui-orders: Orders', () => {
                               volumes: [],
                             },
                           };
-                          Orders.createOrderViaApi(defaultOrder).then((firstOrderResponse) => {
-                            defaultOrder.id = firstOrderResponse.id;
-                            orderNumber = firstOrderResponse.poNumber;
-                            firstOrderLine.purchaseOrderId = firstOrderResponse.id;
 
+                          Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
+                            firstOrder.id = firstOrderResponse.id;
+                            firstOrderLine.purchaseOrderId = firstOrderResponse.id;
+                            orderNumber = firstOrderResponse.poNumber;
                             OrderLines.createOrderLineViaApi(firstOrderLine);
+
                             Orders.updateOrderViaApi({
                               ...firstOrderResponse,
                               workflowStatus: ORDER_STATUSES.OPEN,
                             });
+
                             Invoices.createInvoiceWithInvoiceLineViaApi({
                               vendorId: organization.id,
-                              fiscalYearId: defaultFiscalYear.id,
+                              fiscalYearId: firstFiscalYear.id,
                               poLineId: firstOrderLine.id,
                               fundDistributions: firstOrderLine.fundDistribution,
                               accountingCode: organization.erpCode,
                               releaseEncumbrance: true,
-                              subTotal: 50,
+                              subTotal: 10.5,
                             }).then((invoiceRescponse) => {
                               firstInvoice = invoiceRescponse;
+
+                              Invoices.changeInvoiceStatusViaApi({
+                                invoice: firstInvoice,
+                                status: INVOICE_STATUSES.PAID,
+                              });
+                            });
+                            Invoices.createInvoiceWithInvoiceLineViaApi({
+                              vendorId: organization.id,
+                              fiscalYearId: firstFiscalYear.id,
+                              poLineId: firstOrderLine.id,
+                              fundDistributions: firstOrderLine.fundDistribution,
+                              accountingCode: organization.erpCode,
+                              releaseEncumbrance: true,
+                              subTotal: -4.5,
+                            }).then((secondInvoiceRescponse) => {
+                              secondInvoice = secondInvoiceRescponse;
+
+                              Invoices.changeInvoiceStatusViaApi({
+                                invoice: secondInvoice,
+                                status: INVOICE_STATUSES.PAID,
+                              });
                             });
                           });
                         },
@@ -146,15 +177,12 @@ describe('ui-orders: Orders', () => {
         });
       });
     });
-    cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiOrdersEdit.gui,
-    ]).then((userProperties) => {
+
+    cy.createTempUser([permissions.uiOrdersView.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+        path: TopMenu.ledgerPath,
+        waiter: Ledgers.waitForLedgerDetailsLoading,
       });
     });
   });
@@ -165,35 +193,17 @@ describe('ui-orders: Orders', () => {
   });
 
   it(
-    'C374190: Editing fund distribution in PO line when related Open invoice exists (thunderjet)',
+    'C502982 "Total credited" field is displayed in "PO summary" accordion on order details pane (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '70', '100');
-      OrderLines.checkFundInPOL(secondFund);
-      TopMenuNavigation.navigateToApp('Finance');
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.checkStatusInTransactionDetails('Unreleased');
-      TopMenuNavigation.navigateToApp('Invoices');
-      Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
-      Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
-      Invoices.selectInvoiceLine();
-      Invoices.checkFundInInvoiceLine(firstFund);
-      TopMenuNavigation.navigateToApp('Finance');
-      TopMenuNavigation.navigateToApp('Finance');
-      FinanceHelp.searchByName(firstFund.name);
-      Funds.selectFund(firstFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkNoTransactionOfType('Encumbrance');
+      OrderDetails.checkOrderDetails({
+        summary: [
+          { key: 'Total expended', value: '$10.50' },
+          { key: 'Total credited', value: '$4.50' },
+        ],
+      });
     },
   );
 });
