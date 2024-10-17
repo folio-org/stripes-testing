@@ -34,10 +34,12 @@ describe('bulk-edit', () => {
         ])
           .then((userProperties) => {
             user = userProperties;
+            cy.wait(5000);
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,
               waiter: BulkEditSearchPane.waitLoading,
             });
+            cy.wait(10000);
           })
           .then(() => {
             FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
