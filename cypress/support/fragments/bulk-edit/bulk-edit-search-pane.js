@@ -28,6 +28,7 @@ const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const fileButton = Button('or choose file');
+const bulkEditQueryPane = Pane(including('Bulk edit query'));
 const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
@@ -1214,5 +1215,9 @@ export default {
         cy.expect(DropdownMenu().find(Checkbox(instanceNoteColumnName)).has({ checked: false }));
       });
     });
+  },
+
+  verifyRecordsCountInBulkEditQueryPane(value) {
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
   },
 };
