@@ -88,13 +88,13 @@ export default {
       newButton.click(),
       readingRoomPane.find(TextField({ placeholder: 'Room name' })).fillIn(readingRoom.name),
     ]);
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(
       readingRoomPane
         .find(MultiSelect({ id: 'rra-service-point' }))
         .choose(readingRoom.servicePointName),
     );
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(readingRoomPane.find(Checkbox({ ariaLabel: 'Public 0' })).click());
     cy.wait(2000);
     cy.do(
