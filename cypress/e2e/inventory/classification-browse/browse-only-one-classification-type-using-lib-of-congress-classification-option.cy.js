@@ -11,88 +11,104 @@ import {
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import ClassificationBrowse, {
+  defaultClassificationBrowseIdsAlgorithms,
+} from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       folioInstances: [
         {
-          instanceTitle: 'C466145 Search by Classification Instance 1 - Additional Dewey',
+          instanceTitle: 'C468157 Search by Classification Instance 1 - Additional Dewey',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
           classificationValue: '598.099',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 2 - Canadian Classification',
+          instanceTitle: 'C468157 Search by Classification Instance 2 - Canadian Classification',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.CANADIAN_CLASSIFICATION,
           classificationValue: 'HT154',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 6 - LC (local)',
+          instanceTitle: 'C468157 Search by Classification Instance 6 - LC (local)',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
           classificationValue: 'DD259.4 .B527 1973',
         },
         {
           instanceTitle:
-            'C466145 Search by Classification Instance 7 - National Agricultural Library',
+            'C468157 Search by Classification Instance 7 - National Agricultural Library',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.NATIONAL_AGRICULTURAL_LIBRARY,
           classificationValue: 'HD3492.H8',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 9 - SUDOC',
+          instanceTitle: 'C468157 Search by Classification Instance 9 - SUDOC',
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.SUDOC,
           classificationValue: 'L37.s:Oc1/2/991',
         },
       ],
       marcRecordsTitlesAndClassifications: [
         {
-          instanceTitle: 'C466145 Search by Classification Instance 3 - Dewey',
+          instanceTitle: 'C468157 Search by Classification Instance 3 - Dewey',
           classificationValue: '598.0994',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 4 - GDC',
+          instanceTitle: 'C468157 Search by Classification Instance 4 - GDC',
           classificationValue: 'HEU/G74.3C49',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 5 - LC',
+          instanceTitle: 'C468157 Search by Classification Instance 5 - LC',
           classificationValue: 'QS 11 .GA1 E53 2005',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 8 - NLM',
+          instanceTitle: 'C468157 Search by Classification Instance 8 - NLM',
           classificationValue: 'SB945.A5',
         },
         {
-          instanceTitle: 'C466145 Search by Classification Instance 10 - UDC ',
+          instanceTitle: 'C468157 Search by Classification Instance 10 - UDC ',
           classificationValue: '631.321:631.411.3',
         },
       ],
-      classificationOption: 'Classification, normalized',
+      classificationOption: 'Library of Congress classification',
       localInstnaceClassificationValue: 'VP000321',
-      instanceTitleWithLocalClassification: 'C466145 Search by Classification Instance 11 - Local',
+      instanceTitleWithLocalClassification: 'C468157 Search by Classification Instance 11 - Local',
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[2].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[2].algorithm,
     };
+
     const marcFile = {
-      marc: 'marcBibFileForC466145.mrc',
-      fileName: `testMarcFileC466145.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC468157.mrc',
+      fileName: `testMarcFileC468157.${getRandomPostfix()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       propertyName: 'instance',
     };
     const createdRecordIDs = [];
+
     const localClassificationIdentifierType = {
-      name: `C466145 Classification identifier type ${getRandomPostfix()}`,
+      name: `C468157 Classification identifier type ${getRandomPostfix()}`,
       source: 'local',
     };
     let classificationIdentifierTypeId;
+
     let user;
-    const search = (query, expectedResult) => {
-      InventorySearchAndFilter.selectSearchOption(testData.classificationOption);
-      InventorySearchAndFilter.executeSearch(query);
-      InventorySearchAndFilter.verifySearchResult(expectedResult);
-      InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+
+    const search = (query, isNegative = true) => {
+      InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
+        testData.classificationOption,
+      );
+      InventorySearchAndFilter.browseSearch(query);
+      if (isNegative) {
+        InventorySearchAndFilter.verifySearchResult(`${query}would be here`);
+      } else {
+        InventorySearchAndFilter.verifySearchResult(query);
+      }
+      InventorySearchAndFilter.clickResetAllButton();
     };
 
     before('Create user, test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      InventoryInstances.deleteInstanceByTitleViaApi('C466145*');
+      InventoryInstances.deleteInstanceByTitleViaApi('C468157*');
+      InventoryInstances.deleteInstanceByTitleViaApi('C466154*');
 
       cy.createTempUser([
         Permissions.uiInventoryViewInstances.gui,
@@ -115,6 +131,16 @@ describe('Inventory', () => {
         ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
           (response) => {
             classificationIdentifierTypeId = response.body.id;
+            ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
+              testData.classificationBrowseId,
+            ).then((types) => {
+              testData.originalTypes = types;
+            });
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              testData.classificationBrowseId,
+              testData.classificationBrowseAlgorithm,
+              [CLASSIFICATION_IDENTIFIER_TYPES.LC],
+            );
           },
         );
 
@@ -159,12 +185,20 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventorySearchAndFilter.instanceTabIsDefault();
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
       });
     });
 
     after('Delete user, test data', () => {
       cy.getAdminToken();
+      // restore the original identifier types for target classification browse
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        testData.originalTypes,
+      );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
@@ -173,19 +207,20 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466145 Search for each Instance classification type using "Classification, normalized" search option (spitfire)',
+      'C468157 Only one Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
-          search(folioInstance.classificationValue, folioInstance.instanceTitle);
+          search(folioInstance.classificationValue);
         });
         testData.marcRecordsTitlesAndClassifications.forEach((marcInstance) => {
-          search(marcInstance.classificationValue, marcInstance.instanceTitle);
+          if (marcInstance.classificationValue === 'QS 11 .GA1 E53 2005') {
+            search(marcInstance.classificationValue, false);
+          } else {
+            search(marcInstance.classificationValue);
+          }
         });
-        search(
-          testData.localInstnaceClassificationValue,
-          testData.instanceTitleWithLocalClassification,
-        );
+        search(testData.localInstnaceClassificationValue);
       },
     );
   });
