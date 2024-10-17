@@ -42,52 +42,56 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411732 Edit lists: Not canned records (corsair)', { tags: ['smoke', 'corsair', 'C411732'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status);
-      Lists.saveList();
-      Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
-      Lists.closeListDetailsPane();
+    it(
+      'C411732 Edit lists: Not canned records (corsair)',
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411732'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status);
+        Lists.saveList();
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
+        Lists.closeListDetailsPane();
 
-      Lists.verifyListIsPresent(listData.name);
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.editList();
-      Lists.verifyCancelButtonIsActive();
-      Lists.verifySaveButtonIsDisabled();
-      Lists.setDescription(editListData.description);
-      Lists.verifySaveButtonIsActive();
-      Lists.selectVisibility(editListData.visibility);
-      Lists.verifySaveButtonIsActive();
-      Lists.clearName();
-      Lists.verifySaveButtonIsDisabled();
-      Lists.verifyEmptyListNameErrorMessage();
-      Lists.cancelList();
-      Lists.verifyCancellationModal();
-      Lists.keepEditing();
-      cy.url().should('include', 'lists/list');
-      Lists.cancelList();
-      Lists.closeWithoutSaving();
-      Lists.closeListDetailsPane();
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.editList();
+        Lists.verifyCancelButtonIsActive();
+        Lists.verifySaveButtonIsDisabled();
+        Lists.setDescription(editListData.description);
+        Lists.verifySaveButtonIsActive();
+        Lists.selectVisibility(editListData.visibility);
+        Lists.verifySaveButtonIsActive();
+        Lists.clearName();
+        Lists.verifySaveButtonIsDisabled();
+        Lists.verifyEmptyListNameErrorMessage();
+        Lists.cancelList();
+        Lists.verifyCancellationModal();
+        Lists.keepEditing();
+        cy.url().should('include', 'lists/list');
+        Lists.cancelList();
+        Lists.closeWithoutSaving();
+        Lists.closeListDetailsPane();
 
-      Lists.verifyListIsPresent(listData.name);
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.editList();
-      Lists.setName(editListData.name);
-      Lists.setDescription(editListData.description);
-      Lists.saveList();
-      Lists.verifySuccessCalloutMessage(`List ${editListData.name} saved.`);
-      Lists.closeListDetailsPane();
-      Lists.verifyListIsPresent(editListData.name);
-      Lists.verifyListIsNotPresent(listData.name);
-    });
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.editList();
+        Lists.setName(editListData.name);
+        Lists.setDescription(editListData.description);
+        Lists.saveList();
+        Lists.verifySuccessCalloutMessage(`List ${editListData.name} saved.`);
+        Lists.closeListDetailsPane();
+        Lists.verifyListIsPresent(editListData.name);
+        Lists.verifyListIsNotPresent(listData.name);
+      },
+    );
   });
 });
