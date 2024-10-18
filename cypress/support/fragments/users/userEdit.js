@@ -83,7 +83,6 @@ const noButton = Button('No');
 const lastNameField = TextField({ id: 'adduser_lastname' });
 const firstNameField = TextField({ id: 'adduser_firstname' });
 const emailField = TextField({ id: 'adduser_email' });
-const usersPath = Cypress.env('eureka') ? '/users-keycloak/users/*' : '/users/*';
 const userRoleDeleteIcon = Button({ id: including('clickable-remove-user-role') });
 const profilePictureCard = Image({ alt: 'Profile picture' });
 let totalRows;
@@ -319,7 +318,7 @@ export default {
   },
 
   saveEditedUser() {
-    cy.intercept('PUT', usersPath).as('updateUser');
+    cy.intercept('PUT', '/users/*').as('updateUser');
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
