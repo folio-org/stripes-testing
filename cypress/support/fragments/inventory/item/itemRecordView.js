@@ -241,10 +241,13 @@ export default {
   },
 
   checkBindingNote: (note, staffValue = 'No') => {
-    cy.expect([
-      itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }),
-      itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }),
-    ]);
+    cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
+    cy.get('section')
+      .contains('Item notes')
+      .find('div[class*= row]')
+      .contains(note)
+      .find('[class*=kvValue]')
+      .should('have.text', staffValue);
   },
 
   checkActionNote: (note) => {
