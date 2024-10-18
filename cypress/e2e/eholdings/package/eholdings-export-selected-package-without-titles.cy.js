@@ -54,7 +54,7 @@ describe('eHoldings', () => {
 
     it(
       'C356417 Export of selected “Package” without titles. User chooses "Package" fields to export. (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C356417'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();

@@ -331,4 +331,11 @@ export default {
     path: `copycat/profiles/${id}`,
     isDefaultSearchParamsRequired: false,
   }),
+
+  getAllTargetProfiles: () => {
+    return cy.okapiRequest({
+      path: 'copycat/profiles',
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

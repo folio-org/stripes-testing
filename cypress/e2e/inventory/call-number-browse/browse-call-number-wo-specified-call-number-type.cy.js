@@ -59,7 +59,7 @@ describe('Inventory', () => {
 
     it(
       'C407697 Browse for Call number without specified call number type, which match with any call number type format (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C407697', 'eurekaPhase1'] },
       () => {
         // Click on the "Select a browse option" dropdown and select "Call numbers (all)" browse option.
         InventorySearchAndFilter.selectBrowseCallNumbers();

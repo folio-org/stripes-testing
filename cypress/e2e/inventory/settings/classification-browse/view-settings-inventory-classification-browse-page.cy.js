@@ -27,7 +27,7 @@ describe('Inventory', () => {
 
       it(
         'C451641 View "Settings >> Inventory >> Classification browse" page (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C451641'] },
         () => {
           // 1 Go to "Settings" app >> "Inventory" tab
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');

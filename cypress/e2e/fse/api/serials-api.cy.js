@@ -1,4 +1,4 @@
-describe('fse-circulation-log', () => {
+describe('fse-serials', () => {
   beforeEach(() => {
     // hide sensitive data from the allure report
     cy.allure().logCommandSteps(false);

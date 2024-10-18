@@ -79,7 +79,7 @@ describe('MARC', () => {
 
     it(
       'C359212 Verify that search using "Identifier (all)" option will return records with "\\" at the end of 010 $a and $z subfields (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C359212'] },
       () => {
         MarcAuthorities.switchToSearch();
         testData.positiveSearchQueries.forEach((query) => {

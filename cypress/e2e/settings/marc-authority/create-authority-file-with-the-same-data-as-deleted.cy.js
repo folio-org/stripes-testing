@@ -54,7 +54,7 @@ describe('MARC', () => {
 
       it(
         'C442901 User is able to create authority file with the same data as deleted authority file (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C442901'] },
         () => {
           // 1 Delete the record from preconditions:
           // Click on "delete" icon next to authority record from preconditions

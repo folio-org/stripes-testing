@@ -55,7 +55,7 @@ describe('Inventory', () => {
 
     it.skip(
       'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C388549', 'eurekaPhase1'] },
       () => {
         const holdingsCallNumbers = ['FIC WAL', 'B WASHINGTON', 'FIC CLE', 'B JORDAN', 'SC BRU'];
         const itemsCallNumbers = ['SC VIV', 'FIC DAN', 'DVD F GON', 'B OBAMA', 'SC DAH'];
@@ -170,7 +170,7 @@ describe('Inventory', () => {
 
     it(
       'C388548 Browse call numbers - Correct sorting for Dewey type call numbers (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C388548'] },
       () => {
         const holdingsCallNumbers = ['331.2', '331.042', '331.01', '331.016', '331.1'];
         const itemsCallNumbers = ['331', '331.041', '331.198', '331.0413', '331.02'];

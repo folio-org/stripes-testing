@@ -45,7 +45,7 @@ describe('MARC', () => {
 
       it(
         'C440088 "Base URL" field protocol existence validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440088'] },
         () => {
           authorityFilesInvalidProtocol.baseUrls.forEach((baseUrlInvalidProtocol) => {
             ManageAuthorityFiles.clickNewButton();

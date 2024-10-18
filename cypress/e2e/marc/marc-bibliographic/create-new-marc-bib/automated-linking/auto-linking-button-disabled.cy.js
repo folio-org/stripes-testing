@@ -128,14 +128,14 @@ describe('MARC', () => {
           });
           Users.deleteViaApi(userData.userId);
           createdAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id, true);
+            MarcAuthority.deleteViaAPI(id);
           });
           InventoryInstance.deleteInstanceViaApi(createdInstanceID);
         });
 
         it(
           'C389484 "Link headings" button is NOT displayed in create "MARC bib" window when auto-link for all heading types is disabled (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C389484'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

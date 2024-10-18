@@ -68,7 +68,7 @@ describe('MARC', () => {
 
     it(
       'C422043 Search / Browse options dropdowns in "Select MARC authority" plugin modal (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C422043'] },
       () => {
         MarcAuthorities.checkSearchOptionsInDropdownInOrder();
         MarcAuthorities.switchToBrowse();

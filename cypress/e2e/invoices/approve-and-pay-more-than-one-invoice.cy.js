@@ -16,6 +16,8 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -45,7 +47,10 @@ describe('Invoices', () => {
     batchGroup: '',
     invoiceNumber: FinanceHelp.getRandomInvoiceNumber(),
   };
-  const allocatedQuantity = '100';
+  const firstBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 100,
+  };
   let user;
   let servicePointId;
   let location;
@@ -56,17 +61,16 @@ describe('Invoices', () => {
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
+          firstBudget.fundId = fundResponse.fund.id;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
+          Budgets.createViaApi(firstBudget);
         });
       });
     });
@@ -88,7 +92,7 @@ describe('Invoices', () => {
     });
     defaultOrder.vendor = organization.name;
     secondOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);
@@ -106,7 +110,7 @@ describe('Invoices', () => {
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrder(firstInvoice, defaultFiscalYear.code);
     });
-    cy.visit(TopMenu.ordersPath);
+    TopMenuNavigation.openAppFromDropdown('Orders');
     Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
       secondOrder.id = secondOrderResponse.id;
       Orders.checkCreatedOrder(defaultOrder);

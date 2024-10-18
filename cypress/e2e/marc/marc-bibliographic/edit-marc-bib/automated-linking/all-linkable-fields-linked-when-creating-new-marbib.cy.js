@@ -220,7 +220,7 @@ describe('MARC', () => {
 
         it(
           'C422147 All linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C422147'] },
           () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,

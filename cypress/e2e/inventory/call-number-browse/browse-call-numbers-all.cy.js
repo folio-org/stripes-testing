@@ -116,7 +116,7 @@ describe('Inventory', () => {
 
     it(
       'C387477 Browsing call number types when "Call numbers (all)" browse option selected (based on "Item") (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C387477', 'eurekaPhase1'] },
       () => {
         // #1 Click on browse option dropdown (with default value "Select a browse option")
         // * Dropdown is expanded and includes following browse options:

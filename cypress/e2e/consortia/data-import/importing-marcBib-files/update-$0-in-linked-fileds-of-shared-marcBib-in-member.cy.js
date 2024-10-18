@@ -265,7 +265,7 @@ describe('Data Import', () => {
 
     it(
       'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

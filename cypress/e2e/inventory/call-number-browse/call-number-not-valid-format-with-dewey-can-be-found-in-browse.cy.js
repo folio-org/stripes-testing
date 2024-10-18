@@ -114,7 +114,7 @@ describe('Inventory', () => {
 
     it(
       'C451466 Call number of not valid format and with selected "Dewey" call number type can be found via browse (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451466'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSearch(testData.firstCallNumber);

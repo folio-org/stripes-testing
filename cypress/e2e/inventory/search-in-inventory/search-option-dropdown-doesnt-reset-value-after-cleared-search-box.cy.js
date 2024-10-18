@@ -57,7 +57,7 @@ describe('Inventory', () => {
 
     it(
       'C353938 Verify that the search option dropdown doesnt reset selected value after user cleared search box (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'spitfire', 'C353938', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.titleAllSearchOption,

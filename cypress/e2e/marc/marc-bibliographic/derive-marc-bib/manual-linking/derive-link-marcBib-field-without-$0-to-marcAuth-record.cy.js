@@ -122,7 +122,7 @@ describe('MARC', () => {
 
         it(
           'C365595 Derive | Link "MARC Bib" field without "$0" subfield to "MARC Authority" record. "Authority source file" value created by user (700 field to 100) (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C365595'] },
           () => {
             cy.getAdminToken();
             MarcAuthority.createAuthoritySource(testData.authoritySourceFile).then(() => {

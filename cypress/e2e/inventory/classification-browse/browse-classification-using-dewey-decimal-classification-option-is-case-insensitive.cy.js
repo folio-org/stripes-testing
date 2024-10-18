@@ -73,7 +73,7 @@ describe('Inventory', () => {
 
     it(
       'C468258 Browse for classification using "Dewey Decimal classification" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468258'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(

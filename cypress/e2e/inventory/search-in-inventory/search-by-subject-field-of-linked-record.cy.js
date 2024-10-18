@@ -47,11 +47,11 @@ const testData = {
   ],
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
-    'Radio "Vaticana". Hrvatski program test--Congresses',
+    'Radio "Vaticana". Hrvatski program test',
     'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
-    'Marvel comics ComiCon--Periodicals.--United States',
+    'Marvel comics ComiCon',
     'Speaking Oratory--debating',
-    'Clear Creek (Tex.)--Place in Texas--Form',
+    'Clear Creek (Tex.)',
     'Drama Genre',
   ],
 
@@ -149,7 +149,7 @@ describe('Inventory', () => {
 
     it(
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C375259'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

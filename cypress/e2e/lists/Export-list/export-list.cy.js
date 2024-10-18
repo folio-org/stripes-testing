@@ -38,7 +38,7 @@ describe('lists', () => {
 
     it(
       'C411809 Export list: Not canned lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411809', 'eurekaPhase1'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411809', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -66,7 +66,7 @@ describe('lists', () => {
 
     it(
       'C411811 Export list: Inactive lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411811'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411811', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -87,7 +87,7 @@ describe('lists', () => {
 
     it(
       'C411812 Export list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair', 'C411812'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411812'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

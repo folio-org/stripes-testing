@@ -92,7 +92,7 @@ describe('MARC', () => {
 
       it(
         'C380551 MARC Authority plug-in | Browse using "Personal name" option returns only records with the same "Type of heading" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C380551'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

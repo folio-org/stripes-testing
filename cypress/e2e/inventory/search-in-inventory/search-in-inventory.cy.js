@@ -50,7 +50,7 @@ describe('Inventory', () => {
 
     it(
       'C360548 Verify that operator "=" is used when user search for "Instance" by "Contributor" search option. (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C360548'] },
       () => {
         const searchQueries = [
           'Henri Sauguet',
@@ -90,7 +90,7 @@ describe('Inventory', () => {
 
     it(
       'C360555 Verify that search for "Instance" records by "Keyword" option with "<ISBN with dashes>" query will only return the records with matched identifier value. (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C360555'] },
       () => {
         const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
         cy.getAdminToken();
@@ -129,7 +129,7 @@ describe('Inventory', () => {
 
     it(
       'C358938 Verify that "Instance" record will close when user switches to browse (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C358938', 'eurekaPhase1'] },
       () => {
         cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
           path: TopMenu.inventoryPath,

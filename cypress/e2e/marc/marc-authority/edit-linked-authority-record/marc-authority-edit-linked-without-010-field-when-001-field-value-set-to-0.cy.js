@@ -122,7 +122,7 @@ describe('MARC', () => {
 
       it(
         'C375139 Edit any field in linked "MARC authority" record without "010" field when "001" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C375139'] },
         () => {
           MarcAuthorities.searchAndVerify(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthorities.verifyMarcViewPaneIsOpened();

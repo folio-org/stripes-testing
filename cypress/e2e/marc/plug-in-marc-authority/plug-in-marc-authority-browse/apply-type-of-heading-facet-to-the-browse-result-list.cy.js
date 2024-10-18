@@ -127,7 +127,7 @@ describe('MARC', () => {
 
       it(
         'C359184 MARC Authority plug-in | Apply "Type of heading" facet to the browse result list (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C359184'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.clickReset();

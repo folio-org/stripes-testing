@@ -91,13 +91,13 @@ describe('MARC', () => {
         after('Deleting created user and data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          MarcAuthority.deleteViaAPI(createdAuthorityIDs[0], true);
+          MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
         });
 
         it(
           'C422126 Link "Contributor" fields when creating "MARC Bibliographic" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422126'] },
           () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,

@@ -58,7 +58,7 @@ describe('Inventory', () => {
 
     it(
       'C442841 "LCCN, normalized" search option is displayed in the search option dropdown of "Find Instance" plugin (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C442841'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

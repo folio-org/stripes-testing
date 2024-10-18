@@ -214,7 +214,7 @@ describe('MARC', () => {
 
         it(
           'C387538 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
-          { tags: ['criticalPathFlaky', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C387538'] },
           () => {
             cy.getAdminToken();
             linkableFields.forEach((tag) => {
@@ -265,7 +265,7 @@ describe('MARC', () => {
 
         it(
           'C388500 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C388500'] },
           () => {
             cy.getAdminToken();
             linkableFields.forEach((tag) => {

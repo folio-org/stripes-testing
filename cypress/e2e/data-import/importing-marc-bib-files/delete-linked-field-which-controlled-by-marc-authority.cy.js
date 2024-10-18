@@ -194,6 +194,8 @@ describe('Data Import', () => {
             },
           );
           // create Field mapping profile
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+          SettingsDataImport.goToSettingsDataImport();
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);
           FieldMappingProfileView.edit();
@@ -245,7 +247,7 @@ describe('Data Import', () => {
 
     it(
       'C377005 Delete linked field which is controlled by "MARC Authority" record (when field mapping profile allows updating all subfields) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C377005'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

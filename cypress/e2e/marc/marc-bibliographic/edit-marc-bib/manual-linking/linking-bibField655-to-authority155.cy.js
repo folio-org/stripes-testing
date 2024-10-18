@@ -57,7 +57,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama',
+          '$a C380766 Drama $x Genre',
           '',
           '$0 http://id.loc.gov/authorities/genreForms/gf2014026297',
           '$2 fast',
@@ -68,7 +68,7 @@ describe('MARC', () => {
           testData.tag655,
           '\\',
           '7',
-          '$a C380766 Drama $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
+          '$a C380766 Drama $x Genre $0 http://id.loc.gov/authorities/genreForms/gf2014026297 $2 fast',
         ];
 
         before('Creating user and data', () => {
@@ -115,7 +115,7 @@ describe('MARC', () => {
 
         it(
           'C380766 Link the "655" of "MARC Bib" field with "155" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C380766'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

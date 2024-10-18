@@ -66,7 +66,7 @@ describe('MARC', () => {
 
     it(
       'C358990 Verify user can fill in "852 $b" field by typing text when create new "MARC Holdings" record (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358990'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

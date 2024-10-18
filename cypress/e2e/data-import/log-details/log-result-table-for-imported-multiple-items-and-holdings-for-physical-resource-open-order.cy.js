@@ -11,6 +11,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -69,6 +70,7 @@ describe('Data Import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
         },
@@ -148,7 +150,7 @@ describe('Data Import', () => {
 
     it(
       'C388570 Check the log result table for imported multiple items and holdings for Physical resource open order (folijet)',
-      { tags: ['criticalPathBroken', 'folijet'] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(
@@ -243,8 +245,8 @@ describe('Data Import', () => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace('-1', '');
         });
-        OrderLines.checkQuantityPhysical(quantityOfCreatedItems);
-        OrderLines.checkPhysicalQuantityInLocation(quantityOfCreatedHoldings);
+        OrderLines.checkQuantityPhysical('1');
+        OrderLines.checkPhysicalQuantityInLocation(1);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.close();

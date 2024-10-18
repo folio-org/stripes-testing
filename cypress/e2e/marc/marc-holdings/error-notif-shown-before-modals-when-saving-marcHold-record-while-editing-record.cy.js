@@ -39,7 +39,7 @@ describe('MARC', () => {
         rowIndex: 9,
       },
       errors: {
-        tagCharacterLength: 'Tag must contain three characters and can only accept numbers 0-9.',
+        tagCharacterLength: 'A MARC tag must contain three characters.',
       },
     };
     const marcFile = {
@@ -113,7 +113,7 @@ describe('MARC', () => {
 
     it(
       'C375187 Error notifications shown before modals when saving "MARC holdings" record while editing record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C375187'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceID);
         InventoryInstances.selectInstance();

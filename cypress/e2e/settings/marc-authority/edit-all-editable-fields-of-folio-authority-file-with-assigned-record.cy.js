@@ -66,7 +66,7 @@ describe('MARC', () => {
 
       it(
         'C436863 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C436863'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

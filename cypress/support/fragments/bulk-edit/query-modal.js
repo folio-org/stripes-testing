@@ -42,7 +42,7 @@ export const usersFieldValues = {
   expirationDate: 'Users — User — Expiration date',
   firstName: 'Users — User — First name',
   lastName: 'Users — User — Last name',
-  patronGroup: 'Users — Group — Group',
+  patronGroup: 'Users — Group — Name',
   preferredContactType: 'Users — User — Preferred contact type',
   userActive: 'Users — User — Active',
   userBarcode: 'Users — User — Barcode',
@@ -51,10 +51,10 @@ export const dateTimeOperators = [
   'Select operator',
   'equals',
   'not equal to',
-  '>',
-  '<',
-  '>=',
-  '<=',
+  'greater than',
+  'less than',
+  'greater than or equal to',
+  'less than or equal to',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [

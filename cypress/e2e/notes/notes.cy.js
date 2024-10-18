@@ -46,14 +46,18 @@ describe('Note creation', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C1296 Create a note (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
-    NotesEholdings.createNote(note.title, note.details);
-    NotesEholdings.verifyNoteTitle(note.title);
-    NotesEholdings.openNoteView(note.title);
-    NotesEholdings.deleteNote();
-  });
+  it(
+    'C1296 Create a note (spitfire)',
+    { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1296'] },
+    () => {
+      NotesEholdings.createNote(note.title, note.details);
+      NotesEholdings.verifyNoteTitle(note.title);
+      NotesEholdings.openNoteView(note.title);
+      NotesEholdings.deleteNote();
+    },
+  );
 
-  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
+  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1299'] }, () => {
     const newNote = {
       title: `Changed Title ${getRandomPostfix()}`,
       details: `Changed details ${getRandomPostfix()}`,
@@ -65,16 +69,20 @@ describe('Note creation', () => {
     NotesEholdings.deleteNote();
   });
 
-  it('C16992 View a note (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft'] }, () => {
-    NotesEholdings.createNote(note.title, note.details);
-    NotesEholdings.verifyNoteTitle(note.title);
-    NotesEholdings.openNoteView(note.title);
-    NotesEholdings.deleteNote();
-  });
+  it(
+    'C16992 View a note (spitfire)',
+    { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16992'] },
+    () => {
+      NotesEholdings.createNote(note.title, note.details);
+      NotesEholdings.verifyNoteTitle(note.title);
+      NotesEholdings.openNoteView(note.title);
+      NotesEholdings.deleteNote();
+    },
+  );
 
   it(
     'C359004 A user can view Notes that were created by deleted user (spitfire)',
-    { tags: ['smoke', 'spitfire'] },
+    { tags: ['smoke', 'spitfire', 'C359004'] },
     () => {
       cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
         path: urlToEholdings,
@@ -96,7 +104,7 @@ describe('Note creation', () => {
 
   it(
     'C16993 Able to sort Notes accordion column headings (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPath', 'spitfire', 'C16993'] },
     () => {
       note.titleFirst = '1 Title';
       note.titleSecond = '2 Title';
@@ -115,7 +123,7 @@ describe('Note creation', () => {
     },
   );
 
-  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire', 'C1300'] }, () => {
     note.addDetails = `Test details ${getRandomPostfix()}`;
 
     NotesEholdings.createNote(note.title, note.addDetails);

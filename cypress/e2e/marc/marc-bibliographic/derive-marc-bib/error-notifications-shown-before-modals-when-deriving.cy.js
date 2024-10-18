@@ -70,7 +70,7 @@ describe('MARC', () => {
 
       it(
         'C375177 Error notifications shown before confirmation modals when saving "MARC bib" record while deriving record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C375177'] },
         () => {
           // #1 Input query in search input filed which will return "Instance" record with source "MARC".
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);

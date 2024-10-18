@@ -135,13 +135,7 @@ describe('Orders', () => {
         Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
         Receiving.clickOnInstance();
         InventoryInstance.openHoldingsAccordion(location.name);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-        ItemRecordView.checkItemDetails(
-          location.name,
-          barcodeForFirstItem,
-          ITEM_STATUS_NAMES.IN_PROCESS,
-        );
+        InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
         InventoryItems.edit();
         ItemRecordView.changeItemBarcode(changedBarcode);
         ItemRecordView.checkItemDetails(
@@ -150,8 +144,8 @@ describe('Orders', () => {
           ITEM_STATUS_NAMES.IN_PROCESS,
         );
         InventoryItems.closeItem();
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
+        InventoryInstance.openHoldingsAccordion(location.name);
+        InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForSecondItem,

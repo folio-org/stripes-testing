@@ -35,3 +35,4 @@ import './specifications';
 import './serials';
 import './lists';
 import './profile-pictures';
+import './z3950';

@@ -61,7 +61,7 @@ describe('MARC', () => {
 
       it(
         'C422112 Creating a new "MARC bib" record with invalid LDR positions 06, 07 values (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422112'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
@@ -94,7 +94,7 @@ describe('MARC', () => {
 
       it(
         'C422117 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422117'] },
         () => {
           InventoryInstance.newMarcBibRecord();
 

@@ -60,7 +60,7 @@ describe('MARC', () => {
 
     it(
       'C350756 Create a new "MARC Holdings" record for imported "Instance" record from "OCLC" (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C350756'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Identifier (all)', `(OCoLC)${testData.oclc}`);
         InstanceRecordView.verifyInstancePaneExists();

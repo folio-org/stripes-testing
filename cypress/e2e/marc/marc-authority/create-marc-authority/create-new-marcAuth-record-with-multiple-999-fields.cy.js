@@ -77,7 +77,7 @@ describe('MARC', () => {
 
       it(
         'C423509 Create a new MARC authority record with multiple "999" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423509'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C387458 Add multiple 001s when editing "MARC Bibliographic" record (spitfire)(TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387458'] },
         () => {
           InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);

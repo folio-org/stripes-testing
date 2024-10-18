@@ -70,7 +70,7 @@ describe('MARC', () => {
 
       it(
         'C356840 Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C356840'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);

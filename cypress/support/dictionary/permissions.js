@@ -1053,6 +1053,10 @@ export default {
     internal: 'ui-users.view-reading-room-access',
     gui: 'Users: Can view reading room access',
   },
+  uiCanViewEditReadingRoomAccess: {
+    internal: 'ui-users.edit-reading-room-access',
+    gui: 'Users: Can view, and edit reading room access',
+  },
   uiReadingRoomAll: {
     internal: 'ui-reading-room.all',
     gui: 'Reading room access: In app - track access',

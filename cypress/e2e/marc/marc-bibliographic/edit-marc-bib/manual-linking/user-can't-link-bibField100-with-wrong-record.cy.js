@@ -119,7 +119,7 @@ describe('MARC', () => {
 
         it(
           'C380449 Verify that user cant link "100" MARC Bib field with wrong record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C380449'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

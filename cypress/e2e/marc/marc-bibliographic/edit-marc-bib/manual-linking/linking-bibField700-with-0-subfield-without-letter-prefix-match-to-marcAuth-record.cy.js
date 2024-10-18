@@ -105,7 +105,7 @@ describe('MARC', () => {
 
         it(
           'C380750 Link "MARC Bib" 700 field with "$0" subfield ("Not specified" - without letter prefix) with matched to "MARC authority" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C380750'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

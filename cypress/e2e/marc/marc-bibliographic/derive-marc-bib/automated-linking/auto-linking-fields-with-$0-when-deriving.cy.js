@@ -141,9 +141,10 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.user = createdUserProperties;
 
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.waitContentLoading();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -176,11 +177,12 @@ describe('MARC', () => {
 
         it(
           'C388638 Auto-linking fields having "$0" when deriving new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388638'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.deriveNewMarcBib();
+            cy.wait('@/authn/refresh', { timeout: 30000 });
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.updateExistingField(

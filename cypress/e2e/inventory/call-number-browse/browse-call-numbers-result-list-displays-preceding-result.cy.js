@@ -92,7 +92,7 @@ describe('Inventory', () => {
 
     it(
       'C399095 Verify that "Browse call numbers" result list correctly displays preceding results before the one being searched (all "Items" in different "Instances") (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C399095', 'eurekaPhase1'] },
       () => {
         // Fill in the input field at "Search & filter" pane with the "Call number" value which is alphabetically the first one out of all 25 (see Preconditions)
         // (For example, "E 3184 S75 1231")

@@ -61,7 +61,7 @@ describe('MARC', () => {
 
       it(
         'C376592 Add multiple "$a" to "010" field in "MARC Authority" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C376592'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
           MarcAuthorities.select(`${createdAuthorityID}${authorityPostfix}`);

@@ -55,7 +55,7 @@ describe('lists', () => {
 
     it(
       'C418652 Lists (Export): Can create, edit, refresh, and export lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C418652'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C418652'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

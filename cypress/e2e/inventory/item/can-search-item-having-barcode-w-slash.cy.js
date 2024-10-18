@@ -5,6 +5,9 @@ import {
   InventorySearchAndFilter,
   ItemRecordView,
 } from '../../../support/fragments/inventory';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
+import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -64,23 +67,23 @@ describe('Inventory', () => {
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.folioInstances[0].instanceTitle);
-        const InventoryInstance = InventoryInstances.selectInstance();
+        InventoryInstances.selectInstance();
 
         // Click "Add item" button on "Holdings" accordion
-        const ItemRecordEdit = InventoryInstance.clickAddItemByHoldingName({
+        InventoryInstance.clickAddItemByHoldingName({
           holdingName: testData.location.name,
           instanceTitle: testData.folioInstances[0].instanceTitle,
         });
 
         // Populate the following fields: "Material type", "Permanent loan type"
-        ItemRecordEdit.fillItemRecordFields({
+        ItemRecordNew.fillItemRecordFields({
           barcode: testData.barcodes[0],
           materialType: 'book',
           loanType: 'Can circulate',
         });
 
         // Click on "Save & Close" button
-        ItemRecordEdit.saveAndClose({ itemSaved: true });
+        ItemRecordNew.saveAndClose({ itemSaved: true });
         InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location.name, 1);
 
         // Expand the holdings accordion

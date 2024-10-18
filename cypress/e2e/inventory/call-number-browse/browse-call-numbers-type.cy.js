@@ -147,7 +147,7 @@ describe('Inventory', () => {
 
     it(
       'C414972 Browsing call number types when "Number of titles" > 1 (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C414972', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumbers[0].type);

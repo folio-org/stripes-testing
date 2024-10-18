@@ -34,21 +34,24 @@ describe('eHoldings', () => {
       EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
     });
 
-    it('C692 Create a custom package (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
-      EHoldingSearch.switchToPackages();
-      cy.intercept('eholdings/packages').as('createPackage');
-      EHoldingsPackages.verifyCustomPackage(testData.customPackageName);
-      cy.wait('@createPackage').then(() => {
-        EHoldingsPackageView.waitLoading();
-        EHoldingsPackageView.verifyPackageName(testData.customPackageName);
-        EHoldingsPackageView.verifyPackageType('Custom');
-        cy.getAdminToken();
-        EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
-        EHoldingsPackageView.close();
+    it(
+      'C692 Create a custom package (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C692'] },
+      () => {
         EHoldingSearch.switchToPackages();
-        EHoldingsPackagesSearch.byName(testData.customPackageName);
-        EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
-      });
-    });
+        cy.intercept('eholdings/packages').as('createPackage');
+        EHoldingsPackages.verifyCustomPackage(testData.customPackageName);
+        cy.wait('@createPackage').then(() => {
+          EHoldingsPackageView.waitLoading();
+          EHoldingsPackageView.verifyPackageName(testData.customPackageName);
+          EHoldingsPackageView.verifyPackageType('Custom');
+          EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
+          EHoldingsPackageView.close();
+          EHoldingSearch.switchToPackages();
+          EHoldingsPackagesSearch.byName(testData.customPackageName);
+          EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
+        });
+      },
+    );
   });
 });

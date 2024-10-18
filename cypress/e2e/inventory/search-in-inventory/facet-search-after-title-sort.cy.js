@@ -128,7 +128,7 @@ describe('Inventory', () => {
 
     it(
       'C422219 Verify that facets options are available after "Title" sort was applied to the result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'spitfire', 'C422219', 'eurekaPhase1'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);

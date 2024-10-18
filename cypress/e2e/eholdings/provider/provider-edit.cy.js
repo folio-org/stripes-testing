@@ -21,20 +21,24 @@ describe('eHoldings', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
       });
     });
-    it('C696 Edit proxy setting (spitfire)', { tags: ['smoke', 'spitfire', 'broken'] }, () => {
-      const specialProvider = 'Johns Hopkins University Press';
-      EHoldingsProvidersSearch.byProvider(specialProvider);
-      EHoldingsProviders.viewProvider();
-      EHoldingsProviderView.edit(specialProvider);
-      EHoldingsProviderEdit.waitLoading(specialProvider);
-      EHoldingsProviderEdit.changeProxy().then((newProxy) => {
-        EHoldingsProviderEdit.saveAndClose();
-        // additional delay related with update of proxy information in ebsco services
-        cy.wait(10000);
-        cy.reload();
-        EHoldingsProviderView.checkProxy(newProxy);
-      });
-    });
+    it(
+      'C696 Edit proxy setting (spitfire)',
+      { tags: ['smoke', 'spitfire', 'broken', 'C696'] },
+      () => {
+        const specialProvider = 'Johns Hopkins University Press';
+        EHoldingsProvidersSearch.byProvider(specialProvider);
+        EHoldingsProviders.viewProvider();
+        EHoldingsProviderView.edit(specialProvider);
+        EHoldingsProviderEdit.waitLoading(specialProvider);
+        EHoldingsProviderEdit.changeProxy().then((newProxy) => {
+          EHoldingsProviderEdit.saveAndClose();
+          // additional delay related with update of proxy information in ebsco services
+          cy.wait(10000);
+          cy.reload();
+          EHoldingsProviderView.checkProxy(newProxy);
+        });
+      },
+    );
     afterEach(() => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
