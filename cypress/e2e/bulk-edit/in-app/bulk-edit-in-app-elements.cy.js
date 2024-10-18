@@ -31,6 +31,7 @@ describe('bulk-edit', () => {
         cy.wait(3000);
 
         cy.login(user.username, user.password);
+        cy.wait(10000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.waitLoading();
 
