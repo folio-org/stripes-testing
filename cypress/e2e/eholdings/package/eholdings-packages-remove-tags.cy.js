@@ -40,7 +40,7 @@ describe('eHoldings', () => {
 
     it(
       'C756 Remove a tag from a package record (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C756'] },
       () => {
         let addedTag;
         EHoldingSearch.switchToPackages();

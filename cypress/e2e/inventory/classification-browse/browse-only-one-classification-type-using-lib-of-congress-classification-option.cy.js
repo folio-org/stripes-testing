@@ -208,7 +208,7 @@ describe('Inventory', () => {
 
     it(
       'C468157 Only one Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468157'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);

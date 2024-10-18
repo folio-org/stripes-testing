@@ -220,7 +220,7 @@ describe('Data Import', () => {
 
     it(
       'C374187 Update "4XX" field value (edit not controlling field) of linked "MARC Authority" record. (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C374187'] },
       () => {
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();

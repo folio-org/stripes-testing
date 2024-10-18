@@ -81,7 +81,7 @@ describe('MARC', () => {
 
       it(
         'C380557 MARC Authority plug-in | Browse using "Genre" option returns only records with the same "Type of heading" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C380557'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

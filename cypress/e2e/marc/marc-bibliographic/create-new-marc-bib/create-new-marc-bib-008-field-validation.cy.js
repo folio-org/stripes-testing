@@ -39,7 +39,7 @@ describe('MARC', () => {
 
       it(
         'C387449 "008" field existence validation when create new "MARC bib" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387449'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

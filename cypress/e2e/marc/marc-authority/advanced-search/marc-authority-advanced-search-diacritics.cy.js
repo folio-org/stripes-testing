@@ -183,7 +183,7 @@ describe('MARC', () => {
 
     it(
       'C466268 Diacritics are properly handled when user sorting search result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466268'] },
       () => {
         MarcAuthorities.clickAdvancedSearchButton();
         searchParameters.forEach((parameters, index) => {

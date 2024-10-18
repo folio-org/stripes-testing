@@ -97,7 +97,7 @@ describe('MARC', () => {
 
     it(
       'C432323 Retrieve UUIDs of deleted MARC authority records using filters combination via API (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C432323'] },
       () => {
         MarcAuthorities.getMarcAuthoritiesViaApi({
           query: `(keyword == "${firstRecordToDelete.heading}" or keyword == "${testData.authorityHeadings[0]}")`,

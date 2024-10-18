@@ -141,7 +141,7 @@ describe('MARC', () => {
 
     it(
       'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'C345404'] },
       () => {
         InventoryActions.import();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

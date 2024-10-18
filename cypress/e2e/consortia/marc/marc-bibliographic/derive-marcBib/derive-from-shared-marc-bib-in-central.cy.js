@@ -86,7 +86,7 @@ describe('MARC', () => {
 
       it(
         'C402767 Derive new Shared MARC bib record from Shared Instance in Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C402767'] },
         () => {
           cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
           InventoryInstance.waitLoading();

@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C440086 Uniqueness "Base URL" field validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440086'] },
         () => {
           authorityFilesNonUniqueBaseUrl.baseUrls.forEach((authorityFileNonUniqueBaseUrl) => {
             ManageAuthorityFiles.clickNewButton();

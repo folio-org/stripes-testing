@@ -41,7 +41,7 @@ describe('MARC', () => {
 
       it(
         'C440095 "Prefix" field alpha and special characters validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440095'] },
         () => {
           ManageAuthorityFiles.clickNewButton();
           ManageAuthorityFiles.fillAllFields(

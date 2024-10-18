@@ -116,7 +116,7 @@ describe('MARC', () => {
 
       it(
         'C451456 Search for "MARC authority" by "LCCN" option when using "Advanced search" ($a and $z) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C451456'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
           MarcAuthorities.fillAdvancedSearchField(

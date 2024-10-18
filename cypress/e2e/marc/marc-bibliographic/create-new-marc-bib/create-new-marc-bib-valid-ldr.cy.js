@@ -69,7 +69,7 @@ describe('MARC', () => {
 
       it(
         'C422111 Creating a new "MARC bib" record with valid LDR values in positions 05, 08, 17, 18, 19 (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422111'] },
         () => {
           for (let i = 0; i < descDropdownOptions.length; i++) {
             const title = getRandomPostfix();

@@ -80,7 +80,7 @@ describe('MARC', () => {
 
       it(
         'C380555 MARC Authority plug-in | Browse using "Uniform title" option returns only records with the same "Type of heading" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C380555'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

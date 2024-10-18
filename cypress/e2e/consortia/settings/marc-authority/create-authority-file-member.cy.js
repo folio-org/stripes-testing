@@ -60,7 +60,7 @@ describe('MARC', () => {
 
         it(
           'C423996 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane of Member tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C423996'] },
           () => {
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();

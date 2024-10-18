@@ -131,7 +131,7 @@ describe('MARC', () => {
 
       it(
         'C380434 Include/exclude Reference records in MARC authority plug-in results list while browsing (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380434'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag711);

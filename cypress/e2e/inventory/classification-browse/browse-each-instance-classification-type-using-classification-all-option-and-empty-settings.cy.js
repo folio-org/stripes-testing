@@ -198,7 +198,7 @@ describe('Inventory', () => {
 
     it(
       'C468147 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option and empty settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468147'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.classificationValue);

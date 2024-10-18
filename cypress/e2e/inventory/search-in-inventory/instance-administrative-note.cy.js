@@ -97,7 +97,7 @@ describe('Inventory', () => {
 
     it(
       'C359146 Search "Instance" with source = Folio/MARC by administrative note using query search (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C359146'] },
       () => {
         searchQueries.forEach((searchQuery) => {
           // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.

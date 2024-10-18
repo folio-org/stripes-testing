@@ -133,7 +133,7 @@ describe('MARC', () => {
 
       it(
         'C380573 MARC Authority plug-in | Search using "Advanced search" option (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380573'] },
         () => {
           MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery, true);
           MarcAuthorities.checkRowsCount(4);

@@ -74,7 +74,7 @@ describe('MARC', () => {
 
     it(
       'C387462 Add multiple 001s when creating "MARC Holdings" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C387462'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);

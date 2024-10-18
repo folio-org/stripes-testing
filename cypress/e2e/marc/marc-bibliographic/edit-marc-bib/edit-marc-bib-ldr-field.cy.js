@@ -323,7 +323,7 @@ describe('MARC', () => {
 
       it(
         'C388651 "008" field updated when valid LDR 06-07 combinations entered when editing "MARC bib" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C388651'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,

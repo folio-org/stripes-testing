@@ -147,7 +147,7 @@ describe('MARC', () => {
 
         it(
           'C388504 Link some fields manually >> click on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388504'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

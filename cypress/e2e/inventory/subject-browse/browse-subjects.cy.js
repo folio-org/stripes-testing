@@ -43,7 +43,7 @@ describe('Inventory', () => {
 
     it(
       'C350392 Verify placeholder for the missing match in subject browse (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350392'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(randomSearchString);
         BrowseSubjects.verifyNonExistentSearchResult(randomSearchString);
@@ -53,7 +53,7 @@ describe('Inventory', () => {
 
     it(
       'C350393 Verify selecting row from Browse Result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350393'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);
         BrowseSubjects.verifyClickTakesToInventory(item.instanceSubjectName);

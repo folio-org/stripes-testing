@@ -42,7 +42,7 @@ describe('Inventory', () => {
 
         it(
           'C451649 User without permission on Central tenant cannot see "Classification browse" pane from Member tenant when he has permission on Member tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C451649'] },
           () => {
             SettingsPane.checkOptionInSecondPaneExists(identifierTypesSectionName);
             SettingsPane.checkOptionInSecondPaneExists(classificationBrowseSectionName, false);

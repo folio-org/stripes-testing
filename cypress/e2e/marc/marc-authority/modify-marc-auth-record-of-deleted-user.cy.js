@@ -97,7 +97,7 @@ describe('MARC', () => {
 
     it(
       'C358994 Verify that user has access to "quickMARC" when user who imported "MARC authority" record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358994'] },
       () => {
         cy.login(user.userBProperties.username, user.userBProperties.password, {
           path: TopMenu.usersPath,
@@ -125,7 +125,7 @@ describe('MARC', () => {
 
     it(
       'C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358995'] },
       () => {
         cy.login(user.userCProperties.username, user.userCProperties.password, {
           path: TopMenu.marcAuthorities,

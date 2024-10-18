@@ -68,7 +68,7 @@ describe('MARC', () => {
 
     it(
       'C466087 Search/Browse by "Corporate/Conference name" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466087'] },
       () => {
         // execute search by "Keyword" option
         corporateNameFields.forEach((query) => {
