@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C423377 "Prefix" field uniqueness validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423377'] },
         () => {
           authorityFilesUnuniquePrefix.forEach((authorityFileUnuniquePrefix) => {
             ManageAuthorityFiles.clickNewButton();

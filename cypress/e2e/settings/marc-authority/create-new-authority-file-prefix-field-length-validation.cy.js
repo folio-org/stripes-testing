@@ -52,7 +52,7 @@ describe('MARC', () => {
 
       it(
         'C440094 "Prefix" field length validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440094'] },
         () => {
           // 1 Click on the "+New" button
           ManageAuthorityFiles.clickNewButton();

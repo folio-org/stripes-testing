@@ -146,7 +146,7 @@ describe('MARC', () => {
 
     it(
       'C369084 Delete authorized "MARC Authority" record that has two linked field in different "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C369084'] },
       () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);

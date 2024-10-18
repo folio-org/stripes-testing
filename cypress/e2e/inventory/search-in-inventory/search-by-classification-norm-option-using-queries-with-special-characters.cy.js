@@ -74,7 +74,7 @@ describe('Inventory', () => {
 
     it(
       'C466154 Search by "Classification, normalized" search option using queries with special characters (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466154'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOption(testData.classificationOption);

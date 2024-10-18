@@ -54,7 +54,7 @@ describe('MARC', () => {
       it(
         `C423711 "HRID starts with" field "zero" validation during creation of new "Authority file" 
             at "Settings >> MARC authority>>Manage authority files" pane (spitfire)`,
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423711'] },
         () => {
           authorityFile.hridStartsWith.forEach((hridStartsWithValues) => {
             ManageAuthorityFiles.clickNewButton();

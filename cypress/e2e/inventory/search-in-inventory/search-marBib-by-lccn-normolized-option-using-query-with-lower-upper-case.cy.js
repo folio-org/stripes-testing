@@ -78,7 +78,7 @@ describe('Inventory', () => {
 
     it(
       'C442820 Search for "MARC bibliographic" by "LCCN, normalized" option using a query with lower, UPPER case when "LCCN" (010 $z) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C442820'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');

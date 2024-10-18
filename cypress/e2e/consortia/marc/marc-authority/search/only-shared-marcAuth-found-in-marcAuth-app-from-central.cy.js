@@ -88,7 +88,7 @@ describe('MARC', () => {
 
       it(
         'C410739 Only Shared "MARC authority" records are found in "MARC authority" app from Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C410739'] },
         () => {
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.marcValueShared);
           MarcAuthorities.checkAfterSearch(

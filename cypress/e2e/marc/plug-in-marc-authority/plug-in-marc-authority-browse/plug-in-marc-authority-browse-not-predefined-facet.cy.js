@@ -127,7 +127,7 @@ describe('MARC', () => {
 
       it(
         'C422170 MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the browse result list (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422170'] },
         () => {
           // #1 Create autority source
           cy.getAdminToken();

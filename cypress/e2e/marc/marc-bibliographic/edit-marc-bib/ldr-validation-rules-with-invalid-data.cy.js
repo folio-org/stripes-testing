@@ -108,7 +108,7 @@ describe('MARC', () => {
 
       it(
         'C357567 Verify "LDR" validation rules with invalid data for editable positions "05", "06", "07", "08", "18", "19" when editing record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C357567'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
 

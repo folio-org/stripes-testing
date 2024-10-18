@@ -62,7 +62,7 @@ describe('Inventory', () => {
 
     it(
       'C442835 Verify that "LCCN, normalized" search option searches by "$a" subfield of "010" field only (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C442835'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');

@@ -190,7 +190,7 @@ describe('Data Import', () => {
 
     it(
       'C380499 Add "$9" to the linkable fields when updating "MARC Bib" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C380499'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

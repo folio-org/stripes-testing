@@ -214,7 +214,7 @@ describe('MARC', () => {
 
         it(
           'C388534 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C388534'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

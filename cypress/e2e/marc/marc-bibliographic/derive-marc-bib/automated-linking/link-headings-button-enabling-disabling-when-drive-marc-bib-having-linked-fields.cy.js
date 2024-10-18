@@ -170,7 +170,7 @@ describe('MARC', () => {
 
         it(
           'C388561 "Link headings" button enabling/disabling when derive "MARC bib" having linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388561'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

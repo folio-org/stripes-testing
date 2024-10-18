@@ -161,7 +161,7 @@ describe('MARC', () => {
 
     it(
       'C374148 Delete auth/ref "MARC Authority" record that has one linked field in "MARC Bib" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374148'] },
       () => {
         MarcAuthorities.searchByParameter(testData.searchOption, marcFiles[2].authorutyTitle);
 

@@ -128,7 +128,7 @@ describe('Inventory', () => {
 
     it(
       'C400622 Search Items using advanced search with "AND" operator (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C400622'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventoryInstances.clickAdvSearchButton();

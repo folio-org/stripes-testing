@@ -59,7 +59,7 @@ describe('MARC', () => {
 
       it(
         'C436950 "HRID starts with" field "Spaces" validation during creation of new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C436950'] },
         () => {
           localAuthFiles.forEach((localAuthFile) => {
             ManageAuthorityFiles.clickNewButton();

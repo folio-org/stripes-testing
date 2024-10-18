@@ -88,7 +88,7 @@ describe('MARC', () => {
 
       it(
         'C353533 Protection of specified fields when editing "MARC Authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C353533'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);

@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       it(
         'C436953 "HRID starts with" field length validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C436953'] },
         () => {
           // 1 Click on the "Edit" (pencil) icon of "Local" authority file.
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);

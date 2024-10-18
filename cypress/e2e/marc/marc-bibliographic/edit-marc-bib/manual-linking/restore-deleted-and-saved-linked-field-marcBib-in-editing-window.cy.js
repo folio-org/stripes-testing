@@ -121,7 +121,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
 
   it(
     'C366576 Restore deleted and saved linked field of "MARC Bib" record in editing window (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire', 'C366576'] },
     () => {
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();

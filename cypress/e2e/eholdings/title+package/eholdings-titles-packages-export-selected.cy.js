@@ -47,7 +47,7 @@ describe('eHoldings', () => {
 
     it(
       'C354001 Export of selected “Package+Title” with all fields of “Package” and “Title” selected by default settings (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C354001'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Wiley Online Library');
