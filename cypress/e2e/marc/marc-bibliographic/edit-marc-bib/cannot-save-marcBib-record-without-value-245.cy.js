@@ -28,7 +28,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
-    
+
           cy.getUserToken(userProperties.username, userProperties.password);
           DataImport.uploadFileViaApi(
             marcFile.marc,
