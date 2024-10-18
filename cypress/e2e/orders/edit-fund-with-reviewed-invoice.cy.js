@@ -189,7 +189,7 @@ describe('ui-orders: Orders', () => {
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
-      Invoices.checkFundInInvoiceLine(secondFund);
+      Invoices.checkFundInInvoiceLine(firstFund);
       TopMenuNavigation.navigateToApp('Finance');
       TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(secondFund.name);

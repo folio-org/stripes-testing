@@ -1029,6 +1029,7 @@ export default {
   },
 
   checkFundInInvoiceLine: (fund) => {
+    cy.wait(4000);
     cy.expect(
       Section({ id: 'invoiceLineFundDistribution' })
         .find(Link(`${fund.name}(${fund.code})`))
