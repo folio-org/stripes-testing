@@ -240,8 +240,19 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
   },
 
-  checkBindingNote: (note) => {
-    cy.expect(itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }));
+  checkBindingNote: (note, staffValue = 'No') => {
+    cy.expect([
+      itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }),
+      itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }),
+    ]);
+  },
+
+  checkActionNote: (note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Action note')).has({ value: note }));
+  },
+
+  checkProvenanceNote: (note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Provenance')).has({ value: note }));
   },
 
   checkBarcode: (barcode) => {

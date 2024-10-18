@@ -2,36 +2,55 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-// import ExportFile from '../../../support/fragments/data-export/exportFile';
+import DateTools from '../../../support/utils/dateTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-// import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-// import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
-// import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
+import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 
 let user;
-const notes = {
+const noteTypes = {
+  action: 'Action note',
+  administrative: 'Administrative note',
+  binding: 'Binding',
+  checkIn: 'Check in note',
+  provenance: 'Provenance',
+  electronicBookplate: 'Electronic bookplate',
+};
+const noteText = {
   administrative: 'Administrative note text',
+  electronicBookplate: 'Electronic bookplate note text',
   checkInNote: 'CheckInNote',
   checkOutNote: 'CheckOutNote',
-  electronicBookplate: 'Electronic bookplate note text',
 };
 const instance = {
   title: `C411509 folio instance-${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  itemNoteName: 'Electronic bookplate note',
+  itemNoteName: 'Electronic bookplate',
 };
+const electronicBookplateActionOptions = [
+  'Add note',
+  'Change note type',
+  'Find (full field search)',
+  'Mark as staff only',
+  'Remove all',
+  'Remove mark as staff only',
+];
+const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
+const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemBarcodesFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-${itemBarcodesFileName}`;
+const changedRecordsFileName = `${todayDate}-Changed-Records-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -52,17 +71,18 @@ describe('bulk-edit', () => {
           query: `"barcode"=="${instance.itemBarcode}"`,
         }).then((res) => {
           const itemData = res;
-          itemData.administrativeNotes = [notes.administrative];
+          instance.itemId = itemData.id;
+          itemData.administrativeNotes = [noteText.administrative];
           itemData.notes = [
             {
               itemNoteTypeId: instance.noteTypeId,
-              note: notes.electronicBookplate,
+              note: noteText.electronicBookplate,
               staffOnly: false,
             },
           ];
           itemData.circulationNotes = [
-            { noteType: 'Check in', note: notes.checkInNote, staffOnly: true },
-            { noteType: 'Check out', note: notes.checkOutNote, staffOnly: true },
+            { noteType: 'Check in', note: noteText.checkInNote, staffOnly: true },
+            { noteType: 'Check out', note: noteText.checkOutNote, staffOnly: true },
           ];
           cy.updateItemViaApi(itemData);
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, instance.itemBarcode);
@@ -92,77 +112,154 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(instance.itemBarcode);
-        // 4
         BulkEditActions.openActions();
-
-        const checkedColumnHeaders = [
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTES,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTES,
-        ];
-        const checkedColumnValues = Object.values(notes);
-
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(...checkedColumnHeaders);
-
-        checkedColumnHeaders.forEach((checkedColumnHeader, index) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            instance.itemBarcode,
-            checkedColumnHeader,
-            checkedColumnValues[index],
-          );
-        });
-
-        // 5
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          instance.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+          noteText.administrative,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          instance.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
+          noteText.electronicBookplate,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          instance.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+          `${noteText.checkInNote} (staff only)`,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+          instance.itemBarcode,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+          `${noteText.checkOutNote} (staff only)`,
+        );
+        BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyValueInRowByUUID(
           matchedRecordsFileName,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-          // firstInstance.uuid,
-          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
-          // firstInstance.title,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          instance.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+          noteText.administrative,
         );
+        BulkEditFiles.verifyValueInRowByUUID(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          instance.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
+          noteText.electronicBookplate,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          instance.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+          `${noteText.checkInNote} (staff only)`,
+        );
+        BulkEditFiles.verifyValueInRowByUUID(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+          instance.itemId,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+          `${noteText.checkOutNote} (staff only)`,
+        );
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyOptionsDropdown();
+        BulkEditActions.verifyRowIcons();
+        BulkEditActions.verifyGroupOptionsInSelectOptionsItemDropdown();
+        BulkEditActions.clickOptionsSelection();
+        BulkEditActions.verifyItemOptions();
+        BulkEditActions.changeNoteType(noteTypes.administrative, noteTypes.action);
+        BulkEditActions.verifyNoteTypeAbsentInNoteItemTypeDropdown(noteTypes.administrative);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.verifyNewBulkEditRow(1);
+        BulkEditActions.changeNoteType(noteTypes.checkIn, noteTypes.binding, 1);
+        BulkEditActions.verifyItemCheckInNoteActions(1);
+        BulkEditActions.verifyNoteTypeAbsentInNoteItemTypeDropdown(noteTypes.checkIn, 1);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.verifyNewBulkEditRow(2);
+        BulkEditActions.changeNoteType(noteTypes.electronicBookplate, noteTypes.provenance, 2);
+        BulkEditActions.verifyNoteTypeAbsentInNoteItemTypeDropdown(
+          noteTypes.electronicBookplate,
+          2,
+        );
+        BulkEditActions.verifyTheActionOptions(electronicBookplateActionOptions, 2);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
 
-        // BulkEditActions.openInAppStartBulkEditFrom();
+        const updatedNotesHeaderValueSets = [
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE, noteText.administrative],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BINDING_NOTE,
+            `${noteText.checkInNote} (staff only)`,
+          ],
+          [
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PROVENANCE_NOTE,
+            noteText.electronicBookplate,
+          ],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE, ''],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE, ''],
+        ];
+        BulkEditActions.confirmChanges();
+        BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
 
-        // BulkEditActions.verifyItemOptions();
-        // BulkEditActions.verifyItemCheckInNoteActions();
-        // BulkEditActions.duplicateCheckInNote();
+        updatedNotesHeaderValueSets.forEach((updatedNoteHeaderValue) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+            instance.itemBarcode,
+            ...updatedNoteHeaderValue,
+          );
+        });
 
-        // BulkEditActions.confirmChanges();
+        BulkEditActions.downloadPreview();
 
-        // const checkIn = [`${notes.checkInNote} (staff only)`, notes.checkInNote];
-        // const checkOut = [
-        //   `${notes.checkInNote} (staff only)`,
-        //   notes.checkInNote,
-        //   `${notes.checkOutNote} (staff only)`,
-        //   notes.checkOutNote,
-        // ];
-        // BulkEditActions.verifyChangesInAreYouSureForm('Check out note', checkOut);
-        // BulkEditActions.verifyChangesInAreYouSureForm('Check in note', checkIn);
-        // BulkEditActions.commitChanges();
-        // BulkEditSearchPane.waitFileUploading();
-        // BulkEditSearchPane.verifyChangedResults(item.barcode);
-        // BulkEditActions.openActions();
-        // BulkEditActions.downloadChangedCSV();
-        // ExportFile.verifyFileIncludes(changedRecordsFileName, [...checkIn, ...checkOut]);
+        updatedNotesHeaderValueSets.forEach((updatedNoteHeaderValue) => {
+          BulkEditFiles.verifyValueInRowByUUID(
+            previewFileName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+            instance.itemId,
+            ...updatedNoteHeaderValue,
+          );
+        });
 
-        // checkOut.forEach((value) => {
-        //   BulkEditSearchPane.verifyChangesUnderColumns('Check out note', value);
-        // });
-        // checkIn.forEach((value) => {
-        //   BulkEditSearchPane.verifyChangesUnderColumns('Check in note', value);
-        // });
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount(1);
 
-        // TopMenuNavigation.navigateToApp('Inventory');
-        // InventorySearchAndFilter.switchToItem();
-        // InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-        // ItemRecordView.waitLoading();
-        // ItemRecordView.checkCheckInNote(`${notes.checkInNote}${notes.checkInNote}`, 'Yes\nNo');
-        // ItemRecordView.checkCheckOutNote(
-        //   `${notes.checkOutNote}${notes.checkOutNote}${notes.checkInNote}${notes.checkInNote}`,
-        //   'Yes\nNo\nYes\nNo',
-        // );
+        updatedNotesHeaderValueSets.forEach((updatedNoteHeaderValue) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            instance.itemBarcode,
+            ...updatedNoteHeaderValue,
+          );
+        });
+
+        BulkEditActions.downloadChangedCSV();
+
+        updatedNotesHeaderValueSets.forEach((updatedNoteHeaderValue) => {
+          BulkEditFiles.verifyValueInRowByUUID(
+            changedRecordsFileName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+            instance.itemId,
+            ...updatedNoteHeaderValue,
+          );
+        });
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', instance.itemBarcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkActionNote(noteText.administrative);
+        ItemRecordView.checkBindingNote(noteText.checkInNote);
+        ItemRecordView.checkProvenanceNote(noteText.electronicBookplate);
       },
     );
   });
