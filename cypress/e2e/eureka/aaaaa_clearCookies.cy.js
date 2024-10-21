@@ -2,18 +2,7 @@ describe('Eureka - Clear All Cookies', () => {
   it(
     'Clear all cookies',
     {
-      tags: [
-        'criticalPath',
-        'smoke',
-        'extendedPath',
-        'eureka',
-        'eurekaPhase1',
-        'eurekaSnapshotECS',
-        'smokeECS',
-        'criticalPathECS',
-        'extendedPathECS',
-        'eurekaPreTest',
-      ],
+      tags: ['clearCookies', 'eureka'],
     },
     () => {
       // workaround for EUREKA-396 - otherwise tests may fail in consecutive runs for different tenants
