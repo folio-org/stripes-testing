@@ -268,7 +268,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       `${firstFund.name} (${firstFund.code})`,
     );
     Funds.closeTransactionDetails();
-
     Funds.closeMenu();
     Funds.closeMenu();
     FinanceHelp.searchByName(secondFund.name);
