@@ -12,14 +12,16 @@ import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import QickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
+import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-// import QueryModal, {
-//   QUERY_OPERATIONS,
-//   instanceFieldValues,
-// } from '../../../../support/fragments/bulk-edit/query-modal';
+import QueryModal, {
+  QUERY_OPERATIONS,
+  itemFieldValues,
+} from '../../../../support/fragments/bulk-edit/query-modal';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
@@ -38,14 +40,9 @@ let identifiersQueryFilename;
 let matchedRecordsQueryFileName;
 let previewQueryFileName;
 let changedRecordsQueryFileName;
+let errorsFromCommittingFileName;
 let previewFileName;
 let changedRecordsFileName;
-let downloadedFileNameForUpload;
-const staffSuppressOption = 'Staff suppress';
-const actions = {
-  setTrue: 'Set true',
-  setFalse: 'Set false',
-};
 const folioInstance = {
   title: `C496144 folio instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode1: `folioItem_available${getRandomPostfix()}`,
@@ -56,6 +53,7 @@ const marcInstance = {
   itemBarcode1: `Item_available${getRandomPostfix()}`,
   itemBarcode2: `Item_checkedOut${getRandomPostfix()}`,
 };
+const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const leader = QickMarcEditor.defaultValidLdr;
 const getMarcBibFields = (intsanceTitle) => {
   return [
@@ -145,11 +143,12 @@ describe('Bulk-edit', () => {
                 ],
               }).then((createdInstanceData) => {
                 folioInstance.uuid = createdInstanceData.instanceId;
+                folioInstance.holdingId = createdInstanceData.holdings[0].id;
 
                 cy.getInstanceById(folioInstance.uuid).then((instanceData) => {
                   folioInstance.hrid = instanceData.hrid;
                 });
-
+                // marc instance with items
                 cy.createMarcBibliographicViaAPI(leader, getMarcBibFields(marcInstance.title)).then(
                   (instanceId) => {
                     marcInstance.uuid = instanceId;
@@ -162,6 +161,8 @@ describe('Bulk-edit', () => {
                         permanentLocationId: locationId,
                         sourceId,
                       }).then((holdingData) => {
+                        marcInstance.holdingId = holdingData.id;
+
                         cy.createItem({
                           holdingsRecordId: holdingData.id,
                           materialType: { id: materialTypeId },
@@ -185,24 +186,23 @@ describe('Bulk-edit', () => {
                     });
                     ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
-                    // stopped here
-
-                    // BulkEditSearchPane.openQuerySearch();
-                    // BulkEditSearchPane.checkInstanceRadio();
-                    // BulkEditSearchPane.clickBuildQueryButton();
-                    // QueryModal.verify();
-                    // QueryModal.selectField(instanceFieldValues.staffSuppress);
-                    // QueryModal.verifySelectedField(instanceFieldValues.staffSuppress);
-                    // QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-                    // QueryModal.chooseValueSelect('False');
-                    // QueryModal.addNewRow();
-                    // QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
-                    // QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-                    // QueryModal.fillInValueTextfield('C477642', 1);
-                    // cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
-                    //   'getPreview',
-                    // );
-                    // QueryModal.clickTestQuery();
+                    BulkEditSearchPane.openQuerySearch();
+                    BulkEditSearchPane.checkItemsRadio();
+                    BulkEditSearchPane.clickBuildQueryButton();
+                    QueryModal.verify();
+                    QueryModal.selectField(itemFieldValues.itemStatus);
+                    QueryModal.verifySelectedField(itemFieldValues.itemStatus);
+                    QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+                    QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
+                    QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.CHECKED_OUT);
+                    QueryModal.addNewRow();
+                    QueryModal.selectField(itemFieldValues.instanceTitle, 1);
+                    QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
+                    QueryModal.fillInValueTextfield('C496144', 1);
+                    cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
+                      'getPreview',
+                    );
+                    QueryModal.clickTestQuery();
                   },
                 );
               });
@@ -230,229 +230,270 @@ describe('Bulk-edit', () => {
         'C496144 Verify "Replace with" action for Items status in Central tenant (consortia) (firebird)',
         { tags: ['smokeECS', 'firebird', 'C496144'] },
         () => {
-          // QueryModal.clickRunQuery();
-          // QueryModal.verifyClosed();
+          QueryModal.clickRunQuery();
+          QueryModal.verifyClosed();
           cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
-            matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
-            previewQueryFileName = `*-Updates-Preview-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
+            matchedRecordsQueryFileName = `${today}-Matched-Records-Query-${interceptedUuid}.csv`;
+            previewQueryFileName = `${today}-Updates-Preview-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `${today}-Changed-Records-Query-${interceptedUuid}.csv`;
+            errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}`;
 
-            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            // BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(2);
-            BulkEditSearchPane.verifyQueryHeadLine(
-              '(instance.staff_suppress == "false") AND (instance.title starts with "C477642")',
-            );
+            // BulkEditSearchPane.verifyQueryHeadLine(
+            //   '(instance.staff_suppress == "false") AND (instance.title starts with "C477642")',
+            // );
 
-            const instances = [folioInstance, marcInstance];
+            const itemBarcodes = [
+              folioInstance.itemBarcode1,
+              folioInstance.itemBarcode2,
+              marcInstance.itemBarcode1,
+              marcInstance.itemBarcode2,
+            ];
+            const itemBarcodeWithAvailableStatus = [
+              folioInstance.itemBarcode1,
+              marcInstance.itemBarcode1,
+            ];
+            const itemBarcodeWithCheckedOutStatus = [
+              folioInstance.itemBarcode2,
+              marcInstance.itemBarcode2,
+            ];
 
-            instances.forEach((instance) => {
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                instance.hrid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
-                instance.title,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.AVAILABLE,
+              );
+            });
+            itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
+              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.CHECKED_OUT,
               );
             });
 
             BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
             BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-            BulkEditActions.openActions();
-            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-            );
-            BulkEditSearchPane.verifyResultColumnTitles(
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-            );
 
-            instances.forEach((instance) => {
-              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                instance.hrid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'false',
-              );
-            });
-
+            // 2
             BulkEditActions.downloadMatchedResults();
 
-            instances.forEach((instance) => {
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
               BulkEditFiles.verifyValueInRowByUUID(
                 matchedRecordsQueryFileName,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-                instance.uuid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'false',
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.AVAILABLE,
+              );
+            });
+            itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                matchedRecordsQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.CHECKED_OUT,
               );
             });
 
-            BulkEditActions.openStartBulkEditInstanceForm();
+            // 3
+            BulkEditActions.openInAppStartBulkEditFrom();
             BulkEditSearchPane.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
             BulkEditSearchPane.isConfirmButtonDisabled(true);
-            BulkEditActions.selectOption(staffSuppressOption);
-            BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-            BulkEditActions.selectSecondAction(actions.setTrue);
-            BulkEditActions.verifySecondActionSelected(actions.setTrue);
-            BulkEditActions.verifyCheckboxAbsent();
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
-            BulkEditActions.confirmChanges();
-            BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
-            instances.forEach((instance) => {
+            // 4
+            BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
+            BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);
+            BulkEditActions.replaceWithIsDisabled();
+            BulkEditSearchPane.isConfirmButtonDisabled(false);
+
+            // 6
+
+            BulkEditActions.confirmChanges();
+            BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
+
+            itemBarcodes.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-                instance.hrid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'true',
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.MISSING,
               );
             });
 
-            BulkEditActions.verifyAreYouSureForm(2);
+            BulkEditActions.verifyAreYouSureForm(4);
+
+            // 7
             BulkEditActions.downloadPreview();
 
-            instances.forEach((instance) => {
+            itemBarcodes.forEach((barcode) => {
               BulkEditFiles.verifyValueInRowByUUID(
                 previewQueryFileName,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-                instance.uuid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'true',
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.MISSING,
               );
             });
 
+            // 8
             BulkEditActions.commitChanges();
             BulkEditActions.verifySuccessBanner(2);
 
-            instances.forEach((instance) => {
+            const holdingIds = [folioInstance.holdingId, marcInstance.holdingId];
+
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-                instance.hrid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'true',
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.MISSING,
               );
             });
+
+            BulkEditSearchPane.verifyErrorLabel('Bulk edit query', 2, 2);
+
+            // 9
+            holdingIds.forEach((id) => {
+              BulkEditSearchPane.verifyReasonForErrorByIdentifier(
+                id,
+                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
+              );
+            });
+
+            // 10
 
             BulkEditActions.openActions();
             BulkEditActions.downloadChangedCSV();
 
-            instances.forEach((instance) => {
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
               BulkEditFiles.verifyValueInRowByUUID(
                 changedRecordsQueryFileName,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-                instance.uuid,
-                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                'true',
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.MISSING,
               );
             });
 
-            instances.forEach((instance) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.selectYesfilterStaffSuppress();
-              InventorySearchAndFilter.searchInstanceByTitle(instance.title);
-              InventoryInstances.selectInstance();
-              InventoryInstance.waitLoading();
-              InventoryInstance.verifyStaffSuppress();
-            });
+            BulkEditActions.downloadErrors();
+            BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
+              [
+                folioInstance.holdingId,
+                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
+              ],
+              [
+                marcInstance.holdingId,
+                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
+              ],
+            ]);
 
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+            // 12
             BulkEditSearchPane.openLogsSearch();
             BulkEditLogs.verifyLogsPane();
-            BulkEditLogs.checkInstancesCheckbox();
-            BulkEditLogs.verifyCheckboxIsSelected('INSTANCE', true);
+
+            // 13
+            BulkEditLogs.checkItemsCheckbox();
+            BulkEditLogs.verifyCheckboxIsSelected('ITEMS', true);
+
+            // 14
             BulkEditLogs.clickActionsRunBy(user.username);
+            BulkEditLogs.verifyLogsRowActionWithoutMatchingErrorWithCommittingErrorsQuery();
+
+            // 15
             BulkEditLogs.downloadQueryIdentifiers();
+            // clarify what identifiers will be in this file
             ExportFile.verifyFileIncludes(identifiersQueryFilename, [
               folioInstance.uuid,
               marcInstance.uuid,
             ]);
-            BulkEditSearchPane.openIdentifierSearch();
-            BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
-              'Instances',
-              'Instance UUIDs',
-            );
-            BulkEditSearchPane.uploadRecentlyDownloadedFile(identifiersQueryFilename).then(
-              (changedFileName) => {
-                downloadedFileNameForUpload = changedFileName;
-                previewFileName = `*-Updates-Preview-${downloadedFileNameForUpload}`;
-                changedRecordsFileName = `*-Changed-Records-${downloadedFileNameForUpload}`;
 
-                instances.forEach((instance) => {
-                  BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                    instance.hrid,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
-                    instance.title,
-                  );
-                });
+            // 16
+            BulkEditLogs.downloadFileWithMatchingRecords();
 
-                BulkEditActions.openActions();
-                BulkEditActions.openStartBulkEditInstanceForm();
-                BulkEditActions.selectOption(staffSuppressOption);
-                BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
-                BulkEditActions.selectSecondAction(actions.setFalse);
-                BulkEditActions.verifySecondActionSelected(actions.setFalse);
-                BulkEditActions.verifyCheckboxAbsent();
-                BulkEditSearchPane.isConfirmButtonDisabled(false);
-                BulkEditActions.confirmChanges();
-                BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                matchedRecordsQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.AVAILABLE,
+              );
+            });
+            itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                matchedRecordsQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.CHECKED_OUT,
+              );
+            });
 
-                instances.forEach((instance) => {
-                  BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-                    instance.hrid,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                    'false',
-                  );
-                });
+            // 17
+            BulkEditLogs.downloadFileWithProposedChanges();
 
-                BulkEditActions.verifyAreYouSureForm(2);
-                BulkEditSearchPane.verifyPreviousPaginationButtonInAreYouSureFormDisabled();
-                BulkEditSearchPane.verifyNextPaginationButtonInAreYouSureFormDisabled();
-                BulkEditActions.downloadPreview();
+            itemBarcodes.forEach((barcode) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                previewQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.MISSING,
+              );
+            });
 
-                instances.forEach((instance) => {
-                  BulkEditFiles.verifyValueInRowByUUID(
-                    previewFileName,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-                    instance.uuid,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                    'false',
-                  );
-                });
+            // 18
+            BulkEditLogs.downloadFileWithUpdatedRecords();
 
-                BulkEditActions.commitChanges();
-                BulkEditActions.verifySuccessBanner(2);
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                changedRecordsQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+                barcode,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+                ITEM_STATUS_NAMES.MISSING,
+              );
+            });
 
-                instances.forEach((instance) => {
-                  BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-                    instance.hrid,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                    'false',
-                  );
-                });
+            // 19
+            BulkEditLogs.downloadFileWithCommitErrors();
+            BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
+              [
+                folioInstance.holdingId,
+                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
+              ],
+              [
+                marcInstance.holdingId,
+                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
+              ],
+            ]);
 
-                BulkEditActions.openActions();
-                BulkEditActions.downloadChangedCSV();
+            // 20
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
-                instances.forEach((instance) => {
-                  BulkEditFiles.verifyValueInRowByUUID(
-                    changedRecordsFileName,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-                    instance.uuid,
-                    BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,
-                    'false',
-                  );
-                });
-
-                instances.forEach((instance) => {
-                  TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-                  InventorySearchAndFilter.searchInstanceByTitle(instance.title);
-                  InventoryInstances.selectInstance();
-                  InventoryInstance.waitLoading();
-                  InventoryInstance.verifyNoStaffSuppress();
-                });
-              },
-            );
+            itemBarcodeWithAvailableStatus.forEach((barcode) => {
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              InventorySearchAndFilter.switchToItem();
+              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+              ItemRecordView.waitLoading();
+              ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.MISSING);
+            });
+            itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              InventorySearchAndFilter.switchToItem();
+              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+              ItemRecordView.waitLoading();
+              ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
+            });
           });
         },
       );
