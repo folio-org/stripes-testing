@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C387459 Add multiple 001s when deriving "MARC Bibliographic" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387459'] },
         () => {
           // #1 - #3 Open the "Instance" record view
           InventoryInstances.searchByTitle(createdRecordIDs[0]);

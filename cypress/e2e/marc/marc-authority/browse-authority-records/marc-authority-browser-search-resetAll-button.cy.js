@@ -59,7 +59,7 @@ describe('MARC', () => {
 
       it(
         'C422027 Verify that clicking on "Reset all" button will return focus and cursor to the Browse box (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422027'] },
         () => {
           MarcAuthoritiesBrowseSearch.searchBy(testData.searchOption, testData.marcValue);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);

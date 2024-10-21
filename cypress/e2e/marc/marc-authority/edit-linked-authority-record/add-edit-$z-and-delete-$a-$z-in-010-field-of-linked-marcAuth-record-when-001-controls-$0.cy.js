@@ -137,7 +137,7 @@ describe('MARC', () => {
 
       it(
         'C422055 Q release | Add/Edit "$z" and delete "$a" / "$z" subfields in "010" field of linked "MARC authority" record when "001" controls "$0" of linked MARC bib field (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422055'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, linkingTagAndValues.value);
           MarcAuthorities.checkResultList([linkingTagAndValues.value]);

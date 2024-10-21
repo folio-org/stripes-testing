@@ -129,7 +129,7 @@ describe('MARC', () => {
 
       it(
         'C374160 Edit any field value of linked "MARC Authority" record but not "1XX" and "010" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374160'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityTitle);

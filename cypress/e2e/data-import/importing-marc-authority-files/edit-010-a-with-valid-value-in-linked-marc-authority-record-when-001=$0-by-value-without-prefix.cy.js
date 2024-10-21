@@ -225,7 +225,7 @@ describe('Data Import', () => {
 
     it(
       'C374184 Edit "010 $a" with valid value in linked "MARC Authority" record when "001" = "$0" by value without prefix (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374184'] },
       () => {
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();

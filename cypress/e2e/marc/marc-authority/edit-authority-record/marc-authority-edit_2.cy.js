@@ -73,7 +73,7 @@ describe('MARC', () => {
 
       it(
         'C375120 User cannot delete "1XX" field of "MARC authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375120'] },
         () => {
           const rowIndexTag1XX = 14;
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);

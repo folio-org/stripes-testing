@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C684'] },
       () => {
         cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
           path: TopMenu.eholdingsPath,
@@ -64,7 +64,7 @@ describe('eHoldings', () => {
 
     it(
       'C9240 Selected Title+Package: Add a value to a custom label (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C9240'] },
       () => {
         cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
           path: TopMenu.eholdingsPath,

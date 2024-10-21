@@ -27,7 +27,7 @@ async function getTestHistory(api, caseId, runId) {
     return response.data;
   } catch (error) {
     console.error('Error fetching test history:', error);
-    return [];
+    return { results: [] };
   }
 }
 

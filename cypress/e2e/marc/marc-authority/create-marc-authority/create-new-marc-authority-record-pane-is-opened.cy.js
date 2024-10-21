@@ -46,7 +46,7 @@ describe('MARC', () => {
 
       it(
         'C397394 "Create a new MARC authority record" pane is opened after clicking on "+ New" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C397394'] },
         () => {
           // 1 Click on "Actions" button in second pane
           MarcAuthorities.clickActionsButton();

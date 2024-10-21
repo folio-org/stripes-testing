@@ -172,7 +172,7 @@ describe('MARC', () => {
 
         it(
           'C366553 Derive | Unlink existing unsaved linked "MARC Bib" field from "MARC Authority" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C366553'] },
           () => {
             fields.forEach((field) => {
               QuickMarcEditor.checkLinkButtonExistByRowIndex(field.rowIndex);

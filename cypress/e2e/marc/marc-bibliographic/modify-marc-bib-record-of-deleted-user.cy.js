@@ -85,7 +85,7 @@ describe('MARC', () => {
 
     it(
       'C358963 Verify that user has access to "quickMARC" when user who imported "MARC Bib" record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358963'] },
       () => {
         UsersSearchPane.searchByUsername(user.userAProperties.username);
         UsersSearchPane.openUser(user.userAProperties.username);

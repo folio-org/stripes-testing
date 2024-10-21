@@ -250,7 +250,7 @@ describe('Inventory', () => {
 
     it(
       'C405530 Verify that call numbers of other types are not displayed in browse result list for certain call number type when user uses pagination buttons (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C405530'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

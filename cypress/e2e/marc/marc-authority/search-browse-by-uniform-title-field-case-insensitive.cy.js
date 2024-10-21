@@ -68,7 +68,7 @@ describe('MARC', () => {
 
     it(
       'C466090 Search/Browse by "Unifrom title" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466090'] },
       () => {
         // execute search by "Keyword" option
         uniformTitleFields.forEach((query) => {

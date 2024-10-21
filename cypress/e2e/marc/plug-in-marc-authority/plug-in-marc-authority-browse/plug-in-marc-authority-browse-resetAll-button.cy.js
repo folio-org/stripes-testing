@@ -67,7 +67,7 @@ describe('MARC', () => {
 
       it(
         'C422028 MARC Authority plug-in | Verify that clicking on "Reset all" button will return focus and cursor to the Browse box (spitfire)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422028'] },
         () => {
           MarcAuthorities.searchByParameter('Geographic name', searchValue);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);

@@ -106,7 +106,7 @@ describe('Staff slips', () => {
 
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItemGui(instanceData.folioInstances[0].barcodes[0]);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
     },
   );
 });

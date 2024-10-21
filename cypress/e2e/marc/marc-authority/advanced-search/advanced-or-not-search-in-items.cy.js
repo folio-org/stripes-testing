@@ -156,7 +156,7 @@ describe('MARC', () => {
 
       it(
         'C400623 Search Items using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C400623'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventoryInstances.clickAdvSearchButton();

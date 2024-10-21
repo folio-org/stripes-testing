@@ -75,7 +75,7 @@ describe('Inventory', () => {
 
       it(
         'C451643 Successful saving toast message is displayed after editing and saving "Classification browse" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C451643'] },
         () => {
           ClassificationBrowse.checkClassificationBrowseInTable(
             testData.classificationBrowseName,

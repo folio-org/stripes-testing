@@ -177,7 +177,7 @@ describe('MARC', () => {
 
         it(
           'C388638 Auto-linking fields having "$0" when deriving new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388638'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

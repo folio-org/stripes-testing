@@ -96,7 +96,7 @@ describe('MARC', () => {
 
         it(
           'C405537 Shared "MARC authority" record edited on Member 1 tenant is updated in Central and Member 2 tenants (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C405537'] },
           () => {
             MarcAuthorities.searchBeats(testData.title);
             MarcAuthorities.select(createdAuthorityID);

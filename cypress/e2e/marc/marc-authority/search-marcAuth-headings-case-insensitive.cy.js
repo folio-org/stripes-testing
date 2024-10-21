@@ -78,7 +78,7 @@ describe('MARC', () => {
 
     it(
       'C466093 Search by "Children\'s subject heading" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466093'] },
       () => {
         testData.headingsC466093.forEach((query) => {
           MarcAuthorities.searchBeats(query);
@@ -97,7 +97,7 @@ describe('MARC', () => {
 
     it(
       'C466092 Search/Browse by "Genre" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466092'] },
       () => {
         testData.headingsC466092.forEach((query) => {
           MarcAuthorities.searchBeats(query);
@@ -129,7 +129,7 @@ describe('MARC', () => {
 
     it(
       'C466091 Search/Browse by "Subject" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466091'] },
       () => {
         testData.headingsC466091.forEach((query) => {
           MarcAuthorities.searchBeats(query);

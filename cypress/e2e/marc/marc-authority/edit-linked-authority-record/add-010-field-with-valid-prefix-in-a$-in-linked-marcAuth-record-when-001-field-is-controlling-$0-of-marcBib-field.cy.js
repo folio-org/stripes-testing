@@ -132,7 +132,7 @@ describe('MARC', () => {
 
       it(
         'C422060 Q release | Add "010" field with valid prefix in "$a" subfield in linked "MARC authority" record when "001" field is controlling "$0" of MARC bib\'s field (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422060'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, linkingTagAndValues.value);
           MarcAuthorities.selectTitle(linkingTagAndValues.itemName);

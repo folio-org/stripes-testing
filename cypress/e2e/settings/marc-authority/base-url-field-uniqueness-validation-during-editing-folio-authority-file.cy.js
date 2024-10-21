@@ -72,7 +72,7 @@ describe('MARC', () => {
 
       it(
         'C440091 Uniqueness "Base URL" field validation during editing Folio "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440091'] },
         () => {
           nonUniqueBaseUrls.forEach((nonUniqueBaseUrl) => {
             ManageAuthorityFiles.clickEditButton(folioAuthorityFile.name);

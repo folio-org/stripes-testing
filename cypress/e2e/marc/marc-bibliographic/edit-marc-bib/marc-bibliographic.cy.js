@@ -43,7 +43,7 @@ describe('MARC', () => {
 
       it(
         'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C10950'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -79,7 +79,7 @@ describe('MARC', () => {
 
       it(
         'C10924 Add a field to a record using quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C10924'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -114,7 +114,7 @@ describe('MARC', () => {
 
       it(
         'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C10928'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -146,7 +146,7 @@ describe('MARC', () => {
 
       it(
         'C10957 Attempt to delete a required field (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C10957'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -165,7 +165,7 @@ describe('MARC', () => {
 
       it(
         'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C10951'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -216,7 +216,7 @@ describe('MARC', () => {
 
       it(
         'C345388 Derive a MARC bib record (spitfire)',
-        { tags: ['smokeBroken', 'spitfire'] },
+        { tags: ['smokeBroken', 'spitfire', 'C345388'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,

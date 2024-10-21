@@ -77,7 +77,7 @@ describe('Inventory', () => {
 
         it(
           'C402781 Edit "Classification browse" option from Central tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C402781'] },
           () => {
             ClassificationBrowse.checkClassificationBrowseInTable(
               testData.classificationBrowseName,

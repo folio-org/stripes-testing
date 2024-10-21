@@ -122,7 +122,7 @@ describe('MARC', () => {
 
         it(
           'C422145 "Link headings" button disabling/enabling when creating new "MARC Bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422145'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();

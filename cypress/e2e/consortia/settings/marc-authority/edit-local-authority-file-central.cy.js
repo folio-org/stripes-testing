@@ -77,7 +77,7 @@ describe('MARC', () => {
 
         it(
           'C436902 Edit all editable fields of Local "Authority file" which doesn\'t have assigned "MARC authority" records, from Central tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C436902'] },
           () => {
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
