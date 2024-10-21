@@ -3,10 +3,11 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import TopMenu from '../../../support/fragments/topMenu';
 
 let user;
-const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
+const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 
 describe(
   'bulk-edit',
@@ -18,7 +19,6 @@ describe(
   () => {
     describe('csv approach', () => {
       beforeEach('create test data', () => {
-        cy.clearLocalStorage();
         cy.createTempUser([
           permissions.bulkEditCsvView.gui,
           permissions.bulkEditCsvEdit.gui,
@@ -31,36 +31,32 @@ describe(
             waiter: BulkEditSearchPane.waitLoading,
           });
 
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+          FileManager.createFile(
+            `cypress/fixtures/${invalidUserBarcodesFileName}`,
+            getRandomPostfix(),
+          );
         });
       });
 
       afterEach('delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
       });
 
       it(
-        'C347872 Populating preview of matched records (firebird)',
-        { tags: ['smoke', 'firebird', 'shiftLeft', 'C347872'] },
+        'C360556 Populating preview of matched records in case no matches (firebird)',
+        { tags: ['smoke', 'firebird', 'shiftLeft', 'C360556'] },
         () => {
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-          BulkEditSearchPane.uploadFile(userBarcodesFileName);
+          BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();
-          BulkEditSearchPane.verifyUserBarcodesResultAccordion();
-          BulkEditSearchPane.verifyMatchedResults(user.barcode);
+          BulkEditSearchPane.matchedAccordionIsAbsent();
+          BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
 
-          BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-          BulkEditSearchPane.verifyUsersActionShowColumns();
-
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Last name');
-          BulkEditSearchPane.changeShowColumnCheckbox('Last name');
-          BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude('Last name');
-
-          BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
-          BulkEditSearchPane.verifyResultColumnTitles('Email');
+          BulkEditActions.openActions();
+          BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
         },
       );
     });
