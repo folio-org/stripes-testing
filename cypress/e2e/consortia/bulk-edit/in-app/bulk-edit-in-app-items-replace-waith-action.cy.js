@@ -41,8 +41,6 @@ let matchedRecordsQueryFileName;
 let previewQueryFileName;
 let changedRecordsQueryFileName;
 let errorsFromCommittingFileName;
-let previewFileName;
-let changedRecordsFileName;
 const folioInstance = {
   title: `C496144 folio instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode1: `folioItem_available${getRandomPostfix()}`,
@@ -217,12 +215,10 @@ describe('Bulk-edit', () => {
         InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
         FileManager.deleteFile(`cypress/fixtures/downloaded-${identifiersQueryFilename}`);
         FileManager.deleteFileFromDownloadsByMask(
-          identifiersQueryFilename,
           matchedRecordsQueryFileName,
           previewQueryFileName,
           changedRecordsQueryFileName,
-          previewFileName,
-          changedRecordsFileName,
+          errorsFromCommittingFileName,
         );
       });
 
@@ -242,11 +238,11 @@ describe('Bulk-edit', () => {
             changedRecordsQueryFileName = `${today}-Changed-Records-Query-${interceptedUuid}.csv`;
             errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}`;
 
-            // BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(2);
-            // BulkEditSearchPane.verifyQueryHeadLine(
-            //   '(instance.staff_suppress == "false") AND (instance.title starts with "C477642")',
-            // );
+            BulkEditSearchPane.verifyBulkEditQueryPaneExists();
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(4);
+            BulkEditSearchPane.verifyQueryHeadLine(
+              '(instance.staff_suppress == "false") AND (instance.title starts with "C477642")',
+            );
 
             const itemBarcodes = [
               folioInstance.itemBarcode1,
@@ -318,7 +314,6 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.isConfirmButtonDisabled(false);
 
             // 6
-
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
@@ -370,7 +365,6 @@ describe('Bulk-edit', () => {
             });
 
             // 10
-
             BulkEditActions.openActions();
             BulkEditActions.downloadChangedCSV();
 
@@ -395,6 +389,14 @@ describe('Bulk-edit', () => {
                 `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
               ],
             ]);
+
+            // remove earlier downloaded files
+            FileManager.deleteFileFromDownloadsByMask(
+              matchedRecordsQueryFileName,
+              previewQueryFileName,
+              changedRecordsQueryFileName,
+              errorsFromCommittingFileName,
+            );
 
             // 12
             BulkEditSearchPane.openLogsSearch();
