@@ -136,7 +136,7 @@ describe('MARC', () => {
 
       it(
         'C376600 Verify that user cant delete "$a" subfield from "010" field of linked "MARC Authority" record when "$z" is present and "010" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C376600'] },
         () => {
           MarcAuthorities.searchByParameter(testData.searchOption, testData.authorityTitle);
 

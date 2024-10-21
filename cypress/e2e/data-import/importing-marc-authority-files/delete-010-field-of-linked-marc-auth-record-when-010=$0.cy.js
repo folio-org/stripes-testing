@@ -223,7 +223,7 @@ describe('Data Import', () => {
 
     it(
       'C374182 Delete "010" field of linked "MARC Authority" record when "010" = "$0" (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374182'] },
       () => {
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();

@@ -149,7 +149,7 @@ describe('MARC', () => {
 
         it(
           'C388501 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C388501'] },
           () => {
             // #1 Find and open detail view of "MARC Bib" record from precondition, ex. of search query:
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

@@ -51,7 +51,7 @@ describe('MARC', () => {
 
       it(
         'C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)',
-        { tags: ['smoke', 'authority', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'authority', 'spitfire', 'shiftLeft', 'C360521'] },
         () => {
           DataImport.uploadFileViaApi(
             'corporate_name(prefix_in_010Sa)sc_02.mrc',

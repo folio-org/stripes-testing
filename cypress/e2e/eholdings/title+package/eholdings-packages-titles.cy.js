@@ -39,7 +39,7 @@ describe('eHoldings', () => {
 
     it(
       'C354003 Verify that "Export" button become disabled when user does not choose any fields to export (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C354003'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyPackageInResults(testData.packageName);

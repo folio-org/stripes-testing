@@ -199,7 +199,7 @@ describe('Data Import', () => {
 
     it(
       'C385663 Update "$0" in linked repeatable field (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C385663'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

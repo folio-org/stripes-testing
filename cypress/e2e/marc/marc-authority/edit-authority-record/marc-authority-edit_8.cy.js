@@ -68,7 +68,7 @@ describe('MARC', () => {
 
       it(
         'C375141 Add/edit/delete "010" field of "MARC authority" record not linked to a "MARC bibliographic" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375141'] },
         () => {
           MarcAuthorities.searchAndVerify(
             testData.authorityB.searchOption,

@@ -131,7 +131,7 @@ describe('Inventory', () => {
 
     it(
       'C468178 Browse for classifications of Instance which has each classification type using "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468178'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);

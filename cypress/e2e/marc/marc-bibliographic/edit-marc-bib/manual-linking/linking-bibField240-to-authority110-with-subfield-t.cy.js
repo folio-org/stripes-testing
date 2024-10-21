@@ -108,7 +108,7 @@ describe('MARC', () => {
 
         it(
           'C374111 Link the "240" of "MARC Bib" field with "110" field with a $t of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C374111'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();

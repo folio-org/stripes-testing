@@ -90,7 +90,7 @@ describe('MARC', () => {
 
       it(
         'C405549 User can edit local "MARC Bib" in member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C405549'] },
         () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.inventoryPath,

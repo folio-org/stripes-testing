@@ -28,7 +28,7 @@ describe('MARC', () => {
       it(
         'C422105 User cannot create new "MARC bib" record without "quickMARC: Create a new MARC bibliographic record" permission (spitfire) (TaaS)',
         {
-          tags: ['extendedPath', 'spitfire'],
+          tags: ['extendedPath', 'spitfire', 'C422105'],
         },
         () => {
           // Open "Inventory" app

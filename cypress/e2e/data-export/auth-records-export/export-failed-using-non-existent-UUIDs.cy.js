@@ -51,7 +51,7 @@ describe('Data Export', () => {
 
     it(
       'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
-      { tags: ['extendedPathBroken', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire', 'C353209'] },
       () => {
         MarcAuthorities.searchBy('Keyword', searchHeading);
         MarcAuthorities.downloadSelectedRecordWithRowIdx();

@@ -131,7 +131,7 @@ describe('MARC', () => {
 
     it(
       'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
-      { tags: ['criticalPath', 'spitfire'], retries: 1 },
+      { tags: ['criticalPath', 'spitfire', 'C387450'], retries: 1 },
       () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstances.selectInstance();
@@ -178,7 +178,7 @@ describe('MARC', () => {
 
     it(
       'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C350646'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(instanceIds[1]);
@@ -210,7 +210,7 @@ describe('MARC', () => {
 
     it(
       'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350757'] },
       () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstance.goToMarcHoldingRecordAdding();
@@ -257,7 +257,7 @@ describe('MARC', () => {
 
     it(
       'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C359242'] },
       () => {
         InventoryInstances.searchBySource(testData.sourceMARC);
         InventoryInstances.selectInstance();

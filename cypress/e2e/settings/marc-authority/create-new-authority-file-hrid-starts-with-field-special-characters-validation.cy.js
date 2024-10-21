@@ -44,7 +44,7 @@ describe('MARC', () => {
 
       it(
         'C436951 "HRID starts with" field alpha and special characters validation during creation of new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C436951'] },
         () => {
           invalidHridStartsWith.forEach((hridStartsWith) => {
             const localAuthFile = {

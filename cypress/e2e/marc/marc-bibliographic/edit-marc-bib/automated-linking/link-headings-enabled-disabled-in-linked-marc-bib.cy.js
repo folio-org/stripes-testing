@@ -137,7 +137,7 @@ describe('MARC', () => {
 
         it(
           'C388533 "Link headings" button enabling/disabling when edit "MARC bib" having linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388533'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

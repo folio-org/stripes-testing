@@ -116,7 +116,7 @@ describe('MARC', () => {
 
       it(
         'C387453 "008" field existence validation when edit imported "MARC authority" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387453'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
           MarcAuthorities.select(createdAuthorityIDs[0]);

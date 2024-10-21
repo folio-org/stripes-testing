@@ -139,7 +139,7 @@ describe('MARC', () => {
 
     it(
       'C389500 Verify that "Call number type" is correctly mapped after importing and editing. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C389500'] },
       () => {
         InventoryInstances.searchByTitle(recordIDs[0]);
         for (let i = 0; i < holdingsFile.numOfRecords; i++) {

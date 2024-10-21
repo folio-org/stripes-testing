@@ -207,7 +207,7 @@ describe('MARC', () => {
 
       it(
         'C407633 Update shared linked "MARC Authority" record in member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C407633'] },
         () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.marcAuthorities,

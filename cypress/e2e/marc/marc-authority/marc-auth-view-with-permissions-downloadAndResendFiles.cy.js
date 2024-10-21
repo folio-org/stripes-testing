@@ -34,7 +34,7 @@ describe('MARC', () => {
 
     it(
       'C375135 User with "Export manager: Download and re-send files" permission can view report options for "MARC authority" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C375135'] },
       () => {
         const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
         const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();

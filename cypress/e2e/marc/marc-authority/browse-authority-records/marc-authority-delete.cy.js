@@ -50,7 +50,7 @@ describe('MARC', () => {
 
       it(
         'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C357549'] },
         () => {
           DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
           JobProfiles.waitFileIsUploaded();
@@ -72,7 +72,7 @@ describe('MARC', () => {
 
       it(
         'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C350643'] },
         () => {
           DataImport.uploadFile('marcFileForC350643.mrc', testData.fileName);
           JobProfiles.waitFileIsUploaded();

@@ -178,7 +178,7 @@ describe('MARC', () => {
 
         it(
           'C388515 Click on "Link headings" button when edit "MARC bib" >> unlink some fields >> click on "Link headings" button again (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388515'] },
           () => {
             // #1 Find and open detail view of "MARC Bib" record from precondition, ex. of search query:
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
