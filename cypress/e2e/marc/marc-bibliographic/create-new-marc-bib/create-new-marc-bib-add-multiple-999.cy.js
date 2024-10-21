@@ -37,7 +37,7 @@ describe('MARC', () => {
 
       it(
         'C380716 Add multiple 999s when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380716'] },
         () => {
           // Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
           InventoryInstance.newMarcBibRecord();

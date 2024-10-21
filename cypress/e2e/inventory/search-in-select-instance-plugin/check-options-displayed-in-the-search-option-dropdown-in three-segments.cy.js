@@ -61,7 +61,7 @@ describe('Inventory', () => {
 
     it(
       'C466161 Find Instance plugin | Check what options displayed in the search option dropdown in three segments: Instance, Holdings, Item (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466161'] },
       () => {
         // 1 Click on the Search option dropdown placed at the "Search & filter" pane
         SelectInstanceModal.verifyInstanceSearchOptionsInOrder();

@@ -107,7 +107,7 @@ describe('MARC', () => {
 
     it(
       'C357063 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C357063'] },
       () => {
         HoldingsRecordView.close();
         InventoryInstance.openHoldingView();

@@ -108,7 +108,7 @@ describe('Inventory', () => {
 
       it(
         'C464068 Search by "Contributor" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C464068'] },
         () => {
           testData.searchQueriesKeyword.forEach((query, index) => {
             InventoryInstances.searchByTitle(query);

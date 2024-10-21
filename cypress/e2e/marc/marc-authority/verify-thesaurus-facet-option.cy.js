@@ -47,7 +47,7 @@ describe('MARC', () => {
 
     it(
       'C365627 Search | Verify that the "Thesaurus" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C365627'] },
       () => {
         MarcAuthorities.verifyThesaurusAccordionAndClick();
         MarcAuthorities.chooseThesaurus(thesaurusType);

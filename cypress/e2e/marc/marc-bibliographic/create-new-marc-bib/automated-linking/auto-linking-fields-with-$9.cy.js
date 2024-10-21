@@ -150,7 +150,7 @@ describe('MARC', () => {
 
         it(
           'C422151 Auto-link fields having "$9" when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C422151'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

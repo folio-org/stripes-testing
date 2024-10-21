@@ -34,7 +34,7 @@ describe('Inventory', () => {
 
     it(
       'C466147 No results found when searching by "Classification, normalized" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466147'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.classificationOption);
         InventorySearchAndFilter.executeSearch(testData.searchQuery);

@@ -81,7 +81,7 @@ describe('MARC', () => {
 
         it(
           'C423565 Link MARC Bib with created on UI MARC authority record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C423565'] },
           () => {
             // Creating marc authority part
             MarcAuthorities.clickActionsAndNewAuthorityButton();

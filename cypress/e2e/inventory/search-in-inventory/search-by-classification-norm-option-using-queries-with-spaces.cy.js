@@ -74,7 +74,7 @@ describe('Inventory', () => {
 
     it(
       'C466153 Search by "Classification, normalized" search option using queries with spaces (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C466153'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOption(testData.classificationOption);

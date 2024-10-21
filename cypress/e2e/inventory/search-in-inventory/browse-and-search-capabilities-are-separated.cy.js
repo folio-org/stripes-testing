@@ -39,7 +39,7 @@ describe('Inventory', () => {
 
     it(
       'C368482 Browse and Search capabilities are separated\n (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C368482'] },
       () => {
         cy.reload();
         InventorySearchAndFilter.verifySearchAndFilterPane();

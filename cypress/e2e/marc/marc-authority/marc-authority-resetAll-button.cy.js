@@ -28,7 +28,7 @@ describe('MARC', () => {
 
     it(
       'C422026 Verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C422026'] },
       () => {
         MarcAuthorities.searchBeats(searchOption);
         MarcAuthorities.verifySearchResultTabletIsAbsent(false);

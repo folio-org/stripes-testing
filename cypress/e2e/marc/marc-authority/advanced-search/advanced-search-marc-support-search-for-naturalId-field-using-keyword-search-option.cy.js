@@ -53,7 +53,7 @@ describe('MARC', () => {
 
       it(
         'C350617 Advanced search MARC: support search for "naturalId" field using "Keyword" search option (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350617'] },
         () => {
           // Step 1: Click on the "Advanced search" button at the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();

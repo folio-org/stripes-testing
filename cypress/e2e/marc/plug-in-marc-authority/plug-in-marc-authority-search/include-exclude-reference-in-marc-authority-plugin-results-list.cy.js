@@ -136,7 +136,7 @@ describe('MARC', () => {
 
       it(
         'C380433 Include/exclude Reference and Auth/Ref records in MARC authority plug-in results list while searching (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380433'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag711);

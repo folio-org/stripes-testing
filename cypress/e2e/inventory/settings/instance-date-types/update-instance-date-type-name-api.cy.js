@@ -42,7 +42,7 @@ describe('Inventory', () => {
 
       it(
         'C506694 Update of Date type\'s "name" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C506694'] },
         () => {
           cy.getUserToken(user.username, user.password);
           cy.patchInstanceDateTypeViaAPI(

@@ -92,7 +92,7 @@ describe('MARC', () => {
 
       it(
         'C440123 MARC Authority plug-in | Search by "LCCN" option using a query with asterisk when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces. (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440123'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

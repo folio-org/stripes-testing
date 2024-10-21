@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
       it(
         'C466073 Search by "OCLC" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C466073'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);

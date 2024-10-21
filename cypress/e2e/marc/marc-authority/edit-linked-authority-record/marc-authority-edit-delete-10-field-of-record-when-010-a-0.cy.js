@@ -145,7 +145,7 @@ describe('MARC', () => {
 
       it(
         'C374161 Delete "010" field of linked "MARC Authority" record when "010 $a" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374161'] },
         () => {
           MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
 

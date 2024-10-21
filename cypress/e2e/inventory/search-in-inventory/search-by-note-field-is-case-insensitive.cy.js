@@ -111,7 +111,7 @@ describe('Inventory', () => {
 
       it(
         'C466074 Search by "Note" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C466074'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventorySearchAndFilter.selectSearchOptions(testData.instanceNotesOption, '');
