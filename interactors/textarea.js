@@ -34,5 +34,8 @@ export default HTML.extend('text area')
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     focus: ({ find }) => find(TextField()).focus(),
-    clear: ({ find }) => find(IconButton({ icon: 'times-circle-solid' })).click(),
+    clear: async ({ perform, find }) => {
+      await perform((el) => el.querySelector('textarea').focus());
+      await find(IconButton({ icon: 'times-circle-solid' })).click();
+    },
   });
