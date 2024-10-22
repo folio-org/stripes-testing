@@ -22,7 +22,7 @@ describe('Eureka', () => {
           {
             application: 'app-consortia',
             table: 'Procedural',
-            resource: 'Consortia Inventory Share Local Instance',
+            resource: 'Consortia Inventory Local Sharing-Instances',
             action: 'Execute',
           },
         ],

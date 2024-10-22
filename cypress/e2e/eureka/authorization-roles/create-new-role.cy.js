@@ -31,6 +31,11 @@ describe('Eureka', () => {
             resource: 'Settings Tags Enabled',
             action: 'View',
           },
+          {
+            table: 'Settings',
+            resource: 'UI-Tags Settings',
+            action: 'View',
+          },
         ],
         capabilitiesToSelect: [
           {
@@ -47,7 +52,7 @@ describe('Eureka', () => {
         expectedRowCounts: {
           capabilities: {
             Data: 2,
-            Settings: 2,
+            Settings: 3,
           },
           capabilitySets: {
             Settings: 1,

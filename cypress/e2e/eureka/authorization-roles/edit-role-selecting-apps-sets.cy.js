@@ -16,7 +16,7 @@ describe('Eureka', () => {
           {
             application: 'app-consortia',
             table: 'Procedural',
-            resource: 'Consortia Inventory Share Local Instance',
+            resource: 'Consortia Inventory Local Sharing-Instances',
             action: 'Execute',
           },
         ],
@@ -79,6 +79,12 @@ describe('Eureka', () => {
             resource: 'Configuration Entries Collection',
             action: 'View',
           },
+          {
+            application: 'app-platform-full',
+            table: 'Settings',
+            resource: 'UI-Tags Settings',
+            action: 'View',
+          },
         ],
         newCapabilities: [
           {
@@ -105,7 +111,7 @@ describe('Eureka', () => {
             Settings: 1,
           },
           capabilities: {
-            Settings: 2,
+            Settings: 3,
             Procedural: 1,
             Data: 2,
           },

@@ -14,7 +14,7 @@ describe('Eureka', () => {
           {
             application: applications[0],
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Consortia Inventory Share Local Instance',
+            resource: 'Consortia Inventory Local Sharing-Instances',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
@@ -96,6 +96,12 @@ describe('Eureka', () => {
             table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Module Notes Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            application: applications[1],
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Notes Item Assign-Unassign',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         capabilities: [

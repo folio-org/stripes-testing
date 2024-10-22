@@ -50,6 +50,11 @@ describe('Eureka', () => {
             resource: 'Settings Enabled',
             action: 'View',
           },
+          {
+            table: 'Settings',
+            resource: 'UI-Consortia-Settings Settings Membership',
+            action: 'View',
+          },
         ],
         newCapabilities: [
           {
@@ -69,7 +74,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 2,
-            Settings: 2,
+            Settings: 5,
             Procedural: 2,
           },
         },

@@ -81,6 +81,11 @@ describe('Eureka', () => {
             resource: 'Settings Notes Enabled',
             action: 'View',
           },
+          {
+            table: 'Settings',
+            resource: 'UI-Notes Settings',
+            action: 'Edit',
+          },
         ],
         expectedCounts: {
           capabilitySets: {
@@ -89,7 +94,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 5,
-            Settings: 1,
+            Settings: 2,
           },
         },
       };

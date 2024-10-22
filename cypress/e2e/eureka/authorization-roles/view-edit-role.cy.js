@@ -80,6 +80,12 @@ describe('Eureka', () => {
             resource: 'Settings Notes Enabled',
             action: 'View',
           },
+          {
+            application: 'app-platform-full',
+            table: 'Settings',
+            resource: 'UI-Notes Settings',
+            action: 'View',
+          },
         ],
         originalCapabilities: [
           {
@@ -120,6 +126,12 @@ describe('Eureka', () => {
             resource: 'Circulation Renew-By-Barcode',
             action: 'Execute',
           },
+          {
+            application: 'app-platform-full',
+            table: 'Procedural',
+            resource: 'UI-Users Loans Renew',
+            action: 'Execute',
+          },
         ],
         newCapabilities: [
           {
@@ -135,8 +147,8 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Settings: 2,
-            Procedural: 1,
+            Settings: 3,
+            Procedural: 2,
             Data: 4,
           },
         },
@@ -202,7 +214,7 @@ describe('Eureka', () => {
 
       after('Delete user, role', () => {
         cy.getAdminToken();
-        Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.user.userId, true);
         cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
         cy.deleteCapabilitiesFromRoleApi(testData.roleId);
         cy.deleteAuthorizationRoleApi(testData.roleId);

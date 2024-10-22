@@ -39,6 +39,21 @@ describe('Eureka', () => {
             resource: 'Settings Notes Enabled',
             action: 'View',
           },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'UI-Notes Settings',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Settings Authorization-Policies Enabled',
+            action: 'View',
+          },
         ],
         originalCapabilities: [
           {
@@ -82,7 +97,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 4,
-            Settings: 3,
+            Settings: 6,
             Procedural: 2,
           },
         },
