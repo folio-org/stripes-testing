@@ -300,14 +300,21 @@ describe('Bulk-edit', () => {
           });
 
           // 6
+          BulkEditActions.openInAppStartBulkEditFrom();
+          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyOptionsDropdown();
+          BulkEditActions.verifyRowIcons();
+          BulkEditActions.verifyCancelButtonDisabled(false);
+          BulkEditSearchPane.isConfirmButtonDisabled(true);
 
-          //   // 3
-          //   BulkEditActions.openInAppStartBulkEditFrom();
-          //   BulkEditSearchPane.verifyBulkEditsAccordionExists();
-          //   BulkEditActions.verifyOptionsDropdown();
-          //   BulkEditActions.verifyRowIcons();
-          //   BulkEditActions.verifyCancelButtonDisabled(false);
-          //   BulkEditSearchPane.isConfirmButtonDisabled(true);
+          // 7
+          BulkEditActions.selectOption('Permanent holdings location');
+          BulkEditSearchPane.verifyInputLabel('Permanent holdings location');
+          BulkEditActions.replaceWithIsDisabled();
+
+          // 8
+          BulkEditActions.clickLocationLookup();
+          // step to check Locations modal
 
           //   // 4
           //   BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
