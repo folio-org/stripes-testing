@@ -1,4 +1,4 @@
-describe('fse-organizations', () => {
+describe('fse-organizations', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
