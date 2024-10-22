@@ -32,12 +32,12 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://okapi-linked-data-r.int.aws.folio.org',
+    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     EDGE_HOST: 'https://folio-testing-cypress-edge.ci.folio.org',
     EDGE_API_KEY: '',
-    OKAPI_TENANT: 'fs09000000',
-    diku_login: 'EBSCOAdmin',
-    diku_password: 'KQ56AWcTEQ5UGZbpvCSfYMfS',
+    OKAPI_TENANT: 'diku',
+    diku_login: 'diku_admin',
+    diku_password: 'admin',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     is_kiwi_release: false,
@@ -148,7 +148,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://linked-data-r.int.aws.folio.org',
+    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
 });
