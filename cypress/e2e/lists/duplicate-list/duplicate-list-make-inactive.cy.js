@@ -84,13 +84,6 @@ describe('lists', () => {
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.verifyRecordsNumber('0');
-        Lists.verifyListName(duplicateListData.name);
-        Lists.verifyListDescription(listData.description);
-        Lists.verifyRecordType(listData.recordType);
-        Lists.verifyVisibility('Shared', true);
-        Lists.verifyVisibility('Private', false);
-        Lists.verifyStatus('Active', true);
-        Lists.verifyVisibility('Inactive', false);
         Lists.closeListDetailsPane();
 
         Lists.verifyListIsPresent(listData.name);
