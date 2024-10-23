@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Accordion,
   Button,
@@ -54,6 +55,9 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 
 const deleteConfirmationModal = Modal('Delete list');
 const cancelConfirmationModal = Modal('Are you sure?');
+const buildQueryModal = Modal('Build query');
+
+const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 
 const cannedListInactivePatronsWithOpenLoans = 'Inactive patrons with open loans';
 
@@ -154,6 +158,12 @@ export default {
     cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
   },
 
+  closeQueryEditor() {
+    cy.wait(500);
+    cy.do(cancelQueryButton.click());
+    cy.wait(1000);
+  },
+
   cancelRefresh() {
     cy.do(cancelRefresh.click());
     cy.wait(1000);
@@ -161,7 +171,7 @@ export default {
 
   saveList() {
     cy.do(saveButton.click());
-    cy.wait(1000);
+    cy.wait(1500);
   },
 
   buildQuery() {
@@ -398,6 +408,7 @@ export default {
   },
 
   verifySuccessCalloutMessage(message) {
+    cy.wait(500);
     cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
   },
 
@@ -407,7 +418,7 @@ export default {
 
   closeListDetailsPane() {
     cy.wait(500);
-    cy.get('button[icon=times]').click({ multiple: true });
+    cy.get('div[class^=paneMenu] > button[icon=times]').click();
     cy.wait(1000);
   },
 
@@ -419,10 +430,15 @@ export default {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
+  verifyRecordsNumber(number) {
+    cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+    cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
+  },
+
   openList(listName) {
     cy.do(
       ListRow(including(listName))
-        .find(MultiColumnListCell({ content: including(listName) }))
+        .find(MultiColumnListCell({ content: listName }))
         .find(Button(listName))
         .click(),
     );
@@ -443,12 +459,18 @@ export default {
   },
 
   checkResultSearch(searchResults, rowIndex = 0) {
-    return cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
-      cy.expect(
-        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-          .find(MultiColumnListCell({ content: including(contentToCheck) }))
-          .exists(),
-      );
+    cy.wrap(true).then(() => {
+      if (searchResults.description) {
+        delete searchResults.description;
+      }
+    }).then(() => {
+      cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
+        cy.expect(
+          MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+            .find(MultiColumnListCell({ content: including(contentToCheck) }))
+            .exists(),
+        );
+      });
     });
   },
 
@@ -735,21 +757,39 @@ export default {
     });
   },
 
+  deleteRecursivelyViaApi(id) {
+    recurse(
+      () => this.deleteViaApi(id),
+      (response) => response.status === 204,
+      {
+        limit: 3,
+        timeout: 30 * 1000,
+        delay: 10000,
+      },
+    );
+  },
+
   deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `lists/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
+    }).then((response) => {
+      return response;
     });
   },
 
   // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
-  deleteListByNameViaApi(listName) {
+  deleteListByNameViaApi(listName, recursively = false) {
     this.getViaApi().then((response) => {
       const filteredItem = response.body.content.find((item) => item.name === listName);
       if (filteredItem) {
-        this.deleteViaApi(filteredItem.id);
+        if (recursively) {
+          this.deleteRecursivelyViaApi(filteredItem.id);
+        } else {
+          this.deleteViaApi(filteredItem.id);
+        }
       }
     });
   },

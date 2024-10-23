@@ -8,14 +8,14 @@ describe('lists', () => {
   describe('Edit list', () => {
     const userData = {};
     const listData = {
-      name: `C411732-${getTestEntityValue('test_list')}`,
+      name: `C411732-${getTestEntityValue('list')}`,
       recordType: 'Loans',
       status: 'Active',
       visibility: 'Shared',
     };
     const editListData = {
-      name: `C411732-${getTestEntityValue('test_list')}`,
-      description: `C411732-${getTestEntityValue('test_list_description')}`,
+      name: `C411732-${getTestEntityValue('list')}`,
+      description: `C411732-${getTestEntityValue('desc')}`,
       visibility: 'Private',
     };
 
