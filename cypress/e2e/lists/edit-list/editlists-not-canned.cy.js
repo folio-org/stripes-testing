@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Edit list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       status: ['Active', 'Inactive'],
       visibility: 'Private',
