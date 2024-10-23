@@ -4,15 +4,16 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-data-linked-editor - check view and search', () => {
   beforeEach(() => {
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.linkedDataEditor,
+      waiter: LinkedDataEditor.waitLoading,
+    });
   });
 
   it(
     'C491276 Linked Data Editor: Verify user is navigated to Linked data editor home page when Application header icon is clicked',
     { tags: ['citation', 'linked-data-editor', 'sanity'] },
     () => {
-      cy.visit(TopMenu.linkedDataEditor);
-      LinkedDataEditor.waitLoading();
       // check search is displayed with lccn option
       LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
       // open new resource form
