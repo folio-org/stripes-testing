@@ -11,7 +11,7 @@ describe('lists', () => {
 
     beforeEach('Create a user', () => {
       listData = {
-        name: getTestEntityValue('test_list'),
+        name: getTestEntityValue('list'),
         recordType: 'Loans',
       };
       cy.getAdminToken();

@@ -2,18 +2,17 @@ import Permissions from '../../../support/dictionary/permissions';
 import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
   describe('duplicate list', () => {
     const userData = {};
 
-    const listData = {
-      name: `C423599-${getTestEntityValue('list')}`,
-      description: `C423599-${getTestEntityValue('desc')}`,
+    const duplicateListData = {
+      name: Lists.cannedListInactivePatronsWithOpenLoans + ' - copy',
+      description: 'Returns all loans with a status of open by inactive users',
       recordType: 'Loans',
       status: 'Active',
-      visibility: 'Private',
+      visibility: 'Shared',
     };
 
     before('Create test data', () => {
@@ -34,14 +33,14 @@ describe('lists', () => {
 
     after('Delete test data', () => {
       cy.getUserToken(userData.username, userData.password);
-      Lists.deleteListByNameViaApi(listData.name);
+      Lists.deleteListByNameViaApi(duplicateListData.name);
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 
     it(
-      'C423604 Duplicate lists - Canned reports with modified data (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423604'] },
+      'C423614 Duplicate lists - Canned reports without modified data (corsair)',
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423614'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -53,21 +52,18 @@ describe('lists', () => {
         Lists.openActions();
         Lists.duplicateList();
 
-        Lists.setName(listData.name);
-        Lists.setDescription(listData.name);
-        Lists.selectVisibility(listData.visibility);
-
-        Lists.editQuery();
-        Lists.changeQueryBoolValue(true);
-        Lists.testQuery();
-        Lists.runQueryAndSave();
-
-        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
+        Lists.saveList();
+        Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();
 
         Lists.closeListDetailsPane();
+        // workaround for a bug in the UI
+        Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
-        Lists.verifyListIsPresent(listData.name);
+        Lists.verifyListIsPresent(duplicateListData.name);
+        Lists.findResultRowIndexByContent(duplicateListData.name).then((rowIndex) => {
+          Lists.checkResultSearch(duplicateListData, rowIndex);
+        });
       },
     );
   });
