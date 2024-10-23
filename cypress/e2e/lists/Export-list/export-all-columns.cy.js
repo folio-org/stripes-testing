@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('export query', () => {
     const userData = {};
     const listData = {
-      name: `C552378-${getTestEntityValue('test_list')}`,
-      description: `C552378-${getTestEntityValue('test_list_description')}`,
+      name: `C552378-${getTestEntityValue('list')}`,
+      description: `C552378-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
