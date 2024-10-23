@@ -100,9 +100,9 @@ const saveExternalLinkBtn = updateProfilePictureModal.find(
 );
 const selectRequestType = Select({ id: 'type' });
 const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
-const promoteUsersModal = Modal('Keycloak user record');
+const promoteUserModal = Modal('Keycloak user record');
 const confirmButton = Button('Confirm');
-const promoteUsersModalText = 'This operation will create new record in Keycloak for';
+const promoteUserModalText = 'This operation will create new record in Keycloak for';
 
 let totalRows;
 
@@ -880,25 +880,25 @@ export default {
     cy.do(emailField.fillIn(email));
   },
 
-  checkPromoteUsersModal(lastName, firstName = '') {
+  checkPromoteUserModal(lastName, firstName = '') {
     cy.expect([
-      promoteUsersModal.find(cancelButton).exists(),
-      promoteUsersModal.find(confirmButton).exists(),
-      promoteUsersModal.has({ message: including(promoteUsersModalText) }),
-      promoteUsersModal.has({
+      promoteUserModal.find(cancelButton).exists(),
+      promoteUserModal.find(confirmButton).exists(),
+      promoteUserModal.has({ message: including(promoteUserModalText) }),
+      promoteUserModal.has({
         message: including(`${lastName}${firstName ? ', ' + firstName : ''}`),
       }),
     ]);
   },
 
-  clickConfirmInPromoteUsersModal: (closedAfterClick = true) => {
-    cy.do(promoteUsersModal.find(confirmButton).click());
-    if (closedAfterClick) cy.expect(promoteUsersModal.absent());
-    else cy.expect(promoteUsersModal.exists());
+  clickConfirmInPromoteUserModal: (closedAfterClick = true) => {
+    cy.do(promoteUserModal.find(confirmButton).click());
+    if (closedAfterClick) cy.expect(promoteUserModal.absent());
+    else cy.expect(promoteUserModal.exists());
   },
 
-  clickCancelInPromoteUsersModal: () => {
-    cy.do(promoteUsersModal.find(cancelButton).click());
-    cy.expect(promoteUsersModal.absent());
+  clickCancelInPromoteUserModal: () => {
+    cy.do(promoteUserModal.find(cancelButton).click());
+    cy.expect(promoteUserModal.absent());
   },
 };

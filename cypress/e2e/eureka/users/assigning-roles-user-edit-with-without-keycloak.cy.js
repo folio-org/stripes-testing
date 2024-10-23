@@ -49,8 +49,8 @@ describe('Eureka', () => {
             username: `user${i}c584520${randomPostfix}`,
             patronGroup: Cypress.env('userGroups')[0].id,
             personal: {
-              lastName: `First ${i} c584520${randomPostfix}`,
-              firstName: `Last ${i} c584520${randomPostfix}`,
+              lastName: `Last ${i} c584520${randomPostfix}`,
+              firstName: `First ${i} c584520${randomPostfix}`,
               email: 'testuser@test.org',
               preferredContactTypeId: '002',
             },
@@ -102,7 +102,7 @@ describe('Eureka', () => {
       'C584520 Assigning role to users with/without Keycloak record when editing user (eureka)',
       { tags: ['criticalPath', 'eureka', 'C584520'] },
       () => {
-        UsersSearchPane.searchByUsername(userBodies[0].username);
+        UsersSearchPane.searchByKeywords(userBodies[0].username);
         UsersSearchPane.selectUserFromList(userBodies[0].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
@@ -118,12 +118,12 @@ describe('Eureka', () => {
         UserEdit.saveAndCloseRolesModal();
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
-        UserEdit.saveAndClose();
-        UserEdit.checkPromoteUsersModal(
+        UserEdit.saveUserEditForm();
+        UserEdit.checkPromoteUserModal(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
         );
-        UserEdit.clickCancelInPromoteUsersModal();
+        UserEdit.clickCancelInPromoteUserModal();
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
@@ -139,13 +139,13 @@ describe('Eureka', () => {
         UserEdit.saveAndCloseRolesModal();
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
-        UserEdit.saveAndClose();
-        UserEdit.checkPromoteUsersModal(
+        UserEdit.saveUserEditForm();
+        UserEdit.checkPromoteUserModal(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
         );
         cy.intercept(`${testData.promotePath}/${userIds[0]}`).as('promoteA');
-        UserEdit.clickConfirmInPromoteUsersModal();
+        UserEdit.clickConfirmInPromoteUserModal();
         cy.wait('@promoteA').its('response.statusCode').should('eq', 201);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
@@ -155,7 +155,12 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
-        UsersSearchPane.searchByKeywords(userIds[1]);
+        UsersSearchPane.searchByKeywords(
+          `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
+        );
+        UsersSearchPane.clickOnUserRowContaining(
+          `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
+        );
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[1].personal.lastName,
           userBodies[1].personal.firstName,
@@ -170,22 +175,22 @@ describe('Eureka', () => {
         UserEdit.saveAndCloseRolesModal();
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
-        UserEdit.saveAndClose();
-        UserEdit.checkPromoteUsersModal(
+        UserEdit.saveUserEditForm();
+        UserEdit.checkPromoteUserModal(
           userBodies[1].personal.lastName,
           userBodies[1].personal.firstName,
         );
-        UserEdit.clickConfirmInPromoteUsersModal(false);
+        UserEdit.clickConfirmInPromoteUserModal(false);
         InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
         InteractorsTools.dismissCallout(testData.errorCalloutText);
-        UserEdit.cancelChanges();
+        UserEdit.clickCancelInPromoteUserModal();
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[1].personal.lastName,
           userBodies[1].personal.firstName,
         );
         UsersCard.verifyUserRolesCounter('0');
 
-        UsersSearchPane.searchByUsername(userBodies[2].username);
+        UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
@@ -201,7 +206,7 @@ describe('Eureka', () => {
         UserEdit.saveAndCloseRolesModal();
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
-        UserEdit.saveAndClose();
+        UserEdit.saveUserEditForm();
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
