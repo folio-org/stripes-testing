@@ -240,6 +240,7 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.find(Button()).click(),
+      codeField.click(),
     ]);
   },
 
