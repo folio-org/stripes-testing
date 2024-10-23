@@ -5,31 +5,34 @@ import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('lists', () => {
-  describe('permissions', () => {
+  describe('duplicate list', () => {
     const userData = {};
     const listData = {
-      name: `C418649-${getTestEntityValue('list')}`,
-      description: `C418649-${getTestEntityValue('desc')}`,
+      name: `C423603-${getTestEntityValue('list')}`,
+      description: `C423603-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
       isPrivate: false,
     };
+    const duplicateListData = {
+      name: `C423603-${getTestEntityValue('list')}`,
+      description: `C423603-${getTestEntityValue('desc')}`,
+      status: 'Active',
+      visibility: 'Private',
+    };
 
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        Permissions.listsDelete.gui,
+        Permissions.listsAll.gui,
         Permissions.usersViewRequests.gui,
-        Permissions.uiOrdersCreate.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.loansAll.gui,
-        Permissions.uiOrganizationsViewEditCreate.gui,
       ])
         .then((userProperties) => {
           userData.username = userProperties.username;
           userData.password = userProperties.password;
           userData.userId = userProperties.userId;
+          duplicateListData.source = `${userData.username}, ${userProperties.firstName}`;
         })
         .then(() => {
           Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
@@ -47,41 +50,46 @@ describe('lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getUserToken(userData.username, userData.password);
       Lists.deleteViaApi(listData.id);
+      Lists.deleteListByNameViaApi(duplicateListData.name, true);
+      cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 
     it(
-      'C418649 Lists (Delete): Can create, edit, refresh, and delete lists (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C418649'] },
+      'C423603 Duplicate list is saved with edits (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C423603'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
           waiter: Lists.waitLoading,
         });
+
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
         Lists.openActions();
-        Lists.verifyRefreshListButtonIsActive();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonDoesNotExist();
-        Lists.refreshList();
+        Lists.duplicateList();
+
+        Lists.setName(duplicateListData.name);
+        Lists.setDescription(duplicateListData.description);
+        Lists.selectVisibility(duplicateListData.visibility);
+
+        Lists.editQuery();
+        Lists.changeQueryBoolValue(false);
+        Lists.testQuery();
+        Lists.runQueryAndSave();
+
+        Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();
-        Lists.openActions();
-        Lists.deleteList();
-        Lists.cancelDelete();
-        Lists.openActions();
-        Lists.editList();
-        Lists.openActions();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListButtonDoesNotExist();
-        Lists.deleteList();
-        Lists.confirmDelete();
-        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
-        Lists.verifyListIsNotPresent(listData.name);
+
+        Lists.closeListDetailsPane();
+        Lists.verifyListIsPresent(listData.name);
+        Lists.verifyListIsPresent(duplicateListData.name);
+
+        Lists.findResultRowIndexByContent(duplicateListData.name).then((rowIndex) => {
+          Lists.checkResultSearch(duplicateListData, rowIndex);
+        });
       },
     );
   });

@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Add new list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
     };
 
     before('Create test data', () => {
