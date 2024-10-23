@@ -65,9 +65,7 @@ describe('Eureka', () => {
           cy.getAdminToken();
           userIds.forEach((id) => {
             Users.deleteViaApi(id);
-          });
-          userIds.forEach((id) => {
-            cy.deleteUserWithoutKeycloakInEurekaApi(id);
+            Users.deleteViaApi(id, true);
           });
           cy.deleteAuthorizationRoleApi(testData.roleId);
         });

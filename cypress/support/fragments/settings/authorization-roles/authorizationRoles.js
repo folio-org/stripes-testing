@@ -655,9 +655,7 @@ export default {
     this.checkUsersAccordion(0);
   },
 
-  checkPromoteUsersModal(userIdsArray, checkReappeared = false) {
-    // TO DO: remove the check when UIROLES-116 is done
-    if (checkReappeared) this.waitUntilPromoteUsersModalReappears();
+  checkPromoteUsersModal(userIdsArray) {
     cy.expect([
       promoteUsersModal.find(cancelButton).exists(),
       promoteUsersModal.find(confirmButton).exists(),
@@ -681,10 +679,6 @@ export default {
   closePromoteUsersModalWithEscapeKey: () => {
     cy.get('[class^="modal--"]').type('{esc}');
     cy.expect(promoteUsersModal.absent());
-  },
-
-  waitUntilPromoteUsersModalReappears: () => {
-    cy.expect([promoteUsersModal.exists(), promoteUsersModal.absent(), promoteUsersModal.exists()]);
   },
 
   checkNoUsernameErrorCallout: () => {

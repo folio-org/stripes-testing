@@ -83,11 +83,9 @@ describe('Eureka', () => {
           cy.deleteAuthorizationRoleApi(testData.roleId);
           userIds.forEach((id) => {
             Users.deleteViaApi(id);
+            Users.deleteViaApi(id, true);
           });
           Users.deleteViaApi(testData.tempUser.userId);
-          userIds.forEach((id) => {
-            cy.deleteUserWithoutKeycloakInEurekaApi(id);
-          });
         });
 
         it(
@@ -102,7 +100,7 @@ describe('Eureka', () => {
             AuthorizationRoles.selectUserInModal(userBodies[1].username);
             AuthorizationRoles.selectUserInModal(userBodies[2].username);
             AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId], true);
+            AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId]);
             cy.intercept(`${testData.promotePath}/${testData.userAId}`).as('promoteA');
             cy.intercept(`${testData.promotePath}/${testData.userBId}`).as('promoteB');
             AuthorizationRoles.clickConfirmInPromoteUsersModal();
