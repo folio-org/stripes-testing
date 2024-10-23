@@ -100,6 +100,9 @@ const saveExternalLinkBtn = updateProfilePictureModal.find(
 );
 const selectRequestType = Select({ id: 'type' });
 const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
+const promoteUserModal = Modal('Keycloak user record');
+const confirmButton = Button('Confirm');
+const promoteUserModalText = 'This operation will create new record in Keycloak for';
 
 let totalRows;
 
@@ -875,5 +878,27 @@ export default {
 
   fillEmailAddress(email) {
     cy.do(emailField.fillIn(email));
+  },
+
+  checkPromoteUserModal(lastName, firstName = '') {
+    cy.expect([
+      promoteUserModal.find(cancelButton).exists(),
+      promoteUserModal.find(confirmButton).exists(),
+      promoteUserModal.has({ message: including(promoteUserModalText) }),
+      promoteUserModal.has({
+        message: including(`${lastName}${firstName ? ', ' + firstName : ''}`),
+      }),
+    ]);
+  },
+
+  clickConfirmInPromoteUserModal: (closedAfterClick = true) => {
+    cy.do(promoteUserModal.find(confirmButton).click());
+    if (closedAfterClick) cy.expect(promoteUserModal.absent());
+    else cy.expect(promoteUserModal.exists());
+  },
+
+  clickCancelInPromoteUserModal: () => {
+    cy.do(promoteUserModal.find(cancelButton).click());
+    cy.expect(promoteUserModal.absent());
   },
 };

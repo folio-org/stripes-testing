@@ -11,6 +11,7 @@ import {
   Select,
   TextField,
   Section,
+  MultiColumnListRow,
 } from '../../../../interactors';
 
 const resetAllButton = Button({ id: 'clickable-reset-all' });
@@ -85,5 +86,14 @@ export default {
     cy.do(resetAllButton.click());
     cy.expect(Section({ id: 'pane-userdetails' }).absent());
     cy.wait(1000);
+  },
+
+  clickOnUserRowContaining(text) {
+    cy.do(
+      Pane({ id: 'users-search-results-pane' })
+        .find(MultiColumnListRow(including(text), { isContainer: false }))
+        .find(Link())
+        .click(),
+    );
   },
 };
