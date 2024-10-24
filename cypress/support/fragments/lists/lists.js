@@ -435,6 +435,10 @@ export default {
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
   },
 
+  verifyQuery(query) {
+    cy.get('#results-viewer-accordion').contains(`Query: ${query}`).should('be.visible');
+  },
+
   openList(listName) {
     cy.do(
       ListRow(including(listName))
@@ -510,6 +514,16 @@ export default {
     ]);
   },
 
+  collapseFilterPane() {
+    cy.get('button[icon=caret-left]').click();
+    cy.wait(1000);
+  },
+
+  expandFilterPane() {
+    cy.get('button[icon=caret-right]').click();
+    cy.wait(1000);
+  },
+
   selectActiveLists() {
     cy.do(activeCheckbox.checkIfNotSelected());
     this.waitForSpinnerToDisappear();
@@ -536,6 +550,7 @@ export default {
 
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
+    cy.wait(500);
   },
 
   selectRecordTypeFilter(type) {
