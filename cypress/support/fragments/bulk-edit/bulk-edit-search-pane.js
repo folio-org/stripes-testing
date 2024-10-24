@@ -541,6 +541,21 @@ export default {
     });
   },
 
+  verifyErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect([
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: identifier }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(HTML(including(errorText)))
+          .exists(),
+      ]);
+    });
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),

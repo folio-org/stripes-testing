@@ -10,10 +10,8 @@ import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
-import QickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import DateTools from '../../../../support/utils/dateTools';
@@ -41,40 +39,34 @@ let matchedRecordsQueryFileName;
 let previewQueryFileName;
 let changedRecordsQueryFileName;
 let errorsFromCommittingFileName;
+const checkedOutItemIds = [];
+const availableItemIds = [];
 const folioInstance = {
   title: `C496144 folio instance testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode1: `folioItem_available${getRandomPostfix()}`,
-  itemBarcode2: `folioItem_checkedOut${getRandomPostfix()}`,
+  availableItemBarcode: `Item_available${getRandomPostfix()}`,
+  checkedOutItemBarcode: `Item_checkedOut${getRandomPostfix()}`,
 };
 const marcInstance = {
   title: `C496144 marc instance testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode1: `Item_available${getRandomPostfix()}`,
-  itemBarcode2: `Item_checkedOut${getRandomPostfix()}`,
+  availableItemBarcode: `Item_available${getRandomPostfix()}`,
+  checkedOutItemBarcode: `Item_checkedOut${getRandomPostfix()}`,
 };
+const reasonForError = 'New status value "Missing" is not allowed';
+const itemBarcodeWithAvailableStatus = [
+  folioInstance.availableItemBarcode,
+  marcInstance.availableItemBarcode,
+];
+const itemBarcodeWithCheckedOutStatus = [
+  folioInstance.checkedOutItemBarcode,
+  marcInstance.checkedOutItemBarcode,
+];
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const leader = QickMarcEditor.defaultValidLdr;
-const getMarcBibFields = (intsanceTitle) => {
-  return [
-    {
-      tag: '008',
-      content: QickMarcEditor.defaultValid008Values,
-    },
-    {
-      tag: '245',
-      content: `$a ${intsanceTitle}`,
-      indicators: ['1', '1'],
-    },
-  ];
-};
 
 describe('Bulk-edit', () => {
   describe('Query', () => {
     describe('Consortia', () => {
       before('create test data', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate records in the system
-        InventoryInstances.deleteInstanceByTitleViaApi('C496144*');
-
+        cy.clearLocalStorage();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditItems.gui,
@@ -127,13 +119,13 @@ describe('Bulk-edit', () => {
                 ],
                 items: [
                   {
-                    barcode: folioInstance.itemBarcode1,
+                    barcode: folioInstance.availableItemBarcode,
                     status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                     permanentLoanType: { id: loanTypeId },
                     materialType: { id: materialTypeId },
                   },
                   {
-                    barcode: folioInstance.itemBarcode2,
+                    barcode: folioInstance.checkedOutItemBarcode,
                     status: { name: ITEM_STATUS_NAMES.CHECKED_OUT },
                     permanentLoanType: { id: loanTypeId },
                     materialType: { id: materialTypeId },
@@ -141,68 +133,62 @@ describe('Bulk-edit', () => {
                 ],
               }).then((createdInstanceData) => {
                 folioInstance.uuid = createdInstanceData.instanceId;
-                folioInstance.holdingId = createdInstanceData.holdings[0].id;
+                checkedOutItemIds.push(createdInstanceData.items[1].id);
+                availableItemIds.push(createdInstanceData.items[0].id);
 
-                cy.getInstanceById(folioInstance.uuid).then((instanceData) => {
-                  folioInstance.hrid = instanceData.hrid;
-                });
                 // marc instance with items
-                cy.createMarcBibliographicViaAPI(leader, getMarcBibFields(marcInstance.title)).then(
-                  (instanceId) => {
-                    marcInstance.uuid = instanceId;
+                cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+                  marcInstance.uuid = instanceId;
 
-                    cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-                      marcInstance.hrid = instanceData.hrid;
-
-                      InventoryHoldings.createHoldingRecordViaApi({
-                        instanceId,
-                        permanentLocationId: locationId,
-                        sourceId,
-                      }).then((holdingData) => {
-                        marcInstance.holdingId = holdingData.id;
-
-                        cy.createItem({
-                          holdingsRecordId: holdingData.id,
-                          materialType: { id: materialTypeId },
-                          permanentLoanType: { id: loanTypeId },
-                          status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                          barcode: marcInstance.itemBarcode1,
-                        });
-                        cy.createItem({
-                          holdingsRecordId: holdingData.id,
-                          materialType: { id: materialTypeId },
-                          permanentLoanType: { id: loanTypeId },
-                          status: { name: ITEM_STATUS_NAMES.CHECKED_OUT },
-                          barcode: marcInstance.itemBarcode2,
-                        });
-                      });
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId,
+                    permanentLocationId: locationId,
+                    sourceId,
+                  }).then((holdingData) => {
+                    cy.createItem({
+                      holdingsRecordId: holdingData.id,
+                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                      barcode: marcInstance.availableItemBarcode,
+                    }).then((itemData) => {
+                      availableItemIds.push(itemData.body.id);
                     });
-
-                    cy.login(user.username, user.password, {
-                      path: TopMenu.bulkEditPath,
-                      waiter: BulkEditSearchPane.waitLoading,
+                    cy.createItem({
+                      holdingsRecordId: holdingData.id,
+                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.CHECKED_OUT },
+                      barcode: marcInstance.checkedOutItemBarcode,
+                    }).then((itemData) => {
+                      checkedOutItemIds.push(itemData.body.id);
                     });
-                    ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                  });
 
-                    BulkEditSearchPane.openQuerySearch();
-                    BulkEditSearchPane.checkItemsRadio();
-                    BulkEditSearchPane.clickBuildQueryButton();
-                    QueryModal.verify();
-                    QueryModal.selectField(itemFieldValues.itemStatus);
-                    QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-                    QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-                    QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
-                    QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.CHECKED_OUT);
-                    QueryModal.addNewRow();
-                    QueryModal.selectField(itemFieldValues.instanceTitle, 1);
-                    QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-                    QueryModal.fillInValueTextfield('C496144', 1);
-                    cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
-                      'getPreview',
-                    );
-                    QueryModal.clickTestQuery();
-                  },
-                );
+                  cy.login(user.username, user.password, {
+                    path: TopMenu.bulkEditPath,
+                    waiter: BulkEditSearchPane.waitLoading,
+                  });
+                  ConsortiumManager.checkCurrentTenantInTopMenu('Consortium');
+
+                  BulkEditSearchPane.openQuerySearch();
+                  BulkEditSearchPane.checkItemsRadio();
+                  BulkEditSearchPane.clickBuildQueryButton();
+                  QueryModal.verify();
+                  QueryModal.selectField(itemFieldValues.itemStatus);
+                  QueryModal.verifySelectedField(itemFieldValues.itemStatus);
+                  QueryModal.selectOperator(QUERY_OPERATIONS.IN);
+                  QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
+                  QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.CHECKED_OUT);
+                  QueryModal.addNewRow();
+                  QueryModal.selectField(itemFieldValues.instanceTitle, 1);
+                  QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
+                  QueryModal.fillInValueTextfield('C496144', 1);
+                  cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
+                    'getPreview',
+                  );
+                  QueryModal.clickTestQuery();
+                });
               });
             });
         });
@@ -211,14 +197,15 @@ describe('Bulk-edit', () => {
       after('delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
-        InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.uuid);
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(marcInstance.uuid);
         FileManager.deleteFile(`cypress/fixtures/downloaded-${identifiersQueryFilename}`);
         FileManager.deleteFileFromDownloadsByMask(
           matchedRecordsQueryFileName,
           previewQueryFileName,
           changedRecordsQueryFileName,
           errorsFromCommittingFileName,
+          identifiersQueryFilename,
         );
       });
 
@@ -236,28 +223,13 @@ describe('Bulk-edit', () => {
             matchedRecordsQueryFileName = `${today}-Matched-Records-Query-${interceptedUuid}.csv`;
             previewQueryFileName = `${today}-Updates-Preview-Query-${interceptedUuid}.csv`;
             changedRecordsQueryFileName = `${today}-Changed-Records-Query-${interceptedUuid}.csv`;
-            errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}`;
+            errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(4);
             BulkEditSearchPane.verifyQueryHeadLine(
-              '(instance.staff_suppress == "false") AND (instance.title starts with "C477642")',
+              '(items.status_name in ("Available","Checked out")) AND (instances.title starts with "C496144")',
             );
-
-            const itemBarcodes = [
-              folioInstance.itemBarcode1,
-              folioInstance.itemBarcode2,
-              marcInstance.itemBarcode1,
-              marcInstance.itemBarcode2,
-            ];
-            const itemBarcodeWithAvailableStatus = [
-              folioInstance.itemBarcode1,
-              marcInstance.itemBarcode1,
-            ];
-            const itemBarcodeWithCheckedOutStatus = [
-              folioInstance.itemBarcode2,
-              marcInstance.itemBarcode2,
-            ];
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -276,8 +248,6 @@ describe('Bulk-edit', () => {
 
             BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
             BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-            // 2
             BulkEditActions.downloadMatchedResults();
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
@@ -299,23 +269,25 @@ describe('Bulk-edit', () => {
               );
             });
 
-            // 3
             BulkEditActions.openInAppStartBulkEditFrom();
             BulkEditSearchPane.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
             BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-            // 4
             BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
             BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);
             BulkEditActions.replaceWithIsDisabled();
             BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-            // 6
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
+
+            const itemBarcodes = [
+              folioInstance.availableItemBarcode,
+              folioInstance.checkedOutItemBarcode,
+              marcInstance.availableItemBarcode,
+              marcInstance.checkedOutItemBarcode,
+            ];
 
             itemBarcodes.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -326,8 +298,6 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.verifyAreYouSureForm(4);
-
-            // 7
             BulkEditActions.downloadPreview();
 
             itemBarcodes.forEach((barcode) => {
@@ -340,11 +310,8 @@ describe('Bulk-edit', () => {
               );
             });
 
-            // 8
             BulkEditActions.commitChanges();
             BulkEditActions.verifySuccessBanner(2);
-
-            const holdingIds = [folioInstance.holdingId, marcInstance.holdingId];
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
@@ -354,17 +321,12 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyErrorLabel('Bulk edit query', 2, 2);
+            BulkEditSearchPane.verifyErrorLabelAfterChanges('Bulk edit query', 2, 2);
 
-            // 9
-            holdingIds.forEach((id) => {
-              BulkEditSearchPane.verifyReasonForErrorByIdentifier(
-                id,
-                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-              );
+            checkedOutItemIds.forEach((id) => {
+              BulkEditSearchPane.verifyErrorByIdentifier(id, reasonForError);
             });
 
-            // 10
             BulkEditActions.openActions();
             BulkEditActions.downloadChangedCSV();
 
@@ -379,16 +341,12 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.downloadErrors();
-            BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
-              [
-                folioInstance.holdingId,
-                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-              ],
-              [
-                marcInstance.holdingId,
-                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-              ],
-            ]);
+
+            checkedOutItemIds.forEach((checkedOutItemId) => {
+              ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+                `${checkedOutItemId},${reasonForError}`,
+              ]);
+            });
 
             // remove earlier downloaded files
             FileManager.deleteFileFromDownloadsByMask(
@@ -398,27 +356,17 @@ describe('Bulk-edit', () => {
               errorsFromCommittingFileName,
             );
 
-            // 12
             BulkEditSearchPane.openLogsSearch();
             BulkEditLogs.verifyLogsPane();
-
-            // 13
             BulkEditLogs.checkItemsCheckbox();
-            BulkEditLogs.verifyCheckboxIsSelected('ITEMS', true);
-
-            // 14
+            BulkEditLogs.verifyCheckboxIsSelected('ITEM', true);
             BulkEditLogs.clickActionsRunBy(user.username);
             BulkEditLogs.verifyLogsRowActionWithoutMatchingErrorWithCommittingErrorsQuery();
-
-            // 15
             BulkEditLogs.downloadQueryIdentifiers();
-            // clarify what identifiers will be in this file
             ExportFile.verifyFileIncludes(identifiersQueryFilename, [
-              folioInstance.uuid,
-              marcInstance.uuid,
+              ...checkedOutItemIds,
+              ...availableItemIds,
             ]);
-
-            // 16
             BulkEditLogs.downloadFileWithMatchingRecords();
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
@@ -440,7 +388,6 @@ describe('Bulk-edit', () => {
               );
             });
 
-            // 17
             BulkEditLogs.downloadFileWithProposedChanges();
 
             itemBarcodes.forEach((barcode) => {
@@ -453,7 +400,6 @@ describe('Bulk-edit', () => {
               );
             });
 
-            // 18
             BulkEditLogs.downloadFileWithUpdatedRecords();
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
@@ -466,21 +412,15 @@ describe('Bulk-edit', () => {
               );
             });
 
-            // 19
             BulkEditLogs.downloadFileWithCommitErrors();
-            BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
-              [
-                folioInstance.holdingId,
-                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-              ],
-              [
-                marcInstance.holdingId,
-                `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-              ],
-            ]);
 
-            // 20
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            checkedOutItemIds.forEach((checkedOutItemId) => {
+              ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+                `${checkedOutItemId},${reasonForError}`,
+              ]);
+            });
+
+            ConsortiumManager.switchActiveAffiliation('Consortium', tenantNames.college);
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
               TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
