@@ -132,7 +132,7 @@ export default {
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: 'ui-inventory.all-permissions.TEMPORARY',
+    internal: 'ui-inventory.all',
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
