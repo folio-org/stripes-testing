@@ -58,8 +58,8 @@ describe('lists', () => {
     });
 
     it(
-      'C423603 Duplicate list is saved with edits (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C423603'] },
+      'C423603 C423601 Duplicate list is saved with edits (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C423603', 'C423601'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -82,6 +82,7 @@ describe('lists', () => {
 
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();
+        Lists.verifyQuery('users.active == false');
 
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(listData.name);
