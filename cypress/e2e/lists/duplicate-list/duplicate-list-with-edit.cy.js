@@ -24,10 +24,7 @@ describe('lists', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.listsAll.gui,
-        Permissions.usersViewRequests.gui,
-      ])
+      cy.createTempUser([Permissions.listsAll.gui, Permissions.usersViewRequests.gui])
         .then((userProperties) => {
           userData.username = userProperties.username;
           userData.password = userProperties.password;
@@ -82,6 +79,7 @@ describe('lists', () => {
 
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
         Lists.waitForCompilingToComplete();
+
         Lists.verifyQuery('users.active == false');
 
         Lists.closeListDetailsPane();
