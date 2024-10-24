@@ -1,20 +1,26 @@
 export default {
   // bulk edit
   bulkEditView: {
-    internal: 'ui-bulk-edit.app-view',
+    internal: 'ui-bulk-edit.inventory.view',
     gui: 'Bulk Edit: In app - View inventory records',
   },
   bulkEditEdit: {
-    internal: 'ui-bulk-edit.app-edit',
+    internal: 'ui-bulk-edit.inventory.edit',
     gui: 'Bulk Edit: In app - Edit inventory records',
   },
-  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: Local - View user records' },
-  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: Local - Edit user records' },
+  bulkEditCsvView: {
+    internal: 'ui-bulk-edit.users.csv.view',
+    gui: 'Bulk Edit: Local - View user records',
+  },
+  bulkEditCsvEdit: {
+    internal: 'ui-bulk-edit.users.csv.edit',
+    gui: 'Bulk Edit: Local - Edit user records',
+  },
   bulkEditUpdateRecords: {
-    internal: 'ui-bulk-edit.app-edit.users',
+    internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
   },
-  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Can build query' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: {
@@ -132,7 +138,7 @@ export default {
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: 'ui-inventory.all-permissions.TEMPORARY',
+    internal: 'ui-inventory.all',
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
@@ -148,11 +154,11 @@ export default {
     gui: 'Inventory: Import single bibliographic records',
   },
   uiInventoryCreateOrderFromInstance: {
-    internal: 'ui-inventory.instance.createOrder',
+    internal: 'ui-inventory.instance.order.create',
     gui: 'Inventory: Create order from instance',
   },
   uiInventoryMarkItemsWithdrawn: {
-    internal: 'ui-inventory.items.mark-items-withdrawn',
+    internal: 'ui-inventory.items.mark-withdrawn.execute',
     gui: 'Inventory: Mark items withdrawn',
   },
   uiInventoryViewInstances: {
@@ -172,7 +178,7 @@ export default {
     gui: 'Inventory: Move holdings',
   },
   uiInventoryMarkAsMissing: {
-    internal: 'ui-inventory.item.markasmissing',
+    internal: 'ui-inventory.item.mark-as-missing.execute',
     gui: 'Inventory: View, create, edit, mark missing items',
   },
   uiInventoryMoveItems: { internal: 'ui-inventory.item.move', gui: 'Inventory: Move items' },
@@ -198,27 +204,27 @@ export default {
     gui: 'Inventory: View, create, edit, delete items',
   },
   uiInventoryMarcItemInProcess: {
-    internal: 'ui-inventory.items.mark-in-process-non-requestable',
+    internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
   uiInventoryMarcItemIntellectual: {
-    internal: 'ui-inventory.items.mark-intellectual-item',
+    internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
   },
   uiInventoryMarcItemLongMissing: {
-    internal: 'ui-inventory.items.mark-long-missing',
+    internal: 'ui-inventory.items.mark-long-missing.execute',
     gui: 'Inventory: Mark items long missing',
   },
   uiInventoryMarcItemRestricted: {
-    internal: 'ui-inventory.items.mark-restricted',
+    internal: 'ui-inventory.items.mark-restricted.execute',
     gui: 'Inventory: Mark items restricted',
   },
   uiInventoryMarcItemUnavailable: {
-    internal: 'ui-inventory.items.mark-unavailable',
+    internal: 'ui-inventory.items.mark-unavailable.execute',
     gui: 'Inventory: Mark items unavailable',
   },
   uiInventoryMarcItemUnknow: {
-    internal: 'ui-inventory.items.mark-unknown',
+    internal: 'ui-inventory.items.mark-unknown.execute',
     gui: 'Inventory: Mark items unknown',
   },
   uiCreateEditDeleteURL: {
@@ -226,7 +232,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
   uiInventorySetRecordsForDeletion: {
-    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    internal: 'ui-inventory.instance.set-records-for-deletion.execute',
     gui: 'Inventory: Set records for deletion',
   },
   inventoryCRUDHoldings: {
@@ -282,7 +288,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
   enableStaffSuppressFacet: {
-    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    internal: 'ui-inventory.instance.staff-suppressed-records.view',
     gui: 'Inventory: Enable staff suppress facet',
   },
   patchInstanceDateTypes: {
@@ -479,7 +485,7 @@ export default {
     gui: 'Settings (Users): Can view patron groups',
   },
   uiUsersCreateEditRemovePatronGroups: {
-    internal: 'ui-users.settings.usergroups',
+    internal: 'ui-users.settings.usergroups.all',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
   uiUsersCreatePatronLimits: {
@@ -642,10 +648,16 @@ export default {
     internal: 'ui-invoice.acq.unit.assignment.assign',
     gui: 'Invoice: Assign acquisition units to new invoice',
   },
-  uiInvoicesApproveInvoices: { internal: 'ui-invoice.approve', gui: 'Invoice: Approve invoices' },
-  uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
+  uiInvoicesApproveInvoices: {
+    internal: 'ui-invoice.invoice.approve.execute',
+    gui: 'Invoice: Approve invoices',
+  },
+  uiInvoicesPayInvoices: {
+    internal: 'ui-invoice.invoice.pay.execute',
+    gui: 'Invoice: Pay invoices',
+  },
   uiInvoicesPayInvoicesInDifferentFiscalYear: {
-    internal: 'ui-invoice.payDifferentFY',
+    internal: 'ui-invoice.invoice.pay-different-fy.execute',
     gui: 'Invoice: Pay invoices in a different fiscal year',
   },
   invoiceSettingsAll: {
@@ -656,7 +668,10 @@ export default {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
-  uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
+  uiInvoicesCancelInvoices: {
+    internal: 'ui-invoice.invoice.cancel.execute',
+    gui: 'Invoice: Cancel invoices',
+  },
   uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: {
     internal: 'ui-invoice.invoice.edit',
     gui: 'Invoice: Can view and edit Invoices and Invoice lines',
@@ -678,7 +693,10 @@ export default {
     internal: 'ui-invoice.acq.unit.assignment.manage',
     gui: 'Invoice: Manage acquisition units',
   },
-  uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
+  uiInvoicesVoucherExport: {
+    internal: 'ui-invoice.voucher.export.execute',
+    gui: 'Invoice: Voucher export',
+  },
   // Orders
   uiOrdersView: {
     internal: 'ui-orders.orders.view',
@@ -771,7 +789,7 @@ export default {
     gui: 'Finance: Create transfers',
   },
   uiFinanceExecuteFiscalYearRollover: {
-    internal: 'ui-finance.ledger.rollover',
+    internal: 'ui-finance.ledger.rollover.execute',
     gui: 'Finance: Execute fiscal year rollover',
   },
   uiFinanceExportFinanceRecords: {
@@ -783,7 +801,7 @@ export default {
     gui: 'Finance: Manage acquisition units',
   },
   uiFinanceManuallyReleaseEncumbrance: {
-    internal: 'ui-finance.manually-release-encumbrances',
+    internal: 'ui-finance.encumbrance.release-manually.execute',
     gui: 'Finance: Manually release encumbrance',
   },
   uiFinanceViewFiscalYear: {
@@ -795,7 +813,7 @@ export default {
     gui: 'Finance: View fund and budget',
   },
   uiFinanceUnreleaseEncumbrance: {
-    internal: 'ui-finance.encumbrance.unrelease',
+    internal: 'ui-finance.encumbrance.unrelease.execute',
     gui: 'Finance: Unrelease encumbrance',
   },
   uiFinanceViewGroups: { internal: 'ui-finance.group.view', gui: 'Finance: View group' },
@@ -930,11 +948,11 @@ export default {
     gui: 'Settings (Inventory): Edit fast add settings',
   },
   uiCreateEditDeleteLoanTypes: {
-    internal: 'ui-inventory.settings.loantypes',
+    internal: 'ui-inventory.settings.loan-types',
     gui: 'Settings (Inventory): Create, edit, delete loan types',
   },
   uiCreateEditDeleteMaterialTypes: {
-    internal: 'ui-inventory.settings.materialtypes',
+    internal: 'ui-inventory.settings.material-types',
     gui: 'Settings (Inventory): Create, edit, delete material types',
   },
   uiInventorySettingsConfigureSingleRecordImport: {
@@ -1073,7 +1091,7 @@ export default {
     gui: 'Export manager: All',
   },
   exportManagerDownloadAndResendFiles: {
-    internal: 'ui-export-manager.jobs.downloadAndResend',
+    internal: 'ui-export-manager.jobs.downloadAndResend.execute',
     gui: 'Export manager: Download and resend files',
   },
   exportManagerView: {
@@ -1086,15 +1104,15 @@ export default {
   },
   // OAI-PMH
   oaipmhView: {
-    internal: 'ui-oai-pmh.view',
+    internal: 'ui-oai-pmh.settings.view',
     gui: 'Settings (OAI-PMH): Can view',
   },
   oaipmhViewLogs: {
-    internal: 'ui-oai-pmh.logs',
+    internal: 'ui-oai-pmh.settings.logs.view',
     gui: 'Settings (OAI-PMH): Can view logs',
   },
   oaipmhSettingsEdit: {
-    internal: 'ui-oai-pmh.edit',
+    internal: 'ui-oai-pmh.settings.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
   },
   uiCirculationSettingsOverdueFinesPolicies: {
