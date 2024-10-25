@@ -7,7 +7,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -42,13 +42,14 @@ let changedRecordsQueryFileName;
 let errorsFromCommittingFileName;
 const checkedOutItemIds = [];
 const availableItemIds = [];
+const postfix = randomFourDigitNumber();
 const folioInstance = {
-  title: `C496144 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C496144_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
   availableItemBarcode: `Item_available${getRandomPostfix()}`,
   checkedOutItemBarcode: `Item_checkedOut${getRandomPostfix()}`,
 };
 const marcInstance = {
-  title: `C496144 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C496144_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
   availableItemBarcode: `Item_available${getRandomPostfix()}`,
   checkedOutItemBarcode: `Item_checkedOut${getRandomPostfix()}`,
 };
@@ -178,7 +179,7 @@ describe('Bulk-edit', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(itemFieldValues.instanceTitle, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-          QueryModal.fillInValueTextfield('C496144', 1);
+          QueryModal.fillInValueTextfield(`C496144_${postfix}`, 1);
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickTestQuery();
         });
@@ -198,6 +199,7 @@ describe('Bulk-edit', () => {
           cy.deleteHoldingRecordViaApi(instance.holdingId);
         });
         cy.resetTenant();
+        cy.getAdminToken();
         instances.forEach((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
