@@ -87,7 +87,7 @@ describe('Eureka', () => {
     });
 
     it(
-      'C499897 Assigning role to users with/without Keycloak record when editing user (eureka)',
+      'C499897 Assigning roles to a user without Keycloak record when editing user (eureka)',
       { tags: ['smoke', 'eureka', 'C499897'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.userBody.username);

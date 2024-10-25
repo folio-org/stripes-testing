@@ -17,7 +17,7 @@ describe('Eureka', () => {
           },
           {
             table: 'Procedural',
-            resource: 'UI-Invoice Pay',
+            resource: 'UI-Invoice Invoice Pay',
             action: 'Execute',
           },
         ],
