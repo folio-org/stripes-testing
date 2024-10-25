@@ -1143,7 +1143,7 @@ export default {
     details: ['obsolete'],
   },
   consortiaInventoryShareLocalInstance: {
-    internal: 'consortia.inventory.share.local.instance',
+    internal: 'consortia.inventory.local.sharing-instances.execute',
     gui: 'Inventory: Share local instance with consortium',
     details: ['obsolete'],
   },
