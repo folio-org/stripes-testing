@@ -541,6 +541,21 @@ export default {
     });
   },
 
+  verifyErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect([
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: identifier }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(HTML(including(errorText)))
+          .exists(),
+      ]);
+    });
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -1219,5 +1234,13 @@ export default {
 
   verifyRecordsCountInBulkEditQueryPane(value) {
     cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyBulkEditQueryPaneExists() {
+    cy.expect(bulkEditQueryPane.exists());
+  },
+
+  verifyQueryHeadLine(query) {
+    cy.expect(bulkEditQueryPane.find(HTML(`Query: ${query}`)).exists());
   },
 };
