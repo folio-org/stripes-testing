@@ -25,7 +25,7 @@ const selectFieldButton = Button(including('Select field'));
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holdings — Holding — Instance UUID',
+  instanceUuid: 'Holdings — Holdings — Instance UUID',
 };
 export const instanceFieldValues = {
   instanceHrid: 'Instances — Instance — Instance HRID',
@@ -43,7 +43,7 @@ export const usersFieldValues = {
   expirationDate: 'Users — User — Expiration date',
   firstName: 'Users — User — First name',
   lastName: 'Users — User — Last name',
-  patronGroup: 'Users — Group — Name',
+  patronGroup: 'Users — Patron group — Name',
   preferredContactType: 'Users — User — Preferred contact type',
   userActive: 'Users — User — Active',
   userBarcode: 'Users — User — Barcode',

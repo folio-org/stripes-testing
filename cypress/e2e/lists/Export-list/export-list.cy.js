@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Export query', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       visibility: 'Shared',
     };
