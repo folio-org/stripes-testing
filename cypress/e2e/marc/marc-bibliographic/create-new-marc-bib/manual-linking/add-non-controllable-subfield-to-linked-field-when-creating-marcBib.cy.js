@@ -60,7 +60,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFourthUpdate:
-              '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english $v no. 19. $z England',
+              '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFifth: '',
             boxFifthUpdate: '',
             boxFifthAfterSave: '',

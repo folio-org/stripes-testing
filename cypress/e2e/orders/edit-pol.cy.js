@@ -59,7 +59,7 @@ describe('orders: create', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
     });
 

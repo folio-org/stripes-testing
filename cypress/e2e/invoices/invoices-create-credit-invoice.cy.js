@@ -50,6 +50,7 @@ describe('Invoices', () => {
       Invoices.addFundDistributionToLine(invoiceLine, fund);
       cy.getAdminToken();
       Approvals.setApprovePayValue(false);
+      cy.wait(4000);
       Invoices.approveInvoice();
       // check transactions after approve
       TopMenuNavigation.openAppFromDropdown('Finance');

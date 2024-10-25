@@ -240,6 +240,7 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.find(Button()).click(),
+      codeField.click(),
     ]);
   },
 
@@ -1191,5 +1192,9 @@ export default {
 
   verifyFundLinkNameExists: (FundName) => {
     cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
+  },
+
+  openSource: (linkName) => {
+    cy.do(transactionDetailSection.find(Link(linkName)).click());
   },
 };
