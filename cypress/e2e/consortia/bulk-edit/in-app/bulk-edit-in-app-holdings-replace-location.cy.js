@@ -2,6 +2,7 @@ import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import SelectLocationsModal from '../../../../support/fragments/bulk-edit/select-locations-modal';
 // import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -308,8 +309,13 @@ describe('Bulk-edit', () => {
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup();
           // the method created but not checked yet
-          BulkEditActions.verifyLocationLookupModalInCentralTenant();
+          SelectLocationsModal.verifyLocationLookupModalInCentralTenant();
 
+          // 11
+          SelectLocationsModal.verifyTenantsInAffiliationDropdown(
+            tenantNames.college,
+            tenantNames.university,
+          );
           //   // 4
           //   BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
           //   BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);

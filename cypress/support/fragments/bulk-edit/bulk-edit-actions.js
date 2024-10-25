@@ -16,12 +16,8 @@ import {
   TextArea,
   Selection,
   Keyboard,
-  PaneHeader,
-  Pane,
   MultiColumnListRow,
   MessageBanner,
-  Label,
-  MultiSelect,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -43,7 +39,6 @@ const startBulkEditButton = Button('Start bulk edit');
 const startBulkEditInstanceButton = Button('Instances and Administrative data');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
-const selectLocationsModal = Modal('Select locations');
 const confirmChangesButton = Button('Confirm changes');
 const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const commitChanges = Button('Commit changes');
@@ -53,8 +48,6 @@ const newEmail = TextField({ testid: 'input-email-1' });
 const closeAreYouSureModalButton = areYouSureForm.find(Button({ icon: 'times' }));
 const selectNoteHoldingTypeDropdown = Select({ id: 'noteHoldingsType' });
 const saveAndCloseButton = Button('Save & close');
-const closeButton = Button('Close');
-
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -378,49 +371,14 @@ export default {
     ]);
   },
 
-  verifyLocationLookupModalInCentralTenant() {
-    cy.expect([
-      selectLocationsModal.exists(),
-      selectLocationsModal.find(Pane({ title: 'Search & filter' })).exists(),
-      selectLocationsModal.find(PaneHeader({ title: 'Locations' })).exists(),
-      selectLocationsModal.find(Button({ icon: 'times' })).exists(),
-      selectLocationsModal.find(closeButton).has({ disabled: false }),
-      selectLocationsModal.find(Label('Affiliation')),
-
-      selectLocationsModal
-        .find(Button({ ariaLabelledby: including('affiliations-select') }))
-        .exists(),
-      selectLocationsModal.find(TextField({ id: 'input-record-search' })),
-      selectLocationsModal.find(Button('Search')).has({ disabled: true }),
-      selectLocationsModal.find(Button('Reset all')).has({ disabled: true }),
-
-      selectLocationsModal.find(Accordion('Institution')).has({ open: true }),
-      selectLocationsModal
-        .find(Accordion('Institution'))
-        .find(MultiSelect({ id: 'institutions-filter' })),
-      selectLocationsModal.find(Accordion('Campus')).has({ open: true }),
-      selectLocationsModal.find(Accordion('Campus')).find(MultiSelect({ id: 'campuses-filter' })),
-      selectLocationsModal.find(Accordion('Library')).has({ open: true }),
-      selectLocationsModal.find(Accordion('Library')).find(MultiSelect({ id: 'libraries-filter' })),
-
-      selectLocationsModal.find(PaneHeader({ subtitle: including('records found') })).exists(),
-      selectLocationsModal.find(actionsBtn).exists(),
-
-      selectLocationsModal.find(MultiColumnListHeader('Name')).exists(),
-      selectLocationsModal.find(MultiColumnListHeader('Code')).exists(),
-      selectLocationsModal.find(MultiColumnListHeader('Institution')).exists(),
-      selectLocationsModal.find(MultiColumnListHeader('Campus')).exists(),
-      selectLocationsModal.find(MultiColumnListHeader('Library')).exists(),
-      selectLocationsModal.find(MultiColumnListHeader('Location status')).exists(),
-    ]);
-  },
-
   locationLookupModalCancel() {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
+
   locationLookupModalSaveAndClose() {
     cy.do(locationLookupModal.find(saveAndCloseButton).click());
   },
+
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -442,6 +400,7 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
+
   selectLocation(location, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
@@ -452,6 +411,7 @@ export default {
     ]);
     BulkEditSearchPane.isConfirmButtonDisabled(false);
   },
+
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -470,6 +430,7 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
+
   clickSelectedLocation(currentLocation, newLocation) {
     cy.do([
       Button(including(`Select control\n${currentLocation}`)).click(),
@@ -477,6 +438,7 @@ export default {
       SelectionOption(including(newLocation)).click(),
     ]);
   },
+
   clearPermanentLocation(type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
