@@ -99,7 +99,11 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        changedRecordsFileName,
+        matchedRecordsFileName,
+        previewFileName,
+      );
     });
 
     it(
