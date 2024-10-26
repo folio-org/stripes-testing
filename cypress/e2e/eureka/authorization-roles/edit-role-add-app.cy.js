@@ -41,11 +41,6 @@ describe('Eureka', () => {
           },
           {
             table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
             resource: 'UI-Notes Settings',
             action: 'View',
           },
@@ -76,6 +71,16 @@ describe('Eureka', () => {
           {
             table: 'Settings',
             resource: 'Settings Consortia-Settings Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'UI-Consortia-Settings Settings Membership',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
             action: 'View',
           },
         ],
