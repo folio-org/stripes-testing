@@ -548,11 +548,11 @@ export default {
     gui: 'Settings (Circulation): Title level request edit',
   },
   uiMoveRequest: {
-    internal: 'ui-requests.moveRequest',
+    internal: 'ui-requests.moveRequest.execute',
     gui: 'Requests: Move to new item, reorder queue',
   },
   uiRequestsReorderQueue: {
-    internal: 'ui-requests.reorderQueue',
+    internal: 'ui-requests.reorderQueue.execute',
     gui: 'Requests: Reorder queue',
   },
   // Calendar
@@ -612,10 +612,13 @@ export default {
   // Checkout
   checkoutAll: { internal: 'ui-checkout.all', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: {
-    internal: 'ui-checkout.circulation',
+    internal: 'ui-checkout.circulation.execute',
     gui: 'Check out: Check out circulating items',
   },
-  checkoutViewFeeFines: { internal: 'ui-checkout.viewFeeFines', gui: 'Check out: View fees/fines' },
+  checkoutViewFeeFines: {
+    internal: 'ui-checkout.viewFeeFines.view',
+    gui: 'Check out: View fees/fines',
+  },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
@@ -1068,11 +1071,11 @@ export default {
     details: ['absentInEvrk'],
   },
   uiCanViewReadingRoomAccess: {
-    internal: 'ui-users.view-reading-room-access',
+    internal: 'ui-users.reading-room-access.view',
     gui: 'Users: Can view reading room access',
   },
   uiCanViewEditReadingRoomAccess: {
-    internal: 'ui-users.edit-reading-room-access',
+    internal: 'ui-users.reading-room-access.edit',
     gui: 'Users: Can view, and edit reading room access',
   },
   uiReadingRoomAll: {
