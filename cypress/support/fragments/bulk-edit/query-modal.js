@@ -33,6 +33,7 @@ export const instanceFieldValues = {
 };
 export const itemFieldValues = {
   instanceId: 'Items — Instances — Instance UUID',
+  instanceTitle: 'Items — Instances — Resource title',
   itemStatus: 'Items — Items — Status',
   itemUuid: 'Items — Items — Item UUID',
   holdingsId: 'Items — Holdings — UUID',
