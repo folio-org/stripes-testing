@@ -1,10 +1,12 @@
 export const APPLICATION_NAMES = {
+  AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
   INVOICES: 'Invoices',
+  LICENSES: 'Licenses',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
