@@ -3,7 +3,6 @@ import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthorityBrowse from '../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
@@ -65,7 +64,7 @@ describe('MARC', () => {
 
           cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
-    
+
             cy.getUserToken(userProperties.username, userProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
