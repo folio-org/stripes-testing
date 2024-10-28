@@ -968,6 +968,14 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
   INVENTORY_ITEMS: {
     BARCODE: 'Barcode',
     STATUS: 'Status',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    ACTION_NOTE: 'Action note',
+    BINDING_NOTE: 'Binding note',
+    CHECK_IN_NOTE: 'Check in note',
+    CHECK_OUT_NOTE: 'Check out note',
+    ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    ITEM_UUID: 'Item UUID',
+    PROVENANCE_NOTE: 'Provenance note',
   },
 };
 
