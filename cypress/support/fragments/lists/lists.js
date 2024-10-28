@@ -179,9 +179,26 @@ export default {
     cy.wait(1000);
   },
 
+  verifyBuildQueryButtonIsDisabled() {
+    cy.expect(buildQueryButton.has({ disabled: true }));
+  },
+
   editList() {
     cy.do(editList.click());
     cy.wait(2000);
+  },
+
+  verifyEditListButtonIsDisabled() {
+    cy.expect(editList.has({ disabled: true }));
+  },
+
+  verifyEditListButtonDoesNotExist() {
+    cy.expect(editList.absent());
+  },
+
+  verifyEditListButtonIsActive() {
+    cy.expect(editList.exists());
+    cy.expect(editList.has({ disabled: false }));
   },
 
   duplicateList() {
@@ -235,19 +252,6 @@ export default {
   exportList() {
     cy.do(exportList.click());
     cy.wait(1000);
-  },
-
-  verifyEditListButtonIsDisabled() {
-    cy.expect(editList.has({ disabled: true }));
-  },
-
-  verifyEditListButtonDoesNotExist() {
-    cy.expect(editList.absent());
-  },
-
-  verifyEditListButtonIsActive() {
-    cy.expect(editList.exists());
-    cy.expect(editList.has({ disabled: false }));
   },
 
   exportListVisibleColumns() {
@@ -368,6 +372,24 @@ export default {
     cy.wait(500);
   },
 
+  verifyRecordTypes(options) {
+    const optionsFromUI = [];
+    cy.get('button[name=recordType]')
+      .click()
+      .then(() => {
+        cy.wait(500);
+        cy.get('li[role=option]')
+          .each((element) => {
+            optionsFromUI.push(element.text());
+          })
+          .then(() => {
+            cy.expect(ArrayUtils.compareArrays(optionsFromUI, options)).to.equal(true);
+          });
+      });
+    cy.get('button[name=recordType]').click();
+    cy.wait(500);
+  },
+
   selectRecordType(option) {
     cy.get('button[name=recordType]')
       .click()
@@ -463,19 +485,21 @@ export default {
   },
 
   checkResultSearch(searchResults, rowIndex = 0) {
-    cy.wrap(true).then(() => {
-      if (searchResults.description) {
-        delete searchResults.description;
-      }
-    }).then(() => {
-      cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
-        cy.expect(
-          MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-            .find(MultiColumnListCell({ content: including(contentToCheck) }))
-            .exists(),
-        );
+    cy.wrap(true)
+      .then(() => {
+        if (searchResults.description) {
+          delete searchResults.description;
+        }
+      })
+      .then(() => {
+        cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
+          cy.expect(
+            MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+              .find(MultiColumnListCell({ content: including(contentToCheck) }))
+              .exists(),
+          );
+        });
       });
-    });
   },
 
   clickOnAccordionInFilter(accordionName) {
@@ -785,14 +809,16 @@ export default {
   },
 
   deleteViaApi(id) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `lists/${id}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    }).then((response) => {
-      return response;
-    });
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `lists/${id}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
+      });
   },
 
   // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
