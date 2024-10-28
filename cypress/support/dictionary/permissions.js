@@ -133,7 +133,7 @@ export default {
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['inventory.all', 'Inventory: All permissions'],
+    internal: ['ui-inventory.all', 'Inventory: All permissions'],
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
