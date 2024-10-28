@@ -184,7 +184,7 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('Users — User — Last name, first name').click();
+        cy.contains('User — Last name, first name').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="input-value-0"]').type('ABCD');
         cy.get('button:contains("Test query")').click();
