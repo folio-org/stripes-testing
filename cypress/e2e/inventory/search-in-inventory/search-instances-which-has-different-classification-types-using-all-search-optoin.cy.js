@@ -145,7 +145,7 @@ describe('Inventory', () => {
 
     it(
       'C466149 Search for Instances which have different classification types using "All" search option and one query (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466149'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.allOption);
         InventorySearchAndFilter.executeSearch(testData.classificationValue);

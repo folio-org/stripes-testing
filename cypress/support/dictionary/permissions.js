@@ -133,7 +133,7 @@ export default {
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['inventory.all', 'Inventory: All permissions'],
+    internal: ['ui-inventory.all', 'Inventory: All permissions'],
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
@@ -149,11 +149,11 @@ export default {
     gui: 'Inventory: Import single bibliographic records',
   },
   uiInventoryCreateOrderFromInstance: {
-    internal: 'ui-inventory.instance.createOrder',
+    internal: 'ui-inventory.instance.order.create',
     gui: 'Inventory: Create order from instance',
   },
   uiInventoryMarkItemsWithdrawn: {
-    internal: 'ui-inventory.items.mark-items-withdrawn',
+    internal: 'ui-inventory.items.mark-withdrawn.execute',
     gui: 'Inventory: Mark items withdrawn',
   },
   uiInventoryViewInstances: {
@@ -173,7 +173,7 @@ export default {
     gui: 'Inventory: Move holdings',
   },
   uiInventoryMarkAsMissing: {
-    internal: 'ui-inventory.item.markasmissing',
+    internal: 'ui-inventory.item.mark-as-missing.execute',
     gui: 'Inventory: View, create, edit, mark missing items',
   },
   uiInventoryMoveItems: { internal: 'ui-inventory.item.move', gui: 'Inventory: Move items' },
@@ -198,27 +198,27 @@ export default {
     gui: 'Inventory: View, create, edit, delete items',
   },
   uiInventoryMarcItemInProcess: {
-    internal: 'ui-inventory.items.mark-in-process-non-requestable',
+    internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
   uiInventoryMarcItemIntellectual: {
-    internal: 'ui-inventory.items.mark-intellectual-item',
+    internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
   },
   uiInventoryMarcItemLongMissing: {
-    internal: 'ui-inventory.items.mark-long-missing',
+    internal: 'ui-inventory.items.mark-long-missing.execute',
     gui: 'Inventory: Mark items long missing',
   },
   uiInventoryMarcItemRestricted: {
-    internal: 'ui-inventory.items.mark-restricted',
+    internal: 'ui-inventory.items.mark-restricted.execute',
     gui: 'Inventory: Mark items restricted',
   },
   uiInventoryMarcItemUnavailable: {
-    internal: 'ui-inventory.items.mark-unavailable',
+    internal: 'ui-inventory.items.mark-unavailable.execute',
     gui: 'Inventory: Mark items unavailable',
   },
   uiInventoryMarcItemUnknow: {
-    internal: 'ui-inventory.items.mark-unknown',
+    internal: 'ui-inventory.items.mark-unknown.execute',
     gui: 'Inventory: Mark items unknown',
   },
   uiCreateEditDeleteURL: {
@@ -226,7 +226,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
   uiInventorySetRecordsForDeletion: {
-    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    internal: 'ui-inventory.instance.set-records-for-deletion.execute',
     gui: 'Inventory: Set records for deletion',
   },
   inventoryCRUDHoldings: {
@@ -282,7 +282,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
   enableStaffSuppressFacet: {
-    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    internal: 'ui-inventory.instance.staff-suppressed-records.view',
     gui: 'Inventory: Enable staff suppress facet',
   },
   patchInstanceDateTypes: {
@@ -941,11 +941,11 @@ export default {
     gui: 'Settings (Inventory): Edit fast add settings',
   },
   uiCreateEditDeleteLoanTypes: {
-    internal: 'ui-inventory.settings.loantypes',
+    internal: 'ui-inventory.settings.loan-types',
     gui: 'Settings (Inventory): Create, edit, delete loan types',
   },
   uiCreateEditDeleteMaterialTypes: {
-    internal: 'ui-inventory.settings.materialtypes',
+    internal: 'ui-inventory.settings.material-types',
     gui: 'Settings (Inventory): Create, edit, delete material types',
   },
   uiInventorySettingsConfigureSingleRecordImport: {
@@ -1065,6 +1065,10 @@ export default {
   uiCanViewReadingRoomAccess: {
     internal: 'ui-users.view-reading-room-access',
     gui: 'Users: Can view reading room access',
+  },
+  uiCanViewEditReadingRoomAccess: {
+    internal: 'ui-users.edit-reading-room-access',
+    gui: 'Users: Can view, and edit reading room access',
   },
   uiReadingRoomAll: {
     internal: 'ui-reading-room.all',

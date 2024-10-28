@@ -67,7 +67,7 @@ describe('MARC', () => {
 
       it(
         'C436862 Change "Active" checkbox state of FOLIO "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C436862'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

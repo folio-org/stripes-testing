@@ -47,7 +47,7 @@ describe('MARC', () => {
           },
           {
             rowIndex: 84,
-            value: 'C388642 Robinson and Associates, Inc.',
+            value: 'C388642 Robinson & Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388642 Robinson & Associates, Inc.',
             boxFifth: '',
@@ -218,7 +218,7 @@ describe('MARC', () => {
 
         it(
           'C388642 All linkable fields are NOT linked after clicking on the "Link headings" button when derive "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C388642'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

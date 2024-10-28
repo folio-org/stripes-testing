@@ -84,7 +84,7 @@ describe('MARC', () => {
 
       it(
         'C380572 MARC Authority plug-in | Search using "Genre" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C380572'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

@@ -106,9 +106,9 @@ async function classifyTestResults(runId) {
   for (const test of failedTests) {
     const { case_id, id: testId, status_id } = test;
 
-    // Get test history from 4 days ago
+    // Get test history from 7 days ago
     const startDate =
-      Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 4) / 1000;
+      Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7) / 1000;
     const endDate =
       Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) / 1000;
     const history = (await getTestHistory(testrailClient, case_id, RUN_ID)).results.filter(
@@ -118,7 +118,7 @@ async function classifyTestResults(runId) {
     const joinedHistory = getJoinedHistory(history);
 
     // Check the historical data for the current test
-    const passedInHistory = joinedHistory[0].status_id === status.Passed;
+    const passedInHistory = joinedHistory[0]?.status_id === status.Passed;
     const failedInHistory = joinedHistory.some((result) => result.status_id === status.Failed);
 
     if (status_id === status.Failed && passedInHistory) {
@@ -134,6 +134,9 @@ async function classifyTestResults(runId) {
       } else {
         resultsList.unknownFailed.push({ testId, caseId: case_id });
       }
+    } else {
+      // If no historical data available, mark as unknown
+      resultsList.unknownFailed.push({ testId, caseId: case_id });
     }
   }
   return resultsList;

@@ -138,7 +138,7 @@ describe('MARC', () => {
 
         it(
           'C365599 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & keep editing" button in editing window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C365599'] },
           () => {
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.tag100RowIndex);

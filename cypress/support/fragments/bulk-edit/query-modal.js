@@ -25,7 +25,7 @@ const selectFieldButton = Button(including('Select field'));
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holdings — Holding — Instance UUID',
+  instanceUuid: 'Holdings — Holdings — Instance UUID',
 };
 export const instanceFieldValues = {
   instanceHrid: 'Instances — Instance — Instance HRID',
@@ -33,6 +33,7 @@ export const instanceFieldValues = {
 };
 export const itemFieldValues = {
   instanceId: 'Items — Instances — Instance UUID',
+  instanceTitle: 'Items — Instances — Resource title',
   itemStatus: 'Items — Items — Status',
   itemUuid: 'Items — Items — Item UUID',
   holdingsId: 'Items — Holdings — UUID',
@@ -42,7 +43,7 @@ export const usersFieldValues = {
   expirationDate: 'Users — User — Expiration date',
   firstName: 'Users — User — First name',
   lastName: 'Users — User — Last name',
-  patronGroup: 'Users — Group — Name',
+  patronGroup: 'Users — Patron group — Name',
   preferredContactType: 'Users — User — Preferred contact type',
   userActive: 'Users — User — Active',
   userBarcode: 'Users — User — Barcode',
@@ -51,10 +52,10 @@ export const dateTimeOperators = [
   'Select operator',
   'equals',
   'not equal to',
-  '>',
-  '<',
-  '>=',
-  '<=',
+  'greater than',
+  'less than',
+  'greater than or equal to',
+  'less than or equal to',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [

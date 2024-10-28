@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(groups.group == )');
         QueryModal.verifyValueColumn();
-        QueryModal.fillInValueTextfield(patronGroupNames.STAFF);
+        QueryModal.chooseValueSelect(patronGroupNames.STAFF);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(`(groups.group == "${patronGroupNames.STAFF}")`);

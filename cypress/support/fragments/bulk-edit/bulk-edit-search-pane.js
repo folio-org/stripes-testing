@@ -28,6 +28,7 @@ const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const fileButton = Button('or choose file');
+const bulkEditQueryPane = Pane(including('Bulk edit query'));
 const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
@@ -537,6 +538,21 @@ export default {
           .find(MultiColumnListCell({ column: 'Reason for error', content: errorText }))
           .exists(),
       );
+    });
+  },
+
+  verifyErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect([
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: identifier }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(HTML(including(errorText)))
+          .exists(),
+      ]);
     });
   },
 
@@ -1214,5 +1230,17 @@ export default {
         cy.expect(DropdownMenu().find(Checkbox(instanceNoteColumnName)).has({ checked: false }));
       });
     });
+  },
+
+  verifyRecordsCountInBulkEditQueryPane(value) {
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyBulkEditQueryPaneExists() {
+    cy.expect(bulkEditQueryPane.exists());
+  },
+
+  verifyQueryHeadLine(query) {
+    cy.expect(bulkEditQueryPane.find(HTML(`Query: ${query}`)).exists());
   },
 };

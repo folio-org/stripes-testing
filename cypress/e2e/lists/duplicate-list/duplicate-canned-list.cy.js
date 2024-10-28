@@ -9,8 +9,8 @@ describe('lists', () => {
     const userData = {};
 
     const listData = {
-      name: `C423599-${getTestEntityValue('test_list')}`,
-      description: `C423599-${getTestEntityValue('test_list_description')}`,
+      name: `C423599-${getTestEntityValue('list')}`,
+      description: `C423599-${getTestEntityValue('desc')}`,
       recordType: 'Loans',
       status: 'Active',
       visibility: 'Private',
@@ -41,7 +41,7 @@ describe('lists', () => {
 
     it(
       'C423604 Duplicate lists - Canned reports with modified data (corsair)',
-      { tags: ['smoke', 'corsair', 'C423604'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423604'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

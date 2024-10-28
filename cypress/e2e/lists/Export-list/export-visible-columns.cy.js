@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('export query', () => {
     const userData = {};
     const listData = {
-      name: `C552377-${getTestEntityValue('test_list')}`,
-      description: `C552377-${getTestEntityValue('test_list_description')}`,
+      name: `C552377-${getTestEntityValue('list')}`,
+      description: `C552377-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -55,7 +55,7 @@ describe('lists', () => {
 
     it(
       'C552377 Verify that "Export visible columns (CSV)" exports only the visible columns (corsair)',
-      { tags: ['smoke', 'corsair', 'C552377'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C552377'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

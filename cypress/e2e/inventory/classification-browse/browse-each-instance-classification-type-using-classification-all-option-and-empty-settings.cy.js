@@ -31,18 +31,18 @@ describe('Inventory', () => {
         },
         {
           instanceTitle: 'C468147 Search by Classification Instance 6 - LC (local)',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
           classificationValue: 'DD259.4 .B527 1973',
         },
         {
           instanceTitle:
             'C468147 Search by Classification Instance 7 - National Agricultural Library',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.GDC,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.NATIONAL_AGRICULTURAL_LIBRARY,
           classificationValue: 'HD3492.H8',
         },
         {
           instanceTitle: 'C468147 Search by Classification Instance 9 - SUDOC',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.SUDOC,
           classificationValue: 'L37.s:Oc1/2/991',
         },
       ],
@@ -198,7 +198,7 @@ describe('Inventory', () => {
 
     it(
       'C468147 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option and empty settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468147'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.classificationValue);

@@ -63,7 +63,7 @@ describe('MARC', () => {
 
     it(
       'C466085 Search by "Identifier" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466085'] },
       () => {
         searchQueries.forEach((query) => {
           MarcAuthorities.searchByParameter(keywordSearchOption, query);

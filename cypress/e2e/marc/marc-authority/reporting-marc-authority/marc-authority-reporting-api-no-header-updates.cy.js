@@ -127,7 +127,7 @@ describe('MARC', () => {
 
       it(
         'C380530 No data for "MARC authority headings updates (CSV)" report gathered for time range when no header updates were made to "MARC authority" records (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380530'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);

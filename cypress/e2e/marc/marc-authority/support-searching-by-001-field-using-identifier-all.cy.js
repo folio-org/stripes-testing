@@ -94,7 +94,7 @@ describe('MARC', () => {
 
     it(
       'C380586 Search MARC: support searching by 001 field value using "Identifier (all) " option (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C380586'] },
       () => {
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(testData.searchOptions.IDENTIFIERS_ALL, '01233282023710');

@@ -134,7 +134,7 @@ describe('MARC', () => {
 
         it(
           'C366578 Delete unlinked field of "MARC Bib" record in editing window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C366578'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

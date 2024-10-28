@@ -11,7 +11,7 @@ describe('lists', () => {
 
     beforeEach('Create a user', () => {
       listData = {
-        name: getTestEntityValue('test_list'),
+        name: getTestEntityValue('list'),
         recordType: 'Loans',
       };
       cy.getAdminToken();
@@ -69,9 +69,10 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -94,9 +95,10 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -119,9 +121,10 @@ describe('lists', () => {
         listData.status = 'Inactive';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

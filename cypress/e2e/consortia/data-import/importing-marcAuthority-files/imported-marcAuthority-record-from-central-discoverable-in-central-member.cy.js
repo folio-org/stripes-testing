@@ -61,7 +61,7 @@ describe('Data Import', () => {
 
     it(
       'C405119 Imported "MARC authority" record from Central tenant is discoverable in Central and Member tenants (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire', 'C405119'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);

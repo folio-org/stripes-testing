@@ -73,7 +73,7 @@ describe('MARC', () => {
 
       it(
         'C423500 Verify that 005 and 999 fields are system generated after saving (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423500'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

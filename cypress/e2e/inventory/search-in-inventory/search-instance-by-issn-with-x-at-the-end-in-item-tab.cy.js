@@ -68,7 +68,7 @@ describe('Inventory', () => {
 
     it(
       'C451459 Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Item tab) (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C451459'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.itemTabIsDefault();

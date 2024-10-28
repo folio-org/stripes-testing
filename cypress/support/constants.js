@@ -974,6 +974,8 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
     ITEM_UUID: 'Item UUID',
     PROVENANCE_NOTE: 'Provenance note',
+    BARCODE: 'Barcode',
+    STATUS: 'Status',
   },
 };
 

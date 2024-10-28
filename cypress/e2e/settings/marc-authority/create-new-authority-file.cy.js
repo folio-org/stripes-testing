@@ -45,7 +45,7 @@ describe('MARC', () => {
 
       it(
         'C423372 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C423372'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((fileName) => {
@@ -80,7 +80,7 @@ describe('MARC', () => {
 
       it(
         'C423992 Create new "Authority file" with empty "Base URL" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423992'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           ManageAuthorityFiles.clickNewButton();

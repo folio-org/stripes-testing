@@ -4,6 +4,7 @@ import {
   Accordion,
   Modal,
   SelectionOption,
+  SelectionList,
   Button,
   DropdownMenu,
   Checkbox,
@@ -232,6 +233,7 @@ export default {
       'Restricted',
       'Unavailable',
       'Unknown',
+      'In process',
     ];
     cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).click()]);
     this.verifyPossibleActions(options);
@@ -1188,6 +1190,16 @@ export default {
     this.clickOptionsSelection();
   },
 
+  verifyOptionExistsInSelectOptionDropdown(option) {
+    cy.then(() => {
+      SelectionList({ placeholder: 'Filter options list' })
+        .optionList()
+        .then((list) => {
+          expect(list).to.include(option);
+        });
+    });
+  },
+
   fillLocation(location) {
     cy.do([
       locationSelection.filterOptions(location),
@@ -1323,6 +1335,42 @@ export default {
     });
   },
 
+  verifySelectOptionsInstanceSortedAlphabetically() {
+    this.clickOptionsSelection();
+
+    const group = 'li[class*="groupLabel"]';
+    const option = '[class*="optionSegment"]';
+
+    // check that the group names are sorted alphabetically
+    cy.get('[class*="selectionList"] li:not([class*="groupedOption"])').then((groups) => {
+      const groupTexts = groups.get().map((el) => el.innerText);
+      const sortedGroupTexts = [...groupTexts].sort((a, b) => a.localeCompare(b));
+
+      expect(sortedGroupTexts).to.deep.equal(groupTexts);
+    });
+
+    // check that the option names in the group are sorted alphabetically
+    cy.get(group).each(($groupLabel) => {
+      const optionTexts = [];
+
+      cy.wrap($groupLabel)
+        .nextUntil('[class*="selectionList"] li:not([class*="groupedOption"])')
+        .each(($option) => {
+          cy.wrap($option)
+            .find(option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          const sortedOptionTexts = [...optionTexts].sort((a, b) => a.localeCompare(b));
+
+          expect(sortedOptionTexts).to.deep.equal(optionTexts);
+        });
+    });
+  },
+
   verifyNoteTypeInNoteHoldingTypeDropdown(noteType, rowIndex = 0) {
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
@@ -1386,5 +1434,50 @@ export default {
           });
         });
     });
+  },
+
+  verifyOptionsFilterInFocus() {
+    const inputElement = 'input[placeholder="Filter options list"]';
+    cy.get(inputElement).click();
+    cy.get(inputElement).should('have.focus');
+  },
+
+  typeInFilterOptionsList(value) {
+    cy.get('input[placeholder="Filter options list"]').clear().type(value);
+    cy.wait(500);
+  },
+
+  verifyFilteredOptionsListIncludesOptionsWithText(value) {
+    cy.get('ul[class^="selectionList-"] li').each(($li) => {
+      cy.wrap($li)
+        .invoke('text')
+        .then((text) => {
+          expect(text.toLowerCase()).to.include(value);
+        });
+    });
+  },
+
+  verifyNoMatchingOptionsInFilterOptionsList() {
+    cy.get('ul[class^="selectionList-"] li').should('have.text', '-List is empty-');
+  },
+
+  clearFilterOptionsListByClickingBackspace() {
+    cy.get('input[placeholder="Filter options list"]')
+      .invoke('val')
+      .then((text) => {
+        const length = text.length;
+        const backspaces = '{backspace}'.repeat(length);
+
+        cy.get('input[placeholder="Filter options list"]').type(backspaces);
+        cy.wait(1000);
+      });
+  },
+
+  verifyValueInInputOfFilterOptionsList(value) {
+    cy.get('input[placeholder="Filter options list"]').should('have.value', value);
+  },
+
+  clickFilteredOption(option) {
+    cy.do(SelectionOption(including(option)).click());
   },
 };

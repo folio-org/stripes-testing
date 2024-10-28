@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Export query', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       visibility: 'Shared',
     };
@@ -36,48 +36,58 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411809 Export list: Not canned lists (corsair)', { tags: ['smoke', 'corsair', 'C411809'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.buildQuery();
-      Lists.queryBuilderActions();
-      Lists.viewUpdatedList();
-      Lists.openActions();
-      Lists.exportList();
-      Lists.verifySuccessCalloutMessage(
-        `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
-      );
-      cy.wait(5000);
-      Lists.verifySuccessCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
-    });
+    it(
+      'C411809 Export list: Not canned lists (corsair)',
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411809'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.buildQuery();
+        Lists.queryBuilderActions();
+        Lists.viewUpdatedList();
+        Lists.openActions();
+        Lists.exportList();
+        Lists.verifySuccessCalloutMessage(
+          `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
+        );
+        cy.wait(5000);
+        Lists.verifySuccessCalloutMessage(
+          `List ${listData.name} was successfully exported to CSV.`,
+        );
+      },
+    );
 
-    it('C411811 Export list: Inactive lists (corsair)', { tags: ['smoke', 'corsair', 'C411811'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus('Inactive');
-      Lists.buildQuery();
-      Lists.queryBuilderActions();
-      Lists.openActions();
-      Lists.verifyExportListButtonIsDisabled();
-    });
+    it(
+      'C411811 Export list: Inactive lists (corsair)',
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411811'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus('Inactive');
+        Lists.buildQuery();
+        Lists.queryBuilderActions();
+        Lists.openActions();
+        Lists.verifyExportListButtonIsDisabled();
+      },
+    );
 
     it(
       'C411812 Export list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair', 'C411812'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411812'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -120,7 +130,7 @@ describe('lists', () => {
     );
 
     it(
-      'C411830 Export list: Edit is in progress, when the list doesn\'t have query (corsair)',
+      "C411830 Export list: Edit is in progress, when the list doesn't have query (corsair)",
       { tags: ['criticalPath', 'corsair', 'C411830'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -141,7 +151,7 @@ describe('lists', () => {
     );
 
     it(
-      'C411819 Export list: The list doesn\'t contain query (corsair)',
+      "C411819 Export list: The list doesn't contain query (corsair)",
       { tags: ['smoke', 'corsair', 'C411819'] },
       () => {
         cy.login(userData.username, userData.password, {

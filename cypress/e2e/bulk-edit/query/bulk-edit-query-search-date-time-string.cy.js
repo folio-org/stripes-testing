@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
         QueryModal.verifySelectedField(usersFieldValues.expirationDate);
         QueryModal.verifyQueryAreaContent('(users.expiration_date  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('>=');
+        QueryModal.selectOperator('greater than or equal to');
         QueryModal.verifyOperatorsList(dateTimeOperators);
         QueryModal.verifyQueryAreaContent('(users.expiration_date >= )');
         QueryModal.verifyValueColumn();
@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.typeInAndSelectField(usersFieldValues.expirationDate, 1);
-        QueryModal.selectOperator('<=', 1);
+        QueryModal.selectOperator('less than or equal to', 1);
         QueryModal.verifyValueColumn();
         const nextWeekDate = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
         const nextWeekDateWithDashes = DateTools.getSomeDaysAfterTomorrowDateForFiscalYear(3);

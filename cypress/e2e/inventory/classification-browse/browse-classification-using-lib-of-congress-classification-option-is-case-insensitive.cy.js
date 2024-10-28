@@ -73,7 +73,7 @@ describe('Inventory', () => {
 
     it(
       'C468256 Browse for classification using "Library of Congress classification" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468256'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(

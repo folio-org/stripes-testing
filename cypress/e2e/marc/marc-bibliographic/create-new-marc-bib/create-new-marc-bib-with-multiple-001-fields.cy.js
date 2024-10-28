@@ -43,7 +43,7 @@ describe('MARC', () => {
 
       it(
         'C380699 Add multiple 001s when creating "MARC Bibliographic" record (Spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380699'] },
         () => {
           InventoryInstance.newMarcBibRecord();
 
