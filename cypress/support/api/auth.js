@@ -105,3 +105,16 @@ Cypress.Commands.add('logoutViaApi', () => {
     failOnStatusCode: false,
   });
 });
+
+Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, userId) => {
+  const body = userId
+    ? { username, password: oldPassword, newPassword, userId }
+    : { username, password: oldPassword, newPassword };
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'authn/update',
+    body,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  });
+});
