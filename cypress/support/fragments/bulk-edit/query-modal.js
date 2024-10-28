@@ -25,28 +25,28 @@ const selectFieldButton = Button(including('Select field'));
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holdings — Holdings — Instance UUID',
+  instanceUuid: 'Holdings — Instance UUID',
 };
 export const instanceFieldValues = {
-  instanceHrid: 'Instances — Instance — Instance HRID',
-  instanceResourceTitle: 'Instances — Instance — Resource title',
+  instanceHrid: 'Instance — Instance HRID',
+  instanceResourceTitle: 'Instance — Resource title',
 };
 export const itemFieldValues = {
-  instanceId: 'Items — Instances — Instance UUID',
-  instanceTitle: 'Items — Instances — Resource title',
-  itemStatus: 'Items — Items — Status',
-  itemUuid: 'Items — Items — Item UUID',
-  holdingsId: 'Items — Holdings — UUID',
-  temporaryLocation: 'Items — Temporary location — Name',
+  instanceId: 'Instances — Instance UUID',
+  instanceTitle: 'Instances — Resource title',
+  itemStatus: 'Items — Status',
+  itemUuid: 'Items — Item UUID',
+  holdingsId: 'Holdings — UUID',
+  temporaryLocation: 'Temporary location — Name',
 };
 export const usersFieldValues = {
-  expirationDate: 'Users — User — Expiration date',
-  firstName: 'Users — User — First name',
-  lastName: 'Users — User — Last name',
-  patronGroup: 'Users — Patron group — Name',
-  preferredContactType: 'Users — User — Preferred contact type',
-  userActive: 'Users — User — Active',
-  userBarcode: 'Users — User — Barcode',
+  expirationDate: 'User — Expiration date',
+  firstName: 'User — First name',
+  lastName: 'User — Last name',
+  patronGroup: 'Patron group — Name',
+  preferredContactType: 'User — Preferred contact type',
+  userActive: 'User — Active',
+  userBarcode: 'User — Barcode',
 };
 export const dateTimeOperators = [
   'Select operator',
