@@ -44,7 +44,7 @@ export default {
     gui: 'Settings (Notes): Edit and View General settings',
   },
   uiNotesAssignUnassign: {
-    internal: 'ui-notes.item.assign-unassign',
+    internal: 'ui-notes.item.execute',
     gui: 'Notes: Can assign and unassign a note',
   },
   // Agreements
