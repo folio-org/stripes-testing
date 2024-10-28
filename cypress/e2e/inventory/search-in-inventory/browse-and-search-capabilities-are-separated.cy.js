@@ -41,7 +41,8 @@ describe('Inventory', () => {
       'C368482 Browse and Search capabilities are separated\n (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C368482'] },
       () => {
-        cy.wait(3000);
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.switchToSearchTab();
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventoryInstances.verifyInstanceSearchOptions();
         InventorySearchAndFilter.switchToBrowseTab();
