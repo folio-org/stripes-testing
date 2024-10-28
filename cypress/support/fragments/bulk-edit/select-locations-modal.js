@@ -9,7 +9,9 @@ import {
   Pane,
   Label,
   MultiSelect,
+  MultiColumnListCell,
   SelectionList,
+  Selection,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -65,5 +67,13 @@ export default {
     }).then((options) => {
       expect(options).to.equal(tenants);
     });
+  },
+
+  selectTenantInAffiliationDropdown(tenantName) {
+    cy.do(Selection({ value: including('Select control') }).choose(tenantName));
+  },
+
+  selectLocation(locationName) {
+    cy.do(MultiColumnListCell({ content: locationName }).click());
   },
 };

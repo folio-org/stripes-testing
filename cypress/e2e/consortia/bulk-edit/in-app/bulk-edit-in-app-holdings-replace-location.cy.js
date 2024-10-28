@@ -316,6 +316,10 @@ describe('Bulk-edit', () => {
             tenantNames.college,
             tenantNames.university,
           );
+
+          // 12
+          SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
+          SelectLocationsModal.selectLocation(LOCATION_NAMES.ANNEX_UI);
           //   // 4
           //   BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
           //   BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);
