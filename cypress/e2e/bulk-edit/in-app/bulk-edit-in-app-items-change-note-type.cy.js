@@ -52,9 +52,8 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
       cy.createTempUser([
-        permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
-        permissions.inventoryAll.gui,
+        permissions.uiInventoryViewCreateEditItems.gui,
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
