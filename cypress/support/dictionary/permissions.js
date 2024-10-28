@@ -136,7 +136,6 @@ export default {
     gui: 'All marc-records-editor permissions',
   },
   // Inventory
-  // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
     internal: 'ui-inventory.all',
     gui: 'Inventory: All permissions',
