@@ -87,7 +87,7 @@ export default {
   },
 
   queryBuilderActions() {
-    this.queryBuilderActionsWithParameters('Users — User — Active', '==', 'True');
+    this.queryBuilderActionsWithParameters('User — Active', '==', 'True');
   },
 
   queryBuilderActionsWithParameters(parameter, operator, value) {
@@ -96,7 +96,7 @@ export default {
     cy.get('[data-testid="operator-option-0"]').select(operator);
     cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(runQueryAndSave.click());
     cy.wait(2000);
   },
