@@ -121,10 +121,8 @@ const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${lo
 export default {
   renewalBlockMessage,
   checkLoansPage,
-  renewWithoutOverrideAccess(loanId, userId, itemData) {
-    cy.visit(generateInitialLink(userId, loanId));
-    cy.wait('@/authn/refresh', { timeout: 20000 });
-
+  generateInitialLink,
+  renewWithoutOverrideAccess(itemData) {
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -133,10 +131,7 @@ export default {
     cy.do(Button(buttonLabels.close).click());
   },
 
-  renewWithOverrideAccess(loanId, userId, itemData) {
-    cy.visit(generateInitialLink(userId, loanId));
-    cy.wait('@/authn/refresh', { timeout: 20000 });
-
+  renewWithOverrideAccess(itemData) {
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -200,7 +195,9 @@ export default {
   },
 
   renewAllLoans() {
+    cy.wait(500);
     cy.get('input[name=check-all]').click();
+    cy.wait(500);
     cy.do(Button(buttonLabels.renew).click());
   },
   confirmRenewalsSuccess() {
