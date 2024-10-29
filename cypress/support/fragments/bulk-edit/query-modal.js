@@ -47,6 +47,7 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userId: 'User — User UUID',
 };
 export const dateTimeOperators = [
   'Select operator',
