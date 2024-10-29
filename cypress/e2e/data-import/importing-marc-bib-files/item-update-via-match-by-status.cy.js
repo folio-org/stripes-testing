@@ -248,6 +248,7 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfileItemHrid);
         MatchProfiles.checkMatchProfilePresented(matchProfileItemHrid.profileName);
+        cy.wait(1000);
         MatchProfiles.createMatchProfileWithStaticValue(matchProfileItemStatus);
         MatchProfiles.checkMatchProfilePresented(matchProfileItemStatus.profileName);
 

@@ -136,6 +136,7 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         cy.wrap(orderNumbers).each((number) => {
+          cy.wait(2000);
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
             cy.wait(2000);
             Orders.deleteOrderViaApi(orderId[0].id);
