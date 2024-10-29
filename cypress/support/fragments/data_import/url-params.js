@@ -5,7 +5,7 @@ export default {
   },
 
   getDateQueryString({ from, end }) {
-    return `completedAfter=${from}&completedBefore=${end}&limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    return `completedAfter=${from}&completedBefore=${end}&excludeJobProfileName=Bulk%20operations%20data%20import%20job%20profile-%2A&limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
   },
 
   getSingleJobProfileQueryString() {
