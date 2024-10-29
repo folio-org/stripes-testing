@@ -51,6 +51,8 @@ describe('MARC', () => {
         let userData = {};
 
         before(() => {
+          cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423565');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
