@@ -41,7 +41,8 @@ describe('MARC', () => {
         ];
         const authority = {
           searchOption: 'Keyword',
-          title: 'Lesbian activists--Jamaica--Biography',
+          titleWithLinkIcon: 'Lesbian activists',
+          titleWithoutLinkIcon: 'Lesbian activists--Jamaica--Biography',
         };
         const marcFiles = [
           {
@@ -213,11 +214,11 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
-            BrowseSubjects.browse(authority.title);
-            BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.title);
-            BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authority.title);
-            BrowseSubjects.checkRowValueIsBold(5, authority.title);
-            BrowseSubjects.checkRowValueIsBold(6, authority.title);
+            BrowseSubjects.browse(authority.titleWithoutLinkIcon);
+            BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.titleWithLinkIcon);
+            BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authority.titleWithoutLinkIcon);
+            BrowseSubjects.checkRowValueIsBold(5, authority.titleWithLinkIcon);
+            BrowseSubjects.checkRowValueIsBold(6, authority.titleWithoutLinkIcon);
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.waitLoading();
