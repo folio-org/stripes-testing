@@ -78,7 +78,7 @@ describe('lists', () => {
 
         Lists.editQuery();
         Lists.verifyEditorContainsQuery({
-          field: 'Users — User — Active',
+          field: 'User — Active',
           operator: 'equals',
           value: 'True',
         });
