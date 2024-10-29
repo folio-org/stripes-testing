@@ -8,7 +8,6 @@ import {
   including,
   matching,
   Modal,
-  MultiSelect,
   MultiSelectOption,
   not,
   RepeatableField,
@@ -141,15 +140,13 @@ export default {
     cy.wait(500);
   },
   clearTagsInput() {
-    cy.get('#input-tag-input').clear();
+    cy.get('#input-tag-input').type('{selectall}{backspace}');
   },
   addTag(tag) {
     cy.wait(1000);
-    cy.do([
-      TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag),
-      MultiSelect().open(),
-      MultiSelectOption(including(tag)).click(),
-    ]);
+    cy.do(TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag));
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
     cy.wait(500);
     InteractorsTools.checkCalloutMessage('New tag created');
     cy.wait(1000);

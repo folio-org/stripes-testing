@@ -259,10 +259,10 @@ export default {
     this.startDeclareLost();
     this.finishDeclareLost(comment);
   },
-  checkLoanClosed() {
+  checkLoanClosed(user) {
     this.checkAction(0, 'Closed loan');
     this.checkStatusInList(0, 'Lost and paid');
-    this.checkSource(0, 'System');
+    this.checkSource(0, user);
     this.checkComments(0, '-');
   },
   payFeeFine(amount, paymentMethod) {
