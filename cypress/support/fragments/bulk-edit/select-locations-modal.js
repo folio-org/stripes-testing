@@ -12,6 +12,7 @@ import {
   MultiColumnListCell,
   SelectionList,
   Selection,
+  RepeatableFieldItem,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -75,5 +76,19 @@ export default {
 
   selectLocation(locationName) {
     cy.do(MultiColumnListCell({ content: locationName }).click());
+  },
+
+  verifyLocationSelected(rowIndex = 0, locationName) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex, singleValue: including(locationName) }).exists(),
+    );
+  },
+
+  verifySelectLocationModalExists(isExist = true) {
+    if (isExist) {
+      cy.expect(selectLocationsModal.exists());
+    } else {
+      cy.expect(selectLocationsModal.absent());
+    }
   },
 };

@@ -320,195 +320,25 @@ describe('Bulk-edit', () => {
           // 12
           SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
           SelectLocationsModal.selectLocation(LOCATION_NAMES.ANNEX_UI);
-          //   // 4
-          //   BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
-          //   BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);
-          //   BulkEditActions.replaceWithIsDisabled();
-          //   BulkEditSearchPane.isConfirmButtonDisabled(false);
+          SelectLocationsModal.verifySelectLocationModalExists(false);
+          SelectLocationsModal.verifyLocationSelected(LOCATION_NAMES.ANNEX_UI);
+          BulkEditSearchPane.isConfirmButtonDisabled(false);
 
-          //   // 6
-          //   BulkEditActions.confirmChanges();
-          //   BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
+          // 13
+          BulkEditActions.addNewBulkEditFilterString();
+          BulkEditActions.verifyNewBulkEditRow(1);
 
-          //   itemBarcodes.forEach((barcode) => {
-          //     BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.MISSING,
-          //     );
-          //   });
+          // 14
+          BulkEditActions.selectOption('Temporary holdings location');
+          BulkEditSearchPane.verifyInputLabel('Temporary holdings location');
+          BulkEditSearchPane.isConfirmButtonDisabled(true);
 
-          //   BulkEditActions.verifyAreYouSureForm(4);
+          // 15
+          BulkEditActions.selectAction('Replace with');
+          BulkEditActions.locationLookupExists();
 
-          //   // 7
-          //   BulkEditActions.downloadPreview();
-
-          //   itemBarcodes.forEach((barcode) => {
-          //     BulkEditFiles.verifyValueInRowByUUID(
-          //       previewQueryFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.MISSING,
-          //     );
-          //   });
-
-          //   // 8
-          //   BulkEditActions.commitChanges();
-          //   BulkEditActions.verifySuccessBanner(2);
-
-          //   const holdingIds = [folioInstance.holdingId, marcInstance.holdingId];
-
-          //   itemBarcodeWithAvailableStatus.forEach((barcode) => {
-          //     BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.MISSING,
-          //     );
-          //   });
-
-          //   BulkEditSearchPane.verifyErrorLabel('Bulk edit query', 2, 2);
-
-          //   // 9
-          //   holdingIds.forEach((id) => {
-          //     BulkEditSearchPane.verifyReasonForErrorByIdentifier(
-          //       id,
-          //       `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-          //     );
-          //   });
-
-          //   // 10
-          //   BulkEditActions.openActions();
-          //   BulkEditActions.downloadChangedCSV();
-
-          //   itemBarcodeWithAvailableStatus.forEach((barcode) => {
-          //     BulkEditFiles.verifyValueInRowByUUID(
-          //       changedRecordsQueryFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.MISSING,
-          //     );
-          //   });
-
-          //   BulkEditActions.downloadErrors();
-          //   BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
-          //     [
-          //       folioInstance.holdingId,
-          //       `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-          //     ],
-          //     [
-          //       marcInstance.holdingId,
-          //       `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-          //     ],
-          //   ]);
-
-          //   // remove earlier downloaded files
-          //   FileManager.deleteFileFromDownloadsByMask(
-          //     matchedRecordsQueryFileName,
-          //     previewQueryFileName,
-          //     changedRecordsQueryFileName,
-          //     errorsFromCommittingFileName,
-          //   );
-
-          //   // 12
-          //   BulkEditSearchPane.openLogsSearch();
-          //   BulkEditLogs.verifyLogsPane();
-
-          //   // 13
-          //   BulkEditLogs.checkItemsCheckbox();
-          //   BulkEditLogs.verifyCheckboxIsSelected('ITEMS', true);
-
-          //   // 14
-          //   BulkEditLogs.clickActionsRunBy(user.username);
-          //   BulkEditLogs.verifyLogsRowActionWithoutMatchingErrorWithCommittingErrorsQuery();
-
-          //   // 15
-          //   BulkEditLogs.downloadQueryIdentifiers();
-          //   // clarify what identifiers will be in this file
-          //   ExportFile.verifyFileIncludes(identifiersQueryFilename, [
-          //     folioInstance.uuid,
-          //     marcInstance.uuid,
-          //   ]);
-
-          //   // 16
-          //   BulkEditLogs.downloadFileWithMatchingRecords();
-
-          //   itemBarcodeWithAvailableStatus.forEach((barcode) => {
-          //     BulkEditFiles.verifyValueInRowByUUID(
-          //       matchedRecordsQueryFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.AVAILABLE,
-          //     );
-          //   });
-          //   itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
-          //     BulkEditFiles.verifyValueInRowByUUID(
-          //       matchedRecordsQueryFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.CHECKED_OUT,
-          //     );
-          //   });
-
-          //   // 17
-          //   BulkEditLogs.downloadFileWithProposedChanges();
-
-          //   itemBarcodes.forEach((barcode) => {
-          //     BulkEditFiles.verifyValueInRowByUUID(
-          //       previewQueryFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.MISSING,
-          //     );
-          //   });
-
-          //   // 18
-          //   BulkEditLogs.downloadFileWithUpdatedRecords();
-
-          //   itemBarcodeWithAvailableStatus.forEach((barcode) => {
-          //     BulkEditFiles.verifyValueInRowByUUID(
-          //       changedRecordsQueryFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
-          //       ITEM_STATUS_NAMES.MISSING,
-          //     );
-          //   });
-
-          //   // 19
-          //   BulkEditLogs.downloadFileWithCommitErrors();
-          //   BulkEditFiles.verifyCSVFileRows(errorsFromCommittingFileName, [
-          //     [
-          //       folioInstance.holdingId,
-          //       `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-          //     ],
-          //     [
-          //       marcInstance.holdingId,
-          //       `New status value "${ITEM_STATUS_NAMES.MISSING}" is not allowed`,
-          //     ],
-          //   ]);
-
-          //   // 20
-          //   ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
-          //   itemBarcodeWithAvailableStatus.forEach((barcode) => {
-          //     TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          //     InventorySearchAndFilter.switchToItem();
-          //     InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-          //     ItemRecordView.waitLoading();
-          //     ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.MISSING);
-          //   });
-          //   itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
-          //     TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          //     InventorySearchAndFilter.switchToItem();
-          //     InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-          //     ItemRecordView.waitLoading();
-          //     ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
-          //   });
+          // 16
+          BulkEditActions.clickLocationLookup();
         },
       );
     });
