@@ -78,7 +78,7 @@ export default {
     gui: 'quickMARC: Create a new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcEditorDuplicate: {
-    internal: 'ui-quick-marc.quick-marc-editor.duplicate.execute',
+    internal: 'ui-quick-marc.quick-marc-editor.derive.execute',
     gui: 'quickMARC: Derive new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcBibliographicEditorAll: {
