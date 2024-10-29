@@ -7,7 +7,13 @@ import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPac
 import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import NewNote from '../../../support/fragments/notes/newNote';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import AssignNote from '../../../support/fragments/notes/modal/assign-unassign-notes';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
+import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
+import DeleteConfirmationModal from '../../../support/fragments/notes/modal/deleteConfirmationModal';
+import Agreements from '../../../support/fragments/agreements/agreements';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 
 describe('fse-eholdings - UI for production tenants', () => {
   beforeEach(() => {
@@ -28,10 +34,16 @@ describe('fse-eholdings - UI for production tenants', () => {
 });
 
 describe('fse-eholdings - UI for non-production tenants', () => {
+  let agreementId;
+  const defaultAgreement = { ...Agreements.defaultAgreement };
+
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.eholdingsPath,
+      waiter: EHoldingsSearch.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -40,7 +52,6 @@ describe('fse-eholdings - UI for non-production tenants', () => {
     { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
     () => {
       const expanded = 'true';
-      cy.visit(TopMenu.eholdingsPath);
       // search and open Gale provider; check packages
       EHoldingsProvidersSearch.byProvider('Gale');
       EHoldingsProviders.viewProvider();
@@ -49,7 +60,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
       // add tag
       const addedTag = EHoldingsProviders.addTag();
       // search by tag
-      cy.visit(TopMenu.eholdingsPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.EHOLDINGS);
       EHoldingsSearch.waitLoading();
       EHoldingsProvidersSearch.byTags(addedTag);
       EHoldingsProviders.viewProvider();
@@ -69,8 +80,6 @@ describe('fse-eholdings - UI for non-production tenants', () => {
           return this.details.substring(0, 255);
         },
       };
-
-      cy.visit(TopMenu.eholdingsPath);
       // search by package
       EHoldingsSearch.switchToPackages();
       cy.wait(1000);
@@ -83,6 +92,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
       cy.wait(1000);
       // reset test data
       EHoldingsPackage.addToHoldings();
+      cy.wait(1000);
       // add note
       EHoldingsPackage.addNote();
       NewNote.chooseSelectTypeByTitle('General note');
@@ -91,16 +101,55 @@ describe('fse-eholdings - UI for non-production tenants', () => {
       // check created and assigned note
       EHoldingsPackage.verifySpecialNotesRow({
         title: testNote.title,
-        details: testNote.content,
+        details: testNote.details,
         type: 'General note',
       });
-      // unassign note
-      EHoldingsPackage.clickAssignNoteButton();
-      AssignNote.verifyModalIsShown();
-      AssignNote.searchForNote(testNote.title);
-      AssignNote.verifyDesiredNoteIsShown(testNote.title);
-      AssignNote.clickCheckboxForNote(testNote.title);
-      AssignNote.clickSaveButton();
+      // delete note via UI
+      AgreementViewDetails.clickOnNoteRecordByTitle(testNote.title);
+      ExistingNoteView.waitLoading();
+      ExistingNoteView.gotoDelete();
+      DeleteConfirmationModal.waitLoading();
+      DeleteConfirmationModal.confirmDeleteNote();
+    },
+  );
+
+  before('Creating data', () => {
+    cy.allure().logCommandSteps(false);
+    cy.getAdminToken();
+    defaultAgreement.name += 'FSE_TEST_TC195671';
+    Agreements.createViaApi(defaultAgreement).then((agreement) => {
+      agreementId = agreement.id;
+    });
+    cy.allure().logCommandSteps();
+  });
+
+  after('Delete test data', () => {
+    cy.allure().logCommandSteps(false);
+    cy.getAdminToken();
+    Agreements.deleteViaApi(agreementId);
+    cy.allure().logCommandSteps();
+  });
+
+  it(
+    `TC195671 - eholdings: add an agreement ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    () => {
+      // search by package
+      EHoldingsSearch.switchToPackages();
+      cy.wait(1000);
+      EHoldingsPackagesSearch.byName('abc-clio');
+      EHoldingsPackages.openPackage();
+      cy.wait(3000);
+      EHoldingsPackageView.addExistingAgreement();
+      EHoldingsPackageView.searchForExistingAgreement(defaultAgreement.name);
+      EHoldingsPackageView.clickOnFoundAgreementInModal(defaultAgreement.name);
+      EHoldingsPackageView.verifyLinkedAgreement(defaultAgreement.name);
+      // delete agreement line prior to delete created agreement
+      EHoldingsPackageView.clickOnAgreementInAgreementSection(defaultAgreement.name);
+      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(defaultAgreement.name);
+      AgreementViewDetails.openAgreementLinesSection();
+      cy.wait(3000);
+      AgreementViewDetails.deletionOfAgreementLine();
     },
   );
 });
