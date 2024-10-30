@@ -57,8 +57,6 @@ describe('lists', () => {
         Lists.waitForCompilingToComplete();
 
         Lists.closeListDetailsPane();
-        // workaround for a bug in the UI
-        Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
         Lists.verifyListIsPresent(duplicateListData.name);
         Lists.findResultRowIndexByContent(duplicateListData.name).then((rowIndex) => {

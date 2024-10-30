@@ -6,23 +6,23 @@ import {
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 
 describe('Inventory', () => {
   describe('Tags', () => {
@@ -108,8 +108,8 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventoryInstance.viewSource();
-        InventoryViewSource.notContains('780');
-        InventoryViewSource.notContains('785');
+        InventoryViewSource.notContains('780\t');
+        InventoryViewSource.notContains('785\t');
         InventoryViewSource.close();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventoryInstance.editMarcBibliographicRecord();
