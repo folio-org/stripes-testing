@@ -28,11 +28,11 @@ export default {
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
   },
   uieHoldingsTitlesPackagesCreateDelete: {
-    internal: 'ui-eholdings.titles-packages.create-delete.manage',
+    internal: 'ui-eholdings.titles-packages.create-delete',
     gui: 'eHoldings: Can create and delete custom packages and titles',
   },
   uieHoldingsPackageTitleSelectUnselect: {
-    internal: 'ui-eholdings.package-title.select-unselect.execute',
+    internal: 'ui-eholdings.package-title.select-unselect',
     gui: 'eHoldings: Can select/unselect packages and titles to/from your holdings',
   },
   moduleeHoldingsEnabled: {

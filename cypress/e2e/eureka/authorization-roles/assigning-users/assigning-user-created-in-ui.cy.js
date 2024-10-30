@@ -33,6 +33,7 @@ describe('Eureka', () => {
           { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
           { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
           { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
+          { type: 'Data', resource: 'Users-Bl Users-By-Username Item', action: 'View' },
         ];
 
         before('Create user, role, login', () => {
@@ -65,7 +66,7 @@ describe('Eureka', () => {
         });
 
         it(
-          'C451629 Assigning new user created in UI for an existing authorization role (eureka)',
+          'C451629 Assigning new user created in UI to an existing authorization role (eureka)',
           { tags: ['criticalPath', 'eureka', 'C451629'] },
           () => {
             const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';
