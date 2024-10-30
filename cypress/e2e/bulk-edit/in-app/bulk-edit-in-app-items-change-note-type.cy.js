@@ -262,7 +262,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', instance.itemBarcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkActionNote(noteText.administrative);
-        ItemRecordView.checkBindingNote(noteText.checkInNote, 'Yes');
+        ItemRecordView.checkBindingNoteWithStaffValue(noteText.checkInNote, 'Yes');
         ItemRecordView.checkProvenanceNote(noteText.electronicBookplate);
       },
     );

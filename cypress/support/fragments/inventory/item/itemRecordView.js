@@ -240,13 +240,17 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
   },
 
-  checkBindingNote: (note, staffValue = 'No') => {
+  checkBindingNoteWithStaffValue: (note, staffValue = 'No') => {
     cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
     cy.contains('section', 'Item notes')
       .find('div[class*= row]')
       .contains(note)
       .find('[class*=kvValue]')
       .should('have.text', `${staffValue}${note}`);
+  },
+
+  checkBindingNote: (note) => {
+    cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
   },
 
   checkActionNote: (note) => {
