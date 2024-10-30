@@ -8,6 +8,7 @@
 - Change the labels of the Classification and Call number sections in Inventory browse options. Refs FAT-16040.
 - Migrate imports from `bigtest` to `@interactors/html`. Refs UITEST-120.
 - Refactor ui-inventory permissions. Refs UITEST-121.
+- Rename the `ui-eholdings.titles-packages.create-delete` and `ui-eholdings.package-title.select-unselect` permissions. Refs UITEST-123.
 - Rename the `ui-notes.item.assign-unassign` permission. Refs UITEST-124.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)

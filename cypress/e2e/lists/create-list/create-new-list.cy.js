@@ -38,7 +38,7 @@ describe('lists', () => {
 
     it(
       'C411704 Create new lists: Private list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411704'] },
+      { tags: ['criticalPath', 'corsair', 'C411704', 'shiftLeft'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
@@ -63,8 +63,8 @@ describe('lists', () => {
     );
 
     it(
-      'C411706 Create new lists: Shared lists (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411706'] },
+      'C411706 C414979 Create new lists: Shared lists (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411706', 'C414979'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -76,6 +76,17 @@ describe('lists', () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
+
+        Lists.verifyRecordTypes([
+          'Holdings',
+          'Instances',
+          'Items',
+          'Loans',
+          'Organizations',
+          'Purchase order lines',
+          'Users',
+        ]);
+
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);

@@ -52,6 +52,7 @@ export default {
     openNewActionProfileForm();
     cy.wait(1000);
     NewActionProfile.fill(actionProfile);
+    cy.wait(1000);
     NewActionProfile.linkMappingProfile(mappingProfileName);
   },
 

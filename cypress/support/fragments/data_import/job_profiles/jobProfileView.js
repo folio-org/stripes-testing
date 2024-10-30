@@ -75,9 +75,9 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
-    cy.wait(1000);
+    cy.wait(500);
     cy.expect(ValueChipRoot(tag).absent());
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   verifyJobProfileOpened: () => {
