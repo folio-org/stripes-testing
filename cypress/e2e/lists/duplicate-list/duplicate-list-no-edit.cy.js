@@ -78,7 +78,7 @@ describe('lists', () => {
 
         Lists.editQuery();
         Lists.verifyEditorContainsQuery({
-          field: 'Users — User — Active',
+          field: 'User — Active',
           operator: 'equals',
           value: 'True',
         });
@@ -87,8 +87,6 @@ describe('lists', () => {
         Lists.saveList();
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
 
-        Lists.closeListDetailsPane();
-        // workaround for a bug in the UI
         Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(listData.name);
         Lists.verifyListIsPresent(duplicateListData.name);

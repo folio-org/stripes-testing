@@ -263,7 +263,10 @@ export default {
   waitLoadingTags,
 
   waitLoading: () => cy.expect(Pane({ title: 'Requests' }).exists()),
-  resetAllFilters: () => cy.do(Button('Reset all').click()),
+  resetAllFilters() {
+    cy.do(Button('Reset all').click());
+    cy.wait(1000);
+  },
   selectAwaitingDeliveryRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
   selectAwaitingPickupRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
   selectInTransitRequest: () => cy.do(Checkbox({ name: 'Open - In transit' }).click()),

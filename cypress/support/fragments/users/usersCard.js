@@ -192,6 +192,7 @@ export default {
   },
   viewCurrentLoans({ openLoans, returnedLoans } = {}) {
     this.expandLoansSection(openLoans, returnedLoans);
+    cy.wait(500);
     this.clickCurrentLoansLink();
   },
   openFeeFines(openFeesFines, closedFeesFines) {

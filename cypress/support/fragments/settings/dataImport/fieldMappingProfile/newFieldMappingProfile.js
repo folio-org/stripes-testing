@@ -202,8 +202,11 @@ const addFundDistriction = (profile) => {
     cy.do(Button('Add fund distribution').click());
     cy.wait(1500);
     cy.do([
+      TextField('Fund ID').focus(),
       TextField('Fund ID').fillIn(profile.fundId),
+      TextField('Expense class').focus(),
       TextField('Expense class').fillIn(profile.expenseClass),
+      TextField('Value').focus(),
       TextField('Value').fillIn(`"${profile.value}"`),
       Accordion('Fund distribution').find(Button('%')).click(),
     ]);
@@ -343,10 +346,12 @@ const addItemNotes = (noteType, note, staffOnly) => {
   ]);
   cy.wait(1000);
   cy.do([
-    noteTypeField.fillIn(noteType),
-    noteField.fillIn(note),
     Select({ name: selectName }).focus(),
     Select({ name: selectName }).choose(staffOnly),
+    noteTypeField.focus(),
+    noteTypeField.fillIn(noteType),
+    noteField.focus(),
+    noteField.fillIn(note),
   ]);
 };
 
@@ -953,8 +958,8 @@ export default {
       Select({ name: noteFieldName }).focus(),
       Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
       Button('Add check in / check out note').click(),
+      loanAndAvailabilityAccordion.find(noteTypeField).fillIn(noteType),
       loanAndAvailabilityAccordion.find(noteField).fillIn(note),
-      loanAndAvailabilityAccordion.find(TextField('Note')).fillIn(note),
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
@@ -1063,7 +1068,7 @@ export default {
     cy.do(TextField('Former holdings ID').fillIn(`"${name}"`));
   },
 
-  addExpenceClass: (fundDistributionSource) => {
+  addExpenseClass: (fundDistributionSource) => {
     cy.do([
       Select({
         name: 'profile.mappingDetails.mappingFields[27].subfields.0.fields.14.value',

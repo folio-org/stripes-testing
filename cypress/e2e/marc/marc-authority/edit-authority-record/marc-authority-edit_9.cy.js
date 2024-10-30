@@ -126,6 +126,8 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
+          QuickMarcEditor.confirmDelete();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.constinueWithSaveAndCheck();

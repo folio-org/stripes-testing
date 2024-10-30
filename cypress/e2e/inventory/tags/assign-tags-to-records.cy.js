@@ -107,13 +107,13 @@ describe('Inventory', () => {
       'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
       { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
       () => {
-        const tags = [...Array(5)].map(() => `tag${getRandomStringCode(10)}`.toLowerCase());
+        const tags = [...Array(5)].map(() => `tag${getRandomStringCode(5)}`.toLowerCase());
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
-          cy.wait(2000);
+          cy.wait(200);
           HoldingsRecordEdit.clearTagsInput();
           cy.wait(500);
           HoldingsRecordEdit.addTag(tag);
@@ -123,8 +123,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventoryInstance.openHoldingView();
+        HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
-          cy.wait(2000);
+          cy.wait(1000);
           JobProfileView.removeTag(tag);
         });
       },

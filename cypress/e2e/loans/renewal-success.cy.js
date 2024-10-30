@@ -156,7 +156,10 @@ describe('Renewal', () => {
         });
       })
       .then(() => {
-        cy.login(userName, password);
+        cy.login(userName, password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
       });
   });
 
@@ -190,7 +193,6 @@ describe('Renewal', () => {
     'C567: Renewal: success, from open loans (multiple items) (vega)',
     { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C567'] },
     () => {
-      cy.visit(TopMenu.usersPath);
       cy.intercept('GET', '/configurations/entries?*').as('getEntries');
       UsersSearchPane.searchByKeywords(userName);
       cy.wait('@getEntries');
