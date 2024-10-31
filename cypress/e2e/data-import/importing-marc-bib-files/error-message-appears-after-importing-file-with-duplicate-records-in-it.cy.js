@@ -179,10 +179,9 @@ describe('Data Import', () => {
         cy.wait(1500);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
+        InstanceRecordView.waitLoading();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        Logs.openFileDetails(secondFileName);
         FileDetails.openJsonScreenByStatus(RECORD_STATUSES.NO_ACTION, title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessage);
