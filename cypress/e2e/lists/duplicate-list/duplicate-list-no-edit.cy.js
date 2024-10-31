@@ -88,8 +88,6 @@ describe('lists', () => {
         Lists.verifySuccessCalloutMessage(`List ${duplicateListData.name} saved.`);
 
         Lists.closeListDetailsPane();
-        // workaround for a bug in the UI
-        Lists.closeListDetailsPane();
         Lists.verifyListIsPresent(listData.name);
         Lists.verifyListIsPresent(duplicateListData.name);
         Lists.findResultRowIndexByContent(duplicateListData.name).then((rowIndex) => {

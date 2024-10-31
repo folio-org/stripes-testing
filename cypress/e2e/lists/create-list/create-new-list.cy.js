@@ -38,7 +38,7 @@ describe('lists', () => {
 
     it(
       'C411704 Create new lists: Private list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411704'] },
+      { tags: ['criticalPath', 'corsair', 'C411704', 'shiftLeft'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
