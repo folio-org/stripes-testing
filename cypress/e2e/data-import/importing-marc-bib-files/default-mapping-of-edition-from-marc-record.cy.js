@@ -68,7 +68,7 @@ describe('Data Import', () => {
 
     it(
       'C11120 Check the default mapping of edition from the MARC record to the Inventory Instance record (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11120'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);

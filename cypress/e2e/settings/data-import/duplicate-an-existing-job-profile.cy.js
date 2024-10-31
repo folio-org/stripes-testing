@@ -71,7 +71,7 @@ describe('Data Import', () => {
 
     it(
       'C2333 Duplicate an existing job profile (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2333'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();

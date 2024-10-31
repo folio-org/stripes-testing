@@ -36,7 +36,7 @@ describe('Data Import', () => {
 
     it(
       'C411853 Match profile: update options for Holdings "Incoming records" (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411853'] },
       () => {
         // Go to Settings application-> Data import-> Match profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
@@ -59,7 +59,7 @@ describe('Data Import', () => {
 
     it(
       'C411855 Match profile: update options for MARC Bibliographic "Incoming records" (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411855'] },
       () => {
         // Go to Settings application-> Data import-> Match profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
@@ -81,7 +81,7 @@ describe('Data Import', () => {
 
     it(
       'C411857 Match profile: update options for Item "Incoming records" (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411857'] },
       () => {
         // Go to Settings application-> Data import-> Match profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

@@ -112,7 +112,7 @@ describe('Data Import', () => {
 
     it(
       'C415266 Update MARC Bib via Data Import/incoming bib does not have an 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C415266'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.filePathForCreate, testData.fileNameForCreate);

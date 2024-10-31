@@ -64,7 +64,7 @@ describe('Data Import', () => {
 
     it(
       'C375164 Verify that no error appears after switching from Order record type to another and back (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C375164'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

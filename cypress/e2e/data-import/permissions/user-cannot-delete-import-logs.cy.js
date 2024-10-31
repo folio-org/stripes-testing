@@ -32,7 +32,7 @@ describe('Data Import', () => {
 
     it(
       'C353641 A user can not delete import logs with standard Data import: Can upload files, import, and view logs permission (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C353641'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);

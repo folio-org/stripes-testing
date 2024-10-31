@@ -144,7 +144,7 @@ describe('Data Import', () => {
 
     it(
       'C376973 Verify the log details for created imported order records (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C376973'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);

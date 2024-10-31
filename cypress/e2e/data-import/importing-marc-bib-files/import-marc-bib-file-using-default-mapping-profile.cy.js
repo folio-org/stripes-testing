@@ -36,7 +36,7 @@ describe('Data Import', () => {
 
     it(
       'C2325 Import a MARC Bib file using the default mapping profile (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C2325'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();

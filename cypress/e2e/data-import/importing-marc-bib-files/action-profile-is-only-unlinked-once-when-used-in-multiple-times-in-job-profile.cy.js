@@ -76,7 +76,7 @@ describe('Data Import', () => {
 
     it(
       'C423473 Verify that action profile is only unlinked once when used in multiple times in a job profile (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C423473'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

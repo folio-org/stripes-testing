@@ -48,7 +48,7 @@ describe('Inventory', () => {
 
     it(
       'C436846 Check "Set record for deletion" option in Actions menu with Instance source FOLIO and marked checkboxes (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C436846'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifySetRecordForDeletionOptionAbsent();

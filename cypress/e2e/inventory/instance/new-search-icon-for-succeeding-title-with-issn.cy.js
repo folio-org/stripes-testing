@@ -51,7 +51,7 @@ describe('Inventory', () => {
 
     it(
       'C496130 Check new search icon for Succeeding title with ISSN (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C496130'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();

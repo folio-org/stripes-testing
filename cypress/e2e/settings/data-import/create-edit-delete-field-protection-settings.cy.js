@@ -55,7 +55,7 @@ describe('Data Import', () => {
 
     it(
       'C17016 Create, edit, and delete field protection settings (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C17016'] },
       () => {
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
