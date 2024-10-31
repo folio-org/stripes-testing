@@ -143,7 +143,7 @@ describe('Data Import', () => {
 
     it(
       'C442826 Check the log result table for imported multiple items in multiple holdings with conditional mapping (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C442826'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

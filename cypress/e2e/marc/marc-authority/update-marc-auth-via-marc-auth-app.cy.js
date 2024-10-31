@@ -72,7 +72,7 @@ describe('MARC', () => {
 
     it(
       'C417046 Update MARC Authority via MARC Auth app; check for updated 005 (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C417046'] },
       () => {
         MarcAuthorities.searchBy('Keyword', testData.authTitle);
         MarcAuthority.edit();

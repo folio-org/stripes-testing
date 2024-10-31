@@ -29,7 +29,7 @@ describe('Data Import', () => {
 
     it(
       'C356825 The "select all" button does not select all logs after deleting multiple logs from the DI landing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C356825'] },
       () => {
         DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
         new Array(numberOfLogsToDelete).fill(null).forEach((_, index) => {

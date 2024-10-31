@@ -111,7 +111,7 @@ describe('Data Import', () => {
 
     it(
       'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C410708'] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
         JobProfiles.waitFileIsUploaded();
@@ -179,10 +179,9 @@ describe('Data Import', () => {
         cy.wait(1500);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
+        InstanceRecordView.waitLoading();
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        Logs.openFileDetails(secondFileName);
         FileDetails.openJsonScreenByStatus(RECORD_STATUSES.NO_ACTION, title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessage);

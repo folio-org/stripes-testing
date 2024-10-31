@@ -43,7 +43,7 @@ describe('Data Import', () => {
 
     it(
       'C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C350750'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC350750.mrc', nameMarcFileForImportCreate);

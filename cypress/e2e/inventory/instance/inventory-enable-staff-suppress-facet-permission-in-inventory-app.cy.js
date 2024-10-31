@@ -41,7 +41,7 @@ describe('Inventory', () => {
 
     it(
       'C432313 Check "Inventory: Enable staff suppress facet" permission in Inventory app (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C432313'] },
       () => {
         InventorySearchAndFilter.expandAccordion(testData.accordion);
         InventorySearchAndFilter.verifyCheckboxInAccordion(testData.accordion, 'No', false);
