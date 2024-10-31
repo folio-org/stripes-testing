@@ -314,7 +314,6 @@ describe('Bulk-edit', () => {
               initialHeaderValues,
             );
           });
-
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               instance.barcodeInCollege,
@@ -552,7 +551,6 @@ describe('Bulk-edit', () => {
               editedHeaderValues,
             );
           });
-
           instances.forEach((instance) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
