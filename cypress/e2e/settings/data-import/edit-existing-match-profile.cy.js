@@ -48,7 +48,7 @@ describe('Data Import', () => {
 
     it(
       'C2339 Edit an existing match profile (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C2339'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();

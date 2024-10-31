@@ -348,7 +348,7 @@ describe('Data Import', () => {
 
     it(
       'C430257 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C430257'] },
       () => {
         InventoryInstances.searchByTitle(instanceId);
         InstanceRecordView.verifyInstanceSource('MARC');

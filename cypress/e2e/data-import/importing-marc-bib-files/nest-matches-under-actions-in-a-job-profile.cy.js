@@ -227,7 +227,7 @@ describe('Data Import', () => {
 
     it(
       'C347894 Nest matches under actions in a job profile, and run the job profile successfully (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C347894'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);

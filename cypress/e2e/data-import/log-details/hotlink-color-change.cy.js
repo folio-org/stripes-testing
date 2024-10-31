@@ -29,7 +29,7 @@ describe('Data Import', () => {
 
     it(
       'C353986 Check the change Import log hotlinks to textLink: View all page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353986'] },
       () => {
         // #1 Click on the "Actions" -> select "View all"
         // User is on the View all Log page. At the top of the page, there should be an indication of how many import jobs there are.

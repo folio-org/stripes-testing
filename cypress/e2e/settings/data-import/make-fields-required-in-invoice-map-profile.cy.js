@@ -63,7 +63,7 @@ describe('Data Import', () => {
 
     it(
       'C343284 Make some of the fields on the Invoice field mapping profile required (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C343284'] },
       () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.openNewMappingProfileForm();

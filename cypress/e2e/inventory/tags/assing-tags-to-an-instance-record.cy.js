@@ -55,7 +55,7 @@ describe('Inventory', () => {
 
     it(
       'C196769 Assign tags to an Instance record (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C196769'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();

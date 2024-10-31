@@ -51,7 +51,7 @@ describe('Data Import', () => {
 
     it(
       'C11119 Check that the Instance HRID assigned as MARC Bib 001 when Inventory Instance created via Data Import (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11119'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();

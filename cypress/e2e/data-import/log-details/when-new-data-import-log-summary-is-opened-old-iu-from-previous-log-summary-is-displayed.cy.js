@@ -41,7 +41,7 @@ describe('Data Import', () => {
 
     it(
       'C353957 When new Data Import log summary is opened, old UI from previous log summary is displayed (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353957'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload[1], fileNames[1]);

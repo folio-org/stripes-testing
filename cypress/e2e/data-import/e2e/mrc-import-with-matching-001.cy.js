@@ -105,7 +105,7 @@ describe('Data Import', () => {
 
     it(
       'C17044 MARC-MARC matching for 001 field (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C17044'] },
       () => {
         DataImport.verifyUploadState();
         // upload a marc file for export

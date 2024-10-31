@@ -42,7 +42,7 @@ describe('Data Import', () => {
 
     it(
       'C353624 Check the log summary table display (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353624'] },
       () => {
         const columnNumbers = {
           summary: '1',

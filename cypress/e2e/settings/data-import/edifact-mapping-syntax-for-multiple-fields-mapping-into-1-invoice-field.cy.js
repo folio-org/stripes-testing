@@ -132,7 +132,7 @@ describe('Data Import', () => {
 
     it(
       'C345353 Check EDIFACT mapping syntax for multiple fields mapping into 1 invoice field (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C345353'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.waitLoading();
