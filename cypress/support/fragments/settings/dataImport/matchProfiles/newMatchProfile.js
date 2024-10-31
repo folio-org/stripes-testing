@@ -306,6 +306,7 @@ export default {
     incomingStaticRecordValue,
   }) {
     fillName(profileName);
+    cy.wait(1000);
     selectExistingRecordType(existingRecordType);
     fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
     selectMatchCriterion(matchCriterion);

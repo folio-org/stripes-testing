@@ -18,6 +18,7 @@ import {
   Keyboard,
   MultiColumnListRow,
   MessageBanner,
+  Option,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -530,6 +531,13 @@ export default {
   },
 
   fillExpirationDate(date, rowIndex = 0) {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const targetYear = date.getFullYear();
+    const targetMonth = date.getMonth();
+    const monthDifference = (targetYear - currentYear) * 12 + (targetMonth - currentMonth);
+
     // js date object
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     cy.do([
@@ -539,6 +547,15 @@ export default {
       calendarButton.click(),
       TextField().fillIn(formattedDate),
     ]);
+
+    // in case the desired date to pick is not in the current month/year, we need to move the calendar beforehand
+    if (monthDifference > 0) {
+      for (let i = 0; i < monthDifference; i++) {
+        cy.do(Button({ icon: 'caret-right' }).click());
+        cy.wait(500);
+      }
+    }
+
     // we don't have interactor for this element
     cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
@@ -822,6 +839,13 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Add note'),
       RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value),
     ]);
+  },
+
+  addItemNoteAndVerify(type, value, rowIndex = 0) {
+    this.addItemNote(type, value, rowIndex);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Add note', rowIndex);
+    this.verifyValueInSecondTextArea(value, rowIndex);
   },
 
   verifyItemCheckInNoteActions(rowIndex = 0) {
@@ -1425,5 +1449,58 @@ export default {
 
   clickFilteredOption(option) {
     cy.do(SelectionOption(including(option)).click());
+  },
+
+  verifyNoteTypeAbsentInNoteItemTypeDropdown(noteType, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteType' }))
+        .find(Option({ text: noteType }))
+        .absent(),
+    );
+  },
+
+  verifyGroupOptionsInSelectOptionsItemDropdown() {
+    this.clickOptionsSelection();
+
+    const expectedOptions = [
+      [
+        'Action note',
+        'Binding',
+        'Copy note',
+        'Electronic bookplate',
+        'Note',
+        'Provenance',
+        'Reproduction',
+      ],
+      ['Permanent loan type', 'Temporary loan type'],
+      ['Permanent item location', 'Temporary item location'],
+    ];
+    const expectedGroupLabels = ['Item notes', 'Loan type', 'Location'];
+    const groupSelector = 'li[class*="groupLabel"]';
+
+    cy.get(groupSelector).each(($groupLabel, ind) => {
+      const labelName = $groupLabel.text();
+
+      expect(labelName).to.eq(expectedGroupLabels[ind]);
+
+      const optionTexts = [];
+
+      cy.wrap($groupLabel)
+        .nextUntil(groupSelector)
+        .filter('[class*="groupedOption"]')
+        .each(($option) => {
+          cy.wrap($option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          expectedOptions[ind].forEach((expectedOption) => {
+            expect(optionTexts).to.include(expectedOption);
+          });
+        });
+    });
   },
 };

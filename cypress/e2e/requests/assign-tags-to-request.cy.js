@@ -47,6 +47,7 @@ describe('Requests', () => {
       Requests.addTag(tag);
       Requests.closePane('Tags');
       Requests.closePane('Request details');
+      Requests.resetAllFilters();
       Requests.findCreatedRequest(instanceData.instanceTitle);
       Requests.selectFirstRequest(instanceData.instanceTitle);
       Requests.openTagsPane();

@@ -10,6 +10,7 @@ const text = (el) => el.textContent;
 export default HTML.extend('option')
   .selector('option')
   .filters({
+    text,
     id: (el) => el.getAttribute('id'),
     value: (el) => el.getAttribute('value'),
     index: (el) => [...el.parentElement.children].indexOf(el),

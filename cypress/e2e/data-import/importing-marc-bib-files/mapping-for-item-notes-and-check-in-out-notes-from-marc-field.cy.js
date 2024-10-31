@@ -208,6 +208,7 @@ describe('Data Import', () => {
         // upload a marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         DataImport.uploadFile('marcFileForC368005.mrc', marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);

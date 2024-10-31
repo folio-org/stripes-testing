@@ -243,6 +243,7 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(instanceActionProfileForCreate, instanceMappingProfileForCreate.name);
         ActionProfiles.checkActionProfilePresented(instanceActionProfileForCreate.name);
+        cy.wait(1000);
         ActionProfiles.create(holdingsActionProfileForCreate, holdingsMappingProfileForCreate.name);
         ActionProfiles.checkActionProfilePresented(holdingsActionProfileForCreate.name);
 
