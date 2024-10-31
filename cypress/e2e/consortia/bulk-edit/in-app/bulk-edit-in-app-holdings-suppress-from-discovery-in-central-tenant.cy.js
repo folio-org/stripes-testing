@@ -50,7 +50,7 @@ const marcInstance = {
 const instances = [folioInstance, marcInstance];
 
 describe('Bulk-edit', () => {
-  describe('In-app', () => {
+  describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
