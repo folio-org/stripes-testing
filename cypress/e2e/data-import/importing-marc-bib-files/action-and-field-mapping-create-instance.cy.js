@@ -90,7 +90,7 @@ describe('Data Import', () => {
 
     it(
       'C11103 Action and field mapping: Create an instance (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C11103'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

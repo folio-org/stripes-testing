@@ -129,7 +129,7 @@ describe('Data Import', () => {
 
     it(
       'C11105 Action and field mapping: Create an instance and holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11105'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

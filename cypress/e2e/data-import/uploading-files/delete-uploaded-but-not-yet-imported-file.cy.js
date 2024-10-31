@@ -35,7 +35,7 @@ describe('Data Import', () => {
 
     it(
       'C2377 Delete an uploaded (but not yet imported) file (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2377'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.clickResumeButton();

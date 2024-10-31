@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
     it(
       'C410706 (NON-CONSORTIA) Verify the "View source" button on non-consortia tenant\'s Source = MARC Instance (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C410706'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();

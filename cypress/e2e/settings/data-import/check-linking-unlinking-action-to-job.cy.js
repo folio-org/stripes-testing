@@ -88,7 +88,7 @@ describe('Data Import', () => {
 
     it(
       'C423404 Check linking/unlinking action profiles to job profiles (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C423404'] },
       () => {
         // #2-3 Create a new job profile by clicking Actions/New job profile -> Give the job profile a name -> Accepted Data type = MARC
         JobProfiles.createJobProfile(jobProfile);

@@ -115,7 +115,7 @@ describe('Data Import', () => {
 
     it(
       'C380510 Verify the JSON tab error for the duplicated records for MARC Authorities (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380510'] },
       () => {
         // change 10$a in files to random value
         DataImport.editMarcFile(

@@ -65,7 +65,7 @@ describe('Data Import', () => {
 
     it(
       'C359209 Checking the import to Create MARC Holdings records, when some incoming records do or do not have 999 ff fields (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C359209'] },
       () => {
         DataImport.editMarcFile(
           'marcFileForC359209.mrc',

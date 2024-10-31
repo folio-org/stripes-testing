@@ -43,7 +43,7 @@ describe('Data Import', () => {
 
     it(
       'C358540 Check the data update in the User filter after deleting the logs on the View all page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C358540'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
