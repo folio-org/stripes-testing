@@ -107,6 +107,10 @@ export default {
     cy.do(Select({ id: 'type' }).choose(type));
   },
 
+  changePreferredContact(contact = 'Email') {
+    cy.do(Select({ id: 'adduser_preferredcontact' }).choose(contact));
+  },
+
   searchForPermission(permission) {
     cy.do(permissionsSearch.fillIn(permission));
     cy.expect(permissionsSearch.is({ value: permission }));
