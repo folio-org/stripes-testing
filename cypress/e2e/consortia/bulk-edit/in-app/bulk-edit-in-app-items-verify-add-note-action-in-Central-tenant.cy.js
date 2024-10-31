@@ -117,7 +117,6 @@ describe('Bulk-edit', () => {
           ItemNoteTypesConsortiumManager.createViaApi(centralSharedItemNoteType).then(
             (newItemNoteType) => {
               centralSharedNoteTypeData = newItemNoteType;
-              cy.log(centralSharedItemNoteType);
             },
           );
 
