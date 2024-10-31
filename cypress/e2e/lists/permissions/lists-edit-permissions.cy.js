@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C418650-${getTestEntityValue('test_list')}`,
-      description: `C418650-${getTestEntityValue('test_list_description')}`,
+      name: `C418650-${getTestEntityValue('list')}`,
+      description: `C418650-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -54,7 +54,7 @@ describe('lists', () => {
 
     it(
       'C418650 Lists (Edit): Can create, edit, and refresh lists (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C418650'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

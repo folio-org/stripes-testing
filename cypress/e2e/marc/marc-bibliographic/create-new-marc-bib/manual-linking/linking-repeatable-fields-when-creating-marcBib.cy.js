@@ -54,7 +54,7 @@ describe('MARC', () => {
             rowIndex: 5,
             value: 'C380738 Good and evil History',
             tag: 650,
-            boxFourth: '$a C380738 Good and evil',
+            boxFourth: '$a C380738 Good and evil $x History',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/subjects/sh2009125989',
             boxSeventh: '',
@@ -128,7 +128,7 @@ describe('MARC', () => {
 
         it(
           'C422131 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422131'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -188,7 +188,7 @@ describe('MARC', () => {
             InventoryInstance.viewSource();
             InventoryViewSource.verifyAbsenceOfValue(linkingTagAndValues[1].value);
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t650\t   \t$a C380738 Good and evil $0 http://id.loc.gov/authorities/subjects/sh2009125989 $9',
+              'Linked to MARC authority\n\t650\t   \t$a C380738 Good and evil $x History $0 http://id.loc.gov/authorities/subjects/sh2009125989 $9',
             );
           },
         );

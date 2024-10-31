@@ -142,7 +142,7 @@ describe('MARC', () => {
 
       it(
         'C376936 Verify that user can not delete value from "$a" subfield of "010" field in linked "MARC Authority" record when "010" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C376936'] },
         () => {
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(`${testData.subfieldPrefix} ${testData.tag010content}`, 4);

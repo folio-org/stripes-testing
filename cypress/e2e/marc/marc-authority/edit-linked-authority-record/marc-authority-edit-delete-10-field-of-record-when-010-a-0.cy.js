@@ -97,8 +97,10 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -143,7 +145,7 @@ describe('MARC', () => {
 
       it(
         'C374161 Delete "010" field of linked "MARC Authority" record when "010 $a" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374161'] },
         () => {
           MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
 

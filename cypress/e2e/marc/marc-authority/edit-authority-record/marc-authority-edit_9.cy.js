@@ -69,7 +69,7 @@ describe('MARC', () => {
 
       it(
         'C359238 MARC Authority | Displaying of placeholder message when user deletes a row (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C359238'] },
         () => {
           MarcAuthorities.searchAndVerify(
             testData.authorityB.searchOption,
@@ -126,6 +126,8 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndCloseThenCheck(2);
+          QuickMarcEditor.confirmDelete();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.constinueWithSaveAndCheck();

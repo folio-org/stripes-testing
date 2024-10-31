@@ -51,7 +51,8 @@ describe('MARC', () => {
       ];
       const linkingTagAndValues = {
         rowIndex: 13,
-        value: 'C422060 Robinson, Peter, 1950-2022 Inspector Banks series ;',
+        value: 'C422060 Robinson, Peter, 1950-2022',
+        itemName: 'C422060 Robinson, Peter, 1950-2022 Inspector Banks series ;',
         tag: '100',
       };
 
@@ -91,8 +92,10 @@ describe('MARC', () => {
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.loginAsAdmin().then(() => {
-            cy.visit(TopMenu.inventoryPath);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -129,10 +132,10 @@ describe('MARC', () => {
 
       it(
         'C422060 Q release | Add "010" field with valid prefix in "$a" subfield in linked "MARC authority" record when "001" field is controlling "$0" of MARC bib\'s field (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422060'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, linkingTagAndValues.value);
-          MarcAuthorities.selectTitle(linkingTagAndValues.value);
+          MarcAuthorities.selectTitle(linkingTagAndValues.itemName);
           MarcAuthority.edit();
           QuickMarcEditor.checkFieldAbsense(testData.tag010);
           QuickMarcEditor.addNewField(testData.tag010, testData.tag010content, 4);

@@ -119,7 +119,7 @@ describe('Circulation log', () => {
 
   it(
     'C17047 Filter circulation log by staff information only added (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17047'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,

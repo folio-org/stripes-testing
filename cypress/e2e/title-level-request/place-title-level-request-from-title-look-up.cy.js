@@ -83,7 +83,7 @@ describe('Title Level Request', () => {
     ]).then((userProperties) => {
       userData = userProperties;
       userData.patronGroup = userProperties.userGroup.group;
-      userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+      userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userData.userId,
@@ -127,7 +127,7 @@ describe('Title Level Request', () => {
   });
   it(
     'C353599 C353600 Place title level request from title look-up (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C353599', 'C353600'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage();

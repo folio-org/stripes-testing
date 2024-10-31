@@ -11,7 +11,6 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import QickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -37,20 +36,6 @@ const instanceMarcWithItem = {
 };
 const actionsToSelect = {
   setTrue: 'Set true',
-};
-const leader = QickMarcEditor.defaultValidLdr;
-const getMarcBibFields = (intsanceTitle) => {
-  return [
-    {
-      tag: '008',
-      content: QickMarcEditor.defaultValid008Values,
-    },
-    {
-      tag: '245',
-      content: `$a ${intsanceTitle}`,
-      indicators: ['1', '1'],
-    },
-  ];
 };
 const validInstanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${validInstanceUUIDsFileName}`;
@@ -99,10 +84,7 @@ describe('bulk-edit', () => {
           })
           .then(() => {
             // create MARC instance with Holding and without Items
-            cy.createMarcBibliographicViaAPI(
-              leader,
-              getMarcBibFields(instanceMarc.instanceTitle),
-            ).then((instanceId) => {
+            cy.createSimpleMarcBibViaAPI(instanceMarc.instanceTitle).then((instanceId) => {
               instanceMarc.uuid = instanceId;
 
               cy.getInstanceById(instanceId).then((instanceData) => {
@@ -118,10 +100,7 @@ describe('bulk-edit', () => {
           })
           .then(() => {
             // create MARC instance with Holding and Item
-            cy.createMarcBibliographicViaAPI(
-              leader,
-              getMarcBibFields(instanceMarcWithItem.instanceTitle),
-            ).then((instanceId) => {
+            cy.createSimpleMarcBibViaAPI(instanceMarcWithItem.instanceTitle).then((instanceId) => {
               instanceMarcWithItem.uuid = instanceId;
 
               cy.getInstanceById(instanceId).then((instanceData) => {
@@ -173,7 +152,7 @@ describe('bulk-edit', () => {
 
     it(
       'C435917 Verify Holdings with source MARC are NOT modified by the "Suppress from discovery" option (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C435917'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instances', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(validInstanceUUIDsFileName);

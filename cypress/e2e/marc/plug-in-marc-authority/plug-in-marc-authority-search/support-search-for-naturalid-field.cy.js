@@ -126,7 +126,7 @@ describe('MARC', () => {
 
       it(
         'C359142 MARC Authority plug-in | Support search for "naturalId" field using "Keyword" search option (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C359142'] },
         () => {
           testData.searchQueries.forEach((query, index) => {
             MarcAuthorities.searchByParameter(testData.searchOptions.KEYWORD, query);

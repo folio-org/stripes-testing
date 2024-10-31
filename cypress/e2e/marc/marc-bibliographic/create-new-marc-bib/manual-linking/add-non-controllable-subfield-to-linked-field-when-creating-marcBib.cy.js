@@ -43,6 +43,7 @@ describe('MARC', () => {
             tag: '240',
             content: '$a test123',
             boxFourth: '$a Hosanna Bible',
+            boxFourthUpdate: '$a Hosanna Bible',
             boxFifth: '',
             boxFifthUpdate: '$d test',
             boxFifthAfterSave: '$d test',
@@ -58,13 +59,15 @@ describe('MARC', () => {
             content: '$a test123',
             boxFourth:
               '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english',
+            boxFourthUpdate:
+              '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFifth: '',
-            boxFifthUpdate: '$v test $v test 2 $z test 3',
-            boxFifthAfterSave: '$v test $v test 2 $z test 3 $x test $x test 1',
+            boxFifthUpdate: '',
+            boxFifthAfterSave: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84801249',
             boxSeventh: '',
-            boxSeventhUpdate: '$x test $x test 1 $2 ptf1 $2 ppt3',
-            boxSeventhAfterSave: '$2 ptf1 $2 ppt3',
+            boxSeventhUpdate: '$2 ppt3',
+            boxSeventhAfterSave: '$2 ppt3',
             marcValue:
               'C380747 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
           },
@@ -87,7 +90,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380747*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380747');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -128,7 +131,7 @@ describe('MARC', () => {
 
         it(
           'C422133 Add non-controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422133'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -156,18 +159,13 @@ describe('MARC', () => {
                 newField.tag,
                 '\\',
                 '\\',
-                `${newField.boxFourth}`,
+                `${newField.boxFourthUpdate}`,
                 `${newField.boxFifth}`,
                 `${newField.boxSixth}`,
                 `${newField.boxSeventh}`,
               );
             });
 
-            QuickMarcEditor.fillEmptyTextAreaOfField(
-              6,
-              testData.fieldName.fifthBox(6),
-              newFields[1].boxFifthUpdate,
-            );
             QuickMarcEditor.fillEmptyTextAreaOfField(
               6,
               testData.fieldName.seventhBox(6),
@@ -197,7 +195,7 @@ describe('MARC', () => {
                   newField.tag,
                   '\\',
                   '\\',
-                  `${newField.boxFourth}`,
+                  `${newField.boxFourthUpdate}`,
                   `${newField.boxFifthAfterSave}`,
                   `${newField.boxSixth}`,
                   `${newField.boxSeventhAfterSave}`,

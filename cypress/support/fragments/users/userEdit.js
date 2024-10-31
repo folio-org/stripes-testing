@@ -4,10 +4,11 @@ import {
   Accordion,
   Button,
   Checkbox,
+  DropdownMenu,
+  Image,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
-  SelectionOption,
   MultiColumnListRow,
   MultiSelect,
   Pane,
@@ -16,25 +17,21 @@ import {
   SearchField,
   Section,
   Select,
+  SelectionOption,
   TextArea,
   TextField,
   not,
-  ProfilePictureCard,
-  DropdownMenu,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
+const userDetailsPane = Pane({ id: 'pane-userdetails' });
+
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
-const userDetailsPane = Pane({ id: 'pane-userdetails' });
-const editButton = Button('Edit');
-const externalSystemIdTextfield = TextField('External system ID');
-const selectPermissionsModal = Modal('Select Permissions');
-const deleteProfilePicturesModal = Modal({ header: 'Delete profile picture' });
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const userInformationAccordion = Accordion('User information');
 const affiliationsAccordion = Accordion('Affiliations');
@@ -49,30 +46,37 @@ const feesFinesAccordion = Accordion('Fees/fines');
 const loansAccordion = Accordion('Loans');
 const requestsAccordion = Accordion('Requests');
 const notesAccordion = Accordion('Notes');
+const readingRoomAccessAccordion = Accordion({ id: 'readingRoomAccess' });
+const selectPermissionsModal = Modal('Select Permissions');
+const deleteProfilePicturesModal = Modal({ header: 'Delete profile picture' });
+const areYouSureForm = Modal('Are you sure?');
+const updateProfilePictureModal = Modal('Update profile picture');
+const externalSystemIdTextfield = TextField('External system ID');
+const userSearch = TextField('User search');
+const externalImageUrlTextField = updateProfilePictureModal.find(
+  TextField({ id: 'external-image-url' }),
+);
+const permissionsSearch = selectPermissionsModal.find(SearchField());
+const editButton = Button('Edit');
 const createRequestActionsButton = Button('Create request');
 const createFeeFineActionsButton = Button('Create fee/fine');
 const createPatronBlockActionsButton = Button('Create block');
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
-const permissionsSearch = selectPermissionsModal.find(SearchField());
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
-const selectRequestType = Select({ id: 'type' });
 const cancelButton = Button('Cancel');
-const userSearch = TextField('User search');
-const profilePictureCard = ProfilePictureCard({ alt: 'Profile picture' });
-let totalRows;
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
-const areYouSureForm = Modal('Are you sure?');
-const updateProfilePictureModal = Modal('Update profile picture');
 const keepEditingBtn = Button('Keep editing');
 const closeWithoutSavingButton = Button('Close without saving');
-const externalImageUrlTextField = updateProfilePictureModal.find(
-  TextField({ id: 'external-image-url' }),
-);
 const saveExternalLinkBtn = updateProfilePictureModal.find(
   Button({ id: 'save-external-link-btn' }),
 );
+const selectRequestType = Select({ id: 'type' });
+const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
+const profilePictureCard = Image({ alt: 'Profile picture' });
+
+let totalRows;
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -214,6 +218,38 @@ export default {
 
   openServicePointsAccordion() {
     cy.do(Button({ id: 'accordion-toggle-button-servicePointsSection' }).click());
+  },
+
+  openReadingRoomAccessAccordion() {
+    cy.do(readingRoomAccessAccordion.clickHeader());
+    cy.expect(readingRoomAccessAccordion.find(MultiColumnList()).exists());
+  },
+
+  editAccessToReadingRoom(roomName, optionValue, note) {
+    this.openReadingRoomAccessAccordion();
+    cy.do(
+      MultiColumnListCell({ content: roomName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(
+          MultiColumnListRow({ indexRow: rowNumber })
+            .find(selectReadingRoomAccess)
+            .choose(optionValue),
+        );
+        cy.expect(
+          readingRoomAccessAccordion
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(selectReadingRoomAccess)
+            .has({ value: 'NOT_ALLOWED' }),
+        );
+        cy.do(
+          readingRoomAccessAccordion
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(TextArea({ name: 'notes' }))
+            .fillIn(note),
+        );
+      }),
+    );
   },
 
   checkServicePoints(...points) {
@@ -514,7 +550,7 @@ export default {
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
   },
 
-  verifySaveAndColseIsDisabled: (status) => {
+  verifySaveAndCloseIsDisabled: (status) => {
     cy.expect(saveAndCloseBtn.has({ disabled: status }));
   },
 

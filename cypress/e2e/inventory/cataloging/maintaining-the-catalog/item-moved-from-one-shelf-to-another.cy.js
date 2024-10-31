@@ -1,6 +1,6 @@
 import { Permissions } from '../../../../support/dictionary';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
-import holdingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -70,7 +70,7 @@ describe('Inventory', () => {
         // Change the Call number -> Click "Save & Close" button
         HoldingsRecordEdit.fillCallNumber(testData.callNumber);
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
-        holdingsRecordView.close();
+        HoldingsRecordView.close();
         InventoryInstance.checkIsHoldingsCreated([
           `${testData.location.name} >  ${testData.callNumber}`,
         ]);

@@ -44,12 +44,11 @@ describe('Export Manager', () => {
       let orderNumber = null;
 
       before(() => {
-        cy.getAdminToken();
+        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
         Organizations.createOrganizationViaApi(organization).then((organizationResponse) => {
           organization.id = organizationResponse;
           order.vendor = organization.name;
           order.orderType = 'One-time';
-          cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
           Organizations.searchByParameters('Name', organization.name);
           Organizations.checkSearchResults(organization);
           Organizations.selectOrganization(organization.name);
@@ -65,7 +64,7 @@ describe('Export Manager', () => {
           InteractorsTools.checkCalloutMessage('Integration was saved');
           TopMenuNavigation.openAppFromDropdown('Settings');
           SettingsMenu.selectOrders();
-          SettingOrdersNavigationMenu.selectCustomFieldsPurchaseOrderLines();
+          SettingOrdersNavigationMenu.selectPurchaseOrderLinesLimit();
           SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
           SettingsOrders.setPurchaseOrderLinesLimit(3);
           cy.visit(TopMenu.ordersPath);
@@ -105,8 +104,10 @@ describe('Export Manager', () => {
       });
 
       after(() => {
-        cy.loginAsAdmin();
-        cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+        cy.loginAsAdmin({
+          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+        });
         SettingsOrders.setPurchaseOrderLinesLimit(1);
         Orders.deleteOrderViaApi(order.id);
         Organizations.deleteOrganizationViaApi(organization.id);

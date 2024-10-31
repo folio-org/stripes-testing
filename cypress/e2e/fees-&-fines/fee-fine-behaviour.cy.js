@@ -54,7 +54,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C449 Verify behavior when "Create fee/fine" button pressed within User Information (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C449'] },
       () => {
         // Find active user in FOLIO
         UsersSearchPane.searchByKeywords(testData.user.username);
@@ -68,7 +68,12 @@ describe('Fees&Fines', () => {
         // New fee/fine page will open as shown in attachment
         NewFeeFine.waitLoading();
         NewFeeFine.checkInitialState(
-          { ...testData.user, middleName: 'testMiddleName' },
+          {
+            lastName: testData.user.lastName,
+            middleName: 'testMiddleName',
+            firstName: testData.user.preferredFirstName,
+            barcode: testData.user.barcode,
+          },
           ownerBody.name,
         );
       },
@@ -76,7 +81,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C450 Verify behavior when "New fee/fine" button pressed within Fee/Fine History (vega) (TaaS)',
-      { tags: ['extendedPath', 'vega'] },
+      { tags: ['extendedPath', 'vega', 'C450'] },
       () => {
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.waitLoading();
@@ -94,7 +99,12 @@ describe('Fees&Fines', () => {
         // "New fee/fine" modal opened
         NewFeeFine.waitLoading();
         NewFeeFine.checkInitialState(
-          { ...testData.user, middleName: 'testMiddleName' },
+          {
+            lastName: testData.user.lastName,
+            middleName: 'testMiddleName',
+            firstName: testData.user.preferredFirstName,
+            barcode: testData.user.barcode,
+          },
           ownerBody.name,
         );
       },

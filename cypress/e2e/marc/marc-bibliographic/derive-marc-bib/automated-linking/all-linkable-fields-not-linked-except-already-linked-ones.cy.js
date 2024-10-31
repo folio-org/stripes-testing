@@ -38,7 +38,7 @@ describe('MARC', () => {
         const linkingTagAndValues = [
           {
             rowIndex: 82,
-            value: 'C388642 Lee, Stan, 1922-2018,',
+            value: 'C388642 Lee, Stan, 1922-2018',
             tag: 700,
             boxFourth: '$a C388642 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
@@ -212,13 +212,13 @@ describe('MARC', () => {
           Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
         it(
           'C388642 All linkable fields are NOT linked after clicking on the "Link headings" button when derive "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C388642'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

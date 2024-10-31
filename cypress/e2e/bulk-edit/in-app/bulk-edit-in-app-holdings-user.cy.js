@@ -63,7 +63,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360114 Verify that User can upload file with Holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C360114'] },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -90,7 +90,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367984 Verify that visual clue on the "Are you sure?" form does not provide 0 records (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C367984'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkHoldingsRadio();

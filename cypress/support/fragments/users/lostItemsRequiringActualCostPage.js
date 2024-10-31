@@ -27,7 +27,7 @@ export default {
     ]);
   },
 
-  verifyUserNotHavePermmissionToAccess() {
+  verifyUserNotHavePermissionToAccess() {
     cy.expect(
       HTML(
         'User does not have permission to access "Lost items needing actual cost" processing page',

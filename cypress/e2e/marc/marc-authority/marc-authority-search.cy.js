@@ -106,7 +106,7 @@ describe('MARC', () => {
 
     it(
       'C360532 Verify that "sourceFileId" and "naturalId" fields exist in response to search "MARC Authority" records. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C360532'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.marcAuthorities,
@@ -119,7 +119,7 @@ describe('MARC', () => {
 
     it(
       'C409449 Search for "MARC authority" records using "Name-title" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C409449'] },
       () => {
         cy.login(testData.userPropertiesC409449.username, testData.userPropertiesC409449.password, {
           path: TopMenu.marcAuthorities,

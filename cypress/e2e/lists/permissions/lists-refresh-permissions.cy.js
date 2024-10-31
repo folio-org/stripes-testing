@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C411821-${getTestEntityValue('test_list')}`,
-      description: `C411821-${getTestEntityValue('test_list_description')}`,
+      name: `C411821-${getTestEntityValue('list')}`,
+      description: `C411821-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -52,16 +52,20 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411821 Refresh list: Not canned lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.verifyListIsPresent(listData.name);
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.refreshList();
-      Lists.waitForCompilingToComplete();
-    });
+    it(
+      'C411821 Refresh list: Not canned lists (corsair)',
+      { tags: ['smoke', 'corsair', 'C411821'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.verifyListIsPresent(listData.name);
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.refreshList();
+        Lists.waitForCompilingToComplete();
+      },
+    );
   });
 });

@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C411693-${getTestEntityValue('test_list')}`,
-      description: `C411693-${getTestEntityValue('test_list_description')}`,
+      name: `C411693-${getTestEntityValue('list')}`,
+      description: `C411693-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -54,7 +54,7 @@ describe('lists', () => {
 
     it(
       'C411694 C411693 Lists (Admin): All permissions (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411694', 'C411693'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

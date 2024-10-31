@@ -75,7 +75,7 @@ describe('MARC', () => {
 
       it(
         'C350697 Edit a MARC bibliographic record via quickmarc multiple times (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350697'] },
         () => {
           // #1-#2 Click on the "Source" accordion button, Check thе "MARC" checkbox.
           InventoryInstances.searchBySource(testData.authority.source);

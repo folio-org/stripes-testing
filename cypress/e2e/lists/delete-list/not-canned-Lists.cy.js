@@ -7,7 +7,7 @@ describe('lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Loans',
       status: 'Active',
       visibility: 'Shared',
@@ -28,31 +28,36 @@ describe('lists', () => {
         userData.userId = userProperties.userId;
       });
     });
-    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.resetAllFilters();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.saveList();
-      Lists.openActions();
-      Lists.deleteList();
-      Lists.confirmDelete();
-      cy.contains(`List ${listData.name} deleted.`);
-    });
+    it(
+      'C411768 Delete list: Positive case (corsair)',
+      { tags: ['smoke', 'corsair', 'C411768'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.resetAllFilters();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.saveList();
+        Lists.openActions();
+        Lists.deleteList();
+        Lists.confirmDelete();
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
+      },
+    );
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C411772'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -65,7 +70,7 @@ describe('lists', () => {
         Lists.openActions();
         Lists.deleteList();
         Lists.confirmDelete();
-        cy.contains(`List ${listData.name} deleted.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} deleted.`);
       },
     );
   });

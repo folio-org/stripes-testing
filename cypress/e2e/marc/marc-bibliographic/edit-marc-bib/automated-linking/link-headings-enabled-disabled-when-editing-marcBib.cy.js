@@ -96,7 +96,7 @@ describe('MARC', () => {
 
         it(
           'C387524 "Link headings" button enabling/disabling when edit "MARC bib" (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C387524'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();

@@ -9,64 +9,64 @@ describe('lists', () => {
     const userData = {};
     const createdLists = [
       {
-        name: `C411804-${getTestEntityValue('test_list')}-1`,
-        description: `C411804-${getTestEntityValue('test_list_description')}-1`,
+        name: `C411804-${getTestEntityValue('list')}-1`,
+        description: `C411804-${getTestEntityValue('desc')}-1`,
         recordType: 'Loans',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
       },
       {
-        name: `C411804-${getTestEntityValue('test_list')}-2`,
-        description: `C411804-${getTestEntityValue('test_list_description')}-2`,
+        name: `C411804-${getTestEntityValue('list')}-2`,
+        description: `C411804-${getTestEntityValue('desc')}-2`,
         recordType: 'Loans',
         fqlQuery: '',
         isActive: false,
         isPrivate: true,
       },
       {
-        name: `C411805-${getTestEntityValue('test_list')}-1`,
-        description: `C411805-${getTestEntityValue('test_list_description')}-2`,
+        name: `C411805-${getTestEntityValue('list')}-1`,
+        description: `C411805-${getTestEntityValue('desc')}-2`,
         recordType: 'Loans',
         fqlQuery: '',
         isActive: true,
         isPrivate: false,
       },
       {
-        name: `C411805-${getTestEntityValue('test_list')}-2`,
-        description: `C411805-${getTestEntityValue('test_list_description')}-2`,
+        name: `C411805-${getTestEntityValue('list')}-2`,
+        description: `C411805-${getTestEntityValue('desc')}-2`,
         recordType: 'Loans',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
       },
       {
-        name: `C411806-${getTestEntityValue('test_list')}-1`,
-        description: `C411806-${getTestEntityValue('test_list_description')}-2`,
+        name: `C411806-${getTestEntityValue('list')}-1`,
+        description: `C411806-${getTestEntityValue('desc')}-2`,
         recordType: 'Users',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
       },
       {
-        name: `C411806-${getTestEntityValue('test_list')}-2`,
-        description: `C411806-${getTestEntityValue('test_list_description')}-2`,
+        name: `C411806-${getTestEntityValue('list')}-2`,
+        description: `C411806-${getTestEntityValue('desc')}-2`,
         recordType: 'Loans',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
       },
       {
-        name: `C411806-${getTestEntityValue('test_list')}-3`,
-        description: `C411806-${getTestEntityValue('test_list_description')}-3`,
+        name: `C411806-${getTestEntityValue('list')}-3`,
+        description: `C411806-${getTestEntityValue('desc')}-3`,
         recordType: 'Items',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
       },
       {
-        name: `C411806-${getTestEntityValue('test_list')}-4`,
-        description: `C411806-${getTestEntityValue('test_list_description')}-4`,
+        name: `C411806-${getTestEntityValue('list')}-4`,
+        description: `C411806-${getTestEntityValue('desc')}-4`,
         recordType: 'Purchase order lines',
         fqlQuery: '',
         isActive: true,
@@ -101,26 +101,25 @@ describe('lists', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
 
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-
-        createdLists.forEach((list) => {
-          Lists.createViaApi(list);
+        cy.getUserToken(userData.username, userData.password).then(() => {
+          createdLists.forEach((list) => {
+            Lists.createViaApi(list);
+          });
         });
       });
     });
 
     beforeEach('Reset all filters', () => {
       // #1 Click on "Lists" in app navigation bar
-      cy.visit(TopMenu.listsPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
       Lists.waitLoading();
       Lists.resetAllFilters();
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
       cy.getUserToken(userData.username, userData.password);
       createdLists.forEach((list) => {
         Lists.deleteListByNameViaApi(list.name);
@@ -131,7 +130,7 @@ describe('lists', () => {
 
     it(
       'C411804 Filter section: Statuses (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411804'] },
       () => {
         // #2 Click on "Status" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(statusFilters.accordionName);
@@ -153,7 +152,7 @@ describe('lists', () => {
 
     it(
       'C411805 Filter section: Visibility (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411805'] },
       () => {
         // #2 Click on "Visibility" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
@@ -192,7 +191,7 @@ describe('lists', () => {
 
     it(
       'C411806 Filter section: Record types (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair'] },
+      { tags: ['criticalPath', 'corsair', 'C411806'] },
       () => {
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);

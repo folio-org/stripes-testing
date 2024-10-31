@@ -103,7 +103,7 @@ describe('MARC', () => {
 
     it(
       'C380591 Search MARC: support searching by 035 $a value using "Identifier (all)" option (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C380591'] },
       () => {
         MarcAuthorities.checkSearchOptions();
         MarcAuthorities.searchBy(

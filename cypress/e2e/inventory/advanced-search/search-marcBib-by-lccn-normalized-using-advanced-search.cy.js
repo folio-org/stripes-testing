@@ -103,7 +103,7 @@ describe('Inventory', () => {
 
     it(
       'C451455 Search for "MARC bibliographic" by "LCCN, normalized" option using "Advanced search" modal ($a only) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C451455'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventoryInstances.clickAdvSearchButton();

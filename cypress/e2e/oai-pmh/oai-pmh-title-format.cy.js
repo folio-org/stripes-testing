@@ -25,7 +25,7 @@ describe('OAI-PMH', () => {
 
   it(
     'C410816 Settings (OAI-PMH): HTML page title format (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C410816'] },
     () => {
       // Open "Settings" -> "OAI-PMH"
       OaiPmh.checkSectionListItems({ canViewLogs: true });

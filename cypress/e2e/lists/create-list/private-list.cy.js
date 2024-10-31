@@ -9,7 +9,7 @@ describe('lists', () => {
     const firstUser = {};
     const secondUser = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Loans',
       status: 'Active',
       visibility: 'Private',
@@ -53,23 +53,24 @@ describe('lists', () => {
 
     it(
       "C411710 Verify that private list isn't visible for the other users (corsair)",
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411710'] },
       () => {
-        cy.login(firstUser.username, firstUser.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(firstUser.username, firstUser.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.wait(3000);
-        cy.login(secondUser.username, secondUser.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(secondUser.username, secondUser.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.verifyListIsNotPresent(listData.name);
       },
     );

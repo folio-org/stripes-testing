@@ -197,6 +197,7 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          cy.wait(1500);
         });
 
         // create job profile
@@ -211,6 +212,7 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);

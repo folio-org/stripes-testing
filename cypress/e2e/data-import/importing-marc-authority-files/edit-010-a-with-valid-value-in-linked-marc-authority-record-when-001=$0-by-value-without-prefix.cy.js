@@ -49,7 +49,7 @@ describe('Data Import', () => {
       modifiedMarcFile: `C374184 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C374184 testMarcFile${getRandomPostfix()}.mrc`,
       updated630Field: [
-        23,
+        22,
         '630',
         '0',
         '0',
@@ -97,6 +97,7 @@ describe('Data Import', () => {
         fileName: `C374184 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         numOfRecords: 1,
+        propertyName: 'instance',
       },
       {
         marc: 'marcAuthFileForC374184.mrc',
@@ -104,10 +105,11 @@ describe('Data Import', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
         authorityHeading: 'C374184 Marvel comics',
+        propertyName: 'authority',
       },
     ];
     const linkingTagAndValue = {
-      rowIndex: 23,
+      rowIndex: 22,
       value: 'C374184 Marvel comics',
       tag: '630',
     };
@@ -147,17 +149,21 @@ describe('Data Import', () => {
           );
         });
 
-      marcFiles.forEach((marcFile) => {
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_IMPORT);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
+      cy.loginAsAdmin({
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
+      }).then(() => {
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          cy.wait(2000);
         });
       });
 
@@ -178,7 +184,7 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIconByIndex(23);
+        InventoryInstance.verifyAndClickLinkIconByIndex(22);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(linkingTagAndValue.value);
@@ -219,7 +225,7 @@ describe('Data Import', () => {
 
     it(
       'C374184 Edit "010 $a" with valid value in linked "MARC Authority" record when "001" = "$0" by value without prefix (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374184'] },
       () => {
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();
@@ -271,7 +277,7 @@ describe('Data Import', () => {
         InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(23);
+        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(22);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated630Field);
       },
     );

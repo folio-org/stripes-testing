@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367983 Verify that confirmation screen DOES NOT require manual refresh (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C367983'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

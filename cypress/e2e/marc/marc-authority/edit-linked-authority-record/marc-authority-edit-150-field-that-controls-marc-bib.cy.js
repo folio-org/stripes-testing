@@ -33,7 +33,7 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 150 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         cannotSaveCalloutMessage: 'Record cannot be saved without 1XX field.',
         cannotAddCalloutMessage:
-          'Cannot add a $t to the $150 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
+          'Cannot add a $t to the 150 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
       };
 
       const marcFiles = [
@@ -131,7 +131,7 @@ describe('MARC', () => {
 
       it(
         'C374144 Edit tag value ("150") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374144'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
 

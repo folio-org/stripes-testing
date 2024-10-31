@@ -119,7 +119,7 @@ describe('MARC', () => {
 
       it(
         'C422103 MARC Authority plug-in | Select "Browse" MARC authority records (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422103'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.verifyBrowseAuthorityPane('Personal name', 'Dugmore, C. W.');

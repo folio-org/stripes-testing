@@ -37,7 +37,7 @@ describe('Requests', () => {
 
   it(
     'C747 Assign Tags to Request (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C747'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       Requests.selectNotYetFilledRequest();
@@ -47,6 +47,7 @@ describe('Requests', () => {
       Requests.addTag(tag);
       Requests.closePane('Tags');
       Requests.closePane('Request details');
+      Requests.resetAllFilters();
       Requests.findCreatedRequest(instanceData.instanceTitle);
       Requests.selectFirstRequest(instanceData.instanceTitle);
       Requests.openTagsPane();

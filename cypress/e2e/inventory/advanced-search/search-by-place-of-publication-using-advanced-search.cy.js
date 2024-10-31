@@ -127,7 +127,7 @@ describe('Inventory', () => {
 
     it(
       'C496183 Search for Instance by "Place of publication" search option using "Advanced search" modal (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C496183'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOption(testData.placeOfPublication);

@@ -110,7 +110,7 @@ describe('MARC', () => {
 
         it(
           'C405513 Adding/deleting fields and subfields when editing shared "MARC Bib" in member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C405513'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

@@ -281,7 +281,7 @@ describe('Data Import', () => {
 
     it(
       'C411802 Updating "$0" in linked fields of shared "MARC Bib" which has "Shadow" copy in member tenant via Data Import from Central tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire', 'C411802'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

@@ -29,7 +29,7 @@ describe('Inventory', () => {
 
     it(
       'C442825 "Cancelled LCCN" is displayed on "Resource identifier types" page (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C442825'] },
       () => {
         cy.visit(SettingsMenu.inventoryPath);
         ResourceIdentifierTypes.choose();

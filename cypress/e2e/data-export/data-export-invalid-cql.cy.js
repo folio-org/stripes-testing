@@ -38,7 +38,7 @@ describe('Data Export', () => {
 
   it(
     'C397323 Verify trigger Data export with invalid CQL (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C397323'] },
     () => {
       ExportFileHelper.uploadFile(editedFileName);
       ExportFileHelper.exportWithDefaultJobProfile(

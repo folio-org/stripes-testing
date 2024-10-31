@@ -176,14 +176,20 @@ describe('Renewal', () => {
 
   it(
     'C568 Renewal: failure because loan is not renewable (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C568'] },
     () => {
-      cy.login(renewUserData.username, renewUserData.password);
-      cy.wait(2000);
-      RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
-      cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
-      cy.wait(2000);
-      RenewalActions.renewWithOverrideAccess(loanId, renewUserData.id, itemData);
+      cy.login(renewUserData.username, renewUserData.password, {
+        path: RenewalActions.generateInitialLink(renewUserData.id, loanId),
+        waiter: () => cy.wait(2000),
+      });
+      RenewalActions.renewWithoutOverrideAccess(itemData);
+
+      cy.login(renewOverrideUserData.username, renewOverrideUserData.password, {
+        path: RenewalActions.generateInitialLink(renewOverrideUserData.id, loanId),
+        waiter: () => cy.wait(2000),
+      });
+
+      RenewalActions.renewWithOverrideAccess(itemData);
       RenewalActions.startOverriding(itemData);
       RenewalActions.fillOverrideInfo();
       RenewalActions.overrideLoan();

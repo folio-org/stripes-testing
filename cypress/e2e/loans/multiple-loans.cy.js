@@ -119,7 +119,7 @@ describe('Loans', () => {
 
     it(
       'C572: Multiple loans: Test change due date (vega) (TaaS)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C572'] },
       () => {
         const itemBarcode = testData.folioInstances[0].barcodes[0];
         const item2Barcode = testData.folioInstances[1].barcodes[0];

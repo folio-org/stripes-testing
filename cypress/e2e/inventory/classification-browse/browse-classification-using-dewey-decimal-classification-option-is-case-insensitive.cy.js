@@ -30,6 +30,10 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
+      cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C468258*');
+
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
 
@@ -69,7 +73,7 @@ describe('Inventory', () => {
 
     it(
       'C468258 Browse for classification using "Dewey Decimal classification" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468258'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(

@@ -54,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C353978'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
         ExportManagerSearchPane.searchByBulkEdit();

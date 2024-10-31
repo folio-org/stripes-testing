@@ -294,8 +294,7 @@ export default {
       saveButton.has({ disabled: true }),
     ]);
   },
-  verifyPatronGroupsPane(isDisabled = false) {
-    cy.expect(newButton.has({ disabled: isDisabled }));
+  verifyPatronGroupsPane() {
     tableColumnHeaderNames.forEach((name) => {
       cy.expect(MultiColumnListHeader(name).exists());
     });

@@ -90,7 +90,7 @@ describe('MARC', () => {
 
     it(
       'C359241 Edit MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C359241'] },
       () => {
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.waitLoading();

@@ -57,7 +57,7 @@ describe('Data Export', () => {
 
   it(
     'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C404374'] },
     () => {
       DataExportViewAllLogs.openAllJobLogs();
 

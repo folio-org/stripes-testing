@@ -77,7 +77,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422129*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422129');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -118,7 +118,7 @@ describe('MARC', () => {
 
         it(
           'C422129 Link "Series" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422129'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

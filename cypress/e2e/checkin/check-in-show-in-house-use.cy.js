@@ -97,38 +97,42 @@ describe('Check in', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C9182 Check In: show in-house use (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    // Check in an item that's loaned (item A)
-    CheckInActions.checkInItemGui(itemAData.barcode);
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
-    CheckInPane.checkInHouseUseIcon(false);
-    // Check in an item with at least one open request (item B)
-    CheckInActions.checkInItemGui(itemBData.barcode);
-    AwaitingPickupForARequest.verifyModalTitle();
-    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-    AwaitingPickupForARequest.closeModal();
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AWAITING_PICKUP, itemBData.barcode]);
-    CheckInPane.checkInHouseUseIcon(false);
-    // Switch user to service point that is not the primary service point for the effective location for item C
-    SwitchServicePoint.switchServicePoint(testData.itemServicePoint1.name);
-    SwitchServicePoint.checkIsServicePointSwitched(testData.itemServicePoint1.name);
+  it(
+    'C9182 Check In: show in-house use (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C9182'] },
+    () => {
+      // Check in an item that's loaned (item A)
+      CheckInActions.checkInItemGui(itemAData.barcode);
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemAData.barcode]);
+      CheckInPane.checkInHouseUseIcon(false);
+      // Check in an item with at least one open request (item B)
+      CheckInActions.checkInItemGui(itemBData.barcode);
+      AwaitingPickupForARequest.verifyModalTitle();
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.closeModal();
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AWAITING_PICKUP, itemBData.barcode]);
+      CheckInPane.checkInHouseUseIcon(false);
+      // Switch user to service point that is not the primary service point for the effective location for item C
+      SwitchServicePoint.switchServicePoint(testData.itemServicePoint1.name);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.itemServicePoint1.name);
 
-    // Check in item C
-    CheckInActions.checkInItemGui(itemCData.barcode);
-    InTransit.verifyModalTitle();
-    InTransit.unselectCheckboxPrintSlip();
-    InTransit.closeModal();
-    CheckInPane.checkResultsInTheRow([
-      `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${testData.servicePoint.name}`,
-      itemCData.barcode,
-    ]);
-    CheckInPane.checkInHouseUseIcon(false);
-    // Change user's service point to the service point that is the primary service point for the item's effective location
-    SwitchServicePoint.switchServicePoint(testData.servicePoint.name);
-    SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint.name);
-    // Check in item C again
-    CheckInActions.checkInItemGui(itemCData.barcode);
-    CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemCData.barcode]);
-    CheckInPane.checkInHouseUseIcon(false);
-  });
+      // Check in item C
+      CheckInActions.checkInItemGui(itemCData.barcode);
+      InTransit.verifyModalTitle();
+      InTransit.unselectCheckboxPrintSlip();
+      InTransit.closeModal();
+      CheckInPane.checkResultsInTheRow([
+        `${ITEM_STATUS_NAMES.IN_TRANSIT} - ${testData.servicePoint.name}`,
+        itemCData.barcode,
+      ]);
+      CheckInPane.checkInHouseUseIcon(false);
+      // Change user's service point to the service point that is the primary service point for the item's effective location
+      SwitchServicePoint.switchServicePoint(testData.servicePoint.name);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint.name);
+      // Check in item C again
+      CheckInActions.checkInItemGui(itemCData.barcode);
+      CheckInPane.checkResultsInTheRow([ITEM_STATUS_NAMES.AVAILABLE, itemCData.barcode]);
+      CheckInPane.checkInHouseUseIcon(false);
+    },
+  );
 });

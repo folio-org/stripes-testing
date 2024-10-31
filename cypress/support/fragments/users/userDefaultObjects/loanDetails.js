@@ -60,8 +60,9 @@ export default {
       DeclareLostModal.find(TextArea('Additional information*')).fillIn(additionalInformation),
       DeclareLostModal.find(Button('Confirm')).click(),
     ]);
-    cy.wait(500);
+    cy.wait(2000);
     this.checkDeclareLostModalAbsent();
+    cy.wait(3000);
   },
   checkDeclareLostModalAbsent() {
     cy.expect(DeclareLostModal.absent());
@@ -258,10 +259,10 @@ export default {
     this.startDeclareLost();
     this.finishDeclareLost(comment);
   },
-  checkLoanClosed() {
+  checkLoanClosed(user) {
     this.checkAction(0, 'Closed loan');
     this.checkStatusInList(0, 'Lost and paid');
-    this.checkSource(0, 'System');
+    this.checkSource(0, user);
     this.checkComments(0, '-');
   },
   payFeeFine(amount, paymentMethod) {

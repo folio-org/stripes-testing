@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       status: 'Active',
       visibility: 'Shared',
@@ -39,11 +39,12 @@ describe('lists', () => {
 
     it(
       'C411770 Delete list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411770'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -56,7 +57,6 @@ describe('lists', () => {
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.viewUpdatedList();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });
@@ -65,11 +65,12 @@ describe('lists', () => {
 
     it(
       'C411771 Delete list: Export is in progress (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411771'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.resetAllFilters();
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -84,7 +85,6 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });

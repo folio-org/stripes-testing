@@ -52,7 +52,7 @@ describe('MARC', () => {
 
       it(
         'C422106 Save edited "MARC bib" with changed leader "Type" position to "e" and valid values in 008 "Relf" position (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422106'] },
         () => {
           // 1 Click on the "Actions" button placed on the second pane → Select "Edit MARC bibliographic record" option
           InventoryInstance.editMarcBibliographicRecord();

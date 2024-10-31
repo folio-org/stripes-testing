@@ -81,7 +81,7 @@ describe('Inventory', () => {
 
     it(
       'C368045 Search for "Instance" by "Alternative title" field without special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C368045'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);

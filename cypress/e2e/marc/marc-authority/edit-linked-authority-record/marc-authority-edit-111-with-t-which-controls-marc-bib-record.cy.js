@@ -28,7 +28,7 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 111 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         cannotSaveCalloutMessage: 'Record cannot be saved without 1XX field.',
         cannotRemoveCalloutMessage:
-          'Cannot remove $t from the $111 field because it controls a bibliographic field(s) that requires this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
+          'Cannot remove $t from the 111 field because it controls a bibliographic field(s) that requires this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that requires $t to be controlled.',
       };
 
       const marcFiles = [
@@ -80,8 +80,10 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -126,7 +128,7 @@ describe('MARC', () => {
 
       it(
         'C374142 Edit tag value ("111 which has "$t") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374142'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchByParameter(

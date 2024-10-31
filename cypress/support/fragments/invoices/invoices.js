@@ -1,5 +1,5 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -22,13 +22,14 @@ import {
   SelectionOption,
   TextField,
 } from '../../../../interactors';
+import { INVOICE_STATUSES } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceEditForm from './invoiceEditForm';
-import VoucherExportForm from './voucherExportForm';
-import { INVOICE_STATUSES } from '../../constants';
 import InvoiceStates from './invoiceStates';
+import SelectUser from './modal/selectUser';
+import VoucherExportForm from './voucherExportForm';
 
 const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
@@ -56,6 +57,7 @@ const batchGroupFilterSection = Section({ id: 'batchGroupId' });
 const fundCodeFilterSection = Section({ id: 'fundCode' });
 const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
+const invoiceCreatedByFilterSection = Section({ id: 'metadata.createdByUserId' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
 const newBlankLineButton = Button('New blank line');
 const polLookUpButton = Button('POL look-up');
@@ -1027,6 +1029,7 @@ export default {
   },
 
   checkFundInInvoiceLine: (fund) => {
+    cy.wait(4000);
     cy.expect(
       Section({ id: 'invoiceLineFundDistribution' })
         .find(Link(`${fund.name}(${fund.code})`))
@@ -1267,6 +1270,17 @@ export default {
     ]);
   },
 
+  selectCreatedByFilter: (userName) => {
+    cy.do([
+      invoiceFiltersSection
+        .find(invoiceCreatedByFilterSection)
+        .find(Button({ ariaLabel: 'Created by filter list' }))
+        .click(),
+      Button({ id: 'metadata.createdByUserId-button' }).click(),
+    ]);
+    SelectUser.selectUser(userName);
+  },
+
   openPageCurrentEncumbrance: (title) => {
     cy.get('#invoiceLineFundDistribution')
       .find('a')
@@ -1339,5 +1353,20 @@ export default {
         .find(Button({ id: 'clickable-invoice-line-currency-confirmation-confirm' }))
         .click(),
     );
+  },
+
+  verifySearchResult(invoiceNumber) {
+    cy.expect(
+      invoiceResultsPane
+        .find(MultiColumnListRow({ rowIndexInParent: 'row-0' }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: including(invoiceNumber) }),
+    );
+    cy.get('#invoice-results-pane')
+      .find('div[class^="mclRowContainer--"]')
+      .its('length')
+      .then((rowCount) => {
+        expect(rowCount).to.eq(1);
+      });
   },
 };

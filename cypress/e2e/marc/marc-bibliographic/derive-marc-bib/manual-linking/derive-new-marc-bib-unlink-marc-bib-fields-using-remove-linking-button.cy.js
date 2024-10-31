@@ -73,7 +73,7 @@ describe('MARC', () => {
           .then((createdUserProperties) => {
             testData.preconditionUserId = createdUserProperties.userId;
             // make sure there are no duplicate authority records in the system
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115*');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
 
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -136,7 +136,7 @@ describe('MARC', () => {
 
       it(
         'C366115 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "Remove linking" button in "Remove authority linking" modal (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C366115'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

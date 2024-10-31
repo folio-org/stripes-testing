@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('duplicate list', () => {
     const userData = {};
     const listData = {
-      name: `C423599-${getTestEntityValue('test_list')}`,
-      description: `C423599-${getTestEntityValue('test_list_description')}`,
+      name: `C423599-${getTestEntityValue('list')}`,
+      description: `C423599-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -55,7 +55,7 @@ describe('lists', () => {
 
     it(
       'C423599 Duplicate action takes you to new list screen with some fields pre populated (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423599'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -78,7 +78,7 @@ describe('lists', () => {
 
         Lists.editQuery();
         Lists.verifyEditorContainsQuery({
-          field: 'Users — User — Active',
+          field: 'User — Active',
           operator: 'equals',
           value: 'True',
         });

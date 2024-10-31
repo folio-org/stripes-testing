@@ -93,7 +93,7 @@ describe('Data Import', () => {
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        NewFieldMappingProfile.addExpenceClass(mappingProfile.fundDistributionSource);
+        NewFieldMappingProfile.addExpenseClass(mappingProfile.fundDistributionSource);
         cy.wrap([
           firstExpencseClassData.name,
           secondExpencseClassData.name,

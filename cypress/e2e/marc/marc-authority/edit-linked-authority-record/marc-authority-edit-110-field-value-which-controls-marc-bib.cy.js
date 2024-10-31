@@ -25,7 +25,7 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 110 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         errorMessageAfterSaving: 'Record cannot be saved without 1XX field.',
         errorMessageAfterAddingSubfield:
-          'Cannot add a $t to the $110 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
+          'Cannot add a $t to the 110 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
       };
       const marcFiles = [
         {
@@ -51,6 +51,8 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
+          // make sure there are no duplicate records in the system
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374139*');
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -65,8 +67,10 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -113,7 +117,7 @@ describe('MARC', () => {
 
       it(
         'C374139 Edit tag value ("110") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374139'] },
         () => {
           MarcAuthorities.waitLoading();
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);

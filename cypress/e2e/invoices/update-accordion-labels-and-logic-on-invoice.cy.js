@@ -10,6 +10,7 @@ import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -54,7 +55,7 @@ describe('Invoices', () => {
             invoice.batchGroup = batchGroup.name;
           });
         });
-        cy.visit(TopMenu.invoicesPath);
+        TopMenuNavigation.openAppFromDropdown('Invoices');
         Invoices.createRolloverInvoiceWithFY(invoice, organization.name, defaultFiscalYear);
         Invoices.createInvoiceLine(invoiceLine);
       });

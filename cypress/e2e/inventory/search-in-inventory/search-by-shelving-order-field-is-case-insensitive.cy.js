@@ -120,7 +120,7 @@ describe('Inventory', () => {
 
       it(
         'C466076 Search by "Shelving order" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C466076'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventorySearchAndFilter.selectSearchOptions(testData.effectiveCallNumberOption, '');

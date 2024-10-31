@@ -1,23 +1,23 @@
 import uuid from 'uuid';
-import TenantPane from '../baseTenantPane';
-import Libraries from './libraries';
-import Campuses from './campuses';
-import Institutions from './institutions';
-import LocationDetails from '../locations/locationDetails';
-import LocationEditForm from '../locations/locationEditForm';
-import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Button,
   HTML,
+  including,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  NavListItem,
   Pane,
   Select,
-  including,
-  NavListItem,
 } from '../../../../../../interactors';
+import getRandomPostfix from '../../../../utils/stringTools';
+import TenantPane from '../baseTenantPane';
+import LocationDetails from '../locations/locationDetails';
+import LocationEditForm from '../locations/locationEditForm';
+import Campuses from './campuses';
+import Institutions from './institutions';
+import Libraries from './libraries';
 
 const pane = Pane('Locations');
 const actionsButton = Button('Actions');

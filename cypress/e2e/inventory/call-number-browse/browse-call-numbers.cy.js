@@ -14,7 +14,7 @@ describe('Inventory', () => {
 
     it(
       'C347902 Verify "Browse call numbers" option on the Instances tab (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C347902'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -27,7 +27,7 @@ describe('Inventory', () => {
 
     it(
       'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C347903'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.browseCallNumberIsAbsent();
@@ -38,7 +38,7 @@ describe('Inventory', () => {
 
     it(
       'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C347923'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToItem();
@@ -48,7 +48,7 @@ describe('Inventory', () => {
 
     it(
       'C350377 Verify the "Browse subjects" search option on the Instances tab (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350377'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToBrowseTab();
@@ -66,7 +66,7 @@ describe('Inventory', () => {
 
     it(
       'C350378 Verify the "Browse subjects" search option on the Holdings tab (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350378'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToHoldings();
@@ -78,7 +78,7 @@ describe('Inventory', () => {
 
     it(
       'C350379 Verify the "Browse subjects" search option on the Item tab (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350379'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToItem();

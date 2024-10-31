@@ -211,14 +211,14 @@ describe('Title level Request', () => {
   });
   it(
     'C380488 Verify that user can create TLR: Recall request for instance with item statuses "Awaiting pickup" and "Checked out" (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C380488'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
@@ -237,7 +237,7 @@ describe('Title level Request', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item2Barcode);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
 
       createTLR(users[4], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.CHECKED_OUT);
       createTLR(users[5], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.CHECKED_OUT);

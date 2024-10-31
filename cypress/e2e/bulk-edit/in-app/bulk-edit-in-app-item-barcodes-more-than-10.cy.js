@@ -62,7 +62,7 @@ describe.skip('bulk-edit', () => {
 
     it(
       'C358936 Verify the preview of matched records uploading more than 10 Identifiers (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C358936'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

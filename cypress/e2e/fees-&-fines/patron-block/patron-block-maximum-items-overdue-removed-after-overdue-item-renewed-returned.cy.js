@@ -248,7 +248,7 @@ describe('Fees&Fines', () => {
     });
     it(
       'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C350654'] },
       () => {
         findPatron();
         UsersCard.waitLoading();
@@ -271,7 +271,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
-      { tags: ['criticalPath', 'vega'] },
+      { tags: ['criticalPath', 'vega', 'C350649'] },
       () => {
         findPatron();
         UsersCard.waitLoading();

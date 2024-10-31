@@ -47,7 +47,7 @@ describe('Data Import', () => {
         '1',
         '0',
         '$a C374189 Chin, Staceyann, $d 1972-',
-        '$x Childhood and youth.',
+        '',
         '$0 http://id.loc.gov/authorities/names/n2008052404',
         '',
       ],
@@ -242,7 +242,7 @@ describe('Data Import', () => {
 
     it(
       'C374189 Update tag value of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374189'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

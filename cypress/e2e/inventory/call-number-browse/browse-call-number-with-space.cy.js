@@ -24,7 +24,8 @@ describe('Inventory', () => {
       volume: 'v.1',
       enumeration: 'e.2',
       chronology: 'ch.3',
-      shelvingOrderValue: 'PRT 718 V.1 E.2 CH.3 C.4 SUF',
+      shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
+      effectiveItemCallNumber: 'RR 3718',
     };
 
     const itemA1 = {
@@ -142,7 +143,7 @@ describe('Inventory', () => {
 
     it(
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C358140'] },
       () => {
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
@@ -157,7 +158,7 @@ describe('Inventory', () => {
 
     it(
       'C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)',
-      { tags: ['spitfire', 'criticalPath'] },
+      { tags: ['spitfire', 'criticalPath', 'C359589'] },
       () => {
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -171,7 +172,7 @@ describe('Inventory', () => {
 
     it(
       'C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)',
-      { tags: ['spitfire', 'criticalPath'] },
+      { tags: ['spitfire', 'criticalPath', 'C405529'] },
       () => {
         searchAndOpenInstance(testData.parameter, item.instanceName);
         InventoryInstance.addItem();
@@ -195,7 +196,7 @@ describe('Inventory', () => {
 
     it(
       'C347906 Verify that look and list of available facets change according to search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C347906'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -210,7 +211,7 @@ describe('Inventory', () => {
 
     it(
       'C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)',
-      { tags: ['spitfire', 'criticalPath'] },
+      { tags: ['spitfire', 'criticalPath', 'C347910'] },
       () => {
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -225,7 +226,7 @@ describe('Inventory', () => {
 
     it(
       'C347909 Verify browse call numbers function and result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C347909'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -243,7 +244,7 @@ describe('Inventory', () => {
 
     it(
       'C347916 Verify Browse with non-existent call number (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C347916'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -257,14 +258,14 @@ describe('Inventory', () => {
 
     it(
       'C347918 Verify selecting row from browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C347918'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
-        InventorySearchAndFilter.verifyShelvingOrder(item.itemCallNumber);
+        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumber);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
 
         InventorySearchAndFilter.switchToBrowseTab();

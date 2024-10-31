@@ -41,7 +41,8 @@ describe('MARC', () => {
         ];
         const authority = {
           searchOption: 'Keyword',
-          title: 'Lesbian activists--Jamaica--Biography',
+          titleWithLinkIcon: 'Lesbian activists',
+          titleWithoutLinkIcon: 'Lesbian activists--Jamaica--Biography',
         };
         const marcFiles = [
           {
@@ -159,7 +160,7 @@ describe('MARC', () => {
 
         it(
           'C388537 Edit subfield "$0" in the unlinked fields before clicking on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C388537'] },
           () => {
             // #1 Find and open detail view of "MARC Bib" record from precondition, ex. of search query:
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
@@ -200,7 +201,7 @@ describe('MARC', () => {
               '\\',
               '0',
               '$a Lesbian activists',
-              '$z Jamaica $v Biography.',
+              '',
               '$0 http://id.loc.gov/authorities/subjects/sh96007532',
               '',
             );
@@ -213,11 +214,13 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
-            BrowseSubjects.browse(authority.title);
-            BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.title);
-            BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authority.title);
-            BrowseSubjects.checkRowValueIsBold(5, authority.title);
-            BrowseSubjects.checkRowValueIsBold(6, authority.title);
+            BrowseSubjects.browse(authority.titleWithoutLinkIcon);
+            BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.titleWithLinkIcon);
+            BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(
+              authority.titleWithoutLinkIcon,
+            );
+            BrowseSubjects.checkRowValueIsBold(5, authority.titleWithLinkIcon);
+            BrowseSubjects.checkRowValueIsBold(6, authority.titleWithoutLinkIcon);
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.waitLoading();

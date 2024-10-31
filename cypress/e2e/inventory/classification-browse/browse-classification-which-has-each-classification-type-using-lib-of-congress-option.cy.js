@@ -47,6 +47,9 @@ describe('Inventory', () => {
 
     before('Create user, test data', () => {
       cy.getAdminToken();
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C468180*');
+
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
         (createdUserProperties) => {
           user = createdUserProperties;
@@ -155,7 +158,7 @@ describe('Inventory', () => {
 
     it(
       'C468180 Browse for classifications of Instance which has each classification type using "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468180'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(

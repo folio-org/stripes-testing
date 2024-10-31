@@ -125,20 +125,7 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            testData.searchAuthorityQueries.forEach((query) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 100,
-                query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-              }).then((authorities) => {
-                if (authorities) {
-                  authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id);
-                  });
-                }
-              });
-            });
-
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C436814*');
             newMarcAuthoritySources.forEach((source) => {
               cy.createAuthoritySourceFileUsingAPI(
                 source.prefix,
@@ -192,7 +179,7 @@ describe('MARC', () => {
 
         it(
           'C436814 Protocol is displayed in subfield "$0" of automatically linked field when field has no base URL before linking (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C436814'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

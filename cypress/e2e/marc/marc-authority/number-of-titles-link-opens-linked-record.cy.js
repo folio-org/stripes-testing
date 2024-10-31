@@ -137,7 +137,7 @@ describe('MARC', () => {
 
     it(
       'C375263 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "111" field (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C375263'] },
       () => {
         // Step 1: Input query in search input field that will return imported "MARC authority" record → Click "Search"
         MarcAuthorities.searchBy('Keyword', testData.marcValue);

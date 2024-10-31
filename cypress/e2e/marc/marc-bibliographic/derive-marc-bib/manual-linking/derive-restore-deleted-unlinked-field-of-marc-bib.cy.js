@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -104,24 +105,23 @@ describe('MARC', () => {
           ]).then((userProperties) => {
             testData.user = userProperties;
 
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-              linkingTagAndValues.forEach((linking) => {
-                QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-                MarcAuthorities.switchToSearch();
-                InventoryInstance.verifySelectMarcAuthorityModal();
-                InventoryInstance.verifySearchOptions();
-                InventoryInstance.searchResults(linking.value);
-                InventoryInstance.clickLinkButton();
-                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-              });
-              QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            linkingTagAndValues.forEach((linking) => {
+              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
 
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
@@ -141,7 +141,7 @@ describe('MARC', () => {
 
         it(
           'C366581 Derive | Restore deleted unlinked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C366581'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -167,8 +167,6 @@ describe('MARC', () => {
             QuickMarcEditor.checkDeleteModalClosed();
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib100AfterUnlinking);
             QuickMarcEditor.verifyTagValue(11, testData.tag100);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.verifyContributor(0, 1, marcFiles[0].contributorName);

@@ -116,7 +116,7 @@ describe('MARC', () => {
 
         it(
           'C422144 Auto-linking to deleted and re-imported "MARC authority" record when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['criticalPathBroken', 'spitfire'] },
+          { tags: ['criticalPathBroken', 'spitfire', 'C422144'] },
           () => {
             cy.visit(TopMenu.marcAuthorities);
             newFields.forEach((newField) => {

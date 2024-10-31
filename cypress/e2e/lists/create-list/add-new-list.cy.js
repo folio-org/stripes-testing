@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Add new list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
     };
 
     before('Create test data', () => {
@@ -35,11 +35,12 @@ describe('lists', () => {
 
     it(
       'C411705 Verify that created new list is visible on the "Lists" landing page (corsair)',
-      { tags: ['smoke', 'corsair'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411705'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -47,9 +48,8 @@ describe('lists', () => {
         Lists.selectVisibility('Shared');
         Lists.selectStatus('Active');
         Lists.saveList();
-        cy.contains(`List ${listData.name} saved.`);
+        Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
         Lists.closeListDetailsPane();
-        cy.reload();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);
         });

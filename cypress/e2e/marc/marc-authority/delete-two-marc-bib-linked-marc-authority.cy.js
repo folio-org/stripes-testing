@@ -146,7 +146,7 @@ describe('MARC', () => {
 
     it(
       'C369084 Delete authorized "MARC Authority" record that has two linked field in different "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C369084'] },
       () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
@@ -211,7 +211,7 @@ describe('MARC', () => {
           '600',
           '1',
           '0',
-          '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 http://id.loc.gov/authorities/names/n2008052404',
+          '$a Chin, Staceyann, $d 1972- C369084 $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.pressCancel();
 

@@ -6,7 +6,7 @@ import QueryModal, {
   usersFieldValues,
   booleanOperators,
   QUERY_OPERATIONS,
-  STRING_OPERATORS,
+  STRING_STORES_UUID_OPERATORS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import { patronGroupNames } from '../../../support/constants';
 
@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436871 Verify Bulk Edit Query tab (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C436871'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C436746 Verify actions in the "Build query" form (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'C436746'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,
@@ -111,8 +111,8 @@ describe('bulk-edit', () => {
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
-        QueryModal.verifyOperatorsList(STRING_OPERATORS, 1);
-        QueryModal.fillInValueTextfield(patronGroupNames.STAFF, 1);
+        QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS, 1);
+        QueryModal.chooseValueSelect(patronGroupNames.STAFF, 1);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(

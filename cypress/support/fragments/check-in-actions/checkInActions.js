@@ -133,7 +133,7 @@ export default {
     this.verifyLastCheckInItem(barcode);
     this.endCheckInSession();
   },
-  getSessionIdAfterCheckInItem: (barcode) => {
+  getSessionIdAfterCheckInItem(barcode) {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.intercept('circulation/check-in-by-barcode').as('getCheckInResponse');
     this.checkInItemGui(barcode);
@@ -207,7 +207,7 @@ export default {
     cy.expect(HTML(including(itemBarcode)).exists());
   },
 
-  openNewfeefinesPane: () => {
+  openNewFeeFinesPane: () => {
     cy.do([availableActionsButton.click(), newFeeFineButton.click()]);
     cy.expect(Modal(including('New fee/fine')).exists());
   },
@@ -241,6 +241,17 @@ export default {
       },
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  confirmMultipleItemsCheckinWithoutConfirmation(barcode) {
+    cy.wait(1000);
+    cy.do(checkInButtonInModal.click());
+    cy.wait(1000);
+    cy.expect(
+      MultiColumnList({ id: 'list-items-checked-in' })
+        .find(HTML(including(barcode)))
+        .exists(),
+    );
   },
 
   confirmMultipleItemsCheckin(barcode) {

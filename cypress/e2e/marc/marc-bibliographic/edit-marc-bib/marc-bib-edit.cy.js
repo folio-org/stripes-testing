@@ -93,7 +93,7 @@ describe('MARC', () => {
 
       it(
         'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C360098'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -146,7 +146,7 @@ describe('MARC', () => {
 
       it(
         'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C356842'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -203,7 +203,7 @@ describe('MARC', () => {
 
       it(
         'C359239 Edit MARC Bib | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C359239'] },
         () => {
           const fieldData = {
             firstFieldForAdding: { tag: '', content: '' },

@@ -208,7 +208,7 @@ describe('Data Import', () => {
 
     it(
       'C385667 Update controllable subfield, "$0" in several linked repeatable fields and change field order (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C385667'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

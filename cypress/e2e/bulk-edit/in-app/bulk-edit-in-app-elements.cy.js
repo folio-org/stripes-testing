@@ -31,6 +31,7 @@ describe('bulk-edit', () => {
         cy.wait(3000);
 
         cy.login(user.username, user.password);
+        cy.wait(10000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.waitLoading();
 
@@ -61,7 +62,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353232 Verify error accordion during matching (In app approach) (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C353232'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -77,7 +78,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350941'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
         BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
@@ -108,7 +109,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C350943'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.isItemsRadioChecked(true);
@@ -144,7 +145,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357035 Verify elements of the bulk edit app -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357035'] },
       () => {
         BulkEditSearchPane.clickToBulkEditMainButton();
         BulkEditSearchPane.verifyDefaultFilterState();

@@ -170,7 +170,7 @@ describe('Data Import', () => {
 
     it(
       'C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C374186'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,

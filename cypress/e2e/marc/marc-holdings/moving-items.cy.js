@@ -122,7 +122,7 @@ describe('MARC', () => {
 
     it(
       'C15185 Move multiple items from one holdings to another holdings within an instance (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C15185'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.byKeywords(instanceTitle);
@@ -141,7 +141,7 @@ describe('MARC', () => {
 
     it(
       'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'C345404'] },
       () => {
         InventoryActions.import();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

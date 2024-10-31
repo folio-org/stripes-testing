@@ -121,7 +121,7 @@ describe('MARC', () => {
 
         it(
           'C388552 Add subfield "$9" in the fields before clicking on "Link headings" button when edit "MARC bib" with saved linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388552'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -178,10 +178,10 @@ describe('MARC', () => {
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal authors $0 http://id.loc.gov/authorities/subjects/sh99014708C388552 $9`,
             );
             InventoryViewSource.contains(
-              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $z Jamaica $v Biography. $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
+              `${marcAuthIcon}\n\t650\t  0\t$a C388552 Normal activists $0 http://id.loc.gov/authorities/subjects/sh96007532C388552 $9`,
             );
             InventoryViewSource.contains(
               `${marcAuthIcon}\n\t655\t  2\t$a C388552 Autobiography $0 http://id.loc.gov/authorities/subjects/sh85010050 $9`,

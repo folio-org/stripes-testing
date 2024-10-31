@@ -219,7 +219,7 @@ describe('MARC', () => {
 
       it(
         'C407722 Advanced search of "MARC authority" records using "Contains all" search operator (Personal name and Name-title) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C407722'] },
         () => {
           searchData.forEach((search, index) => {
             MarcAuthorities.clickAdvancedSearchButton();

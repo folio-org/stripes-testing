@@ -106,7 +106,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C397997 Verify that selected settings remain for "Campuses" (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C397997'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
