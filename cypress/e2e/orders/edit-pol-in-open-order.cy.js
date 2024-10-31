@@ -13,6 +13,7 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -65,7 +66,8 @@ describe('ui-orders: Orders', () => {
       defaultOrder.vendor = organization.name;
     });
     defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    TopMenuNavigation.openAppFromDropdown('Orders');
+    Orders.selectOrdersPane();
     Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
