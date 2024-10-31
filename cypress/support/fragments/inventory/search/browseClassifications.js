@@ -24,9 +24,7 @@ export default {
   },
 
   verifyRowExists(rowIndex) {
-    cy.expect(
-      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists(),
-    );
+    cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists());
   },
 
   verifyResultAndItsRow(rowIndex, value) {
@@ -77,5 +75,5 @@ export default {
 
   selectFoundValueByRow(rowIndex, value) {
     cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
-  }
+  },
 };
