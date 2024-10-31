@@ -146,7 +146,7 @@ describe('Data Import', () => {
 
     it(
       'C380390 Verify updating record via 035 match, without taking incorrect records into account (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C380390'] },
       () => {
         // change files for create instance using random identifier code
         DataImport.editMarcFile(

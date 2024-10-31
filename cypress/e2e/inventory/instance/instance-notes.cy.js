@@ -37,7 +37,7 @@ describe('Inventory', () => {
       });
     });
 
-    it('C615 Instance notes (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
+    it('C615 Instance notes (folijet)', { tags: ['extendedPath', 'folijet', 'C615'] }, () => {
       InventoryInstances.searchByTitle(testData.instance.instanceId);
       InventoryInstances.selectInstance();
       InstanceRecordView.verifyInstancePaneExists();

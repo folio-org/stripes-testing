@@ -113,7 +113,7 @@ describe('Data Import', () => {
 
     it(
       'C380388 Creating a pending order with Receipt not required (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380388'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

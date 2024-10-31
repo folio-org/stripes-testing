@@ -30,7 +30,7 @@ describe('Data Import', () => {
 
     it(
       'C357009 Check the log sort on the Data Import View all page (folijet) (TaaS)',
-      { tags: ['extendedPathBroken', 'folijet'] },
+      { tags: ['extendedPathBroken', 'folijet', 'C357009'] },
       () => {
         const descending = true;
         const columnHeaders = [

@@ -47,7 +47,7 @@ describe('Inventory', () => {
 
   it(
     'C514901 Check MARC-MARC search query (folijet)',
-    { tags: ['criticalPath', 'folijet'] },
+    { tags: ['criticalPath', 'folijet', 'C514901'] },
     () => {
       InventoryInstances.verifyRecordsMatchingViaApi();
     },

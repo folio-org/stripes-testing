@@ -50,7 +50,7 @@ describe('Data Import', () => {
 
     it(
       'C380721 Order field mapping: review adjusted info icon to the "Acquisitions units" field in the editing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380721'] },
       () => {
         const message =
           'Order creation will error unless the importing user is a member of the specified acquisitions unit';

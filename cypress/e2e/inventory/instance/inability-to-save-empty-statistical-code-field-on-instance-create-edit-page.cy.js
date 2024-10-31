@@ -44,7 +44,7 @@ describe('Inventory', () => {
 
     it(
       'C396395 Verify the inability to save empty statistical code field on Instance create/edit page (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C396395'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.clickAddStatisticalCodeButton();

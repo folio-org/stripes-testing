@@ -104,7 +104,7 @@ describe('Data Import', () => {
 
     it(
       'C353587 After using the Chrome "go back" button, following the link "Holdings Created" from Data import to Inventory causes an error. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353587'] },
       () => {
         Logs.openFileDetails(fileName);
         [

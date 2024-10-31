@@ -49,7 +49,7 @@ describe('Inventory', () => {
 
     it(
       'C345346 Green success toast appears when Instance is saved (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C345346'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);

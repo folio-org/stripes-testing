@@ -40,7 +40,7 @@ describe('Inventory', () => {
 
     it(
       'C404387 (NON-CONSORTIA) Verify the Instance header on non-consortia tenant (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C404387'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

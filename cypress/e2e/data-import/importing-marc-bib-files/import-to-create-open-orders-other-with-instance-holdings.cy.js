@@ -127,7 +127,7 @@ describe('Data Import', () => {
 
     it(
       'C380485 Import to create open orders: Other with Instances, Holdings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C380485'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(

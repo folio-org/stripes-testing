@@ -56,7 +56,7 @@ describe('Data Import', () => {
 
     it(
       'C2332 Edit an existing job profile by adding a long name (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C2332'] },
       () => {
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();

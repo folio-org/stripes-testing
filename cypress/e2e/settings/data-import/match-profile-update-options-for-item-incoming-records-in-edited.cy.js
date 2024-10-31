@@ -55,7 +55,7 @@ describe('Data Import', () => {
 
     it(
       'C411858 Match profile: update options for Item "Incoming records" in edited one (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411858'] },
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
         SettingsDataImport.goToSettingsDataImport();

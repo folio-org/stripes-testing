@@ -145,7 +145,7 @@ describe('Data Import', () => {
 
     it(
       'C380446 Import to create open orders: P/E mix with Instances, Holdings, Items (folijet)',
-      { tags: ['smokeBroken', 'folijet'] },
+      { tags: ['smokeBroken', 'folijet', 'C380446'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(

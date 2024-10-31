@@ -75,7 +75,7 @@ describe('Data Import', () => {
 
     it(
       'C404370 Verify the error message when attempting to create new Data Import profiles with existing profile names (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C404370'] },
       () => {
         const jobProfileErrorMessage =
           "New record not created: Job profile 'Default - Create instance and SRS MARC Bib' already exists";

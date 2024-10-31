@@ -117,7 +117,7 @@ describe('Data Import', () => {
 
     it(
       "C358998 Data Import Updates should add 035 field from 001/003, if it's HRID already exists",
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C358998'] },
       () => {
         DataImport.verifyUploadState();
         // upload the first .mrc file
