@@ -10,7 +10,7 @@ export const InfoRow = HTML.extend('info-row').selector('[class^=row-]').locator
 });
 
 export const MultiColumnListRow = HTML.extend('multi column list row')
-  .selector('[data-row-inner],[class^=mclRowFormatterContainer-]')
+  .selector('[class^=mclRowFormatterContainer-]')
   .locator(content)
   .filters({
     content,
