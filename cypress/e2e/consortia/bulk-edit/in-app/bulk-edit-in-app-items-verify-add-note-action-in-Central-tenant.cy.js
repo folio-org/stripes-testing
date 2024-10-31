@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -14,6 +14,7 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
+import ItemNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -30,16 +31,16 @@ let locationId;
 let loanTypeId;
 let materialTypeId;
 let sourceId;
-const postfix = randomFourDigitNumber();
+let centralSharedNoteTypeData;
 const folioInstance = {
-  title: `C477648_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C477648 folio instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
   holdingIds: [],
 };
 const marcInstance = {
-  title: `C477648_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C477648 marc instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
@@ -50,9 +51,15 @@ const sharedNoteText = 'New shared note';
 const localNoteText = 'New local note';
 const checkInNoteText = "Check in note ~,!,@,#,$,%,^,&,*,(,),~,', {.[,]<},>,ø, Æ, §,";
 const checkOutNoteText = 'Check out note staff only';
-const itemNoteTypeConsortium = { name: 'Action note' };
-const localItemNoteType = { name: `College NoteType ${getRandomPostfix()}` };
-
+const centralSharedItemNoteType = {
+  payload: {
+    name: `C477648 shared note type ${getRandomPostfix()}`,
+  },
+};
+const localItemNoteType = {
+  name: `College NoteType ${getRandomPostfix()}`,
+};
+const localItemNoteTypeNameWithAffiliation = `${localItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
 const getReasonForError = (itemId) => {
   return `${itemId} cannot be updated because the record is associated with ${Affiliations.University} and note type is not associated with this tenant.`;
@@ -64,10 +71,8 @@ const previewFileName = `${todayDate}-Updates-Preview-${itemUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
 const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${itemUUIDsFileName}`;
 
-// create shared item note type in precondition, try to check the .csv file values using method with transformation to json
-
 describe('Bulk-edit', () => {
-  describe('In-app', () => {
+  describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
@@ -109,11 +114,12 @@ describe('Bulk-edit', () => {
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
-          InventoryInstances.getItemNoteTypes({
-            query: `name="${itemNoteTypeConsortium.name}"`,
-          }).then((res) => {
-            itemNoteTypeConsortium.id = res[0].id;
-          });
+          ItemNoteTypesConsortiumManager.createViaApi(centralSharedItemNoteType).then(
+            (newItemNoteType) => {
+              centralSharedNoteTypeData = newItemNoteType;
+              cy.log(centralSharedItemNoteType);
+            },
+          );
 
           cy.setTenant(Affiliations.College);
           // create local item note type in College
@@ -142,6 +148,7 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
+
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instance.uuid,
@@ -171,6 +178,7 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
+
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instance.uuid,
@@ -216,25 +224,28 @@ describe('Bulk-edit', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
-
         ItemNoteTypes.deleteItemNoteTypeViaApi(localItemNoteType.id);
 
-        cy.deleteItemViaApi(folioInstance.itemIds[0]);
-        cy.deleteItemViaApi(marcInstance.itemIds[0]);
-        cy.deleteHoldingRecordViaApi(folioInstance.holdingIds[0]);
-        cy.deleteHoldingRecordViaApi(marcInstance.holdingIds[0]);
+        instances.forEach((instance) => {
+          cy.deleteItemViaApi(instance.itemIds[0]);
+          cy.deleteHoldingRecordViaApi(instance.holdingIds[0]);
+        });
 
         cy.setTenant(Affiliations.University);
 
-        cy.deleteItemViaApi(folioInstance.itemIds[1]);
-        cy.deleteItemViaApi(marcInstance.itemIds[1]);
+        instances.forEach((instance) => {
+          cy.deleteItemViaApi(instance.itemIds[1]);
+          cy.deleteHoldingRecordViaApi(instance.holdingIds[1]);
+        });
 
-        cy.deleteHoldingRecordViaApi(folioInstance.holdingIds[1]);
-        cy.deleteHoldingRecordViaApi(marcInstance.holdingIds[1]);
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
-        InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
+
+        instances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.uuid);
+        });
+
+        ItemNoteTypesConsortiumManager.deleteViaApi(centralSharedNoteTypeData);
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
@@ -249,7 +260,6 @@ describe('Bulk-edit', () => {
         'C477648 Verify "Add note" action for Items in Central tenant (consortia) (firebird)',
         { tags: ['smokeECS', 'firebird', 'C477648'] },
         () => {
-          // 1
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
@@ -272,217 +282,152 @@ describe('Bulk-edit', () => {
           });
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-          // 4
           BulkEditActions.openActions();
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+          BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
+            centralSharedItemNoteType.payload.name,
+            localItemNoteTypeNameWithAffiliation,
           );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            false,
+          BulkEditSearchPane.changeShowColumnCheckbox(
+            centralSharedItemNoteType.payload.name,
+            localItemNoteTypeNameWithAffiliation,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+          );
+          BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
+            true,
+            centralSharedItemNoteType.payload.name,
+            localItemNoteTypeNameWithAffiliation,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
           );
 
-          // 5
-          BulkEditSearchPane.changeShowColumnCheckbox(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            'Member',
-          );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-          );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            `${localItemNoteType.name} (${Affiliations.College})`,
-          );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked('Member');
+          const initialHeaderValues = [
+            {
+              header: centralSharedItemNoteType.payload.name,
+              value: '',
+            },
+            { header: localItemNoteTypeNameWithAffiliation, value: '' },
+          ];
 
           itemBarcodes.forEach((barcode) => {
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
               barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-              '',
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-              barcode,
-              `${localItemNoteType.name} (${Affiliations.College})`,
-              '',
+              initialHeaderValues,
             );
           });
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               instance.barcodeInCollege,
-              'Member',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
               tenantNames.college,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
               instance.barcodeInUniversity,
-              'Member',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
               tenantNames.university,
             );
           });
 
-          // 6
           BulkEditSearchPane.changeShowColumnCheckbox(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-            `${localItemNoteType.name} (${Affiliations.College})`,
+            centralSharedItemNoteType.payload.name,
+            localItemNoteTypeNameWithAffiliation,
           );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+          BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
+            centralSharedItemNoteType.payload.name,
+            localItemNoteTypeNameWithAffiliation,
           );
-          BulkEditSearchPane.verifyCheckboxInActionsDropdownMenuChecked(
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            false,
+          BulkEditSearchPane.verifyResultColumnTitlesDoNotIncludeTitles(
+            centralSharedItemNoteType.payload.name,
+            localItemNoteTypeNameWithAffiliation,
           );
-          BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-          );
-          BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(
-            `${localItemNoteType.name} (${Affiliations.College})`,
-          );
-
-          // 7
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
           itemBarcodes.forEach((barcode) => {
-            BulkEditFiles.verifyValueInRowByUUID(
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               matchedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-              '',
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              matchedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              `${localItemNoteType.name} (${Affiliations.College})`,
-              '',
+              initialHeaderValues,
             );
           });
 
-          // 8
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 9
           BulkEditActions.clickOptionsSelection();
-          BulkEditActions.verifyOptionExistsInSelectOptionDropdown('Action note');
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
-            `${localItemNoteType.name} (${Affiliations.College})`,
+            centralSharedItemNoteType.payload.name,
           );
-
-          // 10
+          BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
+            localItemNoteTypeNameWithAffiliation,
+          );
           BulkEditActions.clickOptionsSelection();
-          BulkEditActions.selectOption('Administrative note');
-          BulkEditActions.verifyOptionSelected('Administrative note');
-
-          // 11
-          BulkEditActions.selectSecondAction('Add note');
-          BulkEditActions.verifySecondActionSelected('Add note');
-
-          // 12
-          BulkEditActions.fillInSecondTextArea(administrativeNoteText);
-          BulkEditActions.verifyValueInSecondTextArea(administrativeNoteText);
+          BulkEditActions.addItemNoteAndVerify('Administrative note', administrativeNoteText);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 13
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
-
-          // 14
-          BulkEditActions.selectOption('Action note', 1);
-          BulkEditActions.verifyOptionSelected('Action note', 1);
-          BulkEditActions.selectSecondAction('Add note', 1);
-          BulkEditActions.verifySecondActionSelected('Add note', 1);
+          BulkEditActions.addItemNoteAndVerify(
+            centralSharedItemNoteType.payload.name,
+            sharedNoteText,
+            1,
+          );
           BulkEditActions.verifyStaffOnlyCheckbox(false, 1);
-
-          // 15
-          BulkEditActions.fillInSecondTextArea(sharedNoteText, 1);
-          BulkEditActions.verifyValueInSecondTextArea(sharedNoteText, 1);
           BulkEditActions.checkStaffOnlyCheckbox(1);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 16
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
-          BulkEditActions.selectOption(`${localItemNoteType.name} (${Affiliations.College})`, 2);
-          BulkEditActions.verifyOptionSelected(
-            `${localItemNoteType.name} (${Affiliations.College})`,
+          BulkEditActions.addItemNoteAndVerify(
+            localItemNoteTypeNameWithAffiliation,
+            localNoteText,
             2,
           );
-          BulkEditActions.selectSecondAction('Add note', 2);
-          BulkEditActions.verifySecondActionSelected('Add note', 2);
-          BulkEditActions.fillInSecondTextArea(localNoteText, 2);
-          BulkEditActions.verifyValueInSecondTextArea(localNoteText, 2);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 17
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
-          BulkEditActions.selectOption('Check in note', 3);
-          BulkEditActions.verifyOptionSelected('Check in note', 3);
-          BulkEditActions.selectSecondAction('Add note', 3);
-          BulkEditActions.verifySecondActionSelected('Add note', 3);
+          BulkEditActions.addItemNoteAndVerify('Check in note', checkInNoteText, 3);
           BulkEditActions.verifyStaffOnlyCheckbox(false, 3);
-
-          // 18
-          BulkEditActions.fillInSecondTextArea(checkInNoteText, 3);
-          BulkEditActions.verifyValueInSecondTextArea(checkInNoteText, 3);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 19
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(4);
-          BulkEditActions.selectOption('Check out note', 4);
-          BulkEditActions.verifyOptionSelected('Check out note', 4);
-          BulkEditActions.selectSecondAction('Add note', 4);
-          BulkEditActions.verifySecondActionSelected('Add note', 4);
+          BulkEditActions.addItemNoteAndVerify('Check out note', checkOutNoteText, 4);
           BulkEditActions.verifyStaffOnlyCheckbox(false, 4);
-
-          // 20
-          BulkEditActions.fillInSecondTextArea(checkOutNoteText, 4);
-          BulkEditActions.verifyValueInSecondTextArea(checkOutNoteText, 4);
           BulkEditActions.checkStaffOnlyCheckbox(4);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 21
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
+          const headerValuesToEdit = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+              value: administrativeNoteText,
+            },
+            {
+              header: centralSharedItemNoteType.payload.name,
+              value: `${sharedNoteText} (staff only)`,
+            },
+            {
+              header: localItemNoteTypeNameWithAffiliation,
+              value: localNoteText,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+              value: checkInNoteText,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+              value: `${checkOutNoteText} (staff only)`,
+            },
+          ];
+
           itemBarcodes.forEach((barcode) => {
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
               barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              administrativeNoteText,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-              `${sharedNoteText} (staff only)`,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-              barcode,
-              `${localItemNoteType.name} (${Affiliations.College})`,
-              localNoteText,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              checkInNoteText,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              `${checkOutNoteText} (staff only)`,
+              headerValuesToEdit,
             );
           });
 
@@ -491,54 +436,24 @@ describe('Bulk-edit', () => {
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
               instance.barcodeInCollege,
-              'Member',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
               tenantNames.college,
             );
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
               instance.barcodeInUniversity,
-              'Member',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
               tenantNames.university,
             );
           });
 
-          // 22
           BulkEditActions.downloadPreview();
 
           itemBarcodes.forEach((barcode) => {
-            BulkEditFiles.verifyValueInRowByUUID(
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              administrativeNoteText,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              previewFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-              `${sharedNoteText} (staff only)`,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              previewFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              `${localItemNoteType.name} (${Affiliations.College})`,
-              localNoteText,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              previewFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              checkInNoteText,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              previewFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              `${checkOutNoteText} (staff only)`,
+              headerValuesToEdit,
             );
           });
           instances.forEach((instance) => {
@@ -546,196 +461,151 @@ describe('Bulk-edit', () => {
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.barcodeInCollege,
-              'Member',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
               tenantNames.college,
             );
             BulkEditFiles.verifyValueInRowByUUID(
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.barcodeInUniversity,
-              'Member',
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
               tenantNames.university,
             );
           });
 
-          // 23
           BulkEditActions.commitChanges();
-          BulkEditActions.verifySuccessBanner(4); // поставить верное количество обновлённых записей
+          BulkEditActions.verifySuccessBanner(4);
+
+          const editedHeaderValues = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+              value: administrativeNoteText,
+            },
+            {
+              header: centralSharedItemNoteType.payload.name,
+              value: `${sharedNoteText} (staff only)`,
+            },
+
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+              value: checkInNoteText,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+              value: `${checkOutNoteText} (staff only)`,
+            },
+          ];
 
           itemBarcodes.forEach((barcode) => {
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              administrativeNoteText,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-              `${sharedNoteText} (staff only)`,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              checkInNoteText,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              `${checkOutNoteText} (staff only)`,
+              editedHeaderValues,
             );
           });
           instances.forEach((instance) => {
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               instance.barcodeInCollege,
-              'Member',
-              tenantNames.college,
+              [
+                {
+                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+                  value: tenantNames.college,
+                },
+                {
+                  header: localItemNoteTypeNameWithAffiliation,
+                  value: localNoteText,
+                },
+              ],
             );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               instance.barcodeInUniversity,
-              'Member',
-              tenantNames.university,
+              [
+                {
+                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+                  value: tenantNames.university,
+                },
+                {
+                  header: localItemNoteTypeNameWithAffiliation,
+                  value: '',
+                },
+              ],
             );
           });
 
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-            folioInstance.barcodeInCollege,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            localNoteText,
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-            marcInstance.barcodeInCollege,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            localNoteText,
-          );
-
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-            folioInstance.barcodeInUniversity,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            '',
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
-            marcInstance.barcodeInUniversity,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            '',
-          );
-
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 2); // указать количество
+          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 2);
           BulkEditSearchPane.verifyNonMatchedResults();
 
-          // 24, 25
-          BulkEditSearchPane.verifyErrorByIdentifier(
-            folioInstance.itemIds[1],
-            getReasonForError(folioInstance.itemIds[1]),
-          );
-          BulkEditSearchPane.verifyErrorByIdentifier(
-            marcInstance.itemIds[1],
-            getReasonForError(marcInstance.itemIds[1]),
-          );
+          instances.forEach((instance) => {
+            BulkEditSearchPane.verifyErrorByIdentifier(
+              instance.itemIds[1],
+              getReasonForError(instance.itemIds[1]),
+            );
+          });
 
-          // 26
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
           itemBarcodes.forEach((barcode) => {
-            BulkEditFiles.verifyValueInRowByUUID(
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              administrativeNoteText,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-              `${sharedNoteText} (staff only)`,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              checkInNoteText,
-            );
-            BulkEditFiles.verifyValueInRowByUUID(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              `${checkOutNoteText} (staff only)`,
+              editedHeaderValues,
             );
           });
-          BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-            folioInstance.barcodeInCollege,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            localNoteText,
-          );
-          BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-            marcInstance.barcodeInCollege,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            localNoteText,
-          );
-          BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-            folioInstance.barcodeInUniversity,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            '',
-          );
-          BulkEditFiles.verifyValueInRowByUUID(
-            changedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-            marcInstance.barcodeInUniversity,
-            `${localItemNoteType.name} (${Affiliations.College})`,
-            '',
-          );
 
           instances.forEach((instance) => {
-            BulkEditFiles.verifyValueInRowByUUID(
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.barcodeInCollege,
-              'Member',
-              tenantNames.college,
+              [
+                {
+                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+                  value: tenantNames.college,
+                },
+                {
+                  header: localItemNoteTypeNameWithAffiliation,
+                  value: localNoteText,
+                },
+              ],
             );
-            BulkEditFiles.verifyValueInRowByUUID(
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               instance.barcodeInUniversity,
-              'Member',
-              tenantNames.university,
+              [
+                {
+                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.MEMBER,
+                  value: tenantNames.university,
+                },
+                {
+                  header: localItemNoteTypeNameWithAffiliation,
+                  value: '',
+                },
+              ],
             );
           });
 
-          // 27
           BulkEditActions.downloadErrors();
 
-          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `${folioInstance.itemIds[1]},${getReasonForError(folioInstance.itemIds[1])}`,
-          ]);
-          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `${marcInstance.itemIds[1]},${getReasonForError(marcInstance.itemIds[1])}`,
-          ]);
+          instances.forEach((instance) => {
+            ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+              `${instance.itemIds[1]},${getReasonForError(instance.itemIds[1])}`,
+            ]);
+          });
 
-          // 28
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
-          [folioInstance.barcodeInCollege, marcInstance.barcodeInCollege].forEach((barcode) => {
+          instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+            InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInCollege);
             ItemRecordView.waitLoading();
-
             ItemRecordView.checkItemAdministrativeNote(administrativeNoteText);
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
               0,
               'Yes',
-              'Action note',
+              centralSharedItemNoteType.payload.name,
               sharedNoteText,
             );
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
@@ -744,33 +614,28 @@ describe('Bulk-edit', () => {
               localItemNoteType.name,
               localNoteText,
             );
-
             ItemRecordView.checkCheckInNote(checkInNoteText, 'No');
             ItemRecordView.checkCheckOutNote(checkOutNoteText);
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
 
-          [folioInstance.barcodeInUniversity, marcInstance.barcodeInUniversity].forEach(
-            (barcode) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToItem();
-              InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-              ItemRecordView.waitLoading();
-
-              ItemRecordView.checkItemAdministrativeNote(administrativeNoteText);
-              ItemRecordView.checkMultipleItemNotesWithStaffOnly(
-                0,
-                'Yes',
-                'Action note',
-                sharedNoteText,
-              );
-              ItemRecordView.checkCheckInNote(checkInNoteText, 'No');
-              ItemRecordView.checkCheckOutNote(checkOutNoteText);
-
-              ItemRecordView.checkItemNoteAbsent(localItemNoteType.name);
-            },
-          );
+          instances.forEach((instance) => {
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.switchToItem();
+            InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInUniversity);
+            ItemRecordView.waitLoading();
+            ItemRecordView.checkItemAdministrativeNote(administrativeNoteText);
+            ItemRecordView.checkMultipleItemNotesWithStaffOnly(
+              0,
+              'Yes',
+              centralSharedItemNoteType.payload.name,
+              sharedNoteText,
+            );
+            ItemRecordView.checkCheckInNote(checkInNoteText, 'No');
+            ItemRecordView.checkCheckOutNote(checkOutNoteText);
+            ItemRecordView.checkItemNoteAbsent(localItemNoteType.name);
+          });
         },
       );
     });

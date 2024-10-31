@@ -825,6 +825,13 @@ export default {
     ]);
   },
 
+  addItemNoteAndVerify(type, value, rowIndex = 0) {
+    this.addItemNote(type, value, rowIndex);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Add note', rowIndex);
+    this.verifyValueInSecondTextArea(value, rowIndex);
+  },
+
   verifyItemCheckInNoteActions(rowIndex = 0) {
     const options = [
       'Mark as staff only',
