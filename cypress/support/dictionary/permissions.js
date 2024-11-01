@@ -28,11 +28,11 @@ export default {
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
   },
   uieHoldingsTitlesPackagesCreateDelete: {
-    internal: 'ui-eholdings.titles-packages.create-delete',
+    internal: 'ui-eholdings.titles-packages.create-delete.manage',
     gui: 'eHoldings: Can create and delete custom packages and titles',
   },
   uieHoldingsPackageTitleSelectUnselect: {
-    internal: 'ui-eholdings.package-title.select-unselect',
+    internal: 'ui-eholdings.package-title.select-unselect.execute',
     gui: 'eHoldings: Can select/unselect packages and titles to/from your holdings',
   },
   moduleeHoldingsEnabled: {
@@ -49,7 +49,7 @@ export default {
     gui: 'Settings (Notes): Edit and View General settings',
   },
   uiNotesAssignUnassign: {
-    internal: 'ui-notes.item.assign-unassign',
+    internal: 'ui-notes.item.assign-unassign.execute',
     gui: 'Notes: Can assign and unassign a note',
   },
   // Agreements
@@ -83,7 +83,7 @@ export default {
     gui: 'quickMARC: Create a new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcEditorDuplicate: {
-    internal: 'ui-quick-marc.quick-marc-editor.duplicate',
+    internal: 'ui-quick-marc.quick-marc-editor.derive.execute',
     gui: 'quickMARC: Derive new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcBibliographicEditorAll: {
@@ -103,7 +103,7 @@ export default {
     gui: 'quickMARC: View MARC bibliographic record',
   },
   uiQuickMarcQuickMarcAuthorityLinkUnlink: {
-    internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
+    internal: 'ui-quick-marc.quick-marc-authority-records.link-unlink.execute',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
   uiQuickMarcQuickMarcAuthorityCreate: {
