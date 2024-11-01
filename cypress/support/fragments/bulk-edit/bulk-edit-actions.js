@@ -919,6 +919,13 @@ export default {
         .find(Select({ value: '' }))
         .choose(newType),
     ]);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Change note type', rowIndex);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(selectNoteHoldingTypeDropdown)
+        .has({ checkedOptionText: newType }),
+    );
   },
 
   selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
