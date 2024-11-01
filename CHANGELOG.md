@@ -1,5 +1,7 @@
 # Change history for stripes-testing
 
+## 4.9.0 IN PROGRESS
+
 ## 4.8.0 IN PROGRESS
 
 - Updated Call Number search option labels. Refs FAT-13489.
