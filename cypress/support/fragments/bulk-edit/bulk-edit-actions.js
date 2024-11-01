@@ -531,13 +531,6 @@ export default {
   },
 
   fillExpirationDate(date, rowIndex = 0) {
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    const targetYear = date.getFullYear();
-    const targetMonth = date.getMonth();
-    const monthDifference = (targetYear - currentYear) * 12 + (targetMonth - currentMonth);
-
     // js date object
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     cy.do([
@@ -547,14 +540,6 @@ export default {
       calendarButton.click(),
       TextField().fillIn(formattedDate),
     ]);
-
-    // in case the desired date to pick is not in the current month/year, we need to move the calendar beforehand
-    if (monthDifference > 0) {
-      for (let i = 0; i < monthDifference; i++) {
-        cy.do(Button({ icon: 'caret-right' }).click());
-        cy.wait(500);
-      }
-    }
 
     // we don't have interactor for this element
     cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
