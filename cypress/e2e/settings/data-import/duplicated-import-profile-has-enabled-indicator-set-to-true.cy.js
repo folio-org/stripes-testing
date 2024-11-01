@@ -50,7 +50,7 @@ describe('Data Import', () => {
 
     it(
       'C358133 Confirm that a duplicated import profile has enabled indicator set to TRUE (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C358133'] },
       () => {
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);

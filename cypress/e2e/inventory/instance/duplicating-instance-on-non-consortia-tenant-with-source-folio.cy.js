@@ -75,7 +75,7 @@ describe('Inventory', () => {
 
     it(
       'C410929 (NON-CONSORTIA) Duplicating instance on non-consortia tenant with Source FOLIO (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C410929'] },
       () => {
         InventoryInstances.searchByTitle(testDataC410929.instance.instanceId);
         InventoryInstances.selectInstance();
@@ -96,7 +96,7 @@ describe('Inventory', () => {
 
     it(
       'C410930 (NON-CONSORTIA) Duplicating instance on non-consortia tenant with Source MARC (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C410930'] },
       () => {
         InventoryInstances.searchByTitle(testDataC410930.instance.id);
         InventoryInstances.selectInstance();

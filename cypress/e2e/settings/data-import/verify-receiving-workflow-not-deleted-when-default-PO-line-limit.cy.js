@@ -74,7 +74,7 @@ describe('Data Import', () => {
 
     it(
       'C375211 Order field mapping profile: Verify Receiving Workflow value is not deleted when default order line limit setting is changed (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C375211'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');

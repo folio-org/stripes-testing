@@ -177,7 +177,7 @@ describe('Data Import', () => {
 
     it(
       'C385629 Verify that no duplicates of match and actions profiles appear after saving job profile with repeatable match/action profiles (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C385629'] },
       () => {
         // create Job profile
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

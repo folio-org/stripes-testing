@@ -50,7 +50,7 @@ describe('Data Import', () => {
 
     it(
       'C380418 Order field mapping profile: review adjusted info icon text for Physical resource "Create inventory" field (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380418'] },
       () => {
         const message =
           'Required when Order format is Physical resource, P/E mix, or Other. ' +

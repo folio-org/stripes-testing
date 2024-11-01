@@ -508,6 +508,19 @@ export default {
     });
   },
 
+  verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(identifier, columnValues) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          areYouSureForm
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
     cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -519,6 +532,19 @@ export default {
     });
   },
 
+  verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(identifier, columnValues) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          matchedAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(identifier, columnName, value) {
     cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -527,6 +553,19 @@ export default {
           .find(MultiColumnListCell({ column: columnName, content: value }))
           .exists(),
       );
+    });
+  },
+
+  verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(identifier, columnValues) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          changesAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
     });
   },
 
@@ -962,6 +1001,12 @@ export default {
     cy.expect(DropdownMenu().find(Checkbox(name)).has({ checked: isChecked }));
   },
 
+  verifyCheckboxesInActionsDropdownMenuChecked(isChecked, ...names) {
+    names.forEach((name) => {
+      this.verifyCheckboxInActionsDropdownMenuChecked(name, isChecked);
+    });
+  },
+
   uncheckShowColumnCheckbox(...names) {
     names.forEach((name) => {
       cy.get(`[name='${name}']`).then((element) => {
@@ -1003,6 +1048,12 @@ export default {
 
   verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyResultColumnTitlesDoNotIncludeTitles(...titles) {
+    titles.forEach((title) => {
+      this.verifyResultColumnTitlesDoNotInclude(title);
+    });
   },
 
   verifyAreYouSureColumnTitlesInclude(title) {

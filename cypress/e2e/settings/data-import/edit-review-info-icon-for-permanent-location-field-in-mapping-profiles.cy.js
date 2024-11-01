@@ -37,7 +37,7 @@ describe('Data Import', () => {
 
     it(
       'C369053 Field mapping profile: Check info icons when editing field mapping profile for holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C369053'] },
       () => {
         const message = 'Required when creating Holdings';
 

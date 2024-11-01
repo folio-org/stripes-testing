@@ -71,7 +71,9 @@ export default {
 
   deleteUrlRelationship(name) {
     cy.do([
-      MultiColumnListRow(including(name)).find(deleteIcon).click(),
+      MultiColumnListRow({ content: including(name), isContainer: false })
+        .find(deleteIcon)
+        .click(),
       deleteUrlRelationshipModal.find(deleteButton).click(),
     ]);
   },
