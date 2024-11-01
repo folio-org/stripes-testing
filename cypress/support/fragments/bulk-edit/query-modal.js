@@ -62,7 +62,6 @@ export const dateTimeOperators = [
 export const stringStoresUuidButMillionOperators = [
   'Select operator',
   'equals',
-  'not equal to',
   'in',
   'not in',
   'is null/empty',
