@@ -91,7 +91,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -186,6 +186,7 @@ describe('Bulk-edit', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
         cy.setTenant(Affiliations.College);
@@ -232,7 +233,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(4);
             BulkEditSearchPane.verifyQueryHeadLine(
-              '(items.status_name in ("Available","Checked out")) AND (instances.title starts with "C496144")',
+              `(items.status_name in ("Available","Checked out")) AND (instances.title starts with "C496144_${postfix}")`,
             );
 
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
