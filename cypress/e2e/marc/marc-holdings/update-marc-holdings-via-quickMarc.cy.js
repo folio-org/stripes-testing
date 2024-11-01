@@ -74,7 +74,7 @@ describe('MARC', () => {
 
     it(
       'C417047 Update MARC Holdings via quickMARC; check for updated 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C417047'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();

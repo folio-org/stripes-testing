@@ -31,7 +31,7 @@ describe('Data Import', () => {
 
     it(
       'C2357 Upload 2 files with different file extensions (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2357'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfFilesWithDifferentFileExtensions(

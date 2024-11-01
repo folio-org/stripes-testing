@@ -38,7 +38,7 @@ describe('Data Import', () => {
 
     it(
       'C9321 Create match profile for MARC Bib matching to a FOLIO record type (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9321'] },
       () => {
         const matchProfile = {
           profileName: `C9321 001 to Instance HRID ${getRandomPostfix()}`,
@@ -80,7 +80,7 @@ describe('Data Import', () => {
 
     it(
       'C9322 Create match profile for MARC Bib matching to a MARC record type (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9322'] },
       () => {
         const matchProfile = {
           profileName: `C9322 autotest match profile_${getRandomPostfix()}`,
@@ -132,7 +132,7 @@ describe('Data Import', () => {
 
     it(
       'C9323 Create match profile for Static value TEXT match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9323'] },
       () => {
         const matchProfile = {
           profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
@@ -173,7 +173,7 @@ describe('Data Import', () => {
 
     it(
       'C9324 Create match profile for Static value NUMBER match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9324'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -207,7 +207,7 @@ describe('Data Import', () => {
 
     it(
       'C9325 Create match profile for Static value DATE match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9325'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -241,7 +241,7 @@ describe('Data Import', () => {
 
     it(
       'C9326 Create match profile for Static value DATE RANGE match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9326'] },
       () => {
         const matchProfile = {
           profileName: `C9325 autotest match profile_${getRandomPostfix()}`,

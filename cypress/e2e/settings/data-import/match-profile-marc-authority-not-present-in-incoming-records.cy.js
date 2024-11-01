@@ -31,7 +31,7 @@ describe('Data Import', () => {
 
     it(
       'C411692 Match profile: Ensure MARC Authority is NOT present in available options for Incoming Record for New Match Profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411692'] },
       () => {
         // #1 Go to "Settings" application-> "Data import" section-> "Match profiles" section-> Click "Actions" button -> Click "New match profile" option
         SettingsDataImport.goToSettingsDataImport();

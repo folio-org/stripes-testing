@@ -44,7 +44,7 @@ describe('Data Import', () => {
 
     it(
       'C11115 Attach/Remove a field mapping profile to an action profile (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C11115'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

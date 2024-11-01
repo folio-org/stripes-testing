@@ -59,7 +59,6 @@ describe('orders: Settings', () => {
       });
     });
 
-
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,

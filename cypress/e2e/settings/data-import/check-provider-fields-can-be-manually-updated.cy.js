@@ -66,7 +66,7 @@ describe('Data Import', () => {
 
     it(
       'C378896 Order field mapping: Confirm Vendor/Material supplier/Access provider fields can be manually cleared/edited (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C378896'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

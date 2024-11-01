@@ -97,7 +97,7 @@ describe('Data Import', () => {
 
     it(
       'C353645 Checking the Data import UI permission for only viewing settings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C353645'] },
       () => {
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

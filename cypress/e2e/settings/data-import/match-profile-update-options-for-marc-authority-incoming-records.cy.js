@@ -31,7 +31,7 @@ describe('Data Import', () => {
 
     it(
       'C411859 Match profile: update options for MARC Authority "Incoming records" (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411859'] },
       () => {
         // #1 Go to "Settings" application-> "Data import" section-> "Match profiles" section-> Click "Actions" button -> Click "New match profile" option
         // "New match profile" page opens

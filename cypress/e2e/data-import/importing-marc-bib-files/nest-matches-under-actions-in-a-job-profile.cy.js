@@ -227,15 +227,15 @@ describe('Data Import', () => {
 
     it(
       'C347894 Nest matches under actions in a job profile, and run the job profile successfully (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C347894'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);
         InventorySearchAndFilter.searchHoldingsByHRID(holdingsHrId);
         InventorySearchAndFilter.selectResultCheckboxes(1);
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        InventorySearchAndFilter.exportInstanceAsMarc();
         cy.intercept('/data-export/quick-export').as('getHrid');
+        InventorySearchAndFilter.exportInstanceAsMarc();
         cy.wait('@getHrid', getLongDelay()).then((req) => {
           const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
@@ -330,8 +330,6 @@ describe('Data Import', () => {
           instanceHrid = initialInstanceHrId;
         });
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        Logs.openFileDetails(marcFileNameForUpdate);
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
       },
