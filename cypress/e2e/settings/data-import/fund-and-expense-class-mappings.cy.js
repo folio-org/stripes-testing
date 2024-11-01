@@ -6,6 +6,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -97,8 +98,8 @@ describe('Data Import', () => {
       expenseClass: '981$c',
       value: '100',
       type: '%',
-      locationName: 'Main Library (KU/CC/DI/M)',
-      locationQuantityPhysical: '1',
+      locationName: LOCATION_NAMES.ANNEX,
+      locationQuantityPhysical: '"1"',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,

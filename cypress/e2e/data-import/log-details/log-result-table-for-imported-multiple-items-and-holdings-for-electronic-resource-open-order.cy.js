@@ -10,6 +10,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -65,6 +66,7 @@ describe('Data Import', () => {
           currency: 'USD',
           electronicUnitPrice: '"25"',
           quantityElectronic: '"1"',
+          materialTypeElectronic: MATERIAL_TYPE_NAMES.BOOK,
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityElectronic: '"1"',
         },
@@ -239,8 +241,8 @@ describe('Data Import', () => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace('-1', '');
         });
-        OrderLines.checkQuantityElectronic(quantityOfCreatedItems);
-        OrderLines.checkElectronicQuantityInLocation(quantityOfCreatedHoldings);
+        OrderLines.checkQuantityElectronic('1');
+        OrderLines.checkElectronicQuantityInLocation(1);
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);
