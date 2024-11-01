@@ -385,7 +385,6 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(testData.editedMarcFileName, testData.marcFileNameForUpdate);
         JobProfiles.waitFileIsUploaded();
