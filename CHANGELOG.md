@@ -1,6 +1,8 @@
 # Change history for stripes-testing
 
-## 4.8.0 IN PROGRESS
+## [4.8.0](https://github.com/folio-org/stripes-testing/tree/v4.8.0) (2024-11-01)
+
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.7.0...v4.8.0)
 
 - Updated Call Number search option labels. Refs FAT-13489.
 - Update `<MultiSelection>` interactor. Refs STCOM-1304.
