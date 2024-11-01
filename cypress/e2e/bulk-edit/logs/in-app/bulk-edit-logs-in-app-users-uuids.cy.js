@@ -104,11 +104,19 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             `*${matchedRecordsFileNameInvalidAndValid}`,
-            [user.userId, userWithoutPermissions.userId],
-            'userId',
-            true,
+            'User id',
+            user.userId,
+            'User name',
+            user.username,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            `*${matchedRecordsFileNameInvalidAndValid}`,
+            'User id',
+            userWithoutPermissions.userId,
+            'User name',
+            userWithoutPermissions.username,
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();

@@ -88,6 +88,7 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
     servicePointsIds: servicePointIds,
     defaultServicePointId: defaultServicePointId || servicePointIds[0],
   },
+  isDefaultSearchParamsRequired: false,
 });
 
 export default {
@@ -108,6 +109,10 @@ export default {
 
   changeUserType(type = 'Patron') {
     cy.do(Select({ id: 'type' }).choose(type));
+  },
+
+  changePreferredContact(contact = 'Email') {
+    cy.do(Select({ id: 'adduser_preferredcontact' }).choose(contact));
   },
 
   searchForPermission(permission) {

@@ -1,4 +1,3 @@
-import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Funds from '../../support/fragments/finance/funds/funds';
 import NewFund from '../../support/fragments/finance/funds/newFund';
@@ -44,7 +43,6 @@ describe('Invoices', () => {
     'C343209: Create, approve and pay a credit invoice (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
-      const transactionFactory = new Transaction();
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
       Invoices.addFundDistributionToLine(invoiceLine, fund);
@@ -59,11 +57,15 @@ describe('Invoices', () => {
       Funds.selectFund(fund.name);
       Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
       Funds.openTransactions();
-      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-      Funds.checkTransaction(
-        1,
-        transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''),
+      Funds.selectTransactionInList('Pending payment');
+      Funds.varifyDetailsInTransaction(
+        'FY2024',
+        '$100.00',
+        invoice.invoiceNumber,
+        'Pending payment',
+        `${fund.name} (${fund.code})`,
       );
+      Funds.closeTransactionDetails();
       // pay invoice
       TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
@@ -72,9 +74,13 @@ describe('Invoices', () => {
       Invoices.payInvoice();
       // check transactions after payment
       TopMenuNavigation.openAppFromDropdown('Finance');
-      Funds.checkTransaction(
-        1,
-        transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''),
+      Funds.selectTransactionInList('Credit');
+      Funds.varifyDetailsInTransactionFundTo(
+        'FY2024',
+        '$100.00',
+        invoice.invoiceNumber,
+        'Credit',
+        `${fund.name} (${fund.code})`,
       );
     },
   );
