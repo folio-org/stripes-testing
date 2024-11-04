@@ -68,7 +68,7 @@ describe('Eureka', () => {
             action: 'View',
           },
         ],
-        numberOfCapabilitiesInAdditionalSets: 5,
+        numberOfCapabilitiesInAdditionalSets: 6,
       };
 
       testData.capabilitySet.application = testData.applicationName;

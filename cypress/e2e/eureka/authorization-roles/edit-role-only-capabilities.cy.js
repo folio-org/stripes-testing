@@ -34,15 +34,18 @@ describe('Eureka', () => {
             action: 'View',
           },
           {
-            application: 'app-platform-full',
+            table: 'Data',
+            resource: 'Calendar Endpoint Calendars AllOpenings',
+            action: 'View',
+          },
+          {
             table: 'Data',
             resource: 'Calendar Endpoint Calendars CalendarId',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
-            resource: 'Calendar Endpoint Dates',
+            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
             action: 'View',
           },
           {
@@ -233,7 +236,7 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('9');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('10');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
