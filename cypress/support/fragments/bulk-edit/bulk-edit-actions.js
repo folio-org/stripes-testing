@@ -63,11 +63,11 @@ export default {
   },
   openStartBulkEditInstanceForm() {
     cy.do(startBulkEditInstanceButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   verifyOptionsLength(optionsLength, count) {
     cy.expect(optionsLength).to.eq(count);
