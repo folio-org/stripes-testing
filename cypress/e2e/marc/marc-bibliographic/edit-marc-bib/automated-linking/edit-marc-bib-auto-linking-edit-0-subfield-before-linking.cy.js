@@ -42,7 +42,7 @@ describe('MARC', () => {
         const authority = {
           searchOption: 'Keyword',
           titleWithLinkIcon: 'Lesbian activists',
-          titleWithoutLinkIcon: 'Lesbian activists--Jamaica--Biography',
+          titleWithoutLinkIcon: 'Lesbian activists',
         };
         const marcFiles = [
           {
