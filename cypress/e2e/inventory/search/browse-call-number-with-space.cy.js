@@ -17,6 +17,7 @@ describe('Inventory', () => {
       publisher: null,
       holdingCallNumber: '1',
       itemCallNumber: 'RR 718',
+      effectiveCallNumber: 'RR 3718',
       callNumber: 'PRT 718',
       copyNumber: 'c.4',
       callNumberSuffix: 'suf',
@@ -263,7 +264,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
-        InventorySearchAndFilter.verifyShelvingOrder(item.itemCallNumber);
+        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveCallNumber);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.clickResetAllButton();
