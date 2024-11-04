@@ -160,6 +160,7 @@ export default {
       searchParams,
       method: REQUEST_METHOD.DELETE,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
