@@ -139,7 +139,7 @@ describe('Data Import', () => {
 
     it(
       'C411579 MARC file import with matching for 999 ff field (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C411579'] },
       () => {
         FieldMappingProfiles.createInstanceMappingProfile(mappingProfile);
 

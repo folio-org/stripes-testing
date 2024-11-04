@@ -49,7 +49,7 @@ describe('Inventory', () => {
 
     it(
       'C496132 Check that new search icon is not displayed for empty Succeeding title (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C496132'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();

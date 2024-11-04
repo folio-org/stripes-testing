@@ -72,7 +72,7 @@ describe('Inventory', () => {
 
     it(
       'C716 Delete a holding without dependencies (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C716'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();

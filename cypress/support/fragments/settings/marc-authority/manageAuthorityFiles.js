@@ -166,7 +166,7 @@ const getEditableListRow = (rowNumber) => {
 
 const getTargetRowWithFile = (authorityFileName) => {
   return manageAuthorityFilesPane.find(
-    MultiColumnListRow({ innerHTML: including(authorityFileName) }),
+    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: true }),
   );
 };
 

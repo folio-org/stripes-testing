@@ -296,7 +296,7 @@ describe('Data Import', () => {
 
     it(
       'C356791 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356791'] },
       () => {
         // create mapping profiles for creating
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -51,7 +51,7 @@ describe('Data Import', () => {
 
     it(
       'C380637 Job profile: verify that file name in job profile detail view is a hotlink for job log details (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380637'] },
       () => {
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

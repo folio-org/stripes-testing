@@ -96,7 +96,7 @@ describe('Data Import', () => {
 
     it(
       'C423578 Verify the creation of Authority record with non-matches create (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C423578'] },
       () => {
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

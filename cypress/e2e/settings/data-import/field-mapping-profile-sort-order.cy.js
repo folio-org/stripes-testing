@@ -46,7 +46,7 @@ describe('Data Import', () => {
 
     it(
       'C377038 Verify Field mapping profile sort order (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377038'] },
       () => {
         // #1 Go to "Settings" application ->  "Data import" -> "Field mapping profiles" -> Click "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();

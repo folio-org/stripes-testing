@@ -179,7 +179,7 @@ describe('Data Import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C17017'] },
       () => {
         // create mapping profile
         createInstanceMappingProfileForCreate(mappingProfile);

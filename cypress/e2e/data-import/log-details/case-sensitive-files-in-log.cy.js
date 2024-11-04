@@ -42,7 +42,7 @@ describe('Data Import', () => {
 
     it(
       'C423386 Check the case-sensitive files in log (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C423386'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.verifyLogsPaneIsOpened();

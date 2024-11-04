@@ -139,7 +139,7 @@ describe('Data Import', () => {
 
     it(
       'C368005 Verify the mapping for item record notes and check in/out notes from MARC field (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C368005'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -208,7 +208,6 @@ describe('Data Import', () => {
         // upload a marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         DataImport.uploadFile('marcFileForC368005.mrc', marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);

@@ -35,7 +35,7 @@ describe('Data Import', () => {
 
     it(
       'C410707 Verify error notification after creating file extension with already existing name (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C410707'] },
       () => {
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);

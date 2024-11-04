@@ -128,7 +128,7 @@ describe('Data Import', () => {
 
     it(
       'C377018 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Instance (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377018'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
