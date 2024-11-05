@@ -19,6 +19,7 @@ import {
   MultiColumnListRow,
   MessageBanner,
   Option,
+  or,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -908,7 +909,7 @@ export default {
     this.verifySecondActionSelected('Change note type', rowIndex);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(selectNoteHoldingTypeDropdown)
+        .find(Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') }))
         .has({ checkedOptionText: newType }),
     );
   },
