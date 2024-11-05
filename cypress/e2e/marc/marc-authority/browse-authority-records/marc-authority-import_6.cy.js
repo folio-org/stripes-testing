@@ -100,7 +100,6 @@ describe('MARC', () => {
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-          MarcAuthorities.checkSearchOption('keyword');
           MarcAuthorities.searchByParameter(
             testData.searchOptionKeyword,
             `C353995 ${testData.recordB}`,

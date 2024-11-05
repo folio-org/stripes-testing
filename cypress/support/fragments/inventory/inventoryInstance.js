@@ -1025,7 +1025,7 @@ export default {
     InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     // cypress clicks too fast
-    cy.wait(2000);
+    cy.wait(5000);
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
 
