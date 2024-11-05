@@ -73,7 +73,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.newContentFor370Field, 8);
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
           MarcAuthority.contains(testData.tag100);
