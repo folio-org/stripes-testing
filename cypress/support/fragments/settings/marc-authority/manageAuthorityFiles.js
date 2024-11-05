@@ -68,7 +68,9 @@ const clickNewButton = () => {
 };
 
 const clickEditButton = (authorityFileName) => {
-  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  const targetRow = manageAuthorityFilesPane.find(
+    MultiColumnListRow(including(authorityFileName), { isContainer: true }),
+  );
 
   cy.do(targetRow.find(editButton).click());
 };
@@ -166,7 +168,7 @@ const getEditableListRow = (rowNumber) => {
 
 const getTargetRowWithFile = (authorityFileName) => {
   return manageAuthorityFilesPane.find(
-    MultiColumnListRow({ innerHTML: including(authorityFileName) }),
+    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: true }),
   );
 };
 
