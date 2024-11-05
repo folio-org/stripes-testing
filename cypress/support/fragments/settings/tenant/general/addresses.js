@@ -31,7 +31,7 @@ export default {
   },
   openLastUpdated(name) {
     cy.do(
-      MultiColumnListRow(including(name))
+      MultiColumnListRow({ content: including(name), isContainer: true })
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .find(Link({ href: including('/users/view') }))
         .click(),

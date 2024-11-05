@@ -19,6 +19,7 @@ import {
   MultiColumnListRow,
   MessageBanner,
   Option,
+  or,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -63,11 +64,11 @@ export default {
   },
   openStartBulkEditInstanceForm() {
     cy.do(startBulkEditInstanceButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   verifyOptionsLength(optionsLength, count) {
     cy.expect(optionsLength).to.eq(count);
@@ -908,7 +909,7 @@ export default {
     this.verifySecondActionSelected('Change note type', rowIndex);
     cy.expect(
       RepeatableFieldItem({ index: rowIndex })
-        .find(selectNoteHoldingTypeDropdown)
+        .find(Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') }))
         .has({ checkedOptionText: newType }),
     );
   },
