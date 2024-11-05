@@ -81,6 +81,9 @@ export default {
       fundModal.find(Button({ id: 'accordion-toggle-button-ledgerId' })).click(),
       fundModal.find(Button({ id: 'ledgerId-selection' })).click(),
       SelectionOption(ledgerName).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       MultiColumnList({ id: 'list-plugin-find-records' })
         .find(MultiColumnListHeader({ id: 'list-column-ischecked' }))
         .find(Checkbox())
