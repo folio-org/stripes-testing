@@ -42,7 +42,7 @@ describe('MARC', () => {
         const authority = {
           searchOption: 'Keyword',
           titleWithLinkIcon: 'Lesbian activists',
-          titleWithoutLinkIcon: 'Lesbian activists--Jamaica--Biography',
+          titleWithoutLinkIcon: 'Lesbian activists',
         };
         const marcFiles = [
           {
@@ -216,7 +216,9 @@ describe('MARC', () => {
             BrowseSubjects.select();
             BrowseSubjects.browse(authority.titleWithoutLinkIcon);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.titleWithLinkIcon);
-            BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(authority.titleWithoutLinkIcon);
+            BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(
+              authority.titleWithoutLinkIcon,
+            );
             BrowseSubjects.checkRowValueIsBold(5, authority.titleWithLinkIcon);
             BrowseSubjects.checkRowValueIsBold(6, authority.titleWithoutLinkIcon);
             // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.

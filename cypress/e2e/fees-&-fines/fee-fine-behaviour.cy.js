@@ -68,7 +68,12 @@ describe('Fees&Fines', () => {
         // New fee/fine page will open as shown in attachment
         NewFeeFine.waitLoading();
         NewFeeFine.checkInitialState(
-          { lastName: testData.user.lastName, middleName: 'testMiddleName', firstName: testData.user.preferredFirstName, barcode: testData.user.barcode },
+          {
+            lastName: testData.user.lastName,
+            middleName: 'testMiddleName',
+            firstName: testData.user.preferredFirstName,
+            barcode: testData.user.barcode,
+          },
           ownerBody.name,
         );
       },
@@ -94,7 +99,12 @@ describe('Fees&Fines', () => {
         // "New fee/fine" modal opened
         NewFeeFine.waitLoading();
         NewFeeFine.checkInitialState(
-          { lastName: testData.user.lastName, middleName: 'testMiddleName', firstName: testData.user.preferredFirstName, barcode: testData.user.barcode },
+          {
+            lastName: testData.user.lastName,
+            middleName: 'testMiddleName',
+            firstName: testData.user.preferredFirstName,
+            barcode: testData.user.barcode,
+          },
           ownerBody.name,
         );
       },

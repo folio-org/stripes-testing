@@ -201,7 +201,7 @@ export default {
       TextField('CatRules').fillIn(catrules),
     ]);
   },
-  clicksaveAndCloseButton: () => {
+  clickSaveAndCloseButton: () => {
     cy.do(saveAndCloseButton.click());
   },
   continueWithSaveAndCheck() {
