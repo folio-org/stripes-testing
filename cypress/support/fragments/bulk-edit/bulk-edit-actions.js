@@ -18,6 +18,7 @@ import {
   Keyboard,
   MultiColumnListRow,
   MessageBanner,
+  Option,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -232,6 +233,7 @@ export default {
       'Restricted',
       'Unavailable',
       'Unknown',
+      'In process',
     ];
     cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).click()]);
     this.verifyPossibleActions(options);
@@ -538,6 +540,7 @@ export default {
       calendarButton.click(),
       TextField().fillIn(formattedDate),
     ]);
+
     // we don't have interactor for this element
     cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
@@ -823,6 +826,13 @@ export default {
     ]);
   },
 
+  addItemNoteAndVerify(type, value, rowIndex = 0) {
+    this.addItemNote(type, value, rowIndex);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Add note', rowIndex);
+    this.verifyValueInSecondTextArea(value, rowIndex);
+  },
+
   verifyItemCheckInNoteActions(rowIndex = 0) {
     const options = [
       'Mark as staff only',
@@ -894,6 +904,13 @@ export default {
         .find(Select({ value: '' }))
         .choose(newType),
     ]);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Change note type', rowIndex);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(selectNoteHoldingTypeDropdown)
+        .has({ checkedOptionText: newType }),
+    );
   },
 
   selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
@@ -1424,5 +1441,58 @@ export default {
 
   clickFilteredOption(option) {
     cy.do(SelectionOption(including(option)).click());
+  },
+
+  verifyNoteTypeAbsentInNoteItemTypeDropdown(noteType, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteType' }))
+        .find(Option({ text: noteType }))
+        .absent(),
+    );
+  },
+
+  verifyGroupOptionsInSelectOptionsItemDropdown() {
+    this.clickOptionsSelection();
+
+    const expectedOptions = [
+      [
+        'Action note',
+        'Binding',
+        'Copy note',
+        'Electronic bookplate',
+        'Note',
+        'Provenance',
+        'Reproduction',
+      ],
+      ['Permanent loan type', 'Temporary loan type'],
+      ['Permanent item location', 'Temporary item location'],
+    ];
+    const expectedGroupLabels = ['Item notes', 'Loan type', 'Location'];
+    const groupSelector = 'li[class*="groupLabel"]';
+
+    cy.get(groupSelector).each(($groupLabel, ind) => {
+      const labelName = $groupLabel.text();
+
+      expect(labelName).to.eq(expectedGroupLabels[ind]);
+
+      const optionTexts = [];
+
+      cy.wrap($groupLabel)
+        .nextUntil(groupSelector)
+        .filter('[class*="groupedOption"]')
+        .each(($option) => {
+          cy.wrap($option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          expectedOptions[ind].forEach((expectedOption) => {
+            expect(optionTexts).to.include(expectedOption);
+          });
+        });
+    });
   },
 };

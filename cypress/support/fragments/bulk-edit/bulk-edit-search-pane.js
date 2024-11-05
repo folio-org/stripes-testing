@@ -28,6 +28,7 @@ const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const fileButton = Button('or choose file');
+const bulkEditQueryPane = Pane(including('Bulk edit query'));
 const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
@@ -507,6 +508,19 @@ export default {
     });
   },
 
+  verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(identifier, columnValues) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          areYouSureForm
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
     cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -515,6 +529,19 @@ export default {
           .find(MultiColumnListCell({ column: columnName, content: value }))
           .exists(),
       );
+    });
+  },
+
+  verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(identifier, columnValues) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          matchedAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
     });
   },
 
@@ -529,6 +556,19 @@ export default {
     });
   },
 
+  verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(identifier, columnValues) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          changesAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyReasonForErrorByIdentifier(identifier, errorText) {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -537,6 +577,21 @@ export default {
           .find(MultiColumnListCell({ column: 'Reason for error', content: errorText }))
           .exists(),
       );
+    });
+  },
+
+  verifyErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect([
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: identifier }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(HTML(including(errorText)))
+          .exists(),
+      ]);
     });
   },
 
@@ -946,6 +1001,12 @@ export default {
     cy.expect(DropdownMenu().find(Checkbox(name)).has({ checked: isChecked }));
   },
 
+  verifyCheckboxesInActionsDropdownMenuChecked(isChecked, ...names) {
+    names.forEach((name) => {
+      this.verifyCheckboxInActionsDropdownMenuChecked(name, isChecked);
+    });
+  },
+
   uncheckShowColumnCheckbox(...names) {
     names.forEach((name) => {
       cy.get(`[name='${name}']`).then((element) => {
@@ -987,6 +1048,12 @@ export default {
 
   verifyResultColumnTitlesDoNotInclude(title) {
     cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyResultColumnTitlesDoNotIncludeTitles(...titles) {
+    titles.forEach((title) => {
+      this.verifyResultColumnTitlesDoNotInclude(title);
+    });
   },
 
   verifyAreYouSureColumnTitlesInclude(title) {
@@ -1214,5 +1281,17 @@ export default {
         cy.expect(DropdownMenu().find(Checkbox(instanceNoteColumnName)).has({ checked: false }));
       });
     });
+  },
+
+  verifyRecordsCountInBulkEditQueryPane(value) {
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyBulkEditQueryPaneExists() {
+    cy.expect(bulkEditQueryPane.exists());
+  },
+
+  verifyQueryHeadLine(query) {
+    cy.expect(bulkEditQueryPane.find(HTML(`Query: ${query}`)).exists());
   },
 };

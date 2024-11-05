@@ -127,7 +127,7 @@ describe('Data Import', () => {
 
     it(
       'C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C343343'] },
       () => {
         // create Field mapping profile for export
         FieldMappingProfiles.createMappingProfile(mappingProfileForExport);

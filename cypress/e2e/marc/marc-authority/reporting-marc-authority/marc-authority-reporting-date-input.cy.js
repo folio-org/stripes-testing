@@ -37,7 +37,7 @@ describe('MARC', () => {
 
       it(
         'C375218 Date input via date pickers in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375218'] },
         () => {
           MarcAuthorities.clickActionsAndReportsButtons();
           MarcAuthorities.fillReportModal('', tomorrow);
@@ -77,7 +77,7 @@ describe('MARC', () => {
 
       it(
         'C376606 Manual date input in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C376606'] },
         () => {
           MarcAuthorities.clickActionsAndReportsButtons();
           MarcAuthorities.fillReportModal(today, '');

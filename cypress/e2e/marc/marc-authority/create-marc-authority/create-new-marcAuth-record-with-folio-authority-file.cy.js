@@ -25,7 +25,7 @@ describe('MARC', () => {
       const users = {};
 
       const newFields = [
-        { previousFieldTag: '008', tag: '010', content: '$a n4332123 $z n1234432333' },
+        { previousFieldTag: '008', tag: '010', content: '$a n4332123 $z n 1234432333' },
         {
           previousFieldTag: '010',
           tag: '100',
@@ -63,7 +63,7 @@ describe('MARC', () => {
 
       it(
         'C423536 Create a new MARC authority record with "FOLIO" authority file selected (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423536'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

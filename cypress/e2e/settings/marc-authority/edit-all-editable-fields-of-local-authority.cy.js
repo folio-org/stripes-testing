@@ -58,7 +58,7 @@ describe('MARC', () => {
 
       it(
         'C436844 Edit all editable fields of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C436844'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

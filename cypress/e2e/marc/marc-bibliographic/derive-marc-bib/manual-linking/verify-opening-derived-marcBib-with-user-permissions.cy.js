@@ -110,7 +110,7 @@ describe('MARC', () => {
 
         it(
           'C417049 Derive | Verify that derived MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
-          { tags: ['criticalPathFlaky', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C417049'] },
           () => {
             cy.login(testData.userData.username, testData.userData.password, {
               path: TopMenu.inventoryPath,

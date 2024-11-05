@@ -493,6 +493,14 @@ export default {
     ]);
   },
 
+  verifyEmptySearchResults(value) {
+    cy.expect(
+      searchResults
+        .find(HTML(`No results found for "${value}". Please check your spelling and filters.`))
+        .exists(),
+    );
+  },
+
   clickNextPagination() {
     cy.do(rootSection.find(nextButton).click());
   },

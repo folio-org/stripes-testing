@@ -139,7 +139,7 @@ describe('MARC', () => {
 
         it(
           'C365603 Derive | Cancel unlinking "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C365603'] },
           () => {
             InventoryInstance.deriveNewMarcBibRecord();
             QuickMarcEditor.verifyRemoveLinkingModal();

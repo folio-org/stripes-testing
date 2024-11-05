@@ -181,7 +181,7 @@ describe('Data Import', () => {
 
     it(
       'C385654 Verify that no duplicates of match and actions profiles appear after duplicating job profile with repeatable profiles (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C385654'] },
       () => {
         const calloutMessage = `The job profile "${jobProfileNameForChanging}" was successfully created`;
 

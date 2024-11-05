@@ -65,7 +65,7 @@ describe('Inventory', () => {
 
       it(
         'C506695 Cannot update "code", "delimiter", "keepDelimiter", "source" of Date type (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C506695'] },
         () => {
           cy.getUserToken(user.username, user.password);
           cy.patchInstanceDateTypeViaAPI(

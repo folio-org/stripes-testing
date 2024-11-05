@@ -49,7 +49,7 @@ describe('MARC', () => {
 
       it(
         'C440096 "Prefix" field number of prefixes validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440096'] },
         () => {
           // 1 Click on the "+New" button
           ManageAuthorityFiles.clickNewButton();

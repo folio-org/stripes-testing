@@ -41,7 +41,7 @@ describe('Notes', () => {
 
   it(
     'C357554 Verify that user cant delete a "Note type" when the "Note" was created (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire', 'C357554'] },
     () => {
       const noteType = `Note type ${fourDigits}`;
       const note1 = { title: 'Note 1', details: 'This is Note 1' };

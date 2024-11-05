@@ -93,7 +93,7 @@ describe('Data Import', () => {
 
     it(
       'C350716 Ensure an EDIFACT file with file extension .txt imports without errors (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C350716'] },
       () => {
         Organizations.createOrganizationViaApi(organization).then((response) => {
           testData.organization = response;

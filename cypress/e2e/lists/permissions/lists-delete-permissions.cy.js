@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C418649-${getTestEntityValue('test_list')}`,
-      description: `C418649-${getTestEntityValue('test_list_description')}`,
+      name: `C418649-${getTestEntityValue('list')}`,
+      description: `C418649-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,

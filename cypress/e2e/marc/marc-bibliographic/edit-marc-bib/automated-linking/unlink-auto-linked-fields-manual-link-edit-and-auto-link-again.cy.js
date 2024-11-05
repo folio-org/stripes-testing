@@ -127,7 +127,7 @@ describe('MARC', () => {
 
         it(
           'C422150 Unlink auto-linked fields, manually link, edit and auto-link fields again when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422150'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

@@ -42,7 +42,7 @@ describe('Data Import', () => {
 
     it(
       'C2358 View the log resulting from importing a MARC file (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2358'] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
         FileDetails.verifyLogDetailsPageIsOpened(fileNameToUpload);

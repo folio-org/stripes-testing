@@ -48,7 +48,7 @@ describe('MARC', () => {
 
       it(
         'C423527 Create a new MARC authority record without selecting an authority file (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423527'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

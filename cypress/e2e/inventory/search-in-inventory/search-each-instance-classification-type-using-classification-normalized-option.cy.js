@@ -174,7 +174,7 @@ describe('Inventory', () => {
 
     it(
       'C466145 Search for each Instance classification type using "Classification, normalized" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466145'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.instanceTitle);

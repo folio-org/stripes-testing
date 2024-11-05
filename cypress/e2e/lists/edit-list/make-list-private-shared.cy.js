@@ -9,7 +9,7 @@ describe('lists', () => {
     const firstUser = {};
     const secondUser = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Loans',
       status: 'Active',
     };

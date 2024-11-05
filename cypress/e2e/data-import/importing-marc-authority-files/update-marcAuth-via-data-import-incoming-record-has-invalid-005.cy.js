@@ -121,7 +121,7 @@ describe('Data Import', () => {
 
     it(
       'C415366 Update MARC Authority via Data Import/incoming record has invalid 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C415366'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.editedFileNameForCreate, testData.fileNameForCreate);

@@ -54,19 +54,28 @@ describe('Inventory', () => {
 
     it(
       'C350387 Verify the "Browse subjects" result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350387'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.searchBrowseSubjects(testData.testValue);
         BrowseSubjects.checkSearchResultsTable();
-        BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
+        BrowseSubjects.checkResultAndItsRow(
+          5,
+          `${testData.testValue}would be hereNo value set-No value set-`,
+        );
         BrowseSubjects.checkPaginationButtons();
 
         BrowseSubjects.clickPreviousPaginationButton();
-        BrowseSubjects.checkAbsenceOfResultAndItsRow(5, `${testData.testValue}would be here`);
+        BrowseSubjects.checkAbsenceOfResultAndItsRow(
+          5,
+          `${testData.testValue}would be hereNo value set-No value set-`,
+        );
 
         BrowseSubjects.clickNextPaginationButton();
-        BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
+        BrowseSubjects.checkResultAndItsRow(
+          5,
+          `${testData.testValue}would be hereNo value set-No value set-`,
+        );
       },
     );
   });

@@ -33,7 +33,7 @@ describe('Data Import', () => {
 
     it(
       'C367951 Order field mapping profile: Check asterisks for required fields when creating profile (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C367951'] },
       () => {
         // Step 1: Go to "New field mapping profile" page
         FieldMappingProfiles.openNewMappingProfileForm();

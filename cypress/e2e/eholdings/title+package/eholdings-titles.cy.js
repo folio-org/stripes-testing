@@ -23,7 +23,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'], retries: 2 },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16994'], retries: 2 },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -58,7 +58,7 @@ describe('eHoldings', () => {
 
     it(
       'C700 Title: Add or Edit custom coverage (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'], retries: 1 },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C700'], retries: 1 },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -115,7 +115,7 @@ describe('eHoldings', () => {
 
     it(
       'C691 Remove a title in a package from your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C691'] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -147,7 +147,7 @@ describe('eHoldings', () => {
 
     it(
       'C693 Create a custom title. (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C693'] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -169,7 +169,7 @@ describe('eHoldings', () => {
 
     it(
       'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C157916'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -192,7 +192,7 @@ describe('eHoldings', () => {
 
     it(
       'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C17090'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;

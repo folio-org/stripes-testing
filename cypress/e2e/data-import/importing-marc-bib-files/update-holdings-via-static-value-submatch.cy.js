@@ -184,7 +184,7 @@ describe('Data Import', () => {
 
     it(
       'C11110 Update a holdings via a static value submatch (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C11110'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -243,6 +243,7 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(instanceActionProfileForCreate, instanceMappingProfileForCreate.name);
         ActionProfiles.checkActionProfilePresented(instanceActionProfileForCreate.name);
+        cy.wait(1000);
         ActionProfiles.create(holdingsActionProfileForCreate, holdingsMappingProfileForCreate.name);
         ActionProfiles.checkActionProfilePresented(holdingsActionProfileForCreate.name);
 

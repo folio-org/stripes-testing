@@ -209,7 +209,7 @@ describe('MARC', () => {
 
         it(
           'C436828 Protocol is displayed in subfield "$0" of manually linked field when field has base URL without protocol before linking (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C436828'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

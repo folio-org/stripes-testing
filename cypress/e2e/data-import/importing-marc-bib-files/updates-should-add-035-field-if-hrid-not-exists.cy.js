@@ -123,7 +123,7 @@ describe('Data Import', () => {
 
     it(
       "C543840 Data Import Updates should add 035 field from 001/003, if it's not HRID (folijet)",
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C543840'] },
       () => {
         // upload .mrc file
         DataImport.uploadFile('marcBibFileForC543840_1.mrc', marcFileNameForCreate);

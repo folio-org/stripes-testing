@@ -53,7 +53,7 @@ describe('MARC', () => {
 
       it(
         'C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C353995'] },
         () => {
           DataImport.uploadFileViaApi('marcFileForC353995.mrc', fileName, jobProfileToRun).then(
             (response) => {

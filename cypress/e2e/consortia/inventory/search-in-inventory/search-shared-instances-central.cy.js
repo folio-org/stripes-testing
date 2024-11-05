@@ -108,7 +108,7 @@ describe('Inventory', () => {
 
       it(
         'C410714 "Shared" records will be found from "Instance/Holdings/Item" tabs of "Inventory" app on Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C410714'] },
         () => {
           InventoryInstances.searchByTitle(instancePrefix);
           InventorySearchAndFilter.verifySearchResult(testData.sharedInstance.title);

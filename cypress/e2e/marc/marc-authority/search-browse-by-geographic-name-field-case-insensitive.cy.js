@@ -68,7 +68,7 @@ describe('MARC', () => {
 
     it(
       'C466088 Search/Browse by "Geographic name" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466088'] },
       () => {
         // execute search by "Keyword" option
         geographicNameFields.forEach((query) => {

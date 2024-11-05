@@ -33,7 +33,7 @@ describe('Inventory', () => {
 
     it(
       'C411383 (NON-CONSORTIA) Check the "Share local instance" button DOES NOT appear on Non-consortia tenant (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411383'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();

@@ -51,7 +51,7 @@ describe('Data Import', () => {
 
     it(
       'C366549 Verify 720$a default mapping for Contributor fields (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C366549'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.filePathForUpload, testData.marcFileName);

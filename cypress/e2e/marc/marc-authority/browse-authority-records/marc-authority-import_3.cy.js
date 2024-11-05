@@ -51,7 +51,7 @@ describe('MARC', () => {
 
       it(
         'C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)',
-        { tags: ['smoke', 'authority', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'authority', 'spitfire', 'shiftLeft', 'C360522'] },
         () => {
           DataImport.uploadFileViaApi(
             'D_genre(prefixes_in_001_010Sa)sc_03.mrc',

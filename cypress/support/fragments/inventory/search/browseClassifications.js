@@ -6,6 +6,7 @@ import {
   MultiColumnListRow,
   MultiColumnListHeader,
   PaneContent,
+  Button,
 } from '../../../../../interactors';
 
 const browseInventoryPane = Pane('Browse inventory');
@@ -23,9 +24,7 @@ export default {
   },
 
   verifyRowExists(rowIndex) {
-    cy.expect(
-      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists(),
-    );
+    cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).exists());
   },
 
   verifyResultAndItsRow(rowIndex, value) {
@@ -72,5 +71,9 @@ export default {
 
   clickOnSearchResult: (value) => {
     cy.do(MultiColumnListCell({ content: including(value) }).click());
+  },
+
+  selectFoundValueByRow(rowIndex, value) {
+    cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
 };

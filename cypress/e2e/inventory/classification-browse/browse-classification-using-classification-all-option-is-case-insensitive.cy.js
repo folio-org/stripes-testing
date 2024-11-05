@@ -73,7 +73,7 @@ describe('Inventory', () => {
 
     it(
       'C468255 Browse for classification using "Classification (all)" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468255'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);

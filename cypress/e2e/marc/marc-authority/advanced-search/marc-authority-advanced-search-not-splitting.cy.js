@@ -123,7 +123,7 @@ describe('MARC', () => {
 
       it(
         'C466217 Verify that search operators "OR" "AND" "NOT" are not splitting the search terms in "Advanced search" modal of "MARC authority" app (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C466217'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
           searchData.forEach((searchSet, index) => {

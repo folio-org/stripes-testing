@@ -73,7 +73,7 @@ describe('MARC', () => {
 
       it(
         'C380643 Editing imported "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380643'] },
         () => {
           InventoryInstances.searchByTitle('C380643 The Journal of ecclesiastical history.');
           InventoryInstances.selectInstance();
@@ -109,7 +109,7 @@ describe('MARC', () => {
 
       it(
         'C380645 Edit "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380645'] },
         () => {
           InventoryInstances.searchByTitle('C380645 The Journal of ecclesiastical history.');
           InventoryInstances.selectInstance();

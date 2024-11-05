@@ -211,7 +211,7 @@ describe('Data Import', () => {
 
     it(
       'C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C397983'] },
       () => {
         const fileNameForCreate = `C397983 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397983 autotestFileForUpdate${getRandomPostfix()}.mrc`;
@@ -394,7 +394,7 @@ describe('Data Import', () => {
 
     it(
       'C397984 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 1 match (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C397984'] },
       () => {
         const fileNameForCreate = `C397984 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397984 autotestFileForUpdate${getRandomPostfix()}.mrc`;
@@ -549,7 +549,7 @@ describe('Data Import', () => {
 
     it(
       'C397383 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 3 matches (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C397383'] },
       () => {
         const fileNameForCreate = `C397383 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397383 autotestFileForUpdate${getRandomPostfix()}.mrc`;

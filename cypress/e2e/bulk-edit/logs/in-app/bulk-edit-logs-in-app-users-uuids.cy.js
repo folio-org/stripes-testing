@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'C375245'] },
+        { tags: ['smoke', 'firebird', 'C375245', 'shiftLeft'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);
@@ -104,11 +104,19 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             `*${matchedRecordsFileNameInvalidAndValid}`,
-            [user.userId, userWithoutPermissions.userId],
-            'userId',
-            true,
+            'User id',
+            user.userId,
+            'User name',
+            user.username,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            `*${matchedRecordsFileNameInvalidAndValid}`,
+            'User id',
+            userWithoutPermissions.userId,
+            'User name',
+            userWithoutPermissions.username,
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();

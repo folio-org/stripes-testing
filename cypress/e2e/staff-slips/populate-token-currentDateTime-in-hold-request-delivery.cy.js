@@ -105,7 +105,7 @@ describe('Staff slips', () => {
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.checkInItemGui(instanceData.folioInstances[0].barcodes[0]);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
     },
   );
 });

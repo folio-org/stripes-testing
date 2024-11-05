@@ -36,7 +36,7 @@ describe('Data Import', () => {
 
     it(
       'C358546 Data Import log: Check that data in the "View all" page User filter is updated after deleting the logs for particular users. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C358546'] },
       () => {
         const filesNames = ['marcBibFileForC358546_1.mrc', 'marcBibFileForC358546_2.MRC'];
         const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;

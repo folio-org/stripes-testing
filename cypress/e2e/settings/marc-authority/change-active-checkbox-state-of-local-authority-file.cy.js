@@ -50,7 +50,7 @@ describe('MARC', () => {
 
       it(
         'C436842 Change "Active" checkbox state of Local "Authority file" which does not have assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C436842'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

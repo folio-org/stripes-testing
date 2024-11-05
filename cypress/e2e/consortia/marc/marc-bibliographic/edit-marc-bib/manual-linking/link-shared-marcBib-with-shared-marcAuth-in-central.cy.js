@@ -140,7 +140,7 @@ describe('MARC', () => {
 
         it(
           'C410814 Link Shared MARC bib (shadow MARC Instance in Member tenant) with Shared MARC auth on Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C410814'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
