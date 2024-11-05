@@ -1767,6 +1767,22 @@ export default {
     );
   },
 
+  checkErrorMessageForField(index, errorMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ index })
+        .find(TextArea({ error: errorMessage }))
+        .exists(),
+    );
+  },
+
+  checkWarningMessageForField(index, errorMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ index })
+        .find(TextArea({ warning: errorMessage }))
+        .exists(),
+    );
+  },
+
   checkNonEditableLdrCalloutBib() {
     cy.expect([calloutNonEditableLdrBib.exists(), calloutNonEditableLdrBib.has({ type: 'error' })]);
     cy.do(calloutNonEditableLdrBib.dismiss());
