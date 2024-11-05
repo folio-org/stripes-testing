@@ -96,7 +96,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagValue(rowIndex1XX, tag);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            MarcAuthority.clicksaveAndCloseButton();
+            MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
             MarcAuthorities.checkAfterSearch(testData.authority.type, testData.authority.title);
             MarcAuthorities.verifyOnlyOneAuthorityRecordInResultsList();

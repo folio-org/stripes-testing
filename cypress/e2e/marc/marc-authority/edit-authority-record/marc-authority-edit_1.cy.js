@@ -82,7 +82,7 @@ describe('MARC', () => {
           MarcAuthority.deleteTag(testData.authority.rowIndex);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkCallout('Field 1XX is non-repeatable and required.');
           QuickMarcEditor.undoDelete();
           MarcAuthority.changeTag(testData.authority.rowIndex, testData.authority.tag);
