@@ -148,7 +148,7 @@ describe('MARC', () => {
           MarcAuthority.change008Field('x', 'x', 'x');
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains('xxx');
         },
       );
