@@ -28,13 +28,9 @@ describe('Inventory', () => {
       cy.createTempUser([
         permissions.uiInventoryMoveItems.gui,
         permissions.uiInventoryHoldingsMove.gui,
-        permissions.inventoryViewCreateEditInstances.gui,
+        permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
         item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         secondItem.instanceId = InventoryInstances.createInstanceViaApi(
           secondItem.instanceName,
@@ -57,6 +53,10 @@ describe('Inventory', () => {
             ...holdings[0],
             permanentLocationId: LOCATION_IDS.ANNEX,
           });
+        });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
         });
       });
     });
