@@ -41,7 +41,7 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '100',
             content: '$a test123',
-            boxFourth: '$a C380745 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            boxFourth: '$a C380745 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '',
             boxSixth: '$0 3052044',
             boxSeventh: '',

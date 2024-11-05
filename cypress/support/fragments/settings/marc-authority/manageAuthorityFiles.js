@@ -76,13 +76,17 @@ const clickEditButton = (authorityFileName) => {
 };
 
 const clickDeleteButton = (authorityFileName) => {
-  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  const targetRow = manageAuthorityFilesPane.find(
+    MultiColumnListRow(including(authorityFileName), { isContainer: true }),
+  );
 
   cy.do(targetRow.find(deleteButton).click());
 };
 
 const checkEditButtonInRow = (authorityFileName) => {
-  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  const targetRow = manageAuthorityFilesPane.find(
+    MultiColumnListRow(including(authorityFileName), { isContainer: true }),
+  );
 
   cy.expect(targetRow.find(editButton).exists());
 };
@@ -294,9 +298,9 @@ export default {
 
   checkSourceFileExistsByName(fileName, isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).exists());
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName), { isContainer: true })).exists());
     } else {
-      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName), { isContainer: true })).absent());
     }
   },
 
