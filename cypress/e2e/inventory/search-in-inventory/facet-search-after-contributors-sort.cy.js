@@ -134,8 +134,6 @@ describe('Inventory', () => {
       instances.forEach((instance) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
-      // without logout, queries from previous run may persist in search during manual re-run
-      cy.logout();
     });
 
     it(

@@ -92,7 +92,7 @@ describe('Data Import', () => {
 
     it(
       'C389471 Check the JSON screen for imported multiple holdings created from one instance (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C389471'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

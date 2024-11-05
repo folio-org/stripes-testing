@@ -50,7 +50,7 @@ describe('Inventory', () => {
 
     it(
       'C631 Item notes (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C631', 'eurekaPhase1'] },
       () => {
         // #1 Go to the **Inventory** app and search for your title. Click on the instance record and select a hyperlinked barcode from the **Item: barcode** table that will be visible in the rightmost pane
         InventorySearchAndFilter.switchToItem();

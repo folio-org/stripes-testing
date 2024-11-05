@@ -21,7 +21,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 35; i++) {
           const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -51,7 +51,7 @@ describe('Data Import', () => {
 
     it(
       'C353589 For the Data Import View all page, change from Load more to Paginated (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353589'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

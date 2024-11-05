@@ -41,7 +41,7 @@ describe('Data Import', () => {
 
     it(
       'C15851 Make sure the file extension settings are in alphabetical order when a new one is added (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C15851'] },
       () => {
         SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);

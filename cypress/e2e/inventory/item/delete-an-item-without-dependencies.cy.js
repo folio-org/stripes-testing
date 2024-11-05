@@ -89,7 +89,7 @@ describe('Inventory', () => {
 
     it(
       'C715 Delete an item without dependencies (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C715', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemData.barcode);

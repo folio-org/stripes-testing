@@ -147,6 +147,7 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          cy.wait(3000);
           Orders.deleteOrderViaApi(orderId[0].id);
         });
       });
@@ -154,7 +155,7 @@ describe('Data Import', () => {
 
     it(
       'C375174 Verify the importing of orders with pending status (folijet)',
-      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'folijet', 'C375174', 'eurekaPhase1'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

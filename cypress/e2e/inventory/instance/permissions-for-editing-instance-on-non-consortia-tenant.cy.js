@@ -10,48 +10,59 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
-  describe('Instance', () => {
-    let user;
-    const instanceTitle = `C407752 autotestInstance ${getRandomPostfix()}`;
-    const itemBarcode = Helper.getRandomBarcode();
+  describe(
+    'Instance',
+    {
+      retries: {
+        runMode: 1,
+      },
+    },
+    () => {
+      let user;
+      let instanceTitle;
+      let itemBarcode;
 
-    before('Create test data and login', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
+      beforeEach('Create test data and login', () => {
+        instanceTitle = `C407752 autotestInstance ${getRandomPostfix()}`;
+        itemBarcode = Helper.getRandomBarcode();
+
+        cy.getAdminToken().then(() => {
+          InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
+        });
+
+        cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+          (userProperties) => {
+            user = userProperties;
+
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+          },
+        );
       });
 
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+      afterEach('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(user.userId);
+          InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        });
+      });
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+      it(
+        'C407752 (NON-CONSORTIA) Verify the permission for editing instance on Non-consortia tenant (folijet) (TaaS)',
+        { tags: ['smoke', 'folijet', 'shiftLeft', 'C407752'] },
+        () => {
+          InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.edit();
+          InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
+          InstanceRecordEdit.saveAndClose();
+          InstanceRecordView.verifySuccsessCalloutMessage();
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
         },
       );
-    });
-
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(user.userId);
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-      });
-    });
-
-    it(
-      'C407752 (NON-CONSORTIA) Verify the permission for editing instance on Non-consortia tenant (folijet) (TaaS)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
-      () => {
-        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.edit();
-        InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
-        InstanceRecordEdit.saveAndClose();
-        InstanceRecordView.verifySuccsessCalloutMessage();
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED);
-      },
-    );
-  });
+    },
+  );
 });

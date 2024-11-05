@@ -656,6 +656,13 @@ export default {
     cy.wait(1000);
   },
 
+  verifyYouDoNotHavePermissionsToViewThisListIsShown() {
+    cy.wait(1000);
+    cy.contains('You do not have permission to view this list', { timeout: 15000 }).should(
+      'be.visible',
+    );
+  },
+
   verifyListsFilteredByStatus: (filters) => {
     const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
@@ -834,6 +841,12 @@ export default {
           this.deleteViaApi(filteredItem.id);
         }
       }
+    });
+  },
+
+  getListIdByNameViaApi(listName) {
+    return this.getViaApi().then((response) => {
+      return response.body.content.find((item) => item.name === listName).id;
     });
   },
 };

@@ -322,7 +322,7 @@ describe('Data Import', () => {
 
     it(
       'C451467 Check Import with 2 submatches for update Instance, Holdings, Item via VRN (folijet)',
-      { tags: ['criticalPathBroken', 'folijet'] },
+      { tags: ['criticalPathBroken', 'folijet', 'C451467'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createInstanceMappingProfile(
@@ -385,6 +385,7 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(testData.editedMarcFileName, testData.marcFileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

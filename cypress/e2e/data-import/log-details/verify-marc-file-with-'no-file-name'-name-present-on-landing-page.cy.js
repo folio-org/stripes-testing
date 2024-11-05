@@ -31,7 +31,7 @@ describe('Data Import', () => {
 
     it(
       'C375149 Verify that .mrc files with "No file name" name are present on data import landing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C375149'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.marcFileName, testData.marcFileName);

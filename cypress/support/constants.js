@@ -990,6 +990,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
     ITEM_UUID: 'Item UUID',
     PROVENANCE_NOTE: 'Provenance note',
+    MEMBER: 'Member',
   },
 };
 
@@ -1029,4 +1030,10 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   CONTRIBUTORS: 'Contributors',
   DATE: 'Date',
   RELEVANCE: 'Relevance',
+};
+export const STAFF_SLIP_NAMES = {
+  HOLD: 'Hold',
+  PICK_SLIP: 'Pick slip',
+  REQUEST_DELIVERY: 'Request delivery',
+  TRANSIT: 'Transit',
 };

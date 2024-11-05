@@ -196,6 +196,10 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
+  checkItemNoteAbsent(noteTypeName) {
+    cy.expect(itemNotesAccordion.find(KeyValue(noteTypeName)).absent());
+  },
+
   checkMultipleItemNotes: (...itemNotes) => {
     itemNotes.forEach((itemNote) => {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);

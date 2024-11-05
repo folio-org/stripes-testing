@@ -156,7 +156,7 @@ describe('Data Import', () => {
 
     it(
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11088'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();

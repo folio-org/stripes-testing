@@ -109,11 +109,8 @@ describe('Inventory', () => {
           userId,
           firstServicePoint.id,
         );
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
-
+        cy.login(userProperties.username, userProperties.password);
+        cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
@@ -155,7 +152,7 @@ describe('Inventory', () => {
 
     it(
       'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C3506'] },
       () => {
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
@@ -215,7 +212,6 @@ describe('Inventory', () => {
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
         InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'In transit');
         InventoryInstance.verifyLoan('Can circulate');
         InventoryInstance.openItemByBarcode(barcode);

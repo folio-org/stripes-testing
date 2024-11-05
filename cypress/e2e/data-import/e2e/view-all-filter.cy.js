@@ -72,7 +72,7 @@ describe('Data Import', () => {
 
     it(
       'C11113 Filter the "View all" log screen (folijet)',
-      { tags: ['smokeFlaky', 'folijet'] },
+      { tags: ['smokeFlaky', 'folijet', 'C11113'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();

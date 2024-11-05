@@ -49,24 +49,28 @@ describe('Data Import', () => {
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
-    it('C11112 Search the "View all" log screen (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      Logs.openViewAllLogs();
+    it(
+      'C11112 Search the "View all" log screen (folijet)',
+      { tags: ['smoke', 'folijet', 'C11112'] },
+      () => {
+        Logs.openViewAllLogs();
 
-      LogsViewAll.options.forEach((option) => {
-        LogsViewAll.selectOption(option);
-        // when option is "ID", search with hrId otherwise, with file name
-        const term = option === 'ID' ? `${id}` : uniqueFileNameForSearch;
+        LogsViewAll.options.forEach((option) => {
+          LogsViewAll.selectOption(option);
+          // when option is "ID", search with hrId otherwise, with file name
+          const term = option === 'ID' ? `${id}` : uniqueFileNameForSearch;
 
-        LogsViewAll.searchWithTerm(term);
+          LogsViewAll.searchWithTerm(term);
 
-        if (option === 'ID') {
-          LogsViewAll.checkById({ id });
-        } else {
-          // file name is always unique
-          // so, there is always one row
-          LogsViewAll.checkRowsCount(1);
-        }
-      });
-    });
+          if (option === 'ID') {
+            LogsViewAll.checkById({ id });
+          } else {
+            // file name is always unique
+            // so, there is always one row
+            LogsViewAll.checkRowsCount(1);
+          }
+        });
+      },
+    );
   });
 });

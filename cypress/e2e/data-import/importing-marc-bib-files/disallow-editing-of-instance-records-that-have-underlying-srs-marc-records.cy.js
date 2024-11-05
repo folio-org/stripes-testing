@@ -52,7 +52,7 @@ describe('Data Import', () => {
 
     it(
       'C2361 Disallow editing of Instance records that have underlying SRS MARC records',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2361'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();

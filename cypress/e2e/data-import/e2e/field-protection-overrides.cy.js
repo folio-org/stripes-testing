@@ -237,7 +237,7 @@ describe('Data Import', () => {
 
     it(
       'C17018 Check that field protection overrides work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C17018'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);

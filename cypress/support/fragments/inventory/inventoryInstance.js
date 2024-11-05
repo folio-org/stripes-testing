@@ -469,7 +469,7 @@ export default {
   viewSource: () => {
     cy.wait(2000);
     cy.do(actionsButton.click());
-    cy.wait(2000);
+    cy.wait(1000);
     cy.do(viewSourceButton.click());
     cy.wait(1000);
     InventoryViewSource.waitLoading();
@@ -1025,7 +1025,7 @@ export default {
     InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     // cypress clicks too fast
-    cy.wait(2000);
+    cy.wait(5000);
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
 

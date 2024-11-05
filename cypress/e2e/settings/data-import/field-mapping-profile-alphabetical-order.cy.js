@@ -67,7 +67,7 @@ describe('Data Import', () => {
 
     it(
       'C377046 Verify Field mapping profiles alphabetical order (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377046'] },
       () => {
         // #2 Click "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();

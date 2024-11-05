@@ -27,7 +27,7 @@ describe('Data Import', () => {
 
     it(
       'C353974 Check: Change Import log hotlinks to textLink: Landing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353974'] },
       () => {
         // #1 Go to the "Data Import" app
         // User is on the Data Import landing page

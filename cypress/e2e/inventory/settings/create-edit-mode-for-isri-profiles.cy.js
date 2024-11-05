@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
     it(
       'C374178 Verify the create/edit mode for ISRI profiles (folijet)',
-      { tags: ['criticalPath', 'folijet', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'folijet', 'C374178', 'eurekaPhase1'] },
       () => {
         Z3950TargetProfiles.create();
         NewTargetProfile.newFormContains();

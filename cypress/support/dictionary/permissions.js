@@ -16,6 +16,7 @@ export default {
     internal: 'ui-bulk-edit.users.csv.edit',
     gui: 'Bulk Edit: Local - Edit user records',
   },
+  bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: {
     internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',

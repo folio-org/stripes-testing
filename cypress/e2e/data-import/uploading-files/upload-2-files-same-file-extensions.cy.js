@@ -30,7 +30,7 @@ describe('Data Import', () => {
 
     it(
       'C2378 UIDATIMP-252: Uploading 2 files with the same extension, but different case, does not work. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2378'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfDifferentFiles(filesNames);

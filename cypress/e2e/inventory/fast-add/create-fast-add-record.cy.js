@@ -60,7 +60,7 @@ describe('Inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C15850', 'eurekaPhase1'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryActions.openNewFastAddRecordForm();
@@ -125,7 +125,7 @@ describe('Inventory', () => {
 
     it(
       'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'folijet', 'C16972', 'eurekaPhase1'] },
       () => {
         const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
         fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber()}`;

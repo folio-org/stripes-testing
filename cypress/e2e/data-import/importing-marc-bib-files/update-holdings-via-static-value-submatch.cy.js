@@ -184,7 +184,7 @@ describe('Data Import', () => {
 
     it(
       'C11110 Update a holdings via a static value submatch (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C11110'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -359,6 +359,7 @@ describe('Data Import', () => {
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(instanceMatchProfile);
           MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
+          cy.wait(1000);
           MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
           MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
 

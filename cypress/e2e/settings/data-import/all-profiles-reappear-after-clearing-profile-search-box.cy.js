@@ -95,7 +95,7 @@ describe('Data Import', () => {
 
     it(
       'C402365 Verify that all profiles reappear after clearing the profile search box (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C402365'] },
       () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.search(mappingProfile.name);

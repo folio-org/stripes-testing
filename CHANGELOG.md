@@ -1,5 +1,7 @@
 # Change history for stripes-testing
 
+## 4.9.0 IN PROGRESS
+
 ## 4.8.0 IN PROGRESS
 
 - Updated Call Number search option labels. Refs FAT-13489.
@@ -9,6 +11,8 @@
 - Migrate imports from `bigtest` to `@interactors/html`. Refs UITEST-120.
 - Refactor ui-inventory permissions. Refs UITEST-121.
 - Rename the `ui-eholdings.titles-packages.create-delete` and `ui-eholdings.package-title.select-unselect` permissions. Refs UITEST-123.
+- Rename the `ui-notes.item.assign-unassign` permission. Refs UITEST-124.
+- Update `ui-quick-marc.quick-marc-editor.duplicate` and `ui-quick-marc.quick-marc-authority-records.linkUnlink` permissions. Refs UITEST-121.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 
