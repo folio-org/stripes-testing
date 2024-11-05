@@ -1,4 +1,9 @@
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+  STAFF_SLIP_NAMES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -22,6 +27,7 @@ describe('Staff slips', () => {
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     folioInstances: InventoryInstances.generateFolioInstances(),
   };
+
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
@@ -65,9 +71,15 @@ describe('Staff slips', () => {
           requesterId: userData.userId,
         }).then((request) => {
           testData.requestsId = request.body.id;
-          cy.login(userData.username, userData.password);
         });
       });
+  });
+
+  beforeEach('Login', () => {
+    cy.login(userData.username, userData.password, {
+      path: SettingsMenu.circulationStaffSlipsPath,
+      waiter: EditStaffClips.waitLoading,
+    });
   });
 
   after('Deleting created entities', () => {
@@ -92,12 +104,11 @@ describe('Staff slips', () => {
     'C375293 Add "requester.patronGroup" as staff slip token in Settings (volaris)',
     { tags: ['criticalPath', 'volaris'] },
     () => {
-      cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editTransit();
       EditStaffClips.addToken(['requester.patronGroup']);
       EditStaffClips.saveAndClose();
-      EditStaffClips.checkAfterUpdate('Transit');
-      EditStaffClips.checkPreview('Transit', 'Undergraduate');
+      EditStaffClips.checkAfterUpdate(STAFF_SLIP_NAMES.TRANSIT);
+      EditStaffClips.checkPreview(STAFF_SLIP_NAMES.TRANSIT, 'Undergraduate');
       EditStaffClips.editAndClearTransit();
     },
   );
@@ -106,12 +117,14 @@ describe('Staff slips', () => {
     'C387442 Add "Departments" as staff slip token in Settings (volaris)',
     { tags: ['criticalPath', 'volaris'] },
     () => {
-      cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editTransit();
       EditStaffClips.addToken(['requester.departments']);
       EditStaffClips.saveAndClose();
-      EditStaffClips.checkAfterUpdate('Transit');
-      EditStaffClips.checkPreview('Transit', 'Library Technical Services; IT Operations');
+      EditStaffClips.checkAfterUpdate(STAFF_SLIP_NAMES.TRANSIT);
+      EditStaffClips.checkPreview(
+        STAFF_SLIP_NAMES.TRANSIT,
+        'Library Technical Services; IT Operations',
+      );
       EditStaffClips.editAndClearTransit();
     },
   );
@@ -120,11 +133,10 @@ describe('Staff slips', () => {
     'C388508 Verify that token "currentDateTime" is populated in the pick slip (volaris)',
     { tags: ['criticalPath', 'volaris'] },
     () => {
-      cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editPickslip();
       EditStaffClips.addToken(['staffSlip.currentDateTime']);
       EditStaffClips.saveAndClose();
-      EditStaffClips.checkAfterUpdate('Pick slip');
+      EditStaffClips.checkAfterUpdate(STAFF_SLIP_NAMES.PICK_SLIP);
       cy.visit(TopMenu.requestsPath);
       cy.wait(5000);
       NewRequest.printPickSlips();
