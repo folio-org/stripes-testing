@@ -1,21 +1,27 @@
 export default {
   // bulk edit
   bulkEditView: {
-    internal: 'ui-bulk-edit.app-view',
+    internal: 'ui-bulk-edit.inventory.view',
     gui: 'Bulk Edit: In app - View inventory records',
   },
   bulkEditEdit: {
-    internal: 'ui-bulk-edit.app-edit',
+    internal: 'ui-bulk-edit.inventory.edit',
     gui: 'Bulk Edit: In app - Edit inventory records',
   },
-  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: Local - View user records' },
-  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: Local - Edit user records' },
+  bulkEditCsvView: {
+    internal: 'ui-bulk-edit.users.csv.view',
+    gui: 'Bulk Edit: Local - View user records',
+  },
+  bulkEditCsvEdit: {
+    internal: 'ui-bulk-edit.users.csv.edit',
+    gui: 'Bulk Edit: Local - Edit user records',
+  },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: {
-    internal: 'ui-bulk-edit.app-edit.users',
+    internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
   },
-  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Can build query' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: {
