@@ -1,3 +1,4 @@
+import { STAFF_SLIP_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import EditStaffClips from '../../../support/fragments/circulation/editStaffClips';
 import StaffSlip from '../../../support/fragments/settings/circulation/staffSlips/staffSlip';
@@ -9,7 +10,6 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 describe('Permissions -> Circulation', () => {
   const userData = {};
   const description = getTestEntityValue('NewDescription');
-  const staffSlip = 'Hold';
 
   before('Prepare test data', () => {
     cy.getAdminToken().then(() => {
@@ -37,11 +37,11 @@ describe('Permissions -> Circulation', () => {
     'C1219 Settings (Circ): Can create, edit and remove staff slips (vega)',
     { tags: ['extendedPath', 'vega', 'C1219'] },
     () => {
-      StaffSlips.chooseStaffClip(staffSlip);
-      StaffSlip.edit(staffSlip);
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.HOLD);
+      StaffSlip.edit(STAFF_SLIP_NAMES.HOLD);
       EditStaffClips.editDescription(description);
       EditStaffClips.saveAndClose();
-      StaffSlip.checkAfterUpdate(staffSlip);
+      StaffSlip.checkAfterUpdate(STAFF_SLIP_NAMES.HOLD);
       StaffSlip.verifyKeyValue('Description', description);
     },
   );

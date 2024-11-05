@@ -59,6 +59,7 @@ describe('Staff slips', () => {
         STAFF_SLIP_NAMES.HOLD,
         `Preview of staff slip - ${STAFF_SLIP_NAMES.HOLD}`,
       );
+      // steps 14-15 cannot be checked using cypress
     },
   );
 });

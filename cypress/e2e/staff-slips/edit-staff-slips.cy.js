@@ -1,10 +1,10 @@
-import { STAFF_SLIP_NAMES } from '../../../../support/constants';
-import EditStaffClips from '../../../../support/fragments/circulation/editStaffClips';
-import StaffSlip from '../../../../support/fragments/settings/circulation/staffSlips/staffSlip';
-import StaffSlips from '../../../../support/fragments/settings/circulation/staffSlips/staffSlips';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import { STAFF_SLIP_NAMES } from '../../support/constants';
+import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
+import StaffSlip from '../../support/fragments/settings/circulation/staffSlips/staffSlip';
+import StaffSlips from '../../support/fragments/settings/circulation/staffSlips/staffSlips';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 
-describe('ui-circulation-settings: Edit Staff slip settings', () => {
+describe('Staff slips', () => {
   const editStaffClipsHold = { ...EditStaffClips.defaultUiEditStaffClips };
   beforeEach('login', () => {
     cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
