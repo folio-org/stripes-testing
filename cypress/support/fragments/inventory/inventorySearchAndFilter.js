@@ -241,7 +241,9 @@ export default {
   },
 
   bySource(source) {
-    cy.do([sourceAccordion.clickHeader(), sourceAccordion.find(Checkbox(source)).click()]);
+    cy.do(sourceAccordion.clickHeader());
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+    cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
 
