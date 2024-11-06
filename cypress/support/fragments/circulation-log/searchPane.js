@@ -239,7 +239,14 @@ export default {
     ]);
   },
   resetResults() {
-    cy.do(Button('Reset all').click());
+    cy.wait(500);
+    cy.get('button[id="reset-receiving-filters"]').then((element) => {
+      const disabled = element.attr('disabled');
+      if (!disabled) {
+        cy.do(Button('Reset all').click());
+      }
+    });
+    cy.wait(1000);
   },
 
   goToUserDetails() {

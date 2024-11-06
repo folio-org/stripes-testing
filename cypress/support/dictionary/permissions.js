@@ -1065,6 +1065,11 @@ export default {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
   },
+  uiSettingsTenantReadingRoomAll: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.all',
+    gui: 'Settings (tenant): Can create, edit and remove reading room access',
+  },
+
   uiSettingsTenantReadingRoom: {
     internal: 'ui-tenant-settings.settings.reading-room-access.view',
     gui: 'Settings (tenant): Can view reading room access',
