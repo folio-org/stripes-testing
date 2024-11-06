@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
@@ -14,6 +14,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -173,6 +174,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
 
@@ -218,7 +220,7 @@ describe('MARC', () => {
               endDate: todayWithoutPaddingZero,
             };
             MarcAuthorities.checkCalloutAfterExport(jobID);
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
             ExportManagerSearchPane.waitLoading();
             ExportManagerSearchPane.searchByAuthorityControl();
             cy.wait(2000);

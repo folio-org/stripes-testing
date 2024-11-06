@@ -28,20 +28,22 @@ describe('Course Reserves', () => {
     };
 
     before('Create test data', () => {
-      cy.createTempUser([
-        Permissions.coursesReadAll.gui,
-        Permissions.uiNotesItemCreate.gui,
-        Permissions.uiNotesItemView.gui,
-        Permissions.uiNotesItemEdit.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-        cy.login(testData.user.username, testData.user.password, {
-          path: `${TopMenu.coursesPath}?sort=name`,
-          waiter: Courses.waitLoading,
-        });
+      cy.getAdminToken().then(() => {
         Courses.retrieveCoursesViaAPI().then((body) => {
           testData.course.id = body[0].id;
           testData.course.name = body[0].name;
+        });
+        cy.createTempUser([
+          Permissions.coursesReadAll.gui,
+          Permissions.uiNotesItemCreate.gui,
+          Permissions.uiNotesItemView.gui,
+          Permissions.uiNotesItemEdit.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+          cy.login(testData.user.username, testData.user.password, {
+            path: `${TopMenu.coursesPath}?sort=name`,
+            waiter: Courses.waitLoading,
+          });
         });
       });
     });

@@ -164,7 +164,7 @@ describe('Data Import', () => {
     before('Creating user and test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380519*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380519');
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
