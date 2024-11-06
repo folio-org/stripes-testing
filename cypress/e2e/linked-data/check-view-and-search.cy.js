@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import LinkedDataEditor from '../../support/fragments/linked-data-editor/linkedDataEditor';
+import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-data-linked-editor - check view and search', () => {

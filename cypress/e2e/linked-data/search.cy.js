@@ -5,6 +5,7 @@ import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
+import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 
 describe('Citation: Search Linked data resources', () => {
   const testData = {
@@ -42,7 +43,10 @@ describe('Citation: Search Linked data resources', () => {
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
 
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.linkedDataEditor,
+      waiter: LinkedDataEditor.waitLoading,
+    });
   });
 
   after('Delete test data', () => {
@@ -56,7 +60,6 @@ describe('Citation: Search Linked data resources', () => {
       'C451572 Linked-data Search: Basic search by title (citation)',
       { tags: ['draft', 'citation'] },
       () => {
-        cy.visit(TopMenu.marvaEditorPath);
         SearchAndFilter.waitLoading();
         SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
         SearchAndFilter.verifySearchResult(resourceData);
@@ -67,7 +70,6 @@ describe('Citation: Search Linked data resources', () => {
       'C451572 Linked-data Search: Basic search by ISBN (citation)',
       { tags: ['draft', 'citation'] },
       () => {
-        cy.visit(TopMenu.marvaEditorPath);
         SearchAndFilter.waitLoading();
         SearchAndFilter.searchResourceByIsbn(testData.uniqueIsbn);
         SearchAndFilter.verifySearchResult(resourceData);
@@ -78,7 +80,6 @@ describe('Citation: Search Linked data resources', () => {
       'C451572 Linked-data Search: Basic search by Contributor (citation)',
       { tags: ['draft', 'citation'] },
       () => {
-        cy.visit(TopMenu.marvaEditorPath);
         SearchAndFilter.waitLoading();
         SearchAndFilter.searchResourceByContributor(testData.uniqueCreator);
         SearchAndFilter.verifySearchResult(resourceData);
