@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable vars-on-top */
 /* eslint-disable no-var */
 /* eslint-disable guard-for-in */
