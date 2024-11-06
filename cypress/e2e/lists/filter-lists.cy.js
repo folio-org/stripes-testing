@@ -67,7 +67,31 @@ describe('lists', () => {
       {
         name: `C411806-${getTestEntityValue('list')}-4`,
         description: `C411806-${getTestEntityValue('desc')}-4`,
+        recordType: 'Holdings',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
+      },
+      {
+        name: `C411806-${getTestEntityValue('list')}-5`,
+        description: `C411806-${getTestEntityValue('desc')}-5`,
+        recordType: 'Instances',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
+      },
+      {
+        name: `C411806-${getTestEntityValue('list')}-6`,
+        description: `C411806-${getTestEntityValue('desc')}-6`,
         recordType: 'Purchase order lines',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
+      },
+      {
+        name: `C411806-${getTestEntityValue('list')}-7`,
+        description: `C411806-${getTestEntityValue('desc')}-7`,
+        recordType: 'Organizations',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
@@ -91,8 +115,7 @@ describe('lists', () => {
         'Purchase order lines',
         'Holdings',
         'Instances',
-        'Organizations — contact info',
-        'Organizations — vendor info',
+        'Organizations'
       ],
     };
 

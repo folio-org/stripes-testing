@@ -631,7 +631,7 @@ export default {
       statusAccordion.find(Checkbox('Active')).has({ checked: true }),
       statusAccordion.find(clearFilterButton).exists(),
     ]);
-    cy.wait(2000);
+    cy.wait(1000);
   },
 
   verifyResetAllButtonEnabled() {

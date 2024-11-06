@@ -68,23 +68,33 @@ export default {
   openNewRequestPane,
   printPickSlips,
 
+  waitForInstanceOrItemSpinnerToDisappear() {
+    cy.wait(1000);
+    cy.get('#new-item-info [class^="spinner"]').should('not.exist');
+    cy.wait(500);
+  },
+  waitForRequesterSpinnerToDisappear() {
+    cy.wait(1000);
+    cy.get('#new-requester-info [class^="spinner"]').should('not.exist');
+    cy.wait(500);
+  },
+
   fillRequiredFields(newRequest) {
     if ('instanceHRID' in newRequest) {
       cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
       cy.do(titleLevelRequest.click());
       cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
-      cy.intercept('/inventory/instances?*').as('getLoans');
       cy.do(itemInfoSection.find(Button('Enter')).click());
     } else {
       cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-      cy.intercept('/circulation/loans?*').as('getLoans');
       cy.do(enterItemBarcodeButton.click());
     }
-    cy.wait('@getLoans');
+    this.waitForInstanceOrItemSpinnerToDisappear();
     cy.wait(500);
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
+    this.waitForRequesterSpinnerToDisappear();
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
     cy.wait(1000);
@@ -122,12 +132,12 @@ export default {
     addRequester(newRequest.requesterName);
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
+    this.waitForInstanceOrItemSpinnerToDisappear();
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
     cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-    cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
-    cy.wait('@getLoans');
+    this.waitForRequesterSpinnerToDisappear();
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosePickupServicePoint(newRequest.pickupServicePoint);
@@ -167,6 +177,7 @@ export default {
 
   enterItemInfo(barcode) {
     cy.do([itemBarcodeInput.fillIn(barcode), enterItemBarcodeButton.click()]);
+    this.waitForInstanceOrItemSpinnerToDisappear();
   },
 
   enterHridInfo(hrid) {
@@ -180,6 +191,7 @@ export default {
       cy.do(instanceHridInput.fillIn(hrid));
     }
     cy.do(itemInfoSection.find(Button('Enter')).click());
+    this.waitForInstanceOrItemSpinnerToDisappear();
   },
 
   verifyErrorMessage(message) {
@@ -248,7 +260,6 @@ export default {
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
       TextArea({ id: 'patronComments' }).fillIn(patron),
     ]);
-    this.enableTitleLevelRequest();
     cy.expect(Spinner().absent());
   },
 
@@ -268,14 +279,16 @@ export default {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
+    this.waitForRequesterSpinnerToDisappear();
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
 
-  enterRequesterBarcode: (requesterBarcode) => {
+  enterRequesterBarcode(requesterBarcode) {
     cy.do(requesterBarcodeInput.fillIn(requesterBarcode));
     cy.do(enterRequesterBarcodeButton.click());
+    this.waitForRequesterSpinnerToDisappear();
     // wait until requestType select become enabled
     cy.wait(2000);
     // check is requestType select 'enabled', if 'disabled' - click [Enter] button for [Requester barcode] again
@@ -304,6 +317,7 @@ export default {
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.wait(2000);
     cy.do(enterRequesterBarcodeButton.click());
+    this.waitForRequesterSpinnerToDisappear();
     cy.wait(1000);
     this.chooseRequestType(requestType);
     cy.wait(1000);

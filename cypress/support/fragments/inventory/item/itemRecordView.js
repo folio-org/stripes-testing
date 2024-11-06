@@ -42,6 +42,7 @@ const verifyNote = (value) => {
   cy.expect(KeyValue('Check in note').has({ value }));
 };
 const waitLoading = () => {
+  cy.contains('Item', { timeout: 120000 }).should('be.visible');
   cy.expect(Pane(including('Item')).exists());
 };
 const verifyItemStatus = (itemStatus) => {
