@@ -7,7 +7,9 @@ import MatchProfileEditForm from '../../../../support/fragments/settings/dataImp
 import MatchProfileView from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -52,7 +54,8 @@ describe('Inventory', () => {
       'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+        MatchProfiles.waitLoading();
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.verifyExistingRecordSection(detailsOptions);
         NewMatchProfile.close();

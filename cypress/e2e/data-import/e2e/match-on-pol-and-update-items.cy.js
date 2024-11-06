@@ -382,8 +382,7 @@ describe('Data Import', () => {
         });
 
         // create mapping and action profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         collectionOfProfiles.forEach((profile) => {
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
