@@ -18,6 +18,7 @@ import {
   Headline,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
+import FileManager from '../../utils/fileManager';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
@@ -385,6 +386,20 @@ export default {
   uploadFile(fileName) {
     cy.do(fileButton.has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
+  },
+
+  uploadRecentlyDownloadedFile(downloadedFile) {
+    const changedFileName = `downloaded-${downloadedFile}`;
+
+    FileManager.findDownloadedFilesByMask(downloadedFile).then((downloadedFilenames) => {
+      const firstDownloadedFilename = downloadedFilenames[0];
+      FileManager.readFile(firstDownloadedFilename).then((actualContent) => {
+        FileManager.createFile(`cypress/fixtures/${changedFileName}`, actualContent);
+      });
+    });
+    this.uploadFile(changedFileName);
+
+    return cy.wrap(changedFileName);
   },
 
   waitFileUploading() {
