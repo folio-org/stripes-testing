@@ -90,7 +90,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
@@ -121,7 +121,7 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              // create local item note type in College tenant
+              // create local holding note type in College tenant
               InventoryInstances.createHoldingsNoteTypeViaApi(collegeHoldingNoteType.name)
                 .then((noteId) => {
                   collegeHoldingNoteType.id = noteId;
@@ -156,7 +156,6 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
-
               // create holdings in University tenant
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
@@ -248,16 +247,12 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-          // 4
           BulkEditActions.openActions();
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
           );
-
-          // 5
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
@@ -299,7 +294,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 6
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
@@ -313,8 +307,6 @@ describe('Bulk-edit', () => {
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
           );
-
-          // 7
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
@@ -335,16 +327,12 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 8
-
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 9
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedHoldingNoteType.payload.name,
@@ -352,24 +340,17 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             collegeHoldingNoteTypeNameWithAffiliation,
           );
-
-          // 10
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.noteRemoveAll(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-          // 12
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteRemoveAll(centralSharedHoldingNoteType.payload.name, 1);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 14
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteRemoveAll(collegeHoldingNoteTypeNameWithAffiliation, 2);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 15
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
@@ -396,8 +377,6 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.verifyAreYouSureForm(4);
-
-          // 16
           BulkEditActions.downloadPreview();
 
           holdingHrids.forEach((hrid) => {
@@ -409,7 +388,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 17
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
@@ -454,15 +432,12 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyErrorLabelInErrorAccordion(holdingUUIDsFileName, 4, 4, 2);
           BulkEditSearchPane.verifyNonMatchedResults();
 
-          // 18, 19
           universityHoldingIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               id,
               getReasonForError(id, Affiliations.University),
             );
           });
-
-          // 20
 
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
@@ -484,7 +459,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 21
           BulkEditActions.downloadErrors();
 
           universityHoldingIds.forEach((id) => {
