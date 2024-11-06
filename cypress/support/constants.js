@@ -993,6 +993,12 @@ export const HOLDING_NOTE_TYPES = {
   PROVENANCE: 'Provenance',
 };
 
+export const ITEM_NOTE_TYPES = {
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  CHECK_OUT_NOTE: 'Check out note',
+  CHECK_IN_NOTE: 'Check in note',
+};
+
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
@@ -1003,4 +1009,10 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   CONTRIBUTORS: 'Contributors',
   DATE: 'Date',
   RELEVANCE: 'Relevance',
+};
+export const STAFF_SLIP_NAMES = {
+  HOLD: 'Hold',
+  PICK_SLIP: 'Pick slip',
+  REQUEST_DELIVERY: 'Request delivery',
+  TRANSIT: 'Transit',
 };

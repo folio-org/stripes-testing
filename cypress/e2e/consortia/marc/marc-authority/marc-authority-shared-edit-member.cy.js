@@ -125,7 +125,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag046, testData.updatedTag046Value);
             QuickMarcEditor.clickArrowDownButton(4);
             QuickMarcEditor.verifyTagValue(5, testData.tag010);
-            MarcAuthority.clicksaveAndCloseButton();
+            MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkDeleteModal(1);
             MarcAuthority.continueWithSaveAndCheck();
             MarcAuthority.contains(testData.updatedTag100Value);
