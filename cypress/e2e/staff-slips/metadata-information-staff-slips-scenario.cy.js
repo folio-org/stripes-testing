@@ -1,5 +1,8 @@
-import permissions from '../../support/dictionary/permissions';
+import { STAFF_SLIP_NAMES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
+import StaffSlip from '../../support/fragments/settings/circulation/staffSlips/staffSlip';
+import StaffSlips from '../../support/fragments/settings/circulation/staffSlips/staffSlips';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -23,7 +26,7 @@ describe('Staff slips', () => {
         patronGroup.id = patronGroupResponse;
       });
       cy.createTempUser(
-        [permissions.uiCirculationCreateEditRemoveStaffSlips.gui],
+        [Permissions.uiCirculationCreateEditRemoveStaffSlips.gui],
         patronGroup.name,
       ).then((userProperties) => {
         userData = userProperties;
@@ -46,10 +49,10 @@ describe('Staff slips', () => {
     'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
     { tags: ['smoke', 'volaris'] },
     () => {
-      EditStaffClips.chooseStaffClip('Hold');
-      EditStaffClips.checkLastUpdateInfo();
-      EditStaffClips.collapseAll();
-      EditStaffClips.expandAll();
+      StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.HOLD);
+      StaffSlip.checkLastUpdateInfo();
+      StaffSlip.collapseAll();
+      StaffSlip.expandAll();
     },
   );
 });

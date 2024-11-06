@@ -65,11 +65,13 @@ export default {
       });
   },
   deleteViaApi(templateId) {
-    return CirculationPane.deleteViaApi({
+    cy.okapiRequest({
+      method: 'DELETE',
       path: `templates/${templateId}`,
       searchParams: {
         query: '(cql.allRecords=1) and category=""',
       },
+      isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
     });
   },

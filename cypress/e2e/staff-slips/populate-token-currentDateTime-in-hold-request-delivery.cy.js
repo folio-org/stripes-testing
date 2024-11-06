@@ -1,21 +1,19 @@
-import permissions from '../../support/dictionary/permissions';
+import { APPLICATION_NAMES, REQUEST_TYPES } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import { Locations } from '../../support/fragments/settings/tenant';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import { REQUEST_TYPES } from '../../support/constants';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { Locations } from '../../support/fragments/settings/tenant';
-import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 
 describe('Staff slips', () => {
   let userData;
@@ -26,7 +24,7 @@ describe('Staff slips', () => {
   };
 
   before('Preconditions', () => {
-    cy.loginAsAdmin().then(() => {
+    cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(instanceData.servicePoint);
       instanceData.defaultLocation = Location.getDefaultLocation(instanceData.servicePoint.id);
       Location.createViaApi(instanceData.defaultLocation).then((location) => {
@@ -35,18 +33,21 @@ describe('Staff slips', () => {
           location,
         });
       });
+
       cy.createTempUser().then((userProperties) => {
         userHoldData = userProperties;
       });
+
       cy.createTempUser([
-        permissions.checkinAll.gui,
-        permissions.checkoutAll.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiRequestsAll.gui,
-        permissions.uiCirculationCreateEditRemoveStaffSlips.gui,
+        Permissions.checkinAll.gui,
+        Permissions.checkoutAll.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiRequestsAll.gui,
+        Permissions.uiCirculationCreateEditRemoveStaffSlips.gui,
       ])
         .then((userProperties) => {
           userData = userProperties;
+
           UserEdit.addServicePointViaApi(
             instanceData.servicePoint.id,
             userData.userId,
@@ -54,16 +55,13 @@ describe('Staff slips', () => {
           );
         })
         .then(() => {
-          cy.visit(SettingsMenu.circulationStaffSlipsPath);
+          cy.login(userData.username, userData.password, {
+            path: SettingsMenu.circulationStaffSlipsPath,
+            waiter: EditStaffClips.waitLoading,
+          });
           EditStaffClips.editHold();
           EditStaffClips.addToken(['staffSlip.currentDateTime']);
           EditStaffClips.saveAndClose();
-        })
-        .then(() => {
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.checkOutPath,
-            waiter: Checkout.waitLoading,
-          });
         });
     });
   });
@@ -88,11 +86,12 @@ describe('Staff slips', () => {
     'C388509 Populate the token "currentDateTime" in the hold, request delivery (volaris)',
     { tags: ['extendedPath', 'volaris'] },
     () => {
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(instanceData.folioInstances[0].barcodes[0]);
 
       cy.wait(10000);
-      cy.visit(TopMenu.requestsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       NewRequest.openNewRequestPane();
       NewRequest.enterItemInfo(instanceData.folioInstances[0].barcodes[0]);
       NewRequest.enterRequesterBarcode(userHoldData.barcode);
@@ -104,7 +103,7 @@ describe('Staff slips', () => {
         instanceData.requestId = intercept.response.body.id;
       });
 
-      cy.visit(TopMenu.checkInPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.checkInItemGui(instanceData.folioInstances[0].barcodes[0]);
       ConfirmItemInModal.confirmAwaitingPickUpModal();
     },
