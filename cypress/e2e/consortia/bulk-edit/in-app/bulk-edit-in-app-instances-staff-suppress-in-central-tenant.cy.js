@@ -43,6 +43,7 @@ const folioInstance = {
 const marcInstance = {
   title: `C477642_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
 };
+const instances = [folioInstance, marcInstance];
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -82,8 +83,8 @@ describe('Bulk-edit', () => {
                     marcInstance.hrid = instanceData.hrid;
                   });
 
-                  [marcInstance.uuid, folioInstance.uuid].forEach((instanceUuid) => {
-                    cy.getInstanceById(instanceUuid).then((body) => {
+                  instances.forEach((instance) => {
+                    cy.getInstanceById(instance.uuid).then((body) => {
                       body.staffSuppress = false;
                       cy.updateInstance(body);
                     });
@@ -109,8 +110,9 @@ describe('Bulk-edit', () => {
                   cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
                     'getPreview',
                   );
+                  cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
                   QueryModal.clickTestQuery();
-                  cy.wait(20_000);
+                  QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
                 });
               });
             });
@@ -154,8 +156,6 @@ describe('Bulk-edit', () => {
               `(instance.staff_suppress == "false") AND (instance.title starts with "C477642_${postfix}")`,
             );
 
-            const instances = [folioInstance, marcInstance];
-
             instances.forEach((instance) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 instance.hrid,
@@ -182,6 +182,7 @@ describe('Bulk-edit', () => {
               );
             });
 
+            BulkEditActions.openActions();
             BulkEditActions.downloadMatchedResults();
 
             instances.forEach((instance) => {
@@ -261,6 +262,7 @@ describe('Bulk-edit', () => {
               InventoryInstances.selectInstance();
               InventoryInstance.waitLoading();
               InventoryInstance.verifyStaffSuppress();
+              InventoryInstances.resetAllFilters();
             });
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

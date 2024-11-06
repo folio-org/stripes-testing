@@ -1239,6 +1239,14 @@ export default {
     cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
   },
 
+  verifyPreviousPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(previousPaginationButton).has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(nextPaginationButton).has({ disabled: isDisabled }));
+  },
+
   verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {
     cy.expect([
       matchedAccordion.find(previousPaginationButton).has({ disabled: true }),

@@ -344,4 +344,24 @@ export default {
   buildQueryButtonDisabled(disabled = true) {
     cy.do(buildQueryButton.has({ disabled }));
   },
+
+  waitForQueryCompleted(allias, maxRetries = 60) {
+    let retries = 0;
+
+    function checkResponse() {
+      return cy.wait(allias, { timeout: 10000 }).then((interception) => {
+        if (interception.response.body.totalRecords === 0) {
+          retries++;
+          if (retries > maxRetries) {
+            throw new Error(
+              'Exceeded maximum retry attempts waiting for totalRecords to not equal 0',
+            );
+          }
+          cy.wait(1000);
+          checkResponse();
+        }
+      });
+    }
+    checkResponse();
+  },
 };
