@@ -39,7 +39,7 @@ describe('Eureka', () => {
 
     it(
       'C589233 Permission associated with assigned capability set is returned from "_self" endpoint upon login (eureka)',
-      { tags: ['criticalPath', 'eureka', 'C589233'] },
+      { tags: ['smoke', 'eureka', 'C589233'] },
       () => {
         cy.intercept('GET', selfCallpath).as('selfCall');
         cy.login(userA.username, userA.password);
