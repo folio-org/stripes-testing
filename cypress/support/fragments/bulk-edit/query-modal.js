@@ -349,7 +349,7 @@ export default {
     let retries = 0;
 
     function checkResponse() {
-      return cy.wait(allias, { timeout: 10000 }).then((interception) => {
+      return cy.wait(allias, { timeout: 20000 }).then((interception) => {
         if (interception.response.body.totalRecords === 0) {
           retries++;
           if (retries > maxRetries) {
