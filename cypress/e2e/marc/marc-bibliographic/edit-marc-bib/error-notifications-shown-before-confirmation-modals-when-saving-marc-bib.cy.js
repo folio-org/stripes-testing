@@ -18,9 +18,9 @@ describe('MARC', () => {
         tag300: '300',
         tag300content: 'TEST',
         tagLDR: 'LDR',
-        errorMessage:
-          'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
-        errorMarcTagWrongLength: 'Record cannot be saved. A MARC tag must contain three characters.',
+        errorMessage: 'Tag must contain three characters and can only accept numbers 0-9.',
+        errorMarcTagWrongLength:
+          'Record cannot be saved. A MARC tag must contain three characters.',
       };
       const marcFile = {
         marc: 'marcBibFileForC375176.mrc',
@@ -64,29 +64,21 @@ describe('MARC', () => {
 
       it(
         'C375176 Error notifications shown before confirmation modals when saving "MARC bib" record while editing record (Spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C375176'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag0);
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '',
-          );
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '');
           QuickMarcEditor.deleteTag(13);
           QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(0, testData.errorMessage);
-          QuickMarcEditor.fillEmptyTextFieldOfField(
-            0,
-            'records[0].content.ELvl',
-            '\\',
-          );
+          QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
+          QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(10, testData.errorMarcTagWrongLength);
+          QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();

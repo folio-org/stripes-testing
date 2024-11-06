@@ -81,7 +81,7 @@ describe('bulk-edit', () => {
 
     it(
       'C430250 Verify updated properties columns appear on "Are you sure?" form and on Confirmation screen - Items (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C430250'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
@@ -135,9 +135,8 @@ describe('bulk-edit', () => {
         ]);
 
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
-        // TODO: uncomment after MODBULKOPS-204
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkOutNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkOutNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Status', 'Available');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', 'Reading room');
@@ -148,8 +147,8 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkOutNote);
-        // BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkOutNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Status', 'Available');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Permanent loan type', 'Reading room');
@@ -174,9 +173,9 @@ describe('bulk-edit', () => {
         ItemRecordView.checkItemNote(notes.noteNote);
         ItemRecordView.verifyItemStatus('Available');
         ItemRecordView.verifyPermanentLoanType('Reading room');
-        ItemRecordView.verifyTemporaryLoanType('-');
+        ItemRecordView.verifyTemporaryLoanType('No value set-');
         ItemRecordView.verifyPermanentLocation('Online');
-        ItemRecordView.verifyTemporaryLocation('-');
+        ItemRecordView.verifyTemporaryLocation('No value set-');
       },
     );
   });

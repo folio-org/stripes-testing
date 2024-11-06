@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
@@ -5,7 +6,10 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
@@ -43,7 +47,6 @@ describe('Data Import', () => {
       );
 
       cy.loginAsAdmin();
-      cy.visit(SettingsMenu.jobProfilePath);
     });
 
     after('Delete test data', () => {
@@ -53,8 +56,11 @@ describe('Data Import', () => {
 
     it(
       'C2332 Edit an existing job profile by adding a long name (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C2332'] },
       () => {
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.edit();

@@ -114,11 +114,10 @@ describe('Title Level Request. Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.disableTLRViaApi();
   });
   it(
     'C347890 Check that user can create Item level request from instance page (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C347890'] },
     () => {
       cy.log('new request-0');
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);

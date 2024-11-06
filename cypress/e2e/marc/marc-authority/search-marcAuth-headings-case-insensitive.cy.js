@@ -42,22 +42,23 @@ describe('MARC', () => {
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(headingPrefix);
       });
 
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        testData.marcFile.marc,
-        testData.marcFile.fileName,
-        testData.marcFile.jobProfileToRun,
-      ).then((response) => {
-        response.forEach((record) => {
-          testData.authorityIDs.push(record[testData.marcFile.propertyName].id);
+      cy.createTempUser([
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
+        DataImport.uploadFileViaApi(
+          testData.marcFile.marc,
+          testData.marcFile.fileName,
+          testData.marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.authorityIDs.push(record[testData.marcFile.propertyName].id);
+          });
         });
       });
-
-      cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
-        },
-      );
     });
 
     beforeEach('Login', () => {
@@ -77,7 +78,7 @@ describe('MARC', () => {
 
     it(
       'C466093 Search by "Children\'s subject heading" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466093'] },
       () => {
         testData.headingsC466093.forEach((query) => {
           MarcAuthorities.searchBeats(query);
@@ -96,7 +97,7 @@ describe('MARC', () => {
 
     it(
       'C466092 Search/Browse by "Genre" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466092'] },
       () => {
         testData.headingsC466092.forEach((query) => {
           MarcAuthorities.searchBeats(query);
@@ -128,7 +129,7 @@ describe('MARC', () => {
 
     it(
       'C466091 Search/Browse by "Subject" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466091'] },
       () => {
         testData.headingsC466091.forEach((query) => {
           MarcAuthorities.searchBeats(query);

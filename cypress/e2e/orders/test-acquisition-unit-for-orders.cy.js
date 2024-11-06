@@ -1,9 +1,7 @@
 import permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { NewOrder, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
@@ -88,7 +86,7 @@ describe('ui-finance: Orders', () => {
           path: SettingsMenu.acquisitionUnitsPath,
           waiter: AcquisitionUnits.waitLoading,
         });
-        AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+        AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
 
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,

@@ -37,8 +37,8 @@ describe('MARC', () => {
 
         const linkingTagAndValues = [
           {
-            rowIndex: 85,
-            value: 'C388642 Lee, Stan, 1922-2018,',
+            rowIndex: 82,
+            value: 'C388642 Lee, Stan, 1922-2018',
             tag: 700,
             boxFourth: '$a C388642 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
@@ -46,7 +46,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 87,
+            rowIndex: 84,
             value: 'C388642 Robinson & Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388642 Robinson & Associates, Inc.',
@@ -55,7 +55,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 88,
+            rowIndex: 85,
             value:
               'C388642 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
@@ -66,7 +66,7 @@ describe('MARC', () => {
             boxSeventh: '',
           },
           {
-            rowIndex: 89,
+            rowIndex: 86,
             value: 'C388642 Gone with the wind (Motion picture : 1939)',
             tag: 730,
             boxFourth: '$a C388642 Gone with the wind $f 1939) $g (Motion picture :',
@@ -85,76 +85,61 @@ describe('MARC', () => {
           },
           {
             rowIndex: 33,
-            tag: '110',
-            naturalId: 'no20061082779',
-          },
-          {
-            rowIndex: 34,
-            tag: '111',
-            naturalId: 'no20091764299',
-          },
-          {
-            rowIndex: 35,
-            tag: '130',
-            naturalId: 'n800269809',
-          },
-          {
-            rowIndex: 36,
             tag: '240',
             naturalId: 'no20200242309',
           },
           {
-            rowIndex: 64,
+            rowIndex: 61,
             tag: '600',
             naturalId: 'n20160040819',
           },
           {
-            rowIndex: 59,
+            rowIndex: 56,
             tag: '610',
             naturalId: 'nb20090244889',
           },
           {
-            rowIndex: 60,
+            rowIndex: 57,
             tag: '611',
             naturalId: 'n822167579',
           },
           {
-            rowIndex: 61,
+            rowIndex: 58,
             tag: '630',
             naturalId: 'no20230068899',
           },
           {
-            rowIndex: 66,
+            rowIndex: 63,
             tag: '650',
             naturalId: 'sh20091259899',
           },
           {
-            rowIndex: 70,
+            rowIndex: 67,
             tag: '651',
             naturalId: 'sh850015319',
           },
           {
-            rowIndex: 72,
+            rowIndex: 69,
             tag: '655',
             naturalId: 'gf20140262669',
           },
           {
-            rowIndex: 90,
+            rowIndex: 87,
             tag: '800',
             naturalId: 'n790238119',
           },
           {
-            rowIndex: 91,
+            rowIndex: 88,
             tag: '810',
             naturalId: 'n800955859',
           },
           {
-            rowIndex: 92,
+            rowIndex: 89,
             tag: '811',
             naturalId: 'no20181255879',
           },
           {
-            rowIndex: 93,
+            rowIndex: 90,
             tag: '830',
             naturalId: 'no20180187549',
           },
@@ -163,8 +148,7 @@ describe('MARC', () => {
         const createdRecordsIDs = [];
 
         const linkableFields = [
-          100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
-          811, 830,
+          100, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830,
         ];
 
         before('Creating user and data', () => {
@@ -191,9 +175,10 @@ describe('MARC', () => {
                 });
               });
             });
-
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -215,7 +200,6 @@ describe('MARC', () => {
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
-
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -228,13 +212,13 @@ describe('MARC', () => {
           Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
         it(
           'C388642 All linkable fields are NOT linked after clicking on the "Link headings" button when derive "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C388642'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
@@ -263,7 +247,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout(
-              'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 800, 810, 811, and 830 must be set manually by selecting the link icon.',
+              'Field 100, 240, 600, 610, 611, 630, 650, 651, 655, 800, 810, 811, and 830 must be set manually by selecting the link icon.',
             );
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.verifySaveAndCloseButtonDisabled();

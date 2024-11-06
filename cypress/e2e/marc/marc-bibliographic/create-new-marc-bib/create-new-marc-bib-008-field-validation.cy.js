@@ -39,25 +39,25 @@ describe('MARC', () => {
 
       it(
         'C387449 "008" field existence validation when create new "MARC bib" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387449'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 1);
           QuickMarcEditor.updateExistingTagName('008', '00');
           QuickMarcEditor.checkEmptyContent('00');
           QuickMarcEditor.deleteFieldByTagAndCheck('00');
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkDelete008Callout();
+          QuickMarcEditor.checkCallout('Field 008 is required.');
           QuickMarcEditor.undoDelete();
           QuickMarcEditor.updateExistingTagName('00', '008');
           QuickMarcEditor.check008FieldContent();
           cy.intercept('records-editor/records').as('saveMarc');
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait('@saveMarc').then((res) => {

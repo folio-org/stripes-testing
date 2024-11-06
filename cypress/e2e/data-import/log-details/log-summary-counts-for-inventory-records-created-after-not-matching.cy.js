@@ -1,13 +1,14 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   RECORD_STATUSES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -16,9 +17,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -29,10 +27,16 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -173,7 +177,7 @@ describe('Data Import', () => {
 
     it(
       'C378901 Check log summary counts for inventory records created after NOT matching (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C378901'] },
       () => {
         // create mapping profiles
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
@@ -190,19 +194,19 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create match profile
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchAndThreeActionProfiles(
           matchProfile.profileName,
@@ -215,7 +219,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.checkIsLandingPageOpened();
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC378901.mrc', marcFileName);
@@ -244,13 +248,15 @@ describe('Data Import', () => {
 
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyInstanceIsOpened(firstInstanceTitle);
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
         HoldingsRecordView.checkPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
         );
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
         ItemRecordView.verifyItemStatus(

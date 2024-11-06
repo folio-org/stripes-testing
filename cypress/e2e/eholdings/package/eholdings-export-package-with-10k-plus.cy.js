@@ -11,6 +11,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -52,7 +54,7 @@ describe('eHoldings', () => {
 
     it(
       'C367972 "Export" button must be disabled when user tries to export "Package" record with more than 10k of "Title" records (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C367972'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
@@ -109,7 +111,7 @@ describe('eHoldings', () => {
         EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
           const jobId = id;
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.waitLoading();
           // wait until export finished
           cy.wait(10000);

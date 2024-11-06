@@ -55,10 +55,13 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -115,7 +118,7 @@ describe('Inventory', () => {
 
     it(
       'C359596 Verify that contributors with the same "Name", "Name type" and different "authorityID" will display in different rows in the response (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C359596'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

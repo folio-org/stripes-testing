@@ -46,7 +46,7 @@ describe('MARC', () => {
         before('Create user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380726*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380726');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -79,13 +79,13 @@ describe('MARC', () => {
         after('Deleting created user and data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
+          MarcAuthority.deleteViaAPI(createdAuthorityIDs[0], true);
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
         });
 
         it(
           'C422134 "$9" validation when creating a new "MARC bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422134'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -109,7 +109,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
               '',
               '$0 3052044',
               '',
@@ -120,14 +120,24 @@ describe('MARC', () => {
               '$9 test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(5, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              5,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.fillEmptyTextAreaOfField(
               5,
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(5, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              5,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.fillEmptyTextAreaOfField(
               5,
               'records[5].subfieldGroups.uncontrolledAlpha',
@@ -137,14 +147,24 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(6, '$9 test');
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(6, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              6,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.updateExistingFieldContent(
               6,
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(6, '$9 is an invalid subfield for linkable bibliographic fields.');
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkErrorMessage(
+              6,
+              '$9 is an invalid subfield for linkable bibliographic fields.',
+            );
             QuickMarcEditor.updateExistingFieldContent(6, 'test');
             cy.wait(500);
 
@@ -154,6 +174,8 @@ describe('MARC', () => {
             cy.wait(500);
             MarcAuthority.addNewField(8, '588', '$9 test $9 TEST');
             cy.wait(500);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
@@ -168,7 +190,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
+              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',
             );
             InventoryViewSource.contains('\t035\t   \t$a 123123 $9 test ');
             InventoryViewSource.contains('\t300\t   \t$9 123123 ');

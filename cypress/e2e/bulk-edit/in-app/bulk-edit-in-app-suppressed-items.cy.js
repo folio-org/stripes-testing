@@ -8,6 +8,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const itemUUIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
@@ -50,7 +52,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C380641'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
@@ -68,7 +70,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         BulkEditSearchPane.waitFileUploading();
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

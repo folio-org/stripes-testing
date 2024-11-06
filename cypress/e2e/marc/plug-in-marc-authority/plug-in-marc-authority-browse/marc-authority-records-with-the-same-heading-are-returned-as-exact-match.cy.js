@@ -97,7 +97,7 @@ describe('MARC', () => {
 
       it(
         'C442834 MARC Authority plug-in | Both MARC authority records with the same heading are returned as exact match via browse (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C442834'] },
         () => {
           browseValues.forEach((browseValue) => {
             MarcAuthorities.searchBeats(browseValue.title);

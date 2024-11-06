@@ -5,6 +5,7 @@ import {
   MARC_HOLDING_LDR_FIELD_ELVL_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
   MARC_HOLDING_LDR_FIELD_DROPDOWNS_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -15,6 +16,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -56,38 +58,39 @@ describe('MARC', () => {
         Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            recordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
+
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                recordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
-
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(recordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.goToMarcHoldingRecordAdding();
-              QuickMarcEditor.updateExistingField(
-                testData.tag852,
-                QuickMarcEditor.getExistingLocation(),
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveHoldings();
-              HoldingsRecordView.checkHoldingRecordViewOpened();
-              HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-                recordIDs.push(holdingsID);
-                cy.login(createdUserProperties.username, createdUserProperties.password, {
-                  path: `${TopMenu.inventoryPath}/view/${recordIDs[0]}/${recordIDs[1]}`,
-                  waiter: HoldingsRecordView.checkHoldingRecordViewOpened,
-                });
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.searchByTitle(recordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.goToMarcHoldingRecordAdding();
+            QuickMarcEditor.updateExistingField(
+              testData.tag852,
+              QuickMarcEditor.getExistingLocation(),
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveHoldings();
+            HoldingsRecordView.checkHoldingRecordViewOpened();
+            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+              recordIDs.push(holdingsID);
+              cy.login(createdUserProperties.username, createdUserProperties.password, {
+                path: `${TopMenu.inventoryPath}/view/${recordIDs[0]}/${recordIDs[1]}`,
+                waiter: HoldingsRecordView.checkHoldingRecordViewOpened,
               });
             });
           },
@@ -104,7 +107,7 @@ describe('MARC', () => {
 
     it(
       'C357063 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C357063'] },
       () => {
         HoldingsRecordView.close();
         InventoryInstance.openHoldingView();

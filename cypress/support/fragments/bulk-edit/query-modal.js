@@ -1,6 +1,6 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  HTML,
   Modal,
   MultiColumnList,
   MultiSelect,
@@ -10,7 +10,6 @@ import {
   Selection,
   Spinner,
   TextField,
-  including,
 } from '../../../../interactors';
 
 const buildQueryModal = Modal('Build query');
@@ -21,18 +20,21 @@ const runQueryButton = Button('Run query');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
+const selectFieldButton = Button(including('Select field'));
 
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holding — Instance UUID',
+  instanceUuid: 'Holdings — Instance UUID',
 };
 export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
-  instanceResourceTitle: 'Instance — Title',
+  instanceResourceTitle: 'Instance — Resource title',
+  staffSuppress: 'Instance — Staff suppress',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
+  instanceTitle: 'Instances — Resource title',
   itemStatus: 'Items — Status',
   itemUuid: 'Items — Item UUID',
   holdingsId: 'Holdings — UUID',
@@ -42,25 +44,25 @@ export const usersFieldValues = {
   expirationDate: 'User — Expiration date',
   firstName: 'User — First name',
   lastName: 'User — Last name',
-  patronGroup: 'Group — Group',
+  patronGroup: 'Patron group — Name',
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userId: 'User — User UUID',
 };
 export const dateTimeOperators = [
   'Select operator',
   'equals',
   'not equal to',
-  '>',
-  '<',
-  '>=',
-  '<=',
+  'greater than',
+  'less than',
+  'greater than or equal to',
+  'less than or equal to',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
   'Select operator',
   'equals',
-  'not equal to',
   'in',
   'not in',
   'is null/empty',
@@ -145,7 +147,8 @@ export default {
   },
 
   verifyFieldsSortedAlphabetically() {
-    cy.get('[class^="col-sm-4"] [role="listbox"] [role="option"]')
+    cy.do(selectFieldButton.click());
+    cy.get('[class^=selectionListRoot] [role="listbox"] [role="option"]')
       .children()
       .then((optionsText) => {
         const textArray = optionsText.get().map((el) => el.innerText);
@@ -156,6 +159,10 @@ export default {
 
   selectField(selection, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).choose(selection));
+  },
+
+  clickSelectFieldButton() {
+    cy.do(selectFieldButton.click());
   },
 
   typeInAndSelectField(string, row = 0) {
@@ -228,23 +235,13 @@ export default {
   fillInValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
-    cy.do([
-      RepeatableFieldItem({ index: row })
-        .find(MultiSelectOption(including(text)))
-        .click(),
-    ]);
-    cy.focused().type('{selectAll}{backspace}');
+    cy.do([MultiSelectOption(including(text)).click()]);
     cy.do(buildQueryModal.click());
   },
 
   chooseFromValueMultiselect(text, row = 0) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
-    cy.do([
-      RepeatableFieldItem({ index: row })
-        .find(MultiSelectOption(including(text)))
-        .click(),
-      buildQueryModal.click(),
-    ]);
+    cy.do([MultiSelectOption(including(text)).click(), buildQueryModal.click()]);
   },
 
   removeValueFromMultiselect(text) {
@@ -346,5 +343,25 @@ export default {
 
   buildQueryButtonDisabled(disabled = true) {
     cy.do(buildQueryButton.has({ disabled }));
+  },
+
+  waitForQueryCompleted(allias, maxRetries = 60) {
+    let retries = 0;
+
+    function checkResponse() {
+      return cy.wait(allias, { timeout: 20000 }).then((interception) => {
+        if (interception.response.body.totalRecords === 0) {
+          retries++;
+          if (retries > maxRetries) {
+            throw new Error(
+              'Exceeded maximum retry attempts waiting for totalRecords to not equal 0',
+            );
+          }
+          cy.wait(1000);
+          checkResponse();
+        }
+      });
+    }
+    checkResponse();
   },
 };

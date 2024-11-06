@@ -1,5 +1,12 @@
-import { including } from 'bigtest';
-import { Button, MultiColumnListRow, Pane, TextField, Modal } from '../../../../../../interactors';
+import { including } from '@interactors/html';
+import {
+  Button,
+  MultiColumnListRow,
+  Pane,
+  TextField,
+  Modal,
+  NavListItem,
+} from '../../../../../../interactors';
 
 const urlRelationshipPane = Pane('URL relationship');
 const newButton = Button('+ New');
@@ -30,6 +37,12 @@ function getListOfURLRelationship() {
 
 export default {
   getListOfURLRelationship,
+
+  openTabFromInventorySettingsList() {
+    cy.do(NavListItem('Inventory').click());
+    cy.do(NavListItem('URL relationship').click());
+  },
+
   waitloading() {
     cy.expect(urlRelationshipPane.exists());
   },
@@ -58,7 +71,9 @@ export default {
 
   deleteUrlRelationship(name) {
     cy.do([
-      MultiColumnListRow(including(name)).find(deleteIcon).click(),
+      MultiColumnListRow({ content: including(name), isContainer: false })
+        .find(deleteIcon)
+        .click(),
       deleteUrlRelationshipModal.find(deleteButton).click(),
     ]);
   },

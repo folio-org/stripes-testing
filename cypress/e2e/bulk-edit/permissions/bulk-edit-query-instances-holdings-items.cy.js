@@ -6,6 +6,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let firstUser;
 let secondUser;
@@ -18,7 +20,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewInstances.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         firstUser = userProperties;
@@ -29,7 +31,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         secondUser = userProperties;
@@ -44,7 +46,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423696 Verify Query tab permissions (In app Instances, Holdings, Items) (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423696'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.bulkEditPath,
@@ -53,14 +55,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(firstUser.username);
         UsersSearchPane.openUser(firstUser.username);
         // Add bulkEditQueryView permission and remove next three
         UserEdit.addPermissions([
           permissions.bulkEditQueryView.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();
@@ -91,7 +93,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423695 Verify Query tab permissions (In app Instances) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423695'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,
@@ -100,14 +102,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(secondUser.username);
         UsersSearchPane.openUser(secondUser.username);
         // Add bulkEditQueryView permission and remove next three
         UserEdit.addPermissions([
           permissions.bulkEditQueryView.gui,
           permissions.uiUsersView.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
           permissions.uiUserEdit.gui,
         ]);
         UserEdit.saveAndClose();

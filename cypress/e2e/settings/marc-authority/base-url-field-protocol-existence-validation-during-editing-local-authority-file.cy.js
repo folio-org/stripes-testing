@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C440092 "Base URL" field protocol existence validation during editing "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C440092'] },
         () => {
           invalidBaseUrls.forEach((invalidBaseUrl) => {
             ManageAuthorityFiles.clickEditButton(localAuthorityFile.name);

@@ -12,9 +12,10 @@ import Location from '../../../../support/fragments/settings/tenant/locations/ne
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
@@ -153,7 +154,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'shiftLeft'] },
+        { tags: ['smoke', 'firebird', 'shiftLeft', 'C375281'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
@@ -212,7 +213,7 @@ describe('bulk-edit', () => {
           BulkEditLogs.downloadFileWithCommitErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [item2.hrid]);
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', item1.barcode);
           ItemRecordView.waitLoading();

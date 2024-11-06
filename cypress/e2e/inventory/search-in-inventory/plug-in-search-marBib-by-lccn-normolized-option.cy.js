@@ -72,23 +72,29 @@ describe('Inventory', () => {
         orderNumber = response.body.poNumber;
         orderID = response.body.id;
       });
-      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-        (response) => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.getUserToken(user.username, user.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
           response.forEach((record) => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
-        },
-      );
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.uiOrdersCreate.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+        });
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        },
-      );
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
 
     after(() => {
@@ -103,7 +109,7 @@ describe('Inventory', () => {
 
     it(
       'C442799 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C442799'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

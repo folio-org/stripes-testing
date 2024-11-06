@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353230 Verify completion of the in-app bulk edit (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C353230'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

@@ -9,6 +9,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
@@ -50,7 +52,7 @@ describe('bulk-edit', () => {
 
     it(
       'C398010 Verify "Suppress from discovery" (Set true) option in Bulk Editing Holdings (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C398010'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
@@ -71,7 +73,7 @@ describe('bulk-edit', () => {
           suppressFromDiscovery,
         );
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
@@ -79,7 +81,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();

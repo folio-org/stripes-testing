@@ -28,18 +28,18 @@ describe('Inventory', () => {
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 6 - LC (local)',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.DEWEY,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC_LOCAL,
           classificationValue: 'DD259.4 .B527 1973',
         },
         {
           instanceTitle:
             'C466145 Search by Classification Instance 7 - National Agricultural Library',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.GDC,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.NATIONAL_AGRICULTURAL_LIBRARY,
           classificationValue: 'HD3492.H8',
         },
         {
           instanceTitle: 'C466145 Search by Classification Instance 9 - SUDOC',
-          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.LC,
+          classificationType: CLASSIFICATION_IDENTIFIER_TYPES.SUDOC,
           classificationValue: 'L37.s:Oc1/2/991',
         },
       ],
@@ -91,55 +91,47 @@ describe('Inventory', () => {
 
     before('Create user, test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
-        (createdUserProperties) => {
-          user = createdUserProperties;
+      // make sure there are no duplicate records in the system
+      InventoryInstances.deleteInstanceByTitleViaApi('C466145*');
 
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((createdUserProperties) => {
+        user = createdUserProperties;
+
+        cy.getUserToken(user.username, user.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
           });
+        });
 
-          ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
-            (response) => {
-              classificationIdentifierTypeId = response.body.id;
-            },
-          );
+        cy.getAdminToken();
+        ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
+          (response) => {
+            classificationIdentifierTypeId = response.body.id;
+          },
+        );
 
-          cy.getInstanceTypes({ limit: 1 })
-            .then((instanceTypes) => {
-              testData.instanceTypeId = instanceTypes[0].id;
-            })
-            .then(() => {
-              testData.folioInstances.forEach((folioInstance) => {
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId: testData.instanceTypeId,
-                    title: folioInstance.instanceTitle,
-                    classifications: [
-                      {
-                        classificationNumber: folioInstance.classificationValue,
-                        classificationTypeId: folioInstance.classificationType,
-                      },
-                    ],
-                  },
-                }).then((instance) => {
-                  createdRecordIDs.push(instance.instanceId);
-                });
-              });
+        cy.getInstanceTypes({ limit: 1 })
+          .then((instanceTypes) => {
+            testData.instanceTypeId = instanceTypes[0].id;
+          })
+          .then(() => {
+            testData.folioInstances.forEach((folioInstance) => {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
                   instanceTypeId: testData.instanceTypeId,
-                  title: testData.instanceTitleWithLocalClassification,
+                  title: folioInstance.instanceTitle,
                   classifications: [
                     {
-                      classificationNumber: testData.localInstnaceClassificationValue,
-                      classificationTypeId: classificationIdentifierTypeId,
+                      classificationNumber: folioInstance.classificationValue,
+                      classificationTypeId: folioInstance.classificationType,
                     },
                   ],
                 },
@@ -147,14 +139,28 @@ describe('Inventory', () => {
                 createdRecordIDs.push(instance.instanceId);
               });
             });
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: testData.instanceTypeId,
+                title: testData.instanceTitleWithLocalClassification,
+                classifications: [
+                  {
+                    classificationNumber: testData.localInstnaceClassificationValue,
+                    classificationTypeId: classificationIdentifierTypeId,
+                  },
+                ],
+              },
+            }).then((instance) => {
+              createdRecordIDs.push(instance.instanceId);
+            });
           });
-          InventorySearchAndFilter.instanceTabIsDefault();
-        },
-      );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.instanceTabIsDefault();
+      });
     });
 
     after('Delete user, test data', () => {
@@ -168,7 +174,7 @@ describe('Inventory', () => {
 
     it(
       'C466145 Search for each Instance classification type using "Classification, normalized" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466145'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.instanceTitle);

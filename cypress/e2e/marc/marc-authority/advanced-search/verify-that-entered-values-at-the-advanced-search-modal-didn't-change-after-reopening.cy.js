@@ -60,7 +60,7 @@ describe('MARC', () => {
 
       it(
         'C358937 Verify that entered values at the "Advanced search" modal didn\'t change after reopening (Spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C358937'] },
         () => {
           // Step 1: Click on the "Advanced search" button at the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();

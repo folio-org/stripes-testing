@@ -1,8 +1,11 @@
+import { including, matching, or } from '@interactors/html';
 import {
   Accordion,
   Button,
   Checkbox,
   FieldSet,
+  Modal,
+  Pane,
   PaneHeader,
   RepeatableFieldItem,
   Section,
@@ -11,9 +14,6 @@ import {
   SelectionList,
   TextArea,
   TextField,
-  including,
-  matching,
-  or,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -71,10 +71,10 @@ export default {
   close: () => cy.do(closeButton.click()),
   waitLoading: () => {
     cy.expect([
-      Section({ id: 'instance-form' }).exists(),
+      Pane({ id: 'instance-form' }).exists(),
       or(
-        PaneHeader(including('Edit instance')).exists(),
-        PaneHeader(including('Edit shared instance')).exists(),
+        Pane({ titleLabel: including('Edit instance') }).exists(),
+        Pane({ titleLabel: including('Edit shared instance') }).exists(),
       ),
     ]);
   },
@@ -377,6 +377,7 @@ export default {
       });
   },
   getStatisticalCodesFromInstance: () => {
+    cy.do(Button({ name: 'statisticalCodeIds[0]' }).click());
     return cy
       .get('[class^=overlay-]')
       .find('div[class^=optionSegment-]')
@@ -387,7 +388,6 @@ export default {
   },
   getClassificationOptionsList() {
     cy.do(addClassificationButton.click());
-
     return cy.then(() => classificationSection
       .find(Select({ name: 'classifications[0].classificationTypeId' }))
       .optionsText());
@@ -407,5 +407,12 @@ export default {
         }).absent(),
       );
     }
+  },
+  closeCancelEditingModal: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
   },
 };

@@ -1,5 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -18,6 +19,10 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -98,12 +103,12 @@ describe('Data Import', () => {
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfile);
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
@@ -139,7 +144,7 @@ describe('Data Import', () => {
 
     it(
       'C376973 Verify the log details for created imported order records (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C376973'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
@@ -166,7 +171,8 @@ describe('Data Import', () => {
 
             orderNumbers.push(orderNumber);
           });
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           Logs.openFileDetails(marcFileName);
         });
       },

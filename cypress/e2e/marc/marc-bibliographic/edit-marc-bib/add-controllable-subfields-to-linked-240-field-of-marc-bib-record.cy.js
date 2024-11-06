@@ -20,7 +20,7 @@ describe('MARC', () => {
         searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
         marcAuthTitle: 'Variations',
         errorCalloutMessage:
-          'MARC 240 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
       const marcFiles = [
         {
@@ -103,7 +103,7 @@ describe('MARC', () => {
 
       it(
         'C376598 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "111" field of "MARC authority" record) (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C376598'] },
         () => {
           InventorySearchAndFilter.selectSearchOptions(
             testData.searchOption,

@@ -33,22 +33,22 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 150 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         cannotSaveCalloutMessage: 'Record cannot be saved without 1XX field.',
         cannotAddCalloutMessage:
-          'Cannot add a $t to the $150 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
+          'Cannot add a $t to the 150 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
       };
 
       const marcFiles = [
         {
           marc: 'marcBibFileForC374144.mrc',
-          fileName: `testMarcFileC374144.${getRandomPostfix()}.mrc`,
+          fileName: `C374144 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          instanceTitle: 'Oratory, Primitive',
+          instanceTitle: 'C374144 Oratory, Primitive',
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC374144.mrc',
-          fileName: `testMarcFileC374144.${getRandomPostfix()}.mrc`,
+          fileName: `C374144testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          authorityHeading: 'Oratory',
+          authorityHeading: 'C374144 Oratory',
           propertyName: 'authority',
         },
       ];
@@ -56,16 +56,31 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+          // make sure there are no duplicate authority records in the system
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: 'keyword="374144" and (authRefType==("Authorized" or "Auth/Ref"))',
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id);
+              });
+            }
+          });
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -109,13 +124,14 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       });
 
       it(
         'C374144 Edit tag value ("150") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374144'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
 
@@ -151,8 +167,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag149);
-          QuickMarcEditor.pressSaveAndKeepEditing(testData.cannotSaveCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(9, testData.cannotChangeCalloutMessage);
 
           QuickMarcEditor.updateExistingTagName(testData.tag149, testData.tag150);
           QuickMarcEditor.checkButtonsDisabled();

@@ -26,9 +26,11 @@ describe('Data Import', () => {
     before('create user and profile', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
-      cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
       NewFieldMappingProfile.save();
@@ -47,7 +49,7 @@ describe('Data Import', () => {
 
     it(
       'C2352 Duplicate an existing field mapping profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2352'] },
       () => {
         const calloutMessage = `The field mapping profile "${duplicatedMappingProfile.name}" was successfully created`;
 
@@ -60,7 +62,6 @@ describe('Data Import', () => {
         FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.closeViewMode(duplicatedMappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(duplicatedMappingProfile.name);
-        FieldMappingProfileView.closeViewMode(duplicatedMappingProfile.name);
       },
     );
   });

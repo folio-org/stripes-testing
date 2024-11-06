@@ -6,23 +6,25 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -95,9 +97,10 @@ describe('Data Import', () => {
 
     it(
       'C353645 Checking the Data import UI permission for only viewing settings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C353645'] },
       () => {
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifyActionMenuAbsent();
         JobProfiles.search(jobProfileName);
@@ -105,7 +108,7 @@ describe('Data Import', () => {
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyActionMenuAbsent();
 
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.verifyActionMenuAbsent();
         MatchProfiles.search(matchProfile.profileName);
@@ -113,7 +116,7 @@ describe('Data Import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfiles.verifyActionMenuAbsent(matchProfile.profileName);
 
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.verifyActionMenuAbsent();
         ActionProfiles.search(actionProfile.name);
@@ -121,7 +124,7 @@ describe('Data Import', () => {
         ActionProfileView.verifyActionProfileOpened();
         ActionProfileView.verifyActionMenuAbsent();
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.verifyActionMenuAbsent();
         FieldMappingProfiles.search(mappingProfile.name);
@@ -129,13 +132,13 @@ describe('Data Import', () => {
         FieldMappingProfileView.verifyMappingProfileOpened();
         FieldMappingProfileView.verifyActionMenuAbsent();
 
-        cy.visit(SettingsMenu.fileExtensionsPath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.verifyActionMenuAbsent();
         FileExtensions.select(fileExtensionName);
         FileExtensionView.verifyActionMenuAbsent();
 
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.verifyNewButtonAbsent();
       },

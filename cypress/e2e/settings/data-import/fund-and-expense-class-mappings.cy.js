@@ -1,5 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
@@ -24,8 +25,11 @@ import {
 import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -132,6 +136,7 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         cy.wrap(orderNumbers).each((number) => {
+          cy.wait(2000);
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
             cy.wait(2000);
             Orders.deleteOrderViaApi(orderId[0].id);
@@ -142,25 +147,25 @@ describe('Data Import', () => {
 
     it(
       'C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C376975'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, firstMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -179,7 +184,8 @@ describe('Data Import', () => {
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(firstMarcFileName);
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
@@ -191,13 +197,16 @@ describe('Data Import', () => {
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[0]);
         FieldMappingProfileEdit.save();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, secondMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -226,13 +235,16 @@ describe('Data Import', () => {
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[1]);
         FieldMappingProfileEdit.save();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, thirdMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -260,7 +272,8 @@ describe('Data Import', () => {
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(thirdMarcFileName);
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
@@ -272,13 +285,16 @@ describe('Data Import', () => {
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[2]);
         FieldMappingProfileEdit.save();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, forthMarcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -306,7 +322,8 @@ describe('Data Import', () => {
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(forthMarcFileName);
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);

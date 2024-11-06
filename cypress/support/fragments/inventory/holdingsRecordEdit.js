@@ -1,24 +1,24 @@
 import {
-  Button,
-  including,
-  matching,
-  not,
-  HTML,
-  TextField,
-  Select,
-  SelectionList,
   Accordion,
-  TextArea,
+  Button,
   Callout,
   calloutTypes,
-  Spinner,
-  MultiSelect,
-  MultiSelectOption,
-  TextInput,
   FieldSet,
-  Selection,
-  RepeatableFieldItem,
+  HTML,
+  including,
+  matching,
+  Modal,
+  MultiSelectOption,
+  not,
   RepeatableField,
+  RepeatableFieldItem,
+  Select,
+  Selection,
+  SelectionList,
+  Spinner,
+  TextArea,
+  TextField,
+  TextInput,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InstanceStates from './instanceStates';
@@ -110,6 +110,7 @@ export default {
     cy.do(statisticalCodeFieldSet.find(Selection()).find(Button()).click());
   },
   filterStatisticalCodeByName(name) {
+    cy.wait(1000);
     this.openStatisticalCodeDropdown();
     cy.do([statisticalCodeSelectionList.filter(name)]);
   },
@@ -134,15 +135,21 @@ export default {
     ]);
   },
   openTags() {
+    cy.wait(500);
     cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());
+    cy.wait(500);
+  },
+  clearTagsInput() {
+    cy.get('#input-tag-input').type('{selectall}{backspace}');
   },
   addTag(tag) {
-    cy.do([
-      TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag),
-      MultiSelect().open(),
-      MultiSelectOption(including(tag)).click(),
-    ]);
+    cy.wait(1000);
+    cy.do(TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag));
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
     InteractorsTools.checkCalloutMessage('New tag created');
+    cy.wait(1000);
   },
   addHoldingsNotes: (text, type = 'Action note') => {
     cy.do([
@@ -224,5 +231,12 @@ export default {
         });
         return Array.from(resultArray);
       });
+  },
+  closeCancelEditingModal: () => {
+    cy.do(
+      Modal({ id: 'cancel-editing-confirmation' })
+        .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
+        .click(),
+    );
   },
 };

@@ -10,7 +10,7 @@ import Users from '../../support/fragments/users/users';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 
-describe('Check In - Actions', () => {
+describe('Check in', () => {
   let userData;
   let materialType;
   let testData;
@@ -87,7 +87,7 @@ describe('Check In - Actions', () => {
 
   it(
     "C588 Check in: at service point not assigned to item's effective location (vega) (TaaS)",
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C588'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();

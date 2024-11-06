@@ -16,39 +16,41 @@ const profileDetails = {
   description: 'No value set-',
 };
 
-describe('settings: data-export', () => {
-  before('create test data', () => {
-    cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.getAdminSourceRecord().then((adminSourceRecord) => {
-        profileDetails.source = adminSourceRecord;
-        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
-      });
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
+describe('Data Export', () => {
+  describe('Mapping profile - setup', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.getAdminSourceRecord().then((adminSourceRecord) => {
+          profileDetails.source = adminSourceRecord;
+          ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
-  });
 
-  after('delete test data', () => {
-    cy.getAdminToken();
-    ExportFieldMappingProfiles.getFieldMappingProfile({
-      query: `"name"=="${profileDetails.name}"`,
-    }).then((response) => {
-      DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+    after('delete test data', () => {
+      cy.getAdminToken();
+      ExportFieldMappingProfiles.getFieldMappingProfile({
+        query: `"name"=="${profileDetails.name}"`,
+      }).then((response) => {
+        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+      });
+      Users.deleteViaApi(user.userId);
     });
-    Users.deleteViaApi(user.userId);
-  });
 
-  it(
-    'C10985 View existing mapping profile (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
-    () => {
-      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-      SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileDetails.name);
-      SingleFieldMappingProfilePane.waitLoading(profileDetails.name);
-      SingleFieldMappingProfilePane.verifyProfileDetails(profileDetails);
-    },
-  );
+    it(
+      'C10985 View existing mapping profile (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C10985'] },
+      () => {
+        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileDetails.name);
+        SingleFieldMappingProfilePane.waitLoading(profileDetails.name);
+        SingleFieldMappingProfilePane.verifyProfileDetails(profileDetails);
+      },
+    );
+  });
 });

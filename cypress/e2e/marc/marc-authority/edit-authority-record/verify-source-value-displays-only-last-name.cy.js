@@ -61,7 +61,7 @@ describe('MARC', () => {
             JobProfiles.waitLoadingList();
             JobProfiles.search(testData.marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+            Logs.waitFileIsImported(testData.marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(testData.marcFile.fileName);
             Logs.getCreatedItemsID(0).then((link) => {
@@ -93,7 +93,7 @@ describe('MARC', () => {
 
     it(
       'C356848 Verify that "Source" value displays only the Last name of user, which edited record, when First name of user is not populated (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C356848'] },
       () => {
         // Step 1: Fill in the input field at "Search & filter" pane with the search query
         MarcAuthorities.searchByParameter(

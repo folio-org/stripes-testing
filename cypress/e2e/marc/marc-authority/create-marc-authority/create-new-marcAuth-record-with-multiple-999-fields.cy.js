@@ -77,7 +77,7 @@ describe('MARC', () => {
 
       it(
         'C423509 Create a new MARC authority record with multiple "999" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C423509'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -117,6 +117,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAllBoxesInARowAreDisabled(newField999.rowIndex);
 
           // 6 Click on the "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);

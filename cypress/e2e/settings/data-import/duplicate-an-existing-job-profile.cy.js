@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
@@ -9,7 +10,10 @@ import {
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -52,7 +56,6 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password);
-        cy.visit(SettingsMenu.jobProfilePath);
       });
     });
 
@@ -68,8 +71,11 @@ describe('Data Import', () => {
 
     it(
       'C2333 Duplicate an existing job profile (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2333'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.duplicate();
         NewJobProfile.fillDescription(description);

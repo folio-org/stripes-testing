@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -15,9 +16,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -26,8 +24,14 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -118,7 +122,7 @@ describe('Data Import', () => {
 
     it(
       'C430251 Check import summary table with "Created" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C430251'] },
       () => {
         const columnNumbers = {
           summary: '1',
@@ -176,14 +180,14 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
@@ -191,7 +195,7 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -211,7 +215,8 @@ describe('Data Import', () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
           RECORD_STATUSES.CREATED,

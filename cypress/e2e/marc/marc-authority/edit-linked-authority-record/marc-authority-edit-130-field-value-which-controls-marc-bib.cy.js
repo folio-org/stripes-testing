@@ -31,7 +31,7 @@ describe('MARC', () => {
           'Cannot change the saved MARC authority field 130 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         errorMessageAfterSaving: 'Record cannot be saved without 1XX field.',
         errorMessageAfterAddingSubfield:
-          'Cannot add a $t to the $130 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
+          'Cannot add a $t to the 130 field because it controls a bibliographic field(s) that cannot control this subfield. To change this 1XX value, you must unlink all controlled bibliographic fields that cannot control $t.',
       };
       const marcFiles = [
         {
@@ -54,9 +54,9 @@ describe('MARC', () => {
       };
 
       before('Creating user, importing and linking records', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
-        cy.getAdminToken().then(() => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+          // make sure there are no duplicate authority records in the system
           MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374143"' }).then(
             (records) => {
               records.forEach((record) => {
@@ -66,22 +66,25 @@ describe('MARC', () => {
               });
             },
           );
-        });
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -118,6 +121,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           testData.createdRecordIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id);
             else InventoryInstance.deleteInstanceViaApi(id);
@@ -127,7 +131,7 @@ describe('MARC', () => {
 
       it(
         'C374143 Edit tag value ("130") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374143'] },
         () => {
           MarcAuthorities.waitLoading();
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
@@ -163,8 +167,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag121);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkCallout(testData.errorMessageAfterSaving);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.checkErrorMessage(7, testData.errorMessageAfterChangingTag);
 
           QuickMarcEditor.updateExistingTagName(testData.tag121, testData.tag130);
           QuickMarcEditor.checkButtonsDisabled();

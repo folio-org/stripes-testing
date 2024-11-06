@@ -50,7 +50,7 @@ describe('Data Import', () => {
     });
 
     beforeEach('Login to the application', () => {
-      fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+      fileName = `C350668 testMarcFile.${getRandomPostfix()}.mrc`;
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.dataImportPath,
@@ -70,7 +70,7 @@ describe('Data Import', () => {
 
     it(
       'C350666 Create a MARC authority record via data import (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350666'] },
       () => {
         DataImport.uploadFileViaApi('test-auth-file.mrc', fileName, jobProfileToRun).then(
           (response) => {
@@ -89,7 +89,7 @@ describe('Data Import', () => {
 
     it(
       'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350668'] },
       () => {
         DataImport.uploadFileViaApi(
           'test-auth-file-copy.mrc',

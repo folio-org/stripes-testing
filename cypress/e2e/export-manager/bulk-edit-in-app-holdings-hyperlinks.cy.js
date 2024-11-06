@@ -8,6 +8,8 @@ import FileManager from '../../support/utils/fileManager';
 import ExportDetails from '../../support/fragments/exportManager/exportDetails';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ExportFile from '../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 let userWithPermissions;
@@ -60,7 +62,7 @@ describe('Export Manager', () => {
 
   it(
     'C365104 Verify hyperlink on the "JobID" column -- Holdings in app approach (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C365104'] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
@@ -68,7 +70,7 @@ describe('Export Manager', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.waitFileUploading();
       cy.login(user.username, user.password);
-      cy.visit(TopMenu.exportManagerPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchByBulkEdit();
       ExportManagerSearchPane.selectJob(userWithPermissions.username);

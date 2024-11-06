@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -8,6 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -78,7 +79,7 @@ describe('MARC', () => {
 
     it(
       'C358964 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358964'] },
       () => {
         InventoryInstances.searchBySource(testData.source);
         InventoryInstances.searchByTitle(createdRecordID);
@@ -99,10 +100,10 @@ describe('MARC', () => {
         UsersSearchPane.openUser(users.userAProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${users.userAProperties.lastName}, ${users.userAProperties.firstName} testMiddleName deleted successfully.`,
+          `User ${users.userAProperties.lastName}, ${users.userAProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(testData.updatedTag245Value);
         InventoryInstances.selectInstance();
         InventoryInstance.deriveNewMarcBibRecord();

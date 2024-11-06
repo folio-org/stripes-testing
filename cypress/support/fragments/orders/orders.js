@@ -97,6 +97,7 @@ export default {
         method: 'POST',
         path: 'orders/composite-orders',
         body: order,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },
@@ -124,12 +125,14 @@ export default {
       method: 'PUT',
       path: `orders/composite-orders/${order.id}`,
       body: order,
+      isDefaultSearchParamsRequired: false,
     });
   },
 
   openOrder() {
     cy.wait(4000);
     expandActionsDropdown();
+    cy.wait(4000);
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
@@ -151,8 +154,10 @@ export default {
   },
 
   approveOrderbyActions() {
+    cy.wait(4000);
     expandActionsDropdown();
     cy.do(Button('Approve').click());
+    cy.wait(4000);
   },
 
   editOrderNumber: (poNumber) => {
@@ -409,6 +414,7 @@ export default {
     cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
+    cy.wait(4000);
   },
 
   checkAbsentExportDetails() {
@@ -594,7 +600,7 @@ export default {
   selectOrderLines: () => {
     cy.do(Button('Order lines').click());
   },
-  selectOrders: () => {
+  selectOrdersPane: () => {
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {
@@ -639,6 +645,7 @@ export default {
     ]);
   },
   selectFilterAcquisitionMethod: (AUmethod) => {
+    cy.wait(4000);
     cy.do([
       buttonAcquisitionMethodFilter.click(),
       MultiSelect({ id: 'acq-methods-filter' }).select([AUmethod]),
@@ -923,5 +930,10 @@ export default {
   checkExistingPOInOrdersList: (POL) => {
     cy.wait(4000);
     cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
+
+  selectOrdersNavigation: () => {
+    cy.wait(4000);
+    cy.get('[data-test-orders-navigation="true"]').click();
   },
 };

@@ -1,4 +1,4 @@
-import { INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FastAddNewRecord from '../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -8,7 +8,10 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FastAdd from '../../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
-import TopMenu from '../../../support/fragments/topMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import randomFourDigitNumber, { getLongDelay } from '../../../support/utils/cypressTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -35,7 +38,9 @@ describe('Inventory', () => {
         cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
         cy.intercept('POST', '/inventory/items').as('createItem');
 
-        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
         FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
       });
     });
@@ -45,7 +50,9 @@ describe('Inventory', () => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
         );
-        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
         FastAdd.changeDefaultInstanceStatus('Select instance status');
         Users.deleteViaApi(userId);
       });
@@ -53,9 +60,9 @@ describe('Inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C15850'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
@@ -118,13 +125,13 @@ describe('Inventory', () => {
 
     it(
       'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C16972'] },
       () => {
         const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
         fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber}`;
         fastAddRecord.note = 'Note For Journal Issue';
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);

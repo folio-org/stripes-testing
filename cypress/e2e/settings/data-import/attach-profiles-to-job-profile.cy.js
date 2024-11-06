@@ -5,15 +5,18 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -128,7 +131,7 @@ describe('Data Import', () => {
 
     it(
       'C11139 Attaching match and action profiles to a job profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11139'] },
       () => {
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
@@ -162,25 +165,25 @@ describe('Data Import', () => {
         ActionProfileView.verifyActionProfileTitleName(
           collectionOfActionProfiles[0].actionProfile.name,
         );
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.select(jobProfile.profileName);
         JobProfileView.openLinkedProfileById(collectionOfActionProfiles[1].actionProfile.id);
         ActionProfileView.verifyActionProfileTitleName(
           collectionOfActionProfiles[1].actionProfile.name,
         );
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.select(jobProfile.profileName);
         JobProfileView.openLinkedProfileById(collectionOfActionProfiles[2].actionProfile.id);
         ActionProfileView.verifyActionProfileTitleName(
           collectionOfActionProfiles[2].actionProfile.name,
         );
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.select(jobProfile.profileName);
         JobProfileView.openLinkedProfileById(collectionOfMatchProfiles[0].matchProfile.id);
         MatchProfileView.verifyMatchProfileTitleName(
           collectionOfMatchProfiles[0].matchProfile.profileName,
         );
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.select(jobProfile.profileName);
         JobProfileView.openLinkedProfileById(collectionOfMatchProfiles[1].matchProfile.id);
         MatchProfileView.verifyMatchProfileTitleName(

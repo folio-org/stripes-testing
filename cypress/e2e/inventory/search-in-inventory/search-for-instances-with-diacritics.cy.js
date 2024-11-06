@@ -88,21 +88,24 @@ describe('Inventory', () => {
         });
       });
 
-      cy.getAdminToken();
-      testData.marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.instanceIDs.push(record[marcFile.propertyName].id);
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
+        testData.marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.instanceIDs.push(record[marcFile.propertyName].id);
+            });
           });
         });
-      });
-
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-        testData.user = userProperties;
       });
     });
 
@@ -123,7 +126,7 @@ describe('Inventory', () => {
 
     it(
       'C473260 Search for Instance which has diacritics in "Title" field using "Query search" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C473260'] },
       () => {
         testData.searchQueriesC473260.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.querySearchOption, query);
@@ -136,7 +139,7 @@ describe('Inventory', () => {
 
     it(
       'C471498 Search for Instance which has diacritics in "Series" field using "Title (all)" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C471498'] },
       () => {
         testData.searchQueriesC471498.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
@@ -149,7 +152,7 @@ describe('Inventory', () => {
 
     it(
       'C471497 Search for Instance which has diacritics in "Alternative title" field using "Title (all)" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C471497'] },
       () => {
         testData.searchQueriesC471497.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
@@ -162,7 +165,7 @@ describe('Inventory', () => {
 
     it(
       'C471496 Search for Instance which has diacritics in "Title" field using "Title (all)" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C471496'] },
       () => {
         testData.searchQueriesC471496.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.titleAllSearchOption, query);
@@ -175,7 +178,7 @@ describe('Inventory', () => {
 
     it(
       'C471495 Search for subjects which has diacritics (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C471495'] },
       () => {
         testData.searchQueriesC471495.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.subjectSearchOption, query);
@@ -188,7 +191,7 @@ describe('Inventory', () => {
 
     it(
       'C471494 Search for contributors which has diacritics (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C471494'] },
       () => {
         testData.searchQueriesC471494.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(testData.contributorSearchOption, query);
@@ -206,7 +209,7 @@ describe('Inventory', () => {
 
     it(
       'C466290 Search for Instance using query with diacritics should return same results as query without diacritics (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C466290'] },
       () => {
         testData.searchQueriesC466290.forEach((query) => {
           InventoryInstances.searchInstancesWithOption(undefined, query);

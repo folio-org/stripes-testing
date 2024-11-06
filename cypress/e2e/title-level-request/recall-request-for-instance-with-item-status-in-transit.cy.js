@@ -79,7 +79,7 @@ describe('Title level request', () => {
 
   it(
     'C375941 Check that user can create a TLR Recall for Item with status In transit (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C375941'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       InventoryInstance.checkNewRequestAtNewPane();

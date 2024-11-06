@@ -43,10 +43,10 @@ describe('Data Import', () => {
 
     it(
       'C380524 Order field mapping profile: Verify that electronic resource details are not active when Order format is Other in the create screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380524'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Click Actions button, Select New field mapping profile
         const FieldMappingProfileEditForm =

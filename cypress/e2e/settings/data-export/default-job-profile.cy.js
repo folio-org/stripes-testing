@@ -7,7 +7,7 @@ import Users from '../../../support/fragments/users/users';
 
 let user;
 
-describe('settings: data-export', () => {
+describe('Data Export', () => {
   before('create test data', () => {
     cy.createTempUser([permissions.dataExportSettingsViewOnly.gui]).then((userProperties) => {
       user = userProperties;
@@ -25,7 +25,7 @@ describe('settings: data-export', () => {
 
   it(
     'C380470 Verify that Default Data export profiles are present (firebird)',
-    { tags: ['smoke', 'firebird', 'shiftLeft'] },
+    { tags: ['smoke', 'firebird', 'shiftLeft', 'C380470'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.verifyDefaultProfiles();

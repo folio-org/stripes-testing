@@ -12,6 +12,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -103,7 +105,7 @@ describe('eHoldings', () => {
 
     it(
       'C356770 Export of Not selected “Package+Title” with all fields of “Package” and “Title” selected by default settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C356770'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyPackageInResults(testData.packageName);
@@ -117,7 +119,7 @@ describe('eHoldings', () => {
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
           const jobId = id;
 
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.searchByEHoldings();
           ExportManagerSearchPane.verifyResult(jobId);
           ExportManagerSearchPane.exportJob(jobId);

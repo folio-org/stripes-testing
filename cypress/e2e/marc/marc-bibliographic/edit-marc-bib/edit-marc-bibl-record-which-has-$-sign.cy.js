@@ -36,9 +36,11 @@ describe('MARC', () => {
         cy.createTempUser([
           Permissions.uiInventoryViewInstances.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           user.userProperties = createdUserProperties;
 
+          cy.getUserToken(user.userProperties.username, user.userProperties.password);
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -64,7 +66,7 @@ describe('MARC', () => {
 
       it(
         'C451561 Edit "MARC bibliographic" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C451561'] },
         () => {
           // 1 Fill in the search query with title of imported record
           // Click on the "Search" button

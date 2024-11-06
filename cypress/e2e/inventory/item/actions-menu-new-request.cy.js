@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -10,11 +10,13 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import NewRequest from '../../../support/fragments/requests/newRequest';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
-describe.skip('Inventory', () => {
+describe('Inventory', () => {
   describe('Item', () => {
     let user;
     let collectionOfItems = [];
@@ -186,7 +188,7 @@ describe.skip('Inventory', () => {
 
     it(
       'C10946 Actions menu: New Request (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C10946'] },
       () => {
         [
           ITEM_STATUS_NAMES.AVAILABLE,
@@ -209,7 +211,11 @@ describe.skip('Inventory', () => {
             LOCATION_NAMES.MAIN_LIBRARY_UI,
             itemStatus,
           );
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          NewRequest.closeCancelEditingModal();
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.waitLoading();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
         });
@@ -221,7 +227,8 @@ describe.skip('Inventory', () => {
           ITEM_STATUS_NAMES.WITHDRAWN,
           ITEM_STATUS_NAMES.ORDER_CLOSED,
         ].forEach((itemStatus) => {
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
           InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);

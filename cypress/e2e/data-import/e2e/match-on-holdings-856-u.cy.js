@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -30,8 +31,11 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -104,7 +108,6 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.enableStaffSuppressFacet.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
@@ -165,78 +168,82 @@ describe('Data Import', () => {
       FieldMappingProfileView.closeViewMode(profile.name);
     };
 
-    it('C17025 Match on Holdings 856 $u (folijet)', { tags: ['criticalPath', 'folijet'] }, () => {
-      createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(
-        collectionOfMappingAndActionProfiles[0].mappingProfile.name,
-      );
-      createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(
-        collectionOfMappingAndActionProfiles[1].mappingProfile.name,
-      );
-      updateHoldingsMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(
-        collectionOfMappingAndActionProfiles[2].mappingProfile.name,
-      );
+    it(
+      'C17025 Match on Holdings 856 $u (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C17025'] },
+      () => {
+        createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
+        createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+        updateHoldingsMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
 
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-      });
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        });
 
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
+        MatchProfiles.createMatchProfile(matchProfile);
 
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
-      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
-      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfile.profileName);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
+        JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
+        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
+        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfile.profileName);
 
-      // need to wait until the first job profile will be created
-      cy.wait(2500);
-      JobProfiles.createJobProfile(updateEHoldingsJobProfile);
-      NewJobProfile.linkMatchProfile(matchProfile.profileName);
-      NewJobProfile.linkActionProfileForMatches(
-        collectionOfMappingAndActionProfiles[2].actionProfile.name,
-      );
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
+        // need to wait until the first job profile will be created
+        cy.wait(2500);
+        JobProfiles.createJobProfile(updateEHoldingsJobProfile);
+        NewJobProfile.linkMatchProfile(matchProfile.profileName);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[2].actionProfile.name,
+        );
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
-      JobProfiles.runImportFile();
-      Logs.waitFileIsImported(nameForCreateMarcFile);
-      Logs.checkJobStatus(nameForCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(nameForCreateMarcFile);
-      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHRID = initialInstanceHrId;
-
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkURIIsNotEmpty();
-
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
+        DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(updateEHoldingsJobProfile.profileName);
+        JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
-        Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitFileIsImported(nameForCreateMarcFile);
+        Logs.checkJobStatus(nameForCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(nameForCreateMarcFile);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHRID = initialInstanceHrId;
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.selectYesfilterStaffSuppress();
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.openHoldingView();
-        HoldingsRecordView.checkCallNumber('ONLINE');
-      });
-    });
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.checkURIIsNotEmpty();
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
+          DataImport.verifyUploadState();
+          DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(updateEHoldingsJobProfile.profileName);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
+          Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.checkCallNumber('ONLINE');
+        });
+      },
+    );
   });
 });

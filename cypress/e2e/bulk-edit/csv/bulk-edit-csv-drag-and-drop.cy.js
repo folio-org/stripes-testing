@@ -5,6 +5,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -39,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353540 Verify that the "Drag and Drop" is enabled after file is uploaded (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353540'] },
       () => {
         BulkEditSearchPane.verifyDefaultFilterState();
         BulkEditSearchPane.checkUsersRadio();
@@ -62,9 +64,9 @@ describe('bulk-edit', () => {
 
     it(
       'C353538 Verify link record identifier with the drag and drop area on the landing page (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353538'] },
       () => {
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.verifyDefaultFilterState();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);

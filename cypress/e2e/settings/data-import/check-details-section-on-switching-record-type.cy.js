@@ -78,10 +78,10 @@ describe('Data Import', () => {
     // TODO added tag broken FAT-12155
     it(
       'C376005 Order field mapping profile: Order type field is empty after switching to another FOLIO record type (folijet) (TaaS)',
-      { tags: ['extendedPathBroken', 'folijet'] },
+      { tags: ['extendedPathBroken', 'folijet', 'C376005'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Open field mapping profile view for order record
         const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({

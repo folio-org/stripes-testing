@@ -5,6 +5,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
 import FileManager from '../../../support/utils/fileManager';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe.skip('eHoldings', () => {
   const testData = {
@@ -52,7 +54,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C366590 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 2) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C366590'] },
       () => {
         EHoldingsPackageView.getTotalTitlesCount().then((titlesCount) => {
           testData.titlesCount = titlesCount;
@@ -64,7 +66,7 @@ describe.skip('eHoldings', () => {
 
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
           // Go to "Export manager" app
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
 
           // Verify row with "Job ID" displayed at export jobs list.
           ExportManagerSearchPane.searchByEHoldings();
@@ -130,7 +132,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C366591 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 1) (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C366591'] },
       () => {
         // Click the "Search" button in "Titles" accordion
         const FilterTitlesModal = EHoldingsPackageView.openFilterTitlesModal();
@@ -149,7 +151,7 @@ describe.skip('eHoldings', () => {
 
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
           // Go to "Export manager" app
-          cy.visit(TopMenu.exportManagerPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
 
           // Verify row with "Job ID" displayed at export jobs list.
           ExportManagerSearchPane.searchByEHoldings();

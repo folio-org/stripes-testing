@@ -4,7 +4,11 @@ import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragmen
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -33,8 +37,12 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
-        cy.visit(SettingsMenu.matchProfilePath);
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
       });
     });
 
@@ -45,8 +53,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C421992 - (NON-CONSORTIA) Verify the match profile options (Folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      'C421992 (NON-CONSORTIA) Verify the match profile options (Folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet', 'C421992'] },
       () => {
         MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.verifyExistingRecordSection(recordItems);

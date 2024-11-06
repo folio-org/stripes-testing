@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
 
       it(
         'C380546 Verify that selected filters persist on Logs tab (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C380546'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
 

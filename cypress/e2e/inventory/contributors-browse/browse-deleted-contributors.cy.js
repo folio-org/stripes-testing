@@ -61,7 +61,7 @@ describe('Inventory', () => {
 
     it(
       'C357021 Verify that deleted Contributor from "MARC Bibliographic" record not displayed at browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C357021'] },
       () => {
         InventoryInstances.searchByTitle(importedInstanceID[0]);
         InventoryInstances.selectInstance();
@@ -85,6 +85,8 @@ describe('Inventory', () => {
           '\\',
         );
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
+        QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
         InventorySearchAndFilter.switchToBrowseTab();
@@ -102,6 +104,8 @@ describe('Inventory', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.deleteField(11);
         QuickMarcEditor.deleteField(12);
+        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
 

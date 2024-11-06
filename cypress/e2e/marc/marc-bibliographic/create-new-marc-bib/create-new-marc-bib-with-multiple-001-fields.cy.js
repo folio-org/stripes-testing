@@ -43,7 +43,7 @@ describe('MARC', () => {
 
       it(
         'C380699 Add multiple 001s when creating "MARC Bibliographic" record (Spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380699'] },
         () => {
           InventoryInstance.newMarcBibRecord();
 
@@ -52,6 +52,8 @@ describe('MARC', () => {
             testData.tags.tag245,
             testData.fieldContents.tag245Content,
           );
+          QuickMarcEditor.updateIndicatorValue(testData.tags.tag245, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.tags.tag245, '1', 1);
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
 
           QuickMarcEditor.deleteValuesIn008Boxes();
@@ -63,8 +65,6 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tags.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {

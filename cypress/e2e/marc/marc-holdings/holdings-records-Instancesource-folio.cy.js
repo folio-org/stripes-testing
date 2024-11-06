@@ -8,15 +8,17 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.inventoryPath);
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       const InventoryNewInstance = InventoryInstances.addNewInventory();
       InventoryNewInstance.fillRequiredValues();
       InventoryNewInstance.clickSaveAndCloseButton();
     });
     it(
       'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345406'] },
       () => {
         InventoryInstance.createHoldingsRecord();
         InventoryInstance.openHoldingView();

@@ -1,21 +1,27 @@
 export default {
   // bulk edit
   bulkEditView: {
-    internal: 'ui-bulk-edit.app-view',
+    internal: 'ui-bulk-edit.inventory.view',
     gui: 'Bulk Edit: In app - View inventory records',
   },
   bulkEditEdit: {
-    internal: 'ui-bulk-edit.app-edit',
+    internal: 'ui-bulk-edit.inventory.edit',
     gui: 'Bulk Edit: In app - Edit inventory records',
   },
-  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: Local - View user records' },
-  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: Local - Edit user records' },
+  bulkEditCsvView: {
+    internal: 'ui-bulk-edit.users.csv.view',
+    gui: 'Bulk Edit: Local - View user records',
+  },
+  bulkEditCsvEdit: {
+    internal: 'ui-bulk-edit.users.csv.edit',
+    gui: 'Bulk Edit: Local - Edit user records',
+  },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: {
-    internal: 'ui-bulk-edit.app-edit.users',
+    internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
   },
-  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Can build query' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: {
@@ -23,11 +29,11 @@ export default {
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
   },
   uieHoldingsTitlesPackagesCreateDelete: {
-    internal: 'ui-eholdings.titles-packages.create-delete',
+    internal: 'ui-eholdings.titles-packages.create-delete.manage',
     gui: 'eHoldings: Can create and delete custom packages and titles',
   },
   uieHoldingsPackageTitleSelectUnselect: {
-    internal: 'ui-eholdings.package-title.select-unselect',
+    internal: 'ui-eholdings.package-title.select-unselect.execute',
     gui: 'eHoldings: Can select/unselect packages and titles to/from your holdings',
   },
   moduleeHoldingsEnabled: {
@@ -44,7 +50,7 @@ export default {
     gui: 'Settings (Notes): Edit and View General settings',
   },
   uiNotesAssignUnassign: {
-    internal: 'ui-notes.item.assign-unassign',
+    internal: 'ui-notes.item.assign-unassign.execute',
     gui: 'Notes: Can assign and unassign a note',
   },
   // Agreements
@@ -78,7 +84,7 @@ export default {
     gui: 'quickMARC: Create a new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcEditorDuplicate: {
-    internal: 'ui-quick-marc.quick-marc-editor.duplicate',
+    internal: 'ui-quick-marc.quick-marc-editor.derive.execute',
     gui: 'quickMARC: Derive new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcBibliographicEditorAll: {
@@ -98,7 +104,7 @@ export default {
     gui: 'quickMARC: View MARC bibliographic record',
   },
   uiQuickMarcQuickMarcAuthorityLinkUnlink: {
-    internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
+    internal: 'ui-quick-marc.quick-marc-authority-records.link-unlink.execute',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
   uiQuickMarcQuickMarcAuthorityCreate: {
@@ -126,10 +132,14 @@ export default {
     internal: 'ui-marc-authorities.authority-record.create',
     gui: 'MARC Authority: Create new MARC authority record',
   },
+  marcRecordsEditorAll: {
+    internal: 'marc-records-editor.all',
+    gui: 'All marc-records-editor permissions',
+  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['inventory.all', 'Inventory: All permissions'],
+    internal: ['ui-inventory.all', 'Inventory: All permissions'],
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
@@ -145,11 +155,11 @@ export default {
     gui: 'Inventory: Import single bibliographic records',
   },
   uiInventoryCreateOrderFromInstance: {
-    internal: 'ui-inventory.instance.createOrder',
+    internal: 'ui-inventory.instance.order.create',
     gui: 'Inventory: Create order from instance',
   },
   uiInventoryMarkItemsWithdrawn: {
-    internal: 'ui-inventory.items.mark-items-withdrawn',
+    internal: 'ui-inventory.items.mark-withdrawn.execute',
     gui: 'Inventory: Mark items withdrawn',
   },
   uiInventoryViewInstances: {
@@ -169,7 +179,7 @@ export default {
     gui: 'Inventory: Move holdings',
   },
   uiInventoryMarkAsMissing: {
-    internal: 'ui-inventory.item.markasmissing',
+    internal: 'ui-inventory.item.mark-as-missing.execute',
     gui: 'Inventory: View, create, edit, mark missing items',
   },
   uiInventoryMoveItems: { internal: 'ui-inventory.item.move', gui: 'Inventory: Move items' },
@@ -194,27 +204,27 @@ export default {
     gui: 'Inventory: View, create, edit, delete items',
   },
   uiInventoryMarcItemInProcess: {
-    internal: 'ui-inventory.items.mark-in-process-non-requestable',
+    internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
   uiInventoryMarcItemIntellectual: {
-    internal: 'ui-inventory.items.mark-intellectual-item',
+    internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
   },
   uiInventoryMarcItemLongMissing: {
-    internal: 'ui-inventory.items.mark-long-missing',
+    internal: 'ui-inventory.items.mark-long-missing.execute',
     gui: 'Inventory: Mark items long missing',
   },
   uiInventoryMarcItemRestricted: {
-    internal: 'ui-inventory.items.mark-restricted',
+    internal: 'ui-inventory.items.mark-restricted.execute',
     gui: 'Inventory: Mark items restricted',
   },
   uiInventoryMarcItemUnavailable: {
-    internal: 'ui-inventory.items.mark-unavailable',
+    internal: 'ui-inventory.items.mark-unavailable.execute',
     gui: 'Inventory: Mark items unavailable',
   },
   uiInventoryMarcItemUnknow: {
-    internal: 'ui-inventory.items.mark-unknown',
+    internal: 'ui-inventory.items.mark-unknown.execute',
     gui: 'Inventory: Mark items unknown',
   },
   uiCreateEditDeleteURL: {
@@ -222,7 +232,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
   uiInventorySetRecordsForDeletion: {
-    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    internal: 'ui-inventory.instance.set-records-for-deletion.execute',
     gui: 'Inventory: Set records for deletion',
   },
   inventoryCRUDHoldings: {
@@ -278,8 +288,20 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
   enableStaffSuppressFacet: {
-    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    internal: 'ui-inventory.instance.staff-suppressed-records.view',
     gui: 'Inventory: Enable staff suppress facet',
+  },
+  patchInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.item.patch',
+    gui: 'inventory storage - patch instance-date-type',
+  },
+  getInstanceDateTypes: {
+    internal: 'inventory-storage.instance-date-types.collection.get',
+    gui: 'inventory storage - get list of instance-date-types',
+  },
+  inventoryViewEditGeneralSettings: {
+    internal: 'ui-inventory.settings.displaySettings',
+    gui: 'Settings (Inventory): Can view and edit general settings',
   },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
@@ -432,7 +454,7 @@ export default {
     internal: 'ui-users.loans.renew-override',
     gui: 'Users: User loans renew through override',
   },
-  uiUsersPermissions: {
+  uiUserCanAssignUnassignPermissions: {
     internal: 'ui-users.editperms',
     gui: 'Users: Can assign and unassign permissions to users',
   },
@@ -462,7 +484,7 @@ export default {
     internal: 'ui-users.settings.usergroups.view',
     gui: 'Settings (Users): Can view patron groups',
   },
-  uiUsersCreatePatronGroups: {
+  uiUsersCreateEditRemovePatronGroups: {
     internal: 'ui-users.settings.usergroups',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
@@ -498,6 +520,15 @@ export default {
     internal: 'ui-users.financialTransactionReport',
     gui: 'Users: Create and download Financial transaction detail report',
   },
+  uiUserViewEditDeliteProfilePictores: {
+    internal: 'ui-users.profile-pictures.all',
+    gui: 'Users: Can view, edit, and delete profile pictures',
+  },
+  uiUserViewProfilePictores: {
+    internal: 'ui-users.profile-pictures.view',
+    gui: 'Users: Can view profile pictures',
+  },
+
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
@@ -550,19 +581,6 @@ export default {
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
-  dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
-  dataExportEnableModule: {
-    internal: 'module.data-export.enabled',
-    gui: 'Data export: all permissions',
-  },
-  dataExportEnableSettings: {
-    internal: 'ui-data-export.settings.enabled',
-    gui: 'Settings (Data export): display list of settings pages',
-  },
-  dataExportEnableApp: {
-    internal: 'ui-data-export.app.enabled',
-    gui: 'UI: Data export module is enabled',
-  },
   dataExportViewAddUpdateProfiles: {
     internal: 'ui-data-export.settings.edit',
     gui: 'Settings (Data export): Can view, add, update profiles',
@@ -920,16 +938,20 @@ export default {
     internal: 'ui-acquisition-units.settings.all',
     gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units',
   },
+  uiSettingsAcquisitionUnitsManageAcqUnitUserAssignments: {
+    internal: 'ui-acquisition-units.settings.userAssignments',
+    gui: 'Settings (acquisition units): Manage acquisition unit user assignments',
+  },
   uiInventorySettingsFastAdd: {
     internal: 'ui-inventory.settings.fast-add',
     gui: 'Settings (Inventory): Edit fast add settings',
   },
   uiCreateEditDeleteLoanTypes: {
-    internal: 'ui-inventory.settings.loantypes',
+    internal: 'ui-inventory.settings.loan-types',
     gui: 'Settings (Inventory): Create, edit, delete loan types',
   },
   uiCreateEditDeleteMaterialTypes: {
-    internal: 'ui-inventory.settings.materialtypes',
+    internal: 'ui-inventory.settings.material-types',
     gui: 'Settings (Inventory): Create, edit, delete material types',
   },
   uiInventorySettingsConfigureSingleRecordImport: {
@@ -1012,6 +1034,10 @@ export default {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
   },
+  uiSettingsViewAuthorityFiles: {
+    internal: 'ui-marc-authorities.settings.authority-files.view',
+    gui: 'Settings (MARC authority): View authority files',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
@@ -1042,6 +1068,18 @@ export default {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
     gui: 'Settings (tenant): Can create, edit and remove reading room access',
   },
+  uiCanViewReadingRoomAccess: {
+    internal: 'ui-users.view-reading-room-access',
+    gui: 'Users: Can view reading room access',
+  },
+  uiCanViewEditReadingRoomAccess: {
+    internal: 'ui-users.edit-reading-room-access',
+    gui: 'Users: Can view, and edit reading room access',
+  },
+  uiReadingRoomAll: {
+    internal: 'ui-reading-room.all',
+    gui: 'Reading room access: In app - track access',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',
@@ -1054,7 +1092,7 @@ export default {
   },
   exportManagerDownloadAndResendFiles: {
     internal: 'ui-export-manager.jobs.downloadAndResend',
-    gui: 'Export manager: Download and re-send files',
+    gui: 'Export manager: Download and resend files',
   },
   exportManagerView: {
     internal: 'ui-export-manager.export-manager.view',
@@ -1139,6 +1177,26 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  listsEnable: {
+    internal: 'module.lists.enabled',
+    gui: 'Lists (Enable): Can view lists',
+  },
+
+  listsEdit: {
+    internal: 'module.lists.refresh',
+    gui: 'Lists (Edit): Can create, edit, and refresh lists',
+  },
+
+  listsDelete: {
+    internal: 'module.lists.delete',
+    gui: 'Lists (Delete): Can create, edit, refresh, and delete lists',
+  },
+
+  listsExport: {
+    internal: 'module.lists.export',
+    gui: 'Lists (Export): Can create, edit, refresh, and export lists',
   },
 
   // Licenses

@@ -84,7 +84,7 @@ describe('MARC', () => {
 
       it(
         'C405142 "MARC authority" record edited on Central tenant is updated in Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C405142'] },
         () => {
           MarcAuthorities.searchBeats(testData.title);
           MarcAuthorities.select(createdAuthorityID);
@@ -112,7 +112,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(testData.tag046, testData.updatedTag046Value);
           QuickMarcEditor.clickArrowDownButton(4);
           QuickMarcEditor.verifyTagValue(5, testData.tag010);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkDeleteModal(1);
           MarcAuthority.continueWithSaveAndCheck();
           MarcAuthority.contains(testData.updatedTag100Value);

@@ -38,9 +38,13 @@ describe('Inventory', () => {
 
       before(() => {
         cy.getAdminToken();
-        cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        cy.createTempUser([
+          Permissions.inventoryAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
+        ]).then((userProperties) => {
           testData.user = userProperties;
 
+          cy.getUserToken(testData.user.username, testData.user.password);
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -68,7 +72,7 @@ describe('Inventory', () => {
 
       it(
         'C466071 Search by "ISSN" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C466071'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);

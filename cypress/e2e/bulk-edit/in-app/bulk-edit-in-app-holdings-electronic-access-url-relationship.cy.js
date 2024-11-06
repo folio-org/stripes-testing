@@ -9,7 +9,9 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import {
+  APPLICATION_NAMES,
   electronicAccessRelationshipId,
   electronicAccessRelationshipName,
 } from '../../../support/constants';
@@ -74,7 +76,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422222 Verify Bulk Edit for Holding with populated " URL relationship" in electronic access (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C422222'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
@@ -139,7 +141,7 @@ describe('bulk-edit', () => {
           electronicAccessRelationshipName.VERSION_OF_RESOURCE,
         ]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();

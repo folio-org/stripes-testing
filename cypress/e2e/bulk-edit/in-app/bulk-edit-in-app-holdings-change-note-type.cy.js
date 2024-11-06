@@ -69,8 +69,6 @@ const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.clearLocalStorage();
-
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.inventoryCRUDHoldings.gui,
@@ -124,7 +122,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422049 Verify Bulk Edit actions for Holdings notes - change note type (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C422049'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 

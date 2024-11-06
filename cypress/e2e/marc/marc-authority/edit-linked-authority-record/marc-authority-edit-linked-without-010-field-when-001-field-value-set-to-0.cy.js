@@ -29,7 +29,7 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC375139.mrc',
-          fileName: `testMarcFileC375139.${getRandomPostfix()}.mrc`,
+          fileName: `C375139 testMarcFile${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           instanceTitle: 'Variations / C375139Ludwig Van Beethoven.',
           numOfRecords: 1,
@@ -37,7 +37,7 @@ describe('MARC', () => {
         },
         {
           marc: 'marcAuthFileForC375139.mrc',
-          fileName: `testMarcFileC375139.${getRandomPostfix()}.mrc`,
+          fileName: `C375139 testMarcFileC375139${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           authorityHeading: 'C375139 Beethoven, Ludwig van (no 010)',
           numOfRecords: 1,
@@ -46,26 +46,30 @@ describe('MARC', () => {
       ];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C375139"' }).then(
-          (records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
-              }
-            });
-          },
-        );
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
 
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+          MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C375139"' }).then(
+            (records) => {
+              records.forEach((record) => {
+                if (record.authRefType === 'Authorized') {
+                  MarcAuthority.deleteViaAPI(record.id);
+                }
+              });
+            },
+          );
+
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
+            cy.wait(2000);
           });
         });
 
@@ -111,13 +115,14 @@ describe('MARC', () => {
       after('Delete test data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       });
 
       it(
         'C375139 Edit any field in linked "MARC authority" record without "010" field when "001" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C375139'] },
         () => {
           MarcAuthorities.searchAndVerify(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthorities.verifyMarcViewPaneIsOpened();

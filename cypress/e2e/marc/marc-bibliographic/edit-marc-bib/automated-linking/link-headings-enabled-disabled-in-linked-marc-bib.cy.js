@@ -137,7 +137,7 @@ describe('MARC', () => {
 
         it(
           'C388533 "Link headings" button enabling/disabling when edit "MARC bib" having linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388533'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -212,8 +212,6 @@ describe('MARC', () => {
               fieldsToUpdate[2].seventhBox,
             );
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.viewSource();

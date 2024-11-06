@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -27,8 +28,11 @@ import FieldMappingProfileView from '../../../support/fragments/settings/dataImp
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -127,7 +131,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -157,10 +164,9 @@ describe('Data Import', () => {
 
     it(
       'C11109 Update an instance based on an OCLC number match (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C11109'] },
       () => {
         // create mapping profile for creating instance
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
@@ -181,7 +187,7 @@ describe('Data Import', () => {
         );
 
         // create action profile for creating instance
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(
           collectionOfMappingAndActionProfiles[0].actionProfile,
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
@@ -191,7 +197,7 @@ describe('Data Import', () => {
         );
 
         // create job profile for creating instance
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfileWithLinkingProfiles(
           collectionOfJobProfiles[0].jobProfile,
           collectionOfMappingAndActionProfiles[0].actionProfile.name,
@@ -199,7 +205,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(collectionOfJobProfiles[0].jobProfile.profileName);
 
         // upload a marc file for creating of the new instance
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -222,7 +228,7 @@ describe('Data Import', () => {
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
@@ -232,7 +238,9 @@ describe('Data Import', () => {
           InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);
 
           // create mapping profile for updating instance
-          cy.visit(SettingsMenu.mappingProfilePath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+          SettingsDataImport.goToSettingsDataImport();
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.fillSummaryInMappingProfile(
             collectionOfMappingAndActionProfiles[1].mappingProfile,
@@ -249,7 +257,7 @@ describe('Data Import', () => {
           );
 
           // create action profile for updating instance
-          cy.visit(SettingsMenu.actionProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
           ActionProfiles.create(
             collectionOfMappingAndActionProfiles[1].actionProfile,
             collectionOfMappingAndActionProfiles[1].mappingProfile.name,
@@ -259,12 +267,12 @@ describe('Data Import', () => {
           );
 
           // craete match profile
-          cy.visit(SettingsMenu.matchProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(matchProfile);
           MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
           // create job profile for updating instance
-          cy.visit(SettingsMenu.jobProfilePath);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
           JobProfiles.createJobProfile(collectionOfJobProfiles[1].jobProfile);
           NewJobProfile.linkMatchProfile(matchProfile.profileName);
           NewJobProfile.linkActionProfileForMatches(
@@ -274,7 +282,8 @@ describe('Data Import', () => {
           JobProfiles.checkJobProfilePresented(collectionOfJobProfiles[1].jobProfile.profileName);
 
           // upload a marc file for updating instance
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           DataImport.verifyUploadState();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
           JobProfiles.waitFileIsUploaded();
@@ -292,7 +301,7 @@ describe('Data Import', () => {
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.selectYesfilterStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();

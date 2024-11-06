@@ -78,19 +78,19 @@ describe('Inventory', () => {
           }
         });
 
-        cy.getAdminToken();
-        DataImport.uploadFileViaApi(
-          testData.marcFile.marc,
-          testData.marcFile.fileName,
-          testData.marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
-          });
-        });
-
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
           testData.user = userProperties;
+
+          DataImport.uploadFileViaApi(
+            testData.marcFile.marc,
+            testData.marcFile.fileName,
+            testData.marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
+            });
+          });
+
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -108,7 +108,7 @@ describe('Inventory', () => {
 
       it(
         'C464068 Search by "Contributor" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C464068'] },
         () => {
           testData.searchQueriesKeyword.forEach((query, index) => {
             InventoryInstances.searchByTitle(query);

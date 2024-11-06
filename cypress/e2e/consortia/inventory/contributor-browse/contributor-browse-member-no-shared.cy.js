@@ -176,7 +176,7 @@ describe('Inventory', () => {
 
       it(
         'C422237 Verify that contributors from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local contributor, but another tenant has) (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C422237'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(testData.contributorBrowseoption);

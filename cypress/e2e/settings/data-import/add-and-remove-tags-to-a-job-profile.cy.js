@@ -9,7 +9,11 @@ import {
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -45,7 +49,10 @@ describe('Data Import', () => {
           });
         },
       );
-      cy.loginAsAdmin();
+      cy.loginAsAdmin({
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
     });
 
     after('Delete test data', () => {
@@ -57,9 +64,10 @@ describe('Data Import', () => {
 
     it(
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2331'] },
       () => {
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.addExistingTag(tag);
         JobProfileView.verifyAssignedTags(tag);

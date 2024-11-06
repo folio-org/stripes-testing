@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -10,6 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -96,7 +97,7 @@ describe('MARC', () => {
 
     it(
       'C358994 Verify that user has access to "quickMARC" when user who imported "MARC authority" record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358994'] },
       () => {
         cy.login(user.userBProperties.username, user.userBProperties.password, {
           path: TopMenu.usersPath,
@@ -106,10 +107,10 @@ describe('MARC', () => {
         UsersSearchPane.openUser(user.userAProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${user.userAProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+          `User ${user.userAProperties.username}, ${user.userCProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();
@@ -124,7 +125,7 @@ describe('MARC', () => {
 
     it(
       'C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358995'] },
       () => {
         cy.login(user.userCProperties.username, user.userCProperties.password, {
           path: TopMenu.marcAuthorities,
@@ -148,10 +149,10 @@ describe('MARC', () => {
         UsersSearchPane.openUser(user.userCProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${user.userCProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+          `User ${user.userCProperties.username}, ${user.userCProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.selectTitle(testData.marcValue);
         MarcAuthority.edit();

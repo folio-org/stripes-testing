@@ -1,11 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -64,7 +65,7 @@ describe('Data Import', () => {
 
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: ['smokeFlaky', 'folijet'] },
+      { tags: ['smokeFlaky', 'folijet', 'C358137'] },
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();
@@ -75,7 +76,8 @@ describe('Data Import', () => {
         Logs.clickOnHotLink();
         cy.location('pathname').should('include', '/inventory/view');
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.clickToGoHomeButton();
         DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then((logsHrIdsToBeDeleted) => {
           // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();
@@ -95,8 +97,10 @@ describe('Data Import', () => {
           DataImport.openActionsMenu();
           DataImport.openDeleteImportLogsModal();
           DataImport.confirmDeleteImportLogs();
+          cy.wait(1000);
           InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
           DataImport.verifyLogsPaneSubtitleAbsent();
+          cy.wait(2000);
           DataImport.verifyDataImportLogsDeleted(logsHrIdsToBeDeleted);
           DataImport.verifyDeleteLogsButtonDisabled();
           cy.reload();

@@ -2,6 +2,7 @@ import {
   EXISTING_RECORD_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -29,6 +30,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -137,7 +139,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ])
         .then((createdUserProperties) => {
@@ -237,7 +239,7 @@ describe('Data Import', () => {
 
     it(
       'C376967 Delete uncontrolled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C376967'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
@@ -245,7 +247,7 @@ describe('Data Import', () => {
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -275,7 +277,7 @@ describe('Data Import', () => {
         });
 
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
@@ -287,7 +289,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         cy.wait(1000);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

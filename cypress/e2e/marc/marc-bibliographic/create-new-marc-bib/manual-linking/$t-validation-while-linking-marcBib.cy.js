@@ -39,7 +39,7 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '240',
             content: '$a test123',
-            marcValue: 'C380730 Jackson, Peter, 1950-2022 Inspector Banks series ;',
+            marcValue: 'C380730 Jackson, Peter, 1950-2022 Inspector Banks series',
             searchOption: 'Personal name',
           },
         ];
@@ -100,7 +100,7 @@ describe('MARC', () => {
 
         it(
           'C422130 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422130'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

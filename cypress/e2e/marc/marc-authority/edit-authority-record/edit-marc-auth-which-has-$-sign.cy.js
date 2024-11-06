@@ -60,7 +60,7 @@ describe('MARC', () => {
 
       it(
         'C451558 Edit "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C451558'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchText);
           MarcAuthorities.selectItem(testData.title, false);
@@ -68,12 +68,12 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.editMarcHeader);
           // wait for the whole content to be loaded.
           cy.wait(2000);
-          QuickMarcEditor.checkContent(testData.field100Content, 8);
-          QuickMarcEditor.updateExistingFieldContent(9, testData.newContentFor370Field);
-          QuickMarcEditor.checkContent(testData.newContentFor370Field, 9);
+          QuickMarcEditor.checkContent(testData.field100Content, 7);
+          QuickMarcEditor.updateExistingFieldContent(8, testData.newContentFor370Field);
+          QuickMarcEditor.checkContent(testData.newContentFor370Field, 8);
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
           MarcAuthority.contains(testData.tag100);

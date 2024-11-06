@@ -56,10 +56,11 @@ describe('MARC', () => {
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -72,6 +73,7 @@ describe('MARC', () => {
             });
           });
 
+          cy.getAdminToken();
           cy.loginAsAdmin({
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -115,7 +117,7 @@ describe('MARC', () => {
 
       it(
         'C375173 Save linked "MARC authority" record with deleted fields and edited "1XX" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375173'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

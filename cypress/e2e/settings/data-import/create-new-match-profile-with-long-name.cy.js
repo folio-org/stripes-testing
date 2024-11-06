@@ -1,9 +1,12 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
@@ -40,9 +43,11 @@ describe('Data Import', () => {
 
     it(
       'C2337 Create a new match profile with a long name (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2337'] },
       () => {
-        cy.visit(SettingsMenu.matchProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfile);
         MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);

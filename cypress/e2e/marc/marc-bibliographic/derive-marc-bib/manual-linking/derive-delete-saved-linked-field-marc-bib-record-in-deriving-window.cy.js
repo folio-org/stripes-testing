@@ -150,7 +150,7 @@ describe('MARC', () => {
 
         it(
           'C366574 Derive | Delete saved linked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C366574'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

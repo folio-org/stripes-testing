@@ -30,6 +30,7 @@ export default {
   ...ResultsPane,
   clickCreateNewMatchProfile() {
     ResultsPane.expandActionsDropdown();
+    cy.wait(1000);
     cy.do(Button('New match profile').click());
     MatchProfileEditForm.waitLoading();
     MatchProfileEditForm.verifyFormView();
@@ -45,6 +46,7 @@ export default {
     this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileForm(profile);
     NewMatchProfile.saveAndClose();
+    cy.wait(1500);
     waitCreatingMatchProfile();
   },
 

@@ -71,7 +71,8 @@ describe('MARC', () => {
         before('Creating test data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380746*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380746');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374142');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -111,7 +112,7 @@ describe('MARC', () => {
 
         it(
           'C380746 Link the "240" of "MARC Bib" field (having $0 without base URL) with "111" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C380746'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

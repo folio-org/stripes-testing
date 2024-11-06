@@ -5,7 +5,11 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -32,7 +36,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
 
@@ -44,9 +51,10 @@ describe('Data Import', () => {
 
     it(
       'C380637 Job profile: verify that file name in job profile detail view is a hotlink for job log details (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380637'] },
       () => {
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(jobProfileToRun);
         JobProfileView.verifyJobProfileOpened();

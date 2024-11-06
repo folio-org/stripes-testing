@@ -2,6 +2,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -29,8 +30,11 @@ import FieldMappingProfileView from '../../../support/fragments/settings/dataImp
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -192,7 +196,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         userId = userProperties.userId;
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -230,10 +237,9 @@ describe('Data Import', () => {
 
     it(
       'C17018 Check that field protection overrides work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C17018'] },
       () => {
         // create Field mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
         FieldMappingProfileView.checkCreatedMappingProfile(
           marcBibMappingProfile.name,
@@ -267,7 +273,7 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
         // create Action profiles
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
         ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
@@ -281,12 +287,12 @@ describe('Data Import', () => {
         ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
         // create Match profile
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create Job profiles
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfileForUpdate);
         NewJobProfile.linkMatchAndTwoActionProfiles(
           matchProfile.profileName,
@@ -308,7 +314,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
         // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
         JobProfiles.waitFileIsUploaded();
@@ -344,7 +350,8 @@ describe('Data Import', () => {
           );
 
           // upload a marc file
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
           JobProfiles.waitFileIsUploaded();
@@ -362,7 +369,7 @@ describe('Data Import', () => {
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
           FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyAdministrativeNote(administrativeNote);
@@ -393,7 +400,8 @@ describe('Data Import', () => {
           InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
 
           // upload a marc file
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
           JobProfiles.waitFileIsUploaded();
@@ -411,7 +419,7 @@ describe('Data Import', () => {
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
           FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyAdministrativeNote(administrativeNote);

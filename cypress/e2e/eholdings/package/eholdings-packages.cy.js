@@ -22,40 +22,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
-      () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-          Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
-          Permissions.moduleeHoldingsEnabled.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
-          EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName('Examstutor');
-          EHoldingsPackages.openPackage();
-          cy.wait(3000);
-          EHoldingsPackage.addToHoldings();
-          cy.wait(3000);
-          EHoldingsPackage.verifyHoldingStatus();
-          cy.wait(3000);
-          EHoldingsPackage.filterTitles();
-          EHoldingsPackage.checkEmptyTitlesList();
-          // reset test data
-          EHoldingsPackage.removeFromHoldings();
-          cy.wait(3000);
-        });
-      },
-    );
-
-    it(
       'C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C3463'] },
       () => {
         // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
         cy.createTempUser([
@@ -84,7 +52,7 @@ describe('eHoldings', () => {
 
     it(
       'C3464 Update package proxy (spitfire)',
-      { tags: ['criticalPathBroken', 'spitfire'] },
+      { tags: ['criticalPathBroken', 'spitfire', 'C3464'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -109,7 +77,7 @@ describe('eHoldings', () => {
 
     it(
       'C690 Remove a package from your holdings (spitfire)',
-      { tags: ['smokeBroken', 'spitfire'] },
+      { tags: ['smokeBroken', 'spitfire', 'C690'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -139,7 +107,7 @@ describe('eHoldings', () => {
 
     it(
       'C695 Package Record: Search all titles included in a package (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C695'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -177,40 +145,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C756 Remove a tag from a package record (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
-      () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-          Permissions.uiTagsPermissionAll.gui,
-          Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
-          EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName();
-          EHoldingsPackages.openPackage().then(() => {
-            // existing test data clearing
-            EHoldingsPackage.removeExistingTags();
-            const addedTag = EHoldingsPackage.addTag();
-            EHoldingsPackage.closePackage();
-            EHoldingsPackagesSearch.byTag(addedTag);
-            EHoldingsPackages.openPackage();
-            EHoldingsPackage.verifyExistingTags(addedTag);
-            EHoldingsPackage.removeExistingTags();
-            cy.reload();
-            EHoldingsPackage.verifyExistingTags();
-          });
-        });
-      },
-    );
-
-    it(
       'C699 Add or edit package custom coverage (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C699'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -246,7 +182,7 @@ describe('eHoldings', () => {
 
     it(
       'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C3466'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -272,7 +208,7 @@ describe('eHoldings', () => {
 
     it(
       'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C703'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,

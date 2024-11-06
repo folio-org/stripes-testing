@@ -1,4 +1,7 @@
 import { Permissions } from '../../../../support/dictionary';
+import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
@@ -53,18 +56,16 @@ describe('Inventory', () => {
 
     it(
       'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C3500'] },
       () => {
         // Find the instance from precondition
-        const InventoryInstance = InventorySearchAndFilter.searchInstanceByTitle(
-          testData.folioInstances[0].instanceTitle,
-        );
+        InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
 
         // Click on the instance name -> Click on "View holdings"
-        const HoldingsRecordView = InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingView();
 
         // Click on "Actions" menu, Select "Edit"
-        const HoldingsRecordEdit = HoldingsRecordView.edit();
+        InventoryInstance.edit();
 
         // Change the Call number -> Click "Save & Close" button
         HoldingsRecordEdit.fillCallNumber(testData.callNumber);

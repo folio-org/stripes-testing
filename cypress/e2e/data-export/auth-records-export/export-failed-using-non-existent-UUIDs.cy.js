@@ -8,9 +8,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Authority records export', () => {
     const user = {};
     const downloadedFile = 'C_353209.csv';
@@ -28,7 +29,7 @@ describe('Data export', () => {
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        Permissions.dataExportEnableModule.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
 
@@ -50,7 +51,7 @@ describe('Data export', () => {
 
     it(
       'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
-      { tags: ['extendedPathBroken', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire', 'C353209'] },
       () => {
         MarcAuthorities.searchBy('Keyword', searchHeading);
         MarcAuthorities.downloadSelectedRecordWithRowIdx();
@@ -59,7 +60,7 @@ describe('Data export', () => {
         MarcAuthoritiesDelete.clickDeleteButton();
         MarcAuthoritiesDelete.confirmDelete();
         MarcAuthoritiesDelete.checkDelete(searchHeading);
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFileHelper.uploadRecentlyDownloadedFile(downloadedFile);
         ExportFileHelper.exportWithDefaultJobProfile(downloadedFile, 'authority', 'Authorities');
         DataExportResults.verifyLastLog(downloadedFile, 'Fail');

@@ -5,6 +5,7 @@ import {
   Badge,
   Button,
   Checkbox,
+  Image,
   KeyValue,
   ListItem,
   Modal,
@@ -25,7 +26,6 @@ import NewNote from '../notes/newNote';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
-const requestsSection = rootSection.find(Accordion({ id: 'requestsSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const userInformationSection = Accordion({ id: 'userInformationSection' });
@@ -34,6 +34,7 @@ const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const affiliationsSection = Section({ id: 'affiliationsSection' });
 const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const requestsAccordion = Accordion({ id: 'requestsSection' });
+const readingRoomAccessAccordion = Accordion({ id: 'readingRoomAccessSection' });
 const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
 const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
 const notesSection = Accordion('Notes');
@@ -53,6 +54,7 @@ const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfine
 const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
+const profilePictureCard = Image({ alt: 'Profile picture' });
 
 export default {
   errors,
@@ -126,6 +128,27 @@ export default {
 
     return openRequests && this.verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests);
   },
+  expandReadingRoomAccessSection(readingRoomName, status, isRoomCreated = true) {
+    cy.do(readingRoomAccessAccordion.clickHeader());
+    if (isRoomCreated) {
+      cy.do(
+        MultiColumnListCell({ content: readingRoomName }).perform((element) => {
+          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+          cy.expect(
+            readingRoomAccessAccordion
+              .find(MultiColumnListRow({ indexRow: rowNumber }))
+              .find(MultiColumnListCell({ content: status }))
+              .exists(),
+          );
+        }),
+      );
+    } else {
+      cy.expect(
+        readingRoomAccessAccordion.find(MultiColumnListCell({ content: readingRoomName })).absent(),
+      );
+    }
+  },
   verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests) {
     cy.expect(
       openedRequestsLink.has({
@@ -163,6 +186,7 @@ export default {
   },
   viewCurrentLoans({ openLoans, returnedLoans } = {}) {
     this.expandLoansSection(openLoans, returnedLoans);
+    cy.wait(500);
     this.clickCurrentLoansLink();
   },
   openFeeFines(openFeesFines, closedFeesFines) {
@@ -198,7 +222,7 @@ export default {
   },
 
   expandRequestSection() {
-    cy.do(Accordion({ id: 'requestsSection' }).clickHeader());
+    cy.do(requestsAccordion.clickHeader());
     cy.expect([
       Link({ id: 'clickable-viewopenrequests' }).exists(),
       Link({ id: 'clickable-viewclosedrequests' }).exists(),
@@ -492,7 +516,7 @@ export default {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
   },
   startRequestAdding() {
-    cy.do(requestsSection.find(Button('Create request')).click());
+    cy.do(requestsAccordion.find(Button('Create request')).click());
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
@@ -549,5 +573,21 @@ export default {
 
   verifyUserInformationPresence() {
     cy.expect(userInformationSection.exists());
+  },
+
+  verifyProfilePictureIsPresent(url) {
+    cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
+  },
+
+  verifyProfilePictureRemoved() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyPlaceholderProfilePictureIsPresent() {
+    cy.expect(profilePictureCard.has({ src: including('/./img/placeholderThumbnail') }));
+  },
+
+  verifyProfilePictureIsAbsent() {
+    cy.expect(profilePictureCard.absent());
   },
 };

@@ -111,6 +111,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388561*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374161');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -169,7 +170,7 @@ describe('MARC', () => {
 
         it(
           'C388561 "Link headings" button enabling/disabling when derive "MARC bib" having linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388561'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

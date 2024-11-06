@@ -35,10 +35,13 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -66,7 +69,7 @@ describe('Inventory', () => {
 
     it(
       'C451458 Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Holdings tab) (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C451458'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();

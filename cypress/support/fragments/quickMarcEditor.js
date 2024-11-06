@@ -411,7 +411,7 @@ const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library
 const holdingsLocationSelectDisabled = holdingsLocationModal.find(
   Button({ name: 'locationId', disabled: true }),
 );
-const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
+const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save & close'));
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
 const defaultValid008Values = {
@@ -1761,7 +1761,25 @@ export default {
   checkErrorMessage(rowIndex, errorMessage) {
     cy.wait(1000);
     cy.expect(
-      QuickMarcEditorRow({ index: rowIndex, error: including(`Fail: ${errorMessage}`) }).exists(),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(HTML(including(errorMessage)))
+        .exists(),
+    );
+  },
+
+  checkErrorMessageForField(index, errorMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ index })
+        .find(TextArea({ error: errorMessage }))
+        .exists(),
+    );
+  },
+
+  checkWarningMessageForField(index, errorMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ index })
+        .find(TextArea({ warning: errorMessage }))
+        .exists(),
     );
   },
 
@@ -2428,10 +2446,14 @@ export default {
   },
 
   openLinkingAuthorityByIndex(rowIndex) {
-    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(Link())
+        .perform((element) => {
+          element.removeAttribute('target');
+          element.click();
+        }),
+    );
   },
 
   checkSourceValue(firstName, lastName) {
@@ -2495,6 +2517,7 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
   },
   clickAuthorityLookUpButton() {
+    cy.wait(250);
     cy.do(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).click());
     cy.expect(selectAuthorityFileModal.exists());
   },

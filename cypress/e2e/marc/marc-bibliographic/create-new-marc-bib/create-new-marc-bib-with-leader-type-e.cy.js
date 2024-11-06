@@ -55,7 +55,7 @@ describe('MARC', () => {
 
       it(
         'C422119 Create new "MARC bib" with leader "Type" position="e" and valid values in 008 "Relf" position (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422119'] },
         () => {
           // 1 Click on the "Actions" button placed on the second pane → Select "+ New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();
@@ -117,6 +117,8 @@ describe('MARC', () => {
           cy.wait(1000);
 
           // 6 Click "Save & close" button
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 

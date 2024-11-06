@@ -39,21 +39,21 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC380532.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C380532 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           numOfRecords: 1,
           propertyName: 'instance',
         },
         {
           marc: 'marcAuthFileForC380532_1.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C380532 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
         },
         {
           marc: 'marcAuthFileForC380532_2.mrc',
-          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          fileName: `C380532 testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
@@ -85,16 +85,54 @@ describe('MARC', () => {
       const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
 
       before('Creating user and uploading files', () => {
-        cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C380532"' }).then(
-          (records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
-              }
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
+
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: 'keyword="C380532"',
+            }).then((records) => {
+              records.forEach((record) => {
+                if (record.authRefType === 'Authorized') {
+                  MarcAuthority.deleteViaAPI(record.id);
+                }
+              });
             });
-          },
-        );
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
+              });
+              cy.wait(2000);
+            });
+          })
+          .then(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            dataForC380532.forEach((linking) => {
+              QuickMarcEditor.clickLinkIconInTagField(linking.index);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.marcValue);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tagValue, linking.index);
+            });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -108,39 +146,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
-          });
-
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            dataForC380532.forEach((linking) => {
-              QuickMarcEditor.clickLinkIconInTagField(linking.index);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linking.marcValue);
-              // MarcAuthoritiesSearch.selectAuthorityByIndex(0);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tagValue, linking.index);
-            });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
-          });
-
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -151,12 +156,13 @@ describe('MARC', () => {
       after('Deleting user and data', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
       });
       it(
         'C380532 Data for "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380532'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading1);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);

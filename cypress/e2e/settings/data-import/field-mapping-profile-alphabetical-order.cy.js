@@ -2,11 +2,14 @@ import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import SelectProfileModal from '../../../support/fragments/settings/dataImport/modals/selectProfileModal';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -46,7 +49,10 @@ describe('Data Import', () => {
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -61,11 +67,8 @@ describe('Data Import', () => {
 
     it(
       'C377046 Verify Field mapping profiles alphabetical order (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377046'] },
       () => {
-        // #1 Go to "Settings" application ->  "Data import" -> "Field mapping profiles" -> Click "New field mapping profile" option
-        cy.visit(SettingsMenu.mappingProfilePath);
-
         // #2 Click "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();
 
@@ -81,7 +84,7 @@ describe('Data Import', () => {
         FieldMappingProfiles.verifyProfilesIsSortedInAlphabeticalOrder();
 
         // #5 Select "Action profiles" -> click "Actions" button -> Select "New action profile" option
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.openNewActionProfileForm();
 
         // #6 Click "Link profile" button

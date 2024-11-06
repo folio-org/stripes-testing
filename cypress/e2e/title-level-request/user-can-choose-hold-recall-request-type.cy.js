@@ -65,13 +65,14 @@ describe('Title Level Request', () => {
           ],
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
-          cy.wait(3000);
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"id"=="${instanceData.instanceId}"`,
-          }).then((instance) => {
-            testData.instanceHRID = instance.hrid;
+          cy.wait(3000).then(() => {
+            cy.getInstance({
+              limit: 1,
+              expandAll: true,
+              query: `"id"=="${instanceData.instanceId}"`,
+            }).then((instance) => {
+              testData.instanceHRID = instance.hrid;
+            });
           });
         });
       });
@@ -111,7 +112,7 @@ describe('Title Level Request', () => {
 
   it(
     'C359154 Check that user can choose request type when placing request ("Hold", "Recall") (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C359154'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(testData.instanceHRID);

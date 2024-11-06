@@ -69,10 +69,13 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -100,7 +103,7 @@ describe('Inventory', () => {
 
     it(
       'C451455 Search for "MARC bibliographic" by "LCCN, normalized" option using "Advanced search" modal ($a only) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C451455'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventoryInstances.clickAdvSearchButton();

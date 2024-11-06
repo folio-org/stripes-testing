@@ -28,19 +28,24 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411731 Edit list: Canned reports (corsair)', { tags: ['smokeFlaky', 'corsair'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.resetAllFilters();
-      Lists.expiredPatronLoan();
-      Lists.actionButton();
-      cy.contains('Edit list').should('be.disabled');
-      Lists.closeListDetailsPane();
-      Lists.waitLoading();
-      Lists.missingItems();
-      Lists.actionButton();
-      cy.contains('Edit list').should('be.disabled');
-    });
+    it(
+      'C411731 Edit list: Canned reports (corsair)',
+      { tags: ['smokeFlaky', 'corsair', 'C411731'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.resetAllFilters();
+        Lists.openExpiredPatronLoanList();
+        Lists.openActions();
+        Lists.verifyEditListButtonIsDisabled();
+        Lists.verifyEditListButtonIsDisabled();
+        Lists.closeListDetailsPane();
+        Lists.missingItems();
+        Lists.openActions();
+        Lists.verifyEditListButtonIsDisabled();
+      },
+    );
   });
 });

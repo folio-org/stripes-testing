@@ -100,7 +100,7 @@ describe('MARC', () => {
 
       it(
         'C380574 MARC Authority plug-in | Collapse and expand "Search & filter" pane when searching for "MARC Authority" records (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380574'] },
         () => {
           MarcAuthoritiesSearch.collapseSearchPane();
           MarcAuthoritiesSearch.verifySearchPaneIsCollapsed(true);

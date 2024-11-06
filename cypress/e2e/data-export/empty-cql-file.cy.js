@@ -21,7 +21,7 @@ const item = {
 
 const emptyFile = `autoTestEmptyFile${getRandomPostfix()}.cql`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -46,7 +46,7 @@ describe('Data export', () => {
 
   it(
     'C399097 Verify trigger Data export with an empty .cql file (firebird) (Taas)',
-    { tags: ['firebird', 'extendedPath'] },
+    { tags: ['firebird', 'extendedPath', 'C399097'] },
     () => {
       DataExportLogs.waitLoading();
       ExportFileHelper.uploadFile(emptyFile);

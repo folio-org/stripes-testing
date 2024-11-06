@@ -12,18 +12,22 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Permissions', () => {
+    let preconditionUserId;
     let user;
     let instnaceId;
     const uniqueFileName = `C356780 autotestFileName${getRandomPostfix()}.mrc`;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        'oneMarcBib.mrc',
-        uniqueFileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        instnaceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(
+          'oneMarcBib.mrc',
+          uniqueFileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          instnaceId = response[0].instance.id;
+        });
       });
 
       cy.createTempUser([
@@ -42,6 +46,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(preconditionUserId);
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instnaceId);
       });
@@ -49,7 +54,7 @@ describe('Data Import', () => {
 
     it(
       'C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356780'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

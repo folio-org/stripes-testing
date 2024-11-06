@@ -173,7 +173,7 @@ describe('MARC', () => {
 
         it(
           'C366552 Unlink existing unsaved linked "MARC Bib" field from "MARC Authority" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C366552'] },
           () => {
             InventoryInstance.editMarcBibliographicRecord();
             fields.forEach((field) => {

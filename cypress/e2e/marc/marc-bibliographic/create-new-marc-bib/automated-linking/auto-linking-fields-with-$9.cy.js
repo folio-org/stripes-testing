@@ -150,7 +150,7 @@ describe('MARC', () => {
 
         it(
           'C422151 Auto-link fields having "$9" when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C422151'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -174,7 +174,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContent(newFields[3].contentWithout$9, 8);
             QuickMarcEditor.checkContent(testData.fieldContents.tag245Content, 4);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

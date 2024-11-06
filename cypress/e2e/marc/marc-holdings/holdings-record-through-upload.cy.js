@@ -1,12 +1,12 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -37,9 +37,9 @@ describe('MARC', () => {
 
     it(
       'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345408'] },
       () => {
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdInstanceID);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

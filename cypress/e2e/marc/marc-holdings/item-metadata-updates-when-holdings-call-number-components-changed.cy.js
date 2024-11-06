@@ -133,7 +133,7 @@ describe('MARC', () => {
 
     it(
       'C388510 Item metadata updates when Holdings call number components changed (MARC record) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C388510'] },
       () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.editInQuickMarc();

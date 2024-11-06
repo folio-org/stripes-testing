@@ -6,6 +6,8 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -30,7 +32,7 @@ describe('MARC', () => {
         };
 
         const newFields = [
-          { previousFieldTag: '008', tag: '010', content: '$a n00776439' },
+          { previousFieldTag: '008', tag: '010', content: '$a n  00776439' },
           {
             previousFieldTag: '010',
             tag: '100',
@@ -49,6 +51,8 @@ describe('MARC', () => {
         let userData = {};
 
         before(() => {
+          cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423565');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
@@ -79,7 +83,7 @@ describe('MARC', () => {
 
         it(
           'C423565 Link MARC Bib with created on UI MARC authority record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C423565'] },
           () => {
             // Creating marc authority part
             MarcAuthorities.clickActionsAndNewAuthorityButton();
@@ -99,6 +103,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(newFields[0].tag, newFields[0].content);
             QuickMarcEditor.checkContentByTag(newFields[1].tag, newFields[1].content);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             MarcAuthority.verifyAfterSaveAndClose();
             QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.newAuthorityHeaderText);
             MarcAuthority.getId().then((id) => {
@@ -110,7 +116,7 @@ describe('MARC', () => {
             MarcAuthority.contains(newFields[1].content);
 
             // Creating marc bib part and linking
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
@@ -142,7 +148,8 @@ describe('MARC', () => {
               '$0 http://id.loc.gov/authorities/names/n00776439',
               '',
             );
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

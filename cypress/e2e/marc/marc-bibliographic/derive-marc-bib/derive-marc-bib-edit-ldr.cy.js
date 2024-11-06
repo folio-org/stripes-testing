@@ -63,10 +63,11 @@ describe('MARC', () => {
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
@@ -94,7 +95,7 @@ describe('MARC', () => {
 
         it(
           'C357566 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when deriving record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C357566'] },
           () => {
             for (let i = 0; i < testData.LDRValues.validLDR18Values.length; i++) {
               cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);

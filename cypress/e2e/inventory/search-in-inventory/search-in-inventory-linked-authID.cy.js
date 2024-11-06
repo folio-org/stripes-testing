@@ -82,6 +82,8 @@ describe('Inventory', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(22, testData.tag700);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
@@ -97,6 +99,8 @@ describe('Inventory', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(65, testData.tag700);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -118,7 +122,7 @@ describe('Inventory', () => {
 
     it(
       'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C367974'] },
       () => {
         InventoryInstances.verifyInstanceSearchOptions();
         InventoryInstances.searchInstancesWithOption(

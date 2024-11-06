@@ -42,18 +42,19 @@ describe('bulk-edit', () => {
 
     it(
       'C436782 Query builder - Search users with expiration date in specified date range and first name, last name containing specific letters ("Date-time" and "String" property types) (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C436782'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.expirationDate);
         QueryModal.verifySelectedField(usersFieldValues.expirationDate);
         QueryModal.verifyQueryAreaContent('(users.expiration_date  )');
         QueryModal.verifyOperatorColumn();
-        QueryModal.selectOperator('>=');
+        QueryModal.selectOperator('greater than or equal to');
         QueryModal.verifyOperatorsList(dateTimeOperators);
         QueryModal.verifyQueryAreaContent('(users.expiration_date >= )');
         QueryModal.verifyValueColumn();
@@ -75,7 +76,7 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.typeInAndSelectField(usersFieldValues.expirationDate, 1);
-        QueryModal.selectOperator('<=', 1);
+        QueryModal.selectOperator('less than or equal to', 1);
         QueryModal.verifyValueColumn();
         const nextWeekDate = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
         const nextWeekDateWithDashes = DateTools.getSomeDaysAfterTomorrowDateForFiscalYear(3);

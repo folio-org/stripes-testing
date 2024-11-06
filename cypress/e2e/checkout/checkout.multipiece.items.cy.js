@@ -13,7 +13,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Check Out', () => {
+describe('Check out', () => {
   let user = {};
   let userBarcode;
   let servicePoint;
@@ -24,6 +24,7 @@ describe('Check Out', () => {
   const defaultDescription = `autotest_description_${getRandomPostfix()}`;
 
   beforeEach(() => {
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
@@ -88,7 +89,6 @@ describe('Check Out', () => {
         }).then((users) => {
           userBarcode = users[0].barcode;
         });
-        cy.login(user.username, user.password);
       });
   });
 
@@ -132,10 +132,12 @@ describe('Check Out', () => {
 
   it(
     'C591 Check out: multipiece items (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C591'] },
     () => {
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
+      cy.login(user.username, user.password, {
+        path: TopMenu.checkOutPath,
+        waiter: Checkout.waitLoading,
+      });
       CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
       CheckOutActions.checkPatronInformation(user.username, userBarcode);
       cy.expect(CheckOutActions.modal.absent());

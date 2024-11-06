@@ -16,6 +16,9 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -83,7 +86,10 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.dataImportSettingsPath,
+          waiter: SettingsDataImport.waitLoading,
+        });
       });
     });
 
@@ -103,9 +109,9 @@ describe('Data Import', () => {
 
     it(
       'C423385 Check the placing of action profiles in edited Job profile (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C423385'] },
       () => {
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForMatches(

@@ -1,4 +1,9 @@
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
@@ -10,6 +15,7 @@ import { Locations } from '../../support/fragments/settings/tenant';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
@@ -78,48 +84,53 @@ describe('Title Level Request', () => {
     });
   });
 
-  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega', 'shiftLeft'] }, () => {
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItemGui(itemData.barcodes[0]);
-    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-    AwaitingPickupForARequest.closeModal();
-    CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-    cy.visit(TopMenu.requestsPath);
-    Requests.waitLoading();
-    Requests.findCreatedRequest(itemData.instanceTitle);
-    Requests.selectFirstRequest(itemData.instanceTitle);
-    RequestDetail.checkRequestStatus('Open - Awaiting pickup');
-    RequestDetail.checkItemStatus('Awaiting pickup');
-    RequestDetail.openActions();
-    RequestDetail.verifyCancelRequestOptionDisplayed();
+  it(
+    'C3533 Cancel request (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C3533'] },
+    () => {
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+      CheckInActions.checkInItemGui(itemData.barcodes[0]);
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.closeModal();
+      CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
+      Requests.findCreatedRequest(itemData.instanceTitle);
+      Requests.selectFirstRequest(itemData.instanceTitle);
+      RequestDetail.checkRequestStatus('Open - Awaiting pickup');
+      RequestDetail.checkItemStatus('Awaiting pickup');
+      RequestDetail.openActions();
+      RequestDetail.verifyCancelRequestOptionDisplayed();
 
-    RequestDetail.openCancelRequest();
-    RequestDetail.verifyCancelRequestModalDisplayed();
+      RequestDetail.openCancelRequest();
+      RequestDetail.verifyCancelRequestModalDisplayed();
 
-    RequestDetail.clickOnBackButton();
+      RequestDetail.clickOnBackButton();
 
-    RequestDetail.openActions();
-    RequestDetail.openCancelRequest();
-    RequestDetail.checkRequestCancellationModalInfo();
+      RequestDetail.openActions();
+      RequestDetail.openCancelRequest();
+      RequestDetail.checkRequestCancellationModalInfo();
 
-    RequestDetail.confirmRequestCancellation();
-    RequestDetail.checkRequestStatus('Closed - Cancelled');
+      RequestDetail.confirmRequestCancellation();
+      RequestDetail.checkRequestStatus('Closed - Cancelled');
 
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItemGui(itemData.barcodes[0]);
-    CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-    cy.visit(TopMenu.requestsPath);
-    Requests.waitLoading();
-    Requests.findCreatedRequest(itemData.instanceTitle);
-    Requests.selectFirstRequest(itemData.instanceTitle);
-    RequestDetail.checkItemStatus('Available');
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
 
-    RequestDetail.verifyEditButtonAbsent();
+      CheckInActions.checkInItemGui(itemData.barcodes[0]);
+      CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
+      Requests.waitLoading();
+      Requests.findCreatedRequest(itemData.instanceTitle);
+      Requests.selectFirstRequest(itemData.instanceTitle);
+      RequestDetail.checkItemStatus('Available');
 
-    RequestDetail.checkRequestInformation({
-      type: REQUEST_TYPES.PAGE,
-      status: 'Closed - Cancelled',
-      level: REQUEST_LEVELS.TITLE,
-    });
-  });
+      RequestDetail.verifyEditButtonAbsent();
+
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: 'Closed - Cancelled',
+        level: REQUEST_LEVELS.TITLE,
+      });
+    },
+  );
 });

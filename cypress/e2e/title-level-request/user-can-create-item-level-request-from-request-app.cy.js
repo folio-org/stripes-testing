@@ -119,7 +119,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
 
   it(
     'C347886 Check that user can create Item level request from Request app (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C347886'] },
     () => {
       cy.log(`userServicePoint  : ${testData.userServicePoint.name}`);
       NewRequest.openNewRequestPane();

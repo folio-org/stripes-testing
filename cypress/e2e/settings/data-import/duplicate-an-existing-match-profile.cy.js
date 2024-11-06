@@ -1,10 +1,13 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
@@ -36,7 +39,9 @@ describe('Data Import', () => {
         user = userProperties;
         cy.login(user.username, user.password);
       });
-      cy.visit(SettingsMenu.matchProfilePath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      SettingsDataImport.goToSettingsDataImport();
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
       MatchProfiles.createMatchProfile(matchProfile);
       MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
     });
@@ -51,7 +56,7 @@ describe('Data Import', () => {
 
     it(
       'C2340 Duplicate an existing match profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2340'] },
       () => {
         MatchProfileView.duplicate();
         NewMatchProfile.selectMatchCriterion(duplicatedMatchProfile.matchCriterion);

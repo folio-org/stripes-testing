@@ -55,9 +55,11 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -90,7 +92,7 @@ describe('MARC', () => {
 
         it(
           'C369092 Link the "240" of "MARC Bib" field with "100" field with a "$t" of "MARC Authority" record. (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C369092'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();

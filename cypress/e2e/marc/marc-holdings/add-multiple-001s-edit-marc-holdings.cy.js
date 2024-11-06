@@ -29,7 +29,24 @@ describe('MARC', () => {
     const recordIDs = [];
 
     beforeEach('Creating user, data', () => {
+      cy.getAdminToken();
       marcFile.fileName = `testMarcFile.editMarcHoldings.${getRandomPostfix()}.mrc`;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
+
+        cy.getUserToken(userProperties.username, userProperties.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            recordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
+      });
+
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
@@ -37,45 +54,35 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.createdUserProperties = createdUserProperties;
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                recordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          InventoryInstances.searchByTitle(recordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.goToMarcHoldingRecordAdding();
+          QuickMarcEditor.updateExistingField(
+            testData.tag852,
+            QuickMarcEditor.getExistingLocation(),
+          );
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveHoldings();
 
-            cy.visit(TopMenu.inventoryPath).then(() => {
-              InventoryInstances.searchByTitle(recordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.goToMarcHoldingRecordAdding();
-              QuickMarcEditor.updateExistingField(
-                testData.tag852,
-                QuickMarcEditor.getExistingLocation(),
-              );
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveHoldings();
+          HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+            recordIDs.push(holdingsID);
+          });
 
-              HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-                recordIDs.push(holdingsID);
-              });
-            });
-
-            cy.login(createdUserProperties.username, createdUserProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          },
-        );
+          cy.login(createdUserProperties.username, createdUserProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        });
       });
     });
 
     afterEach('Deleting created user, data', () => {
       cy.getAdminToken();
+      Users.deleteViaApi(testData.preconditionUserId);
       Users.deleteViaApi(testData.createdUserProperties.userId);
       cy.deleteHoldingRecordViaApi(recordIDs[1]);
       InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
@@ -84,7 +91,7 @@ describe('MARC', () => {
 
     it(
       'C358991 Verify that field which moved above "852" retains all values in the subfield text box when edit "MARC Holdings" record (Spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358991'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
@@ -104,7 +111,7 @@ describe('MARC', () => {
 
     it(
       'C387461 Add multiple 001s when editing "MARC Holdings" record (Spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C387461'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);
@@ -128,7 +135,7 @@ describe('MARC', () => {
 
     it(
       'C356843 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (Spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C356843'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstances.searchByTitle(recordIDs[0]);

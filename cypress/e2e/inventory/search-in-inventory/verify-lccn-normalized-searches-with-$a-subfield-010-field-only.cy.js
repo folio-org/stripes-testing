@@ -28,10 +28,13 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -59,7 +62,7 @@ describe('Inventory', () => {
 
     it(
       'C442835 Verify that "LCCN, normalized" search option searches by "$a" subfield of "010" field only (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C442835'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');

@@ -15,6 +15,7 @@ describe('MARC', () => {
         tag010: '010',
         tagLDR: 'LDR',
         tag008: '008',
+        tag245: '245',
         tag010Values: ['58020553', '766384'],
       };
       const calloutMessage = 'Field is non-repeatable.';
@@ -42,7 +43,7 @@ describe('MARC', () => {
 
       it(
         'C380644 Create "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380644'] },
         () => {
           // #1 Click on the "Actions" button placed on the second pane >> Select "+New MARC Bib Record" option.
           InventoryInstance.newMarcBibRecord();
@@ -50,7 +51,9 @@ describe('MARC', () => {
           // #2 Replace blank values in LDR positions 06, 07 with valid values
           QuickMarcEditor.updateLDR06And07Positions();
           // #3 Fill in the required fields with valid data:
-          QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
+          QuickMarcEditor.updateExistingField(testData.tag245, `$a ${getRandomPostfix()}`);
+          QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.tag245, '1', 1);
           // #4 Add two new "010" fields and fill in them as specified:
           MarcAuthority.addNewField(4, testData.tag010, `$a ${testData.tag010Values[0]}`);
           MarcAuthority.addNewField(5, testData.tag010, `$a ${testData.tag010Values[1]}`);

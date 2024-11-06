@@ -9,6 +9,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const customFieldData = {
@@ -43,10 +45,10 @@ describe('bulk-edit', () => {
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         CustomFields.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.addMultiSelectCustomField(customFieldData);
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       });
     });
 
@@ -60,9 +62,9 @@ describe('bulk-edit', () => {
 
     it(
       'C389569 Local | Verify bulk edit Users records with recently updated Custom fields (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C389569'] },
       () => {
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -88,7 +90,8 @@ describe('bulk-edit', () => {
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
         );
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,

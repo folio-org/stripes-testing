@@ -6,8 +6,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -16,6 +14,11 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -55,20 +58,15 @@ describe('Data Import', () => {
       NewFieldMappingProfile.save();
 
       // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
 
       // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfile);
       NewJobProfile.linkActionProfileByName('Default - Create instance');
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
-
-      // upload a marc file for creating of the new instance, holding
-      DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-      });
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -76,6 +74,11 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        // upload a marc file for creating of the new instance, holding
+        DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+        });
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
@@ -101,7 +104,7 @@ describe('Data Import', () => {
 
     it(
       'C353587 After using the Chrome "go back" button, following the link "Holdings Created" from Data import to Inventory causes an error. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353587'] },
       () => {
         Logs.openFileDetails(fileName);
         [

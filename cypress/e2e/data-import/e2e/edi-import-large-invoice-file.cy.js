@@ -4,6 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
   VENDOR_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -19,8 +20,11 @@ import {
 } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -57,7 +61,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -73,27 +80,26 @@ describe('Data Import', () => {
 
     it(
       'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C347615'] },
       () => {
         // create Field mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC347615.edi', fileName);
         DataImport.waitFileIsUploaded();

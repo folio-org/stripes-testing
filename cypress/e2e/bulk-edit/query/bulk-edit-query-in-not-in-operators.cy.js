@@ -56,13 +56,14 @@ describe('bulk-edit', () => {
 
     it(
       'C477624 Verify correct formatting of "in" and "not in" operators in query string when “Value“ column contains text box (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C477624'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.itemUuid);
         QueryModal.verifySelectedField(itemFieldValues.itemUuid);
         QueryModal.verifyQueryAreaContent('(items.id  )');

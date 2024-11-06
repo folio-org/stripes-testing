@@ -32,9 +32,8 @@ describe('MARC', () => {
               return `records[${rowIndex}].subfieldGroups.uncontrolledNumber`;
             },
           },
-          errorMessage: (tag) => {
-            return `MARC ${tag} has a subfield(s) that cannot be saved because the field is controlled by an authority record.`;
-          },
+          errorCalloutMessage:
+            'A subfield(s) cannot be updated because it is controlled by an authority heading.',
         };
 
         const newFields = [
@@ -42,12 +41,12 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '100',
             content: '$a test123',
-            boxFourth: '$a C380745 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            boxFourth: '$a C380745 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '',
             boxSixth: '$0 3052044',
             boxSeventh: '',
             searchOption: 'Personal name',
-            marcValue: 'C380745 Jackson, Peter, 1950-2022 Inspector Banks series ;',
+            marcValue: 'C380745 Jackson, Peter, 1950-2022 Inspector Banks series',
           },
           {
             rowIndex: 6,
@@ -119,7 +118,7 @@ describe('MARC', () => {
 
         it(
           'C422132 Add controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422132'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -159,7 +158,7 @@ describe('MARC', () => {
               '$b test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(5, testData.errorMessage(newFields[0].tag));
+            QuickMarcEditor.checkErrorMessage(5, testData.errorCalloutMessage);
 
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.fifthBox(5), '');
             QuickMarcEditor.fillEmptyTextAreaOfField(5, testData.fieldName.seventhBox(5), '');
@@ -170,7 +169,7 @@ describe('MARC', () => {
               '$f test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkErrorMessage(6, testData.errorMessage(newFields[1].tag));
+            QuickMarcEditor.checkErrorMessage(6, testData.errorCalloutMessage);
           },
         );
       });

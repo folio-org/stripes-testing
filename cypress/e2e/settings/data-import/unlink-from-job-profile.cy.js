@@ -1,7 +1,8 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
-  FOLIO_RECORD_TYPE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
+  FOLIO_RECORD_TYPE,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
@@ -10,15 +11,18 @@ import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -84,17 +88,19 @@ describe('Data Import', () => {
 
     it(
       'C11116 Unlinking a match or action profile from a job profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11116'] },
       () => {
         // create 3 action profiles
-        cy.visit(SettingsMenu.actionProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfActionProfiles.forEach((profile) => {
           ActionProfiles.create(profile, mappingProfile.name);
           ActionProfileView.close();
           ActionProfiles.waitLoading();
         });
         // create Job profile with linked match and action profiles
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[0].name);

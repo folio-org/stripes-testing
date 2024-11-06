@@ -16,7 +16,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.uiUserEdit.gui,
         permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
+        permissions.uiUserCanAssignUnassignPermissions.gui,
       ]).then((userProperties) => {
         userWthViewEditPermissions = userProperties;
         cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password, {
@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350765 Verify BULK EDIT permissions list (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350765'] },
       () => {
         const permissionsToVerify = [
           permissions.bulkEditCsvView.gui,

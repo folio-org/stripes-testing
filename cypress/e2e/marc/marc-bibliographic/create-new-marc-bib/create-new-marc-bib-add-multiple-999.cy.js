@@ -37,7 +37,7 @@ describe('MARC', () => {
 
       it(
         'C380716 Add multiple 999s when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380716'] },
         () => {
           // Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
           InventoryInstance.newMarcBibRecord();
@@ -46,6 +46,8 @@ describe('MARC', () => {
 
           // Fill "$a" value in "245" field
           QuickMarcEditor.updateExistingField(testData.field245.tag, testData.field245.content);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 0);
+          QuickMarcEditor.updateIndicatorValue(testData.field245.tag, '1', 1);
 
           // Replace blank values in LDR positions 06, 07 with valid values
           QuickMarcEditor.updateLDR06And07Positions();
@@ -54,8 +56,6 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(testData.field999.tag, testData.field999.content, 4);
 
           // Click "Save & close" button
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {

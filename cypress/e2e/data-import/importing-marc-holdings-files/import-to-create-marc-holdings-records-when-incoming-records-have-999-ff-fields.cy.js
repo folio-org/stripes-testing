@@ -24,13 +24,7 @@ describe('Data Import', () => {
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
-    before('Create test data', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
-      });
-
+    before('Create test data and login', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -39,6 +33,13 @@ describe('Data Import', () => {
         Permissions.settingsTenantViewLocation.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+            instanceId = response[0].instance.id;
+          },
+        );
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
@@ -57,7 +58,7 @@ describe('Data Import', () => {
 
     it(
       'C359218 Checking import to Create MARC Holdings records when incoming records have 999 ff fields (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C359218'] },
       () => {
         // edit marc file adding instance hrid
         DataImport.editMarcFile(
@@ -66,8 +67,8 @@ describe('Data Import', () => {
           ['intest1', 'intest2', 'intest3'],
           [instanceHrid, instanceHrid, instanceHrid],
         );
+
         // upload a marc file for creating holdings
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -55,10 +55,11 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             testData.userProperties = createdUserProperties;
 
-            cy.getAdminToken();
+            cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -91,7 +92,7 @@ describe('MARC', () => {
 
         it(
           'C365134 Link "MARC Bib" field without "$0" subfield to "MARC Authority" record. "Authority source file" value from the pre-defined list (100 field to 100) (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C365134'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();

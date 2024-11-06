@@ -85,7 +85,7 @@ describe('MARC', () => {
 
     it(
       'C375188 Verify that "Call number" fields are cleared after user deletes mapped values from "MARC Holdings" record. (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C375188'] },
       () => {
         InventoryInstance.waitInventoryLoading();
         InventoryInstance.goToMarcHoldingRecordAdding();
@@ -120,8 +120,8 @@ describe('MARC', () => {
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.itemBarcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyShelvingOrder('-');
-        ItemRecordView.verifyCallNumber('-');
+        ItemRecordView.verifyShelvingOrder('No value set-');
+        ItemRecordView.verifyCallNumber('No value set-');
         ItemRecordView.closeDetailView();
         InventoryInstance.waitInventoryLoading();
         InventorySearchAndFilter.selectBrowseCallNumbers();

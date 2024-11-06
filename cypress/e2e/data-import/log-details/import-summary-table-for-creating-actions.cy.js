@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
@@ -14,17 +15,20 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -114,7 +118,7 @@ describe('Data Import', () => {
 
     it(
       'C356801 Check import summary table with "Created" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356801'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -157,14 +161,14 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
@@ -173,7 +177,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcBibFileForC356801.mrc', nameMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -192,7 +196,8 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocationUI,
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(nameMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,

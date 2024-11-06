@@ -8,8 +8,8 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
-  MultiColumnListRow,
   MultiColumnListHeader,
+  MultiColumnListRow,
   Pane,
   PaneContent,
   Select,
@@ -60,6 +60,7 @@ function waitUIToBeFiltered() {
 
 function checkByErrorsInImport(...status) {
   waitUIToBeFiltered();
+  cy.wait(3000);
   return cy.get('#list-data-import').then((element) => {
     // only 100 records shows on every page
     const resultCount =
@@ -363,7 +364,8 @@ export default {
   },
 
   checkByDateAndJobProfile({ from, end }, profileId) {
-    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
+    cy.wait(2000);
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
@@ -373,13 +375,9 @@ export default {
 
   getNumberOfMatchedJobs(queryString) {
     return cy
-      .request({
-        method: 'GET',
-        url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobExecutions?${queryString}`,
-        headers: {
-          'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-          'x-okapi-token': Cypress.env('token'),
-        },
+      .okapiRequest({
+        path: `metadata-provider/jobExecutions?${queryString}`,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         return body.jobExecutions.length;
@@ -409,7 +407,7 @@ export default {
       .get('#list-data-import')
       .find('div[data-row-inner="0"]')
       .find('div[role=gridcell]')
-      .eq(9)
+      .eq(8)
       .invoke('text')
       .then((text) => {
         return text;

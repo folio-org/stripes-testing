@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../../support/fragments/check-in-actions/checkInPane';
@@ -15,7 +15,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -88,7 +88,7 @@ describe('Inventory', () => {
 
         UserEdit.addServicePointsViaApi([servicePoint.id], user.userId, servicePoint.id);
         cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
       });
     });
@@ -109,14 +109,14 @@ describe('Inventory', () => {
 
     it(
       'C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C397325'] },
       () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         CheckInPane.checkResultsInTheRow(testData);
         CheckInActions.endCheckInSessionAndCheckDetailsOfCheckInAreCleared();
 
-        cy.visit(TopMenu.checkOutPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
         Checkout.waitLoading();
         // without this waiter, the user will not be found by username
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -127,7 +127,7 @@ describe('Inventory', () => {
         CheckOutActions.endCheckOutSession();
         CheckOutActions.checkDetailsOfCheckOUTAreCleared();
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(itemData.barcode);
@@ -143,7 +143,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
         InventoryInstance.openItemByBarcode(newItemBarcode);
-        ItemRecordView.checkItemCirculationHistory('-', '-', '-');
+        ItemRecordView.checkItemCirculationHistory('-', 'No value set-', '-');
       },
     );
   });

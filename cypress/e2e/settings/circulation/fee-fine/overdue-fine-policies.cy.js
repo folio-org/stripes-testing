@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
@@ -18,6 +18,7 @@ import PatronGroups from '../../../../support/fragments/settings/users/patronGro
 import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
@@ -210,12 +211,13 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   });
 
   it(
-    'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: ['vega', 'smoke'] },
+    'C5557 Verify that you can create/edit/delete overdue fine policies (vega)',
+    { tags: ['vega', 'smoke', 'C5557'] },
     () => {
-      cy.loginAsAdmin();
-      // TODO add check that name is unique
-      cy.visit(SettingsMenu.circulationOverdueFinePoliciesPath);
+      cy.loginAsAdmin({
+        path: SettingsMenu.circulationOverdueFinePoliciesPath,
+        waiter: () => cy.wait(3000),
+      });
 
       const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
       const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
@@ -241,7 +243,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (vega)',
-    { tags: ['vega', 'smoke', 'broken'] },
+    { tags: ['vega', 'smoke', 'broken', 'C9267'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkOutPath,
@@ -251,7 +253,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       CheckOutActions.checkOutItem(instanceData.itemBarcode);
       CheckOutActions.openLoanDetails();
       CheckOutActions.changeDueDateToPast(minutes);
-      cy.visit(TopMenu.checkInPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.checkInItem(instanceData.itemBarcode);
       CheckInActions.checkFeeFinesDetails(
         minutes,

@@ -54,15 +54,15 @@ describe('MARC', () => {
           testData.tag830,
           '\\',
           '0',
-          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $0 http://id.loc.gov/authorities/names/n84801249',
+          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $z England $0 http://id.loc.gov/authorities/names/n84801249',
         ];
         const bib830LinkedFieldValues = [
           21,
           testData.tag830,
           '\\',
           '0',
-          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english',
-          '$v no. 19.',
+          '$a C375088 Cambridge tracts in mathematics and mathematical physics $l english $v no. 19. $z England',
+          '',
           '$0 http://id.loc.gov/authorities/names/n84801249',
           '',
         ];
@@ -111,7 +111,7 @@ describe('MARC', () => {
 
         it(
           'C375088 Link the "830" of "MARC Bib" field with "130" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C375088'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

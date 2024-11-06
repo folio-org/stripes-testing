@@ -8,6 +8,8 @@ import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -43,7 +45,7 @@ describe('eHoldings', () => {
 
     it(
       'C1295 Create a new Agreement and attach a package (spitfire)',
-      { tags: ['extendedPathBroken', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire', 'C1295'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.wait(10000);
@@ -61,7 +63,7 @@ describe('eHoldings', () => {
         AgreementViewDetails.verifyAgreementLinePresented(
           testData.defaultPackage.data.attributes.name,
         );
-        cy.visit(TopMenu.eholdingsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.openPackage();

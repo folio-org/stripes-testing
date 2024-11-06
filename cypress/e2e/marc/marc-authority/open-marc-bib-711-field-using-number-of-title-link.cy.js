@@ -43,10 +43,11 @@ describe('MARC', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -98,7 +99,7 @@ describe('MARC', () => {
 
     it(
       'C375265 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "711" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C375265'] },
       () => {
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
         MarcAuthorities.checkRow(testData.marcValue);

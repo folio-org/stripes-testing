@@ -31,9 +31,13 @@ describe('Inventory', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -61,7 +65,7 @@ describe('Inventory', () => {
 
     it(
       'C496182 Search for Instance by "Place of publication" field is case insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C496182'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

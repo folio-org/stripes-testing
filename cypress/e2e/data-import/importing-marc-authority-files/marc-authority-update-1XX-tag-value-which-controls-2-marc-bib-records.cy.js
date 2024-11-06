@@ -4,6 +4,7 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -32,6 +33,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -156,53 +158,54 @@ describe('Data Import', () => {
           );
         });
 
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-          });
-        });
-      });
-
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      }).then(() => {
-        twoMarcBibsToLink.forEach((marcBib) => {
-          InventoryInstances.searchByTitle(marcBib.marcBibRecord);
-          cy.wait(1500);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          marcBib.linkingFields.forEach((linking) => {
-            QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.verifySearchOptions();
-            InventoryInstance.searchResults(linking.value);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-          });
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
-        });
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+        });
+
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          twoMarcBibsToLink.forEach((marcBib) => {
+            InventoryInstances.searchByTitle(marcBib.marcBibRecord);
+            cy.wait(1500);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            marcBib.linkingFields.forEach((linking) => {
+              QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.verifySearchOptions();
+              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+            });
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          });
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.marcAuthorities,
@@ -230,7 +233,7 @@ describe('Data Import', () => {
 
     it(
       'C374167 Update "1XX" tag value of linked "MARC Authority" record which controls 2 "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C374167'] },
       () => {
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();
@@ -244,7 +247,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record found');
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -255,7 +258,7 @@ describe('Data Import', () => {
           testData.marcFileForModify,
           testData.modifiedMarcFile,
         );
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
@@ -270,14 +273,14 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
 
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.verifyEmptyNumberOfTitles();
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthority.contains(testData.tag110);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkInstanceTitle(twoMarcBibsToLink[0].marcBibRecord);

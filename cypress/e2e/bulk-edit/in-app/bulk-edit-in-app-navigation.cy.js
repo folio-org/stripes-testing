@@ -20,14 +20,18 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.bulkEditUpdateRecords.gui,
         permissions.uiUserEdit.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+      ])
+        .then((userProperties) => {
+          user = userProperties;
+        })
+        .then(() => {
+          cy.wait(5000);
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         });
-        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-      });
     });
 
     after('delete test data', () => {
@@ -38,7 +42,7 @@ describe('bulk-edit', () => {
 
     it(
       'C374149 Verify Bulk edit state when navigating to another app and back -- In app approach (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+      { tags: ['criticalPath', 'firebird', 'C374149'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

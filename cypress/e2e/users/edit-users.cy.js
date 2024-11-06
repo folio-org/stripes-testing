@@ -7,7 +7,7 @@ import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Permissions Tags', () => {
+describe('Users', () => {
   let userData;
   let servicePointId;
   const newMiddleName = getTestEntityValue('newMiddleName');
@@ -65,13 +65,13 @@ describe('Permissions Tags', () => {
       userData.middleName = newMiddleName;
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.openEdit();
-      UserEdit.verifySaveAndColseIsDisabled(true);
+      UserEdit.verifySaveAndCloseIsDisabled(true);
       UserEdit.changeMiddleName(getTestEntityValue('newName'));
-      UserEdit.verifySaveAndColseIsDisabled(false);
+      UserEdit.verifySaveAndCloseIsDisabled(false);
       UserEdit.cancelChanges();
       Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
       Users.verifyFullNameIsDisplayedCorrectly(
-        `${userData.lastName}, ${userData.firstName} ${userData.middleName}`,
+        `${userData.lastName}, ${userData.preferredFirstName} ${userData.middleName}`,
       );
     },
   );

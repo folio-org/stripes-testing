@@ -1,17 +1,18 @@
-import uuid from 'uuid';
-import moment from 'moment';
 import { HTML, including } from '@interactors/html';
+import moment from 'moment';
+import uuid from 'uuid';
 import {
   Button,
-  TextField,
-  MultiColumnListRow,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
-  Pane,
-  Modal,
-  PaneContent,
-  or,
   MultiColumnListHeader,
+  MultiColumnListRow,
+  Pane,
+  PaneContent,
+  TextField,
+  matching,
+  or,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -61,13 +62,6 @@ const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
   cy.expect(Button('End session').exists());
 };
-const checkInItemGui = (barcode) => {
-  return cy.do([
-    itemBarcodeField.exists(),
-    itemBarcodeField.fillIn(barcode),
-    addItemButton.click(),
-  ]);
-};
 
 export default {
   waitLoading: () => {
@@ -97,6 +91,11 @@ export default {
     cy.do(endSessionButton.click());
     // cy.expect(section('No items have been entered yet.').exists())
   },
+
+  fillInBarcode(barcode) {
+    return cy.do([itemBarcodeField.exists(), itemBarcodeField.fillIn(barcode)]);
+  },
+
   checkInItem: (barcode) => {
     waitLoading();
     cy.intercept('/inventory/items?*').as('getItems');
@@ -119,17 +118,25 @@ export default {
     cy.expect(checkInButtonInModal.exists());
     cy.do(checkInButtonInModal.click());
   },
-  checkInItemGui,
+
+  checkInItemGui(barcode) {
+    return cy.wrap(true).then(() => {
+      cy.do([itemBarcodeField.exists(), itemBarcodeField.fillIn(barcode)]);
+      cy.wait(500);
+      cy.do(addItemButton.click());
+    });
+  },
+
   checkInItemByBarcode(barcode) {
     this.checkInItemGui(barcode);
     this.confirmCheckInLostItem();
     this.verifyLastCheckInItem(barcode);
     this.endCheckInSession();
   },
-  getSessionIdAfterCheckInItem: (barcode) => {
+  getSessionIdAfterCheckInItem(barcode) {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.intercept('circulation/check-in-by-barcode').as('getCheckInResponse');
-    checkInItemGui(barcode);
+    this.checkInItemGui(barcode);
     cy.wait('@getItems');
     return cy.wait('@getCheckInResponse', getLongDelay()).its('request.body.sessionId');
   },
@@ -167,13 +174,13 @@ export default {
     cy.do(checkInButton.click());
   },
 
-  openLoanDetails: (username) => {
+  openLoanDetails(username) {
     cy.do([availableActionsButton.click(), loanDetailsButton.click()]);
     cy.expect(Pane(including(username)).exists());
     cy.expect(Pane(including('Loan details')).exists());
   },
 
-  openPatronDetails: (username) => {
+  openPatronDetails(username) {
     cy.do([availableActionsButton.click(), patronDetailsButton.click()]);
     cy.expect(Pane({ title: including(username) }).exists());
   },
@@ -200,7 +207,7 @@ export default {
     cy.expect(HTML(including(itemBarcode)).exists());
   },
 
-  openNewfeefinesPane: () => {
+  openNewFeeFinesPane: () => {
     cy.do([availableActionsButton.click(), newFeeFineButton.click()]);
     cy.expect(Modal(including('New fee/fine')).exists());
   },
@@ -236,8 +243,23 @@ export default {
     });
   },
 
-  confirmMultipleItemsCheckin(barcode) {
+  confirmMultipleItemsCheckinWithoutConfirmation(barcode) {
+    cy.wait(1000);
     cy.do(checkInButtonInModal.click());
+    cy.wait(1000);
+    cy.expect(
+      MultiColumnList({ id: 'list-items-checked-in' })
+        .find(HTML(including(barcode)))
+        .exists(),
+    );
+  },
+
+  confirmMultipleItemsCheckin(barcode) {
+    cy.wait(1000);
+    cy.do(checkInButtonInModal.click());
+    cy.wait(1000);
+    cy.do(Button({ id: matching('confirm-status-[0-9]+-close-button') }).click());
+    cy.wait(1000);
     cy.expect(
       MultiColumnList({ id: 'list-items-checked-in' })
         .find(HTML(including(barcode)))

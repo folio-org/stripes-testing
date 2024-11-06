@@ -8,6 +8,8 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const invalidUserUUID = getRandomPostfix();
@@ -31,7 +33,7 @@ describe('bulk-edit', () => {
     });
 
     beforeEach('select User', () => {
-      cy.visit(TopMenu.bulkEditPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
     });
 
@@ -48,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357579'] },
       () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -63,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357987 Verify Users Patron group bulk edit -- in app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357987'] },
       () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -84,7 +86,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359213'] },
       () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -107,7 +109,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359214 Verify expiration date updates in In-app approach (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359214'] },
       () => {
         const todayDate = new Date();
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -130,7 +132,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359237 Verify "Expiration date" option in the dropdown (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359237'] },
       () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -143,7 +145,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359585 Verify clicking on the "Commit changes" button (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C359585'] },
       () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -165,7 +167,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359211 Verify upload file with invalid identifiers -- " -- Users-in app approach (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C359211'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidUserUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();

@@ -101,7 +101,7 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
 
   it(
     "C365594 Derive | Link 'MARC Bib' field with '$0' subfield which doesn't match to 'MARC Authority' record. 'Authority source file' value is 'Not specified' (700 field to 100) (spitfire) (TaaS)",
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire', 'C365594'] },
     () => {
       InventoryInstances.searchByTitle(testData.createdRecordsIDs[0]);
       InventoryInstances.selectInstance();

@@ -77,7 +77,7 @@ describe('Data Import', () => {
 
     it(
       'C356832 Inventory Admin note field should validate for MARC, text, or cascade in the field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C356832'] },
       () => {
         // create mapping profile for instance
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -96,7 +96,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[0].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[0].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[0].name);
 
         // create mapping profile for holdings
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -115,7 +114,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[1].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[1].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[1].name);
 
         // create mapping profile for item
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -134,7 +132,6 @@ describe('Data Import', () => {
         );
         FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[2].name);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingProfiles[2].name);
-        FieldMappingProfileView.closeViewMode(collectionOfMappingProfiles[2].name);
       },
     );
   });

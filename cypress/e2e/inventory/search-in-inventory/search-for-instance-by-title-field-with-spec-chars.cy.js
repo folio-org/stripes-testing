@@ -71,7 +71,7 @@ describe('Inventory', () => {
 
     it(
       'C368027 Search for "Instance" by "Title" field with special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C368027'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);

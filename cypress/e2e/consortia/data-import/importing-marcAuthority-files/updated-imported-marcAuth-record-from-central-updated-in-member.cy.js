@@ -102,7 +102,7 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
         users.userAProperties = userProperties;
@@ -174,7 +174,7 @@ describe('Data Import', () => {
 
     it(
       'C405144 Updated "MARC authority" record via "Data import" from Central tenant is updated in Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire', 'C405144'] },
       () => {
         cy.login(users.userAProperties.username, users.userAProperties.password, {
           path: TopMenu.marcAuthorities,

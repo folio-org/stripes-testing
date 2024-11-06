@@ -83,9 +83,13 @@ describe('Inventory', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -113,7 +117,7 @@ describe('Inventory', () => {
 
     it(
       'C496179 Search for Instance by "Place of publication" field using queries with different order of search terms (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C496179'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

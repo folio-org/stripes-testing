@@ -1,15 +1,15 @@
 import uuid from 'uuid';
 import { MultiColumnList } from '../../../../interactors';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import FilterItems from '../../../support/fragments/inventory/filterItems';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
 import users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -76,7 +76,7 @@ describe('Inventory', () => {
             });
           });
       });
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
     });
 
     after('Delete all data', () => {
@@ -97,7 +97,7 @@ describe('Inventory', () => {
 
     it(
       'C11081: Verify item status filters retrieve items with that item status (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'C11081'] },
       () => {
         cy.intercept('GET', '/inventory/items?*').as('getItems');
         cy.intercept('GET', '/search/instances?*').as('getInstances');

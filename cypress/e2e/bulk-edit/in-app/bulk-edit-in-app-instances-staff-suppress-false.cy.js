@@ -12,6 +12,8 @@ import Locations from '../../../support/fragments/settings/tenant/location-setup
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import SelectInstanceModal from '../../../support/fragments/requests/selectInstanceModal';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const testData = {};
@@ -75,6 +77,7 @@ describe('bulk-edit', () => {
         instance: marcInstances[0],
         servicePoint: userServicePoint,
       });
+      Locations.deleteViaApi(testData.defaultLocation);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         matchedRecordsFileName,
@@ -85,7 +88,7 @@ describe('bulk-edit', () => {
 
     it(
       'C423980 Verify "Staff suppress" (Set false) option in Bulk Editing - Instances (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C423980'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
@@ -132,7 +135,7 @@ describe('bulk-edit', () => {
         ]);
 
         [folioItem.instanceName, marcInstances[0].instanceTitle].forEach((title) => {
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           SelectInstanceModal.filterByStaffSuppress('No');
           InventorySearchAndFilter.searchInstanceByTitle(title);
           InventoryInstances.selectInstance();

@@ -43,13 +43,14 @@ describe('bulk-edit', () => {
 
     it(
       'C440079 Render preview after query executed (Users - Edit In app) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C440079'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
         QueryModal.verifyQueryAreaContent('(groups.group  )');
@@ -57,7 +58,7 @@ describe('bulk-edit', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(groups.group == )');
         QueryModal.verifyValueColumn();
-        QueryModal.fillInValueTextfield(patronGroupNames.STAFF);
+        QueryModal.chooseValueSelect(patronGroupNames.STAFF);
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(`(groups.group == "${patronGroupNames.STAFF}")`);

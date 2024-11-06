@@ -86,7 +86,7 @@ describe('MARC', () => {
         ];
 
         const bib830FieldValues = [
-          23,
+          22,
           testData.tag830,
           '\\',
           '0',
@@ -139,7 +139,7 @@ describe('MARC', () => {
 
         it(
           'C380468 Verify that user cant link "830" MARC Bib field with wrong record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C380468'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

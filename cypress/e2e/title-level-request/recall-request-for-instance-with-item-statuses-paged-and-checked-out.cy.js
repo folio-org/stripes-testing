@@ -221,7 +221,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega) (Taas)',
-    { tags: ['criticalPathBroken', 'vega'] },
+    { tags: ['criticalPathBroken', 'vega', 'C380490'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
       createTLR(users[2], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
@@ -238,7 +238,7 @@ describe('Create Item or Title level request', () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item2Barcode);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[2].barcode);

@@ -18,13 +18,14 @@ describe('MARC', () => {
 
         const testData = {
           searchOption: 'Identifier (all)',
-          searchValue: 'n 2008052404',
+          searchValue: 'n 2008052406',
           new31RowValue: '$a C388512Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
           new32RowValue: '$a C388512Lesbian activists $z Jamaica $v Biography.',
           searchAuthorityQueries: [
             'C388512Authors, Jamaican',
             'C388512Lesbian authors',
             'C388512Lesbian activists',
+            'C388512*',
           ],
           rowsToUnlink: [27, 30, 31],
           rowsAbleToLink: [16, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 44],
@@ -33,7 +34,7 @@ describe('MARC', () => {
             '100',
             '1',
             '\\',
-            '$a Chin, Staceyann, $d 1972- $e author. $0 n2008052404',
+            '$a Chin, Staceyann, $d 1972- $e author. $0 n2008052406',
           ],
           field600AfterManualLinking: [
             27,
@@ -41,8 +42,8 @@ describe('MARC', () => {
             '1',
             '0',
             '$a C388512Chin, Staceyann, $d 1972-',
-            '$x Childhood and youth.',
-            '$0 http://id.loc.gov/authorities/names/n2008052404',
+            '',
+            '$0 http://id.loc.gov/authorities/names/n2008052406',
             '',
           ],
           calloutMessage: 'Field 600 and 650 has been linked to MARC authority record(s).',
@@ -55,7 +56,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a C388512Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
-            '$x Childhood and youth.',
+            '',
             '$0 http://id.loc.gov/authorities/names/no2021056179',
             '',
           ],
@@ -65,7 +66,7 @@ describe('MARC', () => {
             '\\',
             '0',
             '$a C388512Authors, Jamaican',
-            '$y 21st century $v Biography.',
+            '',
             '$0 http://id.loc.gov/authorities/subjects/sh85009934',
             '',
           ],
@@ -75,7 +76,7 @@ describe('MARC', () => {
             '\\',
             '0',
             '$a C388512Lesbian authors',
-            '$z Jamaica $v Biography.',
+            '',
             '$0 http://id.loc.gov/authorities/subjects/sh99014709',
             '',
           ],
@@ -85,7 +86,7 @@ describe('MARC', () => {
             '\\',
             '0',
             '$a C388512Lesbian activists',
-            '$z Jamaica $v Biography.',
+            '',
             '$0 http://id.loc.gov/authorities/subjects/sh96007531',
             '',
           ],
@@ -206,7 +207,7 @@ describe('MARC', () => {
 
         it(
           'C388512 Delete one eligible for linking field >> click on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388512'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

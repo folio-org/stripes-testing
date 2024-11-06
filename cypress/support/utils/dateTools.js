@@ -112,15 +112,17 @@ export default {
 
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 3);
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate() + 3,
+      currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
   },
 
   getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
     const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + days);
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() + days,
+      currentDate.getDate(),
     )}`;
   },
 
@@ -141,8 +143,9 @@ export default {
 
   getPreviousDayDateForFiscalYear: () => {
     const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 1);
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 1,
+      currentDate.getDate(),
     )}`;
   },
 

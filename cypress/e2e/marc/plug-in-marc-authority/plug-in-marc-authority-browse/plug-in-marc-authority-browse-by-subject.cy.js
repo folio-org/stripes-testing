@@ -46,10 +46,11 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -82,7 +83,7 @@ describe('MARC', () => {
 
       it(
         'C380556 MARC Authority plug-in | Browse using "Subject" option returns only records with the same "Type of heading" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C380556'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

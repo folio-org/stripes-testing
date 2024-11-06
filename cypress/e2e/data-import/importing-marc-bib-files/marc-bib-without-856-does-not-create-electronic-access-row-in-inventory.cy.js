@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
@@ -24,8 +25,11 @@ import {
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -107,7 +111,7 @@ describe('Data Import', () => {
 
     it(
       'C11122 Check that MARC Bib without 856 does NOT create electronic access row in Inventory Instance, Holdings, Item records (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11122'] },
       () => {
         // create field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -157,14 +161,14 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create instance');
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
@@ -173,7 +177,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -194,7 +198,8 @@ describe('Data Import', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.checkElectronicAccess('-', '-');
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
         ItemRecordView.checkElectronicAccess('-', '-');

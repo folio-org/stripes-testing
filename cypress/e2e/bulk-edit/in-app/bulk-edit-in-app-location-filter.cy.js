@@ -6,6 +6,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
@@ -34,7 +36,7 @@ describe('bulk-edit', () => {
     });
 
     beforeEach('select item tab', () => {
-      cy.visit(TopMenu.bulkEditPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       BulkEditSearchPane.checkItemsRadio();
     });
 
@@ -47,7 +49,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357053 Negative: Verify enable type ahead in location look-up (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357053'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -66,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356787 Verify enable type ahead in location look-up (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C356787'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 

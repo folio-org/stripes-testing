@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -77,6 +78,9 @@ describe('MARC', () => {
     ];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('*C369084');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -100,9 +104,10 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.waitContentLoading();
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
           twoMarcBibsToLink.forEach((marcBib) => {
             InventoryInstances.searchByTitle(marcBib.marcBibRecord);
             InventoryInstances.selectInstance();
@@ -141,7 +146,7 @@ describe('MARC', () => {
 
     it(
       'C369084 Delete authorized "MARC Authority" record that has two linked field in different "MARC Bib" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C369084'] },
       () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
@@ -163,7 +168,7 @@ describe('MARC', () => {
         MarcAuthoritiesDelete.confirmDelete();
         MarcAuthoritiesDelete.checkAfterDeletion(testData.marcValue);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(twoMarcBibsToLink[1].marcBibRecord);
         InventoryInstances.selectInstance();
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
@@ -206,7 +211,7 @@ describe('MARC', () => {
           '600',
           '1',
           '0',
-          '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 http://id.loc.gov/authorities/names/n2008052404',
+          '$a Chin, Staceyann, $d 1972- C369084 $0 http://id.loc.gov/authorities/names/n2008052404',
         );
         QuickMarcEditor.pressCancel();
 

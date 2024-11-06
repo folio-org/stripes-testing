@@ -1,6 +1,7 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -28,8 +29,11 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -185,14 +189,14 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name,
       );
 
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-        cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
       // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.createJobProfile(jobProfileForCreate);
       NewJobProfile.linkActionProfile(
         collectionOfMappingAndActionProfilesForCreate[0].actionProfile,
@@ -238,7 +242,7 @@ describe('Data Import', () => {
 
     it(
       'C11106 Action and field mapping: Update a holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11106'] },
       () => {
         // change file for adding random barcode and holdings hrid
         DataImport.editMarcFile(
@@ -249,7 +253,9 @@ describe('Data Import', () => {
         );
 
         // create mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillPermanentLocation(mappingProfile.permanentLocation);
@@ -259,24 +265,24 @@ describe('Data Import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create match profile
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfileForUpdate);
         NewJobProfile.linkMatchAndActionProfiles(matchProfile.profileName, actionProfile.name);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForUpdate);
         JobProfiles.waitFileIsUploaded();
@@ -285,7 +291,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileNameForUpdate);
         Logs.checkJobStatus(marcFileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();

@@ -133,7 +133,7 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
@@ -241,7 +241,7 @@ describe('Data Import', () => {
 
     it(
       'C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C380511'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

@@ -19,13 +19,15 @@ describe('Users', () => {
       testUser_C350674 = userProperties;
     });
 
-    cy.createTempUser([permissions.uiUsersPermissions.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.usersPath,
-        waiter: UsersSearchPane.waitLoading,
-      });
-    });
+    cy.createTempUser([permissions.uiUserCanAssignUnassignPermissions.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
+      },
+    );
   });
 
   after('delete test data', () => {
@@ -37,7 +39,7 @@ describe('Users', () => {
 
   it(
     'C350673 Verify that a user can assign Subject browse permissions. (firebird)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C350673'] },
     () => {
       UsersSearchPane.searchByUsername(testUser_C350673.username);
       UsersSearchPane.waitLoading();
@@ -51,7 +53,7 @@ describe('Users', () => {
 
   it(
     'C350674 Verify that a user can assign Call number browse: View permissions (firebird)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C350674'] },
     () => {
       UsersSearchPane.searchByUsername(testUser_C350674.username);
       UsersSearchPane.waitLoading();

@@ -1,4 +1,8 @@
-import { EXISTING_RECORD_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  EXISTING_RECORD_NAMES,
+  FOLIO_RECORD_TYPE,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -12,7 +16,10 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import ConfirmDelete from '../../../support/fragments/settings/dataImport/matchProfiles/modals/confirmDelete';
 import ExceptionDelete from '../../../support/fragments/settings/dataImport/matchProfiles/modals/exceptionDelete';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -87,7 +94,6 @@ describe('Data Import', () => {
           matchProfileToDelete,
         );
         cy.login(user.username, user.password);
-        cy.visit(SettingsMenu.matchProfilePath);
       });
     });
 
@@ -101,8 +107,11 @@ describe('Data Import', () => {
 
     it(
       'C2341 Delete an existing match profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2341'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.search(matchProfileToCreate.profileName);
         MatchProfiles.selectMatchProfileFromList(matchProfileToCreate.profileName);
         MatchProfileView.delete();

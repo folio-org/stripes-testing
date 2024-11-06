@@ -4,18 +4,16 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Check Out - Actions ', () => {
+describe('Check out', () => {
   const userData = {
     group: getTestEntityValue('staff$'),
     personal: {},
@@ -99,8 +97,8 @@ describe('Check Out - Actions ', () => {
         UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
 
         cy.login(userData.personal.lastname, userData.password, {
-          path: SettingsMenu.circulationOtherSettingsPath,
-          waiter: OtherSettings.waitLoading,
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
         });
       });
   });
@@ -127,10 +125,8 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C356772'] },
     () => {
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
       // without this waiter, the user will not be found by username
       cy.wait(4000);
       CheckOutActions.checkOutUser(userData.barcode, userData.username);

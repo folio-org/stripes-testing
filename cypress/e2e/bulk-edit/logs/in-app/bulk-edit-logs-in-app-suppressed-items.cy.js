@@ -11,6 +11,8 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 
@@ -72,7 +74,7 @@ describe('bulk-edit', () => {
 
       it(
         'C380761 Verify generated Logs files for Items suppressed from discovery (firebird)',
-        { tags: ['criticalPath', 'firebird', 'shiftLeft'] },
+        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380761'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -125,7 +127,7 @@ describe('bulk-edit', () => {
             true,
           );
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.itemBarcode);
           ItemRecordView.waitLoading();

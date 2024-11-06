@@ -19,7 +19,7 @@ describe('MARC', () => {
         const testData = {
           tag800: '800',
           authorityMarkedValue: 'C375084 Robinson, Peter,',
-          seriesStatementValue: 'C375084 Robinson, Peter, Inspector Banks series ; 1950-2022 24.',
+          seriesStatementValue: 'C375084 Robinson, Peter, Inspector Banks series ; 1950-2022',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };
@@ -35,7 +35,7 @@ describe('MARC', () => {
             marc: 'marcAuthFileForC375084.mrc',
             fileName: `testMarcAuthFileC375071.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-            authorityHeading: 'C375084 Robinson, Peter, 1950-2022 Inspector Banks series ;',
+            authorityHeading: 'C375084 Robinson, Peter',
             propertyName: 'authority',
           },
         ];
@@ -53,7 +53,7 @@ describe('MARC', () => {
           testData.tag800,
           '1',
           '\\',
-          '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022 $v 24. $y 2023 $0 3052044 $8 800',
+          '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $8 800',
         ];
         const bib800LinkedFieldValues = [
           35,
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '1',
           '\\',
           '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
-          '$v 24. $y 2023',
+          '',
           '$0 3052044',
           '$8 800',
         ];
@@ -110,7 +110,7 @@ describe('MARC', () => {
 
         it(
           'C375084 Link the "800" of "MARC Bib" field with "100" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C375084'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

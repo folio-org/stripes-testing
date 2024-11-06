@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
@@ -13,6 +13,7 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 const testData = {
   createdAuthorityID: [],
@@ -119,8 +120,10 @@ describe('MARC', () => {
             });
           });
 
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(testData.createdAuthorityID[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -154,7 +157,7 @@ describe('MARC', () => {
 
       it(
         'C375230 "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375230'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading1);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);
@@ -208,7 +211,7 @@ describe('MARC', () => {
               endDate: todayWithoutPaddingZero,
             };
             MarcAuthorities.checkCalloutAfterExport(jobID);
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
             ExportManagerSearchPane.waitLoading();
             ExportManagerSearchPane.searchByAuthorityControl();
             ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);

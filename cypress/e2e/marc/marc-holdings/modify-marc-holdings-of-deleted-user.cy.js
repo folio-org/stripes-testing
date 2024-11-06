@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  RECORD_STATUSES,
+  APPLICATION_NAMES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -11,6 +15,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -37,6 +42,7 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         user.userAProperties = createdUserProperties;
 
+        cy.getUserToken(user.userAProperties.username, user.userAProperties.password);
         cy.login(user.userAProperties.username, user.userAProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -91,16 +97,16 @@ describe('MARC', () => {
 
     it(
       'C358996 Verify that user has access to "quickMARC" when user who imported "MARC holdings" record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358996'] },
       () => {
         UsersSearchPane.searchByUsername(user.userAProperties.username);
         UsersSearchPane.openUser(user.userAProperties.username);
         Users.deleteUser();
         Users.successMessageAfterDeletion(
-          `User ${user.userAProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+          `User ${user.userAProperties.username}, ${user.userAProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(instanceID);
         InventorySearchAndFilter.selectViewHoldings();
         // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.

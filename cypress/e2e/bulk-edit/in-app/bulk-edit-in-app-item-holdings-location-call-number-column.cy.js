@@ -38,7 +38,6 @@ describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.clearLocalStorage();
-
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
         permissions.bulkEditView.gui,
@@ -142,7 +141,7 @@ describe('bulk-edit', () => {
 
     it(
       'C446017 Verify "Holdings (Location, Call number)" column can be selected for item records (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C446017'] },
       () => {
         const identifier = 'Item UUIDs';
 
@@ -167,11 +166,11 @@ describe('bulk-edit', () => {
           `${instance.defaultLocation.name} > ${callNumber}`,
         ];
 
-        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, rowIndex) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreview(
+        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, index) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+            instance.itemHrids[index],
             columnName,
             holdingLocationCallNumber,
-            rowIndex,
           );
         });
 
@@ -188,6 +187,7 @@ describe('bulk-edit', () => {
         BulkEditActions.fillPermanentLoanType(newPermanentLoanType);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(2, instance.defaultLocation.name);
+
         [0, 1].forEach((row) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
             'Permanent loan type',
@@ -196,11 +196,11 @@ describe('bulk-edit', () => {
           );
         });
 
-        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, rowIndex) => {
-          BulkEditActions.verifyChangesInAreYouSureFormByRow(
+        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, index) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+            instance.itemHrids[index],
             columnName,
-            [holdingLocationCallNumber],
-            rowIndex,
+            holdingLocationCallNumber,
           );
         });
 
@@ -216,11 +216,11 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(2);
         BulkEditSearchPane.verifyLocationChanges(2, newPermanentLoanType);
 
-        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, rowIndex) => {
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreview(
+        holdingsLocationCallNumber.forEach((holdingLocationCallNumber, index) => {
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            instance.itemHrids[index],
             columnName,
             holdingLocationCallNumber,
-            rowIndex,
           );
         });
 

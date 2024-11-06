@@ -13,6 +13,8 @@ import Checkout from '../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 let servicePointId;
@@ -67,7 +69,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357068 Negative: Verify Items status update (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C357068'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -87,7 +89,7 @@ describe('bulk-edit', () => {
           'New status value "Available" is not allowed',
         ]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.verifyItemStatus('Checked out');

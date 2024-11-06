@@ -119,13 +119,11 @@ describe('Inventory', () => {
       instances.forEach((instance) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
-      // without logout, queries from previous run may persist in search during manual re-run
-      cy.logout();
     });
 
     it(
       'C422216 Verify that facets options are available after "Relevance" sort was applied to the result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C422216'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);

@@ -9,6 +9,7 @@ import {
   RECORD_STATUSES,
   LOCATION_NAMES,
   JOB_STATUS_NAMES,
+  APPLICATION_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -31,11 +32,14 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
@@ -177,7 +181,7 @@ describe('Data Import', () => {
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C350591'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -215,7 +219,7 @@ describe('Data Import', () => {
           OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
           OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
-          cy.visit(TopMenu.ordersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
           Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
@@ -236,7 +240,9 @@ describe('Data Import', () => {
         );
 
         // create field mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
           .then(() => {
             MatchOnVRN.creatMappingProfilesForHoldings(holdingsMappingProfileName);
@@ -246,7 +252,7 @@ describe('Data Import', () => {
           });
 
         // create action profiles
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         MatchOnVRN.createActionProfileForVRN(
           instanceActionProfileName,
           'Instance',
@@ -260,18 +266,19 @@ describe('Data Import', () => {
         MatchOnVRN.createActionProfileForVRN(itemActionProfileName, 'Item', itemMappingProfileName);
 
         // create match profiles
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchOnVRN.waitJSONSchemasLoad();
         matchProfiles.forEach((match) => {
           MatchOnVRN.createMatchProfileForVRN(match);
+          cy.wait(3000);
         });
 
         // create job profiles
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         MatchOnVRN.createJobProfileForVRN(jobProfilesData);
 
         // import a file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);

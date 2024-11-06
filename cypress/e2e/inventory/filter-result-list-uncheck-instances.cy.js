@@ -5,6 +5,8 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 describe('Inventory', () => {
   let userId;
@@ -29,15 +31,16 @@ describe('Inventory', () => {
         testData.instanceId = instance.instanceId;
       });
 
-    cy.createTempUser([Permissions.inventoryAll.gui, Permissions.dataExportEnableApp.gui]).then(
-      (userProperties) => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-      },
-    );
+    cy.createTempUser([
+      Permissions.inventoryAll.gui,
+      Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+    ]).then((userProperties) => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+    });
   });
 
   afterEach('delete test data', () => {
@@ -48,7 +51,7 @@ describe('Inventory', () => {
 
   it(
     'C366530 Verify that User can filter the result list and uncheck instances (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C366530'] },
     () => {
       InventorySearchAndFilter.executeSearch('*');
       InventoryInstances.verifySelectAllInstancesCheckbox();
@@ -77,7 +80,7 @@ describe('Inventory', () => {
       InventoryInstances.verifySelectAllInstancesCheckbox();
 
       InventorySearchAndFilter.exportInstanceAsMarc();
-      cy.visit(TopMenu.dataExportPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
       DataExportResults.verifyLastItemCount('99');
     },
   );

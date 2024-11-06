@@ -5,6 +5,7 @@ import {
   AUTHORITY_LDR_FIELD_TYPE_DROPDOWN,
   AUTHORITY_LDR_FIELD_ELVL_DROPDOWN,
   AUTHORITY_LDR_FIELD_PUNCT_DROPDOWN,
+  APPLICATION_NAMES,
 } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -20,6 +21,7 @@ import { JobProfiles as SettingsJobProfiles } from '../../../../support/fragment
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -109,9 +111,9 @@ describe('MARC', () => {
 
       it(
         'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350667'] },
         () => {
-          cy.visit(TopMenu.dataImportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
@@ -127,7 +129,7 @@ describe('MARC', () => {
 
       it(
         'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350575'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -138,7 +140,7 @@ describe('MARC', () => {
 
       it(
         'C350576 Update 008 of Authority record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350576'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -146,14 +148,14 @@ describe('MARC', () => {
           MarcAuthority.change008Field('x', 'x', 'x');
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains('xxx');
         },
       );
 
       it(
         'C350578 Browse existing Authorities (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350578'] },
         () => {
           const checkPresentedColumns = [
             'Authorized/Reference',
@@ -170,7 +172,7 @@ describe('MARC', () => {
 
       it(
         'C350513 Browse authority - handling for when there is no exact match (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350513'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
@@ -187,7 +189,7 @@ describe('MARC', () => {
 
       it(
         'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C350902'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectFirst(testData.authority.title);
@@ -205,13 +207,16 @@ describe('MARC', () => {
           MarcAuthority.checkRemovedTag(9);
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkErrorMessage(9, 'Record cannot be saved. A MARC tag must contain three characters.');
+          QuickMarcEditor.checkErrorMessage(
+            9,
+            'Tag must contain three characters and can only accept numbers 0-9.',
+          );
         },
       );
 
       it(
         'C350680 Duplicate records do not return when searching by Identifier (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C350680'] },
         () => {
           const searchOption = 'Identifier (all)';
           const identifier = 'n  42008104';
@@ -224,7 +229,7 @@ describe('MARC', () => {
 
       it(
         'C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C350641'] },
         () => {
           MarcAuthorities.checkSearchOptions();
           MarcAuthorities.searchBy(

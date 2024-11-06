@@ -46,6 +46,9 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Drama C374159');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -111,7 +114,7 @@ describe('MARC', () => {
 
       it(
         'C374159 Edit values in "1XX" and "010" fields of linked "MARC Authority" record when "$0" = "010 $a" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C374159'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
           MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);

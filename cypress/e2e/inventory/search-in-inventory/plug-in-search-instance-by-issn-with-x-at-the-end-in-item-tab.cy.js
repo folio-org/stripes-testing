@@ -64,23 +64,29 @@ describe('Inventory', () => {
         orderNumber = response.body.poNumber;
         orderID = response.body.id;
       });
-      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-        (response) => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.getUserToken(user.username, user.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
           response.forEach((record) => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
-        },
-      );
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.uiOrdersCreate.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+        });
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        },
-      );
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
 
     after(() => {
@@ -95,7 +101,7 @@ describe('Inventory', () => {
 
     it(
       'C451462 Find Instance plugin | Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Item tab) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C451462'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

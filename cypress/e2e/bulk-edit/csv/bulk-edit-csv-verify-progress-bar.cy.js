@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353529 Verify progress bar for uploading identifier files (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C353529'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

@@ -69,6 +69,7 @@ describe('bulk-edit', () => {
         instance: marcInstances[0],
         servicePoint: userServicePoint,
       });
+      Locations.deleteViaApi(testData.defaultLocation);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         matchedRecordsFileName,
@@ -79,7 +80,7 @@ describe('bulk-edit', () => {
 
     it(
       'C466300 Bulk edit Instance fields - add administrative note (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C466300'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

@@ -1,8 +1,7 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
@@ -10,7 +9,10 @@ import {
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -60,10 +62,7 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -79,9 +78,11 @@ describe('Data Import', () => {
 
     it(
       'C399081 Verify the ability to create job profile with the same matches in different sequences (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C399081'] },
       () => {
-        cy.visit(SettingsMenu.matchProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,
@@ -108,7 +109,7 @@ describe('Data Import', () => {
           collectionOfMatchProfiles[3].matchProfile.profileName,
         );
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
         NewJobProfile.linkMatchProfileForMatches(

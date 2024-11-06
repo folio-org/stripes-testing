@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import {
   Button,
   Checkbox,
@@ -16,15 +16,38 @@ import {
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import InteractorsTools from '../../utils/interactorsTools';
 
+const rootPane = Pane({ id: 'staff-slip-pane' });
 const staffSlipPaneContent = PaneContent({ id: 'staff-slip-pane-content' });
 const editButton = Button({ id: 'clickable-edit-item' });
 const staffClipsDescription = TextArea({ id: 'input-staff-slip-description' });
 const textCheck = 'The Wines of Italyc.2';
 const saveButton = Button('Save & close');
+const addTokenButton = Button('Add token');
+const addTokenModal = Modal('Add token');
+
+function clickCurlyBracketsButton() {
+  cy.do(Button({ className: 'ql-token' }).click());
+}
+function checkTokenCheckbox(tokens) {
+  cy.wrap(tokens).each((token) => {
+    cy.do(Checkbox(token).click());
+  });
+}
+function clickAddTokenButton() {
+  cy.do(addTokenButton.click());
+  cy.expect([addTokenModal.absent(), saveButton.has({ disabled: false })]);
+}
 
 export default {
+  clickCurlyBracketsButton,
+  checkTokenCheckbox,
+  clickAddTokenButton,
   defaultUiEditStaffClips: {
     description: 'Created by autotest team',
+  },
+  waitLoadingEditPane() {
+    cy.expect(rootPane.exists());
+    cy.wait(1000);
   },
   waitLoading() {
     cy.expect(Heading('Staff slips').exists());
@@ -43,6 +66,7 @@ export default {
   },
   chooseStaffClip(name) {
     cy.do(NavListItem(name).click());
+    cy.expect(Pane(name).exists());
   },
   checkLastUpdateInfo(updatedBy = '', createdBy = '', updateTime) {
     this.findPane().then((pane) => {
@@ -79,11 +103,29 @@ export default {
     cy.do([NavListItem('Transit').click(), editButton.click()]);
   },
   addToken: (tokens) => {
-    cy.do(Button({ className: 'ql-token' }).click());
-    cy.wrap(tokens).each((token) => {
-      cy.do(Checkbox(token).click());
-    });
-    cy.do(Button('Add token').click());
+    clickCurlyBracketsButton();
+    checkTokenCheckbox(tokens);
+    clickAddTokenButton();
+  },
+  addTokenAndVerify(section, token) {
+    clickCurlyBracketsButton();
+    this.verifyAddTokenModal(section, token);
+    cy.do(Checkbox(token).click());
+    cy.expect([addTokenButton.has({ disabled: false }), Checkbox(token).has({ checked: true })]);
+  },
+  uncheckTokenAndVerify(token) {
+    cy.do(Checkbox(token).click());
+    cy.expect(Checkbox(token).has({ checked: false }));
+  },
+  verifyAddTokenModal(section, token) {
+    cy.expect(addTokenModal.exists());
+    cy.get('div[class*=categoryHeader]')
+      .contains(section)
+      .parent()
+      .within(() => {
+        cy.contains(token).should('exist');
+      });
+    cy.expect(addTokenButton.has({ disabled: true }));
   },
   fillStaffClips: (editStaffClipsHold) => {
     cy.do([
@@ -91,9 +133,13 @@ export default {
       Button({ className: 'ql-token' }).click(),
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
-      Button('Add token').click(),
+      addTokenButton.click(),
       saveButton.click(),
     ]);
+    cy.wait(1000);
+  },
+  fillTemplateContent(content) {
+    cy.do(richTextEditor().fillIn(content));
   },
   editDescription(description) {
     cy.do(staffClipsDescription.fillIn(description));
@@ -104,8 +150,10 @@ export default {
     cy.expect(richTextEditor().has({ value: including(content) }));
   },
   previewStaffClips: () => {
-    cy.do([Button('Preview').click(), Button('Close').click()]);
+    cy.do(rootPane.find(Button('Preview')).click());
+    cy.wait(1000);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
+    cy.do(Button('Close').click());
   },
   checkPreview: (staffSlipType, displayText) => {
     cy.do(Button('Preview').click());
@@ -171,5 +219,8 @@ export default {
   },
   verifyKeyValue(verifyKey, verifyValue) {
     cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
+  },
+  verifyTemplateContent(token) {
+    cy.expect(richTextEditor().has({ value: `{{${token}}}` }));
   },
 };

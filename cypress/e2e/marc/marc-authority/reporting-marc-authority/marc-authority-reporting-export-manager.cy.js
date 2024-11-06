@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import ExportManagerSearchPane from '../../../../support/fragments/exportManager/exportManagerSearchPane';
@@ -11,6 +11,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -58,6 +59,10 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user and uploading files', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C357996');
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -137,7 +142,7 @@ describe('MARC', () => {
 
       it(
         'C375996 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375996'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
@@ -176,7 +181,7 @@ describe('MARC', () => {
               endDate: todayWithoutPaddingZero,
             };
             MarcAuthorities.checkCalloutAfterExport(jobID);
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
             ExportManagerSearchPane.waitLoading();
             ExportManagerSearchPane.searchByAuthorityControl();
             ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);

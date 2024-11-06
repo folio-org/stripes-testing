@@ -15,10 +15,13 @@ import {
   TextField,
   Image,
   MultiColumnListRow,
+  Headline,
 } from '../../../../interactors';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
+import FileManager from '../../utils/fileManager';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
-const resultsAccordion = Accordion('Preview of record matched');
+const matchedAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
 const bulkEditsAccordion = Accordion('Bulk edits');
@@ -26,6 +29,7 @@ const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const fileButton = Button('or choose file');
+const bulkEditQueryPane = Pane(including('Bulk edit query'));
 const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
@@ -35,11 +39,13 @@ const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
 const setCriteriaPane = Pane('Set criteria');
-const saveAndClose = Button('Save and close');
+const saveAndClose = Button('Save & close');
 const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 const areYouSureForm = Modal('Are you sure?');
+const previousPaginationButton = Button('Previous');
+const nextPaginationButton = Button('Next');
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -64,6 +70,7 @@ export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
+    cy.wait(1000);
   },
 
   checkForUploading(fileName) {
@@ -85,7 +92,7 @@ export default {
   },
 
   verifyPopulatedPreviewPage() {
-    cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
+    cy.expect([errorsAccordion.exists(), matchedAccordion.exists(), actions.exists()]);
   },
 
   actionsIsShown() {
@@ -299,6 +306,7 @@ export default {
 
   selectRecordIdentifier(value) {
     cy.do(recordIdentifierDropdown.choose(value));
+    cy.wait(1000);
   },
 
   clickToBulkEditMainButton() {
@@ -335,6 +343,7 @@ export default {
 
   checkItemsRadio() {
     cy.do(itemsRadio.click());
+    cy.wait(500);
   },
 
   itemsRadioIsDisabled(isDisabled) {
@@ -347,6 +356,7 @@ export default {
 
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
+    cy.wait(500);
   },
 
   holdingsRadioIsDisabled(isDisabled) {
@@ -378,6 +388,20 @@ export default {
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
   },
 
+  uploadRecentlyDownloadedFile(downloadedFile) {
+    const changedFileName = `downloaded-${downloadedFile}`;
+
+    FileManager.findDownloadedFilesByMask(downloadedFile).then((downloadedFilenames) => {
+      const firstDownloadedFilename = downloadedFilenames[0];
+      FileManager.readFile(firstDownloadedFilename).then((actualContent) => {
+        FileManager.createFile(`cypress/fixtures/${changedFileName}`, actualContent);
+      });
+    });
+    this.uploadFile(changedFileName);
+
+    return cy.wrap(changedFileName);
+  },
+
   waitFileUploading() {
     // it is needed to avoid triggering for previous page list
     cy.wait(3000);
@@ -400,14 +424,14 @@ export default {
 
   verifyMatchedResults(...values) {
     values.forEach((value) => {
-      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
+      cy.expect(matchedAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
-    cy.expect(resultsAccordion.has({ itemsAmount: values.length.toString() }));
+    cy.expect(matchedAccordion.has({ itemsAmount: values.length.toString() }));
   },
 
   verifySpecificItemsMatched(...values) {
     values.forEach((value) => {
-      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
+      cy.expect(matchedAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
     });
   },
 
@@ -416,7 +440,7 @@ export default {
   },
 
   matchedAccordionIsAbsent() {
-    cy.expect(resultsAccordion.absent());
+    cy.expect(matchedAccordion.absent());
   },
 
   verifyUserBarcodesResultAccordion() {
@@ -471,6 +495,15 @@ export default {
     );
   },
 
+  verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(columnName, value, row = 0) {
+    cy.expect(
+      changesAccordion
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ column: columnName, content: value }))
+        .exists(),
+    );
+  },
+
   verifyExactChangesUnderColumnsByRowInPreview(columnName, value, row = 0) {
     cy.expect(
       MultiColumnListRow({ indexRow: `row-${row}` })
@@ -487,6 +520,93 @@ export default {
           .find(MultiColumnListCell({ column: columnName, content: value }))
           .exists(),
       );
+    });
+  },
+
+  verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(identifier, columnValues) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          areYouSureForm
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
+  verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        matchedAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(identifier, columnValues) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          matchedAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
+  verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(identifier, columnName, value) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        changesAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: columnName, content: value }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(identifier, columnValues) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          changesAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
+  verifyReasonForErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect(
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason for error', content: errorText }))
+          .exists(),
+      );
+    });
+  },
+
+  verifyErrorByIdentifier(identifier, errorText) {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect([
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: identifier }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(HTML(including(errorText)))
+          .exists(),
+      ]);
     });
   },
 
@@ -524,6 +644,23 @@ export default {
     );
   },
 
+  verifyErrorLabelInErrorAccordion(
+    fileName,
+    numberOfEntries,
+    numberOfRecordsChanged,
+    numberOfErrors,
+  ) {
+    cy.expect(
+      Accordion('Errors')
+        .find(
+          HTML(
+            `${fileName}: ${numberOfEntries} entries * ${numberOfRecordsChanged} records changed * ${numberOfErrors} errors`,
+          ),
+        )
+        .exists(),
+    );
+  },
+
   verifyReasonForError(errorText) {
     cy.expect(
       Accordion('Errors')
@@ -555,12 +692,16 @@ export default {
     }
     if (instance) {
       cy.expect([
-        Button('Start bulk edit - Instance fields').exists(),
-        Button('Start bulk edit - MARC fields').exists(),
+        DropdownMenu().find(Headline('Start bulk edit')).exists(),
+        Button('Instances and Administrative data').exists(),
       ]);
     } else {
       cy.expect(Button('Start bulk edit').exists());
     }
+  },
+
+  verifySearchColumnNameTextFieldExists() {
+    cy.expect(DropdownMenu().find(searchColumnNameTextfield).exists());
   },
 
   verifyUsersActionShowColumns() {
@@ -584,10 +725,12 @@ export default {
       DropdownMenu().find(Checkbox('Birth date')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Addresses')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Preferred contact type id')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Link to the profile picture')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Date enrolled')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Expiration date')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Preferred email communications')).has({ checked: false }),
     ]);
   },
 
@@ -613,6 +756,28 @@ export default {
     });
   },
 
+  verifyColumnsInTableInExactOrder(expectedHeadersOrder) {
+    cy.get('[role=columnheader]').then(($headers) => {
+      const actualHeadersOrder = $headers
+        .map((index, header) => Cypress.$(header).text().trim())
+        .get();
+
+      expect(actualHeadersOrder).to.deep.eq(expectedHeadersOrder);
+    });
+  },
+
+  verifyColumnsInAreYouSureFormInExactOrder(expectedHeadersOrder) {
+    cy.get('[aria-label=PreviewModal]')
+      .find('[role=columnheader]')
+      .then(($headers) => {
+        const actualHeadersOrder = $headers
+          .map((index, header) => Cypress.$(header).text().trim())
+          .get();
+
+        expect(actualHeadersOrder).to.deep.eq(expectedHeadersOrder);
+      });
+  },
+
   verifyActionsDropdownScrollable() {
     cy.xpath('.//main[@id="ModuleContainer"]//div[contains(@class, "DropdownMenu")]').scrollTo(
       'bottom',
@@ -621,37 +786,211 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Holdings UUID')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Former holdings Id')).has({ checked: false }),
       DropdownMenu()
-        .find(Checkbox('Instance (Title, Publisher, Publication date)'))
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID))
         .has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings permanent location')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Holdings temporary location')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number type')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number prefix')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings level call number suffix')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Administrative note')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('ILL policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statement')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statement for indexes')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings statement for supplements')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Holdings copy number')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
-      DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Source')).has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TYPE))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.FORMER_HOLDINGS_ID))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.INSTANCE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION),
+        )
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(
+          Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER_TYPE,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER_PREFIX,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_LEVEL_CALL_NUMBER_SUFFIX,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SHELVING_TITLE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACQUISITION_METHOD))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.RECEIPT_STATUS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ILL_POLICY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.RETENTION_POLICY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ORDER_FORMAT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.DIGITIZATION_POLICY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_STATEMENT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_STATEMENT_FOR_INDEXES,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(
+          Checkbox(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_STATEMENT_FOR_SUPPLEMENTS,
+          ),
+        )
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_COPY_NUMBER))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NUMBER_OF_ITEMS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.STATISTICAL_CODES))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.TAGS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SOURCE))
+        .has({ checked: true }),
+    ]);
+  },
+
+  verifyInstanceActionShowColumns() {
+    cy.expect([
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PREVIOUSLY_HELD))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_HRID))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SOURCE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CATALOGED_DATE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_STATUS_TERM))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SERIES_STATEMENT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.EDITION))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PHYSICAL_DESCRIPTION))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE))
+        .has({ checked: true }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.NATURE_OF_CONTENT))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.FORMATS))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.LANGUAGES))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_FREQUENCY))
+        .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.PUBLICATION_RANGE))
+        .has({ checked: false }),
     ]);
   },
 
@@ -659,6 +998,7 @@ export default {
     names.forEach((name) => {
       cy.do(DropdownMenu().find(Checkbox(name)).click());
     });
+    cy.wait(500);
   },
 
   changeShowColumnCheckboxIfNotYet(...names) {
@@ -669,6 +1009,16 @@ export default {
           cy.do(DropdownMenu().find(Checkbox(name)).click());
         }
       });
+    });
+  },
+
+  verifyCheckboxInActionsDropdownMenuChecked(name, isChecked = true) {
+    cy.expect(DropdownMenu().find(Checkbox(name)).has({ checked: isChecked }));
+  },
+
+  verifyCheckboxesInActionsDropdownMenuChecked(isChecked, ...names) {
+    names.forEach((name) => {
+      this.verifyCheckboxInActionsDropdownMenuChecked(name, isChecked);
     });
   },
 
@@ -686,7 +1036,7 @@ export default {
 
   verifyResultsUnderColumns(columnName, value) {
     cy.expect(
-      resultsAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists(),
+      matchedAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists(),
     );
   },
 
@@ -708,15 +1058,29 @@ export default {
   },
 
   verifyResultColumnTitles(title) {
-    cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
+    cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
   verifyResultColumnTitlesDoNotInclude(title) {
-    cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
+    cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyResultColumnTitlesDoNotIncludeTitles(...titles) {
+    titles.forEach((title) => {
+      this.verifyResultColumnTitlesDoNotInclude(title);
+    });
+  },
+
+  verifyAreYouSureColumnTitlesInclude(title) {
+    cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).exists());
   },
 
   verifyAreYouSureColumnTitlesDoNotInclude(title) {
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).absent());
+  },
+
+  verifyChangedColumnTitlesInclude(title) {
+    cy.expect(changesAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
   verifyChangedColumnTitlesDoNotInclude(title) {
@@ -725,6 +1089,14 @@ export default {
 
   verifyPaneRecordsCount(value) {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyPaneRecordsChangedCount(value) {
+    cy.expect(bulkEditPane.find(HTML(`${value} records changed`)).exists());
+  },
+
+  verifyFileNameHeadLine(fileName) {
+    cy.expect(bulkEditPane.find(HTML(`Filename: ${fileName}`)).exists());
   },
 
   verifyPaneTitleFileName(fileName) {
@@ -825,8 +1197,22 @@ export default {
       .should('have.text', expectedText);
   },
 
-  verifyRowHasEmptyElectronicAccess(index) {
-    cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+  verifyRowHasEmptyElectronicAccessInMatchAccordion(identifier) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
+  },
+
+  verifyRowHasEmptyElectronicAccessInAreYouSureForm(identifier) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
+  },
+
+  verifyRowHasEmptyElectronicAccessInChangedAccordion(identifier) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.get(`[data-row-index="row-${index}"]`).find('table').should('not.exist');
+    });
   },
 
   getNumberMatchedRecordsFromPaneHeader() {
@@ -843,5 +1229,92 @@ export default {
 
   verifyBulkEditsAccordionExists() {
     cy.expect(bulkEditsAccordion.exists());
+  },
+
+  verifyPreviousPaginationButtonDisabled(isDisabled = true) {
+    cy.expect(previousPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonDisabled(isDisabled = true) {
+    cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyPreviousPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(previousPaginationButton).has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(nextPaginationButton).has({ disabled: isDisabled }));
+  },
+
+  verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      matchedAccordion.find(previousPaginationButton).has({ disabled: true }),
+      matchedAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInAreYouSureForm(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      areYouSureForm.find(previousPaginationButton).has({ disabled: true }),
+      areYouSureForm.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[aria-label^="PreviewModal"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInChangedRecords(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      changesAccordion.find(previousPaginationButton).has({ disabled: true }),
+      changesAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyInstanceNoteColumns(instanceNoteColumnNames) {
+    cy.get('[class*="DropdownMenu"] [class*="labelText"]').then((columns) => {
+      const columnNames = Cypress.$(columns)
+        .map((index, column) => {
+          return Cypress.$(column).text();
+        })
+        .get();
+      // get an array of instance note column name
+      const noteColumnNames = columnNames.slice(
+        columnNames.findIndex((item) => item === 'Publication range') + 1,
+      );
+      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort((a, b) => {
+        return a.localeCompare(b);
+      });
+
+      // verify alphabetical order
+      expect(noteColumnNames).to.deep.equal(noteColumnNamesInAlphabeticOrder);
+      // verify exact columns exist
+      instanceNoteColumnNames.forEach((instanceNoteColumnName) => {
+        expect(noteColumnNames).include(instanceNoteColumnName);
+        // verify that the checkbox for this column is unchecked
+        cy.expect(DropdownMenu().find(Checkbox(instanceNoteColumnName)).has({ checked: false }));
+      });
+    });
+  },
+
+  verifyRecordsCountInBulkEditQueryPane(value) {
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+  },
+
+  verifyBulkEditQueryPaneExists() {
+    cy.expect(bulkEditQueryPane.exists());
+  },
+
+  verifyQueryHeadLine(query) {
+    cy.expect(bulkEditQueryPane.find(HTML(`Query: ${query}`)).exists());
   },
 };

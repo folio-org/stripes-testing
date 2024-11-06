@@ -28,11 +28,6 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-      });
-
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -41,6 +36,12 @@ describe('Data Import', () => {
         Permissions.settingsTenantViewLocation.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi(filePathForUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+          },
+        );
 
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
@@ -64,7 +65,7 @@ describe('Data Import', () => {
 
     it(
       'C359209 Checking the import to Create MARC Holdings records, when some incoming records do or do not have 999 ff fields (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C359209'] },
       () => {
         DataImport.editMarcFile(
           'marcFileForC359209.mrc',
@@ -74,7 +75,6 @@ describe('Data Import', () => {
         );
 
         // upload a marc file for creating holdings
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();

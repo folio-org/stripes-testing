@@ -1,4 +1,4 @@
-import { matching } from 'bigtest';
+import { matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -35,7 +35,7 @@ export default {
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
   waitLoading() {
-    cy.expect(Pane('Circulation log').exists());
+    cy.expect(Accordion({ id: 'loan' }).exists());
   },
 
   searchByCheckedOut() {
@@ -43,6 +43,7 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   verifyResult(content) {
@@ -52,16 +53,19 @@ export default {
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     this.clickApplyMainFilter();
+    cy.wait(2000);
   },
 
   searchByUserBarcode(barcode) {
     cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
     this.clickApplyMainFilter();
+    cy.wait(2000);
   },
 
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
     this.clickApplyMainFilter();
+    cy.wait(2000);
   },
 
   searchByChangedDueDate() {
@@ -69,10 +73,12 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   searchByServicePoint(servicePoint) {
     cy.do([servicePointField.fillIn(servicePoint), servicePointField.choose(servicePoint)]);
+    cy.wait(2000);
   },
 
   searchByClaimedReturned() {
@@ -80,6 +86,7 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   searchByMarkedAsMissing() {
@@ -87,21 +94,32 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   searchByLoanType(loanType) {
     cy.do([Accordion({ id: 'loan' }).clickHeader(), Checkbox(loanType).click()]);
+    cy.wait(2000);
+  },
+
+  expandFeeFineAccording() {
+    cy.do(Accordion({ id: 'fee' }).clickHeader());
+  },
+
+  selectOptionFromFeeFineAccordion(option) {
+    cy.do(Checkbox(option).click());
   },
 
   setFilterOptionFromAccordion(accordion, checkboxOption) {
     // Check if it is already open
     cy.get(`#${accordion}`).then(($accordion) => {
       if (!$accordion.find('[class^="content-region"]').is(':visible')) {
-        cy.get(`#${accordion}`).click();
+        // cy.get(`#${accordion}`).click();
+        cy.do(Accordion({ id: accordion }).clickHeader());
       }
     });
     // Need to avoid robotic clicks
-    cy.wait(5000);
+    cy.wait(1000);
     cy.do(Checkbox(checkboxOption).click());
   },
 
@@ -184,6 +202,10 @@ export default {
           .exists(),
       );
     });
+  },
+
+  scroll() {
+    cy.get('[id^="circulation-log-list"] div.mclScrollable---JvHuN').scrollTo('right');
   },
 
   checkSearchResultByBarcode({ barcode, searchResults }) {

@@ -19,7 +19,6 @@ describe('Remote Storage', () => {
     cy.createTempUser([Permissions.inventoryAll.gui, Permissions.remoteStorageCRUD.gui]).then(
       (userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -71,9 +70,12 @@ describe('Remote Storage', () => {
               ],
             });
           });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
       },
     );
-    cy.visit(TopMenu.inventoryPath);
   });
 
   after('Delete all data', () => {
@@ -91,7 +93,7 @@ describe('Remote Storage', () => {
 
   it(
     'C163923 Change a location to remote storage (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'C163923'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
@@ -127,7 +129,7 @@ describe('Remote Storage', () => {
 
   it(
     'C163924 Change a remote storage location to standard location (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'C163924'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;

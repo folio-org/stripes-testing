@@ -1,12 +1,13 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -15,16 +16,19 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -85,7 +89,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -130,10 +137,9 @@ describe('Data Import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C343334'] },
       () => {
         // create mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
         createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[0].mappingProfile.name,
@@ -147,13 +153,13 @@ describe('Data Import', () => {
           collectionOfProfiles[2].mappingProfile.name,
         );
 
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(specialJobProfile);
         collectionOfProfiles.forEach((profile) => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
@@ -161,7 +167,7 @@ describe('Data Import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.waitFileIsUploaded();

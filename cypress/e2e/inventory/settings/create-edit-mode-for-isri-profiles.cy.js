@@ -1,8 +1,12 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
 import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -29,6 +33,9 @@ describe('Inventory', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
       });
     });
 
@@ -45,9 +52,8 @@ describe('Inventory', () => {
 
     it(
       'C374178 Verify the create/edit mode for ISRI profiles (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C374178'] },
       () => {
-        cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.create();
         NewTargetProfile.newFormContains();
         NewTargetProfile.fillName(targetProfileName);

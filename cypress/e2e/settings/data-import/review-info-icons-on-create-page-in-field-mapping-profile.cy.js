@@ -15,15 +15,18 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     };
 
-    before('Create test user and login', () => {
+    beforeEach('Create test user and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
-    after('Delete test user', () => {
+    afterEach('Delete test user', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
       });
@@ -31,12 +34,11 @@ describe('Data Import', () => {
 
     it(
       'C380720 Order field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380720'] },
       () => {
         const message =
           'Order creation will error unless the importing user is a member of the specified acquisitions unit';
 
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.addFolioRecordType('Order');
         NewFieldMappingProfile.verifyAcquisitionsUnitsInfoMessage(message);
@@ -45,12 +47,11 @@ describe('Data Import', () => {
 
     it(
       'C380722 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380722'] },
       () => {
         const message =
           'Invoice creation will error unless the importing user is a member of the specified acquisitions unit';
 
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.addFolioRecordType('Invoice');
         NewFieldMappingProfile.verifyAcquisitionsUnitsInfoMessage(message);
@@ -59,11 +60,10 @@ describe('Data Import', () => {
 
     it(
       'C369052 Field mapping profile: Check info icons when creating field mapping profile for holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C369052'] },
       () => {
         const message = 'Required when creating Holdings';
 
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.verifyPermanentFieldInfoMessage(message);

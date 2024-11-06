@@ -3,19 +3,20 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   RECORD_STATUSES,
   VENDOR_NAMES,
-  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -24,9 +25,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewOrder from '../../../support/fragments/orders/newOrder';
@@ -38,10 +36,16 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -147,7 +151,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
       });
     });
 
@@ -219,10 +226,9 @@ describe('Data Import', () => {
 
     it(
       'C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C350944'] },
       () => {
         // create mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
         createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[0].mappingProfile.name,
@@ -237,19 +243,19 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create match profile
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchAndThreeActionProfiles(
           matchProfile.profileName,
@@ -261,7 +267,7 @@ describe('Data Import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
@@ -279,7 +285,8 @@ describe('Data Import', () => {
         ]);
 
         // create PO with POL
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        Orders.selectOrdersPane();
         Orders.createOrder(order, true).then((orderId) => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
@@ -307,7 +314,8 @@ describe('Data Import', () => {
         });
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.checkIsLandingPageOpened();
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileName);

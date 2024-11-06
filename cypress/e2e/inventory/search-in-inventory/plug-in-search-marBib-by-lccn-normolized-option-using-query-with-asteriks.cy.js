@@ -25,6 +25,7 @@ describe('Inventory', () => {
     };
     let orderNumber;
     let user;
+    let preconditionUserId;
     let orderID;
     const lccnOption = 'LCCN, normalized';
 
@@ -62,38 +63,45 @@ describe('Inventory', () => {
         orderNumber = response.body.poNumber;
         orderID = response.body.id;
       });
-      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-        (response) => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.getUserToken(user.username, user.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
           response.forEach((record) => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
-        },
-      );
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.uiOrdersCreate.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+        });
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        },
-      );
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
 
     after(() => {
       cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(preconditionUserId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       Orders.deleteOrderViaApi(orderID);
       Organizations.deleteOrganizationViaApi(organization.id);
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C442801 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option using a query with asterisk when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C442801'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

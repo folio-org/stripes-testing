@@ -12,6 +12,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let preconditionUserId;
     let user;
     let instanceHrid;
     let instanceId;
@@ -21,10 +22,15 @@ describe('Data Import', () => {
     const title = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25';
 
     before('Create test data', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then(
+          (response) => {
+            instanceHrid = response[0].instance.hrid;
+            instanceId = response[0].instance.id;
+          },
+        );
       });
 
       cy.createTempUser([
@@ -41,6 +47,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(preconditionUserId);
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -48,7 +55,7 @@ describe('Data Import', () => {
 
     it(
       'C2360 Confirm the Inventory "View source" button works after Data Import (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2360'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstanceIsOpened(title);

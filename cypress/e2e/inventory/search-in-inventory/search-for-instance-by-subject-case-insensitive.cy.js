@@ -74,7 +74,7 @@ describe('Inventory', () => {
 
       it(
         'C466075 Search by "Subject" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPathFlaky', 'spitfire', 'C466075'] },
         () => {
           testData.searchQueries.forEach((query) => {
             InventoryInstances.searchInstancesWithOption(testData.subjectSearchOption, query);

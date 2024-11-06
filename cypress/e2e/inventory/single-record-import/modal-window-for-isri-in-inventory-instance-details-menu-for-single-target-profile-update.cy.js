@@ -8,7 +8,10 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ReImportModal from '../../../support/fragments/inventory/reImportModal';
 import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -45,8 +48,12 @@ describe('Inventory', () => {
         instanceId = response[0].instance.id;
       });
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-      cy.loginAsAdmin();
-      cy.visit(SettingsMenu.targetProfilesPath);
+      cy.loginAsAdmin({
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
+      SettingsInventory.goToSettingsInventory();
+      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
       Z3950TargetProfiles.openTargetProfile();
       ViewTargetProfile.verifyTargetProfileForm(
         targetProfile.name,
@@ -79,7 +86,7 @@ describe('Inventory', () => {
 
     it(
       'C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C375146'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);

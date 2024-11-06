@@ -81,7 +81,7 @@ describe('MARC', () => {
 
       it(
         'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C367956'] },
         () => {
           cy.visit(`${TopMenu.inventoryPath}/view/${instanceId}`);
           InventoryInstance.deriveNewMarcBib();
@@ -107,6 +107,8 @@ describe('MARC', () => {
           QuickMarcEditor.moveFieldUp(13);
           QuickMarcEditor.verifyTagValue(13, tags.tag100);
           QuickMarcEditor.verifyTagValue(14, tags.tag245);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.continueWithSaveAndCheckNewInstanceCreated();
           InventoryInstance.viewSource();

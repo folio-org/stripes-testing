@@ -81,6 +81,9 @@ export default {
       fundModal.find(Button({ id: 'accordion-toggle-button-ledgerId' })).click(),
       fundModal.find(Button({ id: 'ledgerId-selection' })).click(),
       SelectionOption(ledgerName).click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       MultiColumnList({ id: 'list-plugin-find-records' })
         .find(MultiColumnListHeader({ id: 'list-column-ischecked' }))
         .find(Checkbox())
@@ -129,7 +132,7 @@ export default {
     cy.do([
       // try to navigate without saving
       Button('Agreements').click(),
-      Button('Keep editing').click,
+      Button('Keep editing').click(),
       Button('Cancel').click(),
       Button('Close without saving').click(),
     ]);
@@ -187,6 +190,7 @@ export default {
   }),
 
   selectGroup: (GroupName) => {
+    cy.wait(4000);
     cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
   },
 

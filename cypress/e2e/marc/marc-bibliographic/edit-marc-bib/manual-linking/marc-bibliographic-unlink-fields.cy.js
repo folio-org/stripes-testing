@@ -81,20 +81,20 @@ describe('MARC', () => {
             Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ])
             .then((createdUserProperties) => {
               testData.userProperties = createdUserProperties;
 
-              cy.loginAsAdmin().then(() => {
-                marcFiles.forEach((marcFile) => {
-                  DataImport.uploadFileViaApi(
-                    marcFile.marc,
-                    marcFile.fileName,
-                    marcFile.jobProfileToRun,
-                  ).then((response) => {
-                    response.forEach((record) => {
-                      createdAuthorityIDs.push(record[marcFile.propertyName].id);
-                    });
+              cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileName,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdAuthorityIDs.push(record[marcFile.propertyName].id);
                   });
                 });
               });
@@ -118,7 +118,7 @@ describe('MARC', () => {
 
         it(
           'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C365598'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[2]);
             InventoryInstances.selectInstance();

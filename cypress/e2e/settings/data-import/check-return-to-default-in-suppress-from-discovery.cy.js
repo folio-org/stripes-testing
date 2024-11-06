@@ -59,7 +59,7 @@ describe('Data Import', () => {
     ].forEach(({ description, existingRecordType }) => {
       it(description, { tags: ['extendedPath', 'folijet'] }, () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Click Actions button, Select New field mapping profile
         const FieldMappingProfileEditForm =
@@ -128,10 +128,10 @@ describe('Data Import', () => {
 
     it(
       'C377018 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Instance (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377018'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Click Actions button, Select New field mapping profile
         const FieldMappingProfileEditForm =

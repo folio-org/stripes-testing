@@ -99,8 +99,8 @@ describe('Edit item level request', () => {
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.patronGroup = userProperties.userGroup.group;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -119,7 +119,10 @@ describe('Edit item level request', () => {
               servicePoint1.id,
             );
 
-            cy.login(userData.username, userData.password);
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
@@ -149,9 +152,8 @@ describe('Edit item level request', () => {
 
   it(
     'C350558 Check that the user can Edit request (Item level request) (vega)',
-    { tags: ['extendedPath', 'vega'] },
+    { tags: ['extendedPath', 'vega', 'C350558'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();

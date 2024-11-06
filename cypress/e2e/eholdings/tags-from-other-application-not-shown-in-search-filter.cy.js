@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import EHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
@@ -10,6 +10,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('eHoldings', () => {
   const testData = {
@@ -68,7 +69,7 @@ describe('eHoldings', () => {
 
   it(
     'C376614 Tags from another application are not shown in search filter for Packages, Titles, Providers (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire', 'C376614'] },
     () => {
       InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
@@ -79,7 +80,7 @@ describe('eHoldings', () => {
       InventorySearchAndFilter.addTag(testData.tag);
       InteractorsTools.checkCalloutMessage(testData.successCallout);
 
-      cy.visit(TopMenu.eholdingsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
       EHoldingsPackagesSearch.verifyTagAbsent(testData.tag);
       EHoldingSearch.switchToPackages();
       EHoldingsPackagesSearch.verifyTagAbsent(testData.tag);

@@ -8,6 +8,8 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -64,7 +66,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367983 Verify that confirmation screen DOES NOT require manual refresh (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C367983'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
@@ -84,7 +86,7 @@ describe('bulk-edit', () => {
         );
 
         [item.itemBarcode, `secondBarcode_${item.itemBarcode}`].forEach((barcode) => {
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', barcode);
           ItemRecordView.waitLoading();

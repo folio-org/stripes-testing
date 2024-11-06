@@ -19,13 +19,16 @@ describe('Inventory', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(
-        testData.filePath,
-        testData.marcFileName,
-        DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      ).then((response) => {
-        testData.instanceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
+
+        DataImport.uploadFileViaApi(
+          testData.filePath,
+          testData.marcFileName,
+          DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        ).then((response) => {
+          testData.instanceId = response[0].instance.id;
+        });
       });
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -41,15 +44,16 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+        Users.deleteViaApi(testData.preconditionUserId);
         Users.deleteViaApi(testData.user.userId);
       });
     });
 
     it(
       'C496125 Check new search icon for Preceding title (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C496125'] },
       () => {
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();

@@ -1,11 +1,14 @@
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -33,7 +36,6 @@ describe('Data Import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-        cy.visit(SettingsMenu.matchProfilePath);
       });
     });
 
@@ -46,8 +48,11 @@ describe('Data Import', () => {
 
     it(
       'C2339 Edit an existing match profile (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C2339'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(matchProfile.profileName);
         MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);

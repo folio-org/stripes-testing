@@ -78,6 +78,7 @@ const renewalBlockMessage = 'Patron blocked from renewing';
 const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
 
+  cy.wait(2000);
   cy.do(Button(buttonLabels.renew).click());
   cy.wait(2000);
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
@@ -120,10 +121,8 @@ const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${lo
 export default {
   renewalBlockMessage,
   checkLoansPage,
-  renewWithoutOverrideAccess(loanId, userId, itemData) {
-    cy.visit(generateInitialLink(userId, loanId));
-
-    cy.wait(5000);
+  generateInitialLink,
+  renewWithoutOverrideAccess(itemData) {
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -132,10 +131,7 @@ export default {
     cy.do(Button(buttonLabels.close).click());
   },
 
-  renewWithOverrideAccess(loanId, userId, itemData) {
-    cy.visit(generateInitialLink(userId, loanId));
-
-    cy.wait(5000);
+  renewWithOverrideAccess(itemData) {
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
@@ -199,7 +195,9 @@ export default {
   },
 
   renewAllLoans() {
-    cy.get('#clickable-list-column- input[type=checkbox]').click();
+    cy.wait(500);
+    cy.get('input[name=check-all]').click();
+    cy.wait(500);
     cy.do(Button(buttonLabels.renew).click());
   },
   confirmRenewalsSuccess() {

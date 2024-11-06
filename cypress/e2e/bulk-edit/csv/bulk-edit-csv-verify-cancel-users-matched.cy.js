@@ -15,8 +15,6 @@ const userUUIDsFileName = `userUUIds_${getRandomPostfix()}.csv`;
 const matchedRecordsFile = `*Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-// TODO enable commented lines when issue is fixed https://issues.folio.org/browse/MODBULKOPS-114
-
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
@@ -48,7 +46,7 @@ describe('bulk-edit', () => {
 
     it(
       'C397348 Verify CANCEL uploading file with matched Users (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C397348'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -90,19 +88,19 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();
         BulkEditActions.cancel();
-        // BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
-        // BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
-        // BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
-        // BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsExists();
-        // BulkEditActions.downloadErrorsExists();
+        BulkEditActions.downloadErrorsExists();
         BulkEditActions.startBulkEditLocalButtonExists();
 
         BulkEditActions.openStartBulkEditForm();

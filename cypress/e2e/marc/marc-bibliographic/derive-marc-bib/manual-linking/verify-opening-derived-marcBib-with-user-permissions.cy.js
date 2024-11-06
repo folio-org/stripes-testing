@@ -94,6 +94,8 @@ describe('MARC', () => {
                 linkingTagAndValues.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1000);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -108,7 +110,7 @@ describe('MARC', () => {
 
         it(
           'C417049 Derive | Verify that derived MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
-          { tags: ['criticalPathFlaky', 'spitfire'] },
+          { tags: ['criticalPathFlaky', 'spitfire', 'C417049'] },
           () => {
             cy.login(testData.userData.username, testData.userData.password, {
               path: TopMenu.inventoryPath,
@@ -121,6 +123,8 @@ describe('MARC', () => {
 
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Content);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             InventoryInstance.checkPresentedText(testData.instanceTitleAfterUpdate);

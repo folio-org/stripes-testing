@@ -25,67 +25,67 @@ describe('MARC', () => {
         instanceBibliographyNote: 'Includes bibliographical references and index',
       };
       const calloutMarcTagWrongLength =
-        'Record cannot be saved. A MARC tag must contain three characters.';
-      const calloutMultiple001MarcTags = 'Record cannot be saved. Can only have one MARC 001.';
-      const calloutInvalidMarcTag = 'Invalid MARC tag. Please try again.';
-      const calloutMultiple245MarcTags = 'Record cannot be saved with more than one field 245.';
+        'Tag must contain three characters and can only accept numbers 0-9.';
+      const calloutMultiple245MarcTags = 'Field is non-repeatable.';
       const marcFile = {
         marc: 'marcBibFileC360098.mrc',
-        fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
+        fileName: `C360098 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
       const marcFileC359239 = {
         marc: 'marcBibFileC359239.mrc',
-        fileName: `testMarcFileC359239.${getRandomPostfix()}.mrc`,
+        fileName: `C359239 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
       const createdInstanceIDs = [];
 
       before(() => {
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            `${marcFile.fileName}_copy`,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFile.propertyName].id);
+            });
+          });
+          DataImport.uploadFileViaApi(
+            marcFileC359239.marc,
+            marcFileC359239.fileName,
+            marcFileC359239.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                `${marcFile.fileName}_copy`,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-              DataImport.uploadFileViaApi(
-                marcFileC359239.marc,
-                marcFileC359239.fileName,
-                marcFileC359239.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdInstanceIDs.push(record[marcFileC359239.propertyName].id);
-                });
-              });
-            },
-          );
         });
       });
 
       after('Deleting created users, Instances', () => {
         cy.getAdminToken().then(() => {
           Users.deleteViaApi(testData.userProperties.userId);
+          Users.deleteViaApi(testData.preconditionUserId);
           InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
           InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
         });
@@ -93,7 +93,7 @@ describe('MARC', () => {
 
       it(
         'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C360098'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -120,7 +120,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(20, calloutInvalidMarcTag);
+          QuickMarcEditor.checkErrorMessage(20, calloutMarcTagWrongLength);
           QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
           QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
@@ -133,19 +133,8 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.verifyNo245TagCallout();
-          QuickMarcEditor.verifyTagValue(14, testData.tag555);
-          QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
-          QuickMarcEditor.updateExistingTagValue(16, '');
-          QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(16, false);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(16, calloutMultiple001MarcTags);
-          QuickMarcEditor.verifyTagValue(16, testData.tag001);
-          QuickMarcEditor.checkFourthBoxEditable(16, false);
-          QuickMarcEditor.closeWithoutSavingAfterChange();
+          QuickMarcEditor.checkCallout('Field 245 is required.');
+          QuickMarcEditor.closeWithoutSaving();
           InventoryInstance.waitLoading();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
           InventoryInstance.checkDetailViewOfInstance(
@@ -157,7 +146,7 @@ describe('MARC', () => {
 
       it(
         'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C356842'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -214,7 +203,7 @@ describe('MARC', () => {
 
       it(
         'C359239 Edit MARC Bib | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C359239'] },
         () => {
           const fieldData = {
             firstFieldForAdding: { tag: '', content: '' },

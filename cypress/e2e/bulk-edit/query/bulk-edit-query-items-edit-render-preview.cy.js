@@ -49,13 +49,14 @@ describe('bulk-edit', () => {
 
     it(
       'C440063 Render preview after query executed (Items - Edit) (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C440063'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
         QueryModal.verifyFieldsSortedAlphabetically();
+        QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.temporaryLocation);
         QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
         QueryModal.verifyQueryAreaContent('(temporary_location.name  )');
@@ -64,7 +65,9 @@ describe('bulk-edit', () => {
         QueryModal.verifyQueryAreaContent('(temporary_location.name == )');
         QueryModal.verifyValueColumn();
         QueryModal.chooseValueSelect(LOCATION_NAMES.ONLINE_UI);
-        QueryModal.verifyQueryAreaContent(`(temporary_location.name == "${LOCATION_IDS.ONLINE}")`);
+        QueryModal.verifyQueryAreaContent(
+          `(temporary_location.name == "${LOCATION_NAMES.ONLINE_UI}")`,
+        );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.clickTestQuery();

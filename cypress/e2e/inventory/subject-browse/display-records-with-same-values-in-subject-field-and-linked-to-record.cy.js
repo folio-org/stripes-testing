@@ -1,5 +1,5 @@
 import { including, matching } from '@interactors/html';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -13,6 +13,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { escapeRegex, randomFourDigitNumber } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {
   user: {},
@@ -88,7 +89,7 @@ describe('Inventory', () => {
           });
         });
       });
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       for (let i = 0; i < testData.instanceRecords.length - 1; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
@@ -127,7 +128,7 @@ describe('Inventory', () => {
     // TODO: remove comment once issue is fixed
     it(
       'C375222 Browse | Display records with same values in "Subject" field and linked to the same "MARC authority" record (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C375222'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

@@ -28,13 +28,9 @@ describe('Inventory', () => {
       cy.createTempUser([
         permissions.uiInventoryMoveItems.gui,
         permissions.uiInventoryHoldingsMove.gui,
-        permissions.inventoryViewCreateEditInstances.gui,
+        permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading,
-        });
         item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         secondItem.instanceId = InventoryInstances.createInstanceViaApi(
           secondItem.instanceName,
@@ -58,6 +54,10 @@ describe('Inventory', () => {
             permanentLocationId: LOCATION_IDS.ANNEX,
           });
         });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
       });
     });
 
@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
     it(
       "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C15186'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.byKeywords(item.instanceName);

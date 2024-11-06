@@ -130,7 +130,7 @@ describe('Inventory', () => {
 
     it(
       'C369042 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Keyword" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C369042'] },
       () => {
         testData.searchQueries.forEach((query, index) => {
           InventoryInstances.searchByTitle(query);
@@ -146,7 +146,7 @@ describe('Inventory', () => {
 
     it(
       'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C368038'] },
       () => {
         InventoryInstances.waitContentLoading();
         expectedTitlesC368038.forEach((expectedTitlesSet, index) => {

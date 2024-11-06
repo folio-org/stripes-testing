@@ -1,6 +1,8 @@
 import { including } from '@interactors/html';
 import { Pane, Section, Button, Card, Select, TextField, TextArea } from '../../../../interactors';
 import KeyValue from '../../../../interactors/key-value';
+import AssignLicense from '../licenses/modal/assign-unassign-licenses';
+import selectOrganizationModal from '../orders/modals/selectOrganizationModal';
 
 const organizationSection = Section({ id: 'formOrganizations' });
 const trashButton = Button({ icon: 'trash' });
@@ -11,6 +13,12 @@ const addInternalContactButton = Button({ id: 'add-contacts-btn' });
 const addSupplementaryDocumentsButton = Button({ id: 'add-supplementaryDocs-btn' });
 const supplementaryDocumentsCard = Section({ id: 'formSupplementaryDocs' }).find(Card());
 const fileButton = Button('or choose file');
+const addLicenseButton = Button({ id: 'add-license-btn' });
+const linkLicenseButton = Button('Link license');
+const licensesSection = Section({ id: 'formLicenses' });
+const deleteLicenseButton = licensesSection.find(Button({ icon: 'trash' }));
+const addOrganizationButton = Button({ id: 'add-org-btn' });
+const linkOrganizationButton = Button('Link organization');
 
 export default {
   waitLoading: () => {
@@ -67,5 +75,25 @@ export default {
 
   verifyFileIsUploadedToSupplementaryDocument(fileName) {
     cy.do([supplementaryDocumentsCard.find(KeyValue({ value: fileName })).exists()]);
+  },
+
+  linkLicense(licenseName, status) {
+    cy.do([addLicenseButton.click(), linkLicenseButton.click()]);
+    cy.wait(1000);
+    AssignLicense.verifyModalIsShown();
+    AssignLicense.searchForLicense(licenseName);
+    AssignLicense.selectLicenseFromSearch(licenseName);
+    cy.wait(1000);
+    cy.do([Select('Status (this agreement)*').choose(status), saveButton.click()]);
+  },
+
+  deleteLicense() {
+    cy.do([deleteLicenseButton.click(), saveButton.click()]);
+  },
+
+  addOrganization(organizationName) {
+    cy.do([addOrganizationButton.click(), linkOrganizationButton.click()]);
+    selectOrganizationModal.findOrganization(organizationName);
+    cy.xpath("//select[contains(@data-testid, 'rolesFieldArray')]").select('Content provider');
   },
 };

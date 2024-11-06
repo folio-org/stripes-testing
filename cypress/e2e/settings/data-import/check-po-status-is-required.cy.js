@@ -59,10 +59,10 @@ describe('Data Import', () => {
 
     it(
       'C380419 Order field mapping profile: Confirm that "Purchase order status" is a required field (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380419'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
         // Click Actions button, Select New field mapping profile
         const FieldMappingProfileEditForm =

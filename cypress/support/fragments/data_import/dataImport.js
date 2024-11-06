@@ -30,7 +30,7 @@ import Logs from './logs/logs';
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
 const deleteLogsButton = Button('Delete selected logs');
-const jobLogsList = MultiColumnList({ id: 'job-logs-list' });
+const jobLogsList = Pane({ id: 'pane-logs-title' });
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const deleteLogsModal = Modal('Delete data import logs?');
 const deleteLogsModalCancelButton = deleteLogsModal.find(Button('No, do not delete'));
@@ -48,6 +48,7 @@ const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
   cy.expect(sectionPaneJobsTitle.exists());
+  cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
   cy.wait(10000);
 };
@@ -236,14 +237,22 @@ function getCreatedRecordInfo(jobExecutionId) {
 }
 
 function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
-  return cy.okapiRequest({
-    path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
-    searchParams: { limit: 100 },
-    isDefaultSearchParamsRequired: false,
-  });
+  return recurse(
+    () => cy.okapiRequest({
+      path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
+      searchParams: { limit: 100 },
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
+    (response) => response.status === 200,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  );
 }
 
-function getJodStatus(jobExecutionId) {
+function getJobStatus(jobExecutionId) {
   return cy.okapiRequest({
     path: `change-manager/jobExecutions/${jobExecutionId}`,
     isDefaultSearchParamsRequired: false,
@@ -298,7 +307,7 @@ function uploadDefinitionWithAssembleStorageFile(
   });
 }
 
-function getParentJobExecutionId() {
+function getParentJobExecutions() {
   // splitting process creates additional job executions for parent/child
   // so we need to query to get the correct job execution ID COMPOSITE_PARENT
   return cy.okapiRequest({
@@ -307,19 +316,56 @@ function getParentJobExecutionId() {
   });
 }
 
+function getParentJobExecutionId(sourcePath) {
+  function filterResponseBySourcePath(response) {
+    const {
+      body: { jobExecutions },
+    } = response;
+    return jobExecutions.find((jobExecution) => {
+      return jobExecution.sourcePath === sourcePath;
+    });
+  }
+  return recurse(
+    () => getParentJobExecutions(),
+    (response) => filterResponseBySourcePath(response) !== undefined,
+    {
+      limit: 5,
+    },
+  ).then((response) => {
+    return filterResponseBySourcePath(response).id;
+  });
+}
+
 function getChildJobExecutionId(jobExecutionId) {
-  return cy.okapiRequest({
-    path: `change-manager/jobExecutions/${jobExecutionId}/children`,
-    isDefaultSearchParamsRequired: false,
+  return recurse(
+    () => cy.okapiRequest({
+      path: `change-manager/jobExecutions/${jobExecutionId}/children`,
+      isDefaultSearchParamsRequired: false,
+    }),
+    (response) => response.body.jobExecutions.length > 0,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  ).then((response) => {
+    return response.body.jobExecutions[0].id;
   });
 }
 
 function getRecordSourceId(jobExecutionId) {
-  return cy.okapiRequest({
-    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
-    isDefaultSearchParamsRequired: false,
-    searchParams: { limit: 100, query: 'order=asc' },
-  });
+  return recurse(
+    () => cy.okapiRequest({
+      path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: { limit: 100, query: 'order=asc' },
+      failOnStatusCode: false,
+    }),
+    (response) => response.body?.entries?.length > 0,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  );
 }
 
 function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) {
@@ -354,7 +400,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
       );
 
       recurse(
-        () => getJodStatus(jobExecutionId),
+        () => getJobStatus(jobExecutionId),
         (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
         {
           limit: 16,
@@ -430,12 +476,9 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                 },
               );
 
-              getParentJobExecutionId().then((jobExecutionResponse) => {
-                const parentJobExecutionId = jobExecutionResponse.body.jobExecutions.find(
-                  (exec) => exec.sourcePath === sourcePath,
-                ).id;
+              getParentJobExecutionId(sourcePath).then((parentJobExecutionId) => {
                 recurse(
-                  () => getJodStatus(parentJobExecutionId),
+                  () => getJobStatus(parentJobExecutionId),
                   (resp) => resp.body.status === 'COMMITTED' && resp.body.uiStatus === 'RUNNING_COMPLETE',
                   {
                     limit: 16,
@@ -443,15 +486,11 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                     delay: 5000,
                   },
                 );
-
-                getChildJobExecutionId(parentJobExecutionId).then((resp2) => {
-                  const childJobExecutionId = resp2.body.jobExecutions[0].id;
-
+                getChildJobExecutionId(parentJobExecutionId).then((childJobExecutionId) => {
                   return getRecordSourceId(childJobExecutionId).then((resp3) => {
                     const sourceRecords = resp3.body.entries;
                     const infos = [];
 
-                    // Use Promise.all to wait for all asynchronous operations to complete
                     return Promise.all(
                       sourceRecords.map((record) => {
                         return getCreatedRecordInfoWithSplitFiles(
@@ -590,7 +629,7 @@ export default {
     );
   },
 
-  checkMultiColumnListRowsCount: (count) => cy.expect(jobLogsList.has({ rowCount: count })),
+  checkMultiColumnListRowsCount: (count) => cy.expect(MultiColumnList().has({ rowCount: count })),
 
   checkIsLandingPageOpened: () => {
     cy.expect(sectionPaneJobsTitle.find(orChooseFilesButton).exists());
@@ -870,6 +909,10 @@ export default {
 
   selectDataImportProfile(profile) {
     cy.do(dataImportNavSection.find(NavListItem(profile)).click());
+  },
+
+  cancelBlockedImportModal() {
+    cy.do(importBlockedModal.find(Button('Cancel')).click());
   },
 
   verifyImportBlockedModal() {

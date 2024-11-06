@@ -81,13 +81,11 @@ describe('Create Recall Item level request', () => {
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData.patronGroup = userProperties.userGroup.group;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
-
-            cy.login(userData.username, userData.password);
           });
       });
   });
@@ -109,9 +107,12 @@ describe('Create Recall Item level request', () => {
 
   it(
     'C350418 Check that user can create "Recall" Item level request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C350418'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
       NewRequest.openNewRequestPane();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);

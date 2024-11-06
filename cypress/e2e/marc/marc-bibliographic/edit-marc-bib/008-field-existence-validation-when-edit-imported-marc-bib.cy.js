@@ -51,7 +51,7 @@ describe('MARC', () => {
         ],
         calloutMessage:
           'This record has successfully saved and is in process. Changes may not appear immediately.',
-        errorCalloutMessage: 'Record cannot be saved without 008 field',
+        errorCalloutMessage: 'Field 008 is required.',
         initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
       };
       const field008DropdownValues = [
@@ -119,7 +119,7 @@ describe('MARC', () => {
 
       it(
         'C387451 "008" field existence validation when edit imported "MARC bib" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387451'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
@@ -152,6 +152,8 @@ describe('MARC', () => {
             );
             cy.wait(500);
           });
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldContent();

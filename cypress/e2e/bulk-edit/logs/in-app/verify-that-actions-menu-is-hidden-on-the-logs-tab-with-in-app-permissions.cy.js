@@ -24,7 +24,7 @@ describe('bulk-edit', () => {
           permissions.bulkEditLogsView.gui,
           permissions.inventoryAll.gui,
           permissions.uiUserEdit.gui,
-          permissions.uiUsersPermissions.gui,
+          permissions.uiUserCanAssignUnassignPermissions.gui,
         ]).then((userProperties) => {
           user = userProperties;
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
@@ -45,7 +45,7 @@ describe('bulk-edit', () => {
 
       it(
         'C367996 Verify that "Actions" menu is hidden on the "Logs" tab with In-app permissions (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird'] },
+        { tags: ['extendedPath', 'firebird', 'C367996'] },
         () => {
           BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
           BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.checkItemsCheckbox();
           BulkEditLogs.verifyActionsRunBy(
-            `${user.username}, ${user.firstName} ${Users.defaultUser.personal.middleName}`,
+            `${user.username}, ${Users.defaultUser.personal.preferredFirstName} ${Users.defaultUser.personal.middleName}`,
           );
         },
       );

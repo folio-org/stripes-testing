@@ -139,7 +139,7 @@ describe('Data Import', () => {
 
     it(
       'C503097 No error after updating existing instance with multiple 035 fields (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C503097'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileNameForCreate);
@@ -157,7 +157,7 @@ describe('Data Import', () => {
           );
         });
 
-        cy.visit(TopMenu.dataImportPath);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileNameForUpdate);
         JobProfiles.waitFileIsUploaded();

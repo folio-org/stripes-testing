@@ -68,23 +68,27 @@ describe('ui-requests: Filter requests by tags', () => {
     });
   });
 
-  it('C9320 Filter requests by tags (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
-    cy.visit(TopMenu.requestsPath);
-    instances.forEach((instance, index) => {
-      Requests.findCreatedRequest(instance.instanceTitle);
-      Requests.selectFirstRequest(instance.instanceTitle);
-      Requests.openTagsPane();
-      Requests.addTag(tags[index].label);
-      Requests.closePane('Tags');
-      Requests.closePane('Request details');
-      Requests.resetAllFilters();
-      Requests.filterRequestsByTag(tags[index].label);
-      Requests.selectFirstRequest(instance.instanceTitle);
-      Requests.openTagsPane();
-      Requests.verifyAssignedTags(tags[index].label);
-      Requests.closePane('Tags');
-      Requests.closePane('Request details');
-      Requests.resetAllFilters();
-    });
-  });
+  it(
+    'C9320 Filter requests by tags (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C9320'] },
+    () => {
+      cy.visit(TopMenu.requestsPath);
+      instances.forEach((instance, index) => {
+        Requests.findCreatedRequest(instance.instanceTitle);
+        Requests.selectFirstRequest(instance.instanceTitle);
+        Requests.openTagsPane();
+        Requests.addTag(tags[index].label);
+        Requests.closePane('Tags');
+        Requests.closePane('Request details');
+        Requests.resetAllFilters();
+        Requests.filterRequestsByTag(tags[index].label);
+        Requests.selectFirstRequest(instance.instanceTitle);
+        Requests.openTagsPane();
+        Requests.verifyAssignedTags(tags[index].label);
+        Requests.closePane('Tags');
+        Requests.closePane('Request details');
+        Requests.resetAllFilters();
+      });
+    },
+  );
 });

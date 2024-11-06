@@ -51,6 +51,7 @@ export {
   defaultClassificationBrowseNames,
   classificationIdentifierTypesDropdownDefaultOptions,
   defaultClassificationBrowseIdsAlgorithms,
+  classificationBrowseSectionName,
 };
 
 export default {
@@ -64,7 +65,7 @@ export default {
 
   getTargetRowWithClassificationName(classificationName) {
     return classificationBrowsePane.find(
-      MultiColumnListRow({ innerHTML: including(classificationName) }),
+      MultiColumnListRow({ innerHTML: including(classificationName), isContainer: true }),
     );
   },
 

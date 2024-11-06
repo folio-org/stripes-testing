@@ -8,6 +8,8 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 let userWithoutPermissions;
@@ -26,6 +28,7 @@ describe('bulk-edit', () => {
         cy.createTempUser([], 'faculty').then((userProperties) => {
           userWithoutPermissions = userProperties;
         });
+        cy.wait(3000);
         cy.createTempUser(
           [
             permissions.bulkEditLogsView.gui,
@@ -33,17 +36,21 @@ describe('bulk-edit', () => {
             permissions.uiUserEdit.gui,
           ],
           'staff',
-        ).then((userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
+        )
+          .then((userProperties) => {
+            user = userProperties;
+          })
+          .then(() => {
+            cy.wait(5000);
+            cy.login(user.username, user.password, {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            });
+            FileManager.createFile(
+              `cypress/fixtures/${invalidAndValidUserUUIDsFileName}`,
+              `${user.userId}\n${userWithoutPermissions.userId}\n${invalidUserUUID}`,
+            );
           });
-          FileManager.createFile(
-            `cypress/fixtures/${invalidAndValidUserUUIDsFileName}`,
-            `${user.userId}\n${userWithoutPermissions.userId}\n${invalidUserUUID}`,
-          );
-        });
       });
 
       after('delete test data', () => {
@@ -62,7 +69,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'shiftLeft'] },
+        { tags: ['smoke', 'firebird', 'C375245', 'shiftLeft'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);
@@ -97,11 +104,19 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             `*${matchedRecordsFileNameInvalidAndValid}`,
-            [user.userId, userWithoutPermissions.userId],
-            'userId',
-            true,
+            'User id',
+            user.userId,
+            'User name',
+            user.username,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            `*${matchedRecordsFileNameInvalidAndValid}`,
+            'User id',
+            userWithoutPermissions.userId,
+            'User name',
+            userWithoutPermissions.username,
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
@@ -136,7 +151,7 @@ describe('bulk-edit', () => {
             false,
           );
 
-          cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.searchByUsername(user.username);
           Users.verifyPatronGroupOnUserDetailsPane('staff');
           UsersSearchPane.searchByUsername(userWithoutPermissions.username);

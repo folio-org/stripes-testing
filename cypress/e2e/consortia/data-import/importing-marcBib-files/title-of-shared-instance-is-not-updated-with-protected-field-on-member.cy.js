@@ -83,6 +83,10 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
+      cy.getConsortiaId().then((consortiaId) => {
+        testData.consortiaId = consortiaId;
+      });
+      cy.setTenant(Affiliations.College);
       MarcFieldProtection.createViaApi({
         indicator1: '*',
         indicator2: '*',
@@ -93,10 +97,6 @@ describe('Data Import', () => {
       }).then((resp) => {
         testData.fieldId = resp.id;
       });
-      cy.getConsortiaId().then((consortiaId) => {
-        testData.consortiaId = consortiaId;
-      });
-      cy.setTenant(Affiliations.College);
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
         testData.marcFile.fileName,
@@ -145,10 +145,10 @@ describe('Data Import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.marcFile.modifiedMarcFile}`);
       cy.resetTenant();
       cy.getAdminToken();
-      MarcFieldProtection.deleteViaApi(testData.protectedField);
       Users.deleteViaApi(testData.user.userId);
       cy.resetTenant();
       cy.setTenant(Affiliations.College);
+      MarcFieldProtection.deleteViaApi(testData.fieldId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -210,17 +210,17 @@ describe('Data Import', () => {
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDate);
-        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDateUI);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.statusTerm);
         InstanceRecordView.verifyInstanceAdministrativeNote(mappingProfile.adminNotes);
         InventoryInstance.verifyInstanceTitle(testData.existing245field);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
-        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDate);
-        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogingDateUI);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.statusTerm);
         InstanceRecordView.verifyInstanceAdministrativeNote(mappingProfile.adminNotes);
         InventoryInstance.verifyInstanceTitle(testData.existing245field);
       },

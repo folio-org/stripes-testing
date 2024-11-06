@@ -11,7 +11,8 @@ import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
 import FileManager from '../../../support/utils/fileManager';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { NOTE_TYPES } from '../../../support/constants';
+import { NOTE_TYPES, APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe.skip('eHoldings', () => {
   describe('Package', () => {
@@ -62,7 +63,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C357529 Export all "Titles" (less than 10k) of "Package" record with large "Note" (around 4k symbols). (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C357529'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Cambridge');
@@ -113,7 +114,7 @@ describe.skip('eHoldings', () => {
 
           EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
             // Go to "Export manager" app.
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
 
             // Verify row with "Job ID" displayed at export jobs list.
             ExportManagerSearchPane.searchByEHoldings();

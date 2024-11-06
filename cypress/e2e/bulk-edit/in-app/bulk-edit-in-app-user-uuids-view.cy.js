@@ -4,6 +4,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -34,12 +36,12 @@ describe('bulk-edit', () => {
     });
 
     afterEach('open new bulk-edit form', () => {
-      cy.visit(TopMenu.bulkEditPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
     });
 
     it(
       'C357578 Verify "In app - Edit user records" permission (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C357578'] },
       () => {
         BulkEditSearchPane.verifyUsersUpdatePermission();
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
@@ -52,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C359197'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(userUUIDsFileName);

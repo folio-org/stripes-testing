@@ -6,11 +6,11 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -41,6 +41,7 @@ describe('Data Import', () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
         NewFieldMappingProfile.save();
+        FieldMappingProfileView.clickCloseButton();
       });
     });
 
@@ -52,10 +53,9 @@ describe('Data Import', () => {
 
     it(
       'C367955 Order field mapping profile: Check asterisks for required fields in existing field mapping profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C367955'] },
       () => {
         // #1 Go to "Settings" application -> "Data import" -> Find field mapping profile from preconditions -> Click on profile from preconditions -> "Actions" -> "Edit"
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);

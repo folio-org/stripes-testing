@@ -17,6 +17,7 @@ describe('Inventory', () => {
     const testData = {
       tag010: '010',
       tag610: '610',
+      rowIndex: 20,
       subjectName: 'C375163 SuperCorp',
       instanceTitle: 'C375163 Testfire : a litany for survival',
     };
@@ -45,10 +46,11 @@ describe('Inventory', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken();
+        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -61,6 +63,7 @@ describe('Inventory', () => {
           });
         });
 
+        cy.getAdminToken();
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -68,7 +71,7 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag610);
+          InventoryInstance.verifyAndClickLinkIconByIndex(testData.rowIndex);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.searchResults(testData.subjectName);
@@ -77,7 +80,7 @@ describe('Inventory', () => {
             `$a ${marcFiles[1].naturalId}`,
           );
           InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
+          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(testData.rowIndex, testData.tag610);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
@@ -102,7 +105,7 @@ describe('Inventory', () => {
 
     it(
       'C375163 Browse | Separate entries for "Subjects" from linked and unlinked "6XX" fields of "MARC bib" record (same subject names) (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C375163'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

@@ -22,7 +22,9 @@ export default {
     cy.do(rootModal.find(TextArea({ name: 'comment' })).fillIn(comment));
   },
   submitAndConfirm: () => {
+    cy.wait(1000);
     cy.do(rootModal.find(Button({ id: 'submit-button' })).click());
+    cy.wait(1000);
     cy.expect(confirmationModal.exists());
     cy.do(
       confirmationModal

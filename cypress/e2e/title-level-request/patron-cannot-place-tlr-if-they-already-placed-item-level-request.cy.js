@@ -134,8 +134,8 @@ describe('Create Item or Title level request', () => {
     );
   });
   it(
-    'C350686 Verify that patron cannot place title level request if they already placed an item level request (same instance) (vega) (Taas)',
-    { tags: ['extendedPath', 'vega'] },
+    'C350686 Verify that patron cannot place title level request if they already placed an item level request (same instance) (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C350686'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);

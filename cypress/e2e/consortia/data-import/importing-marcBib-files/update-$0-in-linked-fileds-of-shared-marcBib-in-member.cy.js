@@ -151,7 +151,7 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ])
         .then((userProperties) => {
@@ -165,7 +165,7 @@ describe('Data Import', () => {
             Permissions.inventoryAll.gui,
             Permissions.moduleDataImportEnabled.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
             Permissions.dataExportViewAddUpdateProfiles.gui,
           ]);
         })
@@ -175,7 +175,7 @@ describe('Data Import', () => {
             Permissions.inventoryAll.gui,
             Permissions.moduleDataImportEnabled.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.dataExportEnableApp.gui,
+            Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
             Permissions.dataExportViewAddUpdateProfiles.gui,
           ]);
         })
@@ -265,7 +265,7 @@ describe('Data Import', () => {
 
     it(
       'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

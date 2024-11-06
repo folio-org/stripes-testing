@@ -11,7 +11,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 let user;
 const editedFileName = `invalid-query-${getRandomPostfix()}.cql`;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -38,7 +38,7 @@ describe('Data export', () => {
 
   it(
     'C397323 Verify trigger Data export with invalid CQL (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C397323'] },
     () => {
       ExportFileHelper.uploadFile(editedFileName);
       ExportFileHelper.exportWithDefaultJobProfile(

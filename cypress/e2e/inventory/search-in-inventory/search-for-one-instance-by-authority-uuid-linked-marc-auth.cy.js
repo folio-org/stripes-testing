@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -11,6 +11,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {
   user: {},
@@ -89,7 +90,7 @@ describe('Inventory', () => {
           });
         });
       });
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.instanceRecords[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
@@ -121,7 +122,7 @@ describe('Inventory', () => {
 
     it(
       'C367973 Search for one "Instance" record by "Authority UUID" value of linked "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C367973'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

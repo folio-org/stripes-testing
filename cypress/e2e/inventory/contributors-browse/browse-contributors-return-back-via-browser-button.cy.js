@@ -4,8 +4,9 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSearch from '../../../support/fragments/inventory/search/browseSubjects';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { APPLICATION_NAMES } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {};
 const instance = BrowseContributors.defaultInstanceAWithContributor;
@@ -33,7 +34,7 @@ describe('Inventory', () => {
         cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
           testData.user = resUserProperties;
           cy.login(resUserProperties.username, resUserProperties.password);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         });
       });
     });
@@ -46,7 +47,7 @@ describe('Inventory', () => {
 
     it(
       'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)(Spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C353653'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

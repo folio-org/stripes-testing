@@ -5,9 +5,10 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -124,10 +125,11 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399080 Verify that hyperlink  "# of Libraries" navigates to a list of Libraries (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird'] },
+    { tags: ['extendedPath', 'firebird', 'C399080'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
-      cy.visit(SettingsMenu.tenantCampusesPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+      Campuses.openCampusesTabFromSettingsList();
 
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
       Campuses.selectOption('Institution', testData.institutions[0]);

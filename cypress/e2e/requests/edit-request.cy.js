@@ -3,18 +3,14 @@ import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
+describe('Requests', () => {
   let userId;
   let requestData;
   let instanceData;
   let cancellationReason;
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
-  });
-
-  beforeEach(() => {
     Requests.createRequestApi().then(
       ({ createdUser, createdRequest, instanceRecordData, cancellationReasonId }) => {
         userId = createdUser.id;
@@ -25,7 +21,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     );
   });
 
-  afterEach(() => {
+  after(() => {
     cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,
@@ -40,17 +36,17 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
 
   it(
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeft'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C556'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       [
         EditRequest.requestStatuses.AWAITING_DELIVERY,
         EditRequest.requestStatuses.AWAITING_PICKUP,
         EditRequest.requestStatuses.IN_TRANSIT,
         EditRequest.requestStatuses.NOT_YET_FILLED,
       ].forEach((status) => {
+        cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
-        EditRequest.resetFiltersAndReloadPage();
+        // EditRequest.resetFiltersAndReloadPage();
       });
     },
   );

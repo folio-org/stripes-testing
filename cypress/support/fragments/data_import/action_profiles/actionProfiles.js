@@ -19,7 +19,11 @@ const viewPane = Pane({ id: 'view-action-profile-pane' });
 const searchField = TextField({ id: 'input-search-action-profiles-field' });
 
 const openNewActionProfileForm = () => {
-  cy.do([resultsPane.find(actionsButton).click(), Button('New action profile').click()]);
+  cy.expect(Pane('Action profiles').exists());
+  cy.wait(1500);
+  cy.do(resultsPane.find(actionsButton).click());
+  cy.wait(1000);
+  cy.do(Button('New action profile').click());
 };
 const close = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
 
@@ -31,7 +35,7 @@ const search = (profileName) => {
   cy.expect(resultsPane.find(searchField).exists());
   cy.wait(1500);
   cy.do(searchField.fillIn(profileName));
-  cy.wait(1000);
+  cy.wait(1500);
   cy.do(Pane('Action profiles').find(Button('Search')).click());
 };
 
@@ -46,7 +50,9 @@ export default {
   waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
   create: (actionProfile, mappingProfileName) => {
     openNewActionProfileForm();
+    cy.wait(1000);
     NewActionProfile.fill(actionProfile);
+    cy.wait(1000);
     NewActionProfile.linkMappingProfile(mappingProfileName);
   },
 

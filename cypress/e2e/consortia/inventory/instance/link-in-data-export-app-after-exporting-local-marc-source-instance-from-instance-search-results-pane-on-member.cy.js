@@ -25,7 +25,6 @@ describe('Inventory', () => {
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.inventoryAll.gui,
-            Permissions.dataExportEnableSettings.gui,
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
           ]);
           InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {

@@ -127,7 +127,7 @@ describe('MARC', () => {
 
         it(
           'C422150 Unlink auto-linked fields, manually link, edit and auto-link fields again when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422150'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -190,6 +190,8 @@ describe('MARC', () => {
               'Field 240 and 711 has been linked to MARC authority record(s).',
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
@@ -200,7 +202,7 @@ describe('MARC', () => {
               'Linked to MARC authority\n\t240\t   \t$a Wakanda Forever $0 http://id.loc.gov/authorities/names/n2016004081C388568 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t100\t   \t$a C388568 Robertson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052007C388568 $9',
+              'Linked to MARC authority\n\t100\t   \t$a C388568 Robertson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052007C388568 $9',
             );
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t711\t   \t$a C388568 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169C388568 $9',

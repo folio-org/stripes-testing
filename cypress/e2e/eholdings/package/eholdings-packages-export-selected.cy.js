@@ -9,6 +9,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
 import FileManager from '../../../support/utils/fileManager';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe.skip('eHoldings', () => {
   describe('Package', () => {
@@ -46,7 +48,7 @@ describe.skip('eHoldings', () => {
 
     it(
       'C354000 Export all selected titles in a "Package". Export all "Package" and "Titles" fields selected by default settings (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C354000'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Book');
@@ -80,7 +82,7 @@ describe.skip('eHoldings', () => {
 
           EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
             // Go to "Export manager" app.
-            cy.visit(TopMenu.exportManagerPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
 
             // Verify row with "Job ID" displayed at export jobs list.
             ExportManagerSearchPane.searchByEHoldings();

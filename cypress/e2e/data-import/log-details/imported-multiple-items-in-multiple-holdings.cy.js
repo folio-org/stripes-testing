@@ -15,9 +15,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
@@ -25,6 +22,12 @@ import {
   FieldMappingProfiles as SettingsFieldMappingProfiles,
   JobProfiles as SettingsJobProfiles,
 } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -119,14 +122,14 @@ describe('Data Import', () => {
         );
 
         // create action profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
 
         // create job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create instance');
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
@@ -158,7 +161,7 @@ describe('Data Import', () => {
 
     it(
       'C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C388506'] },
       () => {
         let instanceHRID;
         const marcFileName = `C388506 multipleAutotestFileName${getRandomPostfix()}.mrc`;
@@ -174,7 +177,6 @@ describe('Data Import', () => {
         const quantityOfErrors = 5;
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -222,7 +224,7 @@ describe('Data Import', () => {
 
     it(
       'C389502 Check the JSON screen for imported multiple items with error in multiple holdings (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C389502'] },
       () => {
         let instanceHrid;
         const marcFileName = `C389502 multipleAutotestFileName${getRandomPostfix()}.mrc`;
@@ -251,7 +253,6 @@ describe('Data Import', () => {
         ];
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -309,7 +310,7 @@ describe('Data Import', () => {
 
     it(
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C388505'] },
       () => {
         const arrayOfHoldingsStatuses = [
           'Created (KU/CC/DI/M)',
@@ -321,7 +322,6 @@ describe('Data Import', () => {
         const marcFileName = `C388505 autotestFileName${getRandomPostfix()}.mrc`;
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();
@@ -370,7 +370,7 @@ describe('Data Import', () => {
 
     it(
       'C389587 Check the JSON screen for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C389587'] },
       () => {
         let instanceHrid;
         const arrayOfHoldingsStatuses = [
@@ -383,7 +383,6 @@ describe('Data Import', () => {
         const marcFileName = `C389587 autotestFileName${getRandomPostfix()}.mrc`;
 
         // upload .mrc file
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
         JobProfiles.waitFileIsUploaded();

@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
@@ -12,6 +12,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -33,7 +34,7 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '800',
             content: '$t testT $0 123 $dtestD  $a testA $0 971256',
-            boxFourth: '$a C422129 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            boxFourth: '$a C422129 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '',
             boxSixth: '$0 3052044',
             boxSeventh: '',
@@ -76,7 +77,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422129*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422129');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -117,7 +118,7 @@ describe('MARC', () => {
 
         it(
           'C422129 Link "Series" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422129'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -183,7 +184,8 @@ describe('MARC', () => {
               `${newFields[1].boxSixth}`,
               `${newFields[1].boxSeventh}`,
             );
-
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -217,13 +219,13 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422129 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422129 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9`,
             );
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 http://id.loc.gov/authorities/names/n84704570 $9`,
             );
 
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchByParameter(newFields[1].searchOption, newFields[1].marcValue);
             MarcAuthorities.checkRow(newFields[1].marcValue);
             MarcAuthorities.verifyNumberOfTitles(5, '1');

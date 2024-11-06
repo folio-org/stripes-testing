@@ -9,6 +9,8 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
 const externalId = getRandomPostfix();
@@ -50,13 +52,13 @@ describe('bulk-edit', () => {
 
       it(
         'C375247 Verify genetated Logs files for Users In app -- only valid External IDs (firebird)',
-        { tags: ['smoke', 'firebird'] },
+        { tags: ['smoke', 'firebird', 'C375247'] },
         () => {
           UsersSearchPane.searchByStatus('Active');
           UsersSearchPane.searchByUsername(user.username);
           UserEdit.addExternalId(externalId);
 
-          cy.visit(TopMenu.bulkEditPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
           BulkEditSearchPane.waitLoading();
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('External IDs');
@@ -110,8 +112,9 @@ describe('bulk-edit', () => {
             true,
           );
 
-          cy.visit(TopMenu.usersPath);
-          UsersSearchPane.searchByUsername(user.username);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+          cy.reload();
+          Users.verifyLastNameOnUserDetailsPane(user.username);
           Users.verifyEmailDomainOnUserDetailsPane(newEmailDomain);
         },
       );

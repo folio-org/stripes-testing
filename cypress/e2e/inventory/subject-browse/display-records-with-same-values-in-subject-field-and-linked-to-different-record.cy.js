@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -13,6 +13,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {
   user: {},
@@ -90,7 +91,7 @@ describe('Inventory', () => {
           });
         });
       });
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
@@ -127,7 +128,7 @@ describe('Inventory', () => {
 
     it(
       'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C375224'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

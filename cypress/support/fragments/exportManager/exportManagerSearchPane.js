@@ -99,6 +99,12 @@ export default {
       HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
+  waitFiltersLoading() {
+    cy.expect([
+      Accordion({ id: 'isSystemSource' }).exists(),
+      Accordion({ id: 'createdByUserId' }).exists(),
+    ]);
+  },
   waitForJobs() {
     cy.expect(MultiColumnList().exists());
   },
@@ -113,7 +119,7 @@ export default {
     cy.expect(HTML('Choose a filter or enter a search query to show results.').exists());
   },
   selectJob(content) {
-    return cy.do(MultiColumnListCell(including(content)).click());
+    cy.do(MultiColumnListCell(including(content)).click());
   },
 
   sortByJobID() {
@@ -289,9 +295,7 @@ export default {
 
   resetStartTime() {
     cy.do(
-      startTimeAccordion
-        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
-        .click(),
+      startTimeAccordion.find(Button({ ariaLabel: 'Clear selected Start time filters' })).click(),
     );
   },
 
@@ -306,11 +310,7 @@ export default {
   },
 
   resetEndTime() {
-    cy.do(
-      endTimeAccordion
-        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
-        .click(),
-    );
+    cy.do(endTimeAccordion.find(Button({ ariaLabel: 'Clear selected End time filters' })).click());
   },
 
   searchBySystemNo() {

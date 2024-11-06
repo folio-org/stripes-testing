@@ -6,11 +6,11 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileEdit from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileEdit';
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -135,7 +135,7 @@ describe('Data Import', () => {
 
     it(
       'C380523 Order field mapping profile: Verify that electronic resource details are not active when Order format is Physical resource in the create screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380523'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -213,10 +213,9 @@ describe('Data Import', () => {
 
     it(
       'C380525 Order field mapping profile: Verify that electronic resource details are not included when Order format is Physical resource in the editing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380525'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
         // #2 Populate following fields
@@ -344,10 +343,9 @@ describe('Data Import', () => {
 
     it(
       'C380527 Order field mapping profile: Verify that electronic resource details are not included when Order format is Other in the editing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380527'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
         // #2 Populate following fields

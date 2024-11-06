@@ -40,7 +40,7 @@ describe('MARC', () => {
 
         it(
           'C422142 User without permission "quickMARC: Can Link/unlink authority records to bib records" can\'t see "Link headings" button when create "MARC bib" (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422142'] },
           () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,

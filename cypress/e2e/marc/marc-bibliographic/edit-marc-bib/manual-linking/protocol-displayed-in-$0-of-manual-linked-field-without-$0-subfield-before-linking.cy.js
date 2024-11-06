@@ -144,6 +144,7 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            Permissions.moduleDataImportEnabled.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
@@ -174,7 +175,7 @@ describe('MARC', () => {
               });
             });
 
-            cy.getAdminToken();
+            cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -209,7 +210,7 @@ describe('MARC', () => {
 
         it(
           'C436826 Protocol is displayed in subfield "$0" of manually linked field when field has no subfield "$0" before linking (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C436826'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

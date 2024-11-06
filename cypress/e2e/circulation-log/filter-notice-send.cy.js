@@ -21,6 +21,8 @@ import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../support/constants';
 
 let user;
 const templateBody = {
@@ -130,7 +132,7 @@ describe('Circulation log', () => {
 
   it(
     'C17092 Filter circulation log by (notice) send (firebird)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'C17092'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,
@@ -157,7 +159,7 @@ describe('Circulation log', () => {
     { tags: ['criticalPath', 'volaris'] },
     () => {
       const goToCircLogApp = (filterName) => {
-        cy.visit(TopMenu.circulationLogPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         SearchPane.waitLoading();
         SearchPane.setFilterOptionFromAccordion('notice', filterName);
         SearchPane.searchByItemBarcode(item.barcode);

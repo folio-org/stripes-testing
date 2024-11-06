@@ -170,7 +170,7 @@ export default {
   verifyTemporaryLocation: (location) => {
     cy.expect(
       Accordion({ label: 'Location' })
-        .find(KeyValue({ dataTestId: 'item-temporary-location', value: location }))
+        .find(KeyValue({ dataTestId: 'item-temporary-location', value: including(location) }))
         .exists(),
     );
   },
@@ -194,6 +194,10 @@ export default {
   checkItemNote: (note, staffValue = 'Yes', value = 'Note') => {
     cy.expect(itemNotesAccordion.find(KeyValue(value)).has({ value: note }));
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
+  },
+
+  checkItemNoteAbsent(noteTypeName) {
+    cy.expect(itemNotesAccordion.find(KeyValue(noteTypeName)).absent());
   },
 
   checkMultipleItemNotes: (...itemNotes) => {
@@ -221,6 +225,10 @@ export default {
     });
   },
 
+  checkStaffOnlyValueInLoanAccordion(staffOnlyValue) {
+    cy.expect(loanAccordion.find(KeyValue('Staff only')).has({ value: staffOnlyValue }));
+  },
+
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));
@@ -240,8 +248,25 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
   },
 
+  checkBindingNoteWithStaffValue: (note, staffValue = 'No') => {
+    cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
+    cy.contains('section', 'Item notes')
+      .find('div[class*= row]')
+      .contains(note)
+      .find('[class*=kvValue]')
+      .should('have.text', `${staffValue}${note}`);
+  },
+
   checkBindingNote: (note) => {
-    cy.expect(itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }));
+    cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
+  },
+
+  checkActionNote: (note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Action note')).has({ value: note }));
+  },
+
+  checkProvenanceNote: (note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Provenance')).has({ value: note }));
   },
 
   checkBarcode: (barcode) => {
@@ -312,15 +337,37 @@ export default {
       .exists(),
   ),
 
-  verifyLoanAndAvailabilitySection: (data) => {
-    verifyPermanentLoanType(data.permanentLoanType);
-    verifyTemporaryLoanType(data.temporaryLoanType);
-    verifyItemStatus(data.itemStatus);
+  verifyLoanAndAvailabilitySection(data) {
+    verifyPermanentLoanType(
+      data.permanentLoanType === '-' ? 'No value set-' : data.permanentLoanType,
+    );
+    verifyTemporaryLoanType(
+      data.temporaryLoanType === '-' ? 'No value set-' : data.temporaryLoanType,
+    );
+    verifyItemStatus(data.itemStatus === '-' ? 'No value set-' : data.itemStatus);
     cy.expect([
-      loanAccordion.find(KeyValue('Requests', { value: data.requestQuantity })).exists(),
-      loanAccordion.find(KeyValue('Borrower', { value: data.borrower })).exists(),
-      loanAccordion.find(KeyValue('Loan date', { value: data.loanDate })).exists(),
-      loanAccordion.find(KeyValue('Due date', { value: data.dueDate })).exists(),
+      loanAccordion
+        .find(
+          KeyValue('Requests', {
+            value: data.requestQuantity === '-' ? 'No value set-' : data.requestQuantity,
+          }),
+        )
+        .exists(),
+      loanAccordion
+        .find(
+          KeyValue('Borrower', { value: data.borrower === '-' ? 'No value set-' : data.borrower }),
+        )
+        .exists(),
+      loanAccordion
+        .find(
+          KeyValue('Loan date', { value: data.loanDate === '-' ? 'No value set-' : data.loanDate }),
+        )
+        .exists(),
+      loanAccordion
+        .find(
+          KeyValue('Due date', { value: data.dueDate === '-' ? 'No value set-' : data.dueDate }),
+        )
+        .exists(),
       loanAccordion.find(KeyValue('Staff only', { value: data.staffOnly })).exists(),
       loanAccordion.find(KeyValue('Note', { value: data.note })).exists(),
     ]);

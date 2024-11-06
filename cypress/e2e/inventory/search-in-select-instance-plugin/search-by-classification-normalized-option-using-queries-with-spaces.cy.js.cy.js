@@ -64,19 +64,23 @@ describe('Inventory', () => {
         orderID = response.body.id;
       });
 
-      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-        (response) => {
-          response.forEach((record) => {
-            createdRecordIDs.push(record[marcFile.propertyName].id);
-          });
-        },
-      );
-
       cy.createTempUser([
         Permissions.uiInventoryViewInstances.gui,
         Permissions.uiOrdersCreate.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         user = createdUserProperties;
+
+        cy.getUserToken(user.username, user.password);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdRecordIDs.push(record[marcFile.propertyName].id);
+          });
+        });
 
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,
@@ -102,7 +106,7 @@ describe('Inventory', () => {
 
     it(
       'C466168 Find Instance plugin | Search by "Classification, normalized" search option using queries with spaces (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466168'] },
       () => {
         SelectInstanceModal.clickSearchOptionSelect();
         testData.searchQueries.forEach((query) => {

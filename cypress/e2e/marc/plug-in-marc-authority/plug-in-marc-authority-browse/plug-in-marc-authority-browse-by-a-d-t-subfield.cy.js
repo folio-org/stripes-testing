@@ -36,13 +36,17 @@ describe('MARC', () => {
       };
 
       before('Creating user', () => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record.instance.id);
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+          testData.preconditionUserId = userProperties.userId;
+
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record.instance.id);
+            });
           });
         });
 
@@ -64,6 +68,7 @@ describe('MARC', () => {
       after('Deleting created user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
         if (testData.createdRecordIDs[0]) InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
         testData.createdRecordIDs.forEach((id, index) => {
           if (index) MarcAuthority.deleteViaAPI(id);
@@ -72,7 +77,7 @@ describe('MARC', () => {
 
       it(
         'C385657 "$a", "$d", "$t" subfield values are shown in correct order in pre-populated browse query when linking "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C385657'] },
         () => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();

@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -7,6 +7,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -49,7 +50,7 @@ describe('Inventory', () => {
 
     it(
       'C360548 Verify that operator "=" is used when user search for "Instance" by "Contributor" search option. (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C360548'] },
       () => {
         const searchQueries = [
           'Henri Sauguet',
@@ -67,7 +68,7 @@ describe('Inventory', () => {
           });
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
         InventorySearchAndFilter.selectSearchOptions('Contributor', 'Sauguet, Henri');
         InventorySearchAndFilter.checkContributorRequest();
@@ -89,7 +90,7 @@ describe('Inventory', () => {
 
     it(
       'C360555 Verify that search for "Instance" records by "Keyword" option with "<ISBN with dashes>" query will only return the records with matched identifier value. (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C360555'] },
       () => {
         const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 
@@ -103,7 +104,7 @@ describe('Inventory', () => {
           });
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
 
         searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOptions(
@@ -128,7 +129,7 @@ describe('Inventory', () => {
 
     it(
       'C358938 Verify that "Instance" record will close when user switches to browse (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C358938'] },
       () => {
         cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
           path: TopMenu.inventoryPath,

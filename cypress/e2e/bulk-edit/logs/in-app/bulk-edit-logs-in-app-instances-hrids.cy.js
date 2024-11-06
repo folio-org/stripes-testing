@@ -13,6 +13,8 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import SelectInstanceModal from '../../../../support/fragments/requests/selectInstanceModal';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import { APPLICATION_NAMES } from '../../../../support/constants';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const hridValues = {};
@@ -92,6 +94,7 @@ describe('bulk-edit', () => {
           instance: marcInstances[0],
           servicePoint: userServicePoint,
         });
+        Locations.deleteViaApi(testData.defaultLocation);
         FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
           matchedRecordsFileName,
@@ -102,7 +105,7 @@ describe('bulk-edit', () => {
 
       it(
         'C423990 Verify generated Logs files for Instances (Instance HRIDs) (firebird)',
-        { tags: ['criticalPath', 'firebird'] },
+        { tags: ['criticalPath', 'firebird', 'C423990'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDFileName);
@@ -171,7 +174,7 @@ describe('bulk-edit', () => {
           ]);
 
           [folioItem.instanceName, marcInstances[0].instanceTitle].forEach((title) => {
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             SelectInstanceModal.filterByStaffSuppress('No');
             InventorySearchAndFilter.searchInstanceByTitle(title);
             InventoryInstances.selectInstance();

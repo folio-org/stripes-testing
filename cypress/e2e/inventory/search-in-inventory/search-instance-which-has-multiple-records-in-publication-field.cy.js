@@ -27,9 +27,8 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before(() => {
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-        testData.user = userProperties;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        testData.preconditionUserId = userProperties.userId;
 
         DataImport.uploadFileViaApi(
           marcFile.marc,
@@ -40,6 +39,9 @@ describe('Inventory', () => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
+      });
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+        testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
@@ -53,12 +55,13 @@ describe('Inventory', () => {
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
+      Users.deleteViaApi(testData.preconditionUserId);
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C494367 Search for Instance which has multiple records in "Place of publication" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C494367'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

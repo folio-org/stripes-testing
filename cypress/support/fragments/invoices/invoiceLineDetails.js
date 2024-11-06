@@ -175,6 +175,6 @@ export default {
     );
   },
   closeInvoiceLineDetailsPane: () => {
-    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'times' })).click());
+    cy.do(invoiceLineDetailsPane.find(Button({ id: 'clickable-back-to-invoice' })).click());
   },
 };

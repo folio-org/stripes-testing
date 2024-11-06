@@ -1,4 +1,3 @@
-import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
@@ -6,6 +5,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -22,10 +23,12 @@ describe('bulk-edit', () => {
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        cy.wait(3000);
+
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        BulkEditSearchPane.waitLoading();
+
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.username);
       });
     });
@@ -43,7 +46,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357982 Verify user records - in app permission - confirmation page (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft'] },
+      { tags: ['smoke', 'firebird', 'shiftLeft', 'C357982'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('Usernames');
@@ -77,7 +80,8 @@ describe('bulk-edit', () => {
 
         BulkEditActions.downloadChangedCSV();
 
-        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(changedFirstName);
         UsersSearchPane.openUser(changedFirstName);
       },

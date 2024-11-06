@@ -11,7 +11,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('ui-requests: Request: Create a New Request with Patron Comment.', () => {
+describe('Requests', () => {
   const folioInstances = InventoryInstances.generateFolioInstances();
   const user = {};
   const testData = {
@@ -82,7 +82,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
 
   it(
     'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
-    { tags: ['criticalPath', 'vega', 'shiftLeft'] },
+    { tags: ['criticalPath', 'vega', 'shiftLeft', 'C199704'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();

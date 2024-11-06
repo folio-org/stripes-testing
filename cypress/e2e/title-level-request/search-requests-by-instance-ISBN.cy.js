@@ -18,7 +18,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix, { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 describe('Requests', () => {
-  const userData = {};
+  let userData = {};
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
@@ -97,13 +97,7 @@ describe('Requests', () => {
       .then(() => {
         cy.createTempUser([Permissions.uiRequestsAll.gui])
           .then((userProperties) => {
-            userData.username = userProperties.username;
-            userData.password = userProperties.password;
-            userData.userId = userProperties.userId;
-            userData.barcode = userProperties.barcode;
-            userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
+            userData = userProperties;
           })
           .then(() => {
             cy.wrap(true)
@@ -146,7 +140,7 @@ describe('Requests', () => {
 
   it(
     'C343043 Search for Requests by Instance ISBN (Normalized) (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    { tags: ['criticalPath', 'vega', 'C343043'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();

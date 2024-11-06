@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import {
+  APPLICATION_NAMES,
   INSTANCE_NOTE_IDS,
   INSTANCE_RESOURCE_TYPE_IDS,
   INSTANCE_STATUS_TERM_IDS,
@@ -87,7 +88,7 @@ const marcInstanceBody = {
     {
       tag: '245',
       content: `$a ${marcFields[245]}`,
-      indicators: ['\\', '\\'],
+      indicators: ['0', '1'],
     },
     {
       tag: '533',
@@ -161,7 +162,7 @@ describe('bulk-edit', () => {
 
     it(
       'C466313 Bulk edit Instance fields - mark as staff only and remove mark as staff only (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C466313'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkInstanceRadio();
@@ -246,7 +247,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(folioItem.instanceId);
         BulkEditSearchPane.verifyReasonForError(
-          'Instance is controlled by MARC record, these fields are blocked and can not be updated:',
+          'Bulk edit of instance notes is not supported for MARC Instances.',
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
@@ -267,7 +268,7 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(fileName, [marcInstance.instanceId]);
         });
 
-        TopMenuNavigation.navigateToApp('Inventory');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -294,10 +295,9 @@ describe('bulk-edit', () => {
             note.noteText,
           );
         });
-
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.byKeywords(`${randomNumberForTitles} Test Instance notes`);
-        InventoryInstances.selectInstance(1);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.byKeywords(marcInstance.instanceId);
+        cy.wait(1000);
         InventoryInstance.waitLoading();
         notesToCheck = [
           { rowIndex: 0, staffOnly: 'No', noteType: 'Action note', noteText: marcFields[583] },
@@ -317,7 +317,7 @@ describe('bulk-edit', () => {
             note.noteText,
           );
         });
-        cy.visit(TopMenu.bulkEditPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.checkInstancesCheckbox();
         BulkEditLogs.clickActionsRunBy(user.username);

@@ -1,14 +1,17 @@
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import settingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -94,7 +97,7 @@ describe('Inventory', () => {
 
     it(
       'C628 Item Data --> Material Type --> (Validate matching settings) (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C628'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(location.name);
@@ -104,7 +107,9 @@ describe('Inventory', () => {
           ItemRecordView.verifyMaterialType(itemData.materialTypes[index].materialType.name);
         });
 
-        cy.visit(settingsMenu.materialTypePath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
         MaterialTypes.checkAvailableOptions();
         [...Array(3)].forEach((_, index) => {
           MaterialTypes.isPresented(itemData.materialTypes[index].materialType.name);

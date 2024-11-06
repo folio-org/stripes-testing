@@ -53,6 +53,7 @@ describe('Inventory', () => {
               createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
+          cy.wait(5000);
         });
 
         cy.loginAsAdmin({
@@ -72,6 +73,8 @@ describe('Inventory', () => {
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -94,7 +97,7 @@ describe('Inventory', () => {
 
     it(
       'C359595 Verify that contributors with the same "Name" and "Name type" and one has, and one has not "authorityID" will display in different rows in the response (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C359595'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

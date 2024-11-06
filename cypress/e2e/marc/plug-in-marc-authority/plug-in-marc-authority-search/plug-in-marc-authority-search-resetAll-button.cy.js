@@ -28,14 +28,13 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.moduleDataImportEnabled.gui,
         ])
           .then((createdUserProperties) => {
             user.userProperties = createdUserProperties;
           })
           .then(() => {
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-          })
-          .then(() => {
+            cy.getUserToken(user.userProperties.username, user.userProperties.password);
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
@@ -67,7 +66,7 @@ describe('MARC', () => {
 
       it(
         'C422029 MARC Authority plug-in | Verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C422029'] },
         () => {
           MarcAuthorities.searchBeats(searchOption);
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);

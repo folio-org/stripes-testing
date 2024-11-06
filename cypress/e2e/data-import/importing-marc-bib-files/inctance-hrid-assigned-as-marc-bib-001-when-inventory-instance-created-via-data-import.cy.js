@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -9,6 +9,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -22,7 +23,7 @@ describe('Data Import', () => {
     const title = 'The Journal of ecclesiastical history.';
     const resourceIdentifier = { type: 'System control number', value: '366832' };
 
-    before('Login', () => {
+    before('Create user and login', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -50,7 +51,7 @@ describe('Data Import', () => {
 
     it(
       'C11119 Check that the Instance HRID assigned as MARC Bib 001 when Inventory Instance created via Data Import (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11119'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();
@@ -67,7 +68,7 @@ describe('Data Import', () => {
         JsonScreenView.getInstanceHrid().then((hrid) => {
           instanceHrid = hrid;
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyInstanceHridValue(instanceHrid);

@@ -2,7 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 
-describe('fse-invoices - UI for non-live tenants', () => {
+describe('fse-invoices - UI for non-production tenants', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe('fse-invoices - UI for non-live tenants', () => {
 
   it(
     `TC195468 - create invoice for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['non-live', 'fse', 'ui', 'finance'] },
+    { tags: ['nonProd', 'fse', 'ui', 'finance'] },
     () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.waitLoading();

@@ -69,6 +69,7 @@ describe('Inventory', () => {
 
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -92,8 +93,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C350639: Verify the ability to see holdings with 1000+ items: CASE 1 (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      'C350639 Verify the ability to see holdings with 1000+ items: CASE 1 (folijet)',
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C350639'] },
       () => {
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',

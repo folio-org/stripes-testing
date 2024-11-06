@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
@@ -10,6 +11,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -51,7 +53,7 @@ describe('Data Import', () => {
 
     it(
       'C359246 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Authority" record (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C359246'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFiles[0].fileName);
@@ -74,7 +76,7 @@ describe('Data Import', () => {
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(marcFiles[0].errorMessage);
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFiles[1].fileName);
         JobProfiles.waitFileIsUploaded();

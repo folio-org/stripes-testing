@@ -1,4 +1,4 @@
-import { matching } from 'bigtest';
+import { matching } from '@interactors/html';
 import {
   Button,
   Pane,
@@ -6,7 +6,7 @@ import {
   including,
   MultiColumnListRow,
   MultiColumnListCell,
-  CheckboxInTable,
+  Checkbox,
   Dropdown,
   DropdownMenu,
   PaneHeader,
@@ -34,10 +34,10 @@ export default {
     );
   },
   checkAll() {
-    cy.do(CheckboxInTable({ name: 'check-all' }).click());
+    cy.do(Checkbox({ name: 'check-all' }).click());
   },
   checkOneLoan() {
-    cy.do(MultiColumnListRow({ index: 0 }).find(CheckboxInTable()).click());
+    cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
   },
   exportLoansToCSV() {
     cy.do(Button('Export to CSV').click());
@@ -60,7 +60,7 @@ export default {
   },
   claimReturnedAndConfirm(reasonWhyItemChangesStatus) {
     this.claimReturned();
-    return ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
+    ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
   },
   resolveClaimedIsVisible() {
     return cy.expect(Button('Resolve claim').exists());
@@ -80,12 +80,10 @@ export default {
   openDeclareLostModal() {
     cy.expect(resolveClaimButton.exists());
     cy.do(resolveClaimButton.choose(DECLARE_LOST_ACTION_NAME));
-    return ConfirmItemStatusModal;
   },
   openMarkAsMissingModal() {
     cy.expect(resolveClaimButton.exists());
     cy.do(resolveClaimButton.choose(MARK_AS_MISSING_ACTION_NAME));
-    return ConfirmItemStatusModal;
   },
   renewLoan() {
     cy.do([Button({ icon: 'ellipsis' }).click(), renewButton.click()]);

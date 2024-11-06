@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
     it(
       'C411681 (NON-CONSORTIA) Verify the closing after Add item action on Non-consortia tenant (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411681'] },
       () => {
         InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
         InventoryInstances.selectInstance();

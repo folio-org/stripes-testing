@@ -83,7 +83,7 @@ describe('bulk-edit', () => {
 
     it(
       'C466309 Bulk edit Instance fields - remove all administrative notes (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'C466309'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
@@ -104,8 +104,7 @@ describe('bulk-edit', () => {
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        // TODO: uncomment line
-        // BulkEditActions.verifyItemAdminstrativeNoteActions();
+        BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteRemoveAll('Administrative note');
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();

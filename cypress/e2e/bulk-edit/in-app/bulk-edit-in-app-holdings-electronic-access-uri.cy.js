@@ -9,7 +9,8 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import { electronicAccessRelationshipId } from '../../../support/constants';
+import { APPLICATION_NAMES, electronicAccessRelationshipId } from '../../../support/constants';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -74,7 +75,7 @@ describe('bulk-edit', () => {
 
     it(
       'C422160 Verify Bulk Edit for Holding populated "URI" in electronic access (firebird)',
-      { tags: ['smoke', 'firebird'] },
+      { tags: ['smoke', 'firebird', 'C422160'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
@@ -107,7 +108,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [`;${item.lastUri};`]);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();

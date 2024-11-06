@@ -61,31 +61,29 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380530*');
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
 
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+            // make sure there are no duplicate authority records in the system
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380530*');
 
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
+              cy.wait(2000);
             });
-          });
-
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          })
+          .then(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -105,6 +103,13 @@ describe('MARC', () => {
             InventoryInstance.waitLoading();
           });
 
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
+
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -117,11 +122,12 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
         Users.deleteViaApi(testData.userProperties.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
       });
 
       it(
         'C380530 No data for "MARC authority headings updates (CSV)" report gathered for time range when no header updates were made to "MARC authority" records (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380530'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);

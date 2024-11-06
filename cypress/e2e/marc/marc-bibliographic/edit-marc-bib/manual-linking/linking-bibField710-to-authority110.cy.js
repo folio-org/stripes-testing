@@ -108,7 +108,7 @@ describe('MARC', () => {
 
         it(
           'C375081 Link the "710" of "MARC Bib" field with "110" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C375081'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -121,6 +121,8 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag710);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib710AfterLinkingToAuth110);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

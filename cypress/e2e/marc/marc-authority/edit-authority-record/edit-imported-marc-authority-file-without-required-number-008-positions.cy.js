@@ -47,7 +47,7 @@ describe('MARC', () => {
 
       it(
         'C387474 User can edit imported "MARC authority" file without required number (40) of "008" positions (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387474'] },
         () => {
           Logs.openFileDetails(updatedFileName);
           Logs.getCreatedItemsID().then((link) => {

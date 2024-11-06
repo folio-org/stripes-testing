@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, TARGET_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
@@ -7,9 +7,16 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Data Import', () => {
@@ -84,7 +91,10 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
 
@@ -99,14 +109,16 @@ describe('Data Import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C359189'] },
       () => {
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
+        SettingsDataImport.goToSettingsDataImport();
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated('NcD');
 
-        cy.visit(SettingsMenu.targetProfilesPath);
+        SettingsInventory.goToSettingsInventory();
+        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);
         Z3950TargetProfiles.openTargetProfile();
         Z3950TargetProfiles.editOclcWorldCat(
           OCLCAuthentication,
@@ -114,7 +126,7 @@ describe('Data Import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.importWithOclc(oclcForImport);
         InstanceRecordView.verifyInstancePaneExists();
         cy.wait(2000);

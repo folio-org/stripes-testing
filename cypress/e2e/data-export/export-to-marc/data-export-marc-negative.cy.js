@@ -5,7 +5,7 @@ import DataExportLogs from '../../../support/fragments/data-export/dataExportLog
 
 let user;
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Export to MARC', () => {
     beforeEach('create test data', () => {
       cy.createTempUser([permissions.dataExportUploadExportDownloadFileViewLogs.gui]).then(
@@ -22,7 +22,7 @@ describe('Data export', () => {
 
     it(
       'C9292 Negative test - invalid file extension (firebird)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C9292'] },
       () => {
         ExportFileHelper.uploadFile('example.json');
         ExportFileHelper.verifyWarningWithInvalidFileExtension();

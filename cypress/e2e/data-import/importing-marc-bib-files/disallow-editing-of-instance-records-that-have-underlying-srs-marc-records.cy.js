@@ -12,6 +12,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
+    let preconditionUserId;
     let user;
     let instanceHrid;
     let instanceId;
@@ -20,10 +21,14 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      DataImport.uploadFileViaApi(filePath, marcFileName, jobProfileToRun).then((response) => {
-        instanceHrid = response[0].instance.hrid;
-        instanceId = response[0].instance.id;
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        preconditionUserId = userProperties.userId;
+
+        // create Instance with source = MARC
+        DataImport.uploadFileViaApi(filePath, marcFileName, jobProfileToRun).then((response) => {
+          instanceHrid = response[0].instance.hrid;
+          instanceId = response[0].instance.id;
+        });
       });
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -39,6 +44,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        Users.deleteViaApi(preconditionUserId);
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceId);
       });
@@ -46,7 +52,7 @@ describe('Data Import', () => {
 
     it(
       'C2361 Disallow editing of Instance records that have underlying SRS MARC records',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2361'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();

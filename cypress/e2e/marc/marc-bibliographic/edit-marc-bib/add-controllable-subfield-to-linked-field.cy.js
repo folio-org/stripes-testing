@@ -19,7 +19,7 @@ describe('MARC', () => {
         marcValue: 'C375954 Kerouac, Jack',
         instanceValue: 'C375954 On the road [sound recording] / Jack Kerouac.',
         errorMessage:
-          'MARC 100 has a subfield(s) that cannot be saved because the field is controlled by an authority record.',
+          'A subfield(s) cannot be updated because it is controlled by an authority heading.',
       };
 
       const marcFiles = [
@@ -48,7 +48,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -96,7 +95,7 @@ describe('MARC', () => {
 
       it(
         'C375954 Add controllable subfield to a linked field in "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375954'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceValue);
           InventoryInstances.selectInstance();

@@ -201,7 +201,7 @@ export default {
       TextField('CatRules').fillIn(catrules),
     ]);
   },
-  clicksaveAndCloseButton: () => {
+  clickSaveAndCloseButton: () => {
     cy.do(saveAndCloseButton.click());
   },
   continueWithSaveAndCheck() {
@@ -273,8 +273,6 @@ export default {
         .find(TextField())
         .has({ disabled: true }),
     );
-    cy.do(saveAndCloseButton.click());
-    cy.wait(1500);
     cy.do(saveAndCloseButton.click());
     cy.expect(
       Callout(

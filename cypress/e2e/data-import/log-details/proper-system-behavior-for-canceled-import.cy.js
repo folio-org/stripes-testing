@@ -1,10 +1,15 @@
-import { DEFAULT_JOB_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -35,7 +40,7 @@ describe('Data Import', () => {
 
     it(
       'C353638 Verify proper system behavior for canceled import (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C353638'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, firstMarcFileName);
@@ -54,7 +59,8 @@ describe('Data Import', () => {
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.ERROR);
         FileDetails.verifyLogSummaryTableIsHidden();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        FileDetails.close();
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, secondMarcFileName);
         JobProfiles.waitFileIsUploaded();

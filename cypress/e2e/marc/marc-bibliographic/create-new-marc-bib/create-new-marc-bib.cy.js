@@ -62,7 +62,7 @@ describe('MARC', () => {
 
       it(
         'C422107 User can create a new "MARC bib" record using "Save & close" button. (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C422107'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
@@ -97,6 +97,8 @@ describe('MARC', () => {
             testData.tags.tag240,
             `$a ${testData.fieldContents.tag240Content}`,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 

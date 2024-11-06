@@ -19,4 +19,11 @@ export const NavListItem = HTML.extend('Nav List Item')
   .filters({
     label,
     href: (el) => el.getAttribute('href'),
+    content: (el) => el.textContent,
+  });
+
+export const NavItemList = HTML.extend('Nav Item List')
+  .selector('[class^=navItemsList-]')
+  .filters({
+    label: (el) => el.querySelector('[class^=label]').textContent,
   });

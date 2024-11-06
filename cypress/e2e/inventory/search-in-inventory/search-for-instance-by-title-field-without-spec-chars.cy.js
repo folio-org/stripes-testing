@@ -63,6 +63,14 @@ describe('Inventory', () => {
             });
           }
         });
+      });
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(
           testData.marcFile.marc,
           testData.marcFile.fileName,
@@ -72,9 +80,7 @@ describe('Inventory', () => {
             testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
           });
         });
-      });
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -92,7 +98,7 @@ describe('Inventory', () => {
 
     it(
       'C368026 Search for "Instance" by "Title" field without special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C368026'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);

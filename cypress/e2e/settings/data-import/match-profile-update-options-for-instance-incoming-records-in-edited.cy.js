@@ -1,11 +1,12 @@
 import { Permissions } from '../../../support/dictionary';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -53,11 +54,11 @@ describe('Data Import', () => {
 
     it(
       'C411691 Match profile: update options for Instance "Incoming records" in Edited Match Profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411691'] },
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
         SettingsDataImport.goToSettingsDataImport();
-        DataImport.selectDataImportProfile('Match profiles');
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
 
         // Click a match profile from the list
         MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);

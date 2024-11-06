@@ -96,7 +96,7 @@ describe('MARC', () => {
 
         it(
           'C388518 Delete automatically linked fields when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388518'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

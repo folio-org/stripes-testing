@@ -15,7 +15,7 @@ const uuidsInInvalidFormat = `invalid-uuids${getRandomPostfix()}.csv`;
 const notFoundUUIDsInValidFormat = `not-found-uuids${getRandomPostfix()}.csv`;
 const validUserUUID = uuid();
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Export to MARC', () => {
     before('create test data', () => {
       cy.createTempUser([
@@ -43,7 +43,7 @@ describe('Data export', () => {
 
     it(
       'C345415 Job triggered with invalid data fails (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C345415'] },
       () => {
         ExportFileHelper.uploadFile(emptyFile);
         ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');

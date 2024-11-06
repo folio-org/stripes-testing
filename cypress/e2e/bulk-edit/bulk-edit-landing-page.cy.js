@@ -24,7 +24,7 @@ describe('bulk-edit', () => {
       permissions.uiInventoryViewInstances.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiInventoryViewCreateEditItems.gui,
-      permissions.uiUsersPermissions.gui,
+      permissions.uiUserCanAssignUnassignPermissions.gui,
       permissions.uiUserEdit.gui,
       permissions.uiUsersPermissionsView.gui,
       permissions.uiUsersView.gui,
@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
 
   it(
     'C350929 Verify Bulk Edit app - landing page (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'C350929'] },
     () => {
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');

@@ -52,10 +52,10 @@ describe('Data Import', () => {
     describe('Settings', () => {
       it(
         'C376001 Verify no error appears after switching record types when duplicating existing field mapping profile (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet'] },
+        { tags: ['extendedPath', 'folijet', 'C376001'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view for item records
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({
@@ -92,10 +92,10 @@ describe('Data Import', () => {
 
       it(
         'C376002 Verify no error appears after switching record types when viewing a field mapping profile, then editing a different one (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet'] },
+        { tags: ['extendedPath', 'folijet', 'C376002'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view for item records
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({
@@ -166,10 +166,10 @@ describe('Data Import', () => {
 
       it(
         'C376004 Verify no error appears after switching record types when starting duplicate an invoice field mapping profile, then a different one (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet'] },
+        { tags: ['extendedPath', 'folijet', 'C376004'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
 
           // Open field mapping profile view for Invoice record
           const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({

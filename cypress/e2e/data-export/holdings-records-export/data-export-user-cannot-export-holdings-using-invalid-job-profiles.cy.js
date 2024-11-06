@@ -15,7 +15,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 
-describe('Data export', () => {
+describe('Data Export', () => {
   describe('Holdings records export', () => {
     before('create test data', () => {
       cy.createTempUser([
@@ -49,7 +49,7 @@ describe('Data export', () => {
 
     it(
       'C350536 Negative: Verify that a user cannot EXPORT HOLDINGS using invalid job profile (Firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
+      { tags: ['extendedPath', 'firebird', 'C350536'] },
       () => {
         ExportFileHelper.uploadFile(holdingUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(holdingUUIDsFileName);
