@@ -353,7 +353,6 @@ describe('Bulk-edit', () => {
             folioInstance.barcodeInUniversity,
             marcInstance.barcodeInUniversity,
           ];
-
           const initialHeaderValueInCollege = [
             {
               header: centralSharedItemNoteType.payload.name,
@@ -660,11 +659,11 @@ describe('Bulk-edit', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
 
-          instances.forEach((instance) => {
+          universityItemBarcodes.forEach((barcode) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToItem();
             cy.wait(3000);
-            InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInUniversity);
+            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
             ItemRecordView.waitLoading();
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
               0,
