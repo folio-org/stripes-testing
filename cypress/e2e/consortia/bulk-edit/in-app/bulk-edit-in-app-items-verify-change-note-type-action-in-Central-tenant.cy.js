@@ -107,7 +107,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -119,21 +119,11 @@ describe('Bulk-edit', () => {
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
-          ItemNoteTypesConsortiumManager.createViaApi(centralSharedItemNoteType).then(
-            (newItemNoteType) => {
+          ItemNoteTypesConsortiumManager.createViaApi(centralSharedItemNoteType)
+            .then((newItemNoteType) => {
               centralSharedNoteTypeData = newItemNoteType;
-              cy.log(centralSharedItemNoteType);
-            },
-          );
-
-          cy.setTenant(Affiliations.College);
-          // create local item note type in College
-          ItemNoteTypes.createItemNoteTypeViaApi(collegeItemNoteType.name)
-            .then((noteId) => {
-              collegeItemNoteType.id = noteId;
             })
             .then(() => {
-              cy.resetTenant();
               // create shared folio instance
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
@@ -151,110 +141,115 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
-              // create holdings in College tenant
               cy.setTenant(Affiliations.College);
-
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingIds.push(holding.id);
+              // create local item note type in College
+              ItemNoteTypes.createItemNoteTypeViaApi(collegeItemNoteType.name)
+                .then((noteId) => {
+                  collegeItemNoteType.id = noteId;
+                })
+                .then(() => {
+                  // create holdings in College tenant
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.uuid,
+                      permanentLocationId: locationId,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingIds.push(holding.id);
+                    });
+                    cy.wait(1000);
+                  });
+                })
+                .then(() => {
+                  // create items in College tenant
+                  instances.forEach((instance) => {
+                    InventoryItems.createItemViaApi({
+                      barcode: instance.barcodeInCollege,
+                      holdingsRecordId: instance.holdingIds[0],
+                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                      administrativeNotes: [administrativeNoteText],
+                      notes: [
+                        {
+                          itemNoteTypeId: centralSharedNoteTypeData.settingId,
+                          note: sharedNoteText,
+                          staffOnly: true,
+                        },
+                        {
+                          itemNoteTypeId: collegeItemNoteType.id,
+                          note: collegeNoteText,
+                          staffOnly: false,
+                        },
+                      ],
+                      circulationNotes: [
+                        { noteType: 'Check in', note: checkInNoteText, staffOnly: true },
+                      ],
+                    }).then((item) => {
+                      collegeItemIds.push(item.id);
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
-            })
-            .then(() => {
-              // create items in College tenant
-              instances.forEach((instance) => {
-                InventoryItems.createItemViaApi({
-                  barcode: instance.barcodeInCollege,
-                  holdingsRecordId: instance.holdingIds[0],
-                  materialType: { id: materialTypeId },
-                  permanentLoanType: { id: loanTypeId },
-                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  administrativeNotes: [administrativeNoteText],
-                  notes: [
-                    {
-                      holdingsNoteTypeId: centralSharedNoteTypeData.settingId,
-                      note: sharedNoteText,
-                      staffOnly: true,
-                    },
-                    {
-                      holdingsNoteTypeId: collegeItemNoteType.id,
-                      note: collegeNoteText,
-                      staffOnly: false,
-                    },
-                  ],
-                  circulationNotes: [
-                    { noteType: 'Check in', note: checkInNoteText, staffOnly: true },
-                  ],
-                }).then((item) => {
-                  collegeItemIds.push(item.id);
-                });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
-
               // create local item note type in University tenant
-              InventoryInstances.createHoldingsNoteTypeViaApi(universityItemNoteType.name).then(
-                (noteId) => {
+              ItemNoteTypes.createItemNoteTypeViaApi(universityItemNoteType.name)
+                .then((noteId) => {
                   universityItemNoteType.id = noteId;
-                },
-              );
-              // create holdings in University tenant
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.uuid,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingIds.push(holding.id);
+                })
+                .then(() => {
+                  // create holdings in University tenant
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.uuid,
+                      permanentLocationId: locationId,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingIds.push(holding.id);
+                    });
+                    cy.wait(1000);
+                  });
+                })
+                .then(() => {
+                  // create items in University tenant
+                  instances.forEach((instance) => {
+                    InventoryItems.createItemViaApi({
+                      barcode: instance.barcodeInUniversity,
+                      holdingsRecordId: instance.holdingIds[1],
+                      materialType: { id: materialTypeId },
+                      permanentLoanType: { id: loanTypeId },
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                      administrativeNotes: [administrativeNoteText],
+                      notes: [
+                        {
+                          itemNoteTypeId: centralSharedNoteTypeData.settingId,
+                          note: sharedNoteText,
+                          staffOnly: true,
+                        },
+                        {
+                          itemNoteTypeId: universityItemNoteType.id,
+                          note: universityNoteText,
+                          staffOnly: false,
+                        },
+                      ],
+                      circulationNotes: [
+                        { noteType: 'Check in', note: checkInNoteText, staffOnly: true },
+                      ],
+                    }).then((item) => {
+                      universityItemIds.push(item.id);
+                    });
+                    cy.wait(1000);
+                  });
                 });
-                cy.wait(1000);
-              });
-            })
-            .then(() => {
-              // create items in University tenant
-              instances.forEach((instance) => {
-                InventoryItems.createItemViaApi({
-                  barcode: instance.barcodeInUniversity,
-                  holdingsRecordId: instance.holdingIds[1],
-                  materialType: { id: materialTypeId },
-                  permanentLoanType: { id: loanTypeId },
-                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  administrativeNotes: [administrativeNoteText],
-                  notes: [
-                    {
-                      holdingsNoteTypeId: centralSharedNoteTypeData.settingId,
-                      note: sharedNoteText,
-                      staffOnly: true,
-                    },
-                    {
-                      holdingsNoteTypeId: universityItemNoteType.id,
-                      note: universityNoteText,
-                      staffOnly: false,
-                    },
-                  ],
-                  circulationNotes: [
-                    { noteType: 'Check in', note: checkInNoteText, staffOnly: true },
-                  ],
-                }).then((item) => {
-                  universityItemIds.push(item.id);
-                });
-                cy.wait(1000);
-              });
             })
             .then(() => {
               FileManager.createFile(
                 `cypress/fixtures/${itemUUIDsFileName}`,
-                `${folioInstance.itemIds.join('\n')}\n${marcInstance.itemIds.join('\n')}`,
+                `${collegeItemIds.join('\n')}\n${universityItemIds.join('\n')}`,
               );
             });
-
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -277,7 +272,6 @@ describe('Bulk-edit', () => {
         });
 
         cy.setTenant(Affiliations.University);
-
         ItemNoteTypes.deleteItemNoteTypeViaApi(universityItemNoteType.id);
 
         universityItemIds.forEach((id) => {
@@ -309,7 +303,6 @@ describe('Bulk-edit', () => {
         'C478254 Verify "Change note type" action for Items in Central tenant (consortia) (firebird)',
         { tags: ['smokeECS', 'firebird', 'C478254'] },
         () => {
-          // 1
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
@@ -330,10 +323,9 @@ describe('Bulk-edit', () => {
               ITEM_STATUS_NAMES.AVAILABLE,
             );
           });
+
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-          // 4
-
           BulkEditActions.openActions();
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
@@ -341,8 +333,6 @@ describe('Bulk-edit', () => {
             collegeItemNoteTypeNameWithAffiliation,
             universityItemNoteTypeNameWithAffiliation,
           );
-
-          // 5
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
@@ -395,8 +385,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 6
-
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
@@ -413,8 +401,6 @@ describe('Bulk-edit', () => {
             collegeItemNoteTypeNameWithAffiliation,
             universityItemNoteTypeNameWithAffiliation,
           );
-
-          // 7
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
@@ -435,16 +421,12 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 8
-
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 9
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedItemNoteType.payload.name,
@@ -455,16 +437,12 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             universityItemNoteTypeNameWithAffiliation,
           );
-
-          // 10
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.changeNoteType(
             ITEM_NOTE_TYPES.ADMINISTRATIVE_NOTE,
             ITEM_NOTE_TYPES.CHECK_OUT_NOTE,
           );
-
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-          // 14
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.changeNoteType(
@@ -473,7 +451,6 @@ describe('Bulk-edit', () => {
             1,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-          // 15
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.changeNoteType(
@@ -481,33 +458,34 @@ describe('Bulk-edit', () => {
             ITEM_NOTE_TYPES.ADMINISTRATIVE_NOTE,
             2,
           );
-
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 16
           BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.verifyNewBulkEditRow(1);
+          BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.changeNoteType(
             ITEM_NOTE_TYPES.CHECK_IN_NOTE,
             ITEM_NOTE_TYPES.CHECK_OUT_NOTE,
             3,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 17
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
-
-          // check if those header/value correct
 
           const headerValuesToEditInCollege = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: `${administrativeNoteText} | ${checkInNoteText} (staff only)`,
+              value: `${checkInNoteText} (staff only) | ${administrativeNoteText}`,
+            },
+            {
+              header: centralSharedItemNoteType.payload.name,
+              value: '',
+            },
+            {
+              header: universityItemNoteTypeNameWithAffiliation,
+              value: `${sharedNoteText} (staff only)`,
             },
             {
               header: collegeItemNoteTypeNameWithAffiliation,
-              value: `${sharedNoteText} (staff only)`,
+              value: '',
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -517,7 +495,7 @@ describe('Bulk-edit', () => {
           const headerValuesToEditInUniversity = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: `${administrativeNoteText} | ${checkInNoteText} (staff only)`,
+              value: `${checkInNoteText} (staff only) | ${administrativeNoteText}`,
             },
             {
               header: centralSharedItemNoteType.payload.name,
@@ -544,8 +522,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 18
-
           BulkEditActions.downloadPreview();
 
           collegeItemBarcodes.forEach((barcode) => {
@@ -564,14 +540,22 @@ describe('Bulk-edit', () => {
               headerValuesToEditInUniversity,
             );
           });
-          // 19
+
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
           const editedHederValueInCollege = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: `${administrativeNoteText} | ${checkInNoteText} (staff only)`,
+              value: `${checkInNoteText} (staff only) | ${administrativeNoteText}`,
+            },
+            {
+              header: collegeItemNoteTypeNameWithAffiliation,
+              value: '',
+            },
+            {
+              header: centralSharedItemNoteType.payload.name,
+              value: `${sharedNoteText} (staff only)`,
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
@@ -581,7 +565,7 @@ describe('Bulk-edit', () => {
           const editedHederValueInUniversity = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: `${administrativeNoteText} | ${checkInNoteText} (staff only)`,
+              value: `${checkInNoteText} (staff only) | ${administrativeNoteText}`,
             },
             {
               header: centralSharedItemNoteType.payload.name,
@@ -592,6 +576,7 @@ describe('Bulk-edit', () => {
               value: `${sharedNoteText} (staff only) | ${universityNoteText}`,
             },
           ];
+
           collegeItemBarcodes.forEach((barcode) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               barcode,
@@ -605,7 +590,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 2);
+          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 4);
           BulkEditSearchPane.verifyNonMatchedResults();
 
           collegeItemIds.forEach((id) => {
@@ -621,15 +606,13 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 22
-
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
           collegeItemBarcodes.forEach((barcode) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
               editedHederValueInCollege,
             );
@@ -637,13 +620,11 @@ describe('Bulk-edit', () => {
           universityItemBarcodes.forEach((barcode) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
               editedHederValueInUniversity,
             );
           });
-
-          // 23
 
           BulkEditActions.downloadErrors();
 
@@ -658,12 +639,12 @@ describe('Bulk-edit', () => {
             ]);
           });
 
-          // 24
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
           collegeItemBarcodes.forEach((barcode) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToItem();
+            cy.wait(3000);
             InventorySearchAndFilter.searchByParameter('Barcode', barcode);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote(collegeNoteText);
@@ -673,8 +654,8 @@ describe('Bulk-edit', () => {
               centralSharedItemNoteType.payload.name,
               sharedNoteText,
             );
-            ItemRecordView.checkCheckOutNote(administrativeNoteText);
-            ItemRecordView.checkCheckOutNote(checkInNoteText);
+            ItemRecordView.checkCheckOutNote(`${checkInNoteText}${administrativeNoteText}`);
+            ItemRecordView.checkStaffOnlyValueInLoanAccordion('YesNo');
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
@@ -682,16 +663,17 @@ describe('Bulk-edit', () => {
           instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToItem();
+            cy.wait(3000);
             InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
               0,
-              'Yes',
+              'YesNo',
               universityItemNoteType.name,
-              sharedNoteText,
+              `${sharedNoteText}${universityNoteText}`,
             );
-            ItemRecordView.checkCheckOutNote(administrativeNoteText);
-            ItemRecordView.checkCheckOutNote(checkInNoteText);
+            ItemRecordView.checkCheckOutNote(`${checkInNoteText}${administrativeNoteText}`);
+            ItemRecordView.checkStaffOnlyValueInLoanAccordion('YesNo');
           });
         },
       );
