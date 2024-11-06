@@ -81,7 +81,6 @@ describe('MARC', () => {
       'C584451 Verify that "Children\'s subject heading" search option uses "all" search operator ("Montessori method of education" case) (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C584451'] },
       () => {
-        // execute search by "Keyword" option
         testData.searchOptions.forEach((option) => {
           testData.searchQueries.forEach((query) => {
             MarcAuthorities.searchByParameter(option, query);
