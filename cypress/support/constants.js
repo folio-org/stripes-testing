@@ -979,6 +979,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_UUID: 'Item UUID',
     PROVENANCE_NOTE: 'Provenance note',
     MEMBER: 'Member',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
   },
 };
 
