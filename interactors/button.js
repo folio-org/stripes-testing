@@ -30,7 +30,6 @@ export default HTML.extend('button')
       },
       default: false,
     },
-    text: (el) => el.textContent,
   })
   .actions({
     hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
