@@ -76,7 +76,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
-      cy.getCollegeAdminToken();
+      cy.getAdminToken();
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
       });
@@ -161,6 +161,7 @@ describe('Inventory', () => {
         // create Field mapping profile
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+        FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);

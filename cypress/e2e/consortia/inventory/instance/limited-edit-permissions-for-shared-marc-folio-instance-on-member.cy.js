@@ -37,6 +37,7 @@ describe('Inventory', () => {
       });
       cy.resetTenant();
 
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           user = userProperties;

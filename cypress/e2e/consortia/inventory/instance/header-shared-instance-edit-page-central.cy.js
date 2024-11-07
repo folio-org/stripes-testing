@@ -53,13 +53,12 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-
         InstanceRecordEdit.checkInstanceHeader(
           ` Edit shared instance • ${testData.instance.instanceTitle}`,
         );
