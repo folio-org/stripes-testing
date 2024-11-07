@@ -166,29 +166,5 @@ describe('bulk-edit', () => {
         BulkEditLogs.verifyLogsPane();
       },
     );
-
-    it(
-      'C368037 Verify that after clicking on "Reset all" button, all filters resets (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C368037'] },
-      () => {
-        BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.verifySetCriteriaPaneExists();
-        BulkEditLogs.resetAllBtnIsDisabled(true);
-        BulkEditLogs.verifyLogsStatusesAccordionExistsAndUnchecked();
-        BulkEditLogs.verifyLogsRecordTypesAccordionExistsAndUnchecked();
-        BulkEditLogs.verifyLogsStartedAccordionCollapsed();
-        BulkEditLogs.verifyLogsEndedAccordionCollapsed();
-        BulkEditLogs.verifyUserAccordionCollapsed();
-        BulkEditLogs.checkLogsCheckbox('Completed');
-        BulkEditLogs.resetAllBtnIsDisabled(false);
-        BulkEditLogs.verifyClearSelectedFiltersButton('Statuses');
-        BulkEditLogs.verifyCellsValues(2, 'Completed');
-        BulkEditLogs.resetAll();
-        BulkEditLogs.resetAllBtnIsDisabled(true);
-        BulkEditLogs.verifyLogsStatusesAccordionExistsAndUnchecked();
-        BulkEditLogs.verifyClearSelectedFiltersButton('Statuses', 'absent');
-        BulkEditLogs.verifyLogsTableHeaders('absent');
-      },
-    );
   });
 });

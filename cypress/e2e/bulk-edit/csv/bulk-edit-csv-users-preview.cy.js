@@ -62,7 +62,9 @@ describe('bulk-edit', () => {
         );
         BulkEditActions.openStartBulkEditForm();
         BulkEditSearchPane.uploadFile(editedFileName);
+        cy.wait(1000);
         BulkEditActions.cancel();
+        cy.wait(1000);
         BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
