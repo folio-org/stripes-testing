@@ -196,11 +196,11 @@ describe('MARC', () => {
             );
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Subject',
-              `${marcAuthIcon}\nC388504 Authors, Jamaican--21st century--Biography`,
+              `${marcAuthIcon}\nC388504 Authors, Jamaican`,
             );
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Subject',
-              `${marcAuthIcon}\nC388504 Normal authors--Jamaica--Biography`,
+              `${marcAuthIcon}\nC388504 Normal authors`,
             );
           },
         );
