@@ -24,7 +24,7 @@ describe('MARC', () => {
             '730',
             '\\',
             '\\',
-            '$a C375083 Gone with the wind $f 1939) $g (Motion picture : $w one $0 http://id.loc.gov/authorities/names/n79066095 $1 tre $2 test',
+            '$a C375083 Gone with the wind $g (Motion picture : $f 1939) $w one $0 http://id.loc.gov/authorities/names/n79066095 $1 tre $2 test',
           ],
         };
         const marcFiles = [
@@ -56,7 +56,7 @@ describe('MARC', () => {
           testData.tag730,
           '\\',
           '\\',
-          '$a C375083 Gone with the wind $f 1939) $g (Motion picture :',
+          '$a C375083 Gone with the wind $g (Motion picture : $f 1939)',
           '$w one',
           '$0 http://id.loc.gov/authorities/names/n79066095',
           '$1 tre $2 test',

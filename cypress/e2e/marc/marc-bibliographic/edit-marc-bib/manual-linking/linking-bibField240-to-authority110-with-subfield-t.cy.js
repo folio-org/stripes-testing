@@ -33,7 +33,7 @@ describe('MARC', () => {
             propertyName: 'instance',
             numOfRecords: 1,
             instanceAlternativeTitle:
-              'Treaties, etc. 1978 September 17 (Framework for Peace in the Middle East) Israel',
+              'Treaties, etc. Israel, 1978 September 17 (Framework for Peace in the Middle East)',
           },
           {
             marc: 'marcAuthFileC374111.mrc',
@@ -48,7 +48,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a Treaties, etc. $d 1978 September 17 (Framework for Peace in the Middle East) $g Israel,',
+          '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East)',
           '',
           '$0 http://id.loc.gov/authorities/names/n91006627',
           '',
@@ -58,7 +58,7 @@ describe('MARC', () => {
           testData.tag240,
           '1',
           '0',
-          '$a Treaties, etc. $d 1978 September 17 (Framework for Peace in the Middle East) $g Israel, $0 http://id.loc.gov/authorities/names/n91006627',
+          '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East) $0 http://id.loc.gov/authorities/names/n91006627',
         ];
 
         const createdAuthorityIDs = [];

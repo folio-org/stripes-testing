@@ -114,6 +114,9 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked700Field);
           QuickMarcEditor.closeCallout();
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
 
         cy.createTempUser([
@@ -165,13 +168,11 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
 
           QuickMarcEditor.pressCancel();
-          AreYouSureModal.clickCloseWithoutSavingButton();
           MarcAuthorities.verifyMarcViewPaneIsOpened();
           cy.get('@viewAuthorityPaneContent').then((viewAuthorityPaneContent) => {
             MarcAuthorities.verifyViewPaneContent(viewAuthorityPaneContent);
