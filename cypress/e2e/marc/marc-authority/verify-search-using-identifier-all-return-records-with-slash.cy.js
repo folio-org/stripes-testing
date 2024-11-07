@@ -20,13 +20,18 @@ describe('MARC', () => {
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numberOfRecords: 2,
       },
-      positiveSearchQueries: ['bslw85033655*', 'nb2006354903*', 'bslw85033881', 'nt2316353105'],
+      positiveSearchQueries: [
+        'bslw85033655*',
+        'nb2006354903*',
+        'bslw85033881',
+        'nt2316353105',
+        'nt2316353105*',
+        'nb2006354903\\',
+      ],
       negativeSearchQueries: [
         'bslw85033655',
         'bslw85033881\\',
-        'nt2316353105*',
         'nb2006354903',
-        'nb2006354903\\',
       ],
       searchResults: ['Cowlitz people', 'Cree people'],
     };
