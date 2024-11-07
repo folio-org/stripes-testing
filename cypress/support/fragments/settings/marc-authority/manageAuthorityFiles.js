@@ -298,9 +298,17 @@ export default {
 
   checkSourceFileExistsByName(fileName, isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName), { isContainer: true })).exists());
+      cy.expect(
+        manageAuthorityFilesPane
+          .find(MultiColumnListRow(including(fileName), { isContainer: true }))
+          .exists(),
+      );
     } else {
-      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName), { isContainer: true })).absent());
+      cy.expect(
+        manageAuthorityFilesPane
+          .find(MultiColumnListRow(including(fileName), { isContainer: true }))
+          .absent(),
+      );
     }
   },
 

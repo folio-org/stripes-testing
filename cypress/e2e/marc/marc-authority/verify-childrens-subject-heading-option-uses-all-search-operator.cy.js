@@ -10,7 +10,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
-      searchOptions: ['Keyword', 'Children\'s subject heading'],
+      searchOptions: ['Keyword', "Children's subject heading"],
       recordType: 'Authorized',
       marcValue: 'C584451 Montessori method of education',
       searchQueries: [
