@@ -57,7 +57,7 @@ export default {
   clickLibrariesColumnLink(campusName, columnIndex = 3) {
     cy.wait(2000);
     cy.do(
-      MultiColumnListRow(including(campusName))
+      MultiColumnListRow(including(campusName), { isContainer: true })
         .find(MultiColumnListCell({ columnIndex }))
         .find(Link())
         .click(),
