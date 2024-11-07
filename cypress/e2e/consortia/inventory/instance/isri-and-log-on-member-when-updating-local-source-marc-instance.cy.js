@@ -74,19 +74,22 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
         InventoryInstances.waitContentLoading();
+        cy.wait(4000);
         InventoryInstances.importWithOclc(testData.oclcNumberForImport);
         InventoryInstance.verifyInstanceTitle(testData.localInstanceTitle);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.overlayWithOclc(testData.oclcNumberForOverlay);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        cy.wait(4000);
         Logs.openViewAllLogs();
+        cy.wait(4000);
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
         LogsViewAll.waitUIToBeFiltered();
         LogsViewAll.filterJobsByJobProfile(testData.jobProfileName);
         LogsViewAll.waitUIToBeFiltered();
-        cy.wait(4000);
+        cy.wait(8000);
         LogsViewAll.openFileDetails(testData.fileName);
         cy.wait(4000);
         FileDetails.verifyTitle(testData.instanceTitle, FileDetails.columnNameInResultList.title);

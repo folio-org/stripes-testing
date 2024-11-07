@@ -1,4 +1,4 @@
-import { EXISTING_RECORD_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../../support/constants';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -10,6 +10,7 @@ import NewMatchProfile from '../../../../support/fragments/settings/dataImport/m
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -54,6 +55,7 @@ describe('Inventory', () => {
       'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.waitLoading();
         MatchProfiles.clickCreateNewMatchProfile();
