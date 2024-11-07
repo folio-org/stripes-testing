@@ -1010,3 +1010,9 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   DATE: 'Date',
   RELEVANCE: 'Relevance',
 };
+export const STAFF_SLIP_NAMES = {
+  HOLD: 'Hold',
+  PICK_SLIP: 'Pick slip',
+  REQUEST_DELIVERY: 'Request delivery',
+  TRANSIT: 'Transit',
+};

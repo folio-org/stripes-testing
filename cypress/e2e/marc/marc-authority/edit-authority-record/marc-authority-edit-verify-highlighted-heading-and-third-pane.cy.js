@@ -145,7 +145,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(rowIndex, `$a ${content}${postfixC350909}`);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            MarcAuthority.clicksaveAndCloseButton();
+            MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
             MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350909}`);
           });
@@ -171,7 +171,7 @@ describe('MARC', () => {
               );
               QuickMarcEditor.pressSaveAndClose();
               cy.wait(1500);
-              MarcAuthority.clicksaveAndCloseButton();
+              MarcAuthority.clickSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndCloseAuthority();
               MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350911}`);
             }
@@ -198,7 +198,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains(`${testData.editedFields[0].content}${postfixC350946}`);
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchByParameter(
@@ -213,7 +213,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains(testData.editedGeographicNameField.content);
         },
       );

@@ -24,7 +24,7 @@ export default {
   },
   clickOnCampusesHyperlink(institution) {
     cy.do(
-      MultiColumnListRow(including(institution))
+      MultiColumnListRow(including(institution), { isContainer: true })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Link())
         .click(),
