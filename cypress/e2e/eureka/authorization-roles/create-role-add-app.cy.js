@@ -8,8 +8,8 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C496128 ${getRandomPostfix()}`,
-        originalApplication: 'app-platform-full',
-        newApplication: 'app-consortia',
+        originalApplication: 'app-platform-minimal',
+        newApplication: 'app-platform-complete',
         originalCapabilitySets: [
           {
             table: 'Settings',
@@ -35,50 +35,61 @@ describe('Eureka', () => {
           },
         ],
         newCapabilitySet: {
-          table: 'Settings',
-          resource: 'UI-Consortia-Settings Settings Membership',
-          action: 'View',
+          table: 'Data',
+          resource: 'Acquisitions-Units Units',
+          action: 'Manage',
         },
         newCapabilitiesInSet: [
           {
-            table: 'Settings',
-            resource: 'Settings Consortia-Settings Enabled',
+            table: 'Data',
+            resource: 'Acquisitions-Units Units Collection',
             action: 'View',
           },
-          {
-            table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'UI-Consortia-Settings Settings Membership',
-            action: 'View',
-          },
-        ],
-        newCapabilities: [
           {
             table: 'Data',
-            resource: 'Consortia Consortium Item',
+            resource: 'Acquisitions-Units Units Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Units Item',
             action: 'Edit',
           },
           {
             table: 'Data',
-            resource: 'Consortia Sharing-Roles Item',
+            resource: 'Acquisitions-Units Units Item',
             action: 'Create',
+          },
+          {
+            table: 'Data',
+            resource: 'Acquisitions-Units Units Item',
+            action: 'Delete',
+          },
+        ],
+        newCapabilities: [
+          {
+            table: 'Settings',
+            resource: 'Circulation Settings Item',
+            action: 'View',
+          },
+          {
+            table: 'Procedural',
+            resource: 'Accounts Cancel',
+            action: 'Execute',
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 3,
+            Settings: 2,
+            Data: 1,
           },
           capabilities: {
             Data: 2,
-            Settings: 5,
-            Procedural: 2,
+            Settings: 4,
+            Procedural: 3,
           },
         },
-        absentCapabilitySetTables: ['Data', 'Procedural'],
+        absentCapabilitySetTables: ['Procedural'],
         capabSetIds: [],
         capabIds: [],
       };
