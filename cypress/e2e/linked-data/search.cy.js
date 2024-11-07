@@ -42,17 +42,19 @@ describe('Citation: Search Linked data resources', () => {
       testData.marcFileName,
       DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     );
-
-    cy.loginAsAdmin({
-      path: TopMenu.linkedDataEditor,
-      waiter: LinkedDataEditor.waitLoading,
-    });
   });
 
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+  });
+
+  beforeEach(() => {
+    cy.loginAsAdmin({
+      path: TopMenu.linkedDataEditor,
+      waiter: LinkedDataEditor.waitLoading,
+    });
   });
 
   describe('Linked-data Search', () => {

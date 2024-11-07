@@ -3,7 +3,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195410 - edge-erm verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-erm'] },
+    { tags: ['fse', 'api', 'edge-erm', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.postEdgeErm().then((response) => {
@@ -14,7 +14,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195411 - edge-ncip verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-ncip'] },
+    { tags: ['fse', 'api', 'edge-ncip', 'app-edge-complete'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-ncip/tree/master/docs/sampleNcipMessages
       // UserIdentifierValue is specified as 'EBSCOSupport' in the requestBody
@@ -50,7 +50,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195412 - edge-oai-pmh verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-oai'] },
+    { tags: ['fse', 'api', 'edge-oai', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgeOai().then((response) => {
@@ -61,7 +61,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195413 - edge-patron verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-patron'] },
+    { tags: ['fse', 'api', 'edge-patron', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgePatron().then((response) => {
@@ -72,7 +72,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195414 - edge-orders verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-orders'] },
+    { tags: ['fse', 'api', 'edge-orders', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.postEdgeOrders().then((response) => {
@@ -83,7 +83,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195633 - edge-orders gobi integration check for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-orders', 'nonProd'] },
+    { tags: ['fse', 'api', 'edge-orders', 'nonProd', 'app-edge-complete'] },
     () => {
       // Request body taken from https://github.com/folio-org/mod-gobi/tree/master/src/test/resources/GOBIIntegrationServiceResourceImpl
 
@@ -166,7 +166,7 @@ describe('fse-edge', () => {
 
   it(
     `TC195415 - edge-rtac verification for ${Cypress.env('EDGE_HOST')}`,
-    { tags: ['fse', 'api', 'edge-rtac'] },
+    { tags: ['fse', 'api', 'edge-rtac', 'app-edge-complete'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
