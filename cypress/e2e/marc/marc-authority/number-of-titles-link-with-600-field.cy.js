@@ -115,7 +115,6 @@ describe('MARC', () => {
           testData.user = createdUserProperties;
         })
         .then(() => {
-          cy.logout();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
