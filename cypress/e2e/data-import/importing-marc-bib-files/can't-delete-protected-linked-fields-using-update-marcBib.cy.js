@@ -41,7 +41,7 @@ describe('Data Import', () => {
         '100',
         '1',
         '\\',
-        '$a C380519 Ludwig van, Beethoven, $d 1770-1827',
+        '$a C380519 Ludwig one, Beethoven, $d 1770-1827',
         '$e composer.',
         '$0 http://id.loc.gov/authorities/names/n79107741',
         '',
@@ -144,7 +144,7 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 16,
-        value: 'C380519 Ludwig van, Beethoven, 1770-1827',
+        value: 'C380519 Ludwig one, Beethoven, 1770-1827',
         tag: 100,
       },
       {
