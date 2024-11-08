@@ -137,7 +137,6 @@ describe('MARC', () => {
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
             });
-            cy.logout();
 
             cy.login(testData.userBData.username, testData.userBData.password, {
               path: TopMenu.inventoryPath,

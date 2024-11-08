@@ -225,6 +225,10 @@ export default {
     });
   },
 
+  checkStaffOnlyValueInLoanAccordion(staffOnlyValue) {
+    cy.expect(loanAccordion.find(KeyValue('Staff only')).has({ value: staffOnlyValue }));
+  },
+
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));
