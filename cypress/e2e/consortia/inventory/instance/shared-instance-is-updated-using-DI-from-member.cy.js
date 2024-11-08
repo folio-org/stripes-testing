@@ -96,6 +96,7 @@ describe('Inventory', () => {
           cy.loginAsAdmin();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -109,6 +110,7 @@ describe('Inventory', () => {
               // use cy.getToken function to get toket for current tenant
               cy.getCollegeAdminToken();
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
+              ExportFile.waitLandingPageOpened();
               ExportFile.downloadExportedMarcFileWithRecordHrid(
                 expectedRecordHrid,
                 testData.exportedFileName,

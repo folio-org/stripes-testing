@@ -247,7 +247,10 @@ describe('Data Import', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
         InventorySearchAndFilter.verifyPanesExist();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+        cy.reload();
         InventoryInstances.searchByTitle(testData.sharedInstanceId);
+        cy.wait('@/authn/refresh', { timeout: 5000 });
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
         // InventoryInstance.verifyLastUpdatedSource(

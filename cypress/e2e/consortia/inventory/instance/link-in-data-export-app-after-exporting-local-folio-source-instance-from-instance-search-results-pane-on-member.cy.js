@@ -62,7 +62,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.exportInstanceAsMarc();
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        cy.wait(1000);
+        ExportFile.waitLandingPageOpened();
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
           ExportFile.downloadExportedMarcFile(name);
