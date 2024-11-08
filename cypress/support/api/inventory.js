@@ -168,6 +168,7 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
       id: instanceId,
       ...instance,
     },
+    isDefaultSearchParamsRequired: false,
   }).then(() => {
     cy.wrap(holdings)
       .each((holding, i) => cy.createHolding({

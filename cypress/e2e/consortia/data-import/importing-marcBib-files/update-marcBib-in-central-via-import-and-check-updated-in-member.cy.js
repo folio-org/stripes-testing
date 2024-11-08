@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -12,7 +13,6 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -26,15 +26,16 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -213,7 +214,8 @@ describe('Data Import', () => {
       () => {
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -224,7 +226,8 @@ describe('Data Import', () => {
           const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
           // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          ExportFile.waitLandingPageOpened();
           ExportFile.downloadExportedMarcFileWithRecordHrid(
             expectedRecordHrid,
             testData.marcFile.exportedFileName,
@@ -240,7 +243,7 @@ describe('Data Import', () => {
         );
 
         // upload the exported and edited marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFile.modifiedMarcFile, testData.marcFile.editedMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -249,7 +252,8 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.editedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         InventoryInstance.verifyLastUpdatedSource(
@@ -263,7 +267,8 @@ describe('Data Import', () => {
         cy.login(users.userBProperties.username, users.userBProperties.password);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test

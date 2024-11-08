@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
@@ -6,7 +7,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import StatisticalCodes from '../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -33,7 +34,7 @@ describe('Inventory', () => {
         testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
     });
@@ -50,6 +51,7 @@ describe('Inventory', () => {
       'C409460 (CONSORTIA) Verify the "Edit instance" button on Central tenant Instance page (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.edit();

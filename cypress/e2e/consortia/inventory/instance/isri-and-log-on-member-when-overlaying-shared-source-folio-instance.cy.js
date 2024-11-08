@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../../support/constants';
+import { APPLICATION_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
@@ -8,7 +8,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -48,7 +48,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         });
     });
 
@@ -63,6 +63,7 @@ describe('Inventory', () => {
       'C418583 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Shared Source = FOLIO instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -70,10 +71,11 @@ describe('Inventory', () => {
         InventoryInstance.overlayWithOclc(testData.oclcNumber);
         InventoryInstance.waitLoading();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         Logs.openViewAllLogs();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+        LogsViewAll.waitUIToBeFiltered();
         LogsViewAll.openFileDetails('No file name');
         FileDetails.verifyTitle(
           testData.updatedInstanceTitle,

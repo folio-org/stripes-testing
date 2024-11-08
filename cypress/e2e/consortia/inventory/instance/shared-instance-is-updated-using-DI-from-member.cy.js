@@ -1,5 +1,6 @@
 import {
   ACTION_NAMES_IN_ACTION_PROFILE,
+  APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_SOURCE_NAMES,
@@ -15,9 +16,6 @@ import JobProfiles from '../../../../support/fragments/data_import/job_profiles/
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -30,10 +28,15 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import TopMenu from '../../../../support/fragments/topMenu';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
@@ -73,7 +76,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
-      cy.getCollegeAdminToken();
+      cy.getAdminToken();
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
       });
@@ -92,7 +95,8 @@ describe('Inventory', () => {
         .then(() => {
           cy.loginAsAdmin();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -105,7 +109,8 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.College).then(() => {
               // use cy.getToken function to get toket for current tenant
               cy.getCollegeAdminToken();
-              cy.visit(TopMenu.dataExportPath);
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
+              ExportFile.waitLandingPageOpened();
               ExportFile.downloadExportedMarcFileWithRecordHrid(
                 expectedRecordHrid,
                 testData.exportedFileName,
@@ -156,7 +161,9 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
         // create Field mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
+        FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
@@ -165,17 +172,17 @@ describe('Inventory', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile
-        cy.visit(SettingsMenu.actionProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Match profile
-        cy.visit(SettingsMenu.matchProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create Job profile
-        cy.visit(SettingsMenu.jobProfilePath);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.openNewJobProfileForm();
         NewJobProfile.fillJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
@@ -187,7 +194,7 @@ describe('Inventory', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload the exported and edited marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(testData.exportedFileName);
         JobProfiles.waitFileIsUploaded();
