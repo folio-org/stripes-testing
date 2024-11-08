@@ -1008,8 +1008,8 @@ export const HOLDING_NOTE_TYPES = {
 
 export const ITEM_NOTE_TYPES = {
   ADMINISTRATIVE_NOTE: 'Administrative note',
-  CHECK_OUT_NOTE: 'Check out note',
   CHECK_IN_NOTE: 'Check in note',
+  CHECK_OUT_NOTE: 'Check out note',
 };
 
 export const AUTHORITY_FILE_SOURCES = {

@@ -245,8 +245,7 @@ describe('Data Import', () => {
           FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
         // create match profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(instanceMatchProfile);
         MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);

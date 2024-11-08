@@ -41,8 +41,7 @@ describe('Data Import', () => {
           importStatus: 'Block import',
         };
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.openNewFileExtensionForm();
@@ -59,8 +58,7 @@ describe('Data Import', () => {
         DataImport.verifyImportBlockedModal();
         DataImport.cancelBlockedImportModal();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.select(testData.fileExtension);
         FileExtensionView.delete(testData.fileExtension);
@@ -78,8 +76,7 @@ describe('Data Import', () => {
           dataType: 'MARC',
         };
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.openNewFileExtensionForm();
@@ -94,8 +91,7 @@ describe('Data Import', () => {
         DataImport.uploadFile(filePath, fileName);
         DataImport.verifyFileIsImported(fileName);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.select(testData.fileExtension);
         FileExtensionView.delete(testData.fileExtension);
