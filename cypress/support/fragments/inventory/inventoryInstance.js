@@ -1015,7 +1015,8 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByHrId(newInstanceHrId);
     InventoryInstanceSelectInstanceModal.selectInstance();
-    cy.wait(3000);
+    // cypress clicks too fast
+    cy.wait(5000);
     InventoryInstancesMovement.move();
   },
 
