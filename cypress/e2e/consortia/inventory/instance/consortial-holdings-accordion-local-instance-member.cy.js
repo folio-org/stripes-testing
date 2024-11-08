@@ -6,6 +6,9 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('Inventory', () => {
   describe('Instance', () => {
@@ -13,12 +16,25 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.getConsortiaId().then((consortiaId) => {
-        testData.consortiaId = consortiaId;
-      });
       cy.setTenant(Affiliations.College);
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
+
+        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+          const collegeLocationData = Locations.getDefaultLocation({
+            servicePointId: ServicePoints.getDefaultServicePoint().id,
+          }).location;
+          Locations.createViaApi(collegeLocationData).then((location) => {
+            testData.collegeLocation = location;
+            InventoryHoldings.createHoldingRecordViaApi({
+              instanceId: testData.instance.instanceId,
+              permanentLocationId: testData.collegeLocation.id,
+              sourceId: folioSource.id,
+            }).then((holdingData) => {
+              testData.holdingsId = holdingData.id;
+            });
+          });
+        });
       });
 
       cy.resetTenant();
@@ -30,7 +46,6 @@ describe('Inventory', () => {
         cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
 
         cy.login(testData.user.username, testData.user.password);
-
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -42,6 +57,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.setTenant(Affiliations.College);
+      cy.deleteHoldingRecordViaApi(testData.holdingsId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
@@ -54,7 +70,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion();
+        InventoryInstance.verifyConsortiaHoldingsAccordionAbsent();
       },
     );
   });

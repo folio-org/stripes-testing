@@ -1407,6 +1407,7 @@ export default {
 
   closeShareInstanceModal() {
     cy.do(shareInstanceModal.find(Button('Cancel')).click());
+    cy.wait(1500);
   },
 
   shareInstance() {
