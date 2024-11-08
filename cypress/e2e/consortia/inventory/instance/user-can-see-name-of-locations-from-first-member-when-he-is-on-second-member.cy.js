@@ -127,7 +127,9 @@ describe('Inventory', () => {
         );
         InventoryInstance.openItemByBarcode(testData.itemBarcode);
         ItemRecordView.verifyEffectiveLocationForItemInDetails(testData.locationName);
-        ItemRecordView.verifyHoldingsPermanentLocation(testData.locationName);
+        ItemRecordView.verifyHoldingsPermanentLocation(
+          `${testData.locationName} (${tenantNames.university})`,
+        );
         ItemRecordView.verifyItemEffectiveLocation(testData.locationName);
       },
     );
