@@ -62,11 +62,9 @@ describe('Inventory', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
-        cy.wait('@/authn/refresh', { timeout: 5000 });
+        cy.wait(1000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({

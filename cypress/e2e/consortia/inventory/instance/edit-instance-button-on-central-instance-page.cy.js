@@ -28,8 +28,9 @@ describe('Inventory', () => {
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
       });
-      cy.resetTenant();
 
+      cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -44,7 +45,9 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       StatisticalCodes.deleteViaApi(testData.statisticalCodeId);
+      cy.wait('@/authn/refresh', { timeout: 5000 });
     });
 
     it(
