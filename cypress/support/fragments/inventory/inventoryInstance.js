@@ -1015,6 +1015,7 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByHrId(newInstanceHrId);
     InventoryInstanceSelectInstanceModal.selectInstance();
+    cy.wait(3000);
     InventoryInstancesMovement.move();
   },
 
