@@ -11,31 +11,25 @@ describe('Eureka', () => {
         roleDescription: `Description C436929 ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C436929 ${getRandomPostfix()} UPD`,
         updatedRoleDescription: `Description C436929 ${getRandomPostfix()} UPD`,
-        originalApplications: ['app-platform-full', 'app-consortia'],
+        originalApplications: ['app-platform-complete', 'app-platform-minimal'],
         originalCapabilitySets: [
           {
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             table: 'Data',
             resource: 'Calendar',
             action: 'View',
           },
           {
-            application: 'app-consortia',
-            table: 'Procedural',
-            resource: 'Consortia Inventory Local Sharing-Instances',
-            action: 'Execute',
+            application: 'app-platform-minimal',
+            table: 'Data',
+            resource: 'UI-Tags',
+            action: 'View',
           },
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar Endpoint Calendars',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars AllOpenings',
             action: 'View',
           },
           {
@@ -45,81 +39,86 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
+            resource: 'Calendar Endpoint Dates',
             action: 'View',
           },
           {
-            application: 'app-consortia',
             table: 'Data',
-            resource: 'Consortia Sharing-Instances Collection',
+            resource: 'Tags Collection',
             action: 'View',
           },
           {
-            application: 'app-consortia',
             table: 'Data',
-            resource: 'Consortia Sharing-Instances Item',
+            resource: 'UI-Tags',
             action: 'View',
           },
           {
-            application: 'app-consortia',
-            table: 'Data',
-            resource: 'Consortia Sharing-Instances Item',
-            action: 'Create',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Data',
-            resource: 'Inventory-Storage Authorities Collection',
+            table: 'Settings',
+            resource: 'Module Tags Enabled',
             action: 'View',
           },
         ],
         originalCapabilities: [
           {
-            application: 'app-platform-full',
-            table: 'Data',
-            resource: 'Owners Item',
-            action: 'Create',
+            table: 'Procedural',
+            resource: 'Login Event Collection',
+            action: 'Execute',
           },
           {
-            application: 'app-consortia',
-            table: 'Settings',
-            resource: 'Module Consortia-Settings Enabled',
-            action: 'View',
+            table: 'Procedural',
+            resource: 'Login Password',
+            action: 'Execute',
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-full',
-          table: 'Settings',
-          resource: 'UI-Tags Settings',
+          application: 'app-platform-minimal',
+          table: 'Data',
+          resource: 'UI-Notes Item',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'Settings Tags Enabled',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-full',
             table: 'Data',
-            resource: 'Configuration Entries Collection',
+            resource: 'Note Links Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
+            table: 'Data',
+            resource: 'Note Types Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Notes Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Notes Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'UI-Notes Item',
+            action: 'View',
+          },
+          {
             table: 'Settings',
-            resource: 'Settings Tags Enabled',
+            resource: 'Module Notes Enabled',
             action: 'View',
           },
         ],
         expectedCounts: {
           capabilitySets: {
-            Settings: 1,
-            Procedural: 1,
+            Data: 2,
           },
         },
-        absentCapabilitySetTable: 'Data',
+        absentCapabilitySetTables: ['Settings', 'Procedural'],
         capabSetIds: [],
         capabIds: [],
       };
@@ -170,7 +169,7 @@ describe('Eureka', () => {
         });
       });
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[0]}-.{1,}or.{1,}${testData.originalApplications[1]}-.{1,}\\)`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[1]}-.{1,}or.{1,}${testData.originalApplications[0]}-.{1,}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
@@ -236,14 +235,16 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('10');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('12');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
           Object.entries(testData.expectedCounts.capabilitySets).forEach(([table, count]) => {
             AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
-          AuthorizationRoles.verifyCapabilitySetTableAbsent(testData.absentCapabilitySetTable);
+          testData.absentCapabilitySetTables.forEach((table) => {
+            AuthorizationRoles.verifyCapabilitySetTableAbsent(table);
+          });
         },
       );
     });

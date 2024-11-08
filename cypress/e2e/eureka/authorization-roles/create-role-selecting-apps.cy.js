@@ -9,50 +9,38 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430260 ${getRandomPostfix()}`,
         roleDescription: `Description C430260 ${getRandomPostfix()}`,
-        firstApplicationName: 'app-platform-full',
-        secondApplicationName: 'app-consortia',
+        firstApplicationName: 'app-platform-complete',
+        secondApplicationName: 'app-platform-minimal',
         capabilities: [
           {
             table: 'Data',
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             resource: 'Erm Entitlements Item',
             action: 'View',
           },
           {
             table: 'Settings',
-            application: 'app-consortia',
-            resource: 'Settings Consortia-Settings Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            application: 'app-consortia',
-            resource: 'Consortia Consortium Item',
-            action: 'Edit',
-          },
-          {
-            table: 'Settings',
-            application: 'app-platform-full',
+            application: 'app-platform-minimal',
             resource: 'UI-Tags Settings',
             action: 'View',
           },
           {
             table: 'Procedural',
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             resource: 'Erm Packages Collection',
             action: 'Execute',
           },
           {
             table: 'Procedural',
-            application: 'app-platform-full',
+            application: 'app-platform-minimal',
             resource: 'Users-bl Password-Reset-Link Reset',
             action: 'Execute',
           },
         ],
         expectedCounts: {
           capabilities: {
-            Data: 2,
-            Settings: 2,
+            Data: 1,
+            Settings: 1,
             Procedural: 2,
           },
         },

@@ -7,15 +7,15 @@ import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
-      const applications = ['app-consortia', 'app-platform-full'];
+      const applications = ['app-platform-complete', 'app-platform-minimal'];
       const testData = {
         roleName: `Auto Role C553052 ${getRandomPostfix()}`,
         capabilitySets: [
           {
             application: applications[0],
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Consortia Inventory Local Sharing-Instances',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             application: applications[1],
@@ -28,25 +28,19 @@ describe('Eureka', () => {
           {
             application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Instances Collection',
+            resource: 'Calendar Endpoint Calendars',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Instances Item',
+            resource: 'Calendar Endpoint Calendars CalendarId',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Instances Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Inventory-Storage Authorities Collection',
+            resource: 'Calendar Endpoint Dates',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -107,9 +101,9 @@ describe('Eureka', () => {
         capabilities: [
           {
             application: applications[0],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Roles Item',
-            action: CAPABILITY_ACTIONS.CREATE,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Accounts Cancel',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
             application: applications[1],

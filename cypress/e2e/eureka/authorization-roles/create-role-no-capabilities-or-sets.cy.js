@@ -9,8 +9,8 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430264 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        firstApplicationName: 'app-platform-full',
-        secondApplicationName: 'app-consortia',
+        firstApplicationName: 'app-platform-complete',
+        secondApplicationName: 'app-platform-minimal',
       };
 
       const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.firstApplicationName}-.{1,}or.{1,}${testData.secondApplicationName}-.{1,}\\)`;

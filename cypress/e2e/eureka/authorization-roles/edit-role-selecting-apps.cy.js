@@ -12,29 +12,29 @@ describe('Eureka', () => {
         updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
         // TO DO: rewrite using >1 original apps when more apps will be consistently available
-        originalApplications: ['app-platform-full'],
-        newApplication: 'app-consortia',
+        originalApplications: ['app-platform-complete'],
+        newApplication: 'app-platform-minimal',
         originalCapabilities: [
           {
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             table: 'Data',
             resource: 'Owners Item',
             action: 'Create',
           },
           {
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             table: 'Procedural',
             resource: 'Orders Item Approve',
             action: 'Execute',
           },
           {
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             table: 'Data',
             resource: 'UI-Users Perms',
             action: 'Edit',
           },
           {
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             table: 'Settings',
             resource: 'Erm Settings',
             action: 'View',

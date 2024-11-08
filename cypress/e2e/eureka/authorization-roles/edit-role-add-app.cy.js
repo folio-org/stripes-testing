@@ -9,8 +9,8 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C496128 ${getRandomPostfix()}`,
         // TO DO: rewrite using >1 original apps when more apps will be consistently available
-        originalApplications: ['app-platform-full'],
-        newApplication: 'app-consortia',
+        originalApplications: ['app-platform-minimal'],
+        newApplication: 'app-platform-complete',
         originalCapabilitySets: [
           {
             table: 'Settings',
@@ -32,6 +32,11 @@ describe('Eureka', () => {
           {
             table: 'Data',
             resource: 'Note Types Item',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
             action: 'View',
           },
           {
@@ -63,50 +68,46 @@ describe('Eureka', () => {
           },
         ],
         newCapabilitySet: {
-          table: 'Settings',
-          resource: 'UI-Consortia-Settings Settings Membership',
+          table: 'Data',
+          resource: 'Erm Files',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            table: 'Settings',
-            resource: 'Settings Consortia-Settings Enabled',
+            table: 'Data',
+            resource: 'Erm Files Collection',
             action: 'View',
           },
           {
-            table: 'Settings',
-            resource: 'UI-Consortia-Settings Settings Membership',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Settings Enabled',
+            table: 'Data',
+            resource: 'Erm Files Item',
             action: 'View',
           },
         ],
         newCapabilities: [
           {
-            table: 'Data',
-            resource: 'Consortia Consortium Item',
-            action: 'Edit',
+            table: 'Settings',
+            resource: 'Licenses Settings',
+            action: 'View',
           },
           {
-            table: 'Data',
-            resource: 'Consortia Sharing-Roles Item',
-            action: 'Create',
+            table: 'Procedural',
+            resource: 'Accounts Pay',
+            action: 'Execute',
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 3,
+            Settings: 2,
+            Data: 1,
           },
           capabilities: {
             Data: 4,
-            Settings: 6,
-            Procedural: 2,
+            Settings: 5,
+            Procedural: 3,
           },
         },
-        absentCapabilitySetTables: ['Data', 'Procedural'],
+        absentCapabilitySetTables: ['Procedural'],
         capabSetIds: [],
         capabIds: [],
       };
