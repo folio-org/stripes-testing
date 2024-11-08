@@ -55,9 +55,8 @@ describe('Inventory', () => {
       'C404355 (CONSORTIA) Verify the header of a shared Instance on edit page for the Central tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
-        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceId);
-        InventoryInstances.selectInstance();
+        cy.reload();
         InventoryInstance.waitLoading();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();

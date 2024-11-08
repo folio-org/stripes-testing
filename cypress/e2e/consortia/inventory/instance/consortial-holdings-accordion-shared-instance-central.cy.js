@@ -144,6 +144,7 @@ describe('Inventory', () => {
         });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 

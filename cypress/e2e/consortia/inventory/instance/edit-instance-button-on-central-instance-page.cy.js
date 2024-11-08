@@ -45,7 +45,9 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       StatisticalCodes.deleteViaApi(testData.statisticalCodeId);
+      cy.wait('@/authn/refresh', { timeout: 5000 });
     });
 
     it(
