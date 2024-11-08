@@ -65,6 +65,7 @@ describe('Inventory', () => {
       'C409518 (CONSORTIA) Verify the "View source" button on Member tenant local Instance page (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

@@ -414,8 +414,7 @@ describe('Data Import', () => {
         ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
 
         // create mapping and action profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(

@@ -299,8 +299,7 @@ describe('Data Import', () => {
         );
 
         // create Field mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(
@@ -328,6 +327,7 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -467,8 +467,7 @@ describe('Data Import', () => {
         );
 
         // create Field mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(
@@ -659,8 +658,7 @@ describe('Data Import', () => {
         );
 
         // create Field mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(
@@ -706,10 +704,12 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[2].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,

@@ -20,7 +20,7 @@ const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const noteTypePane = PaneSet({ id: 'noteTypes' });
-const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType) });
+const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
 
 export default {

@@ -57,13 +57,16 @@ describe('Inventory', () => {
       'C409474 (CONSORTIA) Verify the " Edit MARC bibliographic record" button on Central tenant Instance page (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
         QuickMarcEditor.pressSaveAndClose();
         cy.wait(1500);
+        cy.wait('@/authn/refresh', { timeout: 5000 });
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({

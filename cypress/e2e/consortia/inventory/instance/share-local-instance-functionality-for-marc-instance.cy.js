@@ -31,6 +31,7 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventoryViewCreateInstances.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -64,7 +65,7 @@ describe('Inventory', () => {
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

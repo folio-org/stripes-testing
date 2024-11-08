@@ -21,7 +21,7 @@ describe('MARC', () => {
         authority100FieldValue: 'Clovio, Giulio',
         newAuthority100FieldValue: '$aClovio, Giulio,$d1498-1578 TEST',
         tag040NewValue: '0',
-        tag952RowIndex: 18,
+        tag952RowIndex: 17,
         tag600RowIndex: 25,
         searchOption: 'Keyword',
         calloutMessage: 'Tag must contain three characters and can only accept numbers 0-9.',

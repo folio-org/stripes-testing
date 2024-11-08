@@ -78,7 +78,11 @@ export default {
     cy.wait(8000);
     cy.do([
       Dropdown({ id: 'profileDropdown' })
-        .find(Button({ ariaLabel: `${currentTenantName}  profile` }))
+        .find(
+          Button({
+            ariaLabel: or(`${currentTenantName}  profile`, `${currentTenantName} Central profile`),
+          }),
+        )
         .click(),
       switchActiveAffiliationButton.click(),
       Modal('Select affiliation')
