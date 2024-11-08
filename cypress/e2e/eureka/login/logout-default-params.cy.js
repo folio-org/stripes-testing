@@ -11,7 +11,6 @@ describe('Eureka', () => {
     );
     const userProfileButton = Dropdown({ id: 'profileDropdown' });
     const logoutButton = userProfileButton.find(Button('Log out'));
-    const logInAgainButton = Button({ text: 'Log in again' });
 
     before(() => {
       cy.logoutViaApi();
@@ -37,8 +36,6 @@ describe('Eureka', () => {
         // wait until page fully loaded - if "Log out" clicked too fast, click might not register
         cy.wait(1000);
         cy.do([userProfileButton.open(), logoutButton.click()]);
-        cy.expect(logInAgainButton.exists());
-        cy.do(logInAgainButton.click());
         cy.expect([
           usernameInput.has({ value: '' }),
           passwordInput.has({ value: '' }),

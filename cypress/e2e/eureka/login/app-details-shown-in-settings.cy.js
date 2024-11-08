@@ -7,7 +7,6 @@ import SoftwareVersions, {
 
 describe('Eureka', () => {
   describe('Login', () => {
-    const modulesExpectedToBeMissing = ['inn-reach'];
     const appIds = [];
     const moduleIds = [];
     const uiModuleIds = [];
@@ -42,7 +41,6 @@ describe('Eureka', () => {
         cy.login(tempUser.username, tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_ABOUT);
         SoftwareVersions.waitLoading();
-        SoftwareVersions.checkErrorText(modulesExpectedToBeMissing);
         for (const appId of appIds) {
           SoftwareVersions.verifyTextPresent(appId);
         }

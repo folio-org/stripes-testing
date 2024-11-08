@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
+        applicationName: 'app-platform-minimal',
         firstSelectedCapabilitySet: {
           table: 'Data',
           resource: 'Configuration',
@@ -86,6 +86,11 @@ describe('Eureka', () => {
             resource: 'UI-Notes Settings',
             action: 'Edit',
           },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
+            action: 'View',
+          },
         ],
         expectedCounts: {
           capabilitySets: {
@@ -94,7 +99,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 5,
-            Settings: 2,
+            Settings: 3,
           },
         },
       };
