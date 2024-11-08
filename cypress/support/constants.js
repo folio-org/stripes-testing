@@ -979,6 +979,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_UUID: 'Item UUID',
     PROVENANCE_NOTE: 'Provenance note',
     MEMBER: 'Member',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
   },
 };
 
@@ -993,6 +994,12 @@ export const HOLDING_NOTE_TYPES = {
   PROVENANCE: 'Provenance',
 };
 
+export const ITEM_NOTE_TYPES = {
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  CHECK_IN_NOTE: 'Check in note',
+  CHECK_OUT_NOTE: 'Check out note',
+};
+
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
@@ -1003,4 +1010,10 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   CONTRIBUTORS: 'Contributors',
   DATE: 'Date',
   RELEVANCE: 'Relevance',
+};
+export const STAFF_SLIP_NAMES = {
+  HOLD: 'Hold',
+  PICK_SLIP: 'Pick slip',
+  REQUEST_DELIVERY: 'Request delivery',
+  TRANSIT: 'Transit',
 };

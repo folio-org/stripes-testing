@@ -615,7 +615,7 @@ describe('Bulk-edit', () => {
               administrativeNoteText,
             );
             HoldingsRecordView.checkHoldingNoteTypeAbsent(
-              centralSharedHoldingNoteType,
+              centralSharedHoldingNoteType.payload.name,
               sharedNoteText,
             );
           });

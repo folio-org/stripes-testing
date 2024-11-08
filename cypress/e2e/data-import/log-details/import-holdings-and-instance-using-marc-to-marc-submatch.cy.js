@@ -327,6 +327,7 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -703,10 +704,12 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[2].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,
