@@ -90,7 +90,6 @@ describe('Bulk-edit', () => {
             permissions.bulkEditEdit.gui,
             permissions.uiInventoryViewCreateEditItems.gui,
           ]);
-
           cy.resetTenant();
           cy.assignAffiliationToUser(Affiliations.University, user.userId);
           cy.setTenant(Affiliations.University);
@@ -98,12 +97,11 @@ describe('Bulk-edit', () => {
             permissions.bulkEditEdit.gui,
             permissions.uiInventoryViewCreateEditItems.gui,
           ]);
-
           cy.resetTenant();
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -118,7 +116,6 @@ describe('Bulk-edit', () => {
           ItemNoteTypesConsortiumManager.createViaApi(centralSharedItemNoteType)
             .then((newItemNoteType) => {
               centralSharedNoteTypeData = newItemNoteType;
-              cy.log(centralSharedItemNoteType);
             })
             .then(() => {
               // create shared folio instance
@@ -170,12 +167,12 @@ describe('Bulk-edit', () => {
                   administrativeNotes: [administrativeNoteText],
                   notes: [
                     {
-                      holdingsNoteTypeId: centralSharedNoteTypeData.settingId,
+                      itemNoteTypeId: centralSharedNoteTypeData.settingId,
                       note: sharedNoteText,
                       staffOnly: true,
                     },
                     {
-                      holdingsNoteTypeId: collegeItemNoteType.id,
+                      itemNoteTypeId: collegeItemNoteType.id,
                       note: collegeNoteText,
                       staffOnly: false,
                     },
@@ -192,7 +189,6 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
-
               // create holdings in University tenant
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
@@ -217,7 +213,7 @@ describe('Bulk-edit', () => {
                   administrativeNotes: [administrativeNoteText],
                   notes: [
                     {
-                      holdingsNoteTypeId: centralSharedNoteTypeData.settingId,
+                      itemNoteTypeId: centralSharedNoteTypeData.settingId,
                       note: sharedNoteText,
                       staffOnly: true,
                     },
@@ -235,10 +231,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               FileManager.createFile(
                 `cypress/fixtures/${itemUUIDsFileName}`,
-                `${folioInstance.itemIds.join('\n')}\n${marcInstance.itemIds.join('\n')}`,
+                `${collegeItemIds.join('\n')}\n${universityItemIds.join('\n')}`,
               );
             });
-
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -291,7 +286,6 @@ describe('Bulk-edit', () => {
         'C478267 Verify "Remove all" action for Items notes in Central tenant (consortia) (firebird)',
         { tags: ['smokeECS', 'firebird', 'C478267'] },
         () => {
-          // 1
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
@@ -314,16 +308,12 @@ describe('Bulk-edit', () => {
           });
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-          // // 4
           BulkEditActions.openActions();
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
           );
-
-          // // 5
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
@@ -342,7 +332,6 @@ describe('Bulk-edit', () => {
             folioInstance.barcodeInUniversity,
             marcInstance.barcodeInUniversity,
           ];
-
           const initialHeaderValueInCollege = [
             {
               header: centralSharedItemNoteType.payload.name,
@@ -370,8 +359,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // // 6
-
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
@@ -385,8 +372,6 @@ describe('Bulk-edit', () => {
             centralSharedItemNoteType.payload.name,
             collegeItemNoteTypeNameWithAffiliation,
           );
-
-          // // 7
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
@@ -407,16 +392,12 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // // 8
-
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // // 9
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedItemNoteType.payload.name,
@@ -424,39 +405,31 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             collegeItemNoteTypeNameWithAffiliation,
           );
-
-          // // 10
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.ADMINISTRATIVE_NOTE);
-
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-          // // 14
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteRemoveAll(centralSharedItemNoteType.payload.name, 1);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-          // // 15
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.CHECK_IN_NOTE, 2);
-
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // // 16
           BulkEditActions.addNewBulkEditFilterString();
-          BulkEditActions.verifyNewBulkEditRow(1);
+          BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.CHECK_OUT_NOTE, 3);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // // 17
+          BulkEditActions.addNewBulkEditFilterString();
+          BulkEditActions.verifyNewBulkEditRow(4);
+          BulkEditActions.noteRemoveAll(collegeItemNoteTypeNameWithAffiliation, 4);
+          BulkEditSearchPane.isConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-          // check if those header/value correct
-
           const headerValuesToEdit = [
             {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
               value: '',
             },
             {
@@ -477,35 +450,6 @@ describe('Bulk-edit', () => {
             },
           ];
 
-          //   const headerValuesToEditInCollege = [
-          //     {
-          //       header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
-          //       value: '',
-          //     },
-          //     {
-          //       header: collegeItemNoteTypeNameWithAffiliation,
-          //       value: `${sharedNoteText} (staff only)`,
-          //     },
-          //     {
-          //       header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-          //       value: collegeNoteText,
-          //     },
-          //   ];
-          //   const headerValuesToEditInUniversity = [
-          //     {
-          //       header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-          //       value: `${administrativeNoteText} | ${checkInNoteText} (staff only)`,
-          //     },
-          //     {
-          //       header: centralSharedItemNoteType.payload.name,
-          //       value: '',
-          //     },
-          //     {
-          //       header: universityItemNoteTypeNameWithAffiliation,
-          //       value: `${sharedNoteText} (staff only) | ${universityNoteText}`,
-          //     },
-          //   ];
-
           BulkEditActions.verifyAreYouSureForm(4);
 
           itemBarcodes.forEach((hrid) => {
@@ -514,14 +458,6 @@ describe('Bulk-edit', () => {
               headerValuesToEdit,
             );
           });
-          //   universityItemBarcodes.forEach((hrid) => {
-          //     BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
-          //       hrid,
-          //       headerValuesToEditInUniversity,
-          //     );
-          //   });
-
-          // 18
 
           BulkEditActions.downloadPreview();
 
@@ -534,77 +470,13 @@ describe('Bulk-edit', () => {
             );
           });
 
-          //   collegeItemBarcodes.forEach((barcode) => {
-          //     BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          //       previewFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       headerValuesToEditInCollege,
-          //     );
-          //   });
-          //   universityItemBarcodes.forEach((barcode) => {
-          //     BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-          //       previewFileName,
-          //       BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-          //       barcode,
-          //       headerValuesToEditInUniversity,
-          //     );
-          //   });
-
-          // // 19
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
-          const editedHederValueInCollege = [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: '',
-            },
-            {
-              header: centralSharedItemNoteType.payload.name,
-              value: '',
-            },
-            {
-              header: collegeItemNoteTypeNameWithAffiliation,
-              value: '',
-            },
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              value: '',
-            },
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: '',
-            },
-          ];
-          const editedHederValueInUniversity = [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: '',
-            },
-            {
-              header: centralSharedItemNoteType.payload.name,
-              value: '',
-            },
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
-              value: '',
-            },
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
-              value: '',
-            },
-          ];
-          collegeItemBarcodes.forEach((barcode) => {
+          itemBarcodes.forEach((barcode) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               barcode,
-              editedHederValueInCollege,
-            );
-          });
-          universityItemBarcodes.forEach((barcode) => {
-            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
-              barcode,
-              editedHederValueInUniversity,
+              headerValuesToEdit,
             );
           });
 
@@ -618,29 +490,17 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // // 22
-
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
-          collegeItemBarcodes.forEach((barcode) => {
+          itemBarcodes.forEach((barcode) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
-              editedHederValueInCollege,
+              headerValuesToEdit,
             );
           });
-          universityItemBarcodes.forEach((barcode) => {
-            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              barcode,
-              editedHederValueInUniversity,
-            );
-          });
-
-          // // 23
 
           BulkEditActions.downloadErrors();
 
@@ -650,7 +510,6 @@ describe('Bulk-edit', () => {
             ]);
           });
 
-          // // 24
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
           collegeItemBarcodes.forEach((barcode) => {
@@ -661,22 +520,22 @@ describe('Bulk-edit', () => {
             ItemRecordView.checkItemAdministrativeNote('-');
             ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
             ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
-            ItemRecordView.verifyTextAbsent('Check in note');
-            ItemRecordView.verifyTextAbsent('Check out note');
+            ItemRecordView.verifyTextAbsent(ITEM_NOTE_TYPES.CHECK_IN_NOTE);
+            ItemRecordView.verifyTextAbsent(ITEM_NOTE_TYPES.CHECK_OUT_NOTE);
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
 
-          instances.forEach((instance) => {
+          universityItemBarcodes.forEach((barcode) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInUniversity);
+            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
             ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
             ItemRecordView.checkItemNoteAbsent(collegeItemNoteType.name);
-            ItemRecordView.verifyTextAbsent('Check in note');
-            ItemRecordView.verifyTextAbsent('Check out note');
+            ItemRecordView.verifyTextAbsent(ITEM_NOTE_TYPES.CHECK_IN_NOTE);
+            ItemRecordView.verifyTextAbsent(ITEM_NOTE_TYPES.CHECK_OUT_NOTE);
           });
         },
       );
