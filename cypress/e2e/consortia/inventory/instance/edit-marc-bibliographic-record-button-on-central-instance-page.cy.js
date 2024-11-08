@@ -57,6 +57,7 @@ describe('Inventory', () => {
       'C409474 (CONSORTIA) Verify the " Edit MARC bibliographic record" button on Central tenant Instance page (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
