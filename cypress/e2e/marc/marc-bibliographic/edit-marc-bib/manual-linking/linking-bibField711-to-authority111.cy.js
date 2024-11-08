@@ -27,7 +27,7 @@ describe('MARC', () => {
             '711',
             '2',
             '\\',
-            '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet $0 http://id.loc.gov/authorities/names/n81142344 $4 prf',
+            '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet $v version 1 $0 http://id.loc.gov/authorities/names/n81142344 $4 prf',
           ],
         };
         const marcFiles = [
@@ -61,7 +61,7 @@ describe('MARC', () => {
           '2',
           '\\',
           '$a C375082 Mostly Mozart Festival. $e Orchestra $t sonet',
-          '',
+          '$v version 1',
           '$0 http://id.loc.gov/authorities/names/n81142344',
           '$4 prf',
         ];
@@ -136,6 +136,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
             InventoryInstance.goToPreviousPage();
+            cy.wait('@/authn/refresh', { timeout: 30000 });
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();

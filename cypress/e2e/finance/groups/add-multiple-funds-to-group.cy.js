@@ -75,17 +75,9 @@ describe('ui-finance: Groups', () => {
   });
 
   after(() => {
-    cy.logout();
-    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    Funds.closeFundDetails();
-    FinanceHelp.searchByName(secondFund.name);
-    Funds.selectFund(secondFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
+    cy.getAdminToken();
+    Budgets.deleteViaApi(firstBudget.id);
+    Budgets.deleteViaApi(secondBudget.id);
     // Need to wait some time fo delating all items
     cy.wait(1000);
     Funds.deleteFundViaApi(firstFund.id);

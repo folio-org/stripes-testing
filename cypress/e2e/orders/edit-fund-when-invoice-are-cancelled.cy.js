@@ -109,7 +109,7 @@ describe('ui-orders: Orders', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
@@ -150,7 +150,14 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
+        defaultFiscalYear.code,
+        '($70.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
