@@ -1,13 +1,6 @@
 import { HTML } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
-import {
-  Button,
-  Modal,
-  MultiColumnListCell,
-  Pane,
-  PaneHeader,
-  Select,
-} from '../../../../interactors';
+import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
 
@@ -120,7 +113,7 @@ const downloadExportedMarcFileWithRecordHrid = (hrid, fileName) => {
 };
 
 const waitLandingPageOpened = () => {
-  cy.expect(PaneHeader({ id: 'paneHeader8' }).find(Button('View all')).exists());
+  cy.expect(Pane('Logs').find(Button('View all')).exists());
 };
 
 const uploadFile = (fileName) => {

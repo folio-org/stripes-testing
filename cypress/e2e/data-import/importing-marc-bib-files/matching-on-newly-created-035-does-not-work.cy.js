@@ -185,8 +185,7 @@ describe('Data Import', () => {
         InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
 
         // create match profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);

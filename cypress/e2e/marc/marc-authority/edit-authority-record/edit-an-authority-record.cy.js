@@ -86,8 +86,10 @@ describe('MARC', () => {
             MarcAuthority.changeField('100', testData.authority.newField.title);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
+
             MarcAuthority.clickSaveAndCloseButton();
             cy.wait(5000);
+
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
             MarcAuthority.contains(testData.authority.newField.tag);

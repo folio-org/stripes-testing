@@ -38,11 +38,4 @@ export default {
         return this;
     }
   },
-  goToSettingsDataImport() {
-    cy.do(NavListItem('Data import').click());
-    cy.expect(dataImportPane.exists());
-    Object.values(SETTINGS_TABS).forEach((settingsTab) => {
-      cy.expect(dataImportPane.find(NavListItem(settingsTab)).exists());
-    });
-  },
 };
