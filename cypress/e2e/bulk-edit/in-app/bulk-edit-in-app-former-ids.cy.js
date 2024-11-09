@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
       { tags: ['smoke', 'firebird', 'C356808'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item former identifier');
+        BulkEditSearchPane.selectRecordIdentifier('Item former identifiers');
 
         BulkEditSearchPane.uploadFile(validItemFormerIdsFileName);
         BulkEditSearchPane.waitFileUploading();
