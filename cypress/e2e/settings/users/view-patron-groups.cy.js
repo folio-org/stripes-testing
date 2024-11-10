@@ -48,9 +48,9 @@ describe('Users', () => {
 
     it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris', 'C514997'] }, () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       PatronGroups.verifyPatronGroupsSortingOrder();
       PatronGroups.verifyPatronGroupsPane();
       PatronGroups.verifyActionsCells();

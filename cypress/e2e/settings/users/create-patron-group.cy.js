@@ -48,9 +48,9 @@ describe('Users', () => {
     // https://folio-org.atlassian.net/browse/UIU-3189
     it('C514932 Create patron group (volaris)', { tags: ['smoke', 'volaris', 'C514932'] }, () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       PatronGroups.verifyPatronGroupsPane();
       PatronGroups.clickNewButton();
       PatronGroups.verifyNewRowForGroupInTheList();

@@ -66,8 +66,8 @@ describe('Users', () => {
       'C514946 Patron group can be deleted only if it has no users assigned (volaris)',
       { tags: ['criticalPath', 'volaris', 'C514946'] },
       () => {
-        UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+        UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
         SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
         PatronGroups.waitLoading();
         PatronGroups.verifyPatronGroupsPane();
