@@ -76,7 +76,7 @@ describe('Circulation log', () => {
 
   it(
     'C368490 Verify the icon "..." in "Actions" column (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C368490'] },
     () => {
       // On the "Loan" accordion on the "Search & filter" pane check the "Checked out" checkbox to retrieve result list with at least 1 circulation action => Click "Apply" button
       SearchPane.setFilterOptionFromAccordion('loan', 'Checked out');

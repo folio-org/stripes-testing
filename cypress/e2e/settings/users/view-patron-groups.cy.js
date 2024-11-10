@@ -50,7 +50,7 @@ describe('Users', () => {
       PatronGroups.deleteViaApi(testData.secondPatronGroup.id);
     });
 
-    it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris'] }, () => {
+    it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris', 'C514997'] }, () => {
       UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       SettingsUsers.goToSettingsUsers();

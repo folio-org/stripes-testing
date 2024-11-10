@@ -68,7 +68,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C407704 User with "Setting (Users): View all settings" permission cannot edit transfer accounts (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C407704'] },
       () => {
         cy.visit(SettingsMenu.transferAccounts);
         UsersSettingsGeneral.checkEntityInTable({

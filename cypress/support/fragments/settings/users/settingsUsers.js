@@ -18,7 +18,7 @@ export default {
         return this;
     }
   },
-  goToSettingsCirculation() {
+  goToSettingsUsers() {
     cy.do(NavListItem('Users').click());
     cy.expect(usersPane.exists());
     Object.values(SETTINGS_TABS).forEach((settingsTab) => {

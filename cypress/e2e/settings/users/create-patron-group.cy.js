@@ -1,10 +1,15 @@
 import moment from 'moment';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import SettingsUsers, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Users', () => {
   describe('Settings (Users)', () => {
@@ -45,11 +50,11 @@ describe('Users', () => {
     });
 
     // https://folio-org.atlassian.net/browse/UIU-3189
-    it('C514932 Create patron group (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-      cy.visit(SettingsMenu.patronGroups);
-      cy.wait('@/authn/refresh', { timeout: 20000 });
+    it('C514932 Create patron group (volaris)', { tags: ['smoke', 'volaris', 'C514932'] }, () => {
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+      SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
+      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       PatronGroups.verifyPatronGroupsPane();
       PatronGroups.clickNewButton();
       PatronGroups.verifyNewRowForGroupInTheList();
