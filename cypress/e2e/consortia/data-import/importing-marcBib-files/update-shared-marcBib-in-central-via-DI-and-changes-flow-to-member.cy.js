@@ -166,7 +166,7 @@ describe('Data Import', () => {
 
     it(
       'C405534 User can update shared "MARC Bib" in Central tenant via Data import and changes flow to member tenants (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C405534'] },
       () => {
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

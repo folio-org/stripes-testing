@@ -61,7 +61,7 @@ describe('Inventory', () => {
 
     it(
       'C418583 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Shared Source = FOLIO instance (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C418583'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();

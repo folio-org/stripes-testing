@@ -5,7 +5,6 @@ import SettingsUsers, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -51,10 +50,7 @@ describe('Users', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password, {
-            path: SettingsMenu.usersPath,
-            waiter: () => cy.wait(1000),
-          });
+          cy.login(userProperties.username, userProperties.password);
         },
       );
     });
@@ -68,11 +64,10 @@ describe('Users', () => {
 
     it(
       'C514946 Patron group can be deleted only if it has no users assigned (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C514946'] },
       () => {
         UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsUsers.goToSettingsUsers();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
         SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
         PatronGroups.waitLoading();
         PatronGroups.verifyPatronGroupsPane();

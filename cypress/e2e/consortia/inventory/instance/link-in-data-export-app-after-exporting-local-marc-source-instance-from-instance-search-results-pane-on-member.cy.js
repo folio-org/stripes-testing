@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
     it(
       'C422076 (CONSORTIA) Verify the link in Data export app after exporting local MARC Source Instance from Instance search results pane on Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C422076'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventorySearchAndFilter.closeInstanceDetailPane();

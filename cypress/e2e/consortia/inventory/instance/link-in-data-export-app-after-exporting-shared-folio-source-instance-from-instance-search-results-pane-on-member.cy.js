@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
     it(
       'C422077 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance search results pane on Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C422077'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventorySearchAndFilter.closeInstanceDetailPane();

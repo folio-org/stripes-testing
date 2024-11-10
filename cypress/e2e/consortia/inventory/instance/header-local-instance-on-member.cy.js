@@ -39,7 +39,7 @@ describe('Inventory', () => {
 
     it(
       'C404386 (CONSORTIA) Verify the header of a local Instance on the Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C404386'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
 

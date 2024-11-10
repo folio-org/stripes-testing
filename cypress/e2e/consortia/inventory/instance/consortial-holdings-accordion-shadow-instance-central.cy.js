@@ -102,7 +102,7 @@ describe('Inventory', () => {
 
     it(
       'C411616 (CONSORTIA) Verify the Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411616'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();

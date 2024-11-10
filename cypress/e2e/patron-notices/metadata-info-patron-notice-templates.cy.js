@@ -44,7 +44,7 @@ describe('Patron notices', () => {
 
     it(
       'C387439 C367968 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (volaris)',
-      { tags: ['smoke', 'volaris'] },
+      { tags: ['smoke', 'volaris', 'C387439'] },
       () => {
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
         NewNoticePolicyTemplate.checkAfterSaving({
@@ -72,7 +72,7 @@ describe('Patron notices', () => {
 
     it(
       'C387440 Add metadata info to view of Patron Notice Templates scenario 2/3 (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C387440'] },
       () => {
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
         NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();

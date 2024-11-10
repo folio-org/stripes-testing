@@ -145,7 +145,7 @@ describe('Patron notices', () => {
 
     it(
       'C400642 Verify that Pickup notices are sent when another item is Awaiting pickup (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C400642'] },
       () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplate);

@@ -41,7 +41,7 @@ describe('Inventory', () => {
 
     it(
       'C404357 (CONSORTIA) Verify the header of a local Instance on edit page for a Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C404357'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
 
@@ -59,7 +59,9 @@ describe('Inventory', () => {
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
 
-        InstanceRecordEdit.checkInstanceHeader(` Edit local instance • ${testData.instance.instanceTitle}`);
+        InstanceRecordEdit.checkInstanceHeader(
+          ` Edit local instance • ${testData.instance.instanceTitle}`,
+        );
       },
     );
   });

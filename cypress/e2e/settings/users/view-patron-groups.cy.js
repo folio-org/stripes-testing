@@ -5,7 +5,6 @@ import SettingsUsers, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -36,10 +35,7 @@ describe('Users', () => {
       cy.createTempUser([Permissions.uiUsersViewPatronGroups.gui]).then((userProperties) => {
         testData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.usersPath,
-          waiter: () => cy.wait(1000),
-        });
+        cy.login(userProperties.username, userProperties.password);
       });
     });
 
@@ -50,12 +46,11 @@ describe('Users', () => {
       PatronGroups.deleteViaApi(testData.secondPatronGroup.id);
     });
 
-    it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-      SettingsUsers.goToSettingsUsers();
+    it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris', 'C514997'] }, () => {
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
+      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       PatronGroups.verifyPatronGroupsSortingOrder();
       PatronGroups.verifyPatronGroupsPane();
       PatronGroups.verifyActionsCells();
