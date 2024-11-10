@@ -6,7 +6,6 @@ import SettingsUsers, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -33,10 +32,7 @@ describe('Users', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password, {
-            path: SettingsMenu.usersPath,
-            waiter: () => cy.wait(1000),
-          });
+          cy.login(userProperties.username, userProperties.password);
         },
       );
     });
@@ -52,9 +48,9 @@ describe('Users', () => {
     // https://folio-org.atlassian.net/browse/UIU-3189
     it('C514932 Create patron group (volaris)', { tags: ['smoke', 'volaris', 'C514932'] }, () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       PatronGroups.verifyPatronGroupsPane();
       PatronGroups.clickNewButton();
       PatronGroups.verifyNewRowForGroupInTheList();
