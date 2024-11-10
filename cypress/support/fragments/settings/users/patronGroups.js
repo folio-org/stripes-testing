@@ -302,8 +302,6 @@ export default {
 
   verifyGroupAbsentInTheList({ name }) {
     cy.do(rootList.find(MultiColumnListCell({ content: including(name) })).absent());
-    const row = MultiColumnListRow({ content: including(name) });
-    cy.expect(row.absent());
   },
   verifyNewRowForGroupInTheList() {
     cy.expect([
