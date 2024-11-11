@@ -114,7 +114,7 @@ describe('Loans', () => {
 
       it(
         'C566 Loan: Change due date warnings and alerts (volaris)',
-        { tags: ['smoke', 'volaris', 'shiftLeft'] },
+        { tags: ['smoke', 'volaris', 'shiftLeft', 'C566'] },
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           // show open loans

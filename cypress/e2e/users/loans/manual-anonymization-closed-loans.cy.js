@@ -180,7 +180,7 @@ describe('Loans', () => {
 
     it(
       'C9217 Manual anonymization in closed loans (volaris)',
-      { tags: ['smoke', 'volaris'] },
+      { tags: ['smoke', 'volaris', 'C9217'] },
       () => {
         LoanDetails.anonymizeAllLoans();
         LoanDetails.checkAnonymizeAllLoansModalOpen();
@@ -196,7 +196,7 @@ describe('Loans', () => {
 
     it(
       'C17136 Filter circulation log by Anonymized (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C17136'] },
       () => {
         const searchResultsData = {
           userBarcode: '-',

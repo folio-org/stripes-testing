@@ -53,7 +53,7 @@ describe('Inventory', () => {
 
     it(
       'C407749 (CONSORTIA) Verify the permission for editing local instances on Member tenant (consortia) (folijet)',
-      { tags: ['smokeECS', 'folijet'] },
+      { tags: ['smokeECS', 'folijet', 'C407749'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

@@ -52,6 +52,7 @@ const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
   cy.wait('@/authn/refresh', { timeout: 5000 });
   cy.wait(10000);
+  cy.wait('@/authn/refresh', { timeout: 5000 });
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {

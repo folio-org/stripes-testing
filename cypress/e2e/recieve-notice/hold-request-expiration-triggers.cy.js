@@ -219,7 +219,7 @@ describe('Patron notices', () => {
 
     it(
       'C347873 Hold request + Request expiration triggers (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C347873'] },
       () => {
         noticeTemplates.forEach((template, index) => {
           NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

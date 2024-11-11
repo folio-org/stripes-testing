@@ -63,7 +63,7 @@ describe('Inventory', () => {
 
     it(
       'C411620 (CONSORTIA) Verify the Consortial holdings accordion details on local Instance on Member Tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411620'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();

@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
     it(
       'C409460 (CONSORTIA) Verify the "Edit instance" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409460'] },
       () => {
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);

@@ -62,7 +62,7 @@ describe('Inventory', () => {
 
     it(
       'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C358962'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.dataImportPath,
@@ -98,7 +98,7 @@ describe('Inventory', () => {
 
     it(
       'C358961 Assign tags to an Instance record when unlinked preceding/succeeding titles present 3: quickMARC (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C358961'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.inventoryPath,
@@ -140,7 +140,7 @@ describe('Inventory', () => {
 
     it(
       'C367962 Verify that user can add more than 1 tag to "Holdings" record with source "MARC" (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C367962'] },
       () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,

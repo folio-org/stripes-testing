@@ -22,13 +22,17 @@ describe('Users', () => {
       });
     });
 
-    it('C2234 Create new permission set (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
-      cy.intercept('POST', '/perms/permissions').as('permissionSet');
-      PermissionSets.createNewPermissionSet(newPermissionSet);
-      cy.wait('@permissionSet').then((intercept) => {
-        cy.wrap(intercept.response.body.id).as('permSetId');
-      });
-      PermissionSets.checkAfterSaving(newPermissionSet);
-    });
+    it(
+      'C2234 Create new permission set (volaris)',
+      { tags: ['criticalPath', 'volaris', 'C2234'] },
+      () => {
+        cy.intercept('POST', '/perms/permissions').as('permissionSet');
+        PermissionSets.createNewPermissionSet(newPermissionSet);
+        cy.wait('@permissionSet').then((intercept) => {
+          cy.wrap(intercept.response.body.id).as('permSetId');
+        });
+        PermissionSets.checkAfterSaving(newPermissionSet);
+      },
+    );
   });
 });
