@@ -421,8 +421,9 @@ describe('Bulk-edit', () => {
 
                 instances.forEach((instance) => {
                   TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-                  InventorySearchAndFilter.switchToItem();
-                  InventorySearchAndFilter.searchByParameter('Barcode', instance.itemBarcode);
+                  InventorySearchAndFilter.byKeywords(instance.title);
+                  InventoryInstance.openHoldings(['']);
+                  InventoryInstance.openItemByBarcode(instance.itemBarcode);
                   ItemRecordView.waitLoading();
                   ItemRecordView.suppressedAsDiscoveryIsAbsent();
                 });

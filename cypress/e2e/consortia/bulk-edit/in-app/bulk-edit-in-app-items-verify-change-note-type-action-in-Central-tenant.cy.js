@@ -640,11 +640,11 @@ describe('Bulk-edit', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
-          collegeItemBarcodes.forEach((barcode) => {
+          instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToItem();
-            cy.wait(3000);
-            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+            InventorySearchAndFilter.byKeywords(instance.title);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote(collegeNoteText);
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
@@ -659,12 +659,11 @@ describe('Bulk-edit', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
 
-          universityItemBarcodes.forEach((barcode) => {
+          instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToItem();
-            cy.wait(3000);
-            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-            ItemRecordView.waitLoading();
+            InventorySearchAndFilter.byKeywords(instance.title);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
               0,
               'YesNo',

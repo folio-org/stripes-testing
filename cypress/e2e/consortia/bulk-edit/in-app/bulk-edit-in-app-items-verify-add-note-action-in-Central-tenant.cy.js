@@ -102,7 +102,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -595,8 +595,9 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInCollege);
+            InventorySearchAndFilter.byKeywords(instance.title);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote(administrativeNoteText);
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(
@@ -619,8 +620,9 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.searchByParameter('Barcode', instance.barcodeInUniversity);
+            InventorySearchAndFilter.byKeywords(instance.title);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote(administrativeNoteText);
             ItemRecordView.checkMultipleItemNotesWithStaffOnly(

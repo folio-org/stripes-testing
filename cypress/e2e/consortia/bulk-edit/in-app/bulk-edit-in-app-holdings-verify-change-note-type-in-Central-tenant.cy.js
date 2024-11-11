@@ -95,7 +95,7 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-          cy.getLocations({ limit: 1 }).then((res) => {
+          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
