@@ -512,10 +512,11 @@ describe('Bulk-edit', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
-          collegeItemBarcodes.forEach((barcode) => {
+          instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+            InventorySearchAndFilter.byKeywords(instance.title);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
             ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
@@ -526,10 +527,11 @@ describe('Bulk-edit', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
 
-          universityItemBarcodes.forEach((barcode) => {
+          instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToItem();
-            InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+            InventorySearchAndFilter.byKeywords(instance.title);
+            InventoryInstance.openHoldings(['']);
+            InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
             ItemRecordView.checkItemAdministrativeNote('-');
             ItemRecordView.checkItemNoteAbsent(centralSharedItemNoteType.payload.name);
