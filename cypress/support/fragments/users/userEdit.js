@@ -817,6 +817,7 @@ export default {
   },
 
   selectRoleInModal(roleName, isSelected = true) {
+    cy.wait(1000);
     const targetCheckbox = MultiColumnListRow(including(roleName), { isContainer: false }).find(
       Checkbox(),
     );
