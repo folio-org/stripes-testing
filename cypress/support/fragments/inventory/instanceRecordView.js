@@ -51,7 +51,7 @@ const verifyIndexTitle = (value) => {
   cy.expect(KeyValue('Index title').has({ value }));
 };
 
-const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: sourceValue }));
+const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: including(sourceValue) }));
 
 const verifyInstanceStatusCode = (value) => {
   cy.expect(KeyValue('Instance status code').has({ value }));

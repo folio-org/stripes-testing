@@ -83,8 +83,7 @@ describe('Data Import', () => {
         const actionProfileErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;
         const mappingProfileErrorMessage = `New record not created: The field mapping profile '${mappingProfile.name}' already exists`;
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName(jobProfile.actionProfile);

@@ -27,6 +27,7 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventoryViewCreateInstances.gui,
         Permissions.consortiaInventoryShareLocalInstance.gui,
@@ -35,6 +36,7 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user2 = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user2.userId);
@@ -46,11 +48,13 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user3 = userProperties;
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user4 = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user4.userId);
@@ -80,8 +84,13 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
+        InventoryInstances.waitContentLoading();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+        cy.wait('@/authn/refresh', { timeout: 5000 });
+        cy.pause();
         InventoryInstances.selectInstance();
+
         InventoryInstance.waitLoading();
         InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
       },
@@ -99,7 +108,7 @@ describe('Inventory', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -116,6 +125,8 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -135,7 +146,7 @@ describe('Inventory', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

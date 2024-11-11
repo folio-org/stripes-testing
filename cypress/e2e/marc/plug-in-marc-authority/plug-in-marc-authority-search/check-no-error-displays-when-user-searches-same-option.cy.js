@@ -101,7 +101,6 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.logout();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,

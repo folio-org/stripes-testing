@@ -238,8 +238,10 @@ describe('Data Import', () => {
           InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);
 
           // create mapping profile for updating instance
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.fillSummaryInMappingProfile(

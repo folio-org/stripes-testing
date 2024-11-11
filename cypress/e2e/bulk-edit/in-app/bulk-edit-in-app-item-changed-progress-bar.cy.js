@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -59,7 +61,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
+          'Items',
+          ITEM_IDENTIFIERS.ITEM_BARCODES,
+        );
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.checkForUploading(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

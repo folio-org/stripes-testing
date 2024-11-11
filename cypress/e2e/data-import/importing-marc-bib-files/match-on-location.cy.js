@@ -363,8 +363,7 @@ describe('Data Import', () => {
         );
 
         // create Match profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         collectionOfMatchProfiles.forEach((profile) => {
           MatchProfiles.createMatchProfile(profile.matchProfile);
