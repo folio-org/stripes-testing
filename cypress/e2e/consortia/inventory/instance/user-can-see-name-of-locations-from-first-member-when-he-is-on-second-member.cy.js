@@ -107,7 +107,8 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'folijet'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
-        InventoryInstances.selectInstance();
+        cy.reload();
+        InventoryInstance.waitLoading();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
@@ -126,7 +127,9 @@ describe('Inventory', () => {
         );
         InventoryInstance.openItemByBarcode(testData.itemBarcode);
         ItemRecordView.verifyEffectiveLocationForItemInDetails(testData.locationName);
-        ItemRecordView.verifyHoldingsPermanentLocation(testData.locationName);
+        ItemRecordView.verifyHoldingsPermanentLocation(
+          `${testData.locationName} (${tenantNames.university})`,
+        );
         ItemRecordView.verifyItemEffectiveLocation(testData.locationName);
       },
     );

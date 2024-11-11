@@ -97,7 +97,7 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
-    const newFileName = fileName.replace('/.mrc/i', '');
+    const newFileName = fileName.replace(/\.mrc$/i, '');
 
     cy.expect(
       MultiColumnList({ id: 'job-logs-list' })

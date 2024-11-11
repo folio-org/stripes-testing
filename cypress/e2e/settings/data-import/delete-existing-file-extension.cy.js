@@ -35,8 +35,7 @@ describe('Data Import', () => {
       () => {
         const calloutMessage = `The file extension "${fileExtensionName}" was successfully deleted`;
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.select(fileExtensionName);

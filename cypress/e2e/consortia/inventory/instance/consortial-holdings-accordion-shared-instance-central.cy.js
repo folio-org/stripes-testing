@@ -144,6 +144,7 @@ describe('Inventory', () => {
         });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -187,6 +188,7 @@ describe('Inventory', () => {
       'C411636 (CONSORTIA) Verify the Consortial holdings accordion details on Instance in Central Tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
