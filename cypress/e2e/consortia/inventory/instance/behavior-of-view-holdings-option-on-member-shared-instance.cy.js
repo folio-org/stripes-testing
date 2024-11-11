@@ -24,7 +24,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
-      cy.getCollegeAdminToken();
+      cy.getAdminToken();
       cy.getConsortiaId()
         .then((consortiaId) => {
           testData.consortiaId = consortiaId;
@@ -50,11 +50,16 @@ describe('Inventory', () => {
             }).location;
             Locations.createViaApi(collegeLocationData).then((location) => {
               testData.collegeLocation = location;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.instanceId,
-                permanentLocationId: testData.collegeLocation.id,
-              }).then((holding) => {
-                testData.holding = holding;
+              InventoryHoldings.getHoldingsFolioSource().then((holdingSources) => {
+                testData.holdingSource = holdingSources.id;
+
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.instanceId,
+                  permanentLocationId: testData.collegeLocation.id,
+                  sourceId: holdingSources.id,
+                }).then((holding) => {
+                  testData.holding = holding;
+                });
               });
             });
           });
@@ -96,6 +101,7 @@ describe('Inventory', () => {
       'C409516 (CONSORTIA) Verify the behavior of "View holdings" option on member tenant shared Instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C409516'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstanceSource(testData.instanceSource);

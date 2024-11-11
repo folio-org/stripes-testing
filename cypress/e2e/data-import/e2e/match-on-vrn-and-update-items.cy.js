@@ -240,8 +240,7 @@ describe('Data Import', () => {
         );
 
         // create field mapping profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
           .then(() => {

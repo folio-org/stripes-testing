@@ -17,8 +17,8 @@ describe('Inventory', () => {
     let instanceHRID;
     const instanceData = {
       today: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
-      instanceStatusTerm: 'Batch Loaded (consortium: batch)',
-      instanceStatusTermUI: 'Batch Loaded',
+      instanceStatusTerm: 'Cataloged (consortium: cat)',
+      instanceStatusTermUI: 'Cataloged',
       instanceTitle: `C422050 instanceTitle${getRandomPostfix()}`,
       statisticalCode: 'ARL (Collection stats):    books - Book, print (books)',
       statisticalCodeUI: 'Book, print (books)',
@@ -130,7 +130,7 @@ describe('Inventory', () => {
           subject: instanceData.subject,
           classification: instanceData.classification,
         });
-
+        cy.wait(3000);
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.checkAllInstanceDetails(
           [
