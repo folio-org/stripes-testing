@@ -1,9 +1,15 @@
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-// TO DO: update test with duplicate and edit methods, after PO will review test case.
+import getRandomPostfix from '../../support/utils/stringTools';
+
 describe('Patron notices', () => {
   describe('Settings (Patron notices)', () => {
     const noticePolicy = { ...NewNoticePolicy.defaultUi };
+    const newNoticePolicy = {
+      name: `Test_notice_${getRandomPostfix()}`,
+      description: 'Created by autotest team',
+    };
+
     beforeEach('login', () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationPatronNoticePoliciesPath,
@@ -21,15 +27,17 @@ describe('Patron notices', () => {
         NewNoticePolicy.fillGeneralInformation(noticePolicy);
         NewNoticePolicy.save();
         NewNoticePolicy.checkPolicyName(noticePolicy);
+
         NewNoticePolicy.choosePolicy(noticePolicy);
         NewNoticePolicy.duplicatePolicy(noticePolicy);
         NewNoticePolicy.deletePolicy(noticePolicy);
+
         NewNoticePolicy.choosePolicy(noticePolicy);
-        NewNoticePolicy.editPolicy(noticePolicy);
-        NewNoticePolicy.save(noticePolicy);
-        NewNoticePolicy.checkPolicyName(noticePolicy);
-        NewNoticePolicy.choosePolicy(noticePolicy);
-        NewNoticePolicy.deletePolicy(noticePolicy);
+        NewNoticePolicy.editPolicy(noticePolicy, newNoticePolicy);
+        NewNoticePolicy.save(newNoticePolicy);
+        NewNoticePolicy.checkPolicyName(newNoticePolicy);
+        NewNoticePolicy.choosePolicy(newNoticePolicy);
+        NewNoticePolicy.deletePolicy(newNoticePolicy);
       },
     );
   });
