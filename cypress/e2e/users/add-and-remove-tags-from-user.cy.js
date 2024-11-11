@@ -27,7 +27,7 @@ describe('Users', () => {
 
   it(
     'C9318 Add and remove tags from a user (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'C9318'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UsersCard.openTagsPane();

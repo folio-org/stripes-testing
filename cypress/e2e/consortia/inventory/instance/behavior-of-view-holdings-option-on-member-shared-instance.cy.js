@@ -99,7 +99,7 @@ describe('Inventory', () => {
 
     it(
       'C409516 (CONSORTIA) Verify the behavior of "View holdings" option on member tenant shared Instance (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C409516'] },
       () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);

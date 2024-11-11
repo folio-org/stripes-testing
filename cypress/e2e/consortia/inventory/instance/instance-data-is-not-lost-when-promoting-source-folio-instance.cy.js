@@ -94,7 +94,7 @@ describe('Inventory', () => {
 
     it(
       'C422050 (Consortia) Verify the instance data is not lost, when promoting Source = FOLIO instance (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C422050'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillInstanceFields({

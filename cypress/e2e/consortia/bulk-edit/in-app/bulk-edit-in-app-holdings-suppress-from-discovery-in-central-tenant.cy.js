@@ -163,6 +163,7 @@ describe('Bulk-edit', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
         InventoryItems.deleteItemViaApi(marcInstance.itemId);

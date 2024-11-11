@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -51,7 +53,7 @@ describe('bulk-edit', () => {
         })
         .then(() => {
           BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+          BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();

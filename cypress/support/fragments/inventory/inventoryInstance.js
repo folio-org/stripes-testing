@@ -1014,6 +1014,8 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByHrId(newInstanceHrId);
     InventoryInstanceSelectInstanceModal.selectInstance();
+    // cypress clicks too fast
+    cy.wait(5000);
     InventoryInstancesMovement.move();
   },
 
@@ -1407,6 +1409,7 @@ export default {
 
   closeShareInstanceModal() {
     cy.do(shareInstanceModal.find(Button('Cancel')).click());
+    cy.wait(1500);
   },
 
   shareInstance() {

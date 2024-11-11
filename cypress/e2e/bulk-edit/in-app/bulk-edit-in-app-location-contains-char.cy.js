@@ -2,7 +2,9 @@ import { Locations } from '../../../support/fragments/settings/tenant/location-s
 import Permissions from '../../../support/dictionary/permissions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -73,7 +75,7 @@ describe('bulk-edit', () => {
         cy.viewport(2560, 1440);
         // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
         // Upload a .csv file with items barcodes (see Preconditions) by dragging it on the file drag and drop area
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.checkForUploading(itemBarcodesFileName);

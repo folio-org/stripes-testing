@@ -30,6 +30,7 @@ describe('Inventory', () => {
         testData.instanceId = response[0].instance.id;
       });
 
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
@@ -63,7 +64,7 @@ describe('Inventory', () => {
 
     it(
       'C409518 (CONSORTIA) Verify the "View source" button on Member tenant local Instance page (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409518'] },
       () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);

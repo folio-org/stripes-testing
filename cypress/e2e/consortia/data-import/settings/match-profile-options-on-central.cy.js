@@ -53,7 +53,7 @@ describe('Inventory', () => {
 
     it(
       'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C421990'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

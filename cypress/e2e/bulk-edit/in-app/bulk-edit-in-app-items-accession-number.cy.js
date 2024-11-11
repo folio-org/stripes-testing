@@ -57,7 +57,7 @@ describe('bulk-edit', () => {
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C356809'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item accession number');
+        BulkEditSearchPane.selectRecordIdentifier('Item accession numbers');
 
         BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
         BulkEditSearchPane.waitFileUploading();

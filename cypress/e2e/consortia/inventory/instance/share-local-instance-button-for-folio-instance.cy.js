@@ -77,7 +77,7 @@ describe('Inventory', () => {
 
     it(
       'C411343 (CONSORTIA) Check the "Share local instance" button on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411343'] },
       () => {
         cy.login(testData.user1.username, testData.user1.password, {
           path: TopMenu.inventoryPath,
@@ -98,7 +98,7 @@ describe('Inventory', () => {
 
     it(
       'C411329 (CONSORTIA) Check the "Share local instance" button on a shared Source = FOLIO Instance on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411329'] },
       () => {
         cy.login(testData.user2.username, testData.user2.password, {
           path: TopMenu.inventoryPath,
@@ -118,7 +118,7 @@ describe('Inventory', () => {
 
     it(
       'C411345 (CONSORTIA) Check the "Share local instance" button without permission on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411345'] },
       () => {
         cy.login(testData.user3.username, testData.user3.password, {
           path: TopMenu.inventoryPath,
@@ -136,7 +136,7 @@ describe('Inventory', () => {
 
     it(
       'C411334 (CONSORTIA) Check the "Share local instance" button without permission on a local Source = FOLIO Instance on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411334'] },
       () => {
         cy.login(testData.user4.username, testData.user4.password, {
           path: TopMenu.inventoryPath,
