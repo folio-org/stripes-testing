@@ -1,6 +1,8 @@
 import { Permissions } from '../../../support/dictionary';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -51,7 +53,7 @@ describe('bulk-edit', () => {
       () => {
         // #1 * Select the "Inventory - items", "Item barcode"
         BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
         // #2 Upload a .csv file with valid Item barcodes
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
