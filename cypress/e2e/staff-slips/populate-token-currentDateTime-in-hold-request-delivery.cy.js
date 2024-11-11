@@ -84,7 +84,7 @@ describe('Staff slips', () => {
 
   it(
     'C388509 Populate the token "currentDateTime" in the hold, request delivery (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C388509'] },
     () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       CheckOutActions.checkOutUser(userData.barcode);

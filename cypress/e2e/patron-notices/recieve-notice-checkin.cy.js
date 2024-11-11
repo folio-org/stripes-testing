@@ -197,7 +197,7 @@ describe('Patron notices', () => {
 
     it(
       'C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft'] },
+      { tags: ['smoke', 'volaris', 'shiftLeft', 'C347623'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: settingsMenu.circulationPatronNoticePoliciesPath,

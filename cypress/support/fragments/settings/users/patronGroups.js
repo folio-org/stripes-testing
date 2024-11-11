@@ -2,17 +2,19 @@ import {
   Button,
   EditableListRow,
   including,
+  Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
   PaneHeader,
   Section,
   TextField,
-  Modal,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const rootSection = Section({ id: 'controlled-vocab-pane' });
+const rootList = MultiColumnList({ id: 'editList-patrongroups' });
 const newButton = rootSection.find(Button({ id: 'clickable-add-patrongroups' }));
 const saveButton = rootSection.find(Button({ id: including('clickable-save-patrongroups-') }));
 const cancelButton = rootSection.find(Button({ id: including('clickable-cancel-patrongroups-') }));
@@ -112,14 +114,18 @@ export default {
     cy.do(saveButton.click());
   },
   clickEditButtonForGroup(name) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-
     cy.do(
-      row
-        .find(actionsCell)
-        .find(Button({ icon: 'edit' }))
-        .click(),
+      rootList.find(MultiColumnListCell({ content: including(name) })).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(
+          rootList
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .find(Button({ icon: 'edit' }))
+            .click(),
+        );
+      }),
     );
   },
   clickTrashButtonForGroup(name) {
@@ -239,20 +245,36 @@ export default {
     userName,
     actions = [],
   }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-    cy.expect([
-      row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: description })).exists(),
-      row.find(MultiColumnListCell({ columnIndex: 2, content: expirationDateOffset })).exists(),
-      row
-        .find(MultiColumnListCell({ columnIndex: 3, content: including(`${date} by ${userName}`) }))
-        .exists(),
-    ]);
-    actions.forEach((action) => {
-      const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
-      cy.expect(buttonSelector.exists());
-    });
+    cy.do(
+      rootList.find(MultiColumnListCell({ content: including(name) })).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect([
+          rootList.find(MultiColumnListRow({ indexRow: rowNumber })).exists(),
+          rootList
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(MultiColumnListCell({ columnIndex: 1, content: description }))
+            .exists(),
+          rootList
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(MultiColumnListCell({ columnIndex: 2, content: expirationDateOffset }))
+            .exists(),
+          rootList
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(
+              MultiColumnListCell({ columnIndex: 3, content: including(`${date} by ${userName}`) }),
+            )
+            .exists(),
+        ]);
+        actions.forEach((action) => {
+          const buttonSelector = rootList
+            .find(MultiColumnListRow({ indexRow: rowNumber }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .find(Button({ icon: action }));
+          cy.expect(buttonSelector.exists());
+        });
+      }),
+    );
   },
   verifyEditedGroupInTheList(patronGroup) {
     cy.get(`input[value="${patronGroup.name}"]`).then(($input) => {
@@ -279,8 +301,7 @@ export default {
   },
 
   verifyGroupAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    cy.expect(row.absent());
+    cy.do(rootList.find(MultiColumnListCell({ content: including(name) })).absent());
   },
   verifyNewRowForGroupInTheList() {
     cy.expect([

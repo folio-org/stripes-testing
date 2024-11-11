@@ -20,7 +20,7 @@ describe('Users', () => {
 
     it(
       'C514930 Enable profile pictures functionality on environment (volaris)',
-      { tags: ['smoke', 'volaris'] },
+      { tags: ['smoke', 'volaris', 'C514930'] },
       () => {
         cy.getAdminToken();
         cy.getConfigurationsEntry().then((respBody) => {

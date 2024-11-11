@@ -71,11 +71,15 @@ describe('Reading Room Access', () => {
     SettingsReadingRoom.deleteReadingRoomViaApi(testData.thirdReadingRoomId);
   });
 
-  it('C466319 User can view reading room access (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-    SettingsReadingRoom.loadReadingRoomRecord();
-    SettingsReadingRoom.verifyColumns();
-    SettingsReadingRoom.verifyActionsButtonAbsent();
-    SettingsReadingRoom.verifyNewButtonAbsent();
-    SettingsReadingRoom.verifyPublicCheckboxIsDisabled(testData.firstReadingRoomName);
-  });
+  it(
+    'C466319 User can view reading room access (volaris)',
+    { tags: ['smoke', 'volaris', 'C466319'] },
+    () => {
+      SettingsReadingRoom.loadReadingRoomRecord();
+      SettingsReadingRoom.verifyColumns();
+      SettingsReadingRoom.verifyActionsButtonAbsent();
+      SettingsReadingRoom.verifyNewButtonAbsent();
+      SettingsReadingRoom.verifyPublicCheckboxIsDisabled(testData.firstReadingRoomName);
+    },
+  );
 });

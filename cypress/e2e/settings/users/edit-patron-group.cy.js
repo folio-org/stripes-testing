@@ -6,7 +6,6 @@ import SettingsUsers, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/users/settingsUsers';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -45,10 +44,7 @@ describe('Users', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password, {
-            path: SettingsMenu.usersPath,
-            waiter: () => cy.wait(1000),
-          });
+          cy.login(userProperties.username, userProperties.password);
         },
       );
     });
@@ -60,12 +56,11 @@ describe('Users', () => {
     });
 
     // https://folio-org.atlassian.net/browse/UIU-3189
-    it('C514937 Edit patron groups (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-      SettingsUsers.goToSettingsUsers();
+    it('C514937 Edit patron groups (volaris)', { tags: ['smoke', 'volaris', 'C514937'] }, () => {
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
+      UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       PatronGroups.verifyPatronGroupsPane(testData.isButtonDisabled);
       PatronGroups.clickEditButtonForGroup(testData.patronGroup.name);
       PatronGroups.verifyEditedGroupInTheList(testData.patronGroup);

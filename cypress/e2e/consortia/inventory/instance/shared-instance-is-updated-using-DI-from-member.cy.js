@@ -158,7 +158,7 @@ describe('Inventory', () => {
 
     it(
       'C411726 (CONSORTIA) Verify that shared Instance is updated using Data import from member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C411726'] },
       () => {
         // create Field mapping profile
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

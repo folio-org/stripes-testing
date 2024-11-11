@@ -136,7 +136,7 @@ describe('Circulation log', () => {
 
   it(
     'C358981 Verify that request source is correctly stored in the log (Volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C358981'] },
     () => {
       Requests.findCreatedRequest(instanceData.itemBarcode);
       Requests.selectFirstRequest(instanceData.itemBarcode);

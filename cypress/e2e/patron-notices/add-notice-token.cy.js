@@ -66,7 +66,7 @@ describe('Patron notices', () => {
 
     it(
       'C411712 C385655 Verify that token "feeCharge.additionalInfo" is selectable in Patron notice template settings (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C411712'] },
       () => {
         NewNoticePolicyTemplate.editTemplate(testData.feeFineTemplateBody.name);
         NewNoticePolicyTemplate.clearBody();
@@ -79,7 +79,7 @@ describe('Patron notices', () => {
 
     it(
       'C375248 Add "user.preferredFirstName" as staff slip token in Settings (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C375248'] },
       () => {
         NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
         NewNoticePolicyTemplate.clearBody();
@@ -92,7 +92,7 @@ describe('Patron notices', () => {
 
     it(
       'C387434 Add "Discovery display name" as notice token in Settings (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C387434'] },
       () => {
         NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
         NewNoticePolicyTemplate.clearBody();

@@ -78,7 +78,7 @@ describe('Title Level Request', () => {
 
   it(
     'C1285 Check that "Cannot change "Allow title level requests"" modal appears (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C1285'] },
     () => {
       cy.wait(1000);
       TitleLevelRequests.clickOnTLRCheckbox();

@@ -210,8 +210,10 @@ describe('Data Import', () => {
           );
 
           cy.getAdminToken().then(() => {
+            cy.wait(5000);
             cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
               (instance) => {
+                cy.wait(3000);
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -293,11 +295,13 @@ describe('Data Import', () => {
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
             cy.getAdminToken().then(() => {
+              cy.wait(5000);
               cy.getInstance({
                 limit: 1,
                 expandAll: true,
                 query: `"hrid"=="${instanceHrid}"`,
               }).then((instance) => {
+                cy.wait(3000);
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -356,8 +360,10 @@ describe('Data Import', () => {
           });
 
           cy.getAdminToken().then(() => {
+            cy.wait(5000);
             cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
               (instance) => {
+                cy.wait(3000);
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -419,11 +425,13 @@ describe('Data Import', () => {
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
             cy.getAdminToken().then(() => {
+              cy.wait(5000);
               cy.getInstance({
                 limit: 1,
                 expandAll: true,
                 query: `"hrid"=="${instanceHrid}"`,
               }).then((instance) => {
+                cy.wait(3000);
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
