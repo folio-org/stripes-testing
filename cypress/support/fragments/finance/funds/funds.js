@@ -72,6 +72,7 @@ const locationSection = Section({ id: 'locations' });
 const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
+const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
 
 export default {
   defaultUiFund: {
@@ -534,7 +535,12 @@ export default {
   },
   moveAllocation({ fromFund, toFund, amount }) {
     cy.do([actionsButton.click(), moveAllocationButton.click()]);
+    cy.wait(4000);
     this.fillAllocationFields({ toFund, fromFund, amount });
+  },
+
+  openMoveAllocationModal() {
+    cy.do([actionsButton.click(), moveAllocationButton.click()]);
   },
   closeTransferModal() {
     cy.do(addTransferModal.find(cancelButton).click());
@@ -553,6 +559,25 @@ export default {
         SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       ]);
     }
+    cy.do([
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
+  },
+  fillInAllAllocationFields(toFund, fromFund, amount) {
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+    ]);
+
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+    ]);
+    cy.wait(4000);
+
     cy.do([
       addTransferModal.find(amountTextField).fillIn(amount),
       addTransferModal.find(confirmButton).click(),
@@ -1196,5 +1221,17 @@ export default {
 
   openSource: (linkName) => {
     cy.do(transactionDetailSection.find(Link(linkName)).click());
+  },
+
+  clickOnFiscalYearTab: () => {
+    cy.do(fundsFiltersSection.find(Button('Fiscal year')).click());
+  },
+
+  clickOnGroupTab: () => {
+    cy.get('button[data-test-finance-navigation-group="true"]').click();
+  },
+
+  clickOnLedgerTab: () => {
+    cy.do(fundsFiltersSection.find(Button('Ledger')).click());
   },
 };
