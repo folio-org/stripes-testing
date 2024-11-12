@@ -99,7 +99,6 @@ describe('Finance: Groups', () => {
 
       Funds.openMoveAllocationModal();
       Funds.fillInAllAllocationFields(firstFund, secondFund, amount);
-      cy.pause();
       Funds.closeBudgetDetails();
       Funds.closeFundDetails();
       Funds.clickOnGroupTab();
