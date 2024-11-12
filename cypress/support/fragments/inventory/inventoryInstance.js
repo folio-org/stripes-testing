@@ -469,7 +469,6 @@ export default {
   viewSource: () => {
     cy.wait(2000);
     cy.do(actionsButton.click());
-    cy.wait(1000);
     cy.do(viewSourceButton.click());
     cy.wait(1000);
     InventoryViewSource.waitLoading();
@@ -1411,6 +1410,7 @@ export default {
 
   closeShareInstanceModal() {
     cy.do(shareInstanceModal.find(Button('Cancel')).click());
+    cy.wait(1500);
   },
 
   shareInstance() {

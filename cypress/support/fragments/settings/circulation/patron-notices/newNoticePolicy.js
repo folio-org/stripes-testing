@@ -200,20 +200,18 @@ export default {
     this.save();
     cy.expect(noticePolicyForm.absent());
   },
-  editPolicy(patronNoticePolicy) {
-    cy.do([
-      NavListItem(patronNoticePolicy.name).click(),
-      actionsButton.click(),
-      actionsButtons.edit.click(),
-    ]);
-    this.fillGeneralInformation(patronNoticePolicy);
+  editPolicy(patronNoticePolicy, newPatronNoticePolicy) {
+    cy.do(NavListItem(patronNoticePolicy.name).click());
+    cy.wait(500);
+    cy.do(actionsButton.click());
+    cy.wait(500);
+    cy.do(actionsButtons.edit.click());
+    this.fillGeneralInformation(newPatronNoticePolicy);
   },
   duplicatePolicy() {
-    cy.do([
-      actionsButton.click(),
-      Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
-      nameField.fillIn(`DUPLICATETest_notice_${getRandomPostfix()}`),
-    ]);
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-duplicate-item' }).click()]);
+    cy.wait(1000);
+    cy.do(nameField.fillIn(`DUPLICATETest_notice_${getRandomPostfix()}`));
     this.save();
   },
 

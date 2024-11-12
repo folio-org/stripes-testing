@@ -1,5 +1,7 @@
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
@@ -77,7 +79,7 @@ describe('bulk-edit', () => {
         { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380761'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+          BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
           BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();

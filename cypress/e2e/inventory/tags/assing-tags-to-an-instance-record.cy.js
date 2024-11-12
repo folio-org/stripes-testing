@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
     it(
       'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C358144'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();

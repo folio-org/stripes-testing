@@ -166,8 +166,7 @@ describe('Data Import', () => {
         Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
 
         // create match profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfileWithQualifier(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
@@ -200,8 +199,7 @@ describe('Data Import', () => {
         });
 
         // create mapping profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);

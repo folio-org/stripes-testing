@@ -38,7 +38,7 @@ describe('Inventory', () => {
 
     it(
       'C343215 Filter instances by tags (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['smoke', 'volaris', 'shiftLeft', 'C343215', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();

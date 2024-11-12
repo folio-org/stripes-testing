@@ -79,7 +79,7 @@ describe('Circulation log', () => {
 
   it(
     'C360553 Verify that user barcodes shown in request actions (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C360553'] },
     () => {
       // Create new request with item barcode anf requester barcode
       NewRequest.openNewRequestPane();

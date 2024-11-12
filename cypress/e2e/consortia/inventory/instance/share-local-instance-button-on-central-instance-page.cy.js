@@ -36,7 +36,7 @@ describe('Inventory', () => {
 
     it(
       'C409469 (CONSORTIA) Verify the "Share local instance" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409469'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();

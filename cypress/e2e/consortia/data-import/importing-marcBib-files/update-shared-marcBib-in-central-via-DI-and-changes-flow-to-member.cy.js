@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -14,7 +15,6 @@ import JobProfiles from '../../../../support/fragments/data_import/job_profiles/
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -26,13 +26,15 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -166,11 +168,12 @@ describe('Data Import', () => {
 
     it(
       'C405534 User can update shared "MARC Bib" in Central tenant via Data import and changes flow to member tenants (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C405534'] },
       () => {
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -183,7 +186,8 @@ describe('Data Import', () => {
           // download exported marc file
           cy.setTenant(Affiliations.Consortia).then(() => {
             // use cy.getToken function to get toket for current tenant
-            cy.visit(TopMenu.dataExportPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+            ExportFile.waitLandingPageOpened();
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               expectedRecordHrid,
               testData.marcFile.exportedFileName,
@@ -200,7 +204,7 @@ describe('Data Import', () => {
         );
 
         // upload the exported and edited marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();

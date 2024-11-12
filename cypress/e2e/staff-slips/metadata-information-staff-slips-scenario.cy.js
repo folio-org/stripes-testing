@@ -47,7 +47,7 @@ describe('Staff slips', () => {
 
   it(
     'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    { tags: ['smoke', 'volaris', 'C387437'] },
     () => {
       StaffSlips.chooseStaffClip(STAFF_SLIP_NAMES.HOLD);
       StaffSlip.checkLastUpdateInfo();

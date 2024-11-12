@@ -28,11 +28,7 @@ describe('MARC', () => {
         'nt2316353105*',
         'nb2006354903\\',
       ],
-      negativeSearchQueries: [
-        'bslw85033655',
-        'bslw85033881\\',
-        'nb2006354903',
-      ],
+      negativeSearchQueries: ['bslw85033655', 'bslw85033881\\', 'nb2006354903'],
       searchResults: ['Cowlitz people', 'Cree people'],
     };
     const createdAuthorityID = [];

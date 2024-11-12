@@ -82,7 +82,7 @@ describe('Inventory', () => {
 
     it(
       'C410923 (CONSORTIA) Duplicating local instance on Member tenant with Source FOLIO (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C410923'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceC410923.instanceId);
         InventoryInstances.selectInstance();
@@ -103,7 +103,7 @@ describe('Inventory', () => {
 
     it(
       'C410924 (CONSORTIA) Duplicating local instance on Member tenant with Source MARC (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C410924'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceC410924.id);
         InventoryInstances.selectInstance();

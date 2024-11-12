@@ -17,7 +17,7 @@ describe('Inventory', () => {
     let instanceHRID;
     const instanceData = {
       today: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
-      instanceStatusTerm: 'Cataloged (folio: cat)',
+      instanceStatusTerm: 'Cataloged (consortium: cat)',
       instanceStatusTermUI: 'Cataloged',
       instanceTitle: `C422050 instanceTitle${getRandomPostfix()}`,
       statisticalCode: 'ARL (Collection stats):    books - Book, print (books)',
@@ -94,7 +94,7 @@ describe('Inventory', () => {
 
     it(
       'C422050 (Consortia) Verify the instance data is not lost, when promoting Source = FOLIO instance (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C422050'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillInstanceFields({
@@ -130,7 +130,7 @@ describe('Inventory', () => {
           subject: instanceData.subject,
           classification: instanceData.classification,
         });
-
+        cy.wait(3000);
         InventoryNewInstance.clickSaveAndCloseButton();
         InventoryInstance.checkAllInstanceDetails(
           [

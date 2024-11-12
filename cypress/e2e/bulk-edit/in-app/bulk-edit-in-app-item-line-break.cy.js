@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -83,7 +85,10 @@ describe('bulk-edit', () => {
       'C399086 Verify Previews for the number of Items records if the record has a field with line breaks (firebird)',
       { tags: ['criticalPath', 'firebird', 'C399086'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
+          'Items',
+          ITEM_IDENTIFIERS.ITEM_BARCODES,
+        );
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
 

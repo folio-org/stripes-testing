@@ -1,4 +1,4 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
@@ -10,6 +10,7 @@ import SettingsDataImport, {
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -55,7 +56,7 @@ describe('Data Import', () => {
       'C2339 Edit an existing match profile (folijet)',
       { tags: ['criticalPath', 'folijet', 'C2339'] },
       () => {
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(matchProfile.profileName);

@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
@@ -6,6 +7,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 
@@ -52,7 +54,7 @@ describe('Inventory', () => {
 
     it(
       'C422077 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance search results pane on Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C422077'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventorySearchAndFilter.closeInstanceDetailPane();
@@ -60,8 +62,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySelectedRecords(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
         // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        cy.wait(1000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+        ExportFile.waitLandingPageOpened();
         ExportFile.getExportedFileNameViaApi().then((name) => {
           testData.fileName = name;
           ExportFile.downloadExportedMarcFile(name);
