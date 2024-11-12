@@ -11,6 +11,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
@@ -153,11 +154,11 @@ describe('Export Manager', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
           OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
-          cy.visit(TopMenu.exportManagerOrganizationsPath);
+          TopMenuNavigation.openAppFromDropdown('Export manager');
           ExportManagerSearchPane.selectOrganizationsSearch();
           ExportManagerSearchPane.searchByFailed();
           ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
