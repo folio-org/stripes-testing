@@ -264,6 +264,15 @@ export default {
     ]);
   },
 
+  addTransferFrom: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      MultiSelect({ label: 'Transfer from' }).select([fund]),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
   checkAddGroupToFund: (group) => {
     cy.expect(fundDetailsPane.exists());
     cy.expect(
