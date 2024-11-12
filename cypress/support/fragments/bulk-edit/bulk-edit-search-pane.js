@@ -57,15 +57,19 @@ export const holdingsIdentifiers = [
 ];
 
 export const itemIdentifiers = [
-  'Item barcode',
+  'Item barcodes',
   'Item UUIDs',
   'Item HRIDs',
-  'Item former identifier',
-  'Item accession number',
+  'Item former identifiers',
+  'Item accession numbers',
   'Holdings UUIDs',
 ];
 
 export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
+
+export const ITEM_IDENTIFIERS = {
+  ITEM_BARCODES: 'Item barcodes',
+};
 
 export default {
   waitLoading() {
@@ -215,7 +219,7 @@ export default {
       lowercase = identifier.charAt(0).toLowerCase() + identifier.slice(1);
     }
     cy.expect([
-      HTML(`Select a file with ${lowercase}`).exists(),
+      HTML(`Select a file with ${lowercase}.`).exists(),
       HTML(`Drag and drop or choose file with ${lowercase}.`).exists(),
     ]);
     this.isDragAndDropAreaDisabled(false);
@@ -226,8 +230,7 @@ export default {
     const lowercaseRecordType = recordType === 'Users' ? recordType : recordType.toLowerCase();
     cy.do(RadioButton(including(lowercaseRecordType)).click());
     this.selectRecordIdentifier(identifier);
-    const modifiedIdentifier = identifier === 'Item barcodes' ? 'item barcode' : identifier;
-    this.verifyAfterChoosingIdentifier(modifiedIdentifier);
+    this.verifyAfterChoosingIdentifier(identifier);
     cy.wait(1000);
   },
 
