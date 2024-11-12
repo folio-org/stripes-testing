@@ -94,7 +94,7 @@ describe('Circulation log', () => {
 
   it(
     'C350712 Check date and time --fee/fines (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C350712'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.setFilterOptionFromAccordion('fee', 'Billed');

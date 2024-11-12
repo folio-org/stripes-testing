@@ -141,7 +141,7 @@ describe('Circulation log', () => {
 
   it(
     'C17048 Check the Actions button from filtering Circulation log by Staff only information added (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'C17048'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
       SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');

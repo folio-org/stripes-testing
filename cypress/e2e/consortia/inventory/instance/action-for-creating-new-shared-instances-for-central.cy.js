@@ -43,7 +43,7 @@ describe('Inventory', () => {
 
     it(
       'C405564 (CONSORTIA) Verify the action for creating new shared instances for Central tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C405564'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);

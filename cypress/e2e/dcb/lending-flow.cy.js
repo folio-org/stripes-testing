@@ -112,58 +112,62 @@ describe('DCB', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
-  it('C422200 (DCB) Lending Flow (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
-    ItemRecordView.waitLoading();
-    ItemRecordView.openRequest();
-    Requests.waitLoading();
-    Requests.selectFirstRequest(testData.folioInstances[0].instanceTitle);
-    RequestDetail.checkItemInformation({
-      itemBarcode: ITEM_BARCODE,
-    });
-    RequestDetail.checkRequestInformation({
-      status: 'Open - Not yet filled',
-    });
-    RequestDetail.checkRequesterInformation({
-      lastName: 'DcbSystem',
-      barcode: dcbPatron.barcode,
-      pickupSP: testData.servicePoint.name,
-    });
+  it(
+    'C422200 (DCB) Lending Flow (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C422200'] },
+    () => {
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
+      ItemRecordView.waitLoading();
+      ItemRecordView.openRequest();
+      Requests.waitLoading();
+      Requests.selectFirstRequest(testData.folioInstances[0].instanceTitle);
+      RequestDetail.checkItemInformation({
+        itemBarcode: ITEM_BARCODE,
+      });
+      RequestDetail.checkRequestInformation({
+        status: 'Open - Not yet filled',
+      });
+      RequestDetail.checkRequesterInformation({
+        lastName: 'DcbSystem',
+        barcode: dcbPatron.barcode,
+        pickupSP: testData.servicePoint.name,
+      });
 
-    cy.visit(TopMenu.usersPath);
-    UsersSearchPane.waitLoading();
-    UsersSearchPane.searchByKeywords(dcbPatron.barcode);
-    Users.verifyUserTypeOnUserDetailsPane('dcb');
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByKeywords(dcbPatron.barcode);
+      Users.verifyUserTypeOnUserDetailsPane('dcb');
 
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.checkInItemGui(ITEM_BARCODE);
-    InTransit.verifyModalTitle();
-    InTransit.unselectCheckboxPrintSlip();
-    InTransit.closeModal();
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      CheckInActions.checkInItemGui(ITEM_BARCODE);
+      InTransit.verifyModalTitle();
+      InTransit.unselectCheckboxPrintSlip();
+      InTransit.closeModal();
 
-    cy.getAdminToken();
-    Dcb.updateTransactionViaApi(dcbTransactionId, {
-      status: 'AWAITING_PICKUP',
-    }).then((response) => {
-      expect(response.status).equals('AWAITING_PICKUP');
-    });
+      cy.getAdminToken();
+      Dcb.updateTransactionViaApi(dcbTransactionId, {
+        status: 'AWAITING_PICKUP',
+      }).then((response) => {
+        expect(response.status).equals('AWAITING_PICKUP');
+      });
 
-    Dcb.updateTransactionViaApi(dcbTransactionId, {
-      status: 'ITEM_CHECKED_OUT',
-    }).then((response) => {
-      expect(response.status).equals('ITEM_CHECKED_OUT');
-    });
+      Dcb.updateTransactionViaApi(dcbTransactionId, {
+        status: 'ITEM_CHECKED_OUT',
+      }).then((response) => {
+        expect(response.status).equals('ITEM_CHECKED_OUT');
+      });
 
-    Dcb.updateTransactionViaApi(dcbTransactionId, {
-      status: 'ITEM_CHECKED_IN',
-    }).then((response) => {
-      expect(response.status).equals('ITEM_CHECKED_IN');
-    });
+      Dcb.updateTransactionViaApi(dcbTransactionId, {
+        status: 'ITEM_CHECKED_IN',
+      }).then((response) => {
+        expect(response.status).equals('ITEM_CHECKED_IN');
+      });
 
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.checkInItemGui(ITEM_BARCODE);
-  });
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      CheckInActions.checkInItemGui(ITEM_BARCODE);
+    },
+  );
 });

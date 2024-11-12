@@ -46,7 +46,7 @@ describe('Users', () => {
 
   it(
     'C11096 Add Preferred first name and confirm its display in the User record View and Edit screens (volaris)',
-    { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
+    { tags: ['extendedPath', 'volaris', 'C11096', 'eurekaPhase1'] },
     () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByUsername(userData.username);

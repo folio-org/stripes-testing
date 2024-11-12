@@ -187,7 +187,7 @@ describe('Patron notices', () => {
 
     it(
       'C347866 Page request + Cancel request triggers (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C347866'] },
       () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
