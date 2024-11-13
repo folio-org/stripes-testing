@@ -67,7 +67,7 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId, fromKeycloak = true) => cy
+  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => cy
     .okapiRequest({
       method: 'DELETE',
       path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
