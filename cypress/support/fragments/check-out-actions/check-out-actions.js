@@ -101,11 +101,11 @@ export default {
 
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
-    //cy.intercept('/circulation/loans?*').as('getLoans');
+    // cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Button({ id: 'clickable-find-patron' }).click());
     this.waitForPatronSpinnerToDisappear();
     cy.expect(KeyValue('Borrower').exists());
-    //cy.wait('@getLoans');
+    // cy.wait('@getLoans');
     // need to wait until data to loaded
     cy.wait(1500);
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
@@ -204,19 +204,19 @@ export default {
 
   checkOutItemWithUserName(userName, itemBarcode) {
     addPatron(userName);
-    //cy.intercept('/circulation/loans?*').as('getLoans');
+    // cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Button({ id: 'clickable-find-patron' }).click());
     this.waitForPatronSpinnerToDisappear();
     cy.expect(KeyValue('Borrower').exists());
-    //cy.wait('@getLoans');
-    //cy.intercept('/circulation/requests?*').as('getRequests');
+    // cy.wait('@getLoans');
+    // cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
-    //cy.wait('@getRequests');
+    // cy.wait('@getRequests');
     cy.wait(2000);
     cy.do(Button({ id: 'clickable-add-item' }).click());
     this.waitForItemSpinnerToDisappear();
     // waiters needs for check out item in loop
-    //cy.wait(1000);
+    // cy.wait(1000);
   },
 
   closeForDeliveryRequestModal: () => {
