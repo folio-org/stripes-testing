@@ -5,6 +5,7 @@ const confirmModal = Modal('Delete data import logs?');
 
 export default {
   confirmDelete: (quantity) => {
+    cy.wait(2000);
     cy.expect(confirmModal.find(HTML(including('Data import logs selected'))).exists());
     cy.expect(confirmModal.find(HTML(including(`${quantity}`))).exists());
     cy.expect(
