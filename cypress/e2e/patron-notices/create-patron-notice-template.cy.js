@@ -15,19 +15,23 @@ describe('Patron notices', () => {
       });
     });
 
-    it('C199656 Create notice template (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-      NewNoticePolicyTemplate.startAdding();
-      NewNoticePolicyTemplate.checkInitialState();
-      NewNoticePolicyTemplate.addToken('item.title');
-      NewNoticePolicyTemplate.create(patronNoticeTemplate);
-      NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
-      NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
-      NewNoticePolicyTemplate.delete();
-    });
+    it(
+      'C199656 Create notice template (volaris)',
+      { tags: ['smoke', 'volaris', 'C199656'] },
+      () => {
+        NewNoticePolicyTemplate.startAdding();
+        NewNoticePolicyTemplate.checkInitialState();
+        NewNoticePolicyTemplate.addToken('item.title');
+        NewNoticePolicyTemplate.create(patronNoticeTemplate);
+        NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
+        NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
+        NewNoticePolicyTemplate.delete();
+      },
+    );
 
     it(
       'C356783, C357005 Notice template validations (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C356783'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();

@@ -156,7 +156,7 @@ describe('Circulation log', () => {
 
   it(
     'C17093 Check the Actions button from filtering Circulation log by (notices) send (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'C17093'] },
     () => {
       const goToCircLogApp = (filterName) => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);

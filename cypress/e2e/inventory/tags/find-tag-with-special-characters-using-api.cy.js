@@ -101,7 +101,7 @@ describe('Inventory', () => {
 
     it(
       'C380422 Find Tag with special characters using API (volaris)',
-      { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'volaris', 'C380422', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
         InventorySearchAndFilter.verifySearchResult(instanceData.title);

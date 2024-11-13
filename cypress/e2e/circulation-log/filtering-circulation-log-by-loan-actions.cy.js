@@ -1,6 +1,11 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { APPLICATION_NAMES, FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -235,7 +240,7 @@ describe('Circulation log', () => {
     });
     it(
       'C16995 Check the Actions button from filtering Circulation log by Checked out through override (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C16995'] },
       () => {
         checkActionsButton('Checked out through override');
       },
@@ -243,7 +248,7 @@ describe('Circulation log', () => {
 
     it(
       'C16982 Filter Circulation log by Checked out through override (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C16982'] },
       () => {
         filterByAction({
           circAction: 'Checked out through override',
@@ -254,7 +259,7 @@ describe('Circulation log', () => {
 
     it(
       'C45935 Check the Actions button from filtering Circulation log by renewed through override (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C45935'] },
       () => {
         UserLoans.renewItemViaApi({
           id: uuid(),
@@ -310,7 +315,7 @@ describe('Circulation log', () => {
 
     it(
       'C17006 Check the Actions button from filtering Circulation log by renewed (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C17006'] },
       () => {
         UserLoans.renewItemViaApi({
           id: uuid(),
@@ -323,7 +328,7 @@ describe('Circulation log', () => {
 
     it(
       'C17007 Filter circulation log by aged to lost (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C17007'] },
       () => {
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           const loanData = userLoans.loans[0];
@@ -359,7 +364,7 @@ describe('Circulation log', () => {
 
     it(
       'C17004 Check the Actions button from filtering Circulation log by recall requested (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C17004'] },
       () => {
         Requests.createNewRequestViaApi({
           fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
@@ -382,7 +387,7 @@ describe('Circulation log', () => {
 
     it(
       'C17003 Filter circulation log by recall requested (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C17003'] },
       () => {
         filterByAction({
           circAction: 'Recall requested',

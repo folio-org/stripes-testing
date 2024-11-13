@@ -35,7 +35,7 @@ describe('Inventory', () => {
 
     it(
       'C411345 (CONSORTIA) Check the "Share local instance" button without permission on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411345'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstance.waitLoading();

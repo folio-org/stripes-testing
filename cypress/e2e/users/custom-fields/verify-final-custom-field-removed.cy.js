@@ -44,7 +44,7 @@ describe('Users', () => {
 
     it(
       'C418594 Verify that final custom field can be removed (volaris) (TaaS)',
-      { tags: ['extendedPath', 'volaris', 'eurekaPhase1'] },
+      { tags: ['extendedPath', 'volaris', 'C418594', 'eurekaPhase1'] },
       () => {
         cy.visit(TopMenu.customFieldsPath);
         CustomFields.addCustomTextField(fieldData);

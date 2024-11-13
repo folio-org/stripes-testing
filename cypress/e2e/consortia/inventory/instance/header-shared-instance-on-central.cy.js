@@ -36,7 +36,7 @@ describe('Inventory', () => {
 
     it(
       'C404385 (CONSORTIA) Verify the header of a shared Instance on the Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C404385'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();

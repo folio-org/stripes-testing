@@ -75,33 +75,44 @@ describe('Inventory', () => {
       );
     });
 
-    it('C343216 Filter Holdings by Tags (volaris)', { tags: ['extendedPath', 'volaris'] }, () => {
-      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
-      InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
-      InventoryInstance.openHoldingView();
-      HoldingsRecordEdit.openTags();
-      HoldingsRecordEdit.addTag(tagName);
+    it(
+      'C343216 Filter Holdings by Tags (volaris)',
+      { tags: ['extendedPath', 'volaris', 'C343216'] },
+      () => {
+        const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
+        InventoryInstance.openHoldingView();
+        HoldingsRecordEdit.openTags();
+        HoldingsRecordEdit.addTag(tagName);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
-      InventorySearchAndFilter.resetAll();
-      InventorySearchAndFilter.filterByTag(tagName);
-      InventorySearchAndFilter.checkRowsCount(1);
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
+        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.checkRowsCount(1);
+      },
+    );
 
-    it('C343217 Filter Items by Tags (volaris)', { tags: ['extendedPath', 'volaris'] }, () => {
-      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', testData.folioInstances[0].barcodes[0]);
-      HoldingsRecordEdit.openTags();
-      HoldingsRecordEdit.addTag(tagName);
+    it(
+      'C343217 Filter Items by Tags (volaris)',
+      { tags: ['extendedPath', 'volaris', 'C343217'] },
+      () => {
+        const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter(
+          'Barcode',
+          testData.folioInstances[0].barcodes[0],
+        );
+        HoldingsRecordEdit.openTags();
+        HoldingsRecordEdit.addTag(tagName);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.filterByTag(tagName);
-      InventorySearchAndFilter.checkRowsCount(1);
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.checkRowsCount(1);
+      },
+    );
   });
 });

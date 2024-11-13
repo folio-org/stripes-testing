@@ -53,7 +53,7 @@ describe('Users', () => {
 
     it(
       'C442797 Verify that profile picture can be updated via URL (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C442797'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
