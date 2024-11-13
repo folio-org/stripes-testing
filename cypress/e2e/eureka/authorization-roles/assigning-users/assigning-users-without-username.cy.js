@@ -90,9 +90,6 @@ describe('Eureka', () => {
             Users.deleteViaApi(id);
           });
           Users.deleteViaApi(testData.tempUser.userId);
-          userIds.forEach((id) => {
-            cy.deleteUserWithoutKeycloakInEurekaApi(id);
-          });
         });
 
         it(

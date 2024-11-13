@@ -40,7 +40,7 @@ describe('Eureka', () => {
       'C436914 User-related entities are deleted when user is deleted (eureka)',
       { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C436914'] },
       () => {
-        Users.deleteViaApi(testData.user.userId, true).then((status) => {
+        Users.deleteViaApi(testData.user.userId).then((status) => {
           cy.expect(status).equals(204);
           cy.getAuthorizationPoliciesForEntityApi(
             AUTHORIZATION_POLICY_TYPES.USER,

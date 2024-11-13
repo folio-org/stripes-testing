@@ -49,9 +49,6 @@ describe('Eureka', () => {
       userIds.forEach((id) => {
         Users.deleteViaApi(id);
       });
-      userIds.forEach((id) => {
-        cy.deleteUserWithoutKeycloakInEurekaApi(id);
-      });
     });
 
     it(
