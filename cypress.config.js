@@ -33,7 +33,7 @@ module.exports = defineConfig({
   downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://kong-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
-    EDGE_HOST: 'https://edge-eureka-bugfest-ramsons.int.aws.folio.org',
+    EDGE_HOST: 'https://edge-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
     EDGE_API_KEY: '',
     OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio-aqa',
