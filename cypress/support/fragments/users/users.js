@@ -67,7 +67,7 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId, fromKeycloak = false) => cy
+  deleteViaApi: (userId, fromKeycloak = true) => cy
     .okapiRequest({
       method: 'DELETE',
       path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,

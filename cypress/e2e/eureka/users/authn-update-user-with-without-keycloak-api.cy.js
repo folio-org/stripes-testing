@@ -49,7 +49,6 @@ describe('Eureka', () => {
       cy.getAdminToken();
       userIds.forEach((id) => {
         Users.deleteViaApi(id);
-        Users.deleteViaApi(id, true);
       });
     });
 
