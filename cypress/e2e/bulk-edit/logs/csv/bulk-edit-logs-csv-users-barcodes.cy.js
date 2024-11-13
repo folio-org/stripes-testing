@@ -107,11 +107,20 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+
+          BulkEditFiles.verifyValueInRowByUUID(
             `*${matchedRecordsFileName}`,
-            [user.barcode, userWithoutPermissions.barcode],
-            'userBarcode',
-            true,
+            'Barcode',
+            user.barcode,
+            'Barcode',
+            user.barcode,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            `*${matchedRecordsFileName}`,
+            'Barcode',
+            userWithoutPermissions.barcode,
+            'Barcode',
+            userWithoutPermissions.barcode,
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
@@ -123,19 +132,27 @@ describe('bulk-edit', () => {
           );
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             previewOfProposedChangesFileName.first,
-            [newFirstName, userWithoutPermissions.firstName],
-            'firstName',
-            true,
+            'Barcode',
+            user.barcode,
+            'First name',
+            newFirstName,
           );
-
+          BulkEditFiles.verifyValueInRowByUUID(
+            previewOfProposedChangesFileName.first,
+            'Barcode',
+            userWithoutPermissions.barcode,
+            'First name',
+            userWithoutPermissions.firstName,
+          );
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             updatedRecordsFileName,
-            [newFirstName, userWithoutPermissions.firstName],
-            'firstName',
-            true,
+            'Barcode',
+            user.barcode,
+            'First name',
+            newFirstName,
           );
 
           BulkEditLogs.downloadFileWithCommitErrors();
