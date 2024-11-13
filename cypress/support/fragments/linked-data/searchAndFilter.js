@@ -54,4 +54,8 @@ export default {
         cy.get('td').eq(5).should('contain', data.publicationDate);
       });
   },
+
+  checkSearchResultsByWorkTitle(title) {
+    cy.xpath(`//button[text()="${title}"]`).should('be.visible');
+  },
 };
