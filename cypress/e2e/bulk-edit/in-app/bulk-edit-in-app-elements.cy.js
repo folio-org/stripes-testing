@@ -122,23 +122,23 @@ describe('bulk-edit', () => {
         [
           {
             identifier: 'Item barcodes',
-            label: 'Select a file with item barcodes',
+            label: 'Select a file with item barcodes.',
           },
           {
             identifier: 'Item UUIDs',
-            label: 'Select a file with item UUIDs',
+            label: 'Select a file with item UUIDs.',
           },
           {
             identifier: 'Item former identifiers',
-            label: 'Select a file with item former identifiers',
+            label: 'Select a file with item former identifiers.',
           },
           {
             identifier: 'Item accession numbers',
-            label: 'Select a file with item accession numbers',
+            label: 'Select a file with item accession numbers.',
           },
           {
             identifier: 'Holdings UUIDs',
-            label: 'Select a file with holdings UUIDs',
+            label: 'Select a file with holdings UUIDs.',
           },
         ].forEach((checker) => {
           BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
