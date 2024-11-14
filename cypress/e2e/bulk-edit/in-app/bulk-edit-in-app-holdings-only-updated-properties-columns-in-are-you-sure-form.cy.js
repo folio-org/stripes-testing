@@ -206,7 +206,9 @@ describe('bulk-edit', () => {
         arrayOfOptions.forEach((option) => {
           BulkEditActions.deleteRowBySelectedOption(option);
           BulkEditActions.verifyRowWithOptionAbsent(option);
+          cy.wait(500);
         });
+        cy.wait(500);
 
         BulkEditActions.verifyRowWithOptionExists('Permanent holdings location');
         BulkEditActions.confirmChanges();
