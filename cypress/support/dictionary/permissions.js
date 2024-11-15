@@ -323,7 +323,7 @@ export default {
     gui: 'Settings (Users): Can create, edit and remove owners',
   },
   uiUsersEdituserservicepoints: {
-    internal: 'ui-users.edituserservicepoints',
+    internal: 'ui-users.user-service-points.edit',
     gui: 'Users: Can assign and unassign service points to users',
   },
   // Locations
@@ -396,7 +396,7 @@ export default {
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissionsView: {
-    internal: 'ui-users.viewperms',
+    internal: 'ui-users.perms.view',
     gui: 'Users: Can view permissions assigned to users',
   },
   uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create and edit users' },
@@ -410,28 +410,28 @@ export default {
     gui: 'Users: Create/reset password',
   },
   uiUsersCheckTransactions: {
-    internal: 'ui-users.opentransactions',
+    internal: 'ui-users.open-transactions.view',
     gui: 'Users: Can check open transactions',
   },
   uiUserAccounts: {
-    internal: 'ui-users.accounts',
+    internal: 'ui-users.accounts.all',
     gui: 'Fee/Fine History: Can create, edit and remove accounts',
   },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUserLoansAnonymize: {
-    internal: 'ui-users.loans.anonymize',
+    internal: 'ui-users.loans-anonymize.execute',
     gui: 'Users: User loans anonymize',
   },
   uiUserLostItemRequiringActualCost: {
-    internal: 'ui-users.lost-items.requiring-actual-cost',
+    internal: 'ui-users.lost-items-requiring-actual-cost.execute',
     gui: 'Users: Can process lost items requiring actual cost',
   },
   uiFeeFinesActions: {
-    internal: 'ui-users.feefineactions',
+    internal: 'ui-users.fee-fine-actions.all',
     gui: 'Fee/Fine Details: Can create, edit and remove fee/fine actions',
   },
   uiFeeFinesCanWaive: {
-    internal: 'ui-users.manual_waive',
+    internal: 'ui-users.manual-waive.execute',
     gui: 'Fees/Fines: Can waive',
   },
   uiFeeFines: {
@@ -439,15 +439,15 @@ export default {
     gui: 'Users: Can create, edit and remove fees/fines',
   },
   uiUsersLoansClaimReturned: {
-    internal: 'ui-users.loans.claim-item-returned',
+    internal: 'ui-users.loans-claim-item-returned.execute',
     gui: 'Users: User loans claim returned',
   },
   uiUsersLoansClaimReturnedMissing: {
-    internal: 'ui-users.loans.declare-claimed-returned-item-as-missing',
+    internal: 'ui-users.loans-declare-claimed-returned-item-as-missing.execute',
     gui: 'Users: User loans mark claimed returned missing',
   },
   uiUsersDeclareItemLost: {
-    internal: 'ui-users.loans.declare-item-lost',
+    internal: 'ui-users.loans-declare-item-lost.execute',
     gui: 'Users: User loans declare lost',
   },
   usersLoansRenewThroughOverride: {
@@ -455,17 +455,20 @@ export default {
     gui: 'Users: User loans renew through override',
   },
   uiUserCanAssignUnassignPermissions: {
-    internal: 'ui-users.editperms',
+    internal: 'ui-users.perms.edit',
     gui: 'Users: Can assign and unassign permissions to users',
   },
   uiUsersfeefinesView: {
     internal: 'ui-users.feesfines.view',
     gui: 'Users: Can view fees/fines and loans',
   },
-  uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
-  uiUsersManualPay: { internal: 'ui-users.manual_pay', gui: 'Fees/Fines: Can pay' },
+  uiUsersManualCharge: {
+    internal: 'ui-users.manual-charge.execute',
+    gui: 'Fees/Fines: Can charge',
+  },
+  uiUsersManualPay: { internal: 'ui-users.manual-pay.execute', gui: 'Fees/Fines: Can pay' },
   uiUsersViewServicePoints: {
-    internal: 'ui-users.viewuserservicepoints',
+    internal: 'ui-users.user-service-points.view',
     gui: 'Users: Can view service points assigned to users',
   },
   uiUsersfeefinesCRUD: {
@@ -473,7 +476,7 @@ export default {
     gui: 'Users: Can create, edit and remove fees/fines',
   },
   uiUsersPatronBlocks: {
-    internal: 'ui-users.patron_blocks',
+    internal: 'ui-users.patron-blocks.all',
     gui: 'Users: Can create, edit and remove patron blocks',
   },
   uiUsersCreatePatronTamplate: {
@@ -513,11 +516,11 @@ export default {
     gui: 'Settings (Users): View all settings',
   },
   uiUserLoansChangeDueDate: {
-    internal: 'ui-users.loans.change-due-date',
+    internal: 'ui-users.loans-due-date.edit',
     gui: 'Users: User loans change due date',
   },
   uiUserFinancialTransactionReport: {
-    internal: 'ui-users.financialTransactionReport',
+    internal: 'ui-users.financial-transaction-report.execute',
     gui: 'Users: Create and download Financial transaction detail report',
   },
   uiUserViewEditDeliteProfilePictores: {
@@ -603,13 +606,13 @@ export default {
     gui: 'Users: User loans view, change due date, renew',
   },
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
-  loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
+  loansRenew: { internal: 'ui-users.loans-renew.create', gui: 'Users: User loans renew' },
   loansRenewOverride: {
-    internal: 'ui-users.loans.renew-override',
+    internal: 'ui-users.loans-renew-override.create',
     gui: 'Users: User loans renew through override',
   },
   overridePatronBlock: {
-    internal: 'ui-users.overridePatronBlock',
+    internal: 'ui-users.override-patron-block.execute',
     gui: 'User: Can override patron blocks',
   },
   // Checkout
