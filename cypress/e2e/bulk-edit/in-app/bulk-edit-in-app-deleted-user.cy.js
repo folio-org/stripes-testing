@@ -46,7 +46,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      Users.deleteViaApi(user1.userId);
+      Users.deleteViaApi(user2.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
     });
 
@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        Users.deleteViaApi(user2.userId);
+        Users.deleteViaApi(user1.userId);
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
