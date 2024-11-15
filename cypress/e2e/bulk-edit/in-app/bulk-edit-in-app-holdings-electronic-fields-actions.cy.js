@@ -123,7 +123,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.selectOption('URL public note');
         let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
-        BulkEditActions.verifyPossibleActionsForSpecificSelect(0, 0, possibleActions);
+        BulkEditActions.verifyTheActionOptions(possibleActions);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.fillInSecondTextArea(newElectronicAccessFields.publicNote);
         BulkEditActions.addNewBulkEditFilterString();
@@ -134,7 +134,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction('Find (full field search)', 2);
         BulkEditActions.fillInFirstTextArea(firstElectronicAccess.linkText, 2);
         possibleActions = ['Remove', 'Replace with'];
-        BulkEditActions.verifyPossibleActionsForSpecificSelect(2, 1, possibleActions);
+        BulkEditActions.verifyTheSecondActionOptions(possibleActions, 2);
         BulkEditActions.selectSecondAction('Remove', 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Materials specified', 3);
