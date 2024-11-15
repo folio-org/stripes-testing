@@ -7,7 +7,7 @@ import SoftwareVersions, {
 
 describe('Eureka', () => {
   describe('Login', () => {
-    const modulesExpectedToBeMissing = ['inn-reach'];
+    const modulesExpectedToBeMissing = ['ldp-query 1.2'];
     const appIds = [];
     const moduleIds = [];
     const uiModuleIds = [];

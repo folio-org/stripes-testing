@@ -31,6 +31,7 @@ describe('Eureka', () => {
       { type: 'Data', resource: 'UI-Users', action: 'View' },
       { type: 'Data', resource: 'UI-Users', action: 'Edit' },
       { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
+      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
     ];
 
     before('Create users, roles', () => {

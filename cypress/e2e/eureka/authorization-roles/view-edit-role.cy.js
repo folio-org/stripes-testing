@@ -109,9 +109,9 @@ describe('Eureka', () => {
         ],
         newCapabilitySet: {
           application: 'app-platform-full',
-          table: 'Procedural',
-          resource: 'UI-Users Loans Renew',
-          action: 'Execute',
+          table: 'Data',
+          resource: 'UI-Users Loans-Renew',
+          action: 'Create',
         },
         newCapabilitiesInSet: [
           {
@@ -128,9 +128,9 @@ describe('Eureka', () => {
           },
           {
             application: 'app-platform-full',
-            table: 'Procedural',
-            resource: 'UI-Users Loans Renew',
-            action: 'Execute',
+            table: 'Data',
+            resource: 'UI-Users Loans-Renew',
+            action: 'Create',
           },
         ],
         newCapabilities: [
@@ -144,15 +144,15 @@ describe('Eureka', () => {
         expectedRowCounts: {
           capabilitySets: {
             Settings: 1,
-            Procedural: 1,
+            Data: 1,
           },
           capabilities: {
             Settings: 3,
-            Procedural: 2,
-            Data: 4,
+            Procedural: 1,
+            Data: 5,
           },
         },
-        absentCapabilitySetTables: ['Data'],
+        absentCapabilitySetTables: ['Procedural'],
         capabSetIds: [],
         capabIds: [],
       };
