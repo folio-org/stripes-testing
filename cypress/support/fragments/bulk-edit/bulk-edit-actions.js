@@ -1168,21 +1168,6 @@ export default {
     });
   },
 
-  verifyPossibleActionsForSpecificSelect(row, selectIndex, actions) {
-    cy.get(`[data-testid="row-${row}"]`)
-      .find('> * > *')
-      .filter((index, element) => [...element.classList].some((className) => className.startsWith('select')))
-      .eq(selectIndex)
-      .find('> * > *')
-      .filter((index, element) => [...element.classList].some((className) => className.startsWith('selectControl')))
-      .find('option:not([disabled])')
-      .then((options) => {
-        const optionTexts = [...options].map((option) => option.text);
-
-        expect(optionTexts).to.deep.equal(actions);
-      });
-  },
-
   verifyHoldingsOptions() {
     this.clickOptionsSelection();
     cy.expect([
