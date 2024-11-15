@@ -39,6 +39,7 @@ describe('Eureka', () => {
     const capabsForTestUser = [
       { type: 'Data', resource: 'UI-Users', action: 'View' },
       { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
     ];
 
     before('Create users, roles', () => {
