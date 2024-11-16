@@ -35,7 +35,7 @@ module.exports = defineConfig({
     OKAPI_HOST: 'https://kong-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
     EDGE_HOST: 'https://edge-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
     EDGE_API_KEY: '',
-    OKAPI_TENANT: 'fs09000003',
+    OKAPI_TENANT: 'fs09000002',
     diku_login: 'folio-aqa',
     diku_password: 'Folio-aqa1',
     z3950_login: 'z3950Admin',
