@@ -62,7 +62,7 @@ async function checkCypressPermissionNames() {
     path.join(__dirname, '../../cypress/support/dictionary/permissions.js'),
     path.join(__dirname, '/permissions.mjs'),
   );
-  // eslint-disable-next-line import/no-unresolved
+  // eslint-disable-next-line import/no-unresolved, import/extensions
   const importedPermissions = await import('./permissions.mjs');
   const cypressPermissions = importedPermissions.default;
   Object.values(cypressPermissions).forEach((cypressPermission) => {
