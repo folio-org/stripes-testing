@@ -36,7 +36,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     let user;
-    const orderNumbers = [];
     const filePathForCreateOrder = 'marcFileForC376975.mrc';
     const firstMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
     const secondMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
@@ -135,13 +134,6 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.wrap(orderNumbers).each((number) => {
-          cy.wait(2000);
-          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-            cy.wait(2000);
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
-        });
       });
     });
 
@@ -178,22 +170,22 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          cy.wait(1000);
           const orderNumber = initialNumber.replace('-1', '');
 
-          orderNumbers.push(orderNumber);
-        });
-        OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
+          OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        Logs.openFileDetails(firstMarcFileName);
-        // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
-        OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          const orderNumber = initialNumber.replace('-1', '');
-
-          orderNumbers.push(orderNumber);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
+          Logs.openFileDetails(firstMarcFileName);
+          // check Fund and Expense class populated in the second POL
+          FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
+          OrderLines.waitLoading();
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              Orders.deleteOrderViaApi(orderId[0].id);
+            },
+          );
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
@@ -228,9 +220,14 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          cy.wait(1000);
           const orderNumber = initialNumber.replace('-1', '');
 
-          orderNumbers.push(orderNumber);
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              Orders.deleteOrderViaApi(orderId[0].id);
+            },
+          );
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
@@ -264,22 +261,23 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          cy.wait(1000);
           const orderNumber = initialNumber.replace('-1', '');
 
-          orderNumbers.push(orderNumber);
-        });
-        OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
+          OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        Logs.openFileDetails(thirdMarcFileName);
-        // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
-        OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          const orderNumber = initialNumber.replace('-1', '');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
+          Logs.openFileDetails(thirdMarcFileName);
+          // check Fund and Expense class populated in the second POL
+          FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
+          OrderLines.waitLoading();
 
-          orderNumbers.push(orderNumber);
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              Orders.deleteOrderViaApi(orderId[0].id);
+            },
+          );
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
@@ -313,22 +311,23 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          cy.wait(1000);
           const orderNumber = initialNumber.replace('-1', '');
 
-          orderNumbers.push(orderNumber);
-        });
-        OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
+          OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        Logs.openFileDetails(forthMarcFileName);
-        // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
-        OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          const orderNumber = initialNumber.replace('-1', '');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          FileDetails.close();
+          Logs.openFileDetails(forthMarcFileName);
+          // check Fund and Expense class populated in the second POL
+          FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
+          OrderLines.waitLoading();
 
-          orderNumbers.push(orderNumber);
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+            (orderId) => {
+              Orders.deleteOrderViaApi(orderId[0].id);
+            },
+          );
         });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
       },

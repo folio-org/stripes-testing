@@ -409,6 +409,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
       );
 
       getCreatedRecordInfo(jobExecutionId).then((recordResponse) => {
+        cy.wait(2000);
         // we can get relatedInstanceInfo and in it get idList or hridList
         const recordInfo = recordResponse.body.entries.map((entry) => ({
           instance: {
