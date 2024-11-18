@@ -16,16 +16,17 @@ const changedPermissionNames = [];
 
 async function getToken() {
   axios.defaults.baseURL = envData.apiBaseUrl;
-  axios.defaults.withCredentials = true;
   axios.defaults.headers.common['x-okapi-tenant'] = envData.tenant;
-  await axios({
+  const response = await axios({
     method: 'post',
-    url: '/authn/login',
+    url: '/authn/login-with-expiry',
     data: {
       username: envData.username,
       password: envData.password,
     },
   });
+  const setCookieHeader = response.headers['set-cookie'];
+  axios.defaults.headers.common.Cookie = setCookieHeader;
 }
 
 async function getApplicationsPermissions() {
@@ -83,29 +84,32 @@ async function checkCypressPermissionNames() {
       });
     }
   });
+  if (!changedPermissionNames.length) console.log('No updates required.');
 }
 
 async function updateCypressPermissionsFile() {
-  await fs.copyFile(
-    path.join(__dirname, '/permissions.mjs'),
-    path.join(
-      __dirname,
-      `/permissions_backups/permissions_${new Date().toISOString().replace(/:/g, '-').split('.')[0]}.js`,
-    ),
-  );
-  const data = await fs.readFile(path.join(__dirname, '/permissions.mjs'), 'utf8');
-  let result = data;
-  changedPermissionNames.forEach((changedPermissionName) => {
-    result = result.replace(
-      new RegExp(`'${changedPermissionName.old}'`, 'g'),
-      `'${changedPermissionName.new}'`,
+  if (changedPermissionNames.length) {
+    await fs.copyFile(
+      path.join(__dirname, '/permissions.mjs'),
+      path.join(
+        __dirname,
+        `/permissions_backups/permissions_${new Date().toISOString().replace(/:/g, '-').split('.')[0]}.js`,
+      ),
     );
-  });
-  await fs.writeFile(
-    path.join(__dirname, '../../cypress/support/dictionary/permissions.js'),
-    result,
-    'utf8',
-  );
+    const data = await fs.readFile(path.join(__dirname, '/permissions.mjs'), 'utf8');
+    let result = data;
+    changedPermissionNames.forEach((changedPermissionName) => {
+      result = result.replace(
+        new RegExp(`'${changedPermissionName.old}'`, 'g'),
+        `'${changedPermissionName.new}'`,
+      );
+    });
+    await fs.writeFile(
+      path.join(__dirname, '../../cypress/support/dictionary/permissions.js'),
+      result,
+      'utf8',
+    );
+  }
   await fs.unlink(path.join(__dirname, '/permissions.mjs'));
 }
 

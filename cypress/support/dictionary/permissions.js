@@ -16,7 +16,6 @@ export default {
     internal: 'ui-bulk-edit.users.csv.edit',
     gui: 'Bulk Edit: Local - Edit user records',
   },
-  bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: {
     internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
@@ -189,11 +188,6 @@ export default {
   uiInventoryViewCreateEditInstances: {
     internal: 'ui-inventory.instance.edit',
     gui: 'Inventory: View, create, edit instances',
-  },
-  inventoryViewCreateEditInstances: {
-    internal: 'records-editor.records.item.get',
-    gui: 'All records-editor permissions',
-    details: ['obsolete'],
   },
   uiInventoryViewCreateEditItems: {
     internal: 'ui-inventory.item.edit',
@@ -556,11 +550,6 @@ export default {
     gui: 'Requests: Reorder queue',
   },
   // Calendar
-  calendarEdit: {
-    internal: 'ui-calendar.create',
-    gui: 'Settings (Calendar): Can create, view, and edit calendar events',
-    details: ['ui-calendar.update'],
-  },
   calendarView: {
     internal: 'ui-calendar.view',
     gui: 'Settings (Calendar): Can view existing calendars',
