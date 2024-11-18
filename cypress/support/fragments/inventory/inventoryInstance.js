@@ -206,12 +206,14 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
+  cy.wait(500);
   cy.do(
     instanceDetailsSection
       .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
+  cy.wait(500);
   ItemRecordView.waitLoading();
 };
 
@@ -1082,9 +1084,9 @@ export default {
   },
 
   deleteTag: (tagName) => {
-    cy.do(MultiSelect().find(closeTag).click());
+    cy.do(MultiSelect({ id: 'input-tag' }).find(closeTag).click());
     cy.expect(
-      MultiSelect()
+      MultiSelect({ id: 'input-tag' })
         .find(HTML(including(tagName)))
         .absent(),
     );
