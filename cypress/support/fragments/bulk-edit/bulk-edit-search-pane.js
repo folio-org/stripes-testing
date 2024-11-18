@@ -18,6 +18,7 @@ import {
   Headline,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
+import FileManager from '../../utils/fileManager';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
@@ -56,15 +57,19 @@ export const holdingsIdentifiers = [
 ];
 
 export const itemIdentifiers = [
-  'Item barcode',
+  'Item barcodes',
   'Item UUIDs',
   'Item HRIDs',
-  'Item former identifier',
-  'Item accession number',
+  'Item former identifiers',
+  'Item accession numbers',
   'Holdings UUIDs',
 ];
 
 export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
+
+export const ITEM_IDENTIFIERS = {
+  ITEM_BARCODES: 'Item barcodes',
+};
 
 export default {
   waitLoading() {
@@ -214,7 +219,7 @@ export default {
       lowercase = identifier.charAt(0).toLowerCase() + identifier.slice(1);
     }
     cy.expect([
-      HTML(`Select a file with ${lowercase}`).exists(),
+      HTML(`Select a file with ${lowercase}.`).exists(),
       HTML(`Drag and drop or choose file with ${lowercase}.`).exists(),
     ]);
     this.isDragAndDropAreaDisabled(false);
@@ -225,8 +230,7 @@ export default {
     const lowercaseRecordType = recordType === 'Users' ? recordType : recordType.toLowerCase();
     cy.do(RadioButton(including(lowercaseRecordType)).click());
     this.selectRecordIdentifier(identifier);
-    const modifiedIdentifier = identifier === 'Item barcodes' ? 'item barcode' : identifier;
-    this.verifyAfterChoosingIdentifier(modifiedIdentifier);
+    this.verifyAfterChoosingIdentifier(identifier);
     cy.wait(1000);
   },
 
@@ -385,6 +389,20 @@ export default {
   uploadFile(fileName) {
     cy.do(fileButton.has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
+  },
+
+  uploadRecentlyDownloadedFile(downloadedFile) {
+    const changedFileName = `downloaded-${downloadedFile}`;
+
+    FileManager.findDownloadedFilesByMask(downloadedFile).then((downloadedFilenames) => {
+      const firstDownloadedFilename = downloadedFilenames[0];
+      FileManager.readFile(firstDownloadedFilename).then((actualContent) => {
+        FileManager.createFile(`cypress/fixtures/${changedFileName}`, actualContent);
+      });
+    });
+    this.uploadFile(changedFileName);
+
+    return cy.wrap(changedFileName);
   },
 
   waitFileUploading() {
@@ -1222,6 +1240,14 @@ export default {
 
   verifyNextPaginationButtonDisabled(isDisabled = true) {
     cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
+  },
+
+  verifyPreviousPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(previousPaginationButton).has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(nextPaginationButton).has({ disabled: isDisabled }));
   },
 
   verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {

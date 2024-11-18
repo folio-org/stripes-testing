@@ -20,6 +20,7 @@ import {
   Select,
   TextArea,
   TextField,
+  ValueChipRoot,
   not,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
@@ -222,21 +223,19 @@ export default {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
     cy.wait(2000);
-    cy.do(
-      effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click(),
-    );
-    cy.expect(
-      effectiveLocationInput
-        .find(Checkbox(values ?? this.effectiveLocation.mainLibrary))
-        .has({ checked: true }),
-    );
+    cy.do([
+      effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).click(),
+    ]);
+    cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
 
   byLanguage(lang) {
     // lang: language object. Example: language.eng
     return cy.do([
       languageInput.clickHeader(),
-      languageInput.find(Checkbox(lang ?? this.language.eng)).click(),
+      languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(including(lang ?? 'English(')).click(),
     ]);
   },
 

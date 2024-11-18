@@ -63,7 +63,7 @@ describe('Reading Room Access', () => {
 
   it(
     'C476842 Ensure Manually Changed Status in the User Record is Not Overwritten by Changes Made on the Setting page (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'C476842'] },
     () => {
       UsersSearchPane.searchByUsername(testData.user.username);
       UsersCard.waitLoading();

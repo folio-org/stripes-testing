@@ -26,8 +26,8 @@ import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   INCOMING_RECORD_NAMES,
+  INSTANCE_STATUS_TERM_NAMES,
   LOCATION_NAMES,
 } from '../../../../constants';
 import getRandomPostfix from '../../../../utils/stringTools';

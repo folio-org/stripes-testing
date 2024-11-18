@@ -85,8 +85,10 @@ describe('Data Import', () => {
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
       // create Action profile and link it to Field mapping profile
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
-      SettingsDataImport.goToSettingsDataImport();
+      TopMenuNavigation.openAppFromDropdown(
+        APPLICATION_NAMES.SETTINGS,
+        APPLICATION_NAMES.DATA_IMPORT,
+      );
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
 

@@ -194,8 +194,10 @@ describe('Data Import', () => {
             },
           );
           // create Field mapping profile
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
+          TopMenuNavigation.openAppFromDropdown(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);
           FieldMappingProfileView.edit();

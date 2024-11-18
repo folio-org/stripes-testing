@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -78,7 +80,7 @@ describe.skip('bulk-edit', () => {
       { tags: ['extendedPath', 'firebird', 'C358977'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
         cy.intercept('preview?limit=10&step=UPLOAD').as('fileUpload');
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         cy.wait('@fileUpload', getLongDelay()).then((res) => {

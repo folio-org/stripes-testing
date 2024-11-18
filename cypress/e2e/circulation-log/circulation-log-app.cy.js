@@ -65,7 +65,7 @@ describe('Circulation log', () => {
 
   it(
     'C15483 Select and open the Circulation log app (volaris)',
-    { tags: ['smoke', 'volaris', 'shiftLeft'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft', 'C15483'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();
@@ -74,7 +74,7 @@ describe('Circulation log', () => {
 
   it(
     'C15484 Filter circulation log on item barcode (volaris)',
-    { tags: ['smoke', 'volaris', 'shiftLeft'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft', 'C15484'] },
     () => {
       SearchPane.searchByItemBarcode(testData.folioInstances[0].barcodes[0]);
       SearchPane.verifyResultCells();
@@ -84,7 +84,7 @@ describe('Circulation log', () => {
 
   it(
     'C15485 Filter circulation log on user barcode (volaris)',
-    { tags: ['smoke', 'volaris', 'shiftLeft'] },
+    { tags: ['smoke', 'volaris', 'shiftLeft', 'C15485'] },
     () => {
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.verifyResultCells();

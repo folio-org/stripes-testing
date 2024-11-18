@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
@@ -6,7 +7,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import StatisticalCodes from '../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -27,13 +28,14 @@ describe('Inventory', () => {
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
       });
-      cy.resetTenant();
 
+      cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
         cy.login(testData.user.username, testData.user.password);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
     });
@@ -43,13 +45,16 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       StatisticalCodes.deleteViaApi(testData.statisticalCodeId);
+      cy.wait('@/authn/refresh', { timeout: 5000 });
     });
 
     it(
       'C409460 (CONSORTIA) Verify the "Edit instance" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409460'] },
       () => {
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.edit();

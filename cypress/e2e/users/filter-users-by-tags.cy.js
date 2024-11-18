@@ -39,21 +39,25 @@ describe('Users', () => {
     Users.deleteViaApi(existingUser.userId);
   });
 
-  it('C343214 Filter users by tags (volaris) (TaaS)', { tags: ['criticalPath', 'volaris'] }, () => {
-    UsersSearchPane.searchByKeywords(existingUser.userId);
-    UsersCard.waitLoading();
-    UsersCard.verifyTagsNumber('0');
+  it(
+    'C343214 Filter users by tags (volaris) (TaaS)',
+    { tags: ['criticalPath', 'volaris', 'C343214'] },
+    () => {
+      UsersSearchPane.searchByKeywords(existingUser.userId);
+      UsersCard.waitLoading();
+      UsersCard.verifyTagsNumber('0');
 
-    UsersCard.openTagsPane();
+      UsersCard.openTagsPane();
 
-    UsersCard.addTag(newTag);
-    UsersCard.verifyTagsNumber('1');
+      UsersCard.addTag(newTag);
+      UsersCard.verifyTagsNumber('1');
 
-    UsersSearchPane.resetAllFilters();
-    UsersSearchResultsPane.verifySearchPaneIsEmpty();
+      UsersSearchPane.resetAllFilters();
+      UsersSearchResultsPane.verifySearchPaneIsEmpty();
 
-    UsersSearchPane.chooseTagOption(newTag);
-    UsersSearchResultsPane.verifySearchPaneIsEmpty(false);
-    UsersSearchResultsPane.verifyResultsListHasUserWithName(existingUser.username);
-  });
+      UsersSearchPane.chooseTagOption(newTag);
+      UsersSearchResultsPane.verifySearchPaneIsEmpty(false);
+      UsersSearchResultsPane.verifyResultsListHasUserWithName(existingUser.username);
+    },
+  );
 });

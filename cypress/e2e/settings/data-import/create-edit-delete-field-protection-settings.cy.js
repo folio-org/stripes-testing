@@ -1,9 +1,9 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -40,10 +40,7 @@ describe('Data Import', () => {
       source: 'User',
     };
     before('Login', () => {
-      cy.loginAsAdmin({
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+      cy.loginAsAdmin();
     });
 
     after('Delete test data', () => {
@@ -57,7 +54,10 @@ describe('Data Import', () => {
       'C17016 Create, edit, and delete field protection settings (folijet)',
       { tags: ['extendedPath', 'folijet', 'C17016'] },
       () => {
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.openAppFromDropdown(
+          APPLICATION_NAMES.SETTINGS,
+          APPLICATION_NAMES.DATA_IMPORT,
+        );
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.clickNewButton();

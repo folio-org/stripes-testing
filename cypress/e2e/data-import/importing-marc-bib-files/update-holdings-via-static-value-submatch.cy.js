@@ -314,8 +314,10 @@ describe('Data Import', () => {
           );
 
           // create mapping profile
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
@@ -359,6 +361,7 @@ describe('Data Import', () => {
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(instanceMatchProfile);
           MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
+          cy.wait(1000);
           MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
           MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
 

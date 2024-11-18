@@ -1,7 +1,7 @@
 import { Pane, NavListItem } from '../../../../../interactors';
 import PatronGroups from './patronGroups';
 
-const inventoryPane = Pane('Users');
+const usersPane = Pane('Users');
 
 export const SETTINGS_TABS = {
   PATRON_GROUPS: 'Patron groups',
@@ -18,11 +18,11 @@ export default {
         return this;
     }
   },
-  goToSettingsUsers() {
+  goToSettingsCirculation() {
     cy.do(NavListItem('Users').click());
-    cy.expect(inventoryPane.exists());
+    cy.expect(usersPane.exists());
     Object.values(SETTINGS_TABS).forEach((settingsTab) => {
-      cy.expect(inventoryPane.find(NavListItem(settingsTab)).exists());
+      cy.expect(usersPane.find(NavListItem(settingsTab)).exists());
     });
   },
 };

@@ -232,7 +232,7 @@ describe('Patron notices', () => {
 
     it(
       'C347865: Item aged to lost triggers (volaris)',
-      { tags: ['criticalPath', 'volaris'] },
+      { tags: ['criticalPath', 'volaris', 'C347865'] },
       () => {
         noticeTemplates.forEach((template, index) => {
           NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

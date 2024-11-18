@@ -109,7 +109,6 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
       });
-      cy.logout();
     });
 
     after('Delete test data', () => {

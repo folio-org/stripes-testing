@@ -27,6 +27,7 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventoryViewCreateInstances.gui,
         Permissions.consortiaInventoryShareLocalInstance.gui,
@@ -35,6 +36,7 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user2 = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user2.userId);
@@ -46,11 +48,13 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user3 = userProperties;
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user4 = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user4.userId);
@@ -73,15 +77,20 @@ describe('Inventory', () => {
 
     it(
       'C411343 (CONSORTIA) Check the "Share local instance" button on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411343'] },
       () => {
         cy.login(testData.user1.username, testData.user1.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
 
+        InventoryInstances.waitContentLoading();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
+        cy.wait('@/authn/refresh', { timeout: 5000 });
+        cy.pause();
         InventoryInstances.selectInstance();
+
         InventoryInstance.waitLoading();
         InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
       },
@@ -89,7 +98,7 @@ describe('Inventory', () => {
 
     it(
       'C411329 (CONSORTIA) Check the "Share local instance" button on a shared Source = FOLIO Instance on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411329'] },
       () => {
         cy.login(testData.user2.username, testData.user2.password, {
           path: TopMenu.inventoryPath,
@@ -99,7 +108,7 @@ describe('Inventory', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -109,13 +118,15 @@ describe('Inventory', () => {
 
     it(
       'C411345 (CONSORTIA) Check the "Share local instance" button without permission on a Source = FOLIO Instance on Central tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411345'] },
       () => {
         cy.login(testData.user3.username, testData.user3.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
 
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -125,7 +136,7 @@ describe('Inventory', () => {
 
     it(
       'C411334 (CONSORTIA) Check the "Share local instance" button without permission on a local Source = FOLIO Instance on Member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411334'] },
       () => {
         cy.login(testData.user4.username, testData.user4.password, {
           path: TopMenu.inventoryPath,
@@ -135,7 +146,7 @@ describe('Inventory', () => {
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
