@@ -84,7 +84,7 @@ async function checkCypressPermissionNames() {
       });
     }
   });
-  if (!changedPermissionNames.length) console.log('No updates required.');
+  if (!changedPermissionNames.length) console.log('No permissionName updates required.');
 }
 
 async function updateCypressPermissionsFile() {
