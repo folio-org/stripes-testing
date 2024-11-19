@@ -8,7 +8,6 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Original role C554636 ${getRandomPostfix()}`,
-        application: 'app-platform-full',
         capabilitySets: [
           {
             table: 'Data',
@@ -48,16 +47,6 @@ describe('Eureka', () => {
         capabIds: [],
         capabSetIds: [],
       };
-
-      testData.capabilitySets.forEach((set) => {
-        set.application = testData.application;
-      });
-      testData.capabilitiesInSets.forEach((capab) => {
-        capab.application = testData.application;
-      });
-      testData.capabilities.forEach((capab) => {
-        capab.application = testData.application;
-      });
 
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
