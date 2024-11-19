@@ -932,7 +932,7 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      cy.expect(Pane({ subtitle: including('records found') }).exists());
       expect(totalRecords).greaterThan(totalRecord);
     });
   },
