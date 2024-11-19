@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C423998 ${getRandomPostfix()}`,
         roleDescription: `Description C423998 ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
+        applicationName: 'app-platform-minimal',
         capabilitySet: {
           table: 'Settings',
           resource: 'UI-Tags Settings',

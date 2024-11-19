@@ -40,7 +40,13 @@ describe('Eureka', () => {
           {
             application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Dates',
+            resource: 'Calendar Endpoint Calendars AllOpenings',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            application: applications[0],
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {

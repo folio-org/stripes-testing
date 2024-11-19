@@ -39,7 +39,12 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Calendar Endpoint Dates',
+            resource: 'Calendar Endpoint Calendars AllOpenings',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
             action: 'View',
           },
           {

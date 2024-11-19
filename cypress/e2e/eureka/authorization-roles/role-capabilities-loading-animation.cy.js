@@ -11,13 +11,13 @@ describe('Eureka', () => {
         capabilitySets: [
           {
             table: 'Data',
-            application: 'app-platform-full',
+            application: 'app-platform-complete',
             resource: 'Acquisitions-Units Memberships',
             action: 'Manage',
           },
           {
             table: 'Settings',
-            application: 'app-platform-full',
+            application: 'app-platform-minimal',
             resource: 'UI-Authorization-Policies Settings Admin',
             action: 'View',
           },
