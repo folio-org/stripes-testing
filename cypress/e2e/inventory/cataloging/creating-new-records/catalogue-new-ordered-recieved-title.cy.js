@@ -195,7 +195,7 @@ describe('Inventory', () => {
           cy.wait(1500);
           InventoryInstances.selectInstance();
           InventoryInstances.verifyInstanceDetailsView();
-          InventoryInstance.openHoldings(effectiveLocation.name);
+          // InventoryInstance.openHoldings(effectiveLocation.name);
           InventoryInstance.checkHoldingsTable(
             effectiveLocation.name,
             0,
