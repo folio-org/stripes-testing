@@ -42,6 +42,8 @@ describe('MARC', () => {
       const createdRecordsIDs = [];
 
       before('Creating user and data', () => {
+        InventoryInstances.deleteInstanceByTitleViaApi('C375954*');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

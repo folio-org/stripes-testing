@@ -54,10 +54,8 @@ describe('Data Import', () => {
       { tags: ['criticalPath', 'folijet', 'C422093'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Match Profile"
-        TopMenuNavigation.openAppFromDropdown(
-          APPLICATION_NAMES.SETTINGS,
-          APPLICATION_NAMES.DATA_IMPORT,
-        );
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         // #2 Find a match profile for MARC Authority records where incoming 010$a is being matched to existing 010$a.
         MatchProfiles.createMatchProfile(matchProfile);

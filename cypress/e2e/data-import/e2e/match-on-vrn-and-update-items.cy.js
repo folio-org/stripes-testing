@@ -43,7 +43,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
-    const uniquePartOfInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
+    const uniquePartOfInstanceTitle = `Cornell University Graduate School records,${getRandomPostfix()}`;
     const item = {
       title: `${uniquePartOfInstanceTitle} Jay Jordan Butler.`,
       productId: `xyz${getRandomPostfix()}`,

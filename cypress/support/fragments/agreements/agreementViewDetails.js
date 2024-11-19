@@ -193,7 +193,7 @@ export default {
   },
 
   gotoEdit() {
-    cy.do(actionsButton.click());
+    cy.do(Pane({ id: 'pane-view-agreement' }).find(actionsButton).click());
     cy.expect(editButton.exists());
 
     cy.do(editButton.click());

@@ -7,6 +7,7 @@ export default {
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
     QuickMarcEditor.pressSaveAndClose();
+    cy.wait(5000);
   },
 
   verifyHiddenFieldValueIn008(recordID, fieldLabel, expectedValue) {

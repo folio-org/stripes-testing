@@ -1,8 +1,8 @@
 import { Keyboard } from '@interactors/keyboard';
-import { Button, KeyValue, Section, Pane, MultiSelect, Badge } from '../../../../interactors';
+import { Button, KeyValue, Pane, MultiSelect, Badge } from '../../../../interactors';
 import AgreementViewDetails from './agreementViewDetails';
 
-const rootSection = Section({ id: 'pane-view-agreement-line' });
+const rootSection = Pane({ id: 'pane-view-agreement-line' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const addTagsField = MultiSelect({ label: 'Tag text area' });
@@ -51,13 +51,13 @@ export default {
   },
 
   verifyActionsButtons() {
-    cy.do(actionsButton.click());
+    cy.do(rootSection.find(actionsButton).click());
     cy.expect([editButton.exists(), deleteButton.exists()]);
-    cy.do(actionsButton.click());
+    cy.do(rootSection.find(actionsButton).click());
   },
 
   gotoDelete() {
-    cy.do(actionsButton.click());
+    cy.do(rootSection.find(actionsButton).click());
     cy.expect(deleteButton.exists());
     cy.do(deleteButton.click());
   },

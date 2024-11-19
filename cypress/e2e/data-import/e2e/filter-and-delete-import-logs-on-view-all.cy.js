@@ -117,6 +117,7 @@ describe('Data Import', () => {
           { from: formattedStart, end: formattedEnd },
           jobProfileId,
         ).then((count) => {
+          cy.wait(1800);
           LogsViewAll.selectAllLogs();
           LogsViewAll.checkIsLogsSelected(count);
           LogsViewAll.unmarcCheckbox(0);

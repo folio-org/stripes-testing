@@ -131,6 +131,7 @@ describe('Data Import', () => {
         });
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
+            cy.wait(5000);
             cy.deleteItemViaApi(instance.items[0].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);

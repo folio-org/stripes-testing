@@ -1,25 +1,25 @@
 import { HTML } from '@interactors/html';
 import {
+  Accordion,
   Button,
   MultiColumnListCell,
   MultiColumnListRow,
   Section,
-  or,
   including,
-  Accordion,
+  or,
 } from '../../../../interactors';
-import NewAgreement from './newAgreement';
-import SearchAndFilterAgreements from './searchAndFilterAgreements';
 import { REQUEST_METHOD } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
+import NewAgreement from './newAgreement';
+import SearchAndFilterAgreements from './searchAndFilterAgreements';
 
 const section = Section({ id: 'pane-agreement-list' });
 const agreementsSection = Section({ id: 'agreements-tab-pane' });
 const agreementsViewSection = Section({ id: 'pane-view-agreement' });
 const newButton = Button('New');
 const editButton = Button('Edit');
-const actionsButton = Button('Actions');
+const actionsButton = section.find(Button('Actions'));
 const controllingLicense = Accordion({ id: 'controllingLicense' });
 
 const waitLoading = () => {
@@ -131,6 +131,7 @@ export default {
       method: REQUEST_METHOD.DELETE,
       path: `erm/sas/${agreementId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 

@@ -13,7 +13,7 @@ describe('eHoldings', () => {
     const testData = {
       title: 'Chemical Engineering',
       publicationType: 'Journal',
-      titleC9240: 'Wiley Rutledge',
+      titleC9240: 'Wiley Hall',
       label1Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ${getRandomPostfix()}`,
       label2Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ${getRandomPostfix()}`,
     };

@@ -46,10 +46,6 @@ describe('agreements', () => {
       DeleteConfirmationModal.waitLoading();
 
       DeleteConfirmationModal.confirmDeleteAgreementLine();
-      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
-        Agreements.defaultAgreement.name,
-      );
-
       AgreementViewDetails.openAgreementLineFilter();
       SearchAndFilterAgreementLines.search(agreementLine.description);
       AgreementLines.verifyAgreementLinesCount(0);

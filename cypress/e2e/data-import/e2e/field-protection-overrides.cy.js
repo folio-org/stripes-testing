@@ -420,7 +420,7 @@ describe('Data Import', () => {
           FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InventoryViewSource.close();
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyAdministrativeNote(administrativeNote);
           InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);

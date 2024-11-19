@@ -39,6 +39,9 @@ describe('MARC', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375261*');
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
