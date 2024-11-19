@@ -51,7 +51,7 @@ export default {
   },
 
   verifyLocalResourceIdentifierTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),

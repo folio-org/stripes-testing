@@ -87,7 +87,7 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (userProperties) => {
             testData.user = userProperties;
-
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C451456');
             DataImport.uploadFileViaApi(
               testData.marcFile.marc,
               testData.marcFile.fileName,
