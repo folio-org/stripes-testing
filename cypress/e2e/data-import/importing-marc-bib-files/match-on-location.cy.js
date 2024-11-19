@@ -435,8 +435,9 @@ describe('Data Import', () => {
         FileDetails.checkItemQuantityInSummaryTable('3', 1);
 
         // check updated items in Inventory
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         instanceHrids.forEach((hrid) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(hrid);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
