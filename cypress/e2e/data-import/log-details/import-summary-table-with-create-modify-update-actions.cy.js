@@ -484,7 +484,6 @@ describe('Data Import', () => {
         JsonScreenView.verifyContentInTab('"999"');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(

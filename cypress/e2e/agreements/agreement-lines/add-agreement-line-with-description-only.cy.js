@@ -58,7 +58,7 @@ describe('agreements', () => {
           NewAgreementLine.calloutMessages.ALERT_MESSAGE,
           false,
         );
-
+        cy.wait(2000);
         NewAgreementLine.saveAndClose();
         AgreementLineInformation.verifyDescription(agreementLineDescription);
 

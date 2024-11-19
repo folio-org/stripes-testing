@@ -290,6 +290,7 @@ describe('Data Import', () => {
     const checkReceivedPiece = (number, title) => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.clearSearchField();
+      cy.wait(1500);
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
       OrderDetails.openPolDetails(title);
@@ -387,8 +388,10 @@ describe('Data Import', () => {
         collectionOfProfiles.forEach((profile) => {
           FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
           FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+          cy.wait(3000);
+        });
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        collectionOfProfiles.forEach((profile) => {
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
         });
