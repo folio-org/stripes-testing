@@ -1,10 +1,11 @@
+import { including } from '@interactors/html';
 import {
-  Checkbox,
-  Button,
   Accordion,
-  MultiColumnListCell,
+  Button,
   MultiColumnList,
-  TextField,
+  MultiColumnListCell,
+  MultiSelect,
+  MultiSelectOption,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../constants';
 
@@ -27,11 +28,11 @@ export default {
   ],
 
   toggleStatus(statusName) {
-    cy.do(TextField({ label: 'itemStatus-field' }).fillIn(statusName));
-    // need to wait until status is uploaded
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'itemStatus-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(statusName)).click());
     cy.wait(1500);
-    cy.do(TextField({ label: 'itemStatus-field' }).focus());
-    cy.do(Checkbox(statusName).click());
   },
 
   toggleItemStatusAccordion() {
