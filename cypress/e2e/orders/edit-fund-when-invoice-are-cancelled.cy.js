@@ -158,6 +158,7 @@ describe('ui-orders: Orders', () => {
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
+      Funds.closeTransactionDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

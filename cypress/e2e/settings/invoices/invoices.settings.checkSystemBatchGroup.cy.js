@@ -5,8 +5,8 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
-  const systemBatchGroupName = 'Amherst (AC)';
-  const systemBatchGroupDescription = 'Amherst College';
+  const systemBatchGroupName = 'FOLIO';
+  const systemBatchGroupDescription = 'System Default';
   before(() => {
     cy.getAdminToken()
       .then(() => {
