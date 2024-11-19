@@ -58,13 +58,12 @@ describe('Data Import', () => {
       'C2332 Edit an existing job profile by adding a long name (folijet)',
       { tags: ['criticalPath', 'folijet', 'C2332'] },
       () => {
-        TopMenuNavigation.openAppFromDropdown(
-          APPLICATION_NAMES.SETTINGS,
-          APPLICATION_NAMES.DATA_IMPORT,
-        );
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(jobProfile.profileName);
+        JobProfileView.verifyJobProfileOpened();
         JobProfileView.edit();
         JobProfileEdit.verifyScreenName(jobProfile.profileName);
         JobProfileEdit.changeProfileName(jobProfileLongName);

@@ -38,4 +38,8 @@ export default {
         return this;
     }
   },
+  goToSettingsDataImport() {
+    cy.do(NavListItem('Data import').click());
+    cy.expect(dataImportPane.exists());
+  },
 };
