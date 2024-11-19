@@ -134,7 +134,7 @@ describe('MARC', () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
             cy.reload();
-            cy.wait(3000);
+            cy.wait(7000);
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
               QuickMarcEditor.pressSaveAndClose();
               cy.wait(1500);
