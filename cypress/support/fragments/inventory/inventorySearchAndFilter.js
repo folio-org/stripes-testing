@@ -20,6 +20,7 @@ import {
   Select,
   TextArea,
   TextField,
+  ValueChipRoot,
   not,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
@@ -110,7 +111,10 @@ const searchHoldingsByHRID = (hrid) => {
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
+  cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
+  cy.wait(500);
+  cy.do(searchButton.click());
+  cy.wait(500);
   InventoryInstance.waitInventoryLoading();
 };
 
@@ -222,21 +226,19 @@ export default {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
     cy.wait(2000);
-    cy.do(
-      effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click(),
-    );
-    cy.expect(
-      effectiveLocationInput
-        .find(Checkbox(values ?? this.effectiveLocation.mainLibrary))
-        .has({ checked: true }),
-    );
+    cy.do([
+      effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).click(),
+    ]);
+    cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
 
   byLanguage(lang) {
     // lang: language object. Example: language.eng
     return cy.do([
       languageInput.clickHeader(),
-      languageInput.find(Checkbox(lang ?? this.language.eng)).click(),
+      languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(including(lang ?? 'English(')).click(),
     ]);
   },
 
@@ -655,13 +657,18 @@ export default {
   },
 
   searchTag(tag) {
+    cy.wait(500);
     cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
   },
 
   filterByTag(tag) {
-    this.searchTag(tag);
-    cy.do(instancesTagsSection.find(Checkbox(tag)).click());
-    cy.wait(1000);
+    cy.wait(500);
+    cy.do(tagsAccordionButton.click());
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
   },
 
   verifyTagIsAbsent(tag) {
@@ -706,12 +713,11 @@ export default {
 
   addTag(tag) {
     cy.intercept('PUT', '**/inventory/instances/**').as('addTag');
-    cy.do([
-      MultiSelect({ id: 'input-tag' }).fillIn(tag),
-      MultiSelect().open(),
-      MultiSelectOption(including(tag)).click(),
-    ]);
+    cy.do(MultiSelect({ id: 'input-tag' }).fillIn(tag));
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
     cy.wait('@addTag');
+    cy.wait(500);
   },
 
   verifyTagsView() {

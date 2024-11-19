@@ -79,6 +79,7 @@ describe('Fees&Fines', () => {
                 permissions.uiUsersfeefinesCRUD.gui,
                 permissions.uiUsersViewServicePoints.gui,
                 permissions.uiUsersfeefinesView.gui,
+                permissions.uiFeeFinesActions.gui,
                 permissions.uiUsersManualCharge.gui,
                 permissions.uiUsersManualPay.gui,
                 permissions.uiUserAccounts.gui,

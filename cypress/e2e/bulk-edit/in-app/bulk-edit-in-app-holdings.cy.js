@@ -144,7 +144,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(hrid);
 
-        const tempLocation = 'Main Library';
+        const tempLocation = 'SECOND FLOOR';
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
