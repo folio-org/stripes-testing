@@ -121,8 +121,10 @@ describe('Inventory', () => {
             userId,
             firstServicePoint.id,
           );
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(TopMenu.ordersPath);
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();

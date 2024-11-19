@@ -83,6 +83,7 @@ export default {
 
   pressImportInModal(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(importButtonInModal.click());
+    cy.wait(2000);
     InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
