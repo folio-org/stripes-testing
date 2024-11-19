@@ -17,11 +17,15 @@ export default {
   isAbsent() {
     cy.expect(AppList().absent());
   },
-  openAppFromDropdown(appName) {
+  openAppFromDropdown(appName, subSection) {
     cy.wait(2000);
     cy.do(HTML({ id: 'app-list-dropdown-toggle' }).click());
     cy.wait(2000);
     cy.do(AppList().find(Link(appName)).click());
+    if (subSection) {
+      cy.do(NavListItem(subSection).click());
+      cy.wait(2000);
+    }
   },
   clickToGoHomeButton() {
     cy.do(Button({ id: 'ModuleMainHeading' }).click());
