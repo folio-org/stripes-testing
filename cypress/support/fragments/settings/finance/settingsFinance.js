@@ -80,7 +80,7 @@ export default {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-        })} by FolioLast, FolioFirst`;
+        })} by folio-aqa, folio-aqa`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))

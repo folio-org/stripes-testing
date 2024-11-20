@@ -6,7 +6,7 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroupName = 'FOLIO';
-  const systemBatchGroupDescription = 'System default';
+  const systemBatchGroupDescription = 'System Default';
   before(() => {
     cy.getAdminToken()
       .then(() => {

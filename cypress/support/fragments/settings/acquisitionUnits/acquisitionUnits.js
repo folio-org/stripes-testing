@@ -83,7 +83,7 @@ export default {
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn(Cypress.env('diku_login')),
+      userSearchModal.find(searchTextField).fillIn('folio-aqa'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),

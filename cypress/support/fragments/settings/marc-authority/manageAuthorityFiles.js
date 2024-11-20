@@ -474,7 +474,7 @@ export default {
   checkDefaultSourceFilesExist() {
     defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
       const targetRow = manageAuthorityFilesPane.find(
-        MultiColumnListRow(including(defaultFolioAuthorityFile.name)),
+        MultiColumnListRow(including(defaultFolioAuthorityFile.name), { isContainer: true }),
       );
       cy.expect([
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),

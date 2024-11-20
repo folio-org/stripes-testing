@@ -54,6 +54,7 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(upload.fileName);
+          cy.wait(80000);
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();

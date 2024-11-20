@@ -4,7 +4,6 @@ import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -38,7 +37,6 @@ describe('ui-orders: Orders', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice, status: 'Reviewed' };
   const firstBudget = {
     ...Budgets.getDefaultBudget(),
     allocated: 1000,
@@ -196,12 +194,13 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
-        invoice.invoiceNumber,
-        `${secondFund.name} (${secondFund.code})`,
         '($70.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
     },

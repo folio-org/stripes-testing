@@ -118,6 +118,7 @@ describe('MARC', () => {
             // eslint-disable-next-line no-irregular-whitespace
             InventorySearchAndFilter.verifySearchResult(`${result} would be here`);
           });
+          MarcAuthorities.searchByParameter(testData.searchOption, testData.valueFullText);
           MarcAuthorities.selectTitle(testData.valueFullText);
           MarcAuthorities.checkFieldAndContentExistence('100', testData.value);
           MarcAuthorities.clickResetAndCheckBrowse(testData.value);

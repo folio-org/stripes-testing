@@ -45,7 +45,7 @@ const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-const admin = 'FolioLast, FolioFirst';
+const admin = 'folio-aqa, folio-aqa';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -572,7 +572,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-closeReason.reason' }).click(),
       Button({ id: 'closeReason.reason-selection' }).click(),
-      SelectionOption({ id: 'option-closeReason.reason-selection-0-Cancelled' }).click(),
+      SelectionOption('Cancelled').click(),
     ]);
   },
   selectReEncumberFilter: () => {
