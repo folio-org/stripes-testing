@@ -1784,4 +1784,12 @@ export default {
   verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
+
+  verifySourceInAdministrativeData(sourceValue) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(sourceValue)))
+        .exists(),
+    );
+  },
 };
