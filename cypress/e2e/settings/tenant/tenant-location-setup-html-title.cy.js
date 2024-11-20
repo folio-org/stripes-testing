@@ -104,10 +104,13 @@ describe('Settings: Tenant', () => {
       CreateLocations.saveAndClose();
       TenantPane.verifyPageTitle(`Tenant settings - ${locationName} - FOLIO`);
       LocationDetails.openEditLocationForm();
+      cy.wait(500);
       TenantPane.verifyPageTitle(`Tenant settings - Edit: ${locationName} - FOLIO`);
       const newLocationName = `newLocation_${getRandomPostfix()}`;
       CreateLocations.fillFolioName(newLocationName);
+      cy.wait(500);
       CreateLocations.saveAndClose();
+      cy.wait(500);
       TenantPane.verifyPageTitle(`Tenant settings - ${newLocationName} - FOLIO`);
       Locations.openLocationDetails(newLocationName);
       Locations.deleteLocation(newLocationName);
