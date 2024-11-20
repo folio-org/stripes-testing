@@ -1,5 +1,5 @@
 import { Option } from '../../../../interactors';
-import newResource from './newResource';
+import editResource from './editResource';
 
 const searchSection = "//div[@class='item-search-content']";
 const actionsButton = "//button[@data-testid='search-view-actions-dropdown']";
@@ -36,6 +36,11 @@ export default {
   openNewResourceForm: () => {
     cy.xpath(actionsButton).click();
     cy.xpath(newResourceButton).click();
-    newResource.waitLoading();
+    editResource.waitLoading();
+  },
+
+  editWork: () => {
+    cy.xpath("//div[@class='full-display-container']//button[text()='Edit work']").click();
+    editResource.waitLoading();
   },
 };
