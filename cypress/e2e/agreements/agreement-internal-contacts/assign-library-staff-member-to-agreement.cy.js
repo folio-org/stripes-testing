@@ -82,7 +82,7 @@ describe('agreements', () => {
 
         AgreementViewDetails.openInternalContactsSection();
         AgreementViewDetails.verifyInternalContactsRow({
-          username: firstUser.personal.lastname,
+          username: firstUser.personal.lastName,
           email: firstUser.personal.email,
         });
 
@@ -100,13 +100,13 @@ describe('agreements', () => {
 
         AgreementViewDetails.openInternalContactsSection();
         AgreementViewDetails.verifyInternalContactsRow({
-          username: firstUser.personal.lastname,
+          username: firstUser.personal.lastName,
           email: firstUser.personal.email,
         });
 
         AgreementViewDetails.openInternalContactsSection();
         AgreementViewDetails.verifyInternalContactsRow({
-          username: secondUser.personal.lastname,
+          username: secondUser.personal.lastName,
           email: secondUser.personal.email,
         });
       },

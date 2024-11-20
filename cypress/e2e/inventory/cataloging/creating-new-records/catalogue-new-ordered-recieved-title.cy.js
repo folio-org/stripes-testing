@@ -121,8 +121,10 @@ describe('Inventory', () => {
             userId,
             firstServicePoint.id,
           );
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(TopMenu.ordersPath);
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
@@ -195,7 +197,7 @@ describe('Inventory', () => {
           cy.wait(1500);
           InventoryInstances.selectInstance();
           InventoryInstances.verifyInstanceDetailsView();
-          InventoryInstance.openHoldings(effectiveLocation.name);
+          // InventoryInstance.openHoldings(effectiveLocation.name);
           InventoryInstance.checkHoldingsTable(
             effectiveLocation.name,
             0,

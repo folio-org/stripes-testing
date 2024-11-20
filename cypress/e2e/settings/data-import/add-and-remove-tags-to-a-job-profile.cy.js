@@ -63,12 +63,11 @@ describe('Data Import', () => {
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
       { tags: ['extendedPath', 'folijet', 'C2331', 'eurekaPhase1'] },
       () => {
-        TopMenuNavigation.openAppFromDropdown(
-          APPLICATION_NAMES.SETTINGS,
-          APPLICATION_NAMES.DATA_IMPORT,
-        );
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.search(jobProfile.profileName);
+        JobProfileView.verifyJobProfileOpened();
         JobProfileView.addExistingTag(tag);
         JobProfileView.verifyAssignedTags(tag);
 

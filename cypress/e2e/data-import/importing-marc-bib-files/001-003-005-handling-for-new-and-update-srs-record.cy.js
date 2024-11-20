@@ -254,6 +254,8 @@ describe('Data Import', () => {
 
           // check instance is updated
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryViewSource.close();
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.checkIsInstanceUpdated();
@@ -262,10 +264,13 @@ describe('Data Import', () => {
           InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
           InventoryViewSource.notContains('003\t');
           InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
+          InventoryViewSource.close();
         });
 
         // export instance
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.closeInstanceDetailPane();

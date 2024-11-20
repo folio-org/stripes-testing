@@ -206,12 +206,14 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
+  cy.wait(500);
   cy.do(
     instanceDetailsSection
       .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
+  cy.wait(500);
   ItemRecordView.waitLoading();
 };
 
@@ -447,7 +449,9 @@ export default {
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
     cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
+    cy.wait(500);
     cy.do(editMARCBibRecordButton.click());
+    cy.wait(500);
   },
 
   selectTopRecord() {
@@ -1082,9 +1086,9 @@ export default {
   },
 
   deleteTag: (tagName) => {
-    cy.do(MultiSelect().find(closeTag).click());
+    cy.do(MultiSelect({ id: 'input-tag' }).find(closeTag).click());
     cy.expect(
-      MultiSelect()
+      MultiSelect({ id: 'input-tag' })
         .find(HTML(including(tagName)))
         .absent(),
     );
@@ -1782,5 +1786,13 @@ export default {
 
   verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
+  },
+
+  verifySourceInAdministrativeData(sourceValue) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(sourceValue)))
+        .exists(),
+    );
   },
 };

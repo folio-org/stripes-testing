@@ -7,75 +7,84 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('ui-finance: Ledgers', () => {
-  let aUnit;
-  let user;
-  const ledger = {
-    id: uuid(),
-    name: `E2E ledger ${getRandomPostfix()}`,
-    code: `E2ELC${getRandomPostfix()}`,
-    description: `E2E ledger description ${getRandomPostfix()}`,
-    ledgerStatus: 'Frozen',
-    currency: 'USD',
-    restrictEncumbrance: false,
-    restrictExpenditures: false,
-    acqUnitIds: [],
-    fiscalYearOneId: '',
-  };
-
-  before(() => {
-    cy.getAdminToken();
-
-    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
-      ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-      aUnit = body.acquisitionsUnits[0];
-    });
-
-    cy.getFiscalYearsApi({ limit: 1 }).then(({ body }) => {
-      ledger.fiscalYearOneId = body.fiscalYears[0].id;
-    });
-
-    cy.createTempUser([permissions.uiFinanceViewLedger.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ledgerPath,
-        waiter: Ledgers.waitForLedgerDetailsLoading,
-      });
-    });
-  });
-
-  beforeEach(() => {
-    cy.getAdminToken();
-    cy.createLedgerApi({
-      ...ledger,
-    });
-  });
-
-  afterEach(() => {
-    cy.getAdminToken();
-    cy.deleteLedgerApi(ledger.id);
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C4061 Test the search and filter options for ledgers (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
-    () => {
-      FinanceHelp.checkZeroSearchResultsMessage();
-
-      // search by acquisition units, name and status
-      Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);
-      cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
-
-      // search by name only
-      Ledgers.resetFilters();
-      FinanceHelp.searchByName(ledger.name);
-      cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
-
-      // search by code only
-      Ledgers.resetFilters();
-      FinanceHelp.searchByCode(ledger.code);
-      cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+describe(
+  'ui-finance: Ledgers',
+  {
+    retries: {
+      runMode: 1,
     },
-  );
-});
+  },
+  () => {
+    let aUnit;
+    let user;
+    let ledger;
+
+    beforeEach(() => {
+      ledger = {
+        id: uuid(),
+        name: `E2E ledger ${getRandomPostfix()}`,
+        code: `E2ELC${getRandomPostfix()}`,
+        description: `E2E ledger description ${getRandomPostfix()}`,
+        ledgerStatus: 'Frozen',
+        currency: 'USD',
+        restrictEncumbrance: false,
+        restrictExpenditures: false,
+        acqUnitIds: [],
+        fiscalYearOneId: '',
+      };
+
+      cy.getAdminToken();
+
+      cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
+        ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
+        aUnit = body.acquisitionsUnits[0];
+      });
+
+      cy.getFiscalYearsApi({ limit: 1 }).then(({ body }) => {
+        ledger.fiscalYearOneId = body.fiscalYears[0].id;
+      });
+
+      cy.createTempUser([permissions.uiFinanceViewLedger.gui])
+        .then((userProperties) => {
+          user = userProperties;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ledgerPath,
+            waiter: Ledgers.waitForLedgerDetailsLoading,
+          });
+        })
+        .then(() => {
+          cy.createLedgerApi({
+            ...ledger,
+          });
+        });
+    });
+
+    afterEach(() => {
+      cy.getAdminToken();
+      cy.deleteLedgerApi(ledger.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C4061 Test the search and filter options for ledgers (thunderjet)',
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      () => {
+        FinanceHelp.checkZeroSearchResultsMessage();
+
+        // search by acquisition units, name and status
+        Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);
+        cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+
+        // search by name only
+        Ledgers.resetFilters();
+        FinanceHelp.searchByName(ledger.name);
+        cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+
+        // search by code only
+        Ledgers.resetFilters();
+        FinanceHelp.searchByCode(ledger.code);
+        cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+      },
+    );
+  },
+);

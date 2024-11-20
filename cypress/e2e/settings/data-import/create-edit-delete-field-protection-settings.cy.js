@@ -54,10 +54,8 @@ describe('Data Import', () => {
       'C17016 Create, edit, and delete field protection settings (folijet)',
       { tags: ['extendedPath', 'folijet', 'C17016'] },
       () => {
-        TopMenuNavigation.openAppFromDropdown(
-          APPLICATION_NAMES.SETTINGS,
-          APPLICATION_NAMES.DATA_IMPORT,
-        );
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
+        SettingsDataImport.goToSettingsDataImport();
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.clickNewButton();

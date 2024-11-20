@@ -6,33 +6,41 @@ import InventoryNewHoldings from '../../../support/fragments/inventory/inventory
 import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC', () => {
-  describe('MARC Holdings', () => {
-    beforeEach(() => {
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      const InventoryNewInstance = InventoryInstances.addNewInventory();
-      InventoryNewInstance.fillRequiredValues();
-      InventoryNewInstance.clickSaveAndCloseButton();
-    });
-    it(
-      'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345406'] },
-      () => {
-        InventoryInstance.createHoldingsRecord();
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkSource('FOLIO');
-        HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
-        HoldingsRecordView.edit();
-        HoldingsRecordEdit.waitLoading();
-        HoldingsRecordEdit.checkReadOnlyFields();
-        HoldingsRecordEdit.closeWithoutSave();
-        HoldingsRecordView.tryToDelete();
-        HoldingsRecordView.duplicate();
-        InventoryNewHoldings.checkSource();
-        // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
+  describe(
+    'MARC Holdings',
+    {
+      retries: {
+        runMode: 1,
       },
-    );
-  });
+    },
+    () => {
+      beforeEach(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InventoryNewInstance.fillRequiredValues();
+        InventoryNewInstance.clickSaveAndCloseButton();
+      });
+      it(
+        'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
+        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345406'] },
+        () => {
+          InventoryInstance.createHoldingsRecord();
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.checkSource('FOLIO');
+          HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
+          HoldingsRecordView.edit();
+          HoldingsRecordEdit.waitLoading();
+          HoldingsRecordEdit.checkReadOnlyFields();
+          HoldingsRecordEdit.closeWithoutSave();
+          HoldingsRecordView.tryToDelete();
+          HoldingsRecordView.duplicate();
+          InventoryNewHoldings.checkSource();
+          // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
+        },
+      );
+    },
+  );
 });

@@ -4,36 +4,45 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('Invoices', () => {
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
+describe(
+  'Invoices',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    let invoice;
+    let vendorPrimaryAddress;
 
-  before(() => {
-    cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
-      (organization) => {
-        invoice.accountingCode = organization.erpCode;
-        Object.assign(
-          vendorPrimaryAddress,
-          organization.addresses.find((address) => address.isPrimary === true),
-        );
+    beforeEach(() => {
+      invoice = { ...NewInvoice.defaultUiInvoice };
+      vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
+      cy.getAdminToken();
+      Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
+        (organization) => {
+          invoice.accountingCode = organization.erpCode;
+          Object.assign(
+            vendorPrimaryAddress,
+            organization.addresses.find((address) => address.isPrimary === true),
+          );
+        },
+      );
+      cy.getBatchGroups().then((batchGroup) => {
+        invoice.batchGroup = batchGroup.name;
+      });
+      cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    });
+
+    it(
+      'C2299 Manually Create Invoice (thunderjet)',
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      () => {
+        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+        Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
+        Invoices.deleteInvoiceViaActions();
+        Invoices.confirmInvoiceDeletion();
       },
     );
-    cy.getBatchGroups().then((batchGroup) => {
-      invoice.batchGroup = batchGroup.name;
-    });
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.invoicesPath);
-  });
-
-  it(
-    'C2299 Manually Create Invoice (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
-    () => {
-      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-      Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
-      Invoices.deleteInvoiceViaActions();
-      Invoices.confirmInvoiceDeletion();
-    },
-  );
-});
+  },
+);

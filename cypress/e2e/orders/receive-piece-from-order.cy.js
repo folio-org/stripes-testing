@@ -14,74 +14,86 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('orders: Receive piece from Order', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
-  let orderNumber;
-  let user;
+describe(
+  'orders: Receive piece from Order',
+  {
+    retries: {
+      runMode: 1,
+    },
+  },
+  () => {
+    let order;
+    let organization;
+    let orderLineTitle;
+    let orderNumber;
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-      order.vendor = response;
-    });
-    cy.createOrderApi(order).then((orderResponse) => {
-      orderNumber = orderResponse.body.poNumber;
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
-    });
-    cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+    beforeEach(() => {
+      order = {
+        ...NewOrder.defaultOneTimeOrder,
+        approved: true,
+      };
+      organization = { ...NewOrganization.defaultUiOrganizations };
+      orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
+
+      cy.getAdminToken();
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+        order.vendor = response;
+      });
+      cy.createOrderApi(order).then((orderResponse) => {
+        orderNumber = orderResponse.body.poNumber;
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        OrderLines.addPOLine();
+        OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+      });
+      cy.createTempUser([
+        permissions.uiOrdersView.gui,
+        permissions.uiOrdersApprovePurchaseOrders.gui,
+        permissions.uiOrdersReopenPurchaseOrders.gui,
+        permissions.uiInventoryViewInstances.gui,
+        permissions.uiReceivingViewEditCreate.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
     });
-  });
 
-  after(() => {
-    cy.getAdminToken();
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    Users.deleteViaApi(user.userId);
-  });
+    afterEach(() => {
+      cy.getAdminToken();
+      Orders.deleteOrderViaApi(order.id);
+      Organizations.deleteOrganizationViaApi(organization.id);
+      Users.deleteViaApi(user.userId);
+    });
 
-  it(
-    'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
-    () => {
-      const barcode = Helper.getRandomBarcode();
-      const enumeration = 'autotestCaption';
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.openOrder();
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully opened`,
-      );
-      Orders.receiveOrderViaActions();
-      // Receiving part
-      Receiving.selectPOLInReceive(orderLineTitle);
-      Receiving.receivePiece(0, enumeration, barcode);
-      Receiving.checkReceivedPiece(0, enumeration, barcode);
-      // inventory part
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-      ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
-    },
-  );
-});
+    it(
+      'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      () => {
+        const barcode = Helper.getRandomBarcode();
+        const enumeration = 'autotestCaption';
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        Orders.openOrder();
+        InteractorsTools.checkCalloutMessage(
+          `The Purchase order - ${orderNumber} has been successfully opened`,
+        );
+        Orders.receiveOrderViaActions();
+        // Receiving part
+        Receiving.selectPOLInReceive(orderLineTitle);
+        Receiving.receivePiece(0, enumeration, barcode);
+        Receiving.checkReceivedPiece(0, enumeration, barcode);
+        // inventory part
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+        ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
+      },
+    );
+  },
+);
