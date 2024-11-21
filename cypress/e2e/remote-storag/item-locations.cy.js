@@ -92,8 +92,8 @@ describe('Remote Storage', () => {
   });
 
   it(
-    'C163923 Change a location to remote storage (firebird)',
-    { tags: ['smoke', 'firebird', 'C163923'] },
+    'C163923 Change a location to remote storage (volaris)',
+    { tags: ['smoke', 'volaris', 'C163923'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
@@ -128,8 +128,8 @@ describe('Remote Storage', () => {
   );
 
   it(
-    'C163924 Change a remote storage location to standard location (firebird)',
-    { tags: ['smoke', 'firebird', 'C163924'] },
+    'C163924 Change a remote storage location to standard location (volaris)',
+    { tags: ['smoke', 'volaris', 'C163924'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;
