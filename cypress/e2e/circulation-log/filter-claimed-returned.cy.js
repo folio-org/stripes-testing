@@ -58,8 +58,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C16997 Filter circulation log by Claimed returned (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C16997'] },
+    'C16997 Filter circulation log by Claimed returned (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C16997'] },
     () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(user.userId);
@@ -90,8 +90,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16998 Check the Actions button from filtering Circulation log by claimed returned (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C16998'] },
+    'C16998 Check the Actions button from filtering Circulation log by claimed returned (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C16998'] },
     () => {
       SearchPane.setFilterOptionFromAccordion('loan', 'Claimed returned');
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.ITEM_BARCODE);
