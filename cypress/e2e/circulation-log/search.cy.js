@@ -220,7 +220,7 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C17010 Filter circulation log by service points (firebird)',
+    'C17010 Filter circulation log by service points (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17010'] },
     () => {
       SearchPane.searchByServicePoint('Circ Desk 2');
