@@ -131,7 +131,7 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17092 Filter circulation log by (notice) send (firebird)',
+    'C17092 Filter circulation log by (notice) send (volaris)',
     { tags: ['criticalPath', 'volaris', 'C17092'] },
     () => {
       const searchResultsData = {
