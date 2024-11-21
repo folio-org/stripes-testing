@@ -9,8 +9,8 @@ describe('remote-storage-configuration', () => {
   const rs = Configurations.configurations.CaiaSoft;
 
   it(
-    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C343219'] },
+    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C343219'] },
     () => {
       // delete existing remote storage conf
       cy.loginAsAdmin({
@@ -29,8 +29,8 @@ describe('remote-storage-configuration', () => {
   );
 
   it(
-    'C343220 Configure remote storage and open “Accession tables” using the “Remote storage” pane (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C343220'] },
+    'C343220 Configure remote storage and open “Accession tables” using the “Remote storage” pane (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C343220'] },
     () => {
       cy.loginAsAdmin({
         path: settingsMenu.remoteStorageConfigurationPath,

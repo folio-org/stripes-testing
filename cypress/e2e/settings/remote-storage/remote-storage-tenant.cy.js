@@ -54,8 +54,8 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C163922 Flag a location as remote storage (firebird)',
-    { tags: ['smoke', 'firebird', 'C163922'] },
+    'C163922 Flag a location as remote storage (volaris)',
+    { tags: ['smoke', 'volaris', 'C163922'] },
     () => {
       const locationName = `1_loc_${getRandomPostfix()}`;
 
