@@ -59,13 +59,8 @@ describe('MARC', () => {
         'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C375205'] },
         () => {
-          InventorySearchAndFilter.selectSearchOptions(
-            testData.searchOption,
-            testData.instanceTitle,
-          );
-          InventorySearchAndFilter.clickSearch();
-          InventoryInstances.selectInstanceById(instanceId);
-          InventoryInstance.waitLoading();
+          InventoryInstances.searchByTitle(instanceId);
+          InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
@@ -76,8 +71,6 @@ describe('MARC', () => {
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
           QuickMarcEditor.checkContent('$a The Journal of ecclesiastical history', 13);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         },
