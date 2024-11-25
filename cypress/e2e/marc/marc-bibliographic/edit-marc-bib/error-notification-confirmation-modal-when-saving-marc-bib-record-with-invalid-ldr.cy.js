@@ -3,7 +3,6 @@ import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -59,13 +58,8 @@ describe('MARC', () => {
         'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C375205'] },
         () => {
-          InventorySearchAndFilter.selectSearchOptions(
-            testData.searchOption,
-            testData.instanceTitle,
-          );
-          InventorySearchAndFilter.clickSearch();
-          InventoryInstances.selectInstanceById(instanceId);
-          InventoryInstance.waitLoading();
+          InventoryInstances.searchByTitle(instanceId);
+          InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
@@ -76,8 +70,6 @@ describe('MARC', () => {
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
           QuickMarcEditor.checkContent('$a The Journal of ecclesiastical history', 13);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         },
