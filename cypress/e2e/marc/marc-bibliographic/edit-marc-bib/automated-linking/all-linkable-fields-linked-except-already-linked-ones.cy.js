@@ -47,7 +47,7 @@ describe('MARC', () => {
           },
           {
             rowIndex: 84,
-            value: 'C388534 Robinson & Associates, Inc.',
+            value: 'C388534 Robinson and Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388534 Robinson & Associates, Inc.',
             boxFifth: '',
@@ -60,7 +60,7 @@ describe('MARC', () => {
               'C388534 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
             boxFourth:
-              '$a C388534 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
+              '$a C388534 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425C388534',
             boxSeventh: '',
@@ -69,7 +69,7 @@ describe('MARC', () => {
             rowIndex: 86,
             value: 'C388534 Gone with the wind (Motion picture : 1939)',
             tag: 730,
-            boxFourth: '$a C388534 Gone with the wind $f 1939) $g (Motion picture :',
+            boxFourth: '$a C388534 Gone with the wind $g (Motion picture : $f 1939)',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095C388534',
             boxSeventh: '',
