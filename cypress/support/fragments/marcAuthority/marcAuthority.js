@@ -95,6 +95,58 @@ const defaultAuthority = {
 
 const detailsPaneHeader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
+const authorityRecordsApi = {
+  getRecordsViaAPI(
+    deleted = false,
+    idOnly = false,
+    acceptHeader = null,
+    query = null,
+    limit = 2000,
+    offset = 0,
+  ) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        isDefaultSearchParamsRequired: false,
+        path: 'authority-storage/authorities',
+        searchParams: {
+          limit,
+          deleted,
+          idOnly,
+          offset,
+          query: query || '',
+        },
+        additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
+      })
+      .then(({ body }) => body);
+  },
+
+  getAllRecordsViaAPI(deleted = false, idOnly = false, acceptHeader = null, query = null) {
+    const limit = 2000;
+    let allRecords = [];
+    let offset = 0;
+
+    const fetchPage = () => {
+      return this.getRecordsViaAPI(deleted, idOnly, acceptHeader, query, limit, offset).then(
+        (body) => {
+          allRecords = allRecords.concat(body.authorities);
+          const totalRecords = body.totalRecords;
+
+          if (allRecords.length < totalRecords) {
+            offset += limit;
+            return cy.wrap(null).then(fetchPage);
+          } else {
+            cy.log(`Found ${allRecords.length} records`);
+            return cy.wrap(allRecords);
+          }
+        },
+      );
+    };
+
+    return cy.wrap(null).then(fetchPage);
+  },
+};
+
 export default {
   defaultAuthority,
   defaultUpdateJobProfile,
@@ -406,21 +458,5 @@ export default {
     return cy.get('@authorityId');
   },
 
-  getRecordsViaAPI: (deleted = false, idOnly = false, acceptHeader = null, query = null) => {
-    cy.okapiRequest({
-      method: 'GET',
-      isDefaultSearchParamsRequired: false,
-      path: 'authority-storage/authorities',
-      searchParams: {
-        limit: 1000,
-        deleted,
-        idOnly,
-        query: query || '',
-      },
-      additionalHeaders: acceptHeader ? { accept: acceptHeader } : {},
-    }).then(({ body }) => {
-      cy.wrap(body).as('records');
-    });
-    return cy.get('@records');
-  },
+  ...authorityRecordsApi,
 };
