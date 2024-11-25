@@ -58,8 +58,8 @@ describe('Remote Storage: Accession tables', () => {
   });
 
   it(
-    'C343224 Check that the created locations are displayed in the “Final location (Remote)” column (firebird) (TaaS)',
-    { tags: ['criticalPathBroken', 'firebird', 'C343224'] },
+    'C343224 Check that the created locations are displayed in the “Final location (Remote)” column (volaris) (TaaS)',
+    { tags: ['criticalPathBroken', 'volaris', 'C343224'] },
     () => {
       AccessionTables.verifyAccessionTablePane();
 

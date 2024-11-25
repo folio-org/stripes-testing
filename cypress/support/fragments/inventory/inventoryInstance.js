@@ -449,7 +449,9 @@ export default {
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
     cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
+    cy.wait(500);
     cy.do(editMARCBibRecordButton.click());
+    cy.wait(500);
   },
 
   selectTopRecord() {
@@ -1783,5 +1785,13 @@ export default {
 
   verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
+  },
+
+  verifySourceInAdministrativeData(sourceValue) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(sourceValue)))
+        .exists(),
+    );
   },
 };

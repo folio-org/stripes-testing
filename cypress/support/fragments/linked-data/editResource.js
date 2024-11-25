@@ -1,3 +1,8 @@
+import newInstance from './newInstance';
+
+const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
+const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
+
 export default {
   waitLoading() {
     cy.xpath("//div[@id='edit-section']").should('be.visible');
@@ -32,6 +37,7 @@ export default {
     cy.xpath('//div[@class="label" and text()="Preferred Title for Work"]/../../div/input')
       .focus()
       .should('not.be.disabled')
+      .clear()
       .type(title);
   },
 
@@ -41,5 +47,16 @@ export default {
       .focus()
       .should('not.be.disabled')
       .type(note);
+  },
+
+  duplicateWork() {
+    cy.xpath(actionsButton).click();
+    cy.xpath(duplicateButton).click();
+    cy.xpath("//div[@id='edit-section']").should('be.visible');
+  },
+
+  openNewInstanceForm() {
+    cy.xpath("//button[@data-testid='create-instance-button']").click();
+    newInstance.waitLoading();
   },
 };

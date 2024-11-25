@@ -102,8 +102,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17137 Filter circulation log by renewed through override (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C17137'] },
+    'C17137 Filter circulation log by renewed through override (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C17137'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,
