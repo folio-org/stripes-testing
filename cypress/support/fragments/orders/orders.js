@@ -367,6 +367,7 @@ export default {
         .click(),
       MultiSelectOption(AUName).click(),
     ]);
+    cy.wait(6000);
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay());

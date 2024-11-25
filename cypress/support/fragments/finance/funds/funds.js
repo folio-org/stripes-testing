@@ -1053,8 +1053,9 @@ export default {
         .find(Button({ ariaLabel: 'open menu' }))
         .click(),
       MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
     ]);
+    cy.wait(6000);
+    cy.do([saveAndCloseButton.click()]);
     this.waitForFundDetailsLoading();
   },
 
