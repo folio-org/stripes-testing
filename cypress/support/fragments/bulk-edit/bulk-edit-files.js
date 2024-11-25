@@ -134,7 +134,8 @@ export default {
 
   verifyMatchedResultFirstElement(actualResult, expectedResult) {
     const actualFirstElement = actualResult.split(',')[0];
-    expect(actualFirstElement).to.eq(expectedResult);
+    // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file.
+    expect(actualFirstElement).to.eq(`\uFEFF${expectedResult}`);
   },
 
   verifyMatchedResultPatronGroup(actualResult, expectedResult) {
@@ -213,7 +214,8 @@ export default {
         const headers = rows
           .shift()
           .split(regex)
-          .map((h) => h.replace(/^"|"$/g, ''));
+          .map((h) => h.replace(/^"|"$/g, '').trim());
+        // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
         const uuidHeaderIndex = headers.indexOf(uuidHeader);
         const targetHeaderIndex = headers.indexOf(targetHeader);
 
@@ -244,8 +246,8 @@ export default {
         const headers = rows
           .shift()
           .split(regex)
-          .map((h) => h.replace(/^"|"$/g, ''));
-
+          .map((h) => h.replace(/^"|"$/g, '').trim());
+        // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
         const identifierHeaderIndex = headers.indexOf(identifierHeader);
 
         // Find the target row by UUID
