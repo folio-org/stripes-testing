@@ -18,7 +18,7 @@ describe('MARC', () => {
           searchOption: 'Keyword',
         },
         field010: { tag: '010', subfield1: '$a n90635366', subfield2: '$a n90635377' },
-        errorMultiple010Subfields: '010 can only have one $a.',
+        errorMultiple010Subfields: "Subfield 'a' is non-repeatable.",
       };
       const authorityPostfix = '?authRefType=Authorized&heading';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -82,6 +82,8 @@ describe('MARC', () => {
           MarcAuthority.changeField(testData.field010.tag, testData.field010.subfield1);
           QuickMarcEditor.checkContent(testData.field010.subfield1, 5);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditing();
           MarcAuthority.changeField(
             testData.field010.tag,
