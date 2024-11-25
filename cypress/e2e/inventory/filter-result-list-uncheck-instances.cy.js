@@ -12,7 +12,7 @@ describe('Inventory', () => {
   let userId;
   const testData = {};
   beforeEach('create tests data', () => {
-    testData.instanceTitle = `"autoTestInstanceTitle ${getRandomPostfix()}`;
+    testData.instanceTitle = `!!"autoTestInstanceTitle ${getRandomPostfix()}`;
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
