@@ -93,7 +93,7 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 16,
-        value: 'C380511 Ludwig van, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig one, Beethoven, 1770-1827.',
         tag: '100',
       },
       {
@@ -262,6 +262,7 @@ describe('Data Import', () => {
 
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
+        cy.wait(2000);
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);

@@ -131,26 +131,25 @@ describe('MARC', () => {
         MarcAuthoritiesDelete.checkDeleteModal();
         MarcAuthoritiesDelete.confirmDelete();
         MarcAuthoritiesDelete.verifyDeleteComplete(marcFiles[2].authorityHeading);
-
-        MarcAuthority.getRecordsViaAPI().then((body) => {
+        MarcAuthority.getAllRecordsViaAPI().then((allRecords) => {
           expect(
-            body.authorities.filter(
+            allRecords.filter(
               (record) => record.id === createdRecordIDs[1] || record.id === createdRecordIDs[2],
             ).length,
           ).to.equal(0);
         });
 
-        MarcAuthority.getRecordsViaAPI(true).then((body) => {
-          expect(
-            body.authorities.filter((record) => record.id === createdRecordIDs[1]).length,
-          ).to.equal(1);
-          expect(
-            body.authorities.filter((record) => record.id === createdRecordIDs[2]).length,
-          ).to.equal(1);
+        MarcAuthority.getAllRecordsViaAPI(true).then((allRecords) => {
+          expect(allRecords.filter((record) => record.id === createdRecordIDs[1]).length).to.equal(
+            1,
+          );
+          expect(allRecords.filter((record) => record.id === createdRecordIDs[2]).length).to.equal(
+            1,
+          );
         });
 
-        MarcAuthority.getRecordsViaAPI(true, true).then((body) => {
-          body.authorities
+        MarcAuthority.getAllRecordsViaAPI(true, true).then((allRecords) => {
+          allRecords
             .filter((rec, index) => index < 10)
             .forEach((record) => {
               expect(record).to.not.have.property('source');
@@ -159,12 +158,12 @@ describe('MARC', () => {
               expect(record).to.not.have.property('naturalId');
               expect(record).to.not.have.property('metadata');
             });
-          expect(
-            body.authorities.filter((record) => record.id === createdRecordIDs[1]).length,
-          ).to.equal(1);
-          expect(
-            body.authorities.filter((record) => record.id === createdRecordIDs[2]).length,
-          ).to.equal(1);
+          expect(allRecords.filter((record) => record.id === createdRecordIDs[1]).length).to.equal(
+            1,
+          );
+          expect(allRecords.filter((record) => record.id === createdRecordIDs[2]).length).to.equal(
+            1,
+          );
         });
 
         MarcAuthority.getRecordsViaAPI(true, true, 'text/plain').then((body) => {
