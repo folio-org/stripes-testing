@@ -139,7 +139,7 @@ describe('orders: Edifact export', () => {
   });
 
   it(
-    'C350404: Verify that User can delete created Order (thunderjet)',
+    'C350404 Verify that User can delete created Order (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
