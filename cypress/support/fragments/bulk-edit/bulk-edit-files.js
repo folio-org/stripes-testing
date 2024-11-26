@@ -134,8 +134,7 @@ export default {
 
   verifyMatchedResultFirstElement(actualResult, expectedResult) {
     const actualFirstElement = actualResult.split(',')[0];
-    // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file.
-    expect(actualFirstElement).to.eq(`\uFEFF${expectedResult}`);
+    expect(actualFirstElement).to.eq(expectedResult);
   },
 
   verifyMatchedResultPatronGroup(actualResult, expectedResult) {
