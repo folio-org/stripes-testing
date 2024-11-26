@@ -160,7 +160,7 @@ describe('Invoices', () => {
     },
   ].forEach((filter) => {
     it(
-      'C6724: Test the invoice filters (thunderjet)',
+      'C6724 Test the invoice filters (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
         filter.filterActions();
