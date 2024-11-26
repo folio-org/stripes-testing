@@ -215,7 +215,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C375267: Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (thunderjet)',
+    'C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);

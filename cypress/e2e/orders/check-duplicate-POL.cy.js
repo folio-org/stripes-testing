@@ -102,7 +102,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C347860: Check duplicate POL (thunderjet)',
+    'C347860 Check duplicate POL (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

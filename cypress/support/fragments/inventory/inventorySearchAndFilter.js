@@ -234,9 +234,9 @@ export default {
   },
 
   byLanguage(lang) {
-    // lang: language object. Example: language.eng
-    return cy.do([
-      languageInput.clickHeader(),
+    cy.do(languageInput.clickHeader());
+    cy.wait(1000);
+    cy.do([
       languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(including(lang ?? 'English(')).click(),
     ]);
