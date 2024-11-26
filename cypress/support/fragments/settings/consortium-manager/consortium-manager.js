@@ -11,7 +11,7 @@ import {
   or,
 } from '../../../../../interactors';
 
-const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());
+const myProfileButton = Dropdown({ id: 'profileDropdown' });
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 
 export default {
@@ -126,5 +126,17 @@ export default {
         )
         .exists(),
     );
+  },
+
+  editTenantName(oldName, newName) {
+    cy.xpath(`//input[@value = '${oldName}']`).clear().type(newName);
+  },
+
+  saveEditingTenantChangesClickActiveButton() {
+    cy.xpath("//button[contains(@id, 'save-consortia')]").should('not.be.disabled').click();
+  },
+
+  checkEditedTenantName(name) {
+    cy.xpath(`//div[contains(text(), '${name}')]`).should('be.visible');
   },
 };

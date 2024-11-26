@@ -1,5 +1,4 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import FilterItems from '../../../support/fragments/inventory/filterItems';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { MultiColumnList } from '../../../../interactors';
 
@@ -31,10 +30,8 @@ describe('fse-inventory - UI', () => {
       InventorySearchAndFilter.waitLoading();
       // search by item status
       InventorySearchAndFilter.switchToItem();
-      FilterItems.toggleItemStatusAccordion();
-      FilterItems.toggleStatus('Available');
+      InventorySearchAndFilter.byKeywords();
       // wait for requests
-      cy.wait(['@getInstances', '@getFacets']);
       cy.expect(MultiColumnList().exists());
       // reset filters
       InventorySearchAndFilter.resetAll();
