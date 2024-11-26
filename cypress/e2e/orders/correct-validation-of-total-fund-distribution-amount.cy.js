@@ -128,7 +128,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C359009: Correct validation of total "Fund distribution" amount (thunderjet) (TaaS)',
+    'C359009 Correct validation of total "Fund distribution" amount (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

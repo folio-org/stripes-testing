@@ -108,7 +108,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C15859: Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
+    'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.visit(TopMenu.invoicesPath);
