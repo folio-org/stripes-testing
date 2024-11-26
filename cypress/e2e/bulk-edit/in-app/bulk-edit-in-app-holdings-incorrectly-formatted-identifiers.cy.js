@@ -26,11 +26,11 @@ const checkResponse = (alias, fileName, maxRetries = 20) => {
   let retries = 0;
   const waitForFailedStatus = () => {
     cy.wait(alias).then((interception) => {
+      retries++;
+      if (retries > maxRetries) {
+        throw new Error('Exceeded maximum retry attempts waiting for status to equal FAILED');
+      }
       if (interception.response.body.status === 'FAILED') {
-        retries++;
-        if (retries > maxRetries) {
-          throw new Error('Exceeded maximum retry attempts waiting for status to equal FAILED');
-        }
         expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
         expect(interception.response.body.errorMessage).to.eq(errorMessage);
       } else {

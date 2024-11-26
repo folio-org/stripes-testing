@@ -129,7 +129,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C353546: Add cancel PO action and display indication that PO is canceled (thunderjet)',
+    'C353546 Add cancel PO action and display indication that PO is canceled (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

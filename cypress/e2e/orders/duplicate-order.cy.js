@@ -99,7 +99,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C9220: Duplicate purchase order (thunderjet)',
+    'C9220 Duplicate purchase order (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

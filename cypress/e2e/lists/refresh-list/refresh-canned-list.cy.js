@@ -47,7 +47,6 @@ describe('lists', () => {
           cy.intercept('GET', `lists/${filteredItem.id}`).as('getRecords');
         });
         Lists.refreshList();
-        cy.wait(7000);
         cy.wait('@getRecords').then((interception) => {
           const totalRecords = interception.response.body.successRefresh.recordsCount;
           cy.contains(`Refresh complete with ${totalRecords} records: View updated list`).should(

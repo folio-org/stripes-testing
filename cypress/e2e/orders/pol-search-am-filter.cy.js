@@ -115,7 +115,7 @@ describe('Export Manager', () => {
       });
 
       it(
-        'C350603: Searching POL by specifying acquisition method (thunderjet)',
+        'C350603 Searching POL by specifying acquisition method (thunderjet)',
         { tags: ['smoke', 'thunderjet'] },
         () => {
           Orders.selectOrderLines();
