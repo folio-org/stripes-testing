@@ -58,7 +58,7 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.INVOICE,
           name: `C345353 Test Harrassowitz invoice with space.${getRandomPostfix()}`,
           description: '',
-          batchGroup: BATCH_GROUP.FOLIO,
+          batchGroup: BATCH_GROUP.AMHERST,
           invoiceNote: 'RFF+API[2] " " NAD+SU+++[1]',
           organizationName: VENDOR_NAMES.HARRASSOWITZ,
           paymentMethod: PAYMENT_METHOD.CASH,

@@ -19,7 +19,7 @@ describe('Data Import', () => {
       name: `C343284 invoice mapping profile ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       vendorInvoiceNumber: '123',
       paymentMethod: PAYMENT_METHOD.CASH,
       currency: '"USD"',

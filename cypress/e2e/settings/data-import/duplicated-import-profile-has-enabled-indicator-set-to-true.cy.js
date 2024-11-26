@@ -22,7 +22,7 @@ describe('Data Import', () => {
       description: '',
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,
     };

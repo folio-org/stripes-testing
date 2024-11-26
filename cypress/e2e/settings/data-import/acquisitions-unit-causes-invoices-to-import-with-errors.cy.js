@@ -51,7 +51,7 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       acquisitionsUnits: `"${defaultAcquisitionUnit.name}"`,
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       lockTotalAmount: 'MOA+86[2]',
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,

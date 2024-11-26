@@ -22,7 +22,7 @@ describe('Data Import', () => {
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       invoiceLinePOlDescription: 'This is the Description',
       invoiceDate: '###TODAY###',
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       vendorInvoiceNumber: '1',
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,

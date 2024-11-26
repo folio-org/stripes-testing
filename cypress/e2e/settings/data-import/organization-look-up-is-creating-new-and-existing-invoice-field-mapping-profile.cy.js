@@ -15,7 +15,7 @@ describe('Data Import', () => {
     const mappingProfile = {
       name: `C380521 Import Invoice_${getRandomPostfix()}`,
       description: '',
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       paymentMethod: PAYMENT_METHOD.CASH,
       organization: 'Amazon.com',
       organizationForChanging: 'Alexander Street Press',

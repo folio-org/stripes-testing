@@ -41,7 +41,7 @@ describe('Data Import', () => {
     const mappingProfile = {
       name: `C375103 Testing blank SRS column${getRandomPostfix()}`,
       description: '',
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       organizationName: VENDOR_NAMES.EBSCO,
       paymentMethod: PAYMENT_METHOD.CASH,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
