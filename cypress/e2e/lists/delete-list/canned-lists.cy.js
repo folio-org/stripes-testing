@@ -41,7 +41,7 @@ describe('lists', () => {
         Lists.openActions();
         Lists.verifyEditListButtonIsDisabled();
         Lists.closeListDetailsPane();
-        Lists.missingItems();
+        Lists.openMissingItemsList();
         Lists.openActions();
         Lists.verifyEditListButtonIsDisabled();
       },

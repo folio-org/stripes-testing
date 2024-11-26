@@ -61,8 +61,8 @@ describe('Orders', () => {
     });
 
     it(
-      'C353989: A user can select existing order when creating an order from instance record (Thunderjet)(TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      'C353989 A user can select existing order when creating an order from instance record (Thunderjet)(TaaS)',
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
 

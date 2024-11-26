@@ -92,8 +92,8 @@ describe('Export Manager', () => {
     });
 
     it(
-      'C359200: Days previously chosen for weekly scheduling are NOT displaying in new current scheduling settings (thunderjet) (TaaS)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+      'C359200 Days previously chosen for weekly scheduling are NOT displaying in new current scheduling settings (thunderjet) (TaaS)',
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         Organizations.searchByParameters('Name', organization.name);
         Organizations.checkSearchResults(organization);

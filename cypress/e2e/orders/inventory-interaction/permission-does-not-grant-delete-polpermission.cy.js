@@ -156,8 +156,8 @@ describe('Orders: Inventory interaction', () => {
   });
 
   it(
-    'C367948: "Inventory: Create order from instance" permission does not grant delete POL permission (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C367948 "Inventory: Create order from instance" permission does not grant delete POL permission (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);

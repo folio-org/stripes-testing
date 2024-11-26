@@ -20,7 +20,8 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Renewal', () => {
   let materialTypeId;
-  let loanId;
+  let loanId1;
+  let loanId2;
   let servicePointId;
   let sourceId;
   const firstName = 'preferredName testMiddleName';
@@ -36,7 +37,15 @@ describe('Renewal', () => {
     id: LOAN_POLICY_ID,
     name: `Test loan policy ${LOAN_POLICY_ID}`,
   };
-  const itemData = {
+  const itemData1 = {
+    title: `CY_Test instance ${getRandomPostfix()}`,
+    status: 'Checked out',
+    requests: '0',
+    barcode: generateItemBarcode(),
+    loanPolicy: loanPolicyData.name,
+  };
+
+  const itemData2 = {
     title: `CY_Test instance ${getRandomPostfix()}`,
     status: 'Checked out',
     requests: '0',
@@ -87,6 +96,7 @@ describe('Renewal', () => {
         ]).then((userProperties) => {
           renewOverrideUserData.lastName = userProperties.username;
           renewOverrideUserData.id = userProperties.userId;
+          renewOverrideUserData.barcode = userProperties.barcode;
           renewOverrideUserData.password = userProperties.password;
           renewOverrideUserData.username = userProperties.username;
         });
@@ -96,7 +106,7 @@ describe('Renewal', () => {
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env(CY_ENV.INSTANCE_TYPES)[0].id,
-            title: itemData.title,
+            title: itemData1.title,
           },
           holdings: [
             {
@@ -108,7 +118,32 @@ describe('Renewal', () => {
           items: [
             [
               {
-                barcode: itemData.barcode,
+                barcode: itemData1.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
+                materialType: { id: materialTypeId },
+              },
+            ],
+          ],
+        });
+      })
+      .then(() => {
+        cy.createInstance({
+          instance: {
+            instanceTypeId: Cypress.env(CY_ENV.INSTANCE_TYPES)[0].id,
+            title: itemData2.title,
+          },
+          holdings: [
+            {
+              holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
+              permanentLocationId: Cypress.env(CY_ENV.LOCATION)[0].id,
+              sourceId,
+            },
+          ],
+          items: [
+            [
+              {
+                barcode: itemData2.barcode,
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
                 materialType: { id: materialTypeId },
@@ -144,10 +179,19 @@ describe('Renewal', () => {
       .then(() => {
         Checkout.checkoutItemViaApi({
           servicePointId,
-          itemBarcode: itemData.barcode,
+          itemBarcode: itemData1.barcode,
           userBarcode: renewUserData.barcode,
         }).then((body) => {
-          loanId = body.id;
+          loanId1 = body.id;
+        });
+      })
+      .then(() => {
+        Checkout.checkoutItemViaApi({
+          servicePointId,
+          itemBarcode: itemData2.barcode,
+          userBarcode: renewOverrideUserData.barcode,
+        }).then((body) => {
+          loanId2 = body.id;
         });
       });
   });
@@ -156,15 +200,29 @@ describe('Renewal', () => {
     cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedRule);
     CheckinActions.checkinItemViaApi({
-      itemBarcode: itemData.barcode,
+      itemBarcode: itemData1.barcode,
       servicePointId,
     }).then(() => {
       Users.deleteViaApi(renewUserData.id);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"items.barcode"=="${itemData1.barcode}"`,
+      }).then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    });
+    CheckinActions.checkinItemViaApi({
+      itemBarcode: itemData2.barcode,
+      servicePointId,
+    }).then(() => {
       Users.deleteViaApi(renewOverrideUserData.id);
       cy.getInstance({
         limit: 1,
         expandAll: true,
-        query: `"items.barcode"=="${itemData.barcode}"`,
+        query: `"items.barcode"=="${itemData2.barcode}"`,
       }).then((instance) => {
         cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -176,21 +234,20 @@ describe('Renewal', () => {
 
   it(
     'C568 Renewal: failure because loan is not renewable (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C568'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C568'] },
     () => {
       cy.login(renewUserData.username, renewUserData.password, {
-        path: RenewalActions.generateInitialLink(renewUserData.id, loanId),
+        path: RenewalActions.generateInitialLink(renewUserData.id, loanId1),
         waiter: () => cy.wait(2000),
       });
-      RenewalActions.renewWithoutOverrideAccess(itemData);
+      RenewalActions.renewWithoutOverrideAccess(itemData1);
 
       cy.login(renewOverrideUserData.username, renewOverrideUserData.password, {
-        path: RenewalActions.generateInitialLink(renewOverrideUserData.id, loanId),
+        path: RenewalActions.generateInitialLink(renewOverrideUserData.id, loanId2),
         waiter: () => cy.wait(2000),
       });
-
-      RenewalActions.renewWithOverrideAccess(itemData);
-      RenewalActions.startOverriding(itemData);
+      RenewalActions.renewWithOverrideAccess(itemData2);
+      RenewalActions.startOverriding(itemData2);
       RenewalActions.fillOverrideInfo();
       RenewalActions.overrideLoan();
       RenewalActions.checkLoanDetails({ firstName, lastName: renewOverrideUserData.lastName });

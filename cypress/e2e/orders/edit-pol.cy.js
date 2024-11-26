@@ -86,8 +86,8 @@ describe('orders: create', () => {
   });
 
   it(
-    'C665: Edit an existing PO Line on a "Pending" order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeftBroken', 'eurekaPhase1'] },
+    'C665 Edit an existing PO Line on a "Pending" order (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeftBroken'] },
     () => {
       Orders.selectPendingStatusFilter();
       Orders.selectFromResultsList(orderNumber);

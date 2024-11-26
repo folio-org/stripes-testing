@@ -40,8 +40,8 @@ describe('Invoices', () => {
   });
 
   it(
-    'C343209: Create, approve and pay a credit invoice (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    'C343209 Create, approve and pay a credit invoice (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);

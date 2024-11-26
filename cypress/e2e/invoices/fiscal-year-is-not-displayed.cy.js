@@ -73,8 +73,8 @@ describe('Invoices', () => {
   });
 
   it(
-    'C387533: "Fiscal year" field is NOT displayed and can NOT be selected by user without "Invoice: Pay invoices in a different fiscal year" permission when creating and editing invoice (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    'C387533 "Fiscal year" field is NOT displayed and can NOT be selected by user without "Invoice: Pay invoices in a different fiscal year" permission when creating and editing invoice (thunderjet) (TaaS)',
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // #1 Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });

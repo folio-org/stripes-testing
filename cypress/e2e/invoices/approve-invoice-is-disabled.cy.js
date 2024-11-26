@@ -84,12 +84,12 @@ describe('Invoices', () => {
   [
     {
       description:
-        'C397321: User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is enabled) (thunderjet) (TaaS)',
+        'C397321 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is enabled) (thunderjet) (TaaS)',
       isApprovePayEnabled: true,
     },
     {
       description:
-        'C397326: User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is disabled) (thunderjet) (TaaS)',
+        'C397326 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is disabled) (thunderjet) (TaaS)',
       isApprovePayEnabled: false,
     },
   ].forEach(({ description, isApprovePayEnabled }) => {

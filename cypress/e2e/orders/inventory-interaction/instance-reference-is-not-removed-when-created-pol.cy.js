@@ -107,8 +107,8 @@ describe('Orders', () => {
   });
 
   it(
-    'C374119: Instance reference is NOT removed when user does not confirm changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C374119 Instance reference is NOT removed when user does not confirm changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

@@ -2,7 +2,6 @@ import Permissions from '../../../support/dictionary/permissions';
 import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { Spinner } from '../../../../interactors';
 
 describe('lists', () => {
   describe('Refresh lists', () => {
@@ -48,8 +47,6 @@ describe('lists', () => {
           cy.intercept('GET', `lists/${filteredItem.id}`).as('getRecords');
         });
         Lists.refreshList();
-        cy.wait(7000);
-        cy.expect(Spinner().absent());
         cy.wait('@getRecords').then((interception) => {
           const totalRecords = interception.response.body.successRefresh.recordsCount;
           cy.contains(`Refresh complete with ${totalRecords} records: View updated list`).should(

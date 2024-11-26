@@ -215,8 +215,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C376610: Rollover cash balance as transfer ("Allocation" option is NOT active) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C376610 Rollover cash balance as transfer ("Allocation" option is NOT active) (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

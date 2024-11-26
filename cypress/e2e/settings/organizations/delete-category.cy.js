@@ -25,7 +25,7 @@ describe('Organizations: Settings (Organizations)', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C367989: Delete category (thunderjet)', { tags: ['criticalPth', 'thunderjet'] }, () => {
+  it('C367989 Delete category (thunderjet)', { tags: ['criticalPth', 'thunderjet'] }, () => {
     SettingsOrganizations.selectCategories();
     SettingsOrganizations.deleteCategory(category);
   });

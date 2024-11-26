@@ -214,8 +214,8 @@ describe('Finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C376609: Execute rollover when "Allocation" option is NOT active and "None" option is selected in "Rollover budget value" dropdown (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C376609 Execute rollover when "Allocation" option is NOT active and "None" option is selected in "Rollover budget value" dropdown (TaaS)',
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

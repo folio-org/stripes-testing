@@ -28,8 +28,8 @@ describe('ui-finance: Fiscal Year', () => {
   });
 
   it(
-    'C380514: "UTC" is displayed in "Period begin date" and "Period end date" fields when create or view fiscal year (Orchid +) (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    'C380514 "UTC" is displayed in "Period begin date" and "Period end date" fields when create or view fiscal year (Orchid +) (thunderjet) (TaaS)',
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
       FiscalYears.closeThirdPane();

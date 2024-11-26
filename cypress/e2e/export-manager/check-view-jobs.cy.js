@@ -147,8 +147,8 @@ describe('Export Manager', () => {
       });
 
       it(
-        'C347885: Check view for jobs on Export Manager page (thunderjet)',
-        { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+        'C347885 Check view for jobs on Export Manager page (thunderjet)',
+        { tags: ['smoke', 'thunderjet'] },
         () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);

@@ -155,8 +155,8 @@ describe('Receiving', () => {
     });
 
     it(
-      'C353985: Export results (CSV) from Receiving with specified "Title fields" and "Piece fields" (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+      'C353985 Export results (CSV) from Receiving with specified "Title fields" and "Piece fields" (thunderjet) (TaaS)',
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Click "Actions" button, Select "Export results (CSV)" option
         Receivings.expandActionsDropdown();

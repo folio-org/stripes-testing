@@ -81,8 +81,8 @@ describe('Invoices', () => {
   });
 
   it(
-    'C350937: Update accordion labels and logic on Invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    'C350937 Update accordion labels and logic on Invoice (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
