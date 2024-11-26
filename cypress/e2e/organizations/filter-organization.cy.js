@@ -40,7 +40,7 @@ describe('ui-organizations: Filtering organization', () => {
     { filterActions: Organizations.selectCashInPaymentMethod },
   ].forEach((filter) => {
     it(
-      'C6713: Test the Organizations app filters (except Tags) (thunderjet)',
+      'C6713 Test the Organizations app filters (except Tags) (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'shiftLeftBroken'] },
       () => {
         filter.filterActions();

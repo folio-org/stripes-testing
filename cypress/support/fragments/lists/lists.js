@@ -336,7 +336,7 @@ export default {
     cy.do(Link(cannedListInactivePatronsWithOpenLoans).click());
   },
 
-  missingItems() {
+  openMissingItemsList() {
     cy.do(Link('Missing items').click());
   },
 

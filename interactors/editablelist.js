@@ -21,6 +21,7 @@ export const ColumnHeader = HTML.extend('column header').selector('[role=columnh
 export const EditableListRow = MultiColumnListRow.extend('editable list row')
   .selector('[class^=editListRow-]')
   .filters({
+    content: (el) => el.textContent,
     index: {
       apply: (el) => [...el.closest('[role=rowgroup]').querySelectorAll('[class^=editListRow-]')].indexOf(el),
       default: 0,

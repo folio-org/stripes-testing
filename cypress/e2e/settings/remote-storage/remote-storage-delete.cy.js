@@ -26,8 +26,8 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C163921 Delete remote storage configuration (firebird) (TaaS)',
-    { tags: ['criticalPath', 'firebird', 'C163921'] },
+    'C163921 Delete remote storage configuration (volaris) (TaaS)',
+    { tags: ['criticalPath', 'volaris', 'C163921'] },
     () => {
       // #1 - 2 Open **"Settings"** app and **"Remote Storage"** in "Settings"
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
