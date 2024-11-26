@@ -166,8 +166,8 @@ describe('Export Manager', () => {
     });
 
     it(
-      'C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
-      { tags: ['smoke', 'thunderjet', 'eurekaPhase1', 'shiftLeft'] },
+      'C350410 Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

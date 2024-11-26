@@ -143,7 +143,7 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C353211: Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings: No fiscal year, Each class status (thunderjet) (TaaS)',
+    'C353211 Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings: No fiscal year, Each class status (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);

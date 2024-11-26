@@ -52,6 +52,8 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('MSEARCH-466 Title*');
+
       InventoryInstances.getInstancesViaApi({
         limit: 100,
         query: `title="${testData.positiveSearchQueries[0]}"`,

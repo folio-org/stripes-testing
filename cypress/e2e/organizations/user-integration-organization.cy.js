@@ -64,7 +64,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   it(
-    'C350762: User can Create and Edit Integrations for an Organization-Vendor (thunderjet)',
+    'C350762 User can Create and Edit Integrations for an Organization-Vendor (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       // Found and edit created organization

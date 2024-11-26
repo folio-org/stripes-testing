@@ -57,7 +57,7 @@ describe('Finance › Settings (Finance)', () => {
   });
 
   it(
-    'C367941: Delete Fund types (thunderjet)',
+    'C367941 Delete Fund types (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       SettingsFinance.canNotDeleteFundType(firstFundType);

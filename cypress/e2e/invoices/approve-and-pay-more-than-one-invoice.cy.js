@@ -151,7 +151,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C366537: Approve & pay more than one invoice (thunderjet) (TaaS)',
+    'C366537 Approve & pay more than one invoice (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(firstInvoice.invoiceNumber);

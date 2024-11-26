@@ -81,6 +81,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
