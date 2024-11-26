@@ -62,7 +62,11 @@ describe('Data Export', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*', 'SearchInstanceUUIDs*');
+      FileManager.deleteFileFromDownloadsByMask(
+        'QuickInstanceExport*',
+        'SearchInstanceUUIDs*',
+        'SearchInstanceCQLQuery*',
+      );
     });
 
     it(

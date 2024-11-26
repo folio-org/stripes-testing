@@ -8,6 +8,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Modals from '../../support/fragments/modals';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
@@ -181,7 +182,6 @@ describe('Title level Request', () => {
     cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
-        cy.log(requestResponse);
         requestResponse.forEach((request) => {
           Requests.deleteRequestViaApi(request.id);
         });
@@ -233,6 +233,7 @@ describe('Title level Request', () => {
       CheckOutActions.checkOutUser(users[1].barcode);
       CheckOutActions.checkOutItem(instanceData.item1Barcode);
       CheckOutActions.checkItemInfo(instanceData.item1Barcode, instanceData.title);
+      Modals.closeModalIfAny();
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();

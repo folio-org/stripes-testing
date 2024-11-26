@@ -130,7 +130,7 @@ describe('Orders: Inventory interaction', () => {
   });
 
   it(
-    'C423548: Check possible actions for piece in "Received" status when edit piece (thunderjet) (TaaS)',
+    'C423548 Check possible actions for piece in "Received" status when edit piece (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

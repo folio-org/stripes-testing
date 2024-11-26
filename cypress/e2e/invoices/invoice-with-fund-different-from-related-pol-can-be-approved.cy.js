@@ -135,7 +135,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C378895: An invoice with fund distribution different from related PO line can be approved (thunderjet) (TaaS)',
+    'C378895 An invoice with fund distribution different from related PO line can be approved (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

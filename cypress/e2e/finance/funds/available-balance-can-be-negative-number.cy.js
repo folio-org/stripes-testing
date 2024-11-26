@@ -83,7 +83,7 @@ describe('Finance: Funds', () => {
   });
 
   it(
-    'C374165: Available balance can be a negative number when ledger "Enforce all budget encumbrance limits" option is NOT active (Thunderjet) (TaaS)',
+    'C374165 Available balance can be a negative number when ledger "Enforce all budget encumbrance limits" option is NOT active (Thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.createApprovedOrderForRollover(firstOrder).then((firstOrderResponse) => {
