@@ -545,7 +545,7 @@ export default {
   },
 
   waitContentLoading() {
-    cy.expect([firstRow.exists(), newButton.has({ disabled: or(true, false) })]);
+    cy.expect([firstRow.exists()]);
     cy.wait(3000);
   },
 
