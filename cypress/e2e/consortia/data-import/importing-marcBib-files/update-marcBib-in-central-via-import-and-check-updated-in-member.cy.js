@@ -87,6 +87,7 @@ describe('Data Import', () => {
     const jobProfileName = `C411795 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
         (mappingProfileResponse) => {
@@ -156,6 +157,7 @@ describe('Data Import', () => {
       cy.resetTenant();
 
       // create user A
+      cy.clearCookies({ domain: null });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
@@ -253,8 +255,6 @@ describe('Data Import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.sharedInstanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.updatedInstanceTitle);
         InventoryInstance.verifyLastUpdatedSource(
           users.userAProperties.firstName,

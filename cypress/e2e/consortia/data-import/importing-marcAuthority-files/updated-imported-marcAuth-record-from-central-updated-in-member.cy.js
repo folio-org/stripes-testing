@@ -209,7 +209,7 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
         Logs.checkJobStatus(testData.uploadModifiedMarcFile, 'Completed');
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);

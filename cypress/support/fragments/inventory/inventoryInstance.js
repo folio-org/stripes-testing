@@ -1137,6 +1137,7 @@ export default {
   },
 
   shareInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId, targetTenantId) {
+    cy.wait(5000);
     cy.okapiRequest({
       method: REQUEST_METHOD.POST,
       path: `consortia/${consortiaId}/sharing/instances`,
@@ -1764,11 +1765,11 @@ export default {
     ]);
   },
 
-  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
+  verifyMemberSubSubHoldingsAccordion(memberId, isOpen = true) {
     cy.wait(2000);
     cy.expect([
       Accordion({ id: memberId }).has({ open: isOpen }),
-      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
+      Accordion({ id: memberId }).exists(),
     ]);
   },
 

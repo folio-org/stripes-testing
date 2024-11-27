@@ -14,6 +14,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;

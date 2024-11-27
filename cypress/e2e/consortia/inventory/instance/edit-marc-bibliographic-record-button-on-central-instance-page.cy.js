@@ -17,7 +17,7 @@ describe('Inventory', () => {
       marcFileName: `C409474 autotestFileName ${getRandomPostfix()}`,
       tag010: {
         tag: '010',
-        content: 'test',
+        content: '$a 85153773',
       },
       source: 'MARC',
     };
@@ -60,11 +60,12 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventoryInstance.waitLoading();
+        cy.wait('@/authn/refresh', { timeout: 5000 });
         InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.waitLoading();
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({

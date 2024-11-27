@@ -43,6 +43,7 @@ describe('Inventory', () => {
         [marcFile.instanceTitle],
         [marcFile.newInstanceTitle],
       );
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
       DataImport.uploadFileViaApi(

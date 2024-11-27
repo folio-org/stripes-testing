@@ -47,14 +47,14 @@ describe('Inventory', () => {
       });
     });
 
-    beforeEach('Login', () => {
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-    });
+    // beforeEach('Login', () => {
+    //   cy.login(testData.user.username, testData.user.password, {
+    //     path: TopMenu.inventoryPath,
+    //     waiter: InventoryInstances.waitContentLoading,
+    //   });
+    //   ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+    //   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+    // });
 
     after('Delete test data', () => {
       cy.resetTenant();
@@ -83,6 +83,12 @@ describe('Inventory', () => {
       'C410925 (CONSORTIA) Duplicating shared instance on Member tenant with Source FOLIO (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C410925'] },
       () => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         InventoryInstances.searchByTitle(testData.instanceC410925.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -104,6 +110,12 @@ describe('Inventory', () => {
       'C410926 (CONSORTIA) Duplicating shared instance on Member tenant with Source MARC (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C410926'] },
       () => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         InventoryInstances.searchByTitle(testData.instanceC410926.id);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

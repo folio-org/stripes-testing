@@ -20,6 +20,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
       DataImport.uploadFileViaApi(
@@ -30,7 +31,7 @@ describe('Inventory', () => {
         testData.instanceId = response[0].instance.id;
       });
 
-      cy.getAdminToken();
+      cy.resetTenant();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,

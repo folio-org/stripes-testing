@@ -107,7 +107,6 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'folijet', 'C423392'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
-        cy.reload();
         InventoryInstance.waitLoading();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();
