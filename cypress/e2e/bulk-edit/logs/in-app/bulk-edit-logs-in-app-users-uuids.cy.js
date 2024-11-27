@@ -122,7 +122,8 @@ describe('bulk-edit', () => {
           BulkEditLogs.downloadFileWithErrorsEncountered();
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
-            [invalidUserUUID],
+            // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
+            [`\uFEFF${invalidUserUUID}`],
             'firstElement',
             false,
           );
@@ -146,7 +147,8 @@ describe('bulk-edit', () => {
           BulkEditLogs.downloadFileWithCommitErrors();
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromCommittingFileName,
-            [user.userId],
+            // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
+            [`\uFEFF${user.userId}`],
             'firstElement',
             false,
           );
