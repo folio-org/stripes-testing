@@ -49,7 +49,7 @@ export default {
       .type(note);
   },
 
-  duplicateWork() {
+  duplicateResource() {
     cy.xpath(actionsButton).click();
     cy.xpath(duplicateButton).click();
     cy.xpath("//div[@id='edit-section']").should('be.visible');
@@ -58,5 +58,14 @@ export default {
   openNewInstanceForm() {
     cy.xpath("//button[@data-testid='create-instance-button']").click();
     newInstance.waitLoading();
+  },
+
+  setInstanceTitle(title) {
+    cy.wait(1000);
+    cy.xpath('    //div[@class="label" and text()="Main Title"]/../../div/input')
+      .focus()
+      .should('not.be.disabled')
+      .clear()
+      .type(title);
   },
 };

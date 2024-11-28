@@ -55,7 +55,7 @@ export default {
       });
   },
 
-  checkSearchResultsByWorkTitle(title) {
+  checkSearchResultsByTitle(title) {
     cy.xpath(`//button[text()="${title}"]`).should('be.visible');
   },
 };
