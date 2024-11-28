@@ -78,7 +78,7 @@ describe('Organizations', () => {
   });
 
   it(
-    'C423504: Viewing and editing "Banking information" record with "Organizations: View and edit banking information" permission (thunderjet)',
+    'C423504 Viewing and editing "Banking information" record with "Organizations: View and edit banking information" permission (thunderjet)',
     { tags: ['criticalPathFlaky', 'thunderjet'] },
     () => {
       cy.login(C423504User.username, C423504User.password, {

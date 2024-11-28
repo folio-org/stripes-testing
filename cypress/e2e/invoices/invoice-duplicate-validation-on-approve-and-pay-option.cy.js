@@ -190,7 +190,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C440075: Check invoice duplicate validation on "Approve & pay" option (thunderjet)',
+    'C440075 Check invoice duplicate validation on "Approve & pay" option (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.selectInvoiceByIndex(testData.firstInvoice.vendorInvoiceNo, 0);

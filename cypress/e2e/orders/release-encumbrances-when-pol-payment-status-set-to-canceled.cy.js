@@ -121,7 +121,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C350945: Release encumbrances when POL payment status is set to canceled (no related invoices) (thunderjet) (TaaS)',
+    'C350945 Release encumbrances when POL payment status is set to canceled (no related invoices) (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

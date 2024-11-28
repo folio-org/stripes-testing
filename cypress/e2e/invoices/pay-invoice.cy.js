@@ -90,7 +90,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C3453: Pay invoice (thunderjet)',
+    'C3453 Pay invoice (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);

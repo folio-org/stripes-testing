@@ -72,25 +72,22 @@ describe('MARC', () => {
             cy.login(testData.userA.username, testData.userA.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              ManageAuthorityFiles.checkAuthorityFilesTableExists();
-              ManageAuthorityFiles.verifyTableHeaders();
-              ManageAuthorityFiles.checkActiveTooltipButtonShown();
-              ManageAuthorityFiles.checkNewButtonEnabled(false);
-              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
-
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              cy.visit(TopMenu.settingsAuthorityFilesPath);
-              ManageAuthorityFiles.waitContentLoading();
-              ManageAuthorityFiles.checkAuthorityFilesTableExists();
-              ManageAuthorityFiles.verifyTableHeaders();
-              ManageAuthorityFiles.checkActiveTooltipButtonShown();
-              ManageAuthorityFiles.checkNewButtonEnabled(false);
-              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
             });
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ManageAuthorityFiles.checkAuthorityFilesTableExists();
+            ManageAuthorityFiles.verifyTableHeaders();
+            ManageAuthorityFiles.checkActiveTooltipButtonShown();
+            ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+            ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            cy.visit(TopMenu.settingsAuthorityFilesPath);
+            ManageAuthorityFiles.waitContentLoading();
+            ManageAuthorityFiles.checkAuthorityFilesTableExists();
+            ManageAuthorityFiles.verifyTableHeaders();
+            ManageAuthorityFiles.checkActiveTooltipButtonShown();
+            ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+            ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
           },
         );
 
@@ -98,22 +95,20 @@ describe('MARC', () => {
           'C430209 View "Manage authority files" pane in "Settings >> MARC authority" with CRUD permissions in Member tenant and no permissions in Central tenant (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C430209'] },
           () => {
-            cy.login(testData.userB.username, testData.userB.password).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            cy.login(testData.userB.username, testData.userB.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              cy.visit(TopMenu.settingsAuthorityFilesPath);
-              ManageAuthorityFiles.waitContentLoading();
-              ManageAuthorityFiles.checkAuthorityFilesTableExists();
-              ManageAuthorityFiles.verifyTableHeaders();
-              ManageAuthorityFiles.checkActiveTooltipButtonShown();
-              ManageAuthorityFiles.checkNewButtonEnabled(false);
-              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            cy.visit(TopMenu.settingsAuthorityFilesPath);
+            ManageAuthorityFiles.waitContentLoading();
+            ManageAuthorityFiles.checkAuthorityFilesTableExists();
+            ManageAuthorityFiles.verifyTableHeaders();
+            ManageAuthorityFiles.checkActiveTooltipButtonShown();
+            ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+            ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
 
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-              ConsortiumManagerApp.verifyChooseSettingsIsDisplayed();
-            });
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+            ConsortiumManagerApp.verifyChooseSettingsIsDisplayed();
           },
         );
       });

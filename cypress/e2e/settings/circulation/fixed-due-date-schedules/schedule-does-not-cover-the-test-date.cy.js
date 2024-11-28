@@ -170,7 +170,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
 
   it(
     'C641 Test renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (vega)',
-    { tags: ['smoke', 'vega', 'system', 'shiftLeftBroken', 'C641'] },
+    { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C641'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.circulationFixedDueDateSchedulesPath,

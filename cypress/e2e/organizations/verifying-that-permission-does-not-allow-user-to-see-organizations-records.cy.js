@@ -30,7 +30,7 @@ describe('Organizations', () => {
   });
 
   it(
-    'C423502: Verifying that "Organizations: Integration usernames and passwords: view" permission does not allow user to see "Organizations" records (thunderjet)',
+    'C423502 Verifying that "Organizations: Integration usernames and passwords: view" permission does not allow user to see "Organizations" records (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FiscalYears.varifyExistsFinanceApp();

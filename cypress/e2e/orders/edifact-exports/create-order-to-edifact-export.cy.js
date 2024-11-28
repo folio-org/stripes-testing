@@ -105,7 +105,7 @@ describe('Export Manager', () => {
       });
 
       it(
-        'C350395: Verify that Orders can be created for the selected Vendors EDIFACT export (thunderjet)',
+        'C350395 Verify that Orders can be created for the selected Vendors EDIFACT export (thunderjet)',
         { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
         () => {
           cy.visit(TopMenu.ordersPath);

@@ -79,7 +79,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C359171: Vendor code displays rather than Vendor name in the invoice UI (thunderjet)',
+    'C359171 Vendor code displays rather than Vendor name in the invoice UI (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

@@ -26,7 +26,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422099: Subject/Contributor browse: verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
+      'C422099 Subject/Contributor browse: verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C422099', 'eurekaPhase1'] },
       () => {
         browseOption.forEach((option) => {
