@@ -112,7 +112,6 @@ describe('Data Import', () => {
       NewJobProfile.linkActionProfile(actionProfile);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-      cy.logout();
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
