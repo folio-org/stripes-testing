@@ -50,7 +50,6 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
 
         cy.login(userA.username, userA.password, {

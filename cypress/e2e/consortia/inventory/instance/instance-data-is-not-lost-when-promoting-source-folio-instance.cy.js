@@ -17,7 +17,7 @@ describe('Inventory', () => {
     let instanceHRID;
     const instanceData = {
       today: DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD'),
-      instanceStatusTerm: 'Cataloged (consortium: cat)',
+      instanceStatusTerm: 'Cataloged (folio: cat)',
       instanceStatusTermUI: 'Cataloged',
       instanceTitle: `C422050 instanceTitle${getRandomPostfix()}`,
       statisticalCode: 'ARL (Collection stats):    books - Book, print (books)',

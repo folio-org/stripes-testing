@@ -123,6 +123,7 @@ export default {
         method: 'POST',
         path: 'inventory/items',
         body: item,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },
@@ -131,6 +132,7 @@ export default {
       method: 'DELETE',
       path: `inventory/items/${itemId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
   addItemToHoldingViaApi({

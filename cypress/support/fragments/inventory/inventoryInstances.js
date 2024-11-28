@@ -1087,7 +1087,11 @@ export default {
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
-    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.wait(2000);
+    cy.do([actionsButton.click()]);
+    cy.wait(2000);
+    cy.do([Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.wait(1000);
     cy.expect(singleRecordImportModal.exists());
     cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
     cy.wait(1000);

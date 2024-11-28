@@ -74,9 +74,6 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'folijet', 'C418586'] },
       () => {
         InventoryInstances.waitContentLoading();
-        cy.wait(2000);
-        cy.reload();
-        cy.wait(4000);
         InventoryInstances.importWithOclc(testData.oclcNumberForImport);
         InventoryInstance.verifyInstanceTitle(testData.localInstanceTitle);
         InventoryInstance.startOverlaySourceBibRecord();

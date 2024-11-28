@@ -44,7 +44,7 @@ describe('Data Import', () => {
     const mappingProfile = {
       name: `C347926 Import Harrassowitz invoice.${getRandomPostfix()}`,
       description: '',
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       lockTotalAmount: 'MOA+9?4[2]',
       organizationName: VENDOR_NAMES.HARRASSOWITZ,
       paymentMethod: PAYMENT_METHOD.CASH,

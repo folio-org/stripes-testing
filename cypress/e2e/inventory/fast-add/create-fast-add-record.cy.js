@@ -13,7 +13,8 @@ import SettingsInventory, {
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import randomFourDigitNumber, { getLongDelay } from '../../../support/utils/cypressTools';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Inventory', () => {

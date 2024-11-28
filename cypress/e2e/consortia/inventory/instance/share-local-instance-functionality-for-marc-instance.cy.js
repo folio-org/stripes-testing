@@ -20,6 +20,7 @@ describe('Inventory', () => {
     const testData = {};
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
       DataImport.uploadFileViaApi(

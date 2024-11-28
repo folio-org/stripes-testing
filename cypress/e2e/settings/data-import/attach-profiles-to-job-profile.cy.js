@@ -84,31 +84,8 @@ describe('Data Import', () => {
       profileName: `C11139 autotest job profile ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
-    before('Create test data', () => {
-      cy.getAdminToken();
-      // create 3 action profiles linked to mapping profile
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name).then(
-        (mappingProfileResponse) => {
-          collectionOfActionProfiles.forEach((profile) => {
-            NewActionProfile.createActionProfileViaApi(
-              profile.name,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              profile.id = actionProfileResponse.body.id;
-            });
-          });
-        },
-      );
 
-      // create 2 match profile
-      collectionOfMatchProfiles.forEach((profile) => {
-        NewMatchProfile.createMatchProfileViaApi(profile.profileName).then(
-          (matchProfileResponse) => {
-            profile.id = matchProfileResponse.body.id;
-          },
-        );
-      });
-
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 

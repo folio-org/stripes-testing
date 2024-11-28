@@ -100,6 +100,7 @@ describe('Data Import', () => {
     const jobProfileName = `C411794 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`;
 
     before('Create test data and login', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
         testData.marcFile.marc,
