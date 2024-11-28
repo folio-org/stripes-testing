@@ -33,6 +33,13 @@ export default {
     cy.xpath(workPreviewPanel).should('be.visible');
   },
 
+  editInstanceFromSearchTable: (rowNumber, instanceNumber) => {
+    cy.xpath(
+      `(//div[@class='search-result-entry-container'][${rowNumber}]//table[contains(@class, 'table instance-list')]//button[contains(text(), 'Edit')])[${instanceNumber}]`,
+    ).click();
+    editResource.waitLoading();
+  },
+
   openNewResourceForm: () => {
     cy.xpath(actionsButton).click();
     cy.xpath(newResourceButton).click();
