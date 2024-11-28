@@ -29,7 +29,10 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'UI-Users', action: 'View' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+      const capabsToAssign = [
+        { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
+        { type: 'Data', resource: 'Consortia User-Tenants Collection', action: 'View' },
+      ];
 
       before('Create users, roles', () => {
         cy.getAdminToken();
@@ -133,39 +136,91 @@ describe('Eureka', () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
           UsersCard.verifyUserRolesCounter('1');
           UsersCard.clickUserRolesAccordion();
-          UsersCard.verifyUserRoleNames([testData.roleCAId]);
+          UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
+          UsersCard.verifyUserRoleNames([testData.centralRoleNameA]);
+          UsersCard.selectRolesAffiliation(tenantNames.college);
+          UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
+          UsersCard.selectRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRoleNames([testData.universityRoleNameA]);
 
-          // UsersSearchPane.searchByUsername(testData.userA.username);
-          // UsersSearchPane.selectUserFromList(testData.userA.username);
-          // UsersCard.verifyUserRolesCounter('0');
-          // UsersCard.clickUserRolesAccordion();
-          // UsersCard.verifyUserRolesAccordionEmpty();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.centralRoleNameA);
+          AuthorizationRoles.clickOnRoleName(testData.centralRoleNameA, false);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
+          AuthorizationRoles.clickSaveInAssignModal();
+          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
 
-          // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
-          // AuthorizationRoles.waitContentLoading();
-          // AuthorizationRoles.searchRole(testData.roleAName);
-          // AuthorizationRoles.clickOnRoleName(testData.roleAName);
-          // AuthorizationRoles.clickAssignUsersButton();
-          // AuthorizationRoles.selectUserInModal(testData.userA.username);
-          // AuthorizationRoles.clickSaveInAssignModal();
-          // AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+          Users.waitLoading();
+          UsersSearchPane.resetAllFilters();
+          UsersSearchPane.searchByUsername(testData.testUser.username);
+          UsersSearchPane.selectUserFromList(testData.testUser.username);
+          UsersCard.verifyUserRolesCounter('0');
+          UsersCard.clickUserRolesAccordion();
+          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.selectRolesAffiliation(tenantNames.college);
+          UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
+          UsersCard.selectRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRoleNames([testData.universityRoleNameA]);
 
-          // AuthorizationRoles.searchRole(testData.roleBName);
-          // AuthorizationRoles.clickOnRoleName(testData.roleBName);
-          // AuthorizationRoles.clickAssignUsersButton();
-          // AuthorizationRoles.selectUserInModal(testData.userA.username);
-          // AuthorizationRoles.clickSaveInAssignModal();
-          // AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          Users.waitLoading();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.collegeRoleNameA);
+          AuthorizationRoles.clickOnRoleName(testData.collegeRoleNameA, false);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
+          AuthorizationRoles.clickSaveInAssignModal();
+          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
 
-          // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-          // Users.waitLoading();
-          // UsersSearchPane.resetAllFilters();
-          // UsersSearchPane.searchByUsername(testData.userA.username);
-          // cy.wait(3000);
-          // UsersSearchPane.selectUserFromList(testData.userA.username);
-          // UsersCard.verifyUserRolesCounter('2');
-          // UsersCard.clickUserRolesAccordion();
-          // UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+          Users.waitLoading();
+          UsersSearchPane.searchByUsername(testData.testUser.username);
+          UsersSearchPane.clickOnUserRowContaining(testData.testUser.username);
+          UsersCard.verifyUserRolesCounter('1');
+          UsersCard.clickUserRolesAccordion();
+          UsersCard.checkSelectedRolesAffiliation(tenantNames.college);
+          UsersCard.verifyUserRoleNames([testData.collegeRoleNameB]);
+          UsersCard.selectRolesAffiliation(tenantNames.central);
+          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.selectRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRoleNames([testData.universityRoleNameA]);
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+          Users.waitLoading();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            SETTINGS_SUBSECTION_AUTH_ROLES,
+          );
+          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.searchRole(testData.universityRoleNameA);
+          AuthorizationRoles.clickOnRoleName(testData.universityRoleNameA, false);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
+          AuthorizationRoles.clickSaveInAssignModal();
+          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
+          Users.waitLoading();
+          UsersSearchPane.searchByUsername(testData.testUser.username);
+          UsersSearchPane.clickOnUserRowContaining(testData.testUser.username);
+          UsersCard.verifyUserRolesCounter('0');
+          UsersCard.clickUserRolesAccordion();
+          UsersCard.checkSelectedRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.selectRolesAffiliation(tenantNames.central);
+          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.selectRolesAffiliation(tenantNames.college);
+          UsersCard.verifyUserRoleNames([testData.collegeRoleNameB]);
         },
       );
     });
