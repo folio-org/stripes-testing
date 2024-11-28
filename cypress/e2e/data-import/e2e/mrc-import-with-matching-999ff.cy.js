@@ -236,7 +236,8 @@ describe('Data Import', () => {
             FileDetails.columnNameInResultList.instance,
           );
 
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InstanceRecordView.verifyInstancePaneExists();
           // ensure the fields created in Field mapping profile exists in inventory
