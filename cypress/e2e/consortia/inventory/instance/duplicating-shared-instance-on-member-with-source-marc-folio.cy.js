@@ -47,15 +47,6 @@ describe('Inventory', () => {
       });
     });
 
-    // beforeEach('Login', () => {
-    //   cy.login(testData.user.username, testData.user.password, {
-    //     path: TopMenu.inventoryPath,
-    //     waiter: InventoryInstances.waitContentLoading,
-    //   });
-    //   ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-    //   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-    // });
-
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();

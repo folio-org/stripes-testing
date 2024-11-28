@@ -318,7 +318,7 @@ export default {
         name: 'batchGroupId',
         path: 'invoice.batchGroupId',
         subfields: [],
-        value: '"FOLIO"',
+        value: '"Amherst (AC)"',
       };
 
       const existingValues = {
