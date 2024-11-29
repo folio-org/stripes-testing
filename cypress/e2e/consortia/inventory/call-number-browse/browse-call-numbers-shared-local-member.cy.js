@@ -400,8 +400,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C410759'] },
+        'C410763 Call numbers from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'C410763'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
