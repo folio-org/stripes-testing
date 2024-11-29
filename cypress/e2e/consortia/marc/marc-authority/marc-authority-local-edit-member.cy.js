@@ -65,17 +65,18 @@ describe('MARC', () => {
               testData.userProperties = createdUserProperties;
 
               cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
-              cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
-                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-              ]);
-
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
                 Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
                 Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+              ]);
+
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
+              cy.setTenant(Affiliations.University);
+              cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
+                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               ]);
 
               cy.login(testData.userProperties.username, testData.userProperties.password, {

@@ -37,15 +37,16 @@ describe('Data Import', () => {
             users.userProperties = userProperties;
 
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            ]);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               Permissions.moduleDataImportEnabled.gui,
+            ]);
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
+            cy.setTenant(Affiliations.College);
+            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
           })
           .then(() => {

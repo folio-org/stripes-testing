@@ -80,6 +80,7 @@ describe('Inventory', () => {
         numOfRecords: 1,
       },
     ];
+    let sourceId;
 
     before('Create user, data', () => {
       cy.getAdminToken();
@@ -201,10 +202,10 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
+            cy.resetTenant();
+            cy.getAdminToken();
             cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
               () => {
-                cy.resetTenant();
-                cy.getAdminToken();
                 DataImport.uploadFileViaApi(
                   marcFiles[0].marc,
                   marcFiles[0].fileName,
@@ -241,25 +242,33 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
-
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: sharedFOLIOInstancesFromCentral[1].testInstanceId,
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              createdHoldingsCollege.push(holding.id);
-            });
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: createdRecordsIds[1],
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              createdHoldingsCollege.push(holding.id);
-            });
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: createdRecordsIds[3],
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              createdHoldingsCollege.push(holding.id);
-            });
+            InventoryHoldings.getHoldingsFolioSource()
+              .then((folioSource) => {
+                sourceId = folioSource.id;
+              })
+              .then(() => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: sharedFOLIOInstancesFromCentral[1].testInstanceId,
+                  permanentLocationId: testData.collegeLocation.id,
+                  sourceId,
+                }).then((holding) => {
+                  createdHoldingsCollege.push(holding.id);
+                });
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: createdRecordsIds[1],
+                  permanentLocationId: testData.collegeLocation.id,
+                  sourceId,
+                }).then((holding) => {
+                  createdHoldingsCollege.push(holding.id);
+                });
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: createdRecordsIds[3],
+                  permanentLocationId: testData.collegeLocation.id,
+                  sourceId,
+                }).then((holding) => {
+                  createdHoldingsCollege.push(holding.id);
+                });
+              });
           })
           .then(() => {
             cy.setTenant(Affiliations.University);
@@ -267,23 +276,26 @@ describe('Inventory', () => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: sharedFOLIOInstancesFromCentral[2].testInstanceId,
               permanentLocationId: testData.universityLocation.id,
+              sourceId,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: createdRecordsIds[2],
               permanentLocationId: testData.universityLocation.id,
+              sourceId,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: createdRecordsIds[4],
               permanentLocationId: testData.universityLocation.id,
+              sourceId,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
           });
-
+        cy.resetTenant();
         cy.login(users.userProperties.username, users.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,

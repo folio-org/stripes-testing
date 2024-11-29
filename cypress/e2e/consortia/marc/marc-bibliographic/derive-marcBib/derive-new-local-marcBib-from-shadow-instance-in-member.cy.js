@@ -72,6 +72,7 @@ describe('MARC', () => {
           tenant: 'College',
         },
       ];
+      let sourceId;
 
       const linkableFields = [600, 700, 710];
 
@@ -101,7 +102,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-
+        cy.resetTenant();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -112,7 +113,6 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -120,8 +120,9 @@ describe('MARC', () => {
               Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
               Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
             ]);
-          })
-          .then(() => {
+
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -155,6 +156,9 @@ describe('MARC', () => {
           .then(() => {
             // adding Holdings in College for shared Instance
             cy.setTenant(Affiliations.University);
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              sourceId = folioSource.id;
+            });
             const collegeLocationData = Locations.getDefaultLocation({
               servicePointId: ServicePoints.getDefaultServicePoint().id,
             }).location;
@@ -163,6 +167,7 @@ describe('MARC', () => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: createdRecordIDs[0],
                 permanentLocationId: testData.collegeLocation.id,
+                sourceId,
               }).then((holding) => {
                 testData.collegeHoldings.push(holding);
               });

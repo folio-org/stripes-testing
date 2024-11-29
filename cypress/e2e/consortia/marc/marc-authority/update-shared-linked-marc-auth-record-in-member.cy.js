@@ -164,6 +164,7 @@ describe('MARC', () => {
             });
           })
           .then(() => {
+            cy.resetTenant();
             cy.loginAsAdmin();
             cy.visit(TopMenu.inventoryPath);
             linkingInTenants.forEach((tenants) => {
