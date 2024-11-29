@@ -77,7 +77,6 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-              cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
@@ -85,8 +84,9 @@ describe('MARC', () => {
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
                 Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
               ]);
-            })
-            .then(() => {
+
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
@@ -94,6 +94,7 @@ describe('MARC', () => {
                 Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
               ]);
             })
+
             .then(() => {
               cy.resetTenant();
               cy.loginAsAdmin().then(() => {

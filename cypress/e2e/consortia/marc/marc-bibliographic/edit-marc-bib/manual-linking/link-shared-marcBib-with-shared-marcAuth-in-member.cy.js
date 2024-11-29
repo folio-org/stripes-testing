@@ -71,7 +71,7 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
-
+          cy.resetTenant();
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -80,9 +80,14 @@ describe('MARC', () => {
           ])
             .then((userProperties) => {
               users.userProperties = userProperties;
-            })
-            .then(() => {
               cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
+              cy.setTenant(Affiliations.University);
+              cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+                Permissions.inventoryAll.gui,
+                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              ]);
+
+              cy.resetTenant();
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
@@ -90,13 +95,6 @@ describe('MARC', () => {
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
                 Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-              ]);
-            })
-            .then(() => {
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-                Permissions.inventoryAll.gui,
-                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               ]);
             })
             .then(() => {

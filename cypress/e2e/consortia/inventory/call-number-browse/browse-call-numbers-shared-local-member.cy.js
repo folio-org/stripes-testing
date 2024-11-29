@@ -15,7 +15,6 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -211,6 +210,7 @@ describe('Inventory', () => {
       const locations = {};
       const loanTypeIds = {};
       const materialTypeIds = {};
+      let sourceId;
 
       function createFolioInstance(instanceTitle, tenantId) {
         const targetTenant = Object.keys(Affiliations)
@@ -243,6 +243,7 @@ describe('Inventory', () => {
             callNumber: instance.holdings[targetTenant].callNumberInHoldings
               ? instance.holdings[targetTenant].callNumber
               : null,
+            sourceId,
           }).then((holding) => {
             createdHoldingsIds[targetTenant].push(holding.id);
             instance.holdings[targetTenant].id = holding.id;
@@ -276,6 +277,9 @@ describe('Inventory', () => {
 
       before('Create user, data', () => {
         cy.getAdminToken();
+        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+          sourceId = folioSource.id;
+        });
 
         cy.createTempUser([])
           .then((userProperties) => {
@@ -330,12 +334,11 @@ describe('Inventory', () => {
                   .find((key) => Affiliations[key] === instance.instanceTenant)
                   .toLowerCase();
                 cy.setTenant(instance.instanceTenant);
-                cy.createSimpleMarcBibViaAPI(instance.title);
-                QuickMarcEditor.getCreatedMarcBib(instance.title).then((bib) => {
-                  createdInstanceIds[targetTenant].push(bib.id);
+                cy.createSimpleMarcBibViaAPI(instance.title).then((id) => {
+                  createdInstanceIds[targetTenant].push(id);
                   testData.instances[
                     testData.instances.findIndex((inst) => inst.title === instance.title)
-                  ].instanceId = bib.id;
+                  ].instanceId = id;
                 });
               });
           });

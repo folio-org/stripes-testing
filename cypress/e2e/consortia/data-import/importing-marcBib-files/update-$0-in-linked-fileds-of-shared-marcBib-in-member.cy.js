@@ -85,20 +85,20 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 21,
+        rowIndex: 20,
         value: 'C407696 Marvel comics',
         tag: '630',
         content:
           '$a C407696 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
       },
       {
-        rowIndex: 22,
+        rowIndex: 21,
         value: 'C407696 Speaking Oratory',
         tag: '650',
         content: '$a C407696 Speaking Oratory $b debating $2 fast',
       },
       {
-        rowIndex: 27,
+        rowIndex: 26,
         value: 'C407696 Radio "Vaticana".',
         tag: '710',
         boxFourth: '$a C407696 Radio "Vaticana". $b Hrvatski program',
@@ -156,10 +156,8 @@ describe('Data Import', () => {
       ])
         .then((userProperties) => {
           testData.userProperties = userProperties;
-        })
-        .then(() => {
+
           cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
-          cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
             Permissions.inventoryAll.gui,
@@ -168,8 +166,9 @@ describe('Data Import', () => {
             Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
             Permissions.dataExportViewAddUpdateProfiles.gui,
           ]);
-        })
-        .then(() => {
+
+          cy.resetTenant();
+          cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
             Permissions.inventoryAll.gui,

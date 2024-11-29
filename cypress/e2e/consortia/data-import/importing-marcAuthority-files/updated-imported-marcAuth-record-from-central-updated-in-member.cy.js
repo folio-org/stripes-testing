@@ -1,5 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -28,9 +29,13 @@ import {
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -132,10 +137,19 @@ describe('Data Import', () => {
 
       // create Action profile and link it to Field mapping profile
       cy.visit(SettingsMenu.actionProfilePath);
+      TopMenuNavigation.openAppFromDropdown(
+        APPLICATION_NAMES.SETTINGS,
+        APPLICATION_NAMES.DATA_IMPORT,
+      );
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
 
       // create Job profile
-      cy.visit(SettingsMenu.jobProfilePath);
+      TopMenuNavigation.openAppFromDropdown(
+        APPLICATION_NAMES.SETTINGS,
+        APPLICATION_NAMES.DATA_IMPORT,
+      );
+      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
       JobProfiles.openNewJobProfileForm();
       NewJobProfile.fillJobProfile(jobProfile);
       NewJobProfile.linkMatchProfile(matchProfile.profileName);
@@ -209,7 +223,7 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
         Logs.checkJobStatus(testData.uploadModifiedMarcFile, 'Completed');
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
