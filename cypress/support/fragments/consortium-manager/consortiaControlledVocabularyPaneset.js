@@ -34,7 +34,9 @@ export default {
   verifyEditModeIsActive() {
     this.verifyNewButtonDisabled();
     cy.expect([
-      MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(TextField()).exists(),
+      MultiColumnListRow({ isContainer: true, rowIndexInParent: 'row-0' })
+        .find(TextField())
+        .exists(),
       cancelButton.is({ disabled: false }),
       saveButton.is({ disabled: false }),
     ]);
@@ -74,7 +76,7 @@ export default {
   performAction(recordName, action) {
     // actions are selected by button name: trash(delete) or edit
     cy.do(
-      MultiColumnListRow({ content: including(recordName) })
+      MultiColumnListRow({ isContainer: true, content: including(recordName) })
         .find(Button({ icon: action }))
         .click(),
     );
@@ -82,17 +84,18 @@ export default {
 
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
+      isContainer: true,
       content: including(record[0]),
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
-          MultiColumnListRow({ rowIndexInParent })
+          MultiColumnListRow({ isContainer: true, rowIndexInParent })
             .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
             .exists(),
         );
       });
 
-      const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+      const actionsCell = MultiColumnListRow({ isContainer: true, rowIndexInParent }).find(
         MultiColumnListCell({ columnIndex: record.length }),
       );
       if (actionButtons.length === 0) {
@@ -117,7 +120,7 @@ export default {
       .invoke('attr', 'data-row-index')
       .then((rowIndexInParent) => {
         cy.do(
-          MultiColumnListRow({ rowIndexInParent })
+          MultiColumnListRow({ isContainer: true, rowIndexInParent })
             .find(Button({ icon: action }))
             .click(),
         );
@@ -132,13 +135,13 @@ export default {
       .then((rowIndexInParent) => {
         cy.wrap(record).each((text, columnIndex) => {
           cy.expect(
-            MultiColumnListRow({ rowIndexInParent })
+            MultiColumnListRow({ isContainer: true, rowIndexInParent })
               .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
               .exists(),
           );
         });
 
-        const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+        const actionsCell = MultiColumnListRow({ isContainer: true, rowIndexInParent }).find(
           MultiColumnListCell({ columnIndex: record.length }),
         );
         if (actionButtons.length === 0) {
@@ -162,6 +165,6 @@ export default {
   },
 
   verifyRecordNotInTheList(name) {
-    cy.expect(MultiColumnListRow({ content: including(name) }).absent());
+    cy.expect(MultiColumnListRow({ isContainer: true, content: including(name) }).absent());
   },
 };

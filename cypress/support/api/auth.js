@@ -9,6 +9,7 @@ Cypress.Commands.add(
       pathToSet = 'bl-users/login';
     }
     if (Cypress.env('eureka')) {
+      cy.clearCookies({ domain: null });
       cy.okapiRequest({
         method: 'POST',
         path: 'authn/login',
