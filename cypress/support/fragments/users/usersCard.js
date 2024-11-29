@@ -618,6 +618,7 @@ export default {
   },
 
   verifyUserRolesAccordionEmpty() {
+    cy.wait(2000);
     cy.expect(userRolesAccordion.find(HTML(userRolesEmptyText)).exists());
   },
 

@@ -134,6 +134,7 @@ describe('Eureka', () => {
         { tags: ['criticalPathECS', 'eureka', 'C514899'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           UsersCard.verifyUserRolesCounter('1');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
