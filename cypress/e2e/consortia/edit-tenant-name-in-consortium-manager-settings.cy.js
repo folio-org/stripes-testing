@@ -38,39 +38,44 @@ describe('Consortia', () => {
     'C380515 Edit address (tenant) name in "Consortium manager" settings (consortia) (thunderjet)',
     { tags: ['smokeECS', 'thunderjet'] },
     () => {
+      const index = 6;
       ConsortiumManager.selectMembership();
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
+        index,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.saveEditingTenantInformation(index);
       ConsortiumManager.checkEditedTenantInformation(
-        2,
+        index,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
+        index,
         tenantCodes.professional,
         tenantNames.professional,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.saveEditingTenantInformation(index);
       ConsortiumManager.checkEditedTenantInformation(
-        2,
+        index,
         tenantCodes.professional,
         tenantNames.professional,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-ED`, character151);
+      ConsortiumManager.editTenantInformation(
+        index,
+        `${tenantCodes.professional}-ED`,
+        character151,
+      );
       ConsortiumManager.checkErrorsInEditedTenantInformation(
-        2,
+        index,
         tenantErrors.code,
         tenantErrors.name,
       );
-      ConsortiumManager.cancelEditingTenantInformation(2);
+      ConsortiumManager.cancelEditingTenantInformation(index);
     },
   );
 });
