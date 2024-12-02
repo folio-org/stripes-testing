@@ -61,7 +61,6 @@ describe('Inventory', () => {
         createdRecordsId: [],
       },
     ];
-    let sourceId;
 
     before('Create user, data', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
