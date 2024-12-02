@@ -104,20 +104,27 @@ describe('Inventory', () => {
                     }).location;
                     Locations.createViaApi(collegeLocationData).then((location) => {
                       testData.collegeLocation = location;
-                      InventoryHoldings.createHoldingRecordViaApi({
-                        instanceId: testData.sharedInstanceId,
-                        permanentLocationId: testData.collegeLocation.id,
-                      }).then((holding) => {
-                        testData.collegeHoldings.push(holding);
-
-                        // adding Holdings in College for local Instance
-                        InventoryHoldings.createHoldingRecordViaApi({
-                          instanceId: testData.localInstanceId,
-                          permanentLocationId: testData.collegeLocation.id,
-                        }).then((holding2) => {
-                          testData.collegeHoldings.push(holding2);
+                      InventoryHoldings.getHoldingsFolioSource()
+                        .then((folioSource) => {
+                          testData.folioSourceId = folioSource.id;
+                        })
+                        .then(() => {
+                          InventoryHoldings.createHoldingRecordViaApi({
+                            instanceId: testData.sharedInstanceId,
+                            permanentLocationId: testData.collegeLocation.id,
+                            sourceId: testData.folioSourceId,
+                          }).then((holding) => {
+                            testData.collegeHoldings.push(holding);
+                            // adding Holdings in College for local Instance
+                            InventoryHoldings.createHoldingRecordViaApi({
+                              instanceId: testData.localInstanceId,
+                              permanentLocationId: testData.collegeLocation.id,
+                              sourceId: testData.folioSourceId,
+                            }).then((holding2) => {
+                              testData.collegeHoldings.push(holding2);
+                            });
+                          });
                         });
-                      });
                     });
                   });
 
@@ -131,6 +138,7 @@ describe('Inventory', () => {
                     InventoryHoldings.createHoldingRecordViaApi({
                       instanceId: testData.sharedInstanceId,
                       permanentLocationId: location.id,
+                      sourceId: testData.folioSourceId,
                     }).then((holding) => {
                       testData.universityHoldings.push(holding);
                     });

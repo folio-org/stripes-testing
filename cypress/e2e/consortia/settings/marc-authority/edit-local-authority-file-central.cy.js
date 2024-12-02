@@ -140,11 +140,13 @@ describe('MARC', () => {
               testData.updatedIsActive,
               testData.date, // TO DO: update when MODELINKS-244 is done to `${testData.date} by ${testData.user.lastName}, ${testData.user.firstName}`
               true,
+              true,
             );
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             SettingsPane.waitLoading();
             cy.visit(TopMenu.settingsAuthorityFilesPath);
+            cy.wait('@/authn/refresh', { timeout: 20000 });
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
@@ -155,7 +157,8 @@ describe('MARC', () => {
               testData.updatedBaseUrl,
               testData.updatedIsActive,
               testData.date, // TO DO: update when MODELINKS-244 is done to `${testData.date} by ${testData.user.lastName}, ${testData.user.firstName}`
-              true,
+              false,
+              false,
             );
           },
         );

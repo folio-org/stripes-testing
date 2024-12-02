@@ -215,16 +215,24 @@ describe('Inventory', () => {
           .toLowerCase();
         if (Object.hasOwn(instance.holdings, targetTenant)) {
           cy.setTenant(tenantId);
-          InventoryHoldings.createHoldingRecordViaApi({
-            instanceId,
-            permanentLocationId: locations[targetTenant].id,
-            callNumber: instance.holdings[targetTenant].callNumberInHoldings
-              ? instance.holdings[targetTenant].callNumber
-              : null,
-          }).then((holding) => {
-            createdHoldingsIds[targetTenant].push(holding.id);
-            instance.holdings[targetTenant].id = holding.id;
-          });
+
+          InventoryHoldings.getHoldingsFolioSource()
+            .then((source) => {
+              testData.folioSourceId = source.id;
+            })
+            .then(() => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId,
+                permanentLocationId: locations[targetTenant].id,
+                callNumber: instance.holdings[targetTenant].callNumberInHoldings
+                  ? instance.holdings[targetTenant].callNumber
+                  : null,
+                sourceId: testData.folioSourceId,
+              }).then((holding) => {
+                createdHoldingsIds[targetTenant].push(holding.id);
+                instance.holdings[targetTenant].id = holding.id;
+              });
+            });
         }
       }
 
