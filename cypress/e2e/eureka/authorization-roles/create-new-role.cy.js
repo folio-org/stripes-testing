@@ -7,8 +7,8 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C423998 ${getRandomPostfix()}`,
-        roleDescription: `Description C423998 ${getRandomPostfix()}`,
+        roleName: `Auto Role C624299 ${getRandomPostfix()}`,
+        roleDescription: `Description C624299 ${getRandomPostfix()}`,
         applicationName: 'app-platform-minimal',
         capabilitySet: {
           table: 'Settings',
@@ -103,8 +103,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C423998 Creating new authorization role (eureka)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C423998'] },
+        'C624299 Creating new authorization role (eureka)',
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C624299'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);

@@ -7,7 +7,7 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Original role C554636 ${getRandomPostfix()}`,
+        roleName: `Original role C624300 ${getRandomPostfix()}`,
         capabilitySets: [
           {
             table: 'Data',
@@ -100,8 +100,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C554636 Eureka | Duplicate an authorization role (thunderjet)',
-        { tags: ['extendedPath', 'thunderjet', 'eureka', 'C554636'] },
+        'C624300 Eureka | Duplicate an authorization role (thunderjet)',
+        { tags: ['extendedPath', 'thunderjet', 'eureka', 'C624300'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
