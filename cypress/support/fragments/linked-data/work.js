@@ -30,7 +30,7 @@ export default {
   deleteById: (id) => {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `resource/${id}`,
+      path: `linked-data/resource/${id}`,
     });
   },
 };
