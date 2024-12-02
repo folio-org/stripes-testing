@@ -14,7 +14,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialSource: { name: 'Diku_admin' },
+        initialSource: { name: 'folio-aqa' },
         authority: {
           source: INSTANCE_SOURCE_NAMES.MARC,
           searchInput: 'C350697 On the Road',
