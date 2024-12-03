@@ -69,11 +69,13 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
+        
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((createdUserProperties) => {
             testData.preconditionUserId = createdUserProperties.userId;
-            // make sure there are no duplicate authority records in the system
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
 
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -88,7 +90,10 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
