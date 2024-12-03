@@ -88,6 +88,10 @@ describe('MARC', () => {
           (userProperties) => {
             testData.user = userProperties;
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C451456');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422236');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440118');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440101');
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440111');
             DataImport.uploadFileViaApi(
               testData.marcFile.marc,
               testData.marcFile.fileName,
