@@ -39,7 +39,6 @@ describe('Inventory', () => {
         cy.createTempUser([Permissions.inventoryViewEditGeneralSettings.gui]).then(
           (userProperties) => {
             testData.settingsUserProperties = userProperties;
-            cy.getAdminToken();
             cy.assignAffiliationToUser(
               Affiliations.College,
               testData.settingsUserProperties.userId,

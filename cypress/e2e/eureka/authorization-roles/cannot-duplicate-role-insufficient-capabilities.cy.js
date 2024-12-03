@@ -9,7 +9,7 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Original role C554635 ${getRandomPostfix()}`,
+        roleName: `Original role C624301 ${getRandomPostfix()}`,
         calloutText: 'error while duplicating',
       };
 
@@ -61,8 +61,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C554635 Eureka | User with insufficient capabilities can not duplicate an authorization role (thunderjet)',
-        { tags: ['extendedPath', 'thunderjet', 'eureka', 'C554635'] },
+        'C624301 Eureka | User with insufficient capabilities can not duplicate an authorization role (thunderjet)',
+        { tags: ['extendedPath', 'thunderjet', 'eureka', 'C624301'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName, false);

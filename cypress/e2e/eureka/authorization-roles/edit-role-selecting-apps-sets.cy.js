@@ -7,7 +7,7 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C430262 ${getRandomPostfix()}`,
+        roleName: `Auto Role C624298 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
         // TO DO: rewrite using >1 original apps when more apps will be consistently available
         originalApplications: ['app-platform-complete'],
@@ -170,8 +170,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C430262 Selecting/deselecting applications when editing authorization role',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C430262'] },
+        'C624298 Selecting/deselecting applications when editing authorization role',
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C624298'] },
         () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);

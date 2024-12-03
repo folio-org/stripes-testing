@@ -243,7 +243,15 @@ describe('Inventory', () => {
         });
       }
 
-      function addHoldingsRecord(instanceId, tenantId) {
+      function getHoldingSource(type = 'folio') {
+        if (type === 'marc') {
+          return InventoryHoldings.getHoldingsMarcSource();
+        } else {
+          return InventoryHoldings.getHoldingsFolioSource();
+        }
+      }
+
+      function addHoldingsRecord(instanceId, tenantId, isMarc) {
         const instance =
           testData.instances[
             testData.instances.findIndex((inst) => inst.instanceId === instanceId)
@@ -253,16 +261,24 @@ describe('Inventory', () => {
           .toLowerCase();
         if (Object.hasOwn(instance.holdings, targetTenant)) {
           cy.setTenant(tenantId);
-          InventoryHoldings.createHoldingRecordViaApi({
-            instanceId,
-            permanentLocationId: locations[targetTenant].id,
-            callNumber: instance.holdings[targetTenant].callNumberInHoldings
-              ? instance.holdings[targetTenant].callNumber
-              : null,
-          }).then((holding) => {
-            createdHoldingsIds[targetTenant].push(holding.id);
-            instance.holdings[targetTenant].id = holding.id;
-          });
+
+          getHoldingSource(isMarc ? 'marc' : 'folio')
+            .then((source) => {
+              testData.sourceId = source.id;
+            })
+            .then(() => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId,
+                permanentLocationId: locations[targetTenant].id,
+                callNumber: instance.holdings[targetTenant].callNumberInHoldings
+                  ? instance.holdings[targetTenant].callNumber
+                  : null,
+                sourceId: testData.sourceId,
+              }).then((holding) => {
+                createdHoldingsIds[targetTenant].push(holding.id);
+                instance.holdings[targetTenant].id = holding.id;
+              });
+            });
         }
       }
 
@@ -395,10 +411,10 @@ describe('Inventory', () => {
 
       before(() => {
         testData.instances.forEach((instance) => {
-          addHoldingsRecord(instance.instanceId, Affiliations.College);
+          addHoldingsRecord(instance.instanceId, Affiliations.College, instance.isMarc);
         });
         testData.instances.forEach((instance) => {
-          addHoldingsRecord(instance.instanceId, Affiliations.University);
+          addHoldingsRecord(instance.instanceId, Affiliations.University, instance.isMarc);
         });
       });
 

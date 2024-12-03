@@ -38,7 +38,7 @@ describe('MARC', () => {
             '1',
             '0',
             '$a C410818 Johnson, Samuel, $d 1709-1784',
-            '$x Criticism and interpretation.',
+            '',
             '$0 http://id.loc.gov/authorities/names/n78095825410818C410818',
             '',
           ],
@@ -160,12 +160,19 @@ describe('MARC', () => {
               }).location;
               Locations.createViaApi(collegeLocationData).then((location) => {
                 testData.collegeLocation = location;
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: createdRecordIDs[0],
-                  permanentLocationId: testData.collegeLocation.id,
-                }).then((holding) => {
-                  testData.collegeHoldings.push(holding);
-                });
+                InventoryHoldings.getHoldingsFolioSource()
+                  .then((folioSource) => {
+                    testData.folioSourceId = folioSource.id;
+                  })
+                  .then(() => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: createdRecordIDs[0],
+                      permanentLocationId: testData.collegeLocation.id,
+                      sourceId: testData.folioSourceId,
+                    }).then((holding) => {
+                      testData.collegeHoldings.push(holding);
+                    });
+                  });
               });
 
               cy.login(users.userProperties.username, users.userProperties.password, {
@@ -213,6 +220,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.notLinked710Field);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();

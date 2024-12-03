@@ -173,12 +173,19 @@ describe('Inventory', () => {
             cy.getMaterialTypes({ limit: 1 }).then((matType) => {
               testData.universityMaterialTypeId = matType.id;
             });
+            InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
+              testData.marcSourceId = marcSource.id;
+            });
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              testData.folioSourceId = folioSource.id;
+            });
           })
           .then(() => {
-            function addHoldingsAndItem(currentInstanceId, currentInstanceData) {
+            function addHoldingsAndItem(currentInstanceId, currentInstanceData, isFolio = false) {
               let targetLocation;
               let targetMaterialTypeId;
               let targetLoanTypeId;
+              const sourceId = isFolio ? testData.folioSourceId : testData.marcSourceId;
               if (currentInstanceData.title.includes('M1')) {
                 cy.setTenant(Affiliations.College);
                 targetLocation = testData.collegeLocation;
@@ -196,6 +203,7 @@ describe('Inventory', () => {
                   instanceId: currentInstanceId,
                   permanentLocationId: targetLocation.id,
                   callNumber,
+                  sourceId,
                 }).then((holding) => {
                   if (currentInstanceData.title.includes('M1')) testData.collegeHoldings.push(holding);
                   else testData.universityHoldings.push(holding);
@@ -213,6 +221,7 @@ describe('Inventory', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: currentInstanceId,
                   permanentLocationId: targetLocation.id,
+                  sourceId,
                 }).then((holding) => {
                   if (currentInstanceData.title.includes('M1')) testData.collegeHoldings.push(holding);
                   else testData.universityHoldings.push(holding);
@@ -238,7 +247,7 @@ describe('Inventory', () => {
                   instanceTitle: sharedInstance.title,
                 }).then((instanceData) => {
                   createdInstanceIds.shared.push(instanceData.instanceData.instanceId);
-                  addHoldingsAndItem(instanceData.instanceData.instanceId, sharedInstance);
+                  addHoldingsAndItem(instanceData.instanceData.instanceId, sharedInstance, true);
                 });
               });
 
@@ -252,7 +261,7 @@ describe('Inventory', () => {
                   instanceTitle: collegeInstance.title,
                 }).then((instanceData) => {
                   createdInstanceIds.college.push(instanceData.instanceData.instanceId);
-                  addHoldingsAndItem(instanceData.instanceData.instanceId, collegeInstance);
+                  addHoldingsAndItem(instanceData.instanceData.instanceId, collegeInstance, true);
                 });
               });
 
@@ -266,14 +275,18 @@ describe('Inventory', () => {
                   instanceTitle: universityInstance.title,
                 }).then((instanceData) => {
                   createdInstanceIds.university.push(instanceData.instanceData.instanceId);
-                  addHoldingsAndItem(instanceData.instanceData.instanceId, universityInstance);
+                  addHoldingsAndItem(
+                    instanceData.instanceData.instanceId,
+                    universityInstance,
+                    true,
+                  );
                 });
               });
 
             marcInstances
               .filter((instance) => instance.title.includes('Shared'))
               .forEach((sharedInstance, index) => {
-                addHoldingsAndItem(createdInstanceIds.shared[index], sharedInstance);
+                addHoldingsAndItem(createdInstanceIds.shared[index], sharedInstance, false);
               });
 
             marcInstances
@@ -281,7 +294,7 @@ describe('Inventory', () => {
                 (instance) => instance.title.includes('Local') && instance.title.includes('M1'),
               )
               .forEach((collegeInstance, index) => {
-                addHoldingsAndItem(createdInstanceIds.college[index], collegeInstance);
+                addHoldingsAndItem(createdInstanceIds.college[index], collegeInstance, false);
               });
 
             marcInstances
@@ -289,7 +302,7 @@ describe('Inventory', () => {
                 (instance) => instance.title.includes('Local') && instance.title.includes('M2'),
               )
               .forEach((universityInstance, index) => {
-                addHoldingsAndItem(createdInstanceIds.university[index], universityInstance);
+                addHoldingsAndItem(createdInstanceIds.university[index], universityInstance, false);
               });
 
             cy.login(testData.userProperties.username, testData.userProperties.password).then(

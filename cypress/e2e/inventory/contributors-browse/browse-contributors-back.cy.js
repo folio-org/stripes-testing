@@ -73,6 +73,7 @@ describe('Inventory', () => {
         testData.contributor.types.actor,
       );
       InstanceRecordEdit.saveAndClose();
+      cy.wait(3000);
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,

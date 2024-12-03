@@ -544,7 +544,7 @@ Cypress.Commands.add('getInventoryDisplaySettingsViaAPI', () => {
       method: 'GET',
       path: 'settings/entries',
       searchParams: {
-        query: '(scope==ui-inventory.display-settings and key==display-settings)',
+        query: '(scope==ui-inventory.display-settings.manage and key==display-settings)',
       },
       isDefaultSearchParamsRequired: false,
     })

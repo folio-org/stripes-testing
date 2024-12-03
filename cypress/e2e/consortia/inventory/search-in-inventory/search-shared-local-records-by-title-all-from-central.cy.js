@@ -61,7 +61,6 @@ describe('Inventory', () => {
         createdRecordsId: [],
       },
     ];
-    let sourceId;
 
     before('Create user, data', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
@@ -167,32 +166,31 @@ describe('Inventory', () => {
           cy.setTenant(Affiliations.College);
           InventoryHoldings.getHoldingsFolioSource()
             .then((folioSource) => {
-              sourceId = folioSource.id;
+              testData.folioSourceId = folioSource.id;
             })
             .then(() => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: sharedFOLIOInstancesFromCentral[1].testInstanceId,
                 permanentLocationId: testData.collegeLocation.id,
-                sourceId,
+                sourceId: testData.folioSourceId,
               }).then((holding) => {
                 createdHoldingsCollege.push(holding.id);
               });
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: marcFiles[0].createdRecordsId[1],
                 permanentLocationId: testData.collegeLocation.id,
-                sourceId,
+                sourceId: testData.folioSourceId,
               }).then((holding) => {
                 createdHoldingsCollege.push(holding.id);
               });
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: marcFiles[1].createdRecordsId[0],
                 permanentLocationId: testData.collegeLocation.id,
-                sourceId,
+                sourceId: testData.folioSourceId,
               }).then((holding) => {
                 createdHoldingsCollege.push(holding.id);
               });
             });
-
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
