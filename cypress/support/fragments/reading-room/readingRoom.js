@@ -101,4 +101,9 @@ export default {
     cy.expect(patronBarcodeField.has({ value: '' }));
     cy.get('[class^="borrowerDetails-"]').should('not.exist');
   },
+
+  checkFieldsDisplayed() {
+    cy.expect(patronBarcodeField.exists());
+    cy.expect(rootSection.find(Button('Enter')).exists());
+  },
 };
