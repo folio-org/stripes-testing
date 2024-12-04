@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -92,6 +93,7 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
           InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+          MarcAuthoritiesSearch.selectExcludeReferencesFilter();
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag111,
             testData.authority111FieldValue,

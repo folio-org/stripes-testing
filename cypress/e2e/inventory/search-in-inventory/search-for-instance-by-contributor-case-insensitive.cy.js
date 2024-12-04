@@ -67,16 +67,8 @@ describe('Inventory', () => {
     describe('Case-insensitive checks', () => {
       before('Create test data, login', () => {
         cy.getAdminToken();
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="C464068 MSEARCH-696 Instance"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi('C380454');
+        InventoryInstances.deleteInstanceByTitleViaApi('C464068');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
           testData.user = userProperties;

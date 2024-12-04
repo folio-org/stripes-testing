@@ -252,7 +252,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle('C375098 Paradise of other side (updated title)');
         InventoryInstances.selectInstance();
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
