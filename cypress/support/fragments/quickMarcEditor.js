@@ -1316,6 +1316,7 @@ export default {
   ) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     cy.wait(1000);
+    return newContent;
   },
 
   updateLDR06And07Positions() {
