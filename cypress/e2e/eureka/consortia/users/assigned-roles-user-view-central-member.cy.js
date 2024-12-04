@@ -16,10 +16,12 @@ describe('Eureka', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        centralRoleNameA: `Role CA C514899 ${randomPostfix}`,
-        collegeRoleNameA: `Role M1A C514899 ${randomPostfix}`,
-        collegeRoleNameB: `Role M1B C514899 ${randomPostfix}`,
-        universityRoleNameA: `Role M2A C514899 ${randomPostfix}`,
+        centralRoleNameA: `Role CA C514892 ${randomPostfix}`,
+        centralRoleNameB: `Role CB C514892 ${randomPostfix}`,
+        collegeRoleNameA: `Role M1A C514892 ${randomPostfix}`,
+        collegeRoleNameB: `Role M1B C514892 ${randomPostfix}`,
+        universityRoleNameA: `Role M2A C514892 ${randomPostfix}`,
+        universityRoleNameB: `Role M2B C514892 ${randomPostfix}`,
       };
 
       const capabSetsToAssign = [
@@ -52,6 +54,9 @@ describe('Eureka', () => {
             cy.createAuthorizationRoleApi(testData.centralRoleNameA).then((roleCA) => {
               testData.roleCAId = roleCA.id;
             });
+            cy.createAuthorizationRoleApi(testData.centralRoleNameB).then((roleCB) => {
+              testData.roleCBId = roleCB.id;
+            });
             // need to wait for user policy creation to finish
             cy.wait(10000);
             cy.setTenant(Affiliations.College);
@@ -79,32 +84,17 @@ describe('Eureka', () => {
             cy.createAuthorizationRoleApi(testData.universityRoleNameA).then((roleM2A) => {
               testData.roleM2AId = roleM2A.id;
             });
+            cy.createAuthorizationRoleApi(testData.universityRoleNameB).then((roleM2B) => {
+              testData.roleM2BId = roleM2B.id;
+            });
           });
         });
       });
 
-      before('Assign roles, login', () => {
+      before('Login', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.testUser.userId, [testData.roleCAId]);
-        else cy.addRolesToNewUserApi(testData.testUser.userId, [testData.roleCAId]);
-        cy.wait(10000);
-        cy.setTenant(Affiliations.College);
-        if (Cypress.env('runAsAdmin')) {
-          cy.updateRolesForUserApi(testData.testUser.userId, [
-            testData.roleM1AId,
-            testData.roleM1BId,
-          ]);
-        } else {
-          cy.addRolesToNewUserApi(testData.testUser.userId, [
-            testData.roleM1AId,
-            testData.roleM1BId,
-          ]);
-        }
-        cy.wait(10000);
-        cy.setTenant(Affiliations.University);
-        if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.testUser.userId, [testData.roleM2AId]);
-        else cy.addRolesToNewUserApi(testData.testUser.userId, [testData.roleM2AId]);
+        if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.testUser.userId);
         cy.login(testData.tempUser.username, testData.tempUser.password, {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
@@ -116,6 +106,7 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.deleteAuthorizationRoleApi(testData.roleCAId);
+        cy.deleteAuthorizationRoleApi(testData.roleCBId);
         Users.deleteViaApi(testData.testUser.userId);
         Users.deleteViaApi(testData.tempUser.userId);
         cy.setTenant(Affiliations.College);
@@ -123,22 +114,23 @@ describe('Eureka', () => {
         cy.deleteAuthorizationRoleApi(testData.roleM1BId);
         cy.setTenant(Affiliations.University);
         cy.deleteAuthorizationRoleApi(testData.roleM2AId);
+        cy.deleteAuthorizationRoleApi(testData.roleM2BId);
       });
 
       it(
-        'C514899 Unassigned roles not shown in user detailed view on Central, Member tenants (eureka)',
-        { tags: ['criticalPathECS', 'eureka', 'C514899'] },
+        'C514892 Assigned roles shown in user detailed view on Central, Member tenants (eureka)',
+        { tags: ['criticalPathECS', 'eureka', 'C514892'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
           cy.wait('@/authn/refresh', { timeout: 20000 });
-          UsersCard.verifyUserRolesCounter('1');
+          UsersCard.verifyUserRolesCounter('0');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
-          UsersCard.verifyUserRoleNames([testData.centralRoleNameA]);
+          UsersCard.verifyUserRolesAccordionEmpty();
           UsersCard.selectRolesAffiliation(tenantNames.college);
-          UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
+          UsersCard.verifyUserRolesAccordionEmpty();
           UsersCard.selectRolesAffiliation(tenantNames.university);
-          UsersCard.verifyUserRoleNames([testData.universityRoleNameA]);
+          UsersCard.verifyUserRolesAccordionEmpty();
 
           TopMenuNavigation.navigateToApp(
             APPLICATION_NAMES.SETTINGS,
@@ -148,22 +140,34 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.centralRoleNameA);
           AuthorizationRoles.clickOnRoleName(testData.centralRoleNameA, false);
           AuthorizationRoles.clickAssignUsersButton();
-          AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
+          AuthorizationRoles.selectUserInModal(testData.testUser.username);
           AuthorizationRoles.clickSaveInAssignModal();
-          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
+          AuthorizationRoles.searchRole(testData.centralRoleNameB);
+          AuthorizationRoles.clickOnRoleName(testData.centralRoleNameB, false);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.testUser.username);
+          AuthorizationRoles.clickSaveInAssignModal();
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
           UsersSearchPane.resetAllFilters();
           UsersSearchPane.searchByUsername(testData.testUser.username);
           UsersSearchPane.selectUserFromList(testData.testUser.username);
-          UsersCard.verifyUserRolesCounter('0');
+          UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
-          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
           UsersCard.selectRolesAffiliation(tenantNames.college);
-          UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
+          UsersCard.verifyUserRolesAccordionEmpty();
           UsersCard.selectRolesAffiliation(tenantNames.university);
-          UsersCard.verifyUserRoleNames([testData.universityRoleNameA]);
+          UsersCard.verifyUserRolesAccordionEmpty();
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           Users.waitLoading();
@@ -175,22 +179,34 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.collegeRoleNameA);
           AuthorizationRoles.clickOnRoleName(testData.collegeRoleNameA, false);
           AuthorizationRoles.clickAssignUsersButton();
-          AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
+          AuthorizationRoles.selectUserInModal(testData.testUser.username);
           AuthorizationRoles.clickSaveInAssignModal();
-          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
+          AuthorizationRoles.searchRole(testData.collegeRoleNameB);
+          AuthorizationRoles.clickOnRoleName(testData.collegeRoleNameB, false);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.testUser.username);
+          AuthorizationRoles.clickSaveInAssignModal();
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
           UsersSearchPane.searchByUsername(testData.testUser.username);
           UsersSearchPane.clickOnUserRowContaining(testData.testUser.username);
-          UsersCard.verifyUserRolesCounter('1');
+          UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.college);
-          UsersCard.verifyUserRoleNames([testData.collegeRoleNameB]);
+          UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
           UsersCard.selectRolesAffiliation(tenantNames.central);
-          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
           UsersCard.selectRolesAffiliation(tenantNames.university);
-          UsersCard.verifyUserRoleNames([testData.universityRoleNameA]);
+          UsersCard.verifyUserRolesAccordionEmpty();
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           Users.waitLoading();
@@ -202,22 +218,37 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.universityRoleNameA);
           AuthorizationRoles.clickOnRoleName(testData.universityRoleNameA, false);
           AuthorizationRoles.clickAssignUsersButton();
-          AuthorizationRoles.selectUserInModal(testData.testUser.username, false);
+          AuthorizationRoles.selectUserInModal(testData.testUser.username);
           AuthorizationRoles.clickSaveInAssignModal();
-          AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
+          AuthorizationRoles.searchRole(testData.universityRoleNameB);
+          AuthorizationRoles.clickOnRoleName(testData.universityRoleNameB, false);
+          AuthorizationRoles.clickAssignUsersButton();
+          AuthorizationRoles.selectUserInModal(testData.testUser.username);
+          AuthorizationRoles.clickSaveInAssignModal();
+          AuthorizationRoles.verifyAssignedUser(
+            testData.testUser.lastName,
+            testData.testUser.firstName,
+          );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
           UsersSearchPane.searchByUsername(testData.testUser.username);
           UsersSearchPane.clickOnUserRowContaining(testData.testUser.username);
-          UsersCard.verifyUserRolesCounter('0');
+          UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.university);
-          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameB,
+          ]);
           UsersCard.selectRolesAffiliation(tenantNames.central);
-          UsersCard.verifyUserRolesAccordionEmpty();
+          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
           UsersCard.selectRolesAffiliation(tenantNames.college);
-          UsersCard.verifyUserRoleNames([testData.collegeRoleNameB]);
+          UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
         },
       );
     });
