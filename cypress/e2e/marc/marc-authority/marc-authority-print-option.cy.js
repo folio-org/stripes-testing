@@ -44,6 +44,7 @@ describe('MARC', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.login(testData.userProperties.username, testData.userProperties.password, {

@@ -143,8 +143,7 @@ describe('MARC', () => {
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.verifyTagFieldAfterLinking(
-            59,
+          QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
             testData.tag700,
             '0',
             '\\',
