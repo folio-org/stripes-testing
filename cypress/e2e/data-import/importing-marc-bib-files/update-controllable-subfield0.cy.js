@@ -103,11 +103,11 @@ describe('Data Import', () => {
         value: 'C385665Chin, Staceyann',
       },
       {
-        rowIndex: 76,
+        rowIndex: 75,
         value: 'C385665Lee, Stan, 1922-2018',
       },
       {
-        rowIndex: 77,
+        rowIndex: 76,
         value: 'C385665Kirby, Jack',
       },
     ];
@@ -260,7 +260,7 @@ describe('Data Import', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          75,
+          74,
           '700',
           '1',
           '\\',
@@ -270,7 +270,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          76,
+          75,
           '700',
           '1',
           '\\',
@@ -280,7 +280,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          77,
+          76,
           '700',
           '1',
           '\\',

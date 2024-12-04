@@ -83,7 +83,7 @@ describe('Data Import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityID = link.split('/')[5];
         });
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         MarcAuthorities.waitLoading();
         MarcAuthorities.searchBy('Keyword', searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);

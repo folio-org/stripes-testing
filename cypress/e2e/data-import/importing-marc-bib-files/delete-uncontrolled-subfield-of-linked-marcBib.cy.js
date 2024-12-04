@@ -36,7 +36,6 @@ describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {
       updated100Field: [
-        20,
         '100',
         '1',
         '\\',
@@ -46,7 +45,6 @@ describe('Data Import', () => {
         '',
       ],
       updated245Field: [
-        21,
         '245',
         '1',
         '4',
@@ -124,7 +122,6 @@ describe('Data Import', () => {
       },
     ];
     const linkingTagAndValues = {
-      rowIndex: 17,
       value: 'C376967 Chin, Staceyann, 1972-',
       tag: '100',
     };
@@ -166,16 +163,13 @@ describe('Data Import', () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+          QuickMarcEditor.clickLinkIconInTagFieldByTag(linkingTagAndValues.tag);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
           InventoryInstance.verifySearchOptions();
           InventoryInstance.searchResults(linkingTagAndValues.value);
           InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-            linkingTagAndValues.tag,
-            linkingTagAndValues.rowIndex,
-          );
+          QuickMarcEditor.verifyAfterLinkingAuthority(linkingTagAndValues.tag);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
@@ -289,13 +283,13 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         cy.wait(1000);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated100Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated245Field);
+        QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...testData.updated100Field);
+        QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(...testData.updated245Field);
         QuickMarcEditor.checkFieldAbsense(testData.tag250);
       },
     );
