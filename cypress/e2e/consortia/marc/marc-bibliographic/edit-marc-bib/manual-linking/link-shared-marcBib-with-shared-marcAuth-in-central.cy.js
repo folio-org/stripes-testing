@@ -106,7 +106,7 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
