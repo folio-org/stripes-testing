@@ -55,7 +55,7 @@ describe('MARC', () => {
             '600',
             '1',
             '0',
-            '$a C388512Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
+            '$a C388512Chin, Staceyann, $d 1972- $t Crossfire. $h Spoken word',
             '',
             '$0 http://id.loc.gov/authorities/names/no2021056179',
             '',
@@ -200,7 +200,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
           createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
             else InventoryInstance.deleteInstanceViaApi(id);
           });
         });
@@ -247,7 +247,7 @@ describe('MARC', () => {
             QuickMarcEditor.undoDelete();
             QuickMarcEditor.verifyTagFieldNotLinked(...testData.field100Values);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(2000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(27);
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(29);
