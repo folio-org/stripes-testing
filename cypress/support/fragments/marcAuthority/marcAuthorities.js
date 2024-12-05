@@ -385,6 +385,7 @@ export default {
 
   searchBy: (parameter, value, isLongValue = false) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
+    cy.wait(1000);
     cy.do(filtersSection.find(searchInput).fillIn(value));
     if (isLongValue) {
       // need to wait until value will be applied in case when value is long

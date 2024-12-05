@@ -40,7 +40,7 @@ describe('Notes', () => {
       // * "Delete" (trash can) icon doesn't display under "Actions" column
       NoteTypes.checkNoteTypeButtonsStates({
         name: testData.noteType.name,
-        addNewButton: { disabled: true },
+        addNewButton: { present: false },
         editButton: { present: false },
         deleteButton: { present: false },
       });
