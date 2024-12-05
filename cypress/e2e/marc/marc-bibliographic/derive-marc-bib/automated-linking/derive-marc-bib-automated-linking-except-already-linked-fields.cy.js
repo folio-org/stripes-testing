@@ -40,7 +40,7 @@ describe('MARC', () => {
           'Panther Photographic International',
           'Black Panther, Wakanda forever (Motion picture)',
           'Black Panther (Fictitious character)',
-          'Good and evil',
+          'Good and evil--History',
           'Africa',
           'Comics (Graphic works)',
         ];
@@ -77,7 +77,7 @@ describe('MARC', () => {
               'C388641 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
             boxFourth:
-              '$a C388641 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
+              '$a C388641 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425C388641',
             boxSeventh: '',
@@ -86,7 +86,7 @@ describe('MARC', () => {
             rowIndex: 86,
             value: 'C388641 Gone with the wind (Motion picture : 1939)',
             tag: 730,
-            boxFourth: '$a C388641 Gone with the wind $f 1939) $g (Motion picture :',
+            boxFourth: '$a C388641 Gone with the wind $g (Motion picture : $f 1939)',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095C388641',
             boxSeventh: '',
@@ -214,8 +214,10 @@ describe('MARC', () => {
               });
             });
 
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();

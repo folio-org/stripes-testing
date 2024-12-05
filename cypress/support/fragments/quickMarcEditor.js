@@ -581,6 +581,10 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
   },
 
+  clickLinkIconInTagFieldByTag(tag) {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(linkToMarcRecordButton).click());
+  },
+
   clickLinkHeadingsButton() {
     cy.do(paneHeader.find(linkHeadingsButton).click());
   },

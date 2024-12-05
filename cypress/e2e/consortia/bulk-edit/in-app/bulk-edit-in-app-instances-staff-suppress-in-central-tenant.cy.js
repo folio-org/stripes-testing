@@ -263,6 +263,7 @@ describe('Bulk-edit', () => {
               InventoryInstance.waitLoading();
               InventoryInstance.verifyStaffSuppress();
               InventoryInstances.resetAllFilters();
+              cy.wait(3000);
             });
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
