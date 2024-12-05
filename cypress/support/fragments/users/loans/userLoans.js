@@ -1,18 +1,16 @@
+import { HTML, including, matching } from '@interactors/html';
 import moment from 'moment';
-import { matching } from 'bigtest';
 import {
-  Pane,
-  MultiColumnListRow,
-  MultiColumnListCell,
-  Select,
-  HTML,
-  including,
   Button,
   KeyValue,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
   PaneHeader,
+  Select,
 } from '../../../../../interactors';
-import ItemRecordView from '../../inventory/item/itemRecordView';
 import { REQUEST_METHOD } from '../../../constants';
+import ItemRecordView from '../../inventory/item/itemRecordView';
 import LoansPage from '../../loans/loansPage';
 import ConfirmItemStatusModal from './confirmItemStatusModal';
 

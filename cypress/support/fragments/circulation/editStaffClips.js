@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including, matching } from '@interactors/html';
 import {
   Button,
   Checkbox,
@@ -9,7 +9,6 @@ import {
   PaneContent,
   PaneSet,
   TextArea,
-  matching,
 } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import InteractorsTools from '../../utils/interactorsTools';

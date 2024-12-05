@@ -1,4 +1,4 @@
-import { not } from 'bigtest';
+import { not } from '@interactors/html';
 import { Button, Modal, Select, TextField } from '../../../../interactors';
 import UsersCard from './usersCard';
 

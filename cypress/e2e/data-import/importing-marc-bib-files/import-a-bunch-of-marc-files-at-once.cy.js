@@ -41,10 +41,10 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(upload.fileName);
+          cy.wait(180000);
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();
-          cy.wait(180000);
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
           // TODO need to wait until files are filtered

@@ -1,14 +1,12 @@
+import { HTML, including, or } from '@interactors/html';
 import {
   Button,
   Dropdown,
-  HTML,
   Modal,
   NavListItem,
   Section,
   SelectionOption,
   TextField,
-  including,
-  or,
 } from '../../../../../interactors';
 
 const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());

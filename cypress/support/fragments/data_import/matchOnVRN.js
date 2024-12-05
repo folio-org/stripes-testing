@@ -1,9 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { not } from 'bigtest';
+import { including, not } from '@interactors/html';
 import {
   Accordion,
   Button,
-  including,
   KeyValue,
   Link,
   Modal,

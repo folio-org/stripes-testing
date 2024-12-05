@@ -1,17 +1,16 @@
-import { HTML, including } from '@interactors/html';
-import { matching } from 'bigtest';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
-  MultiColumnListRow,
   Button,
-  Pane,
+  Callout,
   Checkbox,
-  MultiColumnListCell,
+  KeyValue,
+  Link,
   Modal,
   MultiColumnList,
-  Link,
-  Callout,
-  KeyValue,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
   PaneHeader,
 } from '../../../../../interactors';
 

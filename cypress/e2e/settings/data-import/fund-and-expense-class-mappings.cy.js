@@ -98,7 +98,7 @@ describe('Data Import', () => {
       expenseClass: '981$c',
       value: '100',
       type: '%',
-      locationName: LOCATION_NAMES.ANNEX,
+      locationName: `"${LOCATION_NAMES.ANNEX}"`,
       locationQuantityPhysical: '"1"',
     };
     const actionProfile = {

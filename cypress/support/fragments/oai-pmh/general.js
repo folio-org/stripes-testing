@@ -1,5 +1,5 @@
-import { matching } from 'bigtest';
-import { Checkbox, Pane, Select, TextArea, TextField, Button } from '../../../../interactors';
+import { matching } from '@interactors/html';
+import { Button, Checkbox, Pane, Select, TextArea, TextField } from '../../../../interactors';
 
 const generalPane = Pane('General');
 const enableOaiServiceCheckbox = Checkbox('Enable OAI service');

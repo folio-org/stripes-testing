@@ -1,12 +1,12 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import {
   Button,
+  Modal,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
   Section,
   TextField,
-  Modal,
 } from '../../../../../interactors';
 import { getTestEntityValue } from '../../../utils/stringTools';
 

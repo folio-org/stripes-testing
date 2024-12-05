@@ -1,10 +1,5 @@
-import { including } from 'bigtest';
-import {
-  ListRow,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  matching,
-} from '../../../../interactors';
+import { including, matching } from '@interactors/html';
+import { ListRow, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });

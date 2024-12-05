@@ -1,5 +1,5 @@
-import { matching } from 'bigtest';
-import { MultiColumnListRow, MultiColumnListCell, including } from '../../../../interactors';
+import { including, matching } from '@interactors/html';
+import { MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
 
 export default {
   openFeeFine: (index = 0) => {
