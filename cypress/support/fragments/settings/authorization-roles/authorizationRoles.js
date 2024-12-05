@@ -685,4 +685,14 @@ export default {
     InteractorsTools.checkCalloutErrorMessage(noUsernameCalloutText);
     InteractorsTools.dismissCallout(noUsernameCalloutText);
   },
+
+  checkNewButtonShown: (isShown = true) => {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
+  },
+
+  checkViewOnlyActionsOptions: () => {
+    cy.do(actionsButton.click());
+    cy.expect([editButton.absent(), duplicateButton.absent(), deleteButton.absent()]);
+  },
 };
