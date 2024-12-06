@@ -115,6 +115,7 @@ export default {
   },
 
   createViaUi: (userData) => {
+    cy.wait(4000);
     return cy
       .do([
         Dropdown('Actions').find(Button()).click(),

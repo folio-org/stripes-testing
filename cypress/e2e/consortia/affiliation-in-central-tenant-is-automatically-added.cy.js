@@ -52,7 +52,7 @@ describe('Consortia', () => {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
         });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
   });
 
@@ -70,7 +70,7 @@ describe('Consortia', () => {
       Users.createViaUi(testUser).then((id) => {
         testUser.id = id;
       });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
       UsersSearchPane.searchByUsername(testUser.username);
       Users.verifyUserDetailsPane();
       UsersCard.verifyAffiliationsQuantity('2');
