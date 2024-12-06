@@ -10,7 +10,7 @@ describe('Consortia', () => {
 
   before(() => {
     cy.setTenant('consortium');
-    cy.loginAsConsortiumAdmin();
+    cy.getAdminToken();
 
     cy.createTempUser([]).then((userProperties) => {
       firstUser = userProperties;
