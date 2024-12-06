@@ -696,7 +696,7 @@ export default {
     if (instance) {
       cy.expect([
         DropdownMenu().find(Headline('Start bulk edit')).exists(),
-        Button('Instances and Administrative data').exists(),
+        Button('FOLIO Instances').exists(),
       ]);
     } else {
       cy.expect(Button('Start bulk edit').exists());
