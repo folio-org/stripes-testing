@@ -9,8 +9,14 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        roleName: `Auto Role C605890 ${randomPostfix}`,
-        roleDescription: `Description C605890 ${randomPostfix}`,
+        roleName: `Auto Role C605891 ${randomPostfix}`,
+        roleDescription: `Description C605891 ${randomPostfix}`,
+        updatedRoleName: `Auto Role C605891 ${randomPostfix} UPD`,
+        updatedRoleDescription: `Description C605891 ${randomPostfix} UPD`,
+        newRoleName: `Auto Role C605891 ${randomPostfix} 2`,
+        newRoleDescription: `Description C605891 ${randomPostfix} 2`,
+        updatedNewRoleName: `Auto Role C605891 ${randomPostfix} 2 UPD`,
+        updatedNewRoleDescription: `Description C605891 ${randomPostfix} 2 UPD`,
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
@@ -59,6 +65,21 @@ describe('Eureka', () => {
           resource: 'UI-Authorization-Roles Settings',
           action: CAPABILITY_ACTIONS.VIEW,
         },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings',
+          action: CAPABILITY_ACTIONS.EDIT,
+        },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings',
+          action: CAPABILITY_ACTIONS.CREATE,
+        },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings',
+          action: CAPABILITY_ACTIONS.DELETE,
+        },
       ];
 
       const capabsToAssign = [
@@ -103,14 +124,15 @@ describe('Eureka', () => {
       after('Delete user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
+        cy.deleteAuthorizationRoleApi(testData.newRoleId, true);
       });
 
       it(
-        'C605890 User with "view" capability set can only view authorization roles',
-        { tags: ['criticalPath', 'eureka', 'C605890'] },
+        'C605891 User with all capability sets for roles can view/edit/create/delete authorization roles',
+        { tags: ['criticalPath', 'eureka', 'C605891'] },
         () => {
-          AuthorizationRoles.checkNewButtonShown(false);
+          AuthorizationRoles.checkNewButtonShown();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
@@ -128,7 +150,49 @@ describe('Eureka', () => {
           testData.originalCapabilitiesInSets.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
-          AuthorizationRoles.checkActionsOptionsAvailable(false, false, false);
+          AuthorizationRoles.checkActionsOptionsAvailable();
+
+          AuthorizationRoles.openForEdit();
+          testData.originalCapabilitySets.forEach((set) => {
+            AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
+          });
+          testData.originalCapabilitiesInSets.forEach((capability) => {
+            AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
+          });
+          AuthorizationRoles.fillRoleNameDescription(
+            testData.updatedRoleName,
+            testData.updatedRoleDescription,
+          );
+          AuthorizationRoles.clickSaveButton();
+          AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
+
+          AuthorizationRoles.clickDeleteRole();
+          AuthorizationRoles.confirmDeleteRole(testData.updatedRoleName);
+
+          AuthorizationRoles.clickNewButton();
+          AuthorizationRoles.fillRoleNameDescription(
+            testData.newRoleName,
+            testData.newRoleDescription,
+          );
+          AuthorizationRoles.clickSaveButton();
+          AuthorizationRoles.checkAfterSaveEdit(testData.newRoleName, testData.newRoleDescription);
+
+          AuthorizationRoles.openForEdit();
+          AuthorizationRoles.fillRoleNameDescription(
+            testData.updatedNewRoleName,
+            testData.updatedNewRoleDescription,
+          );
+          AuthorizationRoles.clickSaveButton();
+          AuthorizationRoles.checkAfterSaveEdit(
+            testData.updatedNewRoleName,
+            testData.updatedNewRoleDescription,
+          );
+          cy.getUserRoleIdByNameApi(testData.updatedNewRoleName).then((roleId) => {
+            testData.newRoleId = roleId;
+
+            AuthorizationRoles.clickDeleteRole();
+            AuthorizationRoles.confirmDeleteRole(testData.updatedNewRoleName);
+          });
         },
       );
     });
