@@ -35,12 +35,12 @@ describe('Eureka', () => {
         originalCapabilities: [
           {
             table: 'Procedural',
-            resource: 'Accounts Cancel',
+            resource: 'Feesfines Accounts Cancel',
             action: 'Execute',
           },
           {
             table: 'Procedural',
-            resource: 'Accounts Pay',
+            resource: 'Feesfines Accounts Pay',
             action: 'Execute',
           },
         ],

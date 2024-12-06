@@ -45,12 +45,20 @@ describe('Eureka', () => {
         cy.login(userA.username, userA.password);
         cy.wait('@selfCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);
-          expect(call.response.body.permissions.permissions).to.include(permissionName);
+          expect(
+            call.response.body.permissions.permissions.filter(
+              (perm) => perm.permissionName === permissionName,
+            ),
+          ).to.have.lengthOf(1);
         });
         cy.login(userB.username, userB.password);
         cy.wait('@selfCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);
-          expect(call.response.body.permissions.permissions).to.include(permissionName);
+          expect(
+            call.response.body.permissions.permissions.filter(
+              (perm) => perm.permissionName === permissionName,
+            ),
+          ).to.have.lengthOf(1);
         });
       },
     );
