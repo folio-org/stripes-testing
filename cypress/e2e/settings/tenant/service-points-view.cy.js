@@ -80,6 +80,7 @@ describe('Settings: Tenant', () => {
       Locations.editLocation(testData.locations[1].name, {
         servicePoint: testData.servicePoints[1].name,
       });
+      cy.wait(1000);
       LocationDetails.checkLocationDetails({ servicePoints: testData.servicePoints[1].name });
 
       // Select the secondlocation, Open Edit form, Check "Service point" dropdown

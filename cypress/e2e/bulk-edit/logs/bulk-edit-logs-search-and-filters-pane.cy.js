@@ -119,7 +119,8 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.clickClearSelectedDateButton('Started', 'From');
       BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', '');
       BulkEditSearchPane.verifyLogsStartedAccordionExistsWithElements();
-      BulkEditSearchPane.fillLogsDate('Started', 'From', currentDate);
+      BulkEditSearchPane.fillLogsDate('Started', 'From', yesterday);
+      BulkEditSearchPane.fillLogsDate('Started', 'To', currentDate);
       BulkEditSearchPane.applyStartDateFilters();
       BulkEditSearchPane.verifyDateCellsValues(6, yesterday, currentDate);
       BulkEditSearchPane.verifyClearSelectedFiltersButton('Started');
@@ -148,6 +149,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.applyEndDateFilters();
       BulkEditSearchPane.verifyDateCellsValues(6, yesterday, currentDate);
       BulkEditSearchPane.verifyDateCellsValues(7, yesterday, tomorrow);
+      BulkEditSearchPane.clickClearStartedFilter();
       BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', '');
       BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'To', '');
       BulkEditSearchPane.verifyDateCellsValues(7, yesterday, tomorrow);
