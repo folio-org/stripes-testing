@@ -662,4 +662,12 @@ export default {
         .exists(),
     );
   },
+  verifyResourceIdentifier(type, value, rowIndex) {
+    const identifierRow = Accordion('Identifiers').find(
+      MultiColumnList({ id: 'list-identifiers' }).find(MultiColumnListRow({ index: rowIndex })),
+    );
+
+    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
+    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
+  },
 };
