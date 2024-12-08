@@ -49,9 +49,9 @@ describe('Citation: create work', () => {
       LinkedDataEditor.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
-      SearchAndFilter.checkSearchResultsByWorkTitle(testData.uniqueTitle);
+      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
       // check that work is not displayed in the inventory
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle, false);
       InventorySearchAndFilter.verifyNoRecordsFound();
     },
