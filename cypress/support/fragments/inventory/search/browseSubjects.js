@@ -1,21 +1,20 @@
 /* eslint-disable no-dupe-keys */
-import { including } from 'bigtest';
+import { including, matching } from '@interactors/html';
 import {
-  matching,
+  Accordion,
   Button,
-  MultiColumnListCell,
-  Pane,
-  TextArea,
   Link,
+  MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  Pane,
   Section,
-  TextInput,
   Select,
-  Accordion,
+  TextArea,
+  TextInput,
 } from '../../../../../interactors';
-import InventorySearchAndFilter from '../inventorySearchAndFilter';
 import { escapeRegex } from '../../../utils/stringTools';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');

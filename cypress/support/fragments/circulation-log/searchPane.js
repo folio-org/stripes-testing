@@ -1,4 +1,4 @@
-import { matching } from 'bigtest';
+import { including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -11,14 +11,13 @@ import {
   MultiSelect,
   Pane,
   TextField,
-  including,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
-import SearchResults from './searchResults';
-import LoansPage from '../loans/loansPage';
-import Users from '../users/users';
 import ItemRecordView from '../inventory/item/itemRecordView';
+import LoansPage from '../loans/loansPage';
 import TopMenuNavigation from '../topMenuNavigation';
+import Users from '../users/users';
+import SearchResults from './searchResults';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' })
   .find(Dropdown())

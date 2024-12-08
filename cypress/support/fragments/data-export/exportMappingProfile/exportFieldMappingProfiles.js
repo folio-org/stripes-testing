@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Pane,
@@ -8,7 +8,6 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   Modal,
-  HTML,
 } from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
 import InteractorsTools from '../../../utils/interactorsTools';

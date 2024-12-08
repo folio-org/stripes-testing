@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { HTML, including } from '@interactors/html';
 import {
   Pane,
   NavListItem,
@@ -6,7 +6,6 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   TextField,
-  HTML,
   MultiColumnListHeader,
 } from '../../../../../interactors';
 import ExportNewJobProfile from './exportNewJobProfile';

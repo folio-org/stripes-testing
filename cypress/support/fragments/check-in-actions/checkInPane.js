@@ -1,5 +1,4 @@
-import { matching } from 'bigtest';
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import { MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
