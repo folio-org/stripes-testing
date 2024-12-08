@@ -159,7 +159,6 @@ describe('Data Import', () => {
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
-          cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
             Permissions.inventoryAll.gui,
@@ -170,6 +169,8 @@ describe('Data Import', () => {
           ]);
         })
         .then(() => {
+          cy.resetTenant();
+          cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
             Permissions.inventoryAll.gui,

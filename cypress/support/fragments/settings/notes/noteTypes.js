@@ -69,16 +69,16 @@ export default {
 
   checkNoteTypeButtonsStates({
     name,
-    addNewButton = { disabled: false },
+    addNewButton = { present: true },
     editButton = { present: true },
     deleteButton = { present: true },
   } = {}) {
     this.checkNoteTypeIsDisplayed(name);
 
-    if (!addNewButton.disabled) {
+    if (addNewButton.present) {
       cy.expect(noteTypeRootPane.find(Button({ text: '+ New', disabled: false })).exists());
     } else {
-      cy.expect(noteTypeRootPane.find(Button({ text: '+ New', disabled: true })).exists());
+      cy.expect(noteTypeRootPane.find(Button({ text: '+ New' })).absent());
     }
 
     if (editButton.present) {

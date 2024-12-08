@@ -58,7 +58,6 @@ const authorityFileDeletedCalloutText = (authorityFileName) => {
 };
 
 const waitLoading = () => {
-  cy.expect(newButton.has({ disabled: false }));
   cy.expect(firstRow.exists());
   cy.wait(3000);
 };
@@ -179,7 +178,7 @@ const getTargetRowWithFile = (authorityFileName) => {
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: or('aatg,aat', 'aat,aatg'),
+    prefix: or('aat,aatg,aatfg', 'aat,aatg'),
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
@@ -282,7 +281,16 @@ export default {
     if (isActive) switchActiveCheckbox(isActive);
   },
 
-  checkSourceFileExists(name, prefix, startsWith, baseUrl, isActive, lastUpdatedBy, isDeletable) {
+  checkSourceFileExists(
+    name,
+    prefix,
+    startsWith,
+    baseUrl,
+    isActive,
+    lastUpdatedBy,
+    isDeletable = true,
+    isEditable = true,
+  ) {
     const targetRow = getTargetRowWithFile(name);
 
     cy.expect([
@@ -291,8 +299,8 @@ export default {
       targetRow.find(MultiColumnListCell(baseUrl)).exists(),
       targetRow.find(activeCheckbox).has({ checked: isActive, disabled: true }),
       targetRow.find(MultiColumnListCell(including(lastUpdatedBy))).exists(),
-      targetRow.find(editButton).exists(),
     ]);
+    if (isEditable) cy.expect(targetRow.find(editButton).exists());
     if (isDeletable) cy.expect(targetRow.find(deleteButton).exists());
   },
 

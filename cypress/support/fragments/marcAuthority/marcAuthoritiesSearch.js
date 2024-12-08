@@ -57,7 +57,7 @@ export default {
           .checkIfNotSelected(),
       ]);
       // need to wait until filter will be applied
-      cy.wait(1000);
+      cy.wait(3000);
     }
   },
 

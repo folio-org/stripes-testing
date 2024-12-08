@@ -52,7 +52,7 @@ describe('MARC', () => {
         '$a C374148 Feminist poetry $0 http://id.loc.gov/authorities/subjects/sh85047755',
       ],
       deleteModalMessage:
-        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ?',
+        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ? If you proceed with deletion, then 1 linked bibliographic record will retain authorized value and will become uncontrolled.',
     };
 
     const marcFiles = [
@@ -111,33 +111,30 @@ describe('MARC', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
+          cy.loginAsAdmin();
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.editMarcBibliographicRecord();
 
-            testData.recordsLinkingData.forEach((authorityField) => {
-              InventoryInstance.verifyAndClickLinkIcon(authorityField.linkingBibFieldTag);
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.searchResults(authorityField.authorityTitle);
-              MarcAuthorities.checkFieldAndContentExistence(
-                authorityField.authorityLinkedFieldTag,
-                authorityField.authorityFieldValue,
-              );
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingAuthority(authorityField.linkingBibFieldTag);
-              QuickMarcEditor.closeCallout();
-            });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+          testData.recordsLinkingData.forEach((authorityField) => {
+            InventoryInstance.verifyAndClickLinkIcon(authorityField.linkingBibFieldTag);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.searchResults(authorityField.authorityTitle);
+            MarcAuthorities.checkFieldAndContentExistence(
+              authorityField.authorityLinkedFieldTag,
+              authorityField.authorityFieldValue,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(authorityField.linkingBibFieldTag);
+            QuickMarcEditor.closeCallout();
           });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
         });
-      cy.getAdminToken();
+
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,

@@ -86,7 +86,7 @@ describe('Eureka', () => {
 
       it(
         'C424003 Editing existing authorization role (only name/description updated)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C424003'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C424003'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

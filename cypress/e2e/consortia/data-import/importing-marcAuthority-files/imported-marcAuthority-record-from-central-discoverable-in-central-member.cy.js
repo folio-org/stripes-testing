@@ -32,31 +32,29 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      ])
-        .then((userProperties) => {
-          users.userProperties = userProperties;
+      ]).then((userProperties) => {
+        users.userProperties = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          ]);
-        })
-        .then(() => {
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          });
+        cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
+        cy.setTenant(Affiliations.University);
+        cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        ]);
+        cy.resetTenant();
+        cy.login(users.userProperties.username, users.userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        }).then(() => {
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
+      });
     });
 
     after('Delete users, data', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userProperties.userId);
-      MarcAuthority.deleteViaAPI(createdAuthorityID);
+      MarcAuthority.deleteViaAPI(createdAuthorityID, true);
     });
 
     it(

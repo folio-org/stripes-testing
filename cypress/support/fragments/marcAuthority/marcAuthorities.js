@@ -385,6 +385,7 @@ export default {
 
   searchBy: (parameter, value, isLongValue = false) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
+    cy.wait(1000);
     cy.do(filtersSection.find(searchInput).fillIn(value));
     if (isLongValue) {
       // need to wait until value will be applied in case when value is long
@@ -1625,7 +1626,10 @@ export default {
   },
 
   deleteMarcAuthorityByTitleViaAPI(title, authRefType = 'Authorized') {
-    this.getMarcAuthoritiesViaApi({ limit: 100, query: `keyword="${title}"` }).then((records) => {
+    this.getMarcAuthoritiesViaApi({
+      limit: 100,
+      query: `(keyword all "${title}" or naturalId="${title}")`,
+    }).then((records) => {
       records.forEach((record) => {
         if (record.authRefType === authRefType) {
           this.deleteViaAPI(record.id, true);

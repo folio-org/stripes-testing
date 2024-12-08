@@ -40,7 +40,7 @@ describe('MARC', () => {
       const viewSourceData = [
         'Linked to MARC authority',
         '100',
-        '$a C422066 Kerouac, Jack (001 has valid prefix), $d 1922-1969 $e author. $0 http://id.loc.gov/authorities/names/n80036674',
+        '$0 http://id.loc.gov/authorities/names/n80036674 $9 26daa178-09b0-4a44-ac23-d76c2eda0091 $a C422066 Kerouac, Jack (001 has valid prefix), $d 1922-1969 $e author.',
       ];
 
       const marcFiles = [
@@ -89,8 +89,10 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
 
-          cy.loginAsAdmin().then(() => {
-            cy.visit(TopMenu.inventoryPath);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();

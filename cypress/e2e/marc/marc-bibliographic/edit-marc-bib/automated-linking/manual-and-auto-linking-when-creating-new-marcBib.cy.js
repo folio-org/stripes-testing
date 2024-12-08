@@ -90,7 +90,9 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422149*');
+          ['C422149*', 'n99036055'].forEach((identifire) => {
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(identifire);
+          });
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(

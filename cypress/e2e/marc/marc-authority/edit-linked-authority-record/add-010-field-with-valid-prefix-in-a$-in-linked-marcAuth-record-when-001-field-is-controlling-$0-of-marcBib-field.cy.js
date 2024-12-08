@@ -22,7 +22,7 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a C422060 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
+          '$a C422060 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ;',
           '$e author.',
           '$0 http://id.loc.gov/authorities/names/n123123',
           '',

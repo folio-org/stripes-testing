@@ -7,8 +7,8 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C446119 ${getRandomPostfix()}`,
-        roleDescription: `Description C446119 ${getRandomPostfix()}`,
+        roleName: `Auto Role C624297 ${getRandomPostfix()}`,
+        roleDescription: `Description C624297 ${getRandomPostfix()}`,
       };
 
       const capabSetsToAssign = [
@@ -47,8 +47,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C446119 Delete a role without capabilities and users (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C446119'] },
+        'C624297 Delete a role without capabilities and users (eureka)',
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C624297'] },
         () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);

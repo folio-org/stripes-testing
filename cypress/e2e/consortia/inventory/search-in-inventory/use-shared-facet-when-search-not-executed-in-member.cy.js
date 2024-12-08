@@ -208,7 +208,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
 
         // 13 Cancel facet selection by clicking on "x" icon placed in the "Shared" accordion button.
-        InventorySearchAndFilter.clearSharedFilter();
+        InventorySearchAndFilter.selectOptionInExpandedFilter(Dropdowns.SHARED, Dropdowns.YES, false);
+        InventorySearchAndFilter.selectOptionInExpandedFilter(Dropdowns.SHARED, Dropdowns.NO, false);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
         InventorySearchAndFilter.verifyResultPaneEmpty(true);
