@@ -79,7 +79,7 @@ function fillName(profileName) {
   cy.expect(nameTextField.exists());
   cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(5000);
+  cy.wait(6000);
 }
 
 function selectExistingRecordType(existingRecordType) {

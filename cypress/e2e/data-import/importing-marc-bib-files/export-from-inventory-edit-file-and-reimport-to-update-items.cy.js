@@ -345,7 +345,7 @@ describe('Data Import', () => {
         );
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InventoryHoldings.checkIfExpanded(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`, true);

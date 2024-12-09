@@ -22,6 +22,7 @@ import {
   TextField,
   ValueChipRoot,
   not,
+  MultiSelectMenu,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -71,10 +72,6 @@ const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
-const statisticalCodeAccordion = Accordion({ id: 'itemsStatisticalCodeIds' });
-const holdingsPermanentLocationAccordion = Accordion({
-  id: 'holdingsPermanentLocation',
-});
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
@@ -800,11 +797,15 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-itemsStatisticalCodeIds' }).click());
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
-    cy.do(statisticalCodeAccordion.find(TextField()).fillIn(code));
+    cy.do(MultiSelect({ id: 'itemsStatisticalCodeIds-multiselect' }).fillIn(code));
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
-    statisticalCodeAccordion.find(TextField()).click();
-    cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(code)))
+        .click(),
+    );
+    cy.wait(ONE_SECOND);
   },
 
   browseSearch(searchValue) {
@@ -829,11 +830,8 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
-    cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));
+    cy.do(MultiSelect({ id: 'holdingsPermanentLocation-multiselect' }).fillIn(location));
     // need to wait until data will be loaded
-    cy.wait(ONE_SECOND);
-    holdingsPermanentLocationAccordion.find(TextField()).click();
-    cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
     cy.wait(ONE_SECOND);
   },
 
