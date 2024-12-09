@@ -136,7 +136,7 @@ describe('MARC', () => {
             tag: '711',
             naturalId: 'n84745425C387538',
             value:
-              'C387538 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
+              'C387538 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             type: 'Contributor',
           },
           {

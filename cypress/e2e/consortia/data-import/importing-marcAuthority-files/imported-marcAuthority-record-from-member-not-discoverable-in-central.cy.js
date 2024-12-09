@@ -5,9 +5,9 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import {
+  APPLICATION_NAMES,
   JOB_STATUS_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
-  APPLICATION_NAMES,
 } from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';

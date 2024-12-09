@@ -581,6 +581,10 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
   },
 
+  clickLinkIconInTagFieldByTag(tag) {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(linkToMarcRecordButton).click());
+  },
+
   clickLinkHeadingsButton() {
     cy.do(paneHeader.find(linkHeadingsButton).click());
   },
@@ -758,6 +762,7 @@ export default {
   saveAndCloseUpdatedLinkedBibField() {
     cy.do(saveAndCloseButton.click());
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+    cy.wait(1000);
   },
 
   saveAndCheck() {
@@ -1310,6 +1315,7 @@ export default {
     newContent = `newContent${getRandomPostfix()}`,
   ) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
+    cy.wait(1000);
     return newContent;
   },
 
@@ -1911,6 +1917,7 @@ export default {
       rootSection.absent(),
       viewMarcSection.exists(),
     ]);
+    cy.wait(1000);
   },
 
   cancelUpdateLinkedBibs() {
@@ -1956,6 +1963,7 @@ export default {
 
   clickSaveAndKeepEditingButton() {
     cy.do(saveAndKeepEditingBtn.click());
+    cy.wait(1500);
   },
 
   waitAndCheckFirstBibRecordCreated(
@@ -2237,6 +2245,7 @@ export default {
   saveAndKeepEditingUpdatedLinkedBibField() {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+    cy.wait(1000);
   },
 
   verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
@@ -2272,6 +2281,7 @@ export default {
       updateLinkedBibFieldsModal.absent(),
       rootSection.exists(),
     ]);
+    cy.wait(1000);
   },
   confirmDeletingRecord() {
     cy.do(confirmDeleteButton.click());

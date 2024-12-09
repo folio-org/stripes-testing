@@ -22,6 +22,7 @@ const newUsername = getTestEntityValue('username');
 
 describe('Users', () => {
   before('create test data', () => {
+    cy.clearCookies({ domain: null });
     cy.getAdminToken();
     cy.createTempUser([
       permissions.uiUsersCreate.gui,
