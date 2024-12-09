@@ -100,6 +100,7 @@ export default {
         .find(HTML({ text: including(newTenantName) }))
         .exists(),
     );
+    cy.wait(3000);
   },
 
   switchActiveAffiliationIsAbsent() {

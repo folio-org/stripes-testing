@@ -2,11 +2,12 @@ import Permissions from '../../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import Users from '../../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -58,17 +59,15 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
-
+          cy.resetTenant();
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ])
             .then((userProperties) => {
               users.userProperties = userProperties;
-            })
-            .then(() => {
+
               cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-              cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
@@ -76,8 +75,9 @@ describe('MARC', () => {
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
                 Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
               ]);
-            })
-            .then(() => {
+
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
@@ -173,7 +173,7 @@ describe('MARC', () => {
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,
             );
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchBy(
               testData.authoritySearchOption,
               linkingTagAndValues.authorityHeading,
@@ -181,11 +181,11 @@ describe('MARC', () => {
             MarcAuthorities.selectTitle(linkingTagAndValues.authorityHeading);
             MarcAuthorities.checkRecordDetailPageMarkedValue(linkingTagAndValues.authorityHeading);
 
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchBy(
               testData.authoritySearchOption,
               linkingTagAndValues.authorityHeading,
@@ -193,7 +193,7 @@ describe('MARC', () => {
             MarcAuthorities.checkNoResultsMessage(
               `No results found for "${linkingTagAndValues.authorityHeading}". Please check your spelling and filters.`,
             );
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.searchByParameter(
               testData.instanceSearchOption,
               testData.instanceTitle,
@@ -205,7 +205,7 @@ describe('MARC', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchBy(
               testData.authoritySearchOption,
               linkingTagAndValues.authorityHeading,
@@ -213,7 +213,7 @@ describe('MARC', () => {
             MarcAuthorities.checkNoResultsMessage(
               `No results found for "${linkingTagAndValues.authorityHeading}". Please check your spelling and filters.`,
             );
-            cy.visit(TopMenu.inventoryPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.searchByParameter(
               testData.instanceSearchOption,
               testData.instanceTitle,
