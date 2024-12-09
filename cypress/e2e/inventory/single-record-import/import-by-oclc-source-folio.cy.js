@@ -14,7 +14,7 @@ let user;
 let instanceRecord;
 const OCLCAuthentication = '100481406/PAOLF';
 const oclcRecordData = {
-  title: 'Cooking Light Soups & Stew [electronic resource].',
+  title: 'Cooking Light Soups & Stew.',
   language: 'English',
   publisher: 'TI Inc. Books',
   placeOfPublication: 'Chicago',
@@ -91,8 +91,8 @@ describe('Inventory', () => {
           date: oclcRecordData.publicationDate,
         });
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
-        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
-        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
+        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 6);
+        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 7);
         InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
         InventoryInstance.checkInstanceNotes(
           oclcRecordData.notes.noteType,
