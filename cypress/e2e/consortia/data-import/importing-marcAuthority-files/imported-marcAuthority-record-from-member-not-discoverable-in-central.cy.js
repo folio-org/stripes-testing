@@ -2,8 +2,13 @@ import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  APPLICATION_NAMES,
+} from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -42,6 +47,8 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);
+
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405519');
         })
         .then(() => {
           cy.login(users.userProperties.username, users.userProperties.password, {
@@ -72,13 +79,13 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFile.fileName);
+        JobProfiles.waitFileIsImportedForConsortia(marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityID = link.split('/')[5];
         });
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.waitLoading();
         MarcAuthorities.searchBy('Keyword', searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);

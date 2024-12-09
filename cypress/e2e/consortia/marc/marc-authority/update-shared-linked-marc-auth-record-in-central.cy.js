@@ -2,11 +2,12 @@ import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -132,32 +133,32 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                if (marcFile.tenant === 'University') {
-                  cy.setTenant(Affiliations.University);
-                } else if (marcFile.tenant === 'College') {
-                  cy.setTenant(Affiliations.College);
-                } else {
-                  cy.resetTenant();
-                  cy.getAdminToken();
-                }
+            marcFiles.forEach((marcFile) => {
+              if (marcFile.tenant === 'University') {
+                cy.setTenant(Affiliations.University);
+              } else if (marcFile.tenant === 'College') {
+                cy.setTenant(Affiliations.College);
+              } else {
+                cy.resetTenant();
+                cy.getAdminToken();
+              }
 
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
           })
           .then(() => {
-            cy.visit(TopMenu.inventoryPath);
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
@@ -216,7 +217,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(3);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(3);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           instancesToCheckInCentral.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);

@@ -93,6 +93,7 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
+          cy.wait(2000);
           QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
@@ -113,8 +114,10 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
-          // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
-          // InventoryInstance.verifyLastUpdatedSource(users.userAProperties.firstName, users.userAProperties.lastName);
+          InventoryInstance.verifyLastUpdatedSource(
+            users.userAProperties.firstName,
+            users.userAProperties.lastName,
+          );
           InventoryInstance.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
             testData.tag245,

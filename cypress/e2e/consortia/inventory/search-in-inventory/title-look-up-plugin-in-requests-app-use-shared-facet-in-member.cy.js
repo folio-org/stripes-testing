@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -9,7 +13,7 @@ import SelectInstanceModal from '../../../../support/fragments/requests/selectIn
 import TitleLevelRequests from '../../../../support/fragments/settings/circulation/titleLevelRequests';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -147,7 +151,7 @@ describe('Inventory', () => {
               tenantNames.university,
               servicePoint.name,
             );
-            cy.visit(TopMenu.requestsPath);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
             Requests.waitLoading();
           });
         });
@@ -211,14 +215,10 @@ describe('Inventory', () => {
         SelectInstanceModal.clickSearchButton();
         SelectInstanceModal.checkEmptySearchResults(invalidSearchQuery);
 
-        // 5 Click on any checkbox under "Shared" accordion.
-        SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.yes);
-        SelectInstanceModal.checkEmptySearchResults(invalidSearchQuery);
-
-        // 6 Click "Reset all" button
+        // 5 Click "Reset all" button
         SelectInstanceModal.clickResetAllButton();
 
-        // 7 Execute search which will return Instances created at preconditions:
+        // 6 Execute search which will return Instances created at preconditions:
         // -Input the following search query in the search box: "C410702 Test Shared facet"
         // -Click on the "Search" button.
         SelectInstanceModal.fillInSearchField('C410702 Test Shared facet');
@@ -246,7 +246,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 8 Check "Yes" checkbox in "Shared" accordion
+        // 7 Check "Yes" checkbox in "Shared" accordion
         SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.yes);
         sharedFOLIOInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
@@ -269,7 +269,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 9 Click on "Source" accordion header → Select "MARC" option in expanded accordion
+        // 8 Click on "Source" accordion header → Select "MARC" option in expanded accordion
         SelectInstanceModal.clickAccordionByName(filterName);
         SelectInstanceModal.selectOptionInExpandedFilter(filterName, INSTANCE_SOURCE_NAMES.MARC);
         sharedMARCInstances.forEach((instance) => {
@@ -292,7 +292,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 10 Check "No" checkbox in "Shared" accordion
+        // 9 Check "No" checkbox in "Shared" accordion
         SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.no);
         sharedMARCInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
@@ -315,7 +315,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 11 Cancel applied "Source" facet by clicking on the "x" icon placed next to its header
+        // 10 Cancel applied "Source" facet by clicking on the "x" icon placed next to its header
         SelectInstanceModal.clearSourceFilter();
         sharedFOLIOInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);

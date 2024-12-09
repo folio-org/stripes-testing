@@ -41,8 +41,8 @@ describe('MARC', () => {
         let createdAuthorityID;
 
         before('Create test data', () => {
-          cy.resetTenant();
           cy.getAdminToken();
+          cy.resetTenant();
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -61,7 +61,6 @@ describe('MARC', () => {
             testData.userProperties = createdUserProperties;
 
             cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -69,12 +68,12 @@ describe('MARC', () => {
               Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
             ]);
 
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
-
-            cy.resetTenant();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,

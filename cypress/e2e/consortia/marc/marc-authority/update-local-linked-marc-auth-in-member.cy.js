@@ -42,13 +42,13 @@ describe('MARC', () => {
       const marcFiles = [
         {
           marc: 'marcBibFileForC407654.mrc',
-          fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+          fileNameImported: `testMarcFileC407654.${getRandomPostfix()}.mrc`,
           propertyName: 'instance',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         },
         {
           marc: 'marcAuthFileForC407654.mrc',
-          fileNameImported: `testMarcFileC397343.${getRandomPostfix()}.mrc`,
+          fileNameImported: `testMarcFileC407654.${getRandomPostfix()}.mrc`,
           propertyName: 'authority',
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         },
@@ -58,7 +58,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-
+        cy.resetTenant();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -68,10 +68,7 @@ describe('MARC', () => {
         ])
           .then((userProperties) => {
             users.userProperties = userProperties;
-          })
-          .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -82,8 +79,9 @@ describe('MARC', () => {
               Permissions.moduleDataImportEnabled.gui,
               Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
             ]);
-          })
-          .then(() => {
+
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,

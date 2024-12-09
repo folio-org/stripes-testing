@@ -2,11 +2,12 @@ import Permissions from '../../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../../support/dictionary/affiliations';
 import Users from '../../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../../../support/constants';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../../../support/fragments/marcAuthority/marcAuthority';
@@ -105,9 +106,7 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              cy.resetTenant();
-              cy.setTenant(Affiliations.College);
-              cy.visit(TopMenu.inventoryPath);
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -185,7 +184,7 @@ describe('MARC', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            cy.visit(TopMenu.marcAuthorities);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchBy(
               testData.authoritySearchOption,
               linkingTagAndValues.authorityHeading,
