@@ -18,6 +18,7 @@ import {
   or,
   PaneHeader,
   matching,
+  DropdownMenu,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -129,6 +130,7 @@ export default {
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
+      selectApplicationButton.exists(),
     ]);
     cy.wait(1000);
   },
@@ -330,6 +332,7 @@ export default {
       capabilitySetsAccordion.exists(),
       saveButton.exists(),
       unassignAllCapabilitiesButton.exists(),
+      selectApplicationButton.exists(),
     ]);
   },
 
@@ -691,8 +694,15 @@ export default {
     else cy.expect(newButton.absent());
   },
 
-  checkViewOnlyActionsOptions: () => {
+  checkActionsOptionsAvailable: (editShown = true, duplicateShown = true, deleteShown = true) => {
     cy.do(actionsButton.click());
-    cy.expect([editButton.absent(), duplicateButton.absent(), deleteButton.absent()]);
+    if (editShown) cy.expect(editButton.exists());
+    else cy.expect(editButton.absent());
+    if (duplicateShown) cy.expect(duplicateButton.exists());
+    else cy.expect(duplicateButton.absent());
+    if (deleteShown) cy.expect(deleteButton.exists());
+    else cy.expect(deleteButton.absent());
+    cy.do(actionsButton.click());
+    cy.expect(DropdownMenu().absent());
   },
 };
