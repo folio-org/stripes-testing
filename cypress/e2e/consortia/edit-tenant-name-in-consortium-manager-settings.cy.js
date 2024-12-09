@@ -45,32 +45,32 @@ describe('Consortia', () => {
       ConsortiumManager.selectMembership();
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
+        6,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.saveEditingTenantInformation(6);
       ConsortiumManager.checkEditedTenantInformation(
-        2,
+        6,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
+        6,
         tenantCodes.professional,
         tenantNames.professional,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.saveEditingTenantInformation(6);
       ConsortiumManager.checkEditedTenantInformation(
-        2,
+        6,
         tenantCodes.professional,
         tenantNames.professional,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-E`, character151);
+      ConsortiumManager.editTenantInformation(6, `${tenantCodes.professional}-E`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(
-        2,
+        6,
         tenantErrors.code,
         tenantErrors.name,
       );

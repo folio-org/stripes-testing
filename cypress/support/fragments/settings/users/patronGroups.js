@@ -217,25 +217,36 @@ export default {
     }
   },
 
-  verifyGroupInTheList({ name, description = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-    cy.expect([
-      row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: description })).exists(),
-    ]);
-    if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
-    } else {
-      Object.values(reasonsActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
-        if (actions.includes(action)) {
-          cy.expect(buttonSelector.exists());
+  verifyGroupInTheList(record, actionButtons = []) {
+    MultiColumnListRow({
+      content: including(record[0]),
+    })
+      .rowIndexInParent()
+      .then((rowIndexInParent) => {
+        cy.wrap(record).each((text, columnIndex) => {
+          cy.expect(
+            MultiColumnListRow({ rowIndexInParent })
+              .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
+              .exists(),
+          );
+        });
+
+        const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+          MultiColumnListCell({ columnIndex: record.length }),
+        );
+
+        if (actionButtons.length === 0) {
+          cy.expect(actionsCell.has({ content: '' }));
         } else {
-          cy.expect(buttonSelector.absent());
+          cy.wrap(Object.values(reasonsActions)).each((action) => {
+            if (actionButtons.includes(action)) {
+              cy.expect(actionsCell.find(Button({ icon: action })).exists());
+            } else {
+              cy.expect(actionsCell.find(Button({ icon: action })).absent());
+            }
+          });
         }
       });
-    }
   },
   verifyCreatedGroupInTheList({
     name,
