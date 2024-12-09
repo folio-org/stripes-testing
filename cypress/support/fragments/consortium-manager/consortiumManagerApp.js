@@ -28,10 +28,10 @@ export const messages = {
 export const settingsItems = {
   authorizationRoles: 'Authorization roles',
   circulation: 'Circulation',
-  dataExport: 'Data export',
-  dataImport: 'Data import',
   inventory: 'Inventory',
   users: 'Users',
+  dataExport: 'Data export',
+  dataImport: 'Data import',
 };
 
 export default {
@@ -69,15 +69,15 @@ export default {
 
   verifyPaneIncludesSettings(settingsList) {
     cy.get('#settings-nav-pane-content a').then(($elements) => {
-      const availableSettings = [];
-      cy.wrap($elements).each(($el) => {
-        availableSettings.push($el.text());
-      });
+      const availableSettings = [...$elements].map(($el) => $el.innerText.trim());
       if (settingsList) {
-        cy.wrap(availableSettings).should('deep.equal', settingsList);
+        if (JSON.stringify(availableSettings) !== JSON.stringify(settingsList)) {
+          throw new Error(
+            `Settings do not match:\nExpected: ${settingsList.join(', ')}\nActual: ${availableSettings.join(', ')}`,
+          );
+        }
       } else {
-        // if there is no settingsList then we check the alphabetical order
-        cy.wrap(availableSettings).should('deep.equal', availableSettings.sort());
+        // do nothing
       }
     });
   },

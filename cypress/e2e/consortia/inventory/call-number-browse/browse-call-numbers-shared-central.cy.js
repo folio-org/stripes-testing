@@ -195,7 +195,6 @@ describe('Inventory', () => {
         InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
           sourceId = folioSource.id;
         });
-
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             testData.userProperties = userProperties;

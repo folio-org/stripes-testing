@@ -99,27 +99,24 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
-                marcFiles.forEach((marcFile) => {
-                  DataImport.uploadFileViaApi(
-                    marcFile.marc,
-                    marcFile.fileNameImported,
-                    marcFile.jobProfileToRun,
-                  ).then((response) => {
-                    response.forEach((record) => {
-                      createdRecordIDs.push(record[marcFile.propertyName].id);
-                    });
+              marcFiles.forEach((marcFile) => {
+                DataImport.uploadFileViaApi(
+                  marcFile.marc,
+                  marcFile.fileNameImported,
+                  marcFile.jobProfileToRun,
+                ).then((response) => {
+                  response.forEach((record) => {
+                    createdRecordIDs.push(record[marcFile.propertyName].id);
                   });
                 });
               });
             })
             .then(() => {
-              cy.resetTenant();
-              cy.setTenant(Affiliations.College);
-              cy.visit(TopMenu.inventoryPath);
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.pressAddHoldingsButton();

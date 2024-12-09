@@ -93,7 +93,7 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
-          cy.wait(3000);
+          cy.wait(2000);
           QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);

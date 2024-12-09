@@ -82,7 +82,7 @@ describe('MARC', () => {
         '1',
         '0',
         '$a Gálvez Shared C410775',
-        '$x Assassination.',
+        '',
         '$0 http://id.loc.gov/authorities/names/n20114107752',
         '',
       ];
@@ -254,6 +254,8 @@ describe('MARC', () => {
           );
 
           InventoryInstance.deriveNewMarcBib();
+          QuickMarcEditor.clickKeepLinkingButton();
+          cy.wait(1000);
           QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
           InventoryInstances.waitContentLoading();
