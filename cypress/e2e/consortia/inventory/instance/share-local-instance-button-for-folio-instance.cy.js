@@ -88,7 +88,6 @@ describe('Inventory', () => {
         cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         cy.wait('@/authn/refresh', { timeout: 5000 });
-        cy.pause();
         InventoryInstances.selectInstance();
 
         InventoryInstance.waitLoading();
