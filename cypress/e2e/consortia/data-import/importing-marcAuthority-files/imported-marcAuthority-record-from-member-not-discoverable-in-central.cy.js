@@ -47,6 +47,8 @@ describe('Data Import', () => {
             Permissions.moduleDataImportEnabled.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);
+
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405519');
         })
         .then(() => {
           cy.login(users.userProperties.username, users.userProperties.password, {
@@ -83,7 +85,7 @@ describe('Data Import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityID = link.split('/')[5];
         });
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.waitLoading();
         MarcAuthorities.searchBy('Keyword', searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);

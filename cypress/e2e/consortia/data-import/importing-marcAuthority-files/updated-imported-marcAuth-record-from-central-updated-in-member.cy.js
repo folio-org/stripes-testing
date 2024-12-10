@@ -27,7 +27,6 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -136,7 +135,6 @@ describe('Data Import', () => {
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
       // create Action profile and link it to Field mapping profile
-      cy.visit(SettingsMenu.actionProfilePath);
       TopMenuNavigation.openAppFromDropdown(
         APPLICATION_NAMES.SETTINGS,
         APPLICATION_NAMES.DATA_IMPORT,
@@ -205,7 +203,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record found');
 
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -217,7 +215,7 @@ describe('Data Import', () => {
           testData.modifiedMarcFile,
         );
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitLoadingList();

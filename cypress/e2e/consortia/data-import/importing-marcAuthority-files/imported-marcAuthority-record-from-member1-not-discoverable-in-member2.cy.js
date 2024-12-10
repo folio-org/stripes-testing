@@ -42,12 +42,7 @@ describe('Data Import', () => {
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               Permissions.moduleDataImportEnabled.gui,
             ]);
-            cy.resetTenant();
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            ]);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405522');
           })
           .then(() => {
             cy.login(users.userProperties.username, users.userProperties.password, {
