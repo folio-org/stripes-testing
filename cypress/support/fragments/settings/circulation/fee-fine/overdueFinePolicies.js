@@ -62,41 +62,32 @@ export default {
     ]);
   },
 
-  fillOverdueFine(value) {
+  fillFine(locator, value) {
     // eslint-disable-next-line cypress/no-force
-    cy.get('[name="overdueFine.quantity"]')
-      .invoke('val', '')
-      .clear()
-      .type(value, { force: true })
-      .blur();
+    cy.get(locator).invoke('val', '').clear();
+
+    cy.wait(500);
+
+    // eslint-disable-next-line cypress/no-force
+    cy.get(locator).invoke('val', '').type(value, { force: true }).blur();
+
+    cy.wait(500);
+  },
+
+  fillOverdueFine(value) {
+    this.fillFine('[name="overdueFine.quantity"]', value);
   },
 
   fillMaxFine(value) {
-    // eslint-disable-next-line cypress/no-force
-    cy.get('[name="maxOverdueFine"]')
-      .focus()
-      .invoke('val', '')
-      .clear()
-      .type(value, { force: true })
-      .blur();
+    this.fillFine('[name="maxOverdueFine"]', value);
   },
 
   fillOverdueRecall(value) {
-    // eslint-disable-next-line cypress/no-force
-    cy.get('[name="overdueRecallFine.quantity"]')
-      .invoke('val', '')
-      .clear()
-      .type(value, { force: true })
-      .blur();
+    this.fillFine('[name="overdueRecallFine.quantity"]', value);
   },
 
   fillMaxRecall(value) {
-    // eslint-disable-next-line cypress/no-force
-    cy.get('[name="maxOverdueRecallFine"]')
-      .invoke('val', '')
-      .clear()
-      .type(value, { force: true })
-      .blur();
+    this.fillFine('[name="maxOverdueRecallFine"]', value);
   },
 
   save() {

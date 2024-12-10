@@ -45,3 +45,7 @@ Cypress.on('fail', (err) => {
 beforeEach(() => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
 });
+
+afterEach(() => {
+  cy.resetTenant();
+});

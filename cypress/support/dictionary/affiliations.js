@@ -3,6 +3,7 @@ export default {
   University: 'cs00000int_0005',
   School: 'cs00000int_0003',
   College: 'cs00000int_0001',
+  AQA: 'cs00000int_0006',
 };
 
 export const tenantNames = {
@@ -12,6 +13,8 @@ export const tenantNames = {
   professional: 'Professional',
   school: 'School',
   special: 'Special,',
+  aqa: 'AQA',
+  aqa2: 'AQA2',
 };
 
 export const tenantCodes = {
@@ -31,4 +34,5 @@ export const tenantErrors = {
 export const adminUsernames = {
   college: 'ecs_0001_admin',
   university: 'ecs_0005_admin',
+  aqa: 'ecs_0006_admin',
 };

@@ -36,7 +36,7 @@ const editList = Button('Edit list');
 const duplicateList = Button('Duplicate list');
 const deleteList = Button('Delete list');
 const exportList = Button('Export all columns (CSV)');
-const exportListVisibleColumns = Button('Export visible columns (CSV)');
+const exportAllColumns = Button('Export all columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
 const filterPane = Pane('Filter');
@@ -254,14 +254,14 @@ export default {
     cy.wait(1000);
   },
 
-  exportListVisibleColumns() {
-    cy.do(exportListVisibleColumns.click());
+  exportAllColumns() {
+    cy.do(exportAllColumns.click());
     cy.wait(1000);
   },
 
-  verifyExportListVisibleColumnsButtonIsActive() {
-    cy.expect(exportListVisibleColumns.exists());
-    cy.expect(exportListVisibleColumns.has({ disabled: false }));
+  verifyExportAllColumnsButtonIsActive() {
+    cy.expect(exportAllColumns.exists());
+    cy.expect(exportAllColumns.has({ disabled: false }));
   },
 
   verifyExportListButtonIsDisabled() {

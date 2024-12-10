@@ -66,7 +66,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 });
 
 Cypress.Commands.add('getAdminToken', () => {
-  if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), true);
+  if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), false);
   else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 

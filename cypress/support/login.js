@@ -1,6 +1,7 @@
 import localforage from 'localforage';
-
-import { Button, Dropdown, TextField, Heading, including, TextInput } from '../../interactors';
+import { Button, Dropdown, Heading, including, TextField, TextInput } from '../../interactors';
+import { tenantNames } from './dictionary/affiliations';
+import ConsortiumManager from './fragments/settings/consortium-manager/consortium-manager';
 
 Cypress.Commands.add(
   'login',
@@ -24,6 +25,7 @@ Cypress.Commands.add(
           TextInput('Password').fillIn(password),
           Button({ name: 'login' }).click(),
         ]);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.aqa);
         visitPath.waiter();
       });
     } else {
