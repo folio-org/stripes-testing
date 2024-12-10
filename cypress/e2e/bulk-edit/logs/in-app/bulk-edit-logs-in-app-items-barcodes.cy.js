@@ -62,9 +62,10 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(`${itemBarcodesFileName}*`, [invalidItemBrcode]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
+          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
-            [invalidItemBrcode],
+            [`\uFEFF${invalidItemBrcode}`],
             'firstElement',
             false,
           );

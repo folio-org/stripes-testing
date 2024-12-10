@@ -195,8 +195,10 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath);
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

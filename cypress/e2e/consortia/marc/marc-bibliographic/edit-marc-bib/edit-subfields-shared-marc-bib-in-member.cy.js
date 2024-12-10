@@ -63,12 +63,14 @@ describe('MARC', () => {
               users.userProperties = userProperties;
 
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-              cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               ]);
+
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,

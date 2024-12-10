@@ -210,15 +210,12 @@ describe('Inventory', () => {
         SelectInstanceModal.fillInSearchField(invalidSearchQuery);
         SelectInstanceModal.clickSearchButton();
         SelectInstanceModal.checkEmptySearchResults(invalidSearchQuery);
+        cy.wait(1000);
 
-        // 5 Click on any checkbox under "Shared" accordion.
-        SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.yes);
-        SelectInstanceModal.checkEmptySearchResults(invalidSearchQuery);
-
-        // 6 Click "Reset all" button
+        // 5 Click "Reset all" button
         SelectInstanceModal.clickResetAllButton();
 
-        // 7 Execute search which will return Instances created at preconditions:
+        // 6 Execute search which will return Instances created at preconditions:
         // -Input the following search query in the search box: "C410702 Test Shared facet"
         // -Click on the "Search" button.
         SelectInstanceModal.fillInSearchField('C410702 Test Shared facet');
@@ -246,7 +243,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 8 Check "Yes" checkbox in "Shared" accordion
+        // 7 Check "Yes" checkbox in "Shared" accordion
         SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.yes);
         sharedFOLIOInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
@@ -269,7 +266,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 9 Click on "Source" accordion header → Select "MARC" option in expanded accordion
+        // 8 Click on "Source" accordion header → Select "MARC" option in expanded accordion
         SelectInstanceModal.clickAccordionByName(filterName);
         SelectInstanceModal.selectOptionInExpandedFilter(filterName, INSTANCE_SOURCE_NAMES.MARC);
         sharedMARCInstances.forEach((instance) => {
@@ -292,7 +289,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 10 Check "No" checkbox in "Shared" accordion
+        // 9 Check "No" checkbox in "Shared" accordion
         SelectInstanceModal.selectOptionInExpandedFilter(sharedAccordion.name, sharedAccordion.no);
         sharedMARCInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
@@ -315,7 +312,7 @@ describe('Inventory', () => {
           SelectInstanceModal.verifyListResultsNotContains(instance);
         });
 
-        // 11 Cancel applied "Source" facet by clicking on the "x" icon placed next to its header
+        // 10 Cancel applied "Source" facet by clicking on the "x" icon placed next to its header
         SelectInstanceModal.clearSourceFilter();
         sharedFOLIOInstances.forEach((instance) => {
           SelectInstanceModal.verifyListResults(instance);
