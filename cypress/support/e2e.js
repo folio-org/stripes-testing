@@ -19,6 +19,7 @@ import './users';
 import 'cypress-file-upload';
 import 'cypress-recurse/commands';
 import './commands';
+import Affiliations from './dictionary/affiliations';
 
 registerCypressGrep();
 setInteractorTimeout(50_000);
@@ -44,8 +45,9 @@ Cypress.on('fail', (err) => {
 
 beforeEach(() => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+  cy.setTenant(Affiliations.AQA);
 });
 
 afterEach(() => {
-  cy.resetTenant();
+  //cy.resetTenant();
 });

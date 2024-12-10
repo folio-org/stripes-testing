@@ -16,6 +16,7 @@ import {
   TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import Affiliations from '../../dictionary/affiliations';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
@@ -67,16 +68,20 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => cy
-    .okapiRequest({
+  deleteViaApi(userId, fromKeycloak = Cypress.env('eureka')) {
+    // reset tenant to default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    cy.resetTenant();
+    cy.okapiRequest({
       method: 'DELETE',
       path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
-    })
-    .then(({ status }) => {
+    }).then(({ status }) => {
       return status;
-    }),
+    });
+    // reset tenant to member
+    cy.setTenant(Affiliations.AQA);
+  },
 
   getUsers: (searchParams) => {
     return cy

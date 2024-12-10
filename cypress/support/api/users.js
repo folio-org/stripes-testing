@@ -88,6 +88,9 @@ Cypress.Commands.add(
       cy.getAdminToken();
     }
 
+    // reset tenant to default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    cy.resetTenant();
+
     cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
       (userGroup) => {
         const queryField = 'displayName';
@@ -233,6 +236,7 @@ Cypress.Commands.add(
             });
           })
           .then(() => {
+            // reset tenant to member
             cy.assignAffiliationToUser(Affiliations.AQA, userProperties.userId);
             cy.setTenant(Affiliations.AQA);
             cy.assignPermissionsToExistingUser(userProperties.userId, permissions);

@@ -1,5 +1,5 @@
+import Affiliations, { adminUsernames } from '../dictionary/affiliations';
 import Tenant from '../tenant';
-import { adminUsernames } from '../dictionary/affiliations';
 
 Cypress.Commands.add(
   'getToken',
@@ -66,8 +66,12 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 });
 
 Cypress.Commands.add('getAdminToken', () => {
+  // reset tenant to default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  cy.resetTenant();
   if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), false);
   else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  // reset tenant to member
+  cy.setTenant(Affiliations.AQA);
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
@@ -79,6 +83,8 @@ Cypress.Commands.add('getUniversityAdminToken', () => {
 });
 
 Cypress.Commands.add('getUserToken', (username, password) => {
+  // reset tenant to default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  cy.resetTenant();
   let pathToSet = 'bl-users/login-with-expiry';
   if (!Cypress.env('rtrAuth')) {
     pathToSet = 'bl-users/login';
@@ -95,16 +101,22 @@ Cypress.Commands.add('getUserToken', (username, password) => {
     if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
       Cypress.env('token', headers['x-okapi-token']);
     }
+    // reset tenant to member
+    cy.setTenant(Affiliations.AQA);
   });
 });
 
 Cypress.Commands.add('logoutViaApi', () => {
+  // reset tenant to default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  cy.resetTenant();
   cy.okapiRequest({
     method: 'POST',
     path: 'authn/logout',
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   });
+  // reset tenant to member
+  cy.setTenant(Affiliations.AQA);
 });
 
 Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, userId) => {
