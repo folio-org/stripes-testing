@@ -67,6 +67,9 @@ describe('Inventory', () => {
           }).then((specialInstanceIds) => {
             testData.testInstanceIds = specialInstanceIds;
 
+            cy.resetTenant();
+            cy.getAdminToken();
+            cy.setTenant(Affiliations.College);
             InventoryInstance.shareInstanceViaApi(
               specialInstanceIds.instanceId,
               testData.consortiaId,

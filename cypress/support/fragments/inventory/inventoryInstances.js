@@ -1,36 +1,37 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import uuid from 'uuid';
 import { HTML, including, matching } from '@interactors/html';
+import uuid from 'uuid';
 import {
-  Section,
-  or,
-  MultiColumnList,
-  Button,
-  Pane,
-  TextField,
-  Checkbox,
-  Modal,
-  Select,
-  TextInput,
-  TextArea,
-  PaneHeader,
-  PaneContent,
-  MultiColumnListHeader,
-  MultiColumnListRow,
   AdvancedSearch,
   AdvancedSearchRow,
+  Button,
+  Checkbox,
+  Form,
+  Modal,
+  MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  Pane,
+  PaneContent,
+  PaneHeader,
+  Section,
+  Select,
+  TextArea,
+  TextField,
+  TextInput,
+  or,
 } from '../../../../interactors';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
+import Arrays from '../../utils/arrays';
+import FileManager from '../../utils/fileManager';
+import parseMrkFile from '../../utils/parseMrkFile';
+import getRandomPostfix from '../../utils/stringTools';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
-import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
+import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
-import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
-import getRandomPostfix from '../../utils/stringTools';
-import parseMrkFile from '../../utils/parseMrkFile';
-import FileManager from '../../utils/fileManager';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -323,6 +324,11 @@ export default {
       rootSection.find(HTML(including('No results found'))).exists(),
     );
   },
+  waitLoadingSearchAndFilterPane: () => cy.expect([
+    Form()
+      .find(TextArea({ id: 'input-inventory-search' }))
+      .exists(),
+  ]),
 
   selectInstance: (rowNumber = 0) => {
     cy.do([inventoriesList.focus({ row: rowNumber }), inventoriesList.click({ row: rowNumber })]);

@@ -131,6 +131,7 @@ export default {
       method: 'DELETE',
       path: `inventory/items/${itemId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
   addItemToHoldingViaApi({

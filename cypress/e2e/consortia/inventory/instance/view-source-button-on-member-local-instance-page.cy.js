@@ -30,7 +30,7 @@ describe('Inventory', () => {
         testData.instanceId = response[0].instance.id;
       });
 
-      cy.getAdminToken();
+      cy.resetTenant();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
