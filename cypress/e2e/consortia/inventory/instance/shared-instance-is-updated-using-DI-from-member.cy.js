@@ -76,6 +76,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
@@ -97,7 +98,9 @@ describe('Inventory', () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
-          InventoryInstances.searchByTitle(testData.instance.instanceId);
+          cy.wait(3000);
+          InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
+          cy.wait(3000);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
@@ -106,9 +109,8 @@ describe('Inventory', () => {
             const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
             // download exported marc file
+            cy.getAdminToken();
             cy.setTenant(Affiliations.College).then(() => {
-              // use cy.getToken function to get toket for current tenant
-              cy.getCollegeAdminToken();
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
               ExportFile.waitLandingPageOpened();
               ExportFile.downloadExportedMarcFileWithRecordHrid(

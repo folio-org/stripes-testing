@@ -1765,11 +1765,11 @@ export default {
     ]);
   },
 
-  verifyMemberSubSubHoldingsAccordion(memberId, isOpen = true) {
+  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
     cy.wait(2000);
     cy.expect([
       Accordion({ id: memberId }).has({ open: isOpen }),
-      Accordion({ id: memberId }).exists(),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).exists(),
     ]);
   },
 
