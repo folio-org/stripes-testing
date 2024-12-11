@@ -76,6 +76,7 @@ describe('Data Import', () => {
         Logs.checkFileIsRunning(fileName);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.waitLoading();
         InventoryInstance.startOverlaySourceBibRecord();
