@@ -200,9 +200,15 @@ describe('Inventory', () => {
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
         InventoryInstance.expandMemberSubHoldings(Affiliations.College);
-        InventoryInstance.verifyMemberSubSubHoldingsAccordion(Affiliations.College);
+        InventoryInstance.verifyMemberSubSubHoldingsAccordion(
+          Affiliations.College,
+          testData.collegeHoldingsId,
+        );
         InventoryInstance.expandMemberSubHoldings(Affiliations.University);
-        InventoryInstance.verifyMemberSubSubHoldingsAccordion(Affiliations.University);
+        InventoryInstance.verifyMemberSubSubHoldingsAccordion(
+          Affiliations.University,
+          testData.universityHoldingsId,
+        );
       },
     );
   });

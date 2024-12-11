@@ -20,6 +20,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
         testData.instance = instanceData;
@@ -57,8 +58,10 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       cy.setTenant(Affiliations.College);
-      cy.getCollegeAdminToken();
       cy.getInstance({
         limit: 1,
         expandAll: true,
@@ -68,10 +71,6 @@ describe('Inventory', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
       });
       Locations.deleteViaApi(testData.collegeLocation);
-      cy.resetTenant();
-      cy.getAdminToken();
-      Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
 
     it(
