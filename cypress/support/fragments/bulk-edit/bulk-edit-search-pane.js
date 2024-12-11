@@ -696,7 +696,7 @@ export default {
     if (instance) {
       cy.expect([
         DropdownMenu().find(Headline('Start bulk edit')).exists(),
-        Button('Instances and Administrative data').exists(),
+        Button('FOLIO Instances').exists(),
       ]);
     } else {
       cy.expect(Button('Start bulk edit').exists());
@@ -1319,5 +1319,26 @@ export default {
 
   verifyQueryHeadLine(query) {
     cy.expect(bulkEditQueryPane.find(HTML(`Query: ${query}`)).exists());
+  },
+
+  waitForInterceptedRespose(allias, targetProperty, targetValue, maxRetries = 20) {
+    let retries = 0;
+
+    function checkResponse() {
+      cy.wait(allias, { timeout: 20000 }).then((interception) => {
+        if (interception.response.body[targetProperty] !== targetValue) {
+          retries++;
+          if (retries > maxRetries) {
+            throw new Error(
+              `Exceeded maximum retry attempts waiting for ${targetProperty} to have ${targetValue}`,
+            );
+          }
+          cy.wait(1000);
+          checkResponse();
+        }
+        expect(interception.response.body[targetProperty]).to.eq(targetValue);
+      });
+    }
+    checkResponse();
   },
 };

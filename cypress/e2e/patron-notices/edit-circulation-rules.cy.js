@@ -67,7 +67,7 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
+      'C650 Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
       { tags: ['criticalPath', 'vega', 'C650'] },
       () => {
         // Delete Circulation Rules
@@ -110,7 +110,7 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C2268: Add notice policy to circulation rules (volaris)',
+      'C2268 Add notice policy to circulation rules (volaris)',
       { tags: ['smoke', 'volaris', 'system', 'shiftLeft', 'C2268'] },
       () => {
         CirculationRules.clearCirculationRules();

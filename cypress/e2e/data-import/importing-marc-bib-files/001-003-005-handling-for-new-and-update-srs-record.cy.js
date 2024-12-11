@@ -254,7 +254,6 @@ describe('Data Import', () => {
 
           // check instance is updated
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryViewSource.close();
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
@@ -270,7 +269,6 @@ describe('Data Import', () => {
         // export instance
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.closeInstanceDetailPane();

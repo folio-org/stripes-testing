@@ -149,7 +149,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C359604: Make more than one preview for one ledger and same fiscal year with "Test rollover", check test rollover results (thunderjet) (TaaS)',
+    'C359604 Make more than one preview for one ledger and same fiscal year with "Test rollover", check test rollover results (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);

@@ -88,7 +88,7 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C3453: Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.payInvoice();

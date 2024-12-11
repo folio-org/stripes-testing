@@ -1,5 +1,6 @@
 import {
   Button,
+  EditableListRow,
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
@@ -59,7 +60,7 @@ export default {
   },
 
   verifyReasonInTheList({ name, description = '', publicDescription = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = EditableListRow({ content: including(name) });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: description })).exists(),
@@ -86,7 +87,7 @@ export default {
   },
 
   clickEditButtonForReason(name) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = EditableListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.do(
       row
@@ -97,7 +98,7 @@ export default {
   },
 
   clickTrashButtonForReason(name) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = EditableListRow({ content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.do(
       row
