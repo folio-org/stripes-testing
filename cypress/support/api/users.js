@@ -1,9 +1,8 @@
 import uuid from 'uuid';
+import { DEFAULT_LOCALE_STRING, FULFILMENT_PREFERENCES } from '../constants';
+import permissionsList from '../dictionary/permissions';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
-import permissionsList from '../dictionary/permissions';
-import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
-import Affiliations from '../dictionary/affiliations';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
@@ -236,9 +235,9 @@ Cypress.Commands.add(
             });
           })
           .then(() => {
-            // reset tenant to member
-            cy.assignAffiliationToUser(Affiliations.AQA, userProperties.userId);
-            cy.setTenant(Affiliations.AQA);
+            // set tenant to member
+            cy.assignAffiliationToUser(cy.setTenant(Cypress.env('MEMBER_TENANT_ID')), userProperties.userId);
+            cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
             cy.assignPermissionsToExistingUser(userProperties.userId, permissions);
           })
           .then(() => {

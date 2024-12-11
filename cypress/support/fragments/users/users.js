@@ -79,8 +79,8 @@ export default {
     }).then(({ status }) => {
       return status;
     });
-    // reset tenant to member
-    cy.setTenant(Affiliations.AQA);
+    // set tenant to member
+    cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
   },
 
   getUsers: (searchParams) => {

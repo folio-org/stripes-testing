@@ -38,6 +38,8 @@ module.exports = defineConfig({
     OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio-aqa',
     diku_password: 'Folio-aqa1',
+    MEMBER_TENANT_ID: 'cs00000int_0006',
+    MEMBER_TENANT_NAME: 'AQA',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     is_kiwi_release: false,

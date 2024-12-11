@@ -25,7 +25,7 @@ Cypress.Commands.add(
           TextInput('Password').fillIn(password),
           Button({ name: 'login' }).click(),
         ]);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.aqa);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, cy.setTenant(Cypress.env('MEMBER_TENANT_NAME')));
         visitPath.waiter();
       });
     } else {

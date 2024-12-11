@@ -1,4 +1,4 @@
-import Affiliations, { adminUsernames } from '../dictionary/affiliations';
+import { adminUsernames } from '../dictionary/affiliations';
 import Tenant from '../tenant';
 
 Cypress.Commands.add(
@@ -71,7 +71,7 @@ Cypress.Commands.add('getAdminToken', () => {
   if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), false);
   else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
   // reset tenant to member
-  cy.setTenant(Affiliations.AQA);
+  cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
@@ -101,8 +101,8 @@ Cypress.Commands.add('getUserToken', (username, password) => {
     if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
       Cypress.env('token', headers['x-okapi-token']);
     }
-    // reset tenant to member
-    cy.setTenant(Affiliations.AQA);
+    // set tenant to member
+    cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
   });
 });
 
@@ -115,8 +115,8 @@ Cypress.Commands.add('logoutViaApi', () => {
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   });
-  // reset tenant to member
-  cy.setTenant(Affiliations.AQA);
+  // set tenant to member
+  cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
 });
 
 Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, userId) => {

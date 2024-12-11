@@ -68,7 +68,7 @@ describe('lists', () => {
         Lists.verifyEditListButtonIsActive();
         Lists.verifyDuplicateListButtonIsActive();
         Lists.verifyExportListButtonIsActive();
-        Lists.verifyExportListVisibleColumnsButtonIsActive();
+        Lists.verifyExportAllColumnsButtonIsActive();
         Lists.verifyDeleteListButtonDoesNotExist();
         Lists.refreshList();
         Lists.waitForCompilingToComplete();
@@ -83,7 +83,7 @@ describe('lists', () => {
         Lists.editList();
         Lists.openActions();
         Lists.verifyExportListButtonIsActive();
-        Lists.verifyExportListVisibleColumnsButtonIsActive();
+        Lists.verifyExportAllColumnsButtonIsActive();
         Lists.verifyDeleteListButtonDoesNotExist();
         Lists.exportList();
         Lists.verifyCalloutMessage(

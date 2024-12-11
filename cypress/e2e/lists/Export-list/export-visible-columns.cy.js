@@ -65,7 +65,7 @@ describe('lists', () => {
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);
         Lists.openActions();
-        Lists.exportListVisibleColumns();
+        Lists.exportAllColumns();
 
         Lists.verifyCalloutMessage(
           `Export of ${listData.name} is being generated. This may take some time for larger lists.`,

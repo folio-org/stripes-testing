@@ -45,7 +45,7 @@ Cypress.on('fail', (err) => {
 
 beforeEach(() => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
-  cy.setTenant(Affiliations.AQA);
+  cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
 });
 
 afterEach(() => {
