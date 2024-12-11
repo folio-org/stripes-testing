@@ -10,7 +10,7 @@ import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Work from '../../support/fragments/linked-data/work';
 
-describe('Citation: Search Linked data resources', () => {
+describe('Citation: edit existing instance', () => {
   const source = INSTANCE_SOURCE_NAMES.LDE;
 
   const testData = {

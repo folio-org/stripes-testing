@@ -9,7 +9,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
-describe('Citation: duplicate existing work', () => {
+describe('Citation: duplicate instance', () => {
   const testData = {
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
