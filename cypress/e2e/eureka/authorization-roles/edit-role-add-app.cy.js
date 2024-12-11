@@ -92,7 +92,7 @@ describe('Eureka', () => {
           },
           {
             table: 'Procedural',
-            resource: 'Accounts Pay',
+            resource: 'Feesfines Accounts Pay',
             action: 'Execute',
           },
         ],
@@ -102,7 +102,7 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Data: 4,
+            Data: 5,
             Settings: 5,
             Procedural: 3,
           },
@@ -187,6 +187,7 @@ describe('Eureka', () => {
         'C496128 Adding application when editing authorization role',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C496128'] },
         () => {
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
 
