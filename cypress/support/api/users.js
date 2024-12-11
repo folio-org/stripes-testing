@@ -236,7 +236,7 @@ Cypress.Commands.add(
           })
           .then(() => {
             // set tenant to member
-            cy.assignAffiliationToUser(cy.setTenant(Cypress.env('MEMBER_TENANT_ID')), userProperties.userId);
+            cy.assignAffiliationToUser(Cypress.env('MEMBER_TENANT_ID'), userProperties.userId);
             cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
             cy.assignPermissionsToExistingUser(userProperties.userId, permissions);
           })
