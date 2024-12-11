@@ -312,6 +312,7 @@ export const ACCEPTED_DATA_TYPE_NAMES = {
 export const INSTANCE_SOURCE_NAMES = {
   MARC: 'MARC',
   FOLIO: 'FOLIO',
+  LDE: 'LINKED_DATA',
 };
 
 export const PROFILE_TYPE_NAMES = {
