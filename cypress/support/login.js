@@ -19,13 +19,17 @@ Cypress.Commands.add(
     if (Cypress.env('eureka')) {
       cy.logoutViaApi();
       cy.clearCookies({ domain: null }).then(() => {
-        cy.visit(visitPath.path);
+        cy.visit('/');
         cy.do([
           TextInput('Username').fillIn(username),
           TextInput('Password').fillIn(password),
           Button({ name: 'login' }).click(),
         ]);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, Cypress.env('MEMBER_TENANT_NAME'));
+        ConsortiumManager.switchActiveAffiliation(
+          tenantNames.central,
+          Cypress.env('MEMBER_TENANT_NAME'),
+        );
+        cy.visit(visitPath.path);
         visitPath.waiter();
       });
     } else {

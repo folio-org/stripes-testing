@@ -84,7 +84,7 @@ export default {
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
-      SelectionOption(including(newTenantName)).click(),
+      SelectionOption(newTenantName).click(),
     ]);
     cy.wait(2000);
     cy.do(Button({ id: 'save-active-affiliation' }).click());

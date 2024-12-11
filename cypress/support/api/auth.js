@@ -68,8 +68,11 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 Cypress.Commands.add('getAdminToken', () => {
   // reset tenant to default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   cy.resetTenant();
-  if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), false);
-  else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) {
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), false);
+  } else {
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  }
   // reset tenant to member
   cy.setTenant(Cypress.env('MEMBER_TENANT_ID'));
 });
