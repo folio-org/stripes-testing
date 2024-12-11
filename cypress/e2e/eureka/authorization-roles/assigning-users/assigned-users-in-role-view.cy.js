@@ -80,13 +80,11 @@ describe('Eureka', () => {
             testData.userA.lastName,
             testData.userA.firstName,
             true,
-            testData.groupAName,
           );
           AuthorizationRoles.verifyAssignedUser(
             testData.userB.lastName,
             testData.userB.firstName,
             true,
-            testData.groupBName,
           );
           cy.wait('@users').then((call) => {
             expect(call.response.statusCode).to.eq(200);

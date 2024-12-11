@@ -16,7 +16,6 @@ describe('Eureka', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.getUserGroups({ limit: 1 });
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
         cy.createUserGroupApi().then((group) => {
@@ -37,7 +36,6 @@ describe('Eureka', () => {
         });
       });
       Users.deleteViaApi(testData.tempUser.userId);
-      cy.deleteUserGroupApi(testData.userGroup.id);
     });
 
     it(

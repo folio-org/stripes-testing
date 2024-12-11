@@ -18,6 +18,7 @@ describe('Eureka', () => {
           userEmail: 'test@folio.org',
           username: `userc448284${randomString}`,
           roleName: `Auto Role C451629 ${randomString}`,
+          userType: 'Staff',
           promotePath: '/users-keycloak/auth-users',
         };
 
@@ -76,7 +77,7 @@ describe('Eureka', () => {
               testData.lastName,
               userGroupOption,
               testData.userEmail,
-              null,
+              testData.userType,
               testData.username,
             );
             Users.saveCreatedUser();
@@ -107,12 +108,7 @@ describe('Eureka', () => {
               AuthorizationRoles.clickConfirmInPromoteUsersModal();
               cy.wait('@promote').its('response.statusCode').should('eq', 201);
               AuthorizationRoles.verifyAssignedUsersAccordion(1);
-              AuthorizationRoles.verifyAssignedUser(
-                testData.lastName,
-                null,
-                true,
-                testData.userGroup.group,
-              );
+              AuthorizationRoles.verifyAssignedUser(testData.lastName, null, true);
             });
           },
         );

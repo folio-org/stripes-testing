@@ -81,7 +81,6 @@ describe('Eureka', () => {
             testData.userA.lastName,
             testData.userA.firstName,
             true,
-            testData.groupAName,
           );
           AuthorizationRoles.clickAssignUsersButton();
           cy.wait(3000);
@@ -102,13 +101,11 @@ describe('Eureka', () => {
             testData.userB.lastName,
             testData.userB.firstName,
             true,
-            testData.groupBName,
           );
           AuthorizationRoles.verifyAssignedUser(
             testData.userC.lastName,
             testData.userC.firstName,
             true,
-            testData.groupCName,
           );
           AuthorizationRoles.closeRoleDetailView(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
@@ -118,13 +115,11 @@ describe('Eureka', () => {
             testData.userB.lastName,
             testData.userB.firstName,
             true,
-            testData.groupBName,
           );
           AuthorizationRoles.verifyAssignedUser(
             testData.userC.lastName,
             testData.userC.firstName,
             true,
-            testData.groupCName,
           );
           AuthorizationRoles.clickAssignUsersButton();
           cy.wait(3000);

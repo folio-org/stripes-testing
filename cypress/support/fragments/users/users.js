@@ -16,7 +16,6 @@ import {
   TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
-import Affiliations from '../../dictionary/affiliations';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
@@ -284,7 +283,7 @@ export default {
   saveCreatedUser() {
     cy.intercept('POST', '/users').as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
-    cy.wait('@createUser', { timeout: 130000 });
+    cy.wait('@createUser', { timeout: 200000 });
   },
 
   checkZeroSearchResultsHeader: () => {

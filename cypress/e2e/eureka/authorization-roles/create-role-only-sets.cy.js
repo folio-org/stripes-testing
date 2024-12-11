@@ -23,6 +23,11 @@ describe('Eureka', () => {
         capabilitiesInSelectedSets: [
           {
             table: 'Data',
+            resource: 'Configuration',
+            action: 'Manage',
+          },
+          {
+            table: 'Data',
             resource: 'Configuration Entries Collection',
             action: 'View',
           },
@@ -98,7 +103,7 @@ describe('Eureka', () => {
             Settings: 1,
           },
           capabilities: {
-            Data: 5,
+            Data: 6,
             Settings: 3,
           },
         },

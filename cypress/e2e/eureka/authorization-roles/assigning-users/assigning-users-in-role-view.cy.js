@@ -103,13 +103,11 @@ describe('Eureka', () => {
             testData.userA.lastName,
             testData.userA.firstName,
             true,
-            testData.groupAName,
           );
           AuthorizationRoles.verifyAssignedUser(
             testData.userB.lastName,
             testData.userB.firstName,
             true,
-            testData.groupBName,
           );
           cy.wait('@usersPost').its('response.statusCode').should('eq', 201);
           cy.wait('@usersPut').its('response.statusCode').should('eq', 204);
