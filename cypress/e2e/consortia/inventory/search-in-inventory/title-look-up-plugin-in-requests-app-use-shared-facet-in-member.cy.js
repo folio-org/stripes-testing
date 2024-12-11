@@ -214,6 +214,7 @@ describe('Inventory', () => {
         SelectInstanceModal.fillInSearchField(invalidSearchQuery);
         SelectInstanceModal.clickSearchButton();
         SelectInstanceModal.checkEmptySearchResults(invalidSearchQuery);
+        cy.wait(1000);
 
         // 5 Click "Reset all" button
         SelectInstanceModal.clickResetAllButton();
