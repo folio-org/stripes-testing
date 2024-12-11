@@ -1087,6 +1087,11 @@ export default {
     cy.wait(2000);
   },
 
+  backToInvoice: () => {
+    cy.do(invoiceLineDetailsPane.find(Button({ id: 'clickable-back-to-invoice' })).click());
+    cy.wait(2000);
+  },
+
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
