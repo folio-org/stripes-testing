@@ -45,7 +45,7 @@ describe('Cancel item level request', () => {
   before('Prepare test data', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.addCancellationReasonApi(cancellationReason);
+        cy.addCancellationReasonViaApi(cancellationReason);
 
         ServicePoints.createViaApi(servicePoint);
         defaultLocation = Location.getDefaultLocation(servicePoint.id);

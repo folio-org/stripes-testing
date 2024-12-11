@@ -1,5 +1,5 @@
-import { including } from 'bigtest';
-import { Button, MultiColumnListRow, Pane, TextField, Modal } from '../../../../../../interactors';
+import { including } from '@interactors/html';
+import { Button, Modal, MultiColumnListRow, Pane, TextField } from '../../../../../../interactors';
 
 const urlRelationshipPane = Pane('URL relationship');
 const newButton = Button('+ New');

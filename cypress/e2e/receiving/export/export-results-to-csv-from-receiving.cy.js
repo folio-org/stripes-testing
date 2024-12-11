@@ -69,9 +69,9 @@ describe('Receiving', () => {
       'Requester',
       'Rush',
       'Created by',
-      'Date created',
+      'Created on',
       'Updated by',
-      'Date updated',
+      'Updated on',
     ];
     const pieceFields = [
       'Display summary',
@@ -91,9 +91,9 @@ describe('Receiving', () => {
       'Internal note',
       'External note',
       'Created by (Piece)',
-      'Date created (Piece)',
+      'Created on (Piece)',
       'Updated by (Piece)',
-      'Date updated (Piece)',
+      'Updated on (Piece)',
     ];
 
     before('Create test order', () => {
@@ -127,7 +127,6 @@ describe('Receiving', () => {
 
         // Click "Export" button
         ExportSettingsModal.clickExportButton();
-
         // Open downloaded file, Check "Title fields" and "Piece fields" results are present
         FileManager.convertCsvToJson(testData.fileName).then((data) => {
           const fields = [...titleFields, ...pieceFields];

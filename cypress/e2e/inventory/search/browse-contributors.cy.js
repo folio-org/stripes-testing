@@ -34,7 +34,11 @@ describe('Inventory', () => {
       },
     };
 
-    const testValue = `testValue_${getRandomPostfix()}`;
+    const testValue = [
+      `Snow, John_testValue_${getRandomPostfix()}`,
+      `England_testValue_${getRandomPostfix()}`,
+      `DE3_testValue_${getRandomPostfix()}`,
+    ];
 
     before(() => {
       cy.createTempUser([
@@ -219,28 +223,40 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
-        BrowseContributors.browse(testValue);
-        InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+        BrowseContributors.browse(testValue[0]);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[0]}would be here`);
+        InventorySearchAndFilter.verifyContributorsColumResult(`${testValue[0]}would be here`);
 
         InventorySearchAndFilter.selectBrowseSubjects();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        InventorySearchAndFilter.browseSearch(testValue);
-        InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[0]}would be here`);
+        InventorySearchAndFilter.verifyContributorsColumResult(`${testValue[0]}would be here`);
+        InventorySearchAndFilter.browseSearch(testValue[1]);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[1]}would be here`);
+        InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
 
         BrowseContributors.select();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        BrowseContributors.browse(testValue);
-        InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[1]}would be here`);
+        InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
+        BrowseContributors.browse(testValue[0]);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[0]}would be here`);
+        InventorySearchAndFilter.verifyContributorsColumResult(`${testValue[0]}would be here`);
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        InventorySearchAndFilter.browseSearch(testValue);
-        InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[0]}would be here`);
+        InventorySearchAndFilter.verifyContributorsColumResult(`${testValue[0]}would be here`);
+        InventorySearchAndFilter.browseSearch(testValue[2]);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[2]}would be here`);
+        InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(
+          `${testValue[2]}would be here`,
+        );
 
         BrowseContributors.select();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        BrowseContributors.browse(testValue);
-        InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[2]}would be here`);
+        InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(
+          `${testValue[2]}would be here`,
+        );
+        BrowseContributors.browse(testValue[0]);
+        InventorySearchAndFilter.verifySearchResult(`${testValue[0]}would be here`);
       },
     );
   });

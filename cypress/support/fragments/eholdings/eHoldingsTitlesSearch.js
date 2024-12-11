@@ -50,7 +50,6 @@ export default {
   bySelectionStatus: (selectionStatus) => {
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
-    EHoldingsTitles.waitLoading();
   },
   openTitle(itemTitle) {
     cy.do(searchResults.find(Heading(itemTitle)).click());

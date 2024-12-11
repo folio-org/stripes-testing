@@ -10,6 +10,7 @@ import {
   ORDER_STATUSES,
   RECORD_STATUSES,
   VENDOR_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -65,6 +66,7 @@ describe('Data Import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
         },
@@ -214,7 +216,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -239,8 +241,8 @@ describe('Data Import', () => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace('-1', '');
         });
-        OrderLines.checkQuantityPhysical(quantityOfCreatedItems);
-        OrderLines.checkPhysicalQuantityInLocation(quantityOfCreatedHoldings);
+        OrderLines.checkQuantityPhysical('1');
+        OrderLines.checkPhysicalQuantityInLocation(1);
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);

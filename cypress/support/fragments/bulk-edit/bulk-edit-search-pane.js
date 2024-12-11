@@ -37,6 +37,7 @@ const saveAndClose = Button('Save and close');
 const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
+const logsStartDateAccordion = Accordion('Started');
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -764,5 +765,15 @@ export default {
 
   verifyElectronicAccessElementByIndex(index, expectedText) {
     cy.get('[class^="ElectronicAccess"]').find('td').eq(index).should('contain.text', expectedText);
+  },
+
+  clickClearStartedFilter() {
+    cy.do(
+      logsStartDateAccordion
+        .find(
+          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
+        )
+        .click(),
+    );
   },
 };

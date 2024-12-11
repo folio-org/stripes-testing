@@ -52,7 +52,7 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user400666.userId, [
             permissions.settingsCircView.gui,
           ]);
-          cy.addCancellationReasonApi(testData.collegeLocalReason);
+          cy.addCancellationReasonViaApi(testData.collegeLocalReason);
           cy.resetTenant();
           cy.getAdminToken();
           cy.assignAffiliationToUser(Affiliations.University, testData.user400666.userId);
@@ -60,13 +60,13 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user400666.userId, [
             permissions.settingsCircView.gui,
           ]);
-          cy.addCancellationReasonApi(testData.universityLocalReason);
+          cy.addCancellationReasonViaApi(testData.universityLocalReason);
           cy.loginAsAdmin({
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
           SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(7);
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(12);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
 

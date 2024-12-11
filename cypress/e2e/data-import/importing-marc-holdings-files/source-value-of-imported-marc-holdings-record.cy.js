@@ -3,7 +3,6 @@ import {
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
   INSTANCE_SOURCE_NAMES,
-  MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -110,17 +109,9 @@ describe('Data Import', () => {
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkContent('$9 000442923', 6);
         QuickMarcEditor.checkPaneheaderContains(`Source: ${user.username}`);
-        QuickMarcEditor.selectFieldsDropdownOption(
-          'LDR',
-          'Item',
-          MARC_HOLDING_LDR_FIELD_ITEM_DROPDOWN.I,
-        );
-        QuickMarcEditor.addValuesToExistingField(
-          6,
+        QuickMarcEditor.updateExistingField(
           '852',
           '$b E $h BR140 $i .J86 $x dbe=c $z Current issues in Periodicals Room $x CHECK-IN RECORD CREATED $9 Test',
-          '0',
-          '1',
         );
         cy.wait(2000);
         QuickMarcEditor.pressSaveAndKeepEditing(changesSavedCallout);

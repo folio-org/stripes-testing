@@ -1,5 +1,5 @@
-import { HTML, including } from '@interactors/html';
-import { not } from 'bigtest';
+/* eslint-disable cypress/no-unnecessary-waiting */
+import { HTML, including, not } from '@interactors/html';
 import {
   Accordion,
   Button,

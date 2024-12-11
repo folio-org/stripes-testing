@@ -38,6 +38,7 @@ describe('Data Import', () => {
         const jobProfileColumn = 'Job profile';
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
+        cy.wait(7000);
         LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then((beforeFilteringCells) => {
           LogsViewAll.filterJobsByJobProfile(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);
           LogsViewAll.checkByJobProfileName(DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS);

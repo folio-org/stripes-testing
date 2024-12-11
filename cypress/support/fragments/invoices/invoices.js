@@ -422,7 +422,6 @@ export default {
       batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
       invoicePaymentMethodSelect.choose('Cash'),
-      Checkbox('Export to accounting').checked(false),
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
@@ -712,6 +711,7 @@ export default {
   },
 
   changeFundInLine: (fund) => {
+    cy.wait(3000);
     cy.do([
       Selection('Fund ID*').open(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
@@ -770,6 +770,7 @@ export default {
   },
 
   approveInvoice: () => {
+    cy.wait(3000);
     cy.do([
       invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve').click(),
@@ -932,6 +933,7 @@ export default {
   },
 
   selectInvoiceLine: () => {
+    cy.wait(3000);
     cy.do(
       Section({ id: 'invoiceLines' })
         .find(MultiColumnListRow({ index: 0 }))

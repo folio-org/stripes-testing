@@ -39,38 +39,44 @@ describe('Consortia', () => {
     { tags: ['smokeECS', 'thunderjet'] },
     () => {
       ConsortiumManager.selectMembership();
-      ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(
-        4,
-        `${tenantCodes.professional}E`,
-        `${tenantNames.professional}-Edited`,
-      );
-      ConsortiumManager.saveEditingTenantInformation(4);
-      ConsortiumManager.checkEditedTenantInformation(
-        4,
-        `${tenantCodes.professional}E`,
-        `${tenantNames.professional}-Edited`,
-      );
-      ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(
-        4,
-        tenantCodes.professional,
-        tenantNames.professional,
-      );
-      ConsortiumManager.saveEditingTenantInformation(4);
-      ConsortiumManager.checkEditedTenantInformation(
-        4,
-        tenantCodes.professional,
-        tenantNames.professional,
-      );
-      ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(4, `${tenantCodes.professional}-E`, character151);
-      ConsortiumManager.checkErrorsInEditedTenantInformation(
-        4,
-        tenantErrors.code,
-        tenantErrors.name,
-      );
-      ConsortiumManager.cancelEditingTenantInformation(4);
+      ConsortiumManager.getIndexForTenantRow(tenantNames.professional).then((rowIndex) => {
+        ConsortiumManager.editTenant(tenantNames.professional);
+        ConsortiumManager.editTenantInformation(
+          rowIndex,
+          `${tenantCodes.professional}E`,
+          `${tenantNames.professional}-Edited`,
+        );
+        ConsortiumManager.saveEditingTenantInformation(rowIndex);
+        ConsortiumManager.checkEditedTenantInformation(
+          rowIndex,
+          `${tenantCodes.professional}E`,
+          `${tenantNames.professional}-Edited`,
+        );
+        ConsortiumManager.editTenant(`${tenantNames.professional}-Edited`);
+        ConsortiumManager.editTenantInformation(
+          rowIndex,
+          tenantCodes.professional,
+          tenantNames.professional,
+        );
+        ConsortiumManager.saveEditingTenantInformation(rowIndex);
+        ConsortiumManager.checkEditedTenantInformation(
+          rowIndex,
+          tenantCodes.professional,
+          tenantNames.professional,
+        );
+        ConsortiumManager.editTenant(tenantNames.professional);
+        ConsortiumManager.editTenantInformation(
+          rowIndex,
+          `${tenantCodes.professional}-E`,
+          character151,
+        );
+        ConsortiumManager.checkErrorsInEditedTenantInformation(
+          rowIndex,
+          tenantErrors.code,
+          tenantErrors.name,
+        );
+        ConsortiumManager.cancelEditingTenantInformation(rowIndex);
+      });
     },
   );
 });

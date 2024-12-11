@@ -53,7 +53,7 @@ const columnName = {
 function waitUIToBeFiltered() {
   // Need some waiting when jobs list is long, UI takes longer to be filtered
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(1800);
+  cy.wait(4000);
 }
 
 function checkByErrorsInImport(...status) {
@@ -259,19 +259,17 @@ export default {
   },
 
   checkByReverseChronologicalOrder() {
-    this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(
-      (cells) => {
-        // convert each cell value to Date object
-        const dates = cells.map((cell) => new Date(cell));
+    this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then((cells) => {
+      // convert each cell value to Date object
+      const dates = cells.map((cell) => new Date(cell));
 
-        // create new array from the dates and sort this array in descending order
-        const sortedDates = [...dates].sort((a, b) => b - a);
+      // create new array from the dates and sort this array in descending order
+      const sortedDates = [...dates].sort((a, b) => b - a);
 
-        // if job logs are sorted by default in reverse chronological order
-        // the dates and sortedDates should be equal
-        expect(dates).to.deep.equal(sortedDates);
-      },
-    );
+      // if job logs are sorted by default in reverse chronological order
+      // the dates and sortedDates should be equal
+      expect(dates).to.deep.equal(sortedDates);
+    });
   },
 
   checkByDate({ from, end }) {

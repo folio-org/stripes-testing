@@ -701,7 +701,8 @@ export default {
   },
 
   selectFoundItem(callNumber, suffix) {
-    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+    const locator = suffix ? `${callNumber} ${suffix}` : `${callNumber}`;
+    cy.do(Button(including(locator)).click());
   },
 
   selectFoundItemFromBrowseResultList(value) {

@@ -72,13 +72,12 @@ describe('Title Level Request. Create Item or Title level request', () => {
           ],
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
-          cy.wait(3000);
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"id"=="${instanceData.instanceId}"`,
-          }).then((instance) => {
-            cy.wait(3000).then(() => {
+          cy.wait(3000).then(() => {
+            cy.getInstance({
+              limit: 1,
+              expandAll: true,
+              query: `"id"=="${instanceData.instanceId}"`,
+            }).then((instance) => {
               testData.instanceHRID = instance.hrid;
             });
           });

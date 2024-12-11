@@ -97,7 +97,7 @@ describe('Data Import', () => {
       });
     });
 
-    it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: ['smoke', 'folijet'] }, () => {
+    it('C17044 MARC-MARC matching for 001 field (folijet)', { tags: ['smoke', 'folijet'] }, () => {
       DataImport.verifyUploadState();
       // upload a marc file for export
       DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);

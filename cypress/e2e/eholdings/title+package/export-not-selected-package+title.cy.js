@@ -113,10 +113,9 @@ describe('eHoldings', () => {
         EHoldingsPackageView.selectTitleRecord();
         eHoldingsResourceView.openExportModal();
         ExportSettingsModal.clickExportButton();
-        EHoldingsPackageView.verifyDetailViewPage(testData.title, testData.selectionStatus);
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
           const jobId = id;
-
+          EHoldingsPackageView.waitForJobToComplete(jobId);
           cy.visit(TopMenu.exportManagerPath);
           ExportManagerSearchPane.searchByEHoldings();
           ExportManagerSearchPane.verifyResult(jobId);

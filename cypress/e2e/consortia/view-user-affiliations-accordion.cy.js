@@ -10,9 +10,7 @@ describe('Consortia', () => {
   let secondUser;
 
   before(() => {
-    cy.resetTenant();
-    cy.loginAsAdmin();
-
+    cy.getAdminToken();
     cy.createTempUser([]).then((userProperties) => {
       firstUser = userProperties;
     });
@@ -24,6 +22,7 @@ describe('Consortia', () => {
       permissions.uiUsersView.gui,
     ]).then((secondUserProperties) => {
       secondUser = secondUserProperties;
+
       cy.login(secondUser.username, secondUser.password, {
         path: TopMenu.usersPath,
         waiter: Users.waitLoading,
