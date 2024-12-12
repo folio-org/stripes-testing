@@ -1,3 +1,4 @@
+import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
@@ -13,6 +14,7 @@ const invalidUserUUID = getRandomPostfix();
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
+      cy.clearAllLocalStorage();
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
@@ -20,7 +22,15 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        cy.login(
+          user.username,
+          user.password,
+          {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          },
+          false,
+        );
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.waitLoading();
 

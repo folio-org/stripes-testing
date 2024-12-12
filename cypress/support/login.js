@@ -9,6 +9,7 @@ Cypress.Commands.add(
     username,
     password,
     visitPath = { path: '/', waiter: () => cy.expect(Heading(including('Welcome')).exists()) },
+    isSwitchAffiliation = true,
   ) => {
     // We use a behind-the-scenes method of ensuring we are logged
     // out, rather than using the UI, in accordance with the Best
@@ -25,10 +26,12 @@ Cypress.Commands.add(
           TextInput('Password').fillIn(password),
           Button({ name: 'login' }).click(),
         ]);
-        ConsortiumManager.switchActiveAffiliation(
-          tenantNames.central,
-          Cypress.env('MEMBER_TENANT_NAME'),
-        );
+        if (isSwitchAffiliation) {
+          ConsortiumManager.switchActiveAffiliation(
+            tenantNames.central,
+            Cypress.env('MEMBER_TENANT_NAME'),
+          );
+        }
         cy.visit(visitPath.path);
         visitPath.waiter();
       });
