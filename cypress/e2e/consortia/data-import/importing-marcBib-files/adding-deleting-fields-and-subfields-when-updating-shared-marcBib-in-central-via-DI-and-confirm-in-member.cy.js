@@ -207,6 +207,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitLoadingSearchAndFilterPane();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
@@ -228,6 +229,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitLoadingSearchAndFilterPane();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
