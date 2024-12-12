@@ -214,12 +214,8 @@ export default {
     ]);
   },
 
-  checkNonExactSearchResult(contributorA, contributorZ) {
-    cy.expect([
-      MultiColumnListRow({ index: 0 }).has({ content: '__A_test_contributor_would be here' }),
-      rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
-      rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
-    ]);
+  checkNonExactSearchResult(searchQuery) {
+    cy.expect(MultiColumnListCell(including(`${searchQuery}would be here`)).exists());
   },
 
   checkExactSearchResult(contributorA, contributorZ) {

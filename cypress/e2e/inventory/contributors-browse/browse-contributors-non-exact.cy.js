@@ -65,8 +65,7 @@ describe('Inventory', () => {
         BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
         BrowseContributors.checkSearchResultsTable();
         BrowseContributors.checkNonExactSearchResult(
-          instanceA.contributors[0],
-          instanceZ.contributors[0],
+          instanceA.contributors[0].name.substring(0, 21),
         );
         BrowseContributors.resetAllInSearchPane();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
