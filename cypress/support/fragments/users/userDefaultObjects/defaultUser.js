@@ -68,7 +68,7 @@ export default {
   defaultUiCreateNewPassword: {
     body: {
       id: uuid(),
-      password: 'password',
+      password: 'CypressPassword123!',
       userId: uuid(),
       username: `autotest_login_${getRandomPostfix()}`,
     },
