@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
@@ -9,7 +9,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -47,10 +47,7 @@ describe('Inventory', () => {
           testData.instanceHRID = instance.hrid;
         });
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
@@ -77,16 +74,14 @@ describe('Inventory', () => {
       'C411387 (CONSORTIA) Check member instance and central consortial instance when member holdings & item are added to a shared instance (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C411387'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance.instanceId);
-        InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.createHoldingsRecord(
           `${testData.collegeLocation.name} (${testData.collegeLocation.code}) `,
         );
         InventoryInstance.checkInstanceHrId(testData.instanceHRID);
-        // need to reload page because source is FOLIO-shared
-        cy.reload();
         InstanceRecordView.verifyInstanceSource(testData.instanceSource);
 
         const ItemRecordNew = InventoryInstance.clickAddItemByHoldingName({

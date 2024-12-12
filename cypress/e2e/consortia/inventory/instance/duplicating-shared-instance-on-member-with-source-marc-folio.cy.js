@@ -1,4 +1,8 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  INSTANCE_SOURCE_NAMES,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -7,7 +11,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewInstance from '../../../../support/fragments/inventory/inventoryNewInstance';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -74,14 +78,12 @@ describe('Inventory', () => {
       'C410925 (CONSORTIA) Duplicating shared instance on Member tenant with Source FOLIO (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C410925'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceC410925.instanceId);
-        InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
         InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410925);
@@ -101,14 +103,12 @@ describe('Inventory', () => {
       'C410926 (CONSORTIA) Duplicating shared instance on Member tenant with Source MARC (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C410926'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceC410926.id);
-        InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.duplicate();
         InventoryNewInstance.fillResourceTitle(testData.newResourceTitleC410926);

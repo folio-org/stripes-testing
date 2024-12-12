@@ -18,7 +18,6 @@ import FileDetails from '../../../../support/fragments/data_import/logs/fileDeta
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -97,10 +96,9 @@ describe('Inventory', () => {
           cy.loginAsAdmin();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
-          cy.wait(3000);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
-          cy.wait(3000);
+          cy.wait(8000);
           InventorySearchAndFilter.closeInstanceDetailPane();
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
