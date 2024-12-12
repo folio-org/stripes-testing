@@ -658,7 +658,7 @@ export default {
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click(),
     ]);
-    cy.wait(4000);
+    cy.wait(10000);
   },
 
   checkInvoiceLine: (invoiceLine, currency = '$') => {

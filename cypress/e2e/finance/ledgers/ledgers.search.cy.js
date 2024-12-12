@@ -63,6 +63,7 @@ describe('ui-finance: Ledgers', () => {
     () => {
       FinanceHelp.checkZeroSearchResultsMessage();
 
+      cy.wait(10000);
       // search by acquisition units, name and status
       Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);
       cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));

@@ -95,6 +95,7 @@ describe('orders: Test Po line filters', () => {
       });
       cy.visit(TopMenu.ordersPath);
       Orders.selectOrderLines();
+      cy.wait(20000);
     });
   });
 

@@ -51,6 +51,7 @@ describe('Eureka', () => {
           testData.userName,
         );
         UserEdit.verifyUserPermissionsAccordion(false);
+        cy.wait(10000);
         Users.saveCreatedUser();
         Users.checkCreateUserPaneOpened(false);
 

@@ -59,6 +59,7 @@ describe('Inventory', () => {
         BrowseContributors.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         InventorySearchAndFilter.verifyBrowseOptions();
+        cy.wait(10000);
         BrowseContributors.select();
         BrowseContributors.checkSearch();
         BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));

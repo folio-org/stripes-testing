@@ -10,8 +10,9 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import randomFourDigitNumber, { getLongDelay } from '../../support/utils/cypressTools';
+import { getLongDelay } from '../../support/utils/cypressTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Fast Add', () => {
@@ -59,11 +60,10 @@ describe('Inventory', () => {
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
-
+        cy.wait(20000);
         // set starting timestamp right before saving
         timeStamp.start = new Date();
         FastAddNewRecord.saveAndClose();
-
         cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
           // set ending timestamp after saving
           timeStamp.end = new Date();
@@ -124,10 +124,10 @@ describe('Inventory', () => {
         fastAddRecord.note = 'Note For Journal Issue';
 
         cy.visit(TopMenu.inventoryPath);
+        cy.wait(20000);
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);
-
         // set starting timestamp right before saving
         timeStamp.start = new Date();
         FastAddNewRecord.saveAndClose();

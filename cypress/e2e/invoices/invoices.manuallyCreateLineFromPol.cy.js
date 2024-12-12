@@ -75,8 +75,10 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.getAdminToken();
+      cy.wait(10000);
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.invoicesPath);
+        cy.wait(20000);
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.checkInvoiceCurrency(orderLine.cost.currency);
         Invoices.createInvoiceLineFromPol(poNumber);
