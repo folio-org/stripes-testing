@@ -9,7 +9,8 @@ import AuthorizationRoles, {
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+// Was required by "user w/out username" workflow which is NOT supported on ECS
+// import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -56,7 +57,8 @@ describe('Eureka', () => {
             },
           });
         }
-        delete userBodies[1].username;
+        // User without username is NOT applicable on ECS
+        // delete userBodies[1].username;
         cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
           userIds.push(userId);
         });
@@ -102,7 +104,7 @@ describe('Eureka', () => {
       { tags: ['smoke', 'eureka', 'C584520'] },
       () => {
         UsersSearchPane.searchByKeywords(userBodies[0].username);
-        UsersSearchPane.selectUserFromList(userBodies[0].username);
+        UsersSearchPane.openUser(userBodies[0].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
@@ -179,18 +181,19 @@ describe('Eureka', () => {
           userBodies[1].personal.lastName,
           userBodies[1].personal.firstName,
         );
-        UserEdit.clickConfirmInPromoteUserModal(false);
-        InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
-        InteractorsTools.dismissCallout(testData.errorCalloutText);
-        UserEdit.clickCancelInPromoteUserModal();
+        UserEdit.clickConfirmInPromoteUserModal(true);
+        // User w/out username NOT applicable on ECS - therefore cannot check the corresponding workflow
+        // InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
+        // InteractorsTools.dismissCallout(testData.errorCalloutText);
+        // UserEdit.clickCancelInPromoteUserModal();
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[1].personal.lastName,
           userBodies[1].personal.firstName,
         );
-        UsersCard.verifyUserRolesCounter('0');
+        UsersCard.verifyUserRolesCounter('1');
 
         UsersSearchPane.searchByKeywords(userBodies[2].username);
-        UsersSearchPane.selectUserFromList(userBodies[2].username);
+        UsersSearchPane.openUser(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,
@@ -226,7 +229,7 @@ describe('Eureka', () => {
         AuthorizationRoles.verifyAssignedUser(
           userBodies[1].personal.lastName,
           userBodies[1].personal.firstName,
-          false,
+          true,
         );
         AuthorizationRoles.verifyAssignedUser(
           userBodies[2].personal.lastName,
