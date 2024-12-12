@@ -152,6 +152,7 @@ const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
+const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -1794,5 +1795,12 @@ export default {
         .find(HTML(including(sourceValue)))
         .exists(),
     );
+  },
+
+  editInstanceInLde: () => {
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.do(editInLdeButton.click());
+    cy.wait(1000);
   },
 };

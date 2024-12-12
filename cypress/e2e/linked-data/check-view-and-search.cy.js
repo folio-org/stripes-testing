@@ -3,7 +3,7 @@ import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEdit
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 
-describe('ui-data-linked-editor - check view and search', () => {
+describe('Citation: check navigation', () => {
   beforeEach(() => {
     cy.loginAsAdmin({
       path: TopMenu.linkedDataEditor,
