@@ -397,7 +397,7 @@ export default {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
