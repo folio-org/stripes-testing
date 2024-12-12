@@ -26,13 +26,21 @@ describe('bulk-edit', () => {
         'undergrad',
       ).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
         FileManager.createFile(`cypress/fixtures/${invalidUserUUIDsFileName}`, invalidUserUUID);
       });
     });
 
     beforeEach('select User', () => {
+      cy.login(
+        user.username,
+        user.password,
+        {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        },
+        false,
+      );
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
     });
@@ -77,7 +85,15 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
 
-        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        cy.login(
+          Cypress.env('diku_login'),
+          Cypress.env('diku_password'),
+          {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          },
+          false,
+        );
         UsersSearchPane.searchByKeywords(user.username);
         UsersSearchPane.openUser(user.username);
         UsersCard.verifyPatronBlockValue('graduate');
@@ -123,7 +139,15 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
 
-        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        cy.login(
+          Cypress.env('diku_login'),
+          Cypress.env('diku_password'),
+          {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          },
+          false,
+        );
         UsersSearchPane.searchByKeywords(user.username);
         UsersSearchPane.openUser(user.username);
         UsersCard.verifyExpirationDate(todayDate);

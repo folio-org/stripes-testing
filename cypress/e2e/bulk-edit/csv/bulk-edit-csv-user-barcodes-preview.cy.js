@@ -27,10 +27,15 @@ describe(
           user = userProperties;
           cy.wait(5000);
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
+          cy.login(
+            user.username,
+            user.password,
+            {
+              path: TopMenu.bulkEditPath,
+              waiter: BulkEditSearchPane.waitLoading,
+            },
+            false,
+          );
 
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         });
