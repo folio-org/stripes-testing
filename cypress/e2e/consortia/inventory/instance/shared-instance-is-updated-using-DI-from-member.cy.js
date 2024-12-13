@@ -76,6 +76,7 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.clearCookies({ domain: null });
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
@@ -107,6 +108,7 @@ describe('Inventory', () => {
             const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
             // download exported marc file
+            cy.getAdminToken();
             cy.getAdminToken();
             cy.setTenant(Affiliations.College).then(() => {
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
