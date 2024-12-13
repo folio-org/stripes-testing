@@ -127,6 +127,7 @@ describe('Data Import', () => {
 
         // FILTER By more than one filter
         // in this case, filter by "User" and "Errors in Import"
+        cy.wait(1500);
         LogsViewAll.selectNofilterJobsByErrors();
         LogsViewAll.waitUIToBeFiltered();
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);

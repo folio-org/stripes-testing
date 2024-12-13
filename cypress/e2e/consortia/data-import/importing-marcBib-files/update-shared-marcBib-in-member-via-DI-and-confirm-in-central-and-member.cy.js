@@ -185,7 +185,6 @@ describe('Data Import', () => {
 
           // download exported marc file
           cy.setTenant(Affiliations.College).then(() => {
-            // use cy.getToken function to get toket for current tenant
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.waitLandingPageOpened();
             ExportFile.downloadExportedMarcFileWithRecordHrid(

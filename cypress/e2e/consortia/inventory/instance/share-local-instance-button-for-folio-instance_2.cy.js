@@ -1,9 +1,10 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -11,6 +12,7 @@ describe('Inventory', () => {
     const testData = {};
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       cy.setTenant(Affiliations.College);
       InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
@@ -19,7 +21,7 @@ describe('Inventory', () => {
 
       cy.resetTenant();
       cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
+      cy.createTempUser([]).then((userProperties) => {
         testData.user = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
@@ -27,10 +29,7 @@ describe('Inventory', () => {
           Permissions.uiInventoryViewCreateInstances.gui,
         ]);
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -49,8 +48,8 @@ describe('Inventory', () => {
       'C411334 (CONSORTIA) Check the "Share local instance" button without permission on a local Source = FOLIO Instance on Member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C411334'] },
       () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.checkShareLocalInstanceButtonIsAbsent();
       },
