@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -17,7 +18,6 @@ import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-// import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
@@ -236,10 +236,10 @@ describe('Finance: Transactions', () => {
       );
       Invoices.selectInvoiceLineByNumber('$95.00');
       Invoices.verifyCurrentEncumbrance('$95.00');
-      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.backToInvoice();
       Invoices.selectInvoiceLineByNumber('$10.00');
       Invoices.verifyCurrentEncumbrance('$10.00');
-      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.backToInvoice();
       Invoices.selectInvoiceLineByNumber('$5.00');
       Invoices.verifyCurrentEncumbrance('$5.00');
       InvoiceLineDetails.openFundDetailsPane(firstFund.name);
