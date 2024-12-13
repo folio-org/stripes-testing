@@ -48,7 +48,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   it(
-    'C350758 Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)',
+    'C350758 Verify if a User can not set and edit EDI convention in Organization Integration (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
