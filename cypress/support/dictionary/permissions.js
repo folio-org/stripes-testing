@@ -641,7 +641,7 @@ export default {
   },
   assignAcqUnitsToNewInvoice: {
     internal: 'ui-invoice.acq.unit.assignment.assign',
-    gui: 'Invoice: Assign acquisition units to new invoice',
+    gui: 'Invoice: Assign acquisitions units to new record',
   },
   uiInvoicesApproveInvoices: {
     internal: 'ui-invoice.invoice.approve.execute',
