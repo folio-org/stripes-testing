@@ -55,7 +55,7 @@ describe('Inventory', () => {
 
     it(
       'C196769 Assign tags to an Instance record (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C196769'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();
@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
     it(
       'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C358144'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();

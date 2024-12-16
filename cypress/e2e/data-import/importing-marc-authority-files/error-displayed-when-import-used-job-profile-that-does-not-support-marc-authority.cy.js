@@ -53,7 +53,7 @@ describe('Data Import', () => {
 
     it(
       'C359246 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Authority" record (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C359246'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFiles[0].fileName);

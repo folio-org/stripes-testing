@@ -242,7 +242,7 @@ describe('Data Import', () => {
 
     it(
       'C11106 Action and field mapping: Update a holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11106'] },
       () => {
         // change file for adding random barcode and holdings hrid
         DataImport.editMarcFile(
@@ -253,8 +253,7 @@ describe('Data Import', () => {
         );
 
         // create mapping profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

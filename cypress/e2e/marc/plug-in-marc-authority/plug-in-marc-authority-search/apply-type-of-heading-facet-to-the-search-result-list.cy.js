@@ -89,7 +89,6 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.logout();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -116,7 +115,7 @@ describe('MARC', () => {
 
       it(
         'C359199 MARC Authority plug-in | Apply "Type of heading" facet to the search result list (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C359199'] },
         () => {
           MarcAuthorities.searchByParameter(testData.authSearchOption.CORPORATE_NAME, '*');
           MarcAuthorities.verifyColumnValuesOnlyExist({

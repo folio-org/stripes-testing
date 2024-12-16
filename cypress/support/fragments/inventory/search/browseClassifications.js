@@ -6,6 +6,7 @@ import {
   MultiColumnListRow,
   MultiColumnListHeader,
   PaneContent,
+  Button,
 } from '../../../../../interactors';
 
 const browseInventoryPane = Pane('Browse inventory');
@@ -70,5 +71,9 @@ export default {
 
   clickOnSearchResult: (value) => {
     cy.do(MultiColumnListCell({ content: including(value) }).click());
+  },
+
+  selectFoundValueByRow(rowIndex, value) {
+    cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
 };

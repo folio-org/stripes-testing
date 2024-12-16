@@ -43,6 +43,7 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   verifyResult(content) {
@@ -52,16 +53,19 @@ export default {
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     this.clickApplyMainFilter();
+    cy.wait(2000);
   },
 
   searchByUserBarcode(barcode) {
     cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
     this.clickApplyMainFilter();
+    cy.wait(2000);
   },
 
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
     this.clickApplyMainFilter();
+    cy.wait(2000);
   },
 
   searchByChangedDueDate() {
@@ -69,10 +73,12 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   searchByServicePoint(servicePoint) {
     cy.do([servicePointField.fillIn(servicePoint), servicePointField.choose(servicePoint)]);
+    cy.wait(2000);
   },
 
   searchByClaimedReturned() {
@@ -80,6 +86,7 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   searchByMarkedAsMissing() {
@@ -87,10 +94,12 @@ export default {
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click(),
     ]);
+    cy.wait(2000);
   },
 
   searchByLoanType(loanType) {
     cy.do([Accordion({ id: 'loan' }).clickHeader(), Checkbox(loanType).click()]);
+    cy.wait(2000);
   },
 
   expandFeeFineAccording() {

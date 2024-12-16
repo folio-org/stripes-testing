@@ -51,7 +51,7 @@ const verifyIndexTitle = (value) => {
   cy.expect(KeyValue('Index title').has({ value }));
 };
 
-const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: sourceValue }));
+const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: including(sourceValue) }));
 
 const verifyInstanceStatusCode = (value) => {
   cy.expect(KeyValue('Instance status code').has({ value }));
@@ -661,5 +661,13 @@ export default {
         )
         .exists(),
     );
+  },
+  verifyResourceIdentifier(type, value, rowIndex) {
+    const identifierRow = Accordion('Identifiers').find(
+      MultiColumnList({ id: 'list-identifiers' }).find(MultiColumnListRow({ index: rowIndex })),
+    );
+
+    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
+    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
   },
 };

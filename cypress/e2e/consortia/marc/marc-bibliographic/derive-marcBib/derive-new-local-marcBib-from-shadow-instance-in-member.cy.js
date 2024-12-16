@@ -81,7 +81,7 @@ describe('MARC', () => {
         '1',
         '0',
         '$a Gálvez Shared C410775',
-        '$x Assassination.',
+        '',
         '$0 http://id.loc.gov/authorities/names/n20114107752',
         '',
       ];
@@ -201,7 +201,7 @@ describe('MARC', () => {
 
       it(
         'C410775 Derive new Local MARC bib record from shadow Instance with "MARC" source and link it in Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C410775'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstance.checkPresentedText(testData.instanceTitle);
@@ -249,6 +249,8 @@ describe('MARC', () => {
           );
 
           InventoryInstance.deriveNewMarcBib();
+          QuickMarcEditor.clickKeepLinkingButton();
+          cy.wait(1000);
           QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.college);
           InventoryInstances.waitContentLoading();

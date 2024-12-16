@@ -1,6 +1,7 @@
 import {
-  EXISTING_RECORD_NAMES,
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
 } from '../../../../support/constants';
@@ -12,7 +13,6 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -27,8 +27,10 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../../support/fragments/settings/dataImport';
+import NewFieldMappingProfile from '../../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import NewMatchProfile from '../../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
@@ -167,8 +169,9 @@ describe('Data Import', () => {
 
     it(
       'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C405531'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -179,7 +182,7 @@ describe('Data Import', () => {
           const expectedRecordHrid = req.response.body.jobExecutionHrId;
 
           // download exported marc file
-          cy.visit(TopMenu.dataExportPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           ExportFile.downloadExportedMarcFileWithRecordHrid(
             expectedRecordHrid,
             testData.marcFile.exportedFileName,
@@ -193,7 +196,7 @@ describe('Data Import', () => {
           testData.marcFile.modifiedMarcFile,
         );
         // upload the exported marc file
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(testData.marcFile.modifiedMarcFile);
         JobProfiles.waitFileIsUploaded();
@@ -203,8 +206,8 @@ describe('Data Import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.verifyPanesExist();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
@@ -225,7 +228,8 @@ describe('Data Import', () => {
         BrowseSubjects.checkSearchResultRecord(testData.subjects[1].name);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);

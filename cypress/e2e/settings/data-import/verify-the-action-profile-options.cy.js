@@ -1,4 +1,4 @@
-import { ACTION_NAMES_IN_ACTION_PROFILE } from '../../../support/constants';
+import { ACTION_NAMES_IN_ACTION_PROFILE, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
@@ -12,8 +12,7 @@ import NewFieldMappingProfile from '../../../support/fragments/settings/dataImpo
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -40,10 +39,7 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -55,14 +51,14 @@ describe('Data Import', () => {
     });
 
     it(
-      'C421995 - (NON-CONSORTIA) Verify the action profile options (Folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      'C421995 (NON-CONSORTIA) Verify the action profile options (Folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet', 'C421995'] },
       () => {
         const actionCreate = ACTION_NAMES_IN_ACTION_PROFILE.CREATE;
         const actionModify = ACTION_NAMES_IN_ACTION_PROFILE.MODIFY;
         const recordTypeBibliographic = 'MARC Bibliographic';
 
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.openNewActionProfileForm();
         NewActionProfile.verifyNewActionProfileExists();

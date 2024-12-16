@@ -62,7 +62,7 @@ describe('Data Import', () => {
 
     it(
       'C376970 Order field mapping profile: Check vendor mapping UI (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C376970'] },
       () => {
         // #1 Go to "Settings" application-> Select "Data import" setting-> Select "Field mapping profiles"-> Click on "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();

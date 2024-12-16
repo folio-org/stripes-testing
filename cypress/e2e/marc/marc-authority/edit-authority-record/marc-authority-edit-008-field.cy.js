@@ -79,7 +79,7 @@ describe('MARC', () => {
 
       it(
         'C350691 Update 008 field of MARC Authority record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350691'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.select(createdAuthorityID[0]);
@@ -87,14 +87,14 @@ describe('MARC', () => {
           MarcAuthority.change008Field('x', 'x', 'x');
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains('xxx');
         },
       );
 
       it(
         'C350696 Edit the imported MARC Authority record via MARC Authority app multiple times (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350696'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.select(createdAuthorityID[0]);
@@ -109,7 +109,7 @@ describe('MARC', () => {
             MarcAuthority.changeField('130', testData.editedFieldValues[index]);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            MarcAuthority.clicksaveAndCloseButton();
+            MarcAuthority.clickSaveAndCloseButton();
             MarcAuthority.continueWithSaveAndCheck();
           });
         },

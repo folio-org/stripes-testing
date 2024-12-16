@@ -147,7 +147,7 @@ describe('MARC', () => {
 
         it(
           'C388504 Link some fields manually >> click on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C388504'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
@@ -196,11 +196,11 @@ describe('MARC', () => {
             );
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Subject',
-              `${marcAuthIcon}\nC388504 Authors, Jamaican--21st century--Biography`,
+              `${marcAuthIcon}\nC388504 Authors, Jamaican`,
             );
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               'Subject',
-              `${marcAuthIcon}\nC388504 Normal authors--Jamaica--Biography`,
+              `${marcAuthIcon}\nC388504 Normal authors`,
             );
           },
         );

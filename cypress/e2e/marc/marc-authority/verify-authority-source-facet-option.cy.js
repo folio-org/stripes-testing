@@ -59,7 +59,7 @@ describe('MARC', () => {
 
     it(
       'C365626 Search | Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (Spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C365626'] },
       () => {
         MarcAuthorities.switchToSearch();
         MarcAuthorities.checkAuthoritySourceOptions();

@@ -75,7 +75,7 @@ describe('Data Import', () => {
 
     it(
       'C404370 Verify the error message when attempting to create new Data Import profiles with existing profile names (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C404370'] },
       () => {
         const jobProfileErrorMessage =
           "New record not created: Job profile 'Default - Create instance and SRS MARC Bib' already exists";
@@ -83,8 +83,7 @@ describe('Data Import', () => {
         const actionProfileErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;
         const mappingProfileErrorMessage = `New record not created: The field mapping profile '${mappingProfile.name}' already exists`;
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfileByName(jobProfile.actionProfile);

@@ -1,6 +1,8 @@
 import TopMenu from '../../../../support/fragments/topMenu';
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
@@ -44,7 +46,7 @@ describe('bulk-edit', () => {
         { tags: ['smoke', 'firebird', 'C375284'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+          BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();
@@ -60,9 +62,10 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(`${itemBarcodesFileName}*`, [invalidItemBrcode]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
+          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
-            [invalidItemBrcode],
+            [`\uFEFF${invalidItemBrcode}`],
             'firstElement',
             false,
           );

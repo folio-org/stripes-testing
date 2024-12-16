@@ -55,15 +55,16 @@ describe('Inventory', () => {
 
     it(
       'C409474 (CONSORTIA) Verify the " Edit MARC bibliographic record" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409474'] },
       () => {
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(1000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({

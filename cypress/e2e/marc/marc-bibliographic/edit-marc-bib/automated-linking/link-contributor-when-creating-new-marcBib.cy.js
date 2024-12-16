@@ -30,7 +30,7 @@ describe('MARC', () => {
             contributor: 'Contributors',
           },
           marcValue: 'C380726 Jackson, Peter, 1950-2022 Inspector Banks series ;',
-          browseResult: 'C380726 Jackson, Peter, Inspector Banks series ; 1950-2022',
+          browseResult: 'C380726 Jackson, Peter, 1950-2022 Inspector Banks series ;',
         };
 
         const newFields = [
@@ -97,7 +97,7 @@ describe('MARC', () => {
 
         it(
           'C422126 Link "Contributor" fields when creating "MARC Bibliographic" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422126'] },
           () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,
@@ -129,7 +129,7 @@ describe('MARC', () => {
                 newField.tag,
                 '\\',
                 '\\',
-                '$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+                '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
                 '',
                 '$0 3052044',
                 '',
@@ -152,7 +152,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
               '',
               '$0 3052044',
               '',
@@ -162,7 +162,7 @@ describe('MARC', () => {
               '700',
               '\\',
               '\\',
-              '$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
               '',
               '$0 3052044',
               '',
@@ -171,10 +171,10 @@ describe('MARC', () => {
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
+              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t700\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
+              'Linked to MARC authority\n\t700\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',
             );
             QuickMarcEditor.closeEditorPane();
 

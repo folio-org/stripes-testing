@@ -20,7 +20,7 @@ describe('MARC', () => {
           tag811: '811',
           authorityMarkedValue: 'C375086 Delaware Symposium on Language Studies.',
           seriesValue:
-            'C375086 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
+            'C375086 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985 4.',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };
@@ -54,15 +54,15 @@ describe('MARC', () => {
           testData.tag811,
           '2',
           '\\',
-          '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies $0 http://id.loc.gov/authorities/names/n84745425',
+          '$a C375086 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985 $v 4. $0 http://id.loc.gov/authorities/names/n84745425',
         ];
         const bib811LinkedFieldValues = [
           25,
           testData.tag811,
           '2',
           '\\',
-          '$a C375086 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
-          '',
+          '$a C375086 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985',
+          '$v 4.',
           '$0 http://id.loc.gov/authorities/names/n84745425',
           '',
         ];
@@ -111,7 +111,7 @@ describe('MARC', () => {
 
         it(
           'C375086 Link the "811" of "MARC Bib" field with "111" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C375086'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
@@ -124,8 +124,6 @@ describe('MARC', () => {
             MarcAuthorities.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag811);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib811LinkedFieldValues);
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(

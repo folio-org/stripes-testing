@@ -1,10 +1,12 @@
 export const APPLICATION_NAMES = {
+  AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
   INVOICES: 'Invoices',
+  LICENSES: 'Licenses',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
@@ -310,6 +312,7 @@ export const ACCEPTED_DATA_TYPE_NAMES = {
 export const INSTANCE_SOURCE_NAMES = {
   MARC: 'MARC',
   FOLIO: 'FOLIO',
+  LDE: 'LINKED_DATA',
 };
 
 export const PROFILE_TYPE_NAMES = {
@@ -965,6 +968,20 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     TYPE_REPORT_PERIOD_COVERED_NOTE: 'Type of report and period covered note',
     WITH_NOTE: 'With note',
   },
+  INVENTORY_ITEMS: {
+    BARCODE: 'Barcode',
+    STATUS: 'Status',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    ACTION_NOTE: 'Action note',
+    BINDING_NOTE: 'Binding note',
+    CHECK_IN_NOTE: 'Check in note',
+    CHECK_OUT_NOTE: 'Check out note',
+    ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    ITEM_UUID: 'Item UUID',
+    PROVENANCE_NOTE: 'Provenance note',
+    MEMBER: 'Member',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+  },
 };
 
 export const HOLDING_NOTE_TYPES = {
@@ -978,6 +995,12 @@ export const HOLDING_NOTE_TYPES = {
   PROVENANCE: 'Provenance',
 };
 
+export const ITEM_NOTE_TYPES = {
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  CHECK_IN_NOTE: 'Check in note',
+  CHECK_OUT_NOTE: 'Check out note',
+};
+
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
@@ -988,4 +1011,10 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   CONTRIBUTORS: 'Contributors',
   DATE: 'Date',
   RELEVANCE: 'Relevance',
+};
+export const STAFF_SLIP_NAMES = {
+  HOLD: 'Hold',
+  PICK_SLIP: 'Pick slip',
+  REQUEST_DELIVERY: 'Request delivery',
+  TRANSIT: 'Transit',
 };

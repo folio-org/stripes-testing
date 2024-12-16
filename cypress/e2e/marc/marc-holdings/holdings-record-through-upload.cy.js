@@ -37,7 +37,7 @@ describe('MARC', () => {
 
     it(
       'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft'] },
+      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345408'] },
       () => {
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdInstanceID);

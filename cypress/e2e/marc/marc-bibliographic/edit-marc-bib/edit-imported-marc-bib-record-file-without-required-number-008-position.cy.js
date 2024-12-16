@@ -68,7 +68,7 @@ describe('MARC', () => {
 
       it(
         'C387455 User can edit imported "MARC Bib" file without required number (40) of "008" positions (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C387455'] },
         () => {
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numOfRecords; i++) {

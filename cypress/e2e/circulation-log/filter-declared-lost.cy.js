@@ -82,8 +82,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17135 Filter circulation log by declared lost (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C17135'] },
+    'C17135 Filter circulation log by declared lost (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C17135'] },
     () => {
       SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
       SearchPane.verifyResultCells();
@@ -102,8 +102,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C45934'] },
+    'C45934 Check the Actions button from filtering Circulation log by declared lost (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C45934'] },
     () => {
       SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);

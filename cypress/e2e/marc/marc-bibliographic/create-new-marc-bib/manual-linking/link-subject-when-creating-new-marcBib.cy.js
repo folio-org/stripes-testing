@@ -34,7 +34,7 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '600',
             content: '$e test123',
-            boxFourth: '$a C380728 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            boxFourth: '$a C380728 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '$e test123',
             boxSixth: '$0 3052044',
             boxSeventh: '',
@@ -113,7 +113,7 @@ describe('MARC', () => {
 
         it(
           'C422128 Link "Subject" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422128'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -181,7 +181,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380728 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $e test123 $0 3052044 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380728 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $e test123 $0 3052044 $9`,
             );
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380728 Mostly Chopin Festival. $e Orchestra $t sonet $0 997404 $9`,

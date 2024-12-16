@@ -22,11 +22,23 @@ const errorMessage =
 const getCalloutContent = (fileName) => {
   return `${fileName} is formatted incorrectly. Please correct the formatting and upload the file again.`;
 };
-const checkResponse = (alias, fileName) => {
-  cy.wait(alias).then((interception) => {
-    expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
-    expect(interception.response.body.errorMessage).to.eq(errorMessage);
-  });
+const checkResponse = (alias, fileName, maxRetries = 20) => {
+  let retries = 0;
+  const waitForFailedStatus = () => {
+    cy.wait(alias).then((interception) => {
+      retries++;
+      if (retries > maxRetries) {
+        throw new Error('Exceeded maximum retry attempts waiting for status to equal FAILED');
+      }
+      if (interception.response.body.status === 'FAILED') {
+        expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
+        expect(interception.response.body.errorMessage).to.eq(errorMessage);
+      } else {
+        waitForFailedStatus();
+      }
+    });
+  };
+  waitForFailedStatus();
 };
 
 describe('bulk-edit', () => {

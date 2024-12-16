@@ -106,7 +106,7 @@ describe('Inventory', () => {
 
     it(
       'C466168 Find Instance plugin | Search by "Classification, normalized" search option using queries with spaces (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C466168'] },
       () => {
         SelectInstanceModal.clickSearchOptionSelect();
         testData.searchQueries.forEach((query) => {

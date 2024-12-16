@@ -260,6 +260,10 @@ export default {
   },
 
   clearSourceFilter() {
-    cy.do(sourceAccordion.find(Button({ ariaLabel: including('Clear selected filters') })).click());
+    cy.do(
+      sourceAccordion
+        .find(Button({ ariaLabel: including('Clear selected Source filters') }))
+        .click(),
+    );
   },
 };

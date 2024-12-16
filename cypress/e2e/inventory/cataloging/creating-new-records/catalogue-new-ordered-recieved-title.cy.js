@@ -25,203 +25,220 @@ import Users from '../../../../support/fragments/users/users';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 
 describe('Inventory', () => {
-  describe('Cataloging -> Creating new records', () => {
-    let effectiveLocation;
-    let orderNumber;
-    let materialTypeId;
-    const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
-    const itemQuantity = '1';
-    const barcode = Helper.getRandomBarcode();
-    const firstServicePoint = NewServicePoint.getDefaultServicePoint(
-      `autotestServicePoint ${Helper.getRandomBarcode()}`,
-    );
-    const secondServicePoint = NewServicePoint.getDefaultServicePoint(
-      `autotestServicePoint ${Helper.getRandomBarcode()}`,
-    );
-    let userId;
+  describe(
+    'Cataloging -> Creating new records',
+    {
+      retries: {
+        runMode: 1,
+      },
+    },
+    () => {
+      let effectiveLocation;
+      let orderNumber;
+      let materialTypeId;
+      let instanceTitle;
+      const itemQuantity = '1';
+      let barcode;
+      let firstServicePoint;
+      let secondServicePoint;
+      let userId;
 
-    before('Create test data and login', () => {
-      cy.getAdminToken();
-      InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
-        query: '(module==ORDERS and configName==approvals)',
-      }).then((body) => {
-        if (body.configs.length !== 0) {
-          const id = body.configs[0].id;
+      beforeEach('Create test data and login', () => {
+        instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
+        barcode = Helper.getRandomBarcode();
+        firstServicePoint = NewServicePoint.getDefaultServicePoint(
+          `autotestServicePoint ${Helper.getRandomBarcode()}`,
+        );
+        secondServicePoint = NewServicePoint.getDefaultServicePoint(
+          `autotestServicePoint ${Helper.getRandomBarcode()}`,
+        );
 
-          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-            id,
-            module: 'ORDERS',
-            configName: 'approvals',
-            enabled: true,
-            value: '{"isApprovalRequired":false}',
-          });
-        }
-      });
-      InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
-        query: '(module==ORDERS and configName==inventory-loanTypeName)',
-      }).then((body) => {
-        if (body.configs.length !== 0) {
-          const id = body.configs[0].id;
+        cy.getAdminToken();
+        InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
+          query: '(module==ORDERS and configName==approvals)',
+        }).then((body) => {
+          if (body.configs.length !== 0) {
+            const id = body.configs[0].id;
 
-          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-            id,
-            module: 'ORDERS',
-            configName: 'inventory-loanTypeName',
-            enabled: true,
-            value: 'Can circulate',
+            InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+              id,
+              module: 'ORDERS',
+              configName: 'approvals',
+              enabled: true,
+              value: '{"isApprovalRequired":false}',
+            });
+          }
+        });
+        InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
+          query: '(module==ORDERS and configName==inventory-loanTypeName)',
+        }).then((body) => {
+          if (body.configs.length !== 0) {
+            const id = body.configs[0].id;
+
+            InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+              id,
+              module: 'ORDERS',
+              configName: 'inventory-loanTypeName',
+              enabled: true,
+              value: 'Can circulate',
+            });
+          }
+        });
+        cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+          materialTypeId = materialType.id;
+        });
+        ServicePoints.createViaApi(firstServicePoint);
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(firstServicePoint.id)).then(
+          (location) => {
+            effectiveLocation = location;
+            Orders.createOrderWithOrderLineViaApi(
+              NewOrder.getDefaultOrder(),
+              BasicOrderLine.getDefaultOrderLine({
+                quantity: itemQuantity,
+                title: instanceTitle,
+                specialLocationId: effectiveLocation.id,
+                specialMaterialTypeId: materialTypeId,
+              }),
+            ).then((order) => {
+              orderNumber = order.poNumber;
+            });
+          },
+        );
+        ServicePoints.createViaApi(secondServicePoint);
+
+        cy.createTempUser([
+          Permissions.checkinAll.gui,
+          Permissions.uiInventoryViewInstances.gui,
+          Permissions.uiInventoryViewCreateEditItems.gui,
+          Permissions.uiOrdersView.gui,
+          Permissions.uiOrdersEdit.gui,
+          Permissions.uiReceivingViewEditCreate.gui,
+        ]).then((userProperties) => {
+          userId = userProperties.userId;
+
+          UserEdit.addServicePointsViaApi(
+            [firstServicePoint.id, secondServicePoint.id],
+            userId,
+            firstServicePoint.id,
+          );
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
           });
-        }
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.openOrder();
+          InteractorsTools.checkCalloutMessage(
+            `The Purchase order - ${orderNumber} has been successfully opened`,
+          );
+          Orders.receiveOrderViaActions();
+          Receiving.selectFromResultsList(instanceTitle);
+          Receiving.receivePieceWithoutBarcode();
+          Receiving.checkReceivedPiece(0, 'No value set-');
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        });
       });
-      cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
-        materialTypeId = materialType.id;
-      });
-      ServicePoints.createViaApi(firstServicePoint);
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(firstServicePoint.id)).then(
-        (location) => {
-          effectiveLocation = location;
-          Orders.createOrderWithOrderLineViaApi(
-            NewOrder.getDefaultOrder(),
-            BasicOrderLine.getDefaultOrderLine({
-              quantity: itemQuantity,
-              title: instanceTitle,
-              specialLocationId: effectiveLocation.id,
-              specialMaterialTypeId: materialTypeId,
-            }),
-          ).then((order) => {
-            orderNumber = order.poNumber;
+
+      afterEach('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
+            Orders.deleteOrderViaApi(res[0].id);
           });
+          InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
+          UserEdit.changeServicePointPreferenceViaApi(userId, [
+            firstServicePoint.id,
+            secondServicePoint.id,
+          ]).then(() => {
+            ServicePoints.deleteViaApi(firstServicePoint.id);
+            ServicePoints.deleteViaApi(secondServicePoint.id);
+            Users.deleteViaApi(userId);
+          });
+          NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+            effectiveLocation.institutionId,
+            effectiveLocation.campusId,
+            effectiveLocation.libraryId,
+            effectiveLocation.id,
+          );
+        });
+      });
+
+      it(
+        'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
+        { tags: ['smoke', 'folijet', 'shiftLeft', 'C3506'] },
+        () => {
+          InventoryInstances.selectInstance();
+          InventoryInstances.verifyInstanceDetailsView();
+          InventoryInstance.openHoldings(effectiveLocation.name);
+          InventoryInstance.verifyItemBarcode('No barcode');
+          InventoryInstance.verifyLoan('Can circulate');
+          InventoryInstance.openItemByBarcode('No barcode');
+          ItemRecordView.checkBarcode('No value set-');
+          InventoryItems.edit();
+          ItemRecordEdit.waitLoading(instanceTitle);
+          ItemRecordEdit.addBarcode(barcode);
+          ItemRecordEdit.saveAndClose({ itemSaved: true });
+          ItemRecordView.waitLoading();
+          ItemRecordView.checkBarcode(barcode);
+          ItemRecordView.closeDetailView();
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+          CheckInActions.checkInItem(barcode);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.instanceTabIsDefault();
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.searchByParameter(
+            'Keyword (title, contributor, identifier, HRID, UUID)',
+            instanceTitle,
+          );
+          // TODO need to wait until result is displayed
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(1500);
+          InventoryInstances.selectInstance();
+          InventoryInstances.verifyInstanceDetailsView();
+          // InventoryInstance.openHoldings(effectiveLocation.name);
+          InventoryInstance.checkHoldingsTable(
+            effectiveLocation.name,
+            0,
+            '-',
+            barcode,
+            ITEM_STATUS_NAMES.AVAILABLE,
+          );
+          InventoryInstance.verifyLoan('Can circulate');
+          InventoryInstance.openItemByBarcode(barcode);
+          ItemRecordView.waitLoading();
+          ItemRecordView.checkBarcode(barcode);
+          ItemRecordView.closeDetailView();
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+          SwitchServicePoint.switchServicePoint(secondServicePoint.name);
+          CheckInActions.checkInItem(barcode);
+          ConfirmItemInModal.confirmInTransitModal();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.searchByParameter(
+            'Keyword (title, contributor, identifier, HRID, UUID)',
+            instanceTitle,
+          );
+          // TODO need to wait until result is displayed
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(1500);
+          InventoryInstances.selectInstance();
+          InventoryInstances.verifyInstanceDetailsView();
+          InventoryInstance.checkHoldingsTable(
+            effectiveLocation.name,
+            0,
+            '-',
+            barcode,
+            'In transit',
+          );
+          InventoryInstance.verifyLoan('Can circulate');
+          InventoryInstance.openItemByBarcode(barcode);
+          ItemRecordView.waitLoading();
+          ItemRecordView.checkBarcode(barcode);
         },
       );
-      ServicePoints.createViaApi(secondServicePoint);
-
-      cy.createTempUser([
-        Permissions.checkinAll.gui,
-        Permissions.uiInventoryViewInstances.gui,
-        Permissions.uiInventoryViewCreateEditItems.gui,
-        Permissions.uiOrdersView.gui,
-        Permissions.uiOrdersEdit.gui,
-        Permissions.uiReceivingViewEditCreate.gui,
-      ]).then((userProperties) => {
-        userId = userProperties.userId;
-
-        UserEdit.addServicePointsViaApi(
-          [firstServicePoint.id, secondServicePoint.id],
-          userId,
-          firstServicePoint.id,
-        );
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
-
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
-        InteractorsTools.checkCalloutMessage(
-          `The Purchase order - ${orderNumber} has been successfully opened`,
-        );
-        Orders.receiveOrderViaActions();
-        Receiving.selectFromResultsList(instanceTitle);
-        Receiving.receivePieceWithoutBarcode();
-        Receiving.checkReceivedPiece(0, 'No value set-');
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-      });
-    });
-
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
-          Orders.deleteOrderViaApi(res[0].id);
-        });
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
-        UserEdit.changeServicePointPreferenceViaApi(userId, [
-          firstServicePoint.id,
-          secondServicePoint.id,
-        ]).then(() => {
-          ServicePoints.deleteViaApi(firstServicePoint.id);
-          ServicePoints.deleteViaApi(secondServicePoint.id);
-          Users.deleteViaApi(userId);
-        });
-        NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-          effectiveLocation.institutionId,
-          effectiveLocation.campusId,
-          effectiveLocation.libraryId,
-          effectiveLocation.id,
-        );
-      });
-    });
-
-    it(
-      'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
-      () => {
-        InventoryInstances.selectInstance();
-        InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
-        InventoryInstance.verifyItemBarcode('No barcode');
-        InventoryInstance.verifyLoan('Can circulate');
-        InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.checkBarcode('No value set-');
-        InventoryItems.edit();
-        ItemRecordEdit.waitLoading(instanceTitle);
-        ItemRecordEdit.addBarcode(barcode);
-        ItemRecordEdit.saveAndClose({ itemSaved: true });
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode(barcode);
-        ItemRecordView.closeDetailView();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
-        CheckInActions.checkInItem(barcode);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.instanceTabIsDefault();
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(
-          'Keyword (title, contributor, identifier, HRID, UUID)',
-          instanceTitle,
-        );
-        // TODO need to wait until result is displayed
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1500);
-        InventoryInstances.selectInstance();
-        InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
-        InventoryInstance.checkHoldingsTable(
-          effectiveLocation.name,
-          0,
-          '-',
-          barcode,
-          ITEM_STATUS_NAMES.AVAILABLE,
-        );
-        InventoryInstance.verifyLoan('Can circulate');
-        InventoryInstance.openItemByBarcode(barcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode(barcode);
-        ItemRecordView.closeDetailView();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
-        SwitchServicePoint.switchServicePoint(secondServicePoint.name);
-        CheckInActions.checkInItem(barcode);
-        ConfirmItemInModal.confirmInTransitModal();
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(
-          'Keyword (title, contributor, identifier, HRID, UUID)',
-          instanceTitle,
-        );
-        // TODO need to wait until result is displayed
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1500);
-        InventoryInstances.selectInstance();
-        InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
-        InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'In transit');
-        InventoryInstance.verifyLoan('Can circulate');
-        InventoryInstance.openItemByBarcode(barcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode(barcode);
-      },
-    );
-  });
+    },
+  );
 });

@@ -36,7 +36,7 @@ describe('Data Import', () => {
 
     it(
       'C367952 Orders field mapping profile: Verify the profile cannot be saved without required fields (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C367952'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.checkNewMatchProfileFormIsOpened();

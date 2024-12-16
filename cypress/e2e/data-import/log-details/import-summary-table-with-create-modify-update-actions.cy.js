@@ -348,7 +348,7 @@ describe('Data Import', () => {
 
     it(
       'C430257 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C430257'] },
       () => {
         InventoryInstances.searchByTitle(instanceId);
         InstanceRecordView.verifyInstanceSource('MARC');
@@ -391,8 +391,7 @@ describe('Data Import', () => {
         );
 
         // create mapping profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.createInstanceMappingProfile(
           collectionOfProfilesForUpdate[0].mappingProfile,
@@ -485,7 +484,6 @@ describe('Data Import', () => {
         JsonScreenView.verifyContentInTab('"999"');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(

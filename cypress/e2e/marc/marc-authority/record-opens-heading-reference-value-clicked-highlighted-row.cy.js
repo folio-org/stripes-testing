@@ -43,7 +43,7 @@ describe('MARC', () => {
 
     it(
       'C375089 View Authority Record: record opens in third pane when "Heading/Reference" value clicked for highlighted row (spitfire) (TaaS)',
-      { tags: ['extendedPathBroken', 'spitfire'] },
+      { tags: ['extendedPathBroken', 'spitfire', 'C375089'] },
       () => {
         MarcAuthorities.searchBy('Geographic name', 'C375089 Chidao Jineiya');
         MarcAuthorities.selectFirst();

@@ -102,7 +102,7 @@ describe('MARC', () => {
 
         it(
           'C366582 Delete created linked field of "MARC Bib" record in editing window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C366582'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

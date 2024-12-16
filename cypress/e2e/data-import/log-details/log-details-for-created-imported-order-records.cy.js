@@ -37,7 +37,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    const orderNumbers = [];
     const quantityOfOrders = '7';
     const filePathForCreateOrder = 'marcFileForC376973.mrc';
     const marcFileName = `C376973 autotestFileName${getRandomPostfix()}.mrc`;
@@ -134,17 +133,12 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        cy.wrap(orderNumbers).each((number) => {
-          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
-        });
       });
     });
 
     it(
       'C376973 Verify the log details for created imported order records (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C376973'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
@@ -167,9 +161,13 @@ describe('Data Import', () => {
           FileDetails.openOrder(RECORD_STATUSES.CREATED, rowNumber);
           OrderLines.waitLoading();
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace('-1', '');
+            const orderNumber = initialNumber.replace(/-\d+$/, '');
 
-            orderNumbers.push(orderNumber);
+            Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+              (orderId) => {
+                Orders.deleteOrderViaApi(orderId[0].id);
+              },
+            );
           });
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           FileDetails.close();

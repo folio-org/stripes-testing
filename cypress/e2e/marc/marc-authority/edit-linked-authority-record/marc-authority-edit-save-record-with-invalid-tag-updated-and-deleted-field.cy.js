@@ -21,7 +21,7 @@ describe('MARC', () => {
         authority100FieldValue: 'Clovio, Giulio',
         newAuthority100FieldValue: '$aClovio, Giulio,$d1498-1578 TEST',
         tag040NewValue: '0',
-        tag952RowIndex: 18,
+        tag952RowIndex: 17,
         tag600RowIndex: 25,
         searchOption: 'Keyword',
         calloutMessage: 'Tag must contain three characters and can only accept numbers 0-9.',
@@ -111,7 +111,7 @@ describe('MARC', () => {
 
       it(
         'C375171 Save linked "MARC authority" record with wrong tag value, updated "1XX" and deleted field (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C375171'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
 

@@ -70,7 +70,7 @@ describe('Data Import', () => {
 
     it(
       'C2353 Delete an existing field mapping profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2353'] },
       () => {
         FieldMappingProfiles.search(linkedMappingProfile.name);
         FieldMappingProfiles.selectMappingProfileFromList(linkedMappingProfile.name);

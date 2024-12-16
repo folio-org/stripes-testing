@@ -9,7 +9,7 @@ describe('lists', () => {
     const firstUser = {};
     const secondUser = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Loans',
       status: 'Active',
     };
@@ -52,7 +52,7 @@ describe('lists', () => {
 
     it(
       'C411733 Edit list: Make the list Private (corsair)',
-      { tags: ['smoke', 'corsair', 'C411733'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411733'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.listsPath,
@@ -101,7 +101,7 @@ describe('lists', () => {
 
     it(
       'C411736 Edit list: Make the list Shared (corsair)',
-      { tags: ['smoke', 'corsair', 'C411736'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411736'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.listsPath,

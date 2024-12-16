@@ -20,7 +20,7 @@ const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const noteTypePane = PaneSet({ id: 'noteTypes' });
-const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType) });
+const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
 
 export default {
@@ -69,16 +69,16 @@ export default {
 
   checkNoteTypeButtonsStates({
     name,
-    addNewButton = { disabled: false },
+    addNewButton = { present: true },
     editButton = { present: true },
     deleteButton = { present: true },
   } = {}) {
     this.checkNoteTypeIsDisplayed(name);
 
-    if (!addNewButton.disabled) {
+    if (addNewButton.present) {
       cy.expect(noteTypeRootPane.find(Button({ text: '+ New', disabled: false })).exists());
     } else {
-      cy.expect(noteTypeRootPane.find(Button({ text: '+ New', disabled: true })).exists());
+      cy.expect(noteTypeRootPane.find(Button({ text: '+ New' })).absent());
     }
 
     if (editButton.present) {

@@ -168,6 +168,7 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
       id: instanceId,
       ...instance,
     },
+    isDefaultSearchParamsRequired: false,
   }).then(() => {
     cy.wrap(holdings)
       .each((holding, i) => cy.createHolding({
@@ -236,6 +237,9 @@ Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
+  }).then(({ response }) => {
+    cy.wait(1000);
+    return response;
   });
 });
 
@@ -290,6 +294,9 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
     path: `inventory/items/${itemId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
+  }).then(({ response }) => {
+    cy.wait(1000);
+    return response;
   });
 });
 

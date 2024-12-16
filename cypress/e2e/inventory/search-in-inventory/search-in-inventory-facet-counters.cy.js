@@ -69,7 +69,7 @@ describe('Inventory', () => {
 
     it(
       'C415263 Counters in expanded facet accordions updated when another facet is applied (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire'] },
+      { tags: ['criticalPathFlaky', 'spitfire', 'C415263'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventorySearchAndFilter.checkRowsCount(2);

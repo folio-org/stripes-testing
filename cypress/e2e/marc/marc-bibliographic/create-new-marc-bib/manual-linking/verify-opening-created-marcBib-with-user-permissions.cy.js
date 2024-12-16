@@ -94,7 +94,7 @@ describe('MARC', () => {
 
         it(
           'C422140 Create | Verify that created MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422140'] },
           () => {
             cy.login(testData.userAData.username, testData.userAData.password, {
               path: TopMenu.inventoryPath,
@@ -137,7 +137,6 @@ describe('MARC', () => {
             InventoryInstance.getId().then((id) => {
               createdAuthorityIDs.push(id);
             });
-            cy.logout();
 
             cy.login(testData.userBData.username, testData.userBData.password, {
               path: TopMenu.inventoryPath,

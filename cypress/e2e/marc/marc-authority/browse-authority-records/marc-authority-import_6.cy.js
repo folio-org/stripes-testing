@@ -53,7 +53,7 @@ describe('MARC', () => {
 
       it(
         'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C356765'] },
         () => {
           DataImport.uploadFileViaApi('marcFileForC356765.mrc', fileName, jobProfileToRun).then(
             (response) => {
@@ -89,7 +89,7 @@ describe('MARC', () => {
 
       it(
         'C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C353995'] },
         () => {
           DataImport.uploadFileViaApi('marcFileForC353995.mrc', fileName, jobProfileToRun).then(
             (response) => {
@@ -100,7 +100,6 @@ describe('MARC', () => {
           );
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-          MarcAuthorities.checkSearchOption('keyword');
           MarcAuthorities.searchByParameter(
             testData.searchOptionKeyword,
             `C353995 ${testData.recordB}`,

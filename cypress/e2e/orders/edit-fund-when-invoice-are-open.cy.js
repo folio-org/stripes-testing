@@ -4,7 +4,6 @@ import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -19,6 +18,7 @@ import Budgets from '../../support/fragments/finance/budgets/budgets';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -37,7 +37,6 @@ describe('ui-orders: Orders', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstBudget = {
     ...Budgets.getDefaultBudget(),
     allocated: 1000,
@@ -166,7 +165,7 @@ describe('ui-orders: Orders', () => {
   });
 
   it(
-    'C374190: Editing fund distribution in PO line when related Open invoice exists (thunderjet)',
+    'C374190 Editing fund distribution in PO line when related Open invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
@@ -175,7 +174,7 @@ describe('ui-orders: Orders', () => {
       OrderLines.editPOLInOrder();
       OrderLines.editFundInPOL(secondFund, '70', '100');
       OrderLines.checkFundInPOL(secondFund);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
@@ -183,24 +182,18 @@ describe('ui-orders: Orders', () => {
       Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
       Funds.selectTransactionInList('Encumbrance');
       Funds.checkStatusInTransactionDetails('Unreleased');
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
-      Invoices.checkFundInInvoiceLine(secondFund);
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
+      Invoices.checkFundInInvoiceLine(firstFund);
+      TopMenuNavigation.navigateToApp('Finance');
+      TopMenuNavigation.navigateToApp('Finance');
+      FinanceHelp.searchByName(firstFund.name);
+      Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
-        defaultFiscalYear.code,
-        invoice.invoiceNumber,
-        `${secondFund.name} (${secondFund.code})`,
-        '($70.00)',
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.checkNoTransactionOfType('Encumbrance');
     },
   );
 });

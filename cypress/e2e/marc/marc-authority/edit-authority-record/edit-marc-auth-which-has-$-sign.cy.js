@@ -60,7 +60,7 @@ describe('MARC', () => {
 
       it(
         'C451558 Edit "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C451558'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchText);
           MarcAuthorities.selectItem(testData.title, false);
@@ -73,7 +73,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.newContentFor370Field, 8);
           QuickMarcEditor.verifySaveAndCloseButtonEnabled();
           QuickMarcEditor.verifySaveAndKeepEditingButtonEnabled();
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
 
           MarcAuthority.contains(testData.tag100);

@@ -105,7 +105,7 @@ describe('MARC', () => {
 
         it(
           'C389478 All three messages shown for one field each when auto-linking  fields when editing "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C389478'] },
           () => {
             // #1 Find and open detail view of record from precondition
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

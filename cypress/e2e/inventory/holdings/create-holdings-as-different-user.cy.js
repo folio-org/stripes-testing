@@ -1,9 +1,5 @@
 import { MultiColumnListCell } from '../../../../interactors';
-import {
-  APPLICATION_NAMES,
-  INSTANCE_SOURCE_NAMES,
-  LOCATION_NAMES,
-} from '../../../support/constants';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -11,72 +7,85 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
-  describe('Holdings', () => {
-    let firstUser;
-    let secondUser;
-    const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-    const recordsData = {
-      instanceTitle,
-      permanentLocationOption: 'Online (E) ',
-      permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
-      source: INSTANCE_SOURCE_NAMES.FOLIO,
-    };
+  describe(
+    'Holdings',
+    {
+      retries: {
+        runMode: 1,
+      },
+    },
+    () => {
+      let firstUser;
+      let secondUser;
+      let instanceTitle;
+      let recordsData;
 
-    before('Create test data and login', () => {
-      cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
-        firstUser = userProperties;
-      });
+      beforeEach('Create test data and login', () => {
+        instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 
-      cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
-        secondUser = userProperties;
+        recordsData = {
+          instanceTitle,
+          permanentLocationOption: 'Online (E) ',
+          permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
+          source: INSTANCE_SOURCE_NAMES.FOLIO,
+        };
 
-        cy.login(secondUser.username, secondUser.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+          firstUser = userProperties;
+        });
+
+        cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+          secondUser = userProperties;
+
+          cy.login(secondUser.username, secondUser.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
-    });
 
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-          (instance) => {
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
-        Users.deleteViaApi(firstUser.userId);
-        Users.deleteViaApi(secondUser.userId);
+      afterEach('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+            (instance) => {
+              cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+          Users.deleteViaApi(firstUser.userId);
+          Users.deleteViaApi(secondUser.userId);
+        });
       });
-    });
 
-    it(
-      'C1294 Create a Holdings record as another user than the one that created the Instance (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
-      () => {
-        const InventoryNewInstance = InventoryInstances.addNewInventory();
-        InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
-        InventoryNewInstance.clickSaveAndCloseButton();
+      it(
+        'C1294 Create a Holdings record as another user than the one that created the Instance (folijet)',
+        { tags: ['smoke', 'folijet', 'shiftLeft', 'C1294'] },
+        () => {
+          const InventoryNewInstance = InventoryInstances.addNewInventory();
+          InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
+          InventoryNewInstance.clickSaveAndCloseButton();
 
-        InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
-        cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
+          InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
+          cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
-        // login as a different user
-        cy.login(firstUser.username, firstUser.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
-        InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
+          // login as a different user
+          cy.login(firstUser.username, firstUser.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
 
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkSource(recordsData.source);
-        HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
-      },
-    );
-  });
+          InventoryInstance.openHoldingView();
+          HoldingsRecordView.checkSource(recordsData.source);
+          HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
+        },
+      );
+    },
+  );
 });

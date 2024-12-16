@@ -54,7 +54,7 @@ describe('Data Import', () => {
 
     it(
       'C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356780'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

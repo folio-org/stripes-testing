@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Export query', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       visibility: 'Shared',
     };
@@ -38,7 +38,7 @@ describe('lists', () => {
 
     it(
       'C411809 Export list: Not canned lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411809'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411809'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -66,7 +66,7 @@ describe('lists', () => {
 
     it(
       'C411811 Export list: Inactive lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411811'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411811'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -87,7 +87,7 @@ describe('lists', () => {
 
     it(
       'C411812 Export list: Refresh is in progress (corsair)',
-      { tags: ['smoke', 'corsair', 'C411812'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411812'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -184,7 +184,7 @@ describe('lists', () => {
         Lists.selectVisibility(listData.visibility);
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('Users — User — Last name, first name').click();
+        cy.contains('User — Last name, first name').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="input-value-0"]').type('ABCD');
         cy.get('button:contains("Test query")').click();

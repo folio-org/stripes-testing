@@ -1,9 +1,12 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsDataImport, {
+  SETTINGS_TABS,
+} from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -36,7 +39,7 @@ describe('Data Import', () => {
 
     it(
       'C357019 Check that no error when going to the "Uploading jobs" and "Settings/Job profiles" pages from the "View All" page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C357019'] },
       () => {
         // #1 Go to "Data import" app -> click on "Actions" button -> Select the "View all"
         // User is taken to the View all logs screen
@@ -46,7 +49,7 @@ describe('Data Import', () => {
 
         // #2 Click the "Data import" button in breadcrumbs -> import any "*.mrc" file
         // You will be brought to the Job profiles view with your file listed in the left pane and available job profiles in the right pane
-        TopMenuNavigation.navigateToApp('Data import');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
@@ -57,7 +60,7 @@ describe('Data Import', () => {
 
         // #3 Click the "Data import" button in breadcrumbs -> click on "Actions" button -> Select the "View all"
         // User is taken to the View all logs screen
-        TopMenuNavigation.navigateToApp('Data import');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.waitLoading();
         Logs.actionsButtonClick();
         Logs.viewAllLogsButtonClick();
@@ -65,9 +68,8 @@ describe('Data Import', () => {
 
         // #4 Click the Settings page from Apps -> select "Data import" -> select "Job profiles"
         // Job profiles are displayed in the 3rd pane, and there is no Action menu
-        TopMenuNavigation.navigateToApp('Settings');
-        SettingsDataImport.goToSettingsDataImport();
-        DataImport.selectDataImportProfile('Job profiles');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.waitLoadingList();
         JobProfiles.verifyActionMenuAbsent();
       },

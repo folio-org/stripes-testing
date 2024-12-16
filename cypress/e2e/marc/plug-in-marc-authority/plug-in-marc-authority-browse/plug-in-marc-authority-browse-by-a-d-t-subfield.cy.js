@@ -77,7 +77,7 @@ describe('MARC', () => {
 
       it(
         'C385657 "$a", "$d", "$t" subfield values are shown in correct order in pre-populated browse query when linking "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C385657'] },
         () => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();

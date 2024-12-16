@@ -242,7 +242,7 @@ describe('Data Import', () => {
 
     it(
       'C374189 Update tag value of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374189'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

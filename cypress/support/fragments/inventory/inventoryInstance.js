@@ -152,6 +152,7 @@ const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
+const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -206,12 +207,14 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
+  cy.wait(500);
   cy.do(
     instanceDetailsSection
       .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
+  cy.wait(500);
   ItemRecordView.waitLoading();
 };
 
@@ -447,7 +450,9 @@ export default {
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
     cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
+    cy.wait(500);
     cy.do(editMARCBibRecordButton.click());
+    cy.wait(500);
   },
 
   selectTopRecord() {
@@ -469,7 +474,6 @@ export default {
   viewSource: () => {
     cy.wait(2000);
     cy.do(actionsButton.click());
-    cy.wait(2000);
     cy.do(viewSourceButton.click());
     cy.wait(1000);
     InventoryViewSource.waitLoading();
@@ -1015,6 +1019,8 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByHrId(newInstanceHrId);
     InventoryInstanceSelectInstanceModal.selectInstance();
+    // cypress clicks too fast
+    cy.wait(5000);
     InventoryInstancesMovement.move();
   },
 
@@ -1025,7 +1031,7 @@ export default {
     InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     // cypress clicks too fast
-    cy.wait(2000);
+    cy.wait(5000);
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
 
@@ -1081,9 +1087,9 @@ export default {
   },
 
   deleteTag: (tagName) => {
-    cy.do(MultiSelect().find(closeTag).click());
+    cy.do(MultiSelect({ id: 'input-tag' }).find(closeTag).click());
     cy.expect(
-      MultiSelect()
+      MultiSelect({ id: 'input-tag' })
         .find(HTML(including(tagName)))
         .absent(),
     );
@@ -1408,6 +1414,7 @@ export default {
 
   closeShareInstanceModal() {
     cy.do(shareInstanceModal.find(Button('Cancel')).click());
+    cy.wait(1500);
   },
 
   shareInstance() {
@@ -1779,5 +1786,20 @@ export default {
 
   verifyHoldingsAbsent(holdingsLocation) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
+  },
+
+  verifySourceInAdministrativeData(sourceValue) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(sourceValue)))
+        .exists(),
+    );
+  },
+
+  editInstanceInLde: () => {
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.do(editInLdeButton.click());
+    cy.wait(1000);
   },
 };

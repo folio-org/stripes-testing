@@ -131,7 +131,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C6723: Test the invoice searches (thunderjet)',
+    'C6723 Test the invoice searches (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.searchByParameter('All', invoice.invoiceNumber);

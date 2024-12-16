@@ -86,7 +86,7 @@ describe('MARC', () => {
 
       it(
         'C380397 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when editing record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380397'] },
         () => {
           InventoryInstances.searchByTitle(instanceID);
           InventoryInstances.selectInstance();

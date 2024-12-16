@@ -59,8 +59,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C421998 - (NON-CONSORTIA) Verify the field mapping profile options (Folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      'C421998 (NON-CONSORTIA) Verify the field mapping profile options (Folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet', 'C421998'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.waitLoading();

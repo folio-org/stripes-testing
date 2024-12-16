@@ -19,7 +19,7 @@ describe('MARC', () => {
         const testData = {
           tag800: '800',
           authorityMarkedValue: 'C375084 Robinson, Peter,',
-          seriesStatementValue: 'C375084 Robinson, Peter, Inspector Banks series ; 1950-2022',
+          seriesStatementValue: 'C375084 Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
           authorityIconText: 'Linked to MARC authority',
           accordion: 'Title data',
         };
@@ -53,15 +53,15 @@ describe('MARC', () => {
           testData.tag800,
           '1',
           '\\',
-          '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $8 800',
+          '$a C375084 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ; $v 24. $y 2023 $0 3052044 $8 800',
         ];
         const bib800LinkedFieldValues = [
           35,
           testData.tag800,
           '1',
           '\\',
-          '$a C375084 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
-          '',
+          '$a C375084 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ;',
+          '$v 24. $y 2023',
           '$0 3052044',
           '$8 800',
         ];
@@ -69,7 +69,7 @@ describe('MARC', () => {
         before('Creating user', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375084*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375084');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -110,7 +110,7 @@ describe('MARC', () => {
 
         it(
           'C375084 Link the "800" of "MARC Bib" field with "100" field of "MARC Authority" record. (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C375084'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

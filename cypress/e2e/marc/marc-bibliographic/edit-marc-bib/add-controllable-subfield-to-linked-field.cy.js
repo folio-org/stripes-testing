@@ -95,7 +95,7 @@ describe('MARC', () => {
 
       it(
         'C375954 Add controllable subfield to a linked field in "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375954'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceValue);
           InventoryInstances.selectInstance();

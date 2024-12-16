@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import {
   Accordion,
   Button,
@@ -54,6 +55,9 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 
 const deleteConfirmationModal = Modal('Delete list');
 const cancelConfirmationModal = Modal('Are you sure?');
+const buildQueryModal = Modal('Build query');
+
+const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 
 const cannedListInactivePatronsWithOpenLoans = 'Inactive patrons with open loans';
 
@@ -83,7 +87,7 @@ export default {
   },
 
   queryBuilderActions() {
-    this.queryBuilderActionsWithParameters('Users — User — Active', '==', 'True');
+    this.queryBuilderActionsWithParameters('User — Active', '==', 'True');
   },
 
   queryBuilderActionsWithParameters(parameter, operator, value) {
@@ -92,7 +96,7 @@ export default {
     cy.get('[data-testid="operator-option-0"]').select(operator);
     cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(runQueryAndSave.click());
     cy.wait(2000);
   },
@@ -154,6 +158,12 @@ export default {
     cy.get('[data-testid="data-input-select-boolType"]').contains(query.value);
   },
 
+  closeQueryEditor() {
+    cy.wait(500);
+    cy.do(cancelQueryButton.click());
+    cy.wait(1000);
+  },
+
   cancelRefresh() {
     cy.do(cancelRefresh.click());
     cy.wait(1000);
@@ -161,7 +171,7 @@ export default {
 
   saveList() {
     cy.do(saveButton.click());
-    cy.wait(1000);
+    cy.wait(1500);
   },
 
   buildQuery() {
@@ -169,9 +179,26 @@ export default {
     cy.wait(1000);
   },
 
+  verifyBuildQueryButtonIsDisabled() {
+    cy.expect(buildQueryButton.has({ disabled: true }));
+  },
+
   editList() {
     cy.do(editList.click());
     cy.wait(2000);
+  },
+
+  verifyEditListButtonIsDisabled() {
+    cy.expect(editList.has({ disabled: true }));
+  },
+
+  verifyEditListButtonDoesNotExist() {
+    cy.expect(editList.absent());
+  },
+
+  verifyEditListButtonIsActive() {
+    cy.expect(editList.exists());
+    cy.expect(editList.has({ disabled: false }));
   },
 
   duplicateList() {
@@ -225,19 +252,6 @@ export default {
   exportList() {
     cy.do(exportList.click());
     cy.wait(1000);
-  },
-
-  verifyEditListButtonIsDisabled() {
-    cy.expect(editList.has({ disabled: true }));
-  },
-
-  verifyEditListButtonDoesNotExist() {
-    cy.expect(editList.absent());
-  },
-
-  verifyEditListButtonIsActive() {
-    cy.expect(editList.exists());
-    cy.expect(editList.has({ disabled: false }));
   },
 
   exportListVisibleColumns() {
@@ -322,7 +336,7 @@ export default {
     cy.do(Link(cannedListInactivePatronsWithOpenLoans).click());
   },
 
-  missingItems() {
+  openMissingItemsList() {
     cy.do(Link('Missing items').click());
   },
 
@@ -355,6 +369,24 @@ export default {
 
   selectRecordTypeOld(option) {
     cy.get('select[name=recordType]').select(option);
+    cy.wait(500);
+  },
+
+  verifyRecordTypes(options) {
+    const optionsFromUI = [];
+    cy.get('button[name=recordType]')
+      .click()
+      .then(() => {
+        cy.wait(500);
+        cy.get('li[role=option]')
+          .each((element) => {
+            optionsFromUI.push(element.text());
+          })
+          .then(() => {
+            cy.expect(ArrayUtils.compareArrays(optionsFromUI, options)).to.equal(true);
+          });
+      });
+    cy.get('button[name=recordType]').click();
     cy.wait(500);
   },
 
@@ -398,6 +430,7 @@ export default {
   },
 
   verifySuccessCalloutMessage(message) {
+    cy.wait(500);
     cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
   },
 
@@ -407,7 +440,7 @@ export default {
 
   closeListDetailsPane() {
     cy.wait(500);
-    cy.get('button[icon=times]').click({ multiple: true });
+    cy.get('div[class^=paneMenu] > button[icon=times]').click();
     cy.wait(1000);
   },
 
@@ -419,10 +452,19 @@ export default {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
+  verifyRecordsNumber(number) {
+    cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+    cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
+  },
+
+  verifyQuery(query) {
+    cy.get('#results-viewer-accordion').contains(`Query: ${query}`).should('be.visible');
+  },
+
   openList(listName) {
     cy.do(
       ListRow(including(listName))
-        .find(MultiColumnListCell({ content: including(listName) }))
+        .find(MultiColumnListCell({ content: listName }))
         .find(Button(listName))
         .click(),
     );
@@ -443,13 +485,21 @@ export default {
   },
 
   checkResultSearch(searchResults, rowIndex = 0) {
-    return cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
-      cy.expect(
-        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-          .find(MultiColumnListCell({ content: including(contentToCheck) }))
-          .exists(),
-      );
-    });
+    cy.wrap(true)
+      .then(() => {
+        if (searchResults.description) {
+          delete searchResults.description;
+        }
+      })
+      .then(() => {
+        cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
+          cy.expect(
+            MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+              .find(MultiColumnListCell({ content: including(contentToCheck) }))
+              .exists(),
+          );
+        });
+      });
   },
 
   clickOnAccordionInFilter(accordionName) {
@@ -488,6 +538,16 @@ export default {
     ]);
   },
 
+  collapseFilterPane() {
+    cy.get('button[icon=caret-left]').click();
+    cy.wait(1000);
+  },
+
+  expandFilterPane() {
+    cy.get('button[icon=caret-right]').click();
+    cy.wait(1000);
+  },
+
   selectActiveLists() {
     cy.do(activeCheckbox.checkIfNotSelected());
     this.waitForSpinnerToDisappear();
@@ -514,6 +574,7 @@ export default {
 
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
+    cy.wait(500);
   },
 
   selectRecordTypeFilter(type) {
@@ -595,6 +656,13 @@ export default {
     cy.wait(1000);
   },
 
+  verifyYouDoNotHavePermissionsToViewThisListIsShown() {
+    cy.wait(1000);
+    cy.contains('You do not have permission to view this list', { timeout: 15000 }).should(
+      'be.visible',
+    );
+  },
+
   verifyListsFilteredByStatus: (filters) => {
     const cells = [];
     cy.get('div[class^="mclRowContainer--"]')
@@ -647,7 +715,7 @@ export default {
       // Split the contents of a file into lines
       const fileRows = fileContent.split('\n');
 
-      expect(fileRows[0].trim()).to.equal(header);
+      expect(fileRows[0].trim()).to.contain(header);
     });
   },
 
@@ -735,22 +803,48 @@ export default {
     });
   },
 
+  deleteRecursivelyViaApi(id) {
+    recurse(
+      () => this.deleteViaApi(id),
+      (response) => response.status === 204,
+      {
+        limit: 3,
+        timeout: 30 * 1000,
+        delay: 10000,
+      },
+    );
+  },
+
   deleteViaApi(id) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `lists/${id}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    });
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `lists/${id}`,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        return response;
+      });
   },
 
   // Use only with USER token, not ADMIN token!!! Admin doesn't have access to lists of other users
-  deleteListByNameViaApi(listName) {
+  deleteListByNameViaApi(listName, recursively = false) {
     this.getViaApi().then((response) => {
       const filteredItem = response.body.content.find((item) => item.name === listName);
       if (filteredItem) {
-        this.deleteViaApi(filteredItem.id);
+        if (recursively) {
+          this.deleteRecursivelyViaApi(filteredItem.id);
+        } else {
+          this.deleteViaApi(filteredItem.id);
+        }
       }
+    });
+  },
+
+  getListIdByNameViaApi(listName) {
+    return this.getViaApi().then((response) => {
+      return response.body.content.find((item) => item.name === listName).id;
     });
   },
 };

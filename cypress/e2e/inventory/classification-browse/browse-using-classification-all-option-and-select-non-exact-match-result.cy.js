@@ -111,7 +111,7 @@ describe('Inventory', () => {
 
     it(
       'C468142 Select non-exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C468142'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);

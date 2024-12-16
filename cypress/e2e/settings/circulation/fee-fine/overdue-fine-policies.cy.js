@@ -242,7 +242,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   );
 
   it(
-    'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (vega)',
+    'C9267 Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (vega)',
     { tags: ['vega', 'smoke', 'broken', 'C9267'] },
     () => {
       cy.login(userData.username, userData.password, {

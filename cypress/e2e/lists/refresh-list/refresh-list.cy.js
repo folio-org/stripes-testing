@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Refresh lists', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       visibility: 'Private',
     };
@@ -57,7 +57,7 @@ describe('lists', () => {
         Lists.buildQuery();
         Lists.queryBuilderActions();
         Lists.openActions();
-        Lists.verifyRefreshListButtonIsDisabled();
+        Lists.verifyRefreshListButtonDoesNotExist();
       },
     );
 
@@ -73,7 +73,7 @@ describe('lists', () => {
         Lists.selectStatus('Inactive');
         Lists.saveList();
         Lists.openActions();
-        Lists.verifyRefreshListButtonIsDisabled();
+        Lists.verifyRefreshListButtonDoesNotExist();
       },
     );
 
@@ -145,7 +145,7 @@ describe('lists', () => {
         Lists.selectStatus('Active');
         Lists.buildQuery();
         cy.get('#field-option-0').click();
-        cy.contains('Users — User — Active').click();
+        cy.contains('User — Active').click();
         cy.get('[data-testid="operator-option-0"]').select('==');
         cy.get('[data-testid="data-input-select-boolType"]').select('False');
         cy.get('button:contains("Test query")').click();

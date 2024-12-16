@@ -179,7 +179,7 @@ describe('Data Import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C17017'] },
       () => {
         // create mapping profile
         createInstanceMappingProfileForCreate(mappingProfile);
@@ -234,8 +234,7 @@ describe('Data Import', () => {
         });
 
         // create mapping profile for update
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         createInstanceMappingProfileForUpdate(mappingProfileUpdate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileUpdate.name);

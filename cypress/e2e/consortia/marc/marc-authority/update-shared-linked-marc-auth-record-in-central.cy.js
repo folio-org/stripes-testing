@@ -116,14 +116,13 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             ]);
-          })
-          .then(() => {
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -199,7 +198,7 @@ describe('MARC', () => {
 
       it(
         'C405927 Update shared linked "MARC Authority" record in Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C405927'] },
         () => {
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.marcAuthorities,

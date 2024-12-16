@@ -32,7 +32,7 @@ describe('Data Import', () => {
 
     it(
       'C2328 Create a file extension for a blocked file type and ensure that file type cannot be uploaded (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2328'] },
       () => {
         const filePath = 'file.txt';
         const fileName = `C2328 autotestFile.${getRandomPostfix()}.txt`;
@@ -41,8 +41,7 @@ describe('Data Import', () => {
           importStatus: 'Block import',
         };
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.openNewFileExtensionForm();
@@ -59,8 +58,7 @@ describe('Data Import', () => {
         DataImport.verifyImportBlockedModal();
         DataImport.cancelBlockedImportModal();
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.select(testData.fileExtension);
         FileExtensionView.delete(testData.fileExtension);
@@ -69,7 +67,7 @@ describe('Data Import', () => {
 
     it(
       'C2329 Create a file extension for an acceptable file type and upload a file (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2329'] },
       () => {
         const filePath = 'file.csv';
         const fileName = `C2329 autotestFile.${getRandomPostfix()}.csv`;
@@ -78,8 +76,7 @@ describe('Data Import', () => {
           dataType: 'MARC',
         };
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.openNewFileExtensionForm();
@@ -94,8 +91,7 @@ describe('Data Import', () => {
         DataImport.uploadFile(filePath, fileName);
         DataImport.verifyFileIsImported(fileName);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);
         FileExtensions.select(testData.fileExtension);
         FileExtensionView.delete(testData.fileExtension);

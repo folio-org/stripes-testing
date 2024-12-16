@@ -48,10 +48,9 @@ describe('Data Import', () => {
 
     it(
       'C404371 Verify the error message after attempting to link action and field mapping profiles with different record type (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C404371'] },
       () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         NewActionProfile.verifyPreviouslyPopulatedDataIsDisplayed(actionProfile);

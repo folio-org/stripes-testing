@@ -62,7 +62,11 @@ describe('Data Export', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*', 'SearchInstanceUUIDs*');
+      FileManager.deleteFileFromDownloadsByMask(
+        'QuickInstanceExport*',
+        'SearchInstanceUUIDs*',
+        'SearchInstanceCQLQuery*',
+      );
     });
 
     it(
@@ -96,8 +100,9 @@ describe('Data Export', () => {
           item.instanceName,
         );
         InventorySearchAndFilter.byEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        cy.wait(3000);
         InventorySearchAndFilter.saveCQLQuery();
-
+        cy.wait(1000);
         FileManager.verifyFile(
           InventoryActions.verifySaveCQLQueryFileName,
           'SearchInstanceCQLQuery*',

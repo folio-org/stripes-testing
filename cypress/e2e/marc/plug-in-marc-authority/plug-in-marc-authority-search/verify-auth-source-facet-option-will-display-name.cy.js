@@ -94,7 +94,6 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.logout();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -121,7 +120,7 @@ describe('MARC', () => {
 
       it(
         'C360551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C360551'] },
         () => {
           MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
           MarcAuthorities.chooseAuthoritySourceOption(testData.authSourceOptions.NOT_SPECIFIED);

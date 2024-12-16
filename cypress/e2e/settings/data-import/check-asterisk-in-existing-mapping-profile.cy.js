@@ -53,7 +53,7 @@ describe('Data Import', () => {
 
     it(
       'C367955 Order field mapping profile: Check asterisks for required fields in existing field mapping profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C367955'] },
       () => {
         // #1 Go to "Settings" application -> "Data import" -> Find field mapping profile from preconditions -> Click on profile from preconditions -> "Actions" -> "Edit"
         FieldMappingProfiles.search(mappingProfile.name);

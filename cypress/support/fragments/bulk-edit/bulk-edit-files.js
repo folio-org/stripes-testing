@@ -213,7 +213,8 @@ export default {
         const headers = rows
           .shift()
           .split(regex)
-          .map((h) => h.replace(/^"|"$/g, ''));
+          .map((h) => h.replace(/^"|"$/g, '').trim());
+        // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
         const uuidHeaderIndex = headers.indexOf(uuidHeader);
         const targetHeaderIndex = headers.indexOf(targetHeader);
 
@@ -231,6 +232,41 @@ export default {
         const actualValue = cells[targetHeaderIndex];
 
         expect(actualValue).to.equal(expectedValue);
+      });
+    });
+  },
+
+  verifyHeaderValueInRowByIdentifier(filePath, identifierHeader, identifierValue, targetValues) {
+    return FileManager.findDownloadedFilesByMask(filePath).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((fileContent) => {
+        // Regular expression to split on commas that are not inside quotes
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+        const rows = fileContent.split('\n').filter((row) => row.trim() !== '');
+        const headers = rows
+          .shift()
+          .split(regex)
+          .map((h) => h.replace(/^"|"$/g, '').trim());
+        // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
+        const identifierHeaderIndex = headers.indexOf(identifierHeader);
+
+        // Find the target row by UUID
+        const targetRow = rows.find((row) => {
+          const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
+          return cells[identifierHeaderIndex] === identifierValue;
+        });
+
+        // eslint-disable-next-line no-unused-expressions
+        expect(targetRow).to.exist;
+
+        // Split targetRow to cells to facilitate value extraction
+        const cells = targetRow.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
+
+        targetValues.forEach((pair) => {
+          const targetHeaderIndex = headers.indexOf(pair.header);
+          const actualValue = cells[targetHeaderIndex];
+
+          expect(actualValue).to.equal(pair.value);
+        });
       });
     });
   },

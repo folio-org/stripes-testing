@@ -283,7 +283,7 @@ describe('Data Import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356802'] },
       () => {
         NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
           marcBibMappingProfileForCreate,
@@ -395,8 +395,7 @@ describe('Data Import', () => {
         });
 
         // create mapping profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(

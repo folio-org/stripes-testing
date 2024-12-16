@@ -86,7 +86,7 @@ describe('Inventory', () => {
 
       it(
         'C451645 Delete already selected “Classification identifier types” when edit "Classification browse" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C451645'] },
         () => {
           ClassificationBrowse.checkClassificationBrowseInTable(
             testData.classificationBrowseName,

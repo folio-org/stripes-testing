@@ -115,7 +115,6 @@ describe('MARC', () => {
           testData.user = createdUserProperties;
         })
         .then(() => {
-          cy.logout();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
@@ -136,7 +135,7 @@ describe('MARC', () => {
 
     it(
       'C374164 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "600" field (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C374164'] },
       () => {
         // Step 1: Input query in search input field that will return imported "MARC authority" record → Click "Search"
         MarcAuthorities.searchBy('Keyword', testData.marcValue);

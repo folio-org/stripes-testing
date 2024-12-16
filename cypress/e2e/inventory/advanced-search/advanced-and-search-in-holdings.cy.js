@@ -107,7 +107,7 @@ describe('Inventory', () => {
 
     it(
       'C422017 Search Holdings using advanced search with "AND" operator (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C422017'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventoryInstances.clickAdvSearchButton();

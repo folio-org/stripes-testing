@@ -76,7 +76,7 @@ describe('MARC', () => {
 
       it(
         'C422123 Create new Shared MARC bib in Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire'] },
+        { tags: ['criticalPathECS', 'spitfire', 'C422123'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField(

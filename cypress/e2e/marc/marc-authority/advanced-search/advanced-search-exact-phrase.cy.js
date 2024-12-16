@@ -79,7 +79,7 @@ describe('MARC', () => {
 
       it(
         'C407728 Advanced search of "MARC authority" records using "Exact phrase" search operator (Geographic name and Subject) (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C407728'] },
         () => {
           // #1 Click on the "Advanced search" button placed on the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();

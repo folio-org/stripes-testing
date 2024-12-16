@@ -8,6 +8,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Modals from '../../support/fragments/modals';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
@@ -181,7 +182,6 @@ describe('Title level Request', () => {
     cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
-        cy.log(requestResponse);
         requestResponse.forEach((request) => {
           Requests.deleteRequestViaApi(request.id);
         });
@@ -218,7 +218,7 @@ describe('Title level Request', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
@@ -233,11 +233,12 @@ describe('Title level Request', () => {
       CheckOutActions.checkOutUser(users[1].barcode);
       CheckOutActions.checkOutItem(instanceData.item1Barcode);
       CheckOutActions.checkItemInfo(instanceData.item1Barcode, instanceData.title);
+      Modals.closeModalIfAny();
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item2Barcode);
-      ConfirmItemInModal.confirmAvaitingPickUpModal();
+      ConfirmItemInModal.confirmAwaitingPickUpModal();
 
       createTLR(users[4], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.CHECKED_OUT);
       createTLR(users[5], REQUEST_TYPES.RECALL, ITEM_STATUS_NAMES.CHECKED_OUT);

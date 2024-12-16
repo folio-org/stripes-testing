@@ -68,6 +68,7 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+
           InventoryInstances.getInstancesViaApi({
             limit: 100,
             query: `title="${testData.instanceTitle}"`,
@@ -90,36 +91,29 @@ describe('MARC', () => {
               }
             });
           });
-
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
-            .then(() => {
-              testData.marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    if (
-                      marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                    ) {
-                      testData.instanceIDs.push(record[marcFile.propertyName].id);
-                    } else {
-                      testData.authorityIDs.push(record[marcFile.propertyName].id);
-                    }
-                  });
-                });
+          testData.marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                if (
+                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                ) {
+                  testData.instanceIDs.push(record[marcFile.propertyName].id);
+                } else {
+                  testData.authorityIDs.push(record[marcFile.propertyName].id);
+                }
               });
-            })
-            .then(() => {
-              cy.logout();
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              InventoryInstances.searchByTitle(testData.instanceTitle);
-              InventoryInstances.selectInstance();
             });
+          });
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstances.searchByTitle(testData.instanceTitle);
+          InventoryInstances.selectInstance();
         });
       });
 
@@ -136,7 +130,7 @@ describe('MARC', () => {
 
       it(
         'C380433 Include/exclude Reference and Auth/Ref records in MARC authority plug-in results list while searching (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380433'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag711);

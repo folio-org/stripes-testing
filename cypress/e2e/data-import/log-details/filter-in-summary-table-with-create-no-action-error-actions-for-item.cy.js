@@ -101,7 +101,7 @@ describe('Data Import', () => {
 
     it(
       'C357017 Check the filter in summary table with "create + no action + error" actions for the Item column (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C357017'] },
       () => {
         // create field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

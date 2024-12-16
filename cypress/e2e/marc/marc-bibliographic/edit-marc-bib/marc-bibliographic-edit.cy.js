@@ -122,7 +122,7 @@ describe('MARC', () => {
 
       it(
         'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C353526'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           MarcAuthority.checkInfoButton('999');
@@ -138,8 +138,10 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
           MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
           protectedFields.forEach((field) => {

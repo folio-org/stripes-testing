@@ -85,7 +85,7 @@ describe('MARC', () => {
 
         it(
           'C422134 "$9" validation when creating a new "MARC bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422134'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
@@ -109,7 +109,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
               '',
               '$0 3052044',
               '',
@@ -190,7 +190,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeEditorPane();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
+              'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9',
             );
             InventoryViewSource.contains('\t035\t   \t$a 123123 $9 test ');
             InventoryViewSource.contains('\t300\t   \t$9 123123 ');

@@ -100,7 +100,7 @@ describe('MARC', () => {
 
         it(
           'C405544 Edit Local "MARC authority" record on Member 1 tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C405544'] },
           () => {
             MarcAuthorities.searchBeats(testData.title);
             MarcAuthorities.select(createdAuthorityID);
@@ -126,7 +126,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.updatedTag100Value);
             QuickMarcEditor.clickArrowDownButton(5);
             QuickMarcEditor.verifyTagValue(6, testData.tag035);
-            MarcAuthority.clicksaveAndCloseButton();
+            MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkDeleteModal(1);
             MarcAuthority.continueWithSaveAndCheck();
             MarcAuthority.contains(testData.updatedTag100Value);

@@ -127,7 +127,7 @@ describe('MARC', () => {
 
         it(
           'C365601 Cancel unlinking "MARC Bibliographic" field from "MARC Authority" record and use the "Cancel" button in editing window. (Spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire'] },
+          { tags: ['extendedPath', 'spitfire', 'C365601'] },
           () => {
             QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues.rowIndex);
             QuickMarcEditor.checkButtonsDisabled();

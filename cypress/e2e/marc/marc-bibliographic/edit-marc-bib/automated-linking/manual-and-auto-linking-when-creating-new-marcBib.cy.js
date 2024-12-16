@@ -130,7 +130,7 @@ describe('MARC', () => {
 
         it(
           'C422149 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeftBroken'] },
+          { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C422149'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -161,7 +161,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a C422149Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C422149Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
               '',
               '$0 3052044',
               '',
@@ -211,7 +211,7 @@ describe('MARC', () => {
               '100',
               '\\',
               '\\',
-              '$a C422149Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+              '$a C422149Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
               '',
               '$0 3052044',
               '',

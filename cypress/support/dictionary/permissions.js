@@ -1,21 +1,27 @@
 export default {
   // bulk edit
   bulkEditView: {
-    internal: 'ui-bulk-edit.app-view',
+    internal: 'ui-bulk-edit.inventory.view',
     gui: 'Bulk Edit: In app - View inventory records',
   },
   bulkEditEdit: {
-    internal: 'ui-bulk-edit.app-edit',
+    internal: 'ui-bulk-edit.inventory.edit',
     gui: 'Bulk Edit: In app - Edit inventory records',
   },
-  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: Local - View user records' },
-  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: Local - Edit user records' },
+  bulkEditCsvView: {
+    internal: 'ui-bulk-edit.users.csv.view',
+    gui: 'Bulk Edit: Local - View user records',
+  },
+  bulkEditCsvEdit: {
+    internal: 'ui-bulk-edit.users.csv.edit',
+    gui: 'Bulk Edit: Local - Edit user records',
+  },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: {
-    internal: 'ui-bulk-edit.app-edit.users',
+    internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
   },
-  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Can build query' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query.execute', gui: 'Bulk edit: Can build query' },
   bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: {
@@ -23,11 +29,11 @@ export default {
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
   },
   uieHoldingsTitlesPackagesCreateDelete: {
-    internal: 'ui-eholdings.titles-packages.create-delete',
+    internal: 'ui-eholdings.titles-packages.create-delete.manage',
     gui: 'eHoldings: Can create and delete custom packages and titles',
   },
   uieHoldingsPackageTitleSelectUnselect: {
-    internal: 'ui-eholdings.package-title.select-unselect',
+    internal: 'ui-eholdings.package-title.select-unselect.execute',
     gui: 'eHoldings: Can select/unselect packages and titles to/from your holdings',
   },
   moduleeHoldingsEnabled: {
@@ -44,7 +50,7 @@ export default {
     gui: 'Settings (Notes): Edit and View General settings',
   },
   uiNotesAssignUnassign: {
-    internal: 'ui-notes.item.assign-unassign',
+    internal: 'ui-notes.item.assign-unassign.execute',
     gui: 'Notes: Can assign and unassign a note',
   },
   // Agreements
@@ -78,7 +84,7 @@ export default {
     gui: 'quickMARC: Create a new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcEditorDuplicate: {
-    internal: 'ui-quick-marc.quick-marc-editor.duplicate',
+    internal: 'ui-quick-marc.quick-marc-editor.derive.execute',
     gui: 'quickMARC: Derive new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcBibliographicEditorAll: {
@@ -98,7 +104,7 @@ export default {
     gui: 'quickMARC: View MARC bibliographic record',
   },
   uiQuickMarcQuickMarcAuthorityLinkUnlink: {
-    internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
+    internal: 'ui-quick-marc.quick-marc-authority-records.link-unlink.execute',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
   uiQuickMarcQuickMarcAuthorityCreate: {
@@ -133,7 +139,7 @@ export default {
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['inventory.all', 'Inventory: All permissions'],
+    internal: ['ui-inventory.all', 'Inventory: All permissions'],
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
@@ -149,11 +155,11 @@ export default {
     gui: 'Inventory: Import single bibliographic records',
   },
   uiInventoryCreateOrderFromInstance: {
-    internal: 'ui-inventory.instance.createOrder',
+    internal: 'ui-inventory.instance.order.create',
     gui: 'Inventory: Create order from instance',
   },
   uiInventoryMarkItemsWithdrawn: {
-    internal: 'ui-inventory.items.mark-items-withdrawn',
+    internal: 'ui-inventory.items.mark-withdrawn.execute',
     gui: 'Inventory: Mark items withdrawn',
   },
   uiInventoryViewInstances: {
@@ -173,7 +179,7 @@ export default {
     gui: 'Inventory: Move holdings',
   },
   uiInventoryMarkAsMissing: {
-    internal: 'ui-inventory.item.markasmissing',
+    internal: 'ui-inventory.item.mark-as-missing.execute',
     gui: 'Inventory: View, create, edit, mark missing items',
   },
   uiInventoryMoveItems: { internal: 'ui-inventory.item.move', gui: 'Inventory: Move items' },
@@ -198,27 +204,27 @@ export default {
     gui: 'Inventory: View, create, edit, delete items',
   },
   uiInventoryMarcItemInProcess: {
-    internal: 'ui-inventory.items.mark-in-process-non-requestable',
+    internal: 'ui-inventory.items.mark-in-process-non-requestable.execute',
     gui: 'Inventory: Mark items in process (non-requestable)',
   },
   uiInventoryMarcItemIntellectual: {
-    internal: 'ui-inventory.items.mark-intellectual-item',
+    internal: 'ui-inventory.items.mark-intellectual-item.execute',
     gui: 'Inventory: Mark items intellectual item',
   },
   uiInventoryMarcItemLongMissing: {
-    internal: 'ui-inventory.items.mark-long-missing',
+    internal: 'ui-inventory.items.mark-long-missing.execute',
     gui: 'Inventory: Mark items long missing',
   },
   uiInventoryMarcItemRestricted: {
-    internal: 'ui-inventory.items.mark-restricted',
+    internal: 'ui-inventory.items.mark-restricted.execute',
     gui: 'Inventory: Mark items restricted',
   },
   uiInventoryMarcItemUnavailable: {
-    internal: 'ui-inventory.items.mark-unavailable',
+    internal: 'ui-inventory.items.mark-unavailable.execute',
     gui: 'Inventory: Mark items unavailable',
   },
   uiInventoryMarcItemUnknow: {
-    internal: 'ui-inventory.items.mark-unknown',
+    internal: 'ui-inventory.items.mark-unknown.execute',
     gui: 'Inventory: Mark items unknown',
   },
   uiCreateEditDeleteURL: {
@@ -226,7 +232,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete URL relationships',
   },
   uiInventorySetRecordsForDeletion: {
-    internal: 'ui-inventory.instance.set-deletion-and-staff-suppress',
+    internal: 'ui-inventory.instance.set-records-for-deletion.execute',
     gui: 'Inventory: Set records for deletion',
   },
   inventoryCRUDHoldings: {
@@ -282,7 +288,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete resource identifier types',
   },
   enableStaffSuppressFacet: {
-    internal: 'ui-inventory.instance.view-staff-suppressed-records',
+    internal: 'ui-inventory.instance.staff-suppressed-records.view',
     gui: 'Inventory: Enable staff suppress facet',
   },
   patchInstanceDateTypes: {
@@ -317,7 +323,7 @@ export default {
     gui: 'Settings (Users): Can create, edit and remove owners',
   },
   uiUsersEdituserservicepoints: {
-    internal: 'ui-users.edituserservicepoints',
+    internal: 'ui-users.user-service-points.edit',
     gui: 'Users: Can assign and unassign service points to users',
   },
   // Locations
@@ -390,7 +396,7 @@ export default {
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissionsView: {
-    internal: 'ui-users.viewperms',
+    internal: 'ui-users.perms.view',
     gui: 'Users: Can view permissions assigned to users',
   },
   uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create and edit users' },
@@ -404,28 +410,28 @@ export default {
     gui: 'Users: Create/reset password',
   },
   uiUsersCheckTransactions: {
-    internal: 'ui-users.opentransactions',
+    internal: 'ui-users.open-transactions.view',
     gui: 'Users: Can check open transactions',
   },
   uiUserAccounts: {
-    internal: 'ui-users.accounts',
+    internal: 'ui-users.accounts.all',
     gui: 'Fee/Fine History: Can create, edit and remove accounts',
   },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUserLoansAnonymize: {
-    internal: 'ui-users.loans.anonymize',
+    internal: 'ui-users.loans-anonymize.execute',
     gui: 'Users: User loans anonymize',
   },
   uiUserLostItemRequiringActualCost: {
-    internal: 'ui-users.lost-items.requiring-actual-cost',
+    internal: 'ui-users.lost-items-requiring-actual-cost.execute',
     gui: 'Users: Can process lost items requiring actual cost',
   },
   uiFeeFinesActions: {
-    internal: 'ui-users.feefineactions',
+    internal: 'ui-users.fee-fine-actions.all',
     gui: 'Fee/Fine Details: Can create, edit and remove fee/fine actions',
   },
   uiFeeFinesCanWaive: {
-    internal: 'ui-users.manual_waive',
+    internal: 'ui-users.manual-waive.execute',
     gui: 'Fees/Fines: Can waive',
   },
   uiFeeFines: {
@@ -433,15 +439,15 @@ export default {
     gui: 'Users: Can create, edit and remove fees/fines',
   },
   uiUsersLoansClaimReturned: {
-    internal: 'ui-users.loans.claim-item-returned',
+    internal: 'ui-users.loans-claim-item-returned.execute',
     gui: 'Users: User loans claim returned',
   },
   uiUsersLoansClaimReturnedMissing: {
-    internal: 'ui-users.loans.declare-claimed-returned-item-as-missing',
+    internal: 'ui-users.loans-declare-claimed-returned-item-as-missing.execute',
     gui: 'Users: User loans mark claimed returned missing',
   },
   uiUsersDeclareItemLost: {
-    internal: 'ui-users.loans.declare-item-lost',
+    internal: 'ui-users.loans-declare-item-lost.execute',
     gui: 'Users: User loans declare lost',
   },
   usersLoansRenewThroughOverride: {
@@ -449,17 +455,20 @@ export default {
     gui: 'Users: User loans renew through override',
   },
   uiUserCanAssignUnassignPermissions: {
-    internal: 'ui-users.editperms',
+    internal: 'ui-users.perms.edit',
     gui: 'Users: Can assign and unassign permissions to users',
   },
   uiUsersfeefinesView: {
     internal: 'ui-users.feesfines.view',
     gui: 'Users: Can view fees/fines and loans',
   },
-  uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
-  uiUsersManualPay: { internal: 'ui-users.manual_pay', gui: 'Fees/Fines: Can pay' },
+  uiUsersManualCharge: {
+    internal: 'ui-users.manual-charge.execute',
+    gui: 'Fees/Fines: Can charge',
+  },
+  uiUsersManualPay: { internal: 'ui-users.manual-pay.execute', gui: 'Fees/Fines: Can pay' },
   uiUsersViewServicePoints: {
-    internal: 'ui-users.viewuserservicepoints',
+    internal: 'ui-users.user-service-points.view',
     gui: 'Users: Can view service points assigned to users',
   },
   uiUsersfeefinesCRUD: {
@@ -467,7 +476,7 @@ export default {
     gui: 'Users: Can create, edit and remove fees/fines',
   },
   uiUsersPatronBlocks: {
-    internal: 'ui-users.patron_blocks',
+    internal: 'ui-users.patron-blocks.all',
     gui: 'Users: Can create, edit and remove patron blocks',
   },
   uiUsersCreatePatronTamplate: {
@@ -507,11 +516,11 @@ export default {
     gui: 'Settings (Users): View all settings',
   },
   uiUserLoansChangeDueDate: {
-    internal: 'ui-users.loans.change-due-date',
+    internal: 'ui-users.loans-due-date.edit',
     gui: 'Users: User loans change due date',
   },
   uiUserFinancialTransactionReport: {
-    internal: 'ui-users.financialTransactionReport',
+    internal: 'ui-users.financial-transaction-report.execute',
     gui: 'Users: Create and download Financial transaction detail report',
   },
   uiUserViewEditDeliteProfilePictores: {
@@ -597,13 +606,13 @@ export default {
     gui: 'Users: User loans view, change due date, renew',
   },
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
-  loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
+  loansRenew: { internal: 'ui-users.loans-renew.create', gui: 'Users: User loans renew' },
   loansRenewOverride: {
-    internal: 'ui-users.loans.renew-override',
+    internal: 'ui-users.loans-renew-override.create',
     gui: 'Users: User loans renew through override',
   },
   overridePatronBlock: {
-    internal: 'ui-users.overridePatronBlock',
+    internal: 'ui-users.override-patron-block.execute',
     gui: 'User: Can override patron blocks',
   },
   // Checkout
@@ -941,11 +950,11 @@ export default {
     gui: 'Settings (Inventory): Edit fast add settings',
   },
   uiCreateEditDeleteLoanTypes: {
-    internal: 'ui-inventory.settings.loantypes',
+    internal: 'ui-inventory.settings.loan-types',
     gui: 'Settings (Inventory): Create, edit, delete loan types',
   },
   uiCreateEditDeleteMaterialTypes: {
-    internal: 'ui-inventory.settings.materialtypes',
+    internal: 'ui-inventory.settings.material-types',
     gui: 'Settings (Inventory): Create, edit, delete material types',
   },
   uiInventorySettingsConfigureSingleRecordImport: {
@@ -1065,6 +1074,10 @@ export default {
   uiCanViewReadingRoomAccess: {
     internal: 'ui-users.view-reading-room-access',
     gui: 'Users: Can view reading room access',
+  },
+  uiCanViewEditReadingRoomAccess: {
+    internal: 'ui-users.edit-reading-room-access',
+    gui: 'Users: Can view, and edit reading room access',
   },
   uiReadingRoomAll: {
     internal: 'ui-reading-room.all',

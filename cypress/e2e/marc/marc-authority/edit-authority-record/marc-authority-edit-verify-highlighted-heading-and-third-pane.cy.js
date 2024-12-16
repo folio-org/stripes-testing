@@ -126,7 +126,7 @@ describe('MARC', () => {
 
       it(
         'C350909 Results List: Display updated and highlighted Heading/reference value at search result list after editing 1XX, 4XX, 5XX fields (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350909'] },
         () => {
           MarcAuthorities.switchToSearch();
           MarcAuthorities.searchByParameter(
@@ -145,7 +145,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(rowIndex, `$a ${content}${postfixC350909}`);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
-            MarcAuthority.clicksaveAndCloseButton();
+            MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkAfterSaveAndCloseAuthority();
             MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350909}`);
           });
@@ -154,7 +154,7 @@ describe('MARC', () => {
 
       it(
         'C350911 Results List: Display updated and highlighted Heading/reference value at browse result list after editing 1XX, 4XX, 5XX fields (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350911'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchByParameter(
@@ -171,7 +171,7 @@ describe('MARC', () => {
               );
               QuickMarcEditor.pressSaveAndClose();
               cy.wait(1500);
-              MarcAuthority.clicksaveAndCloseButton();
+              MarcAuthority.clickSaveAndCloseButton();
               QuickMarcEditor.checkAfterSaveAndCloseAuthority();
               MarcAuthorities.checkRowUpdatedAndHighlighted(`${content}${postfixC350911}`);
             }
@@ -181,7 +181,7 @@ describe('MARC', () => {
 
       it(
         'C350946 Verify that third pane still opened after editing first search result (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C350946'] },
         () => {
           MarcAuthorities.switchToSearch();
           MarcAuthorities.searchByParameter(
@@ -198,7 +198,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains(`${testData.editedFields[0].content}${postfixC350946}`);
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchByParameter(
@@ -213,7 +213,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           MarcAuthority.contains(testData.editedGeographicNameField.content);
         },
       );

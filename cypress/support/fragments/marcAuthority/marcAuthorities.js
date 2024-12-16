@@ -385,6 +385,7 @@ export default {
 
   searchBy: (parameter, value, isLongValue = false) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
+    cy.wait(1000);
     cy.do(filtersSection.find(searchInput).fillIn(value));
     if (isLongValue) {
       // need to wait until value will be applied in case when value is long
@@ -491,6 +492,14 @@ export default {
       MultiColumnListCell({ columnIndex: 1, content: typeB }).exists(),
       MultiColumnListCell({ columnIndex: 1, content: typeC }).exists(),
     ]);
+  },
+
+  verifyEmptySearchResults(value) {
+    cy.expect(
+      searchResults
+        .find(HTML(`No results found for "${value}". Please check your spelling and filters.`))
+        .exists(),
+    );
   },
 
   clickNextPagination() {

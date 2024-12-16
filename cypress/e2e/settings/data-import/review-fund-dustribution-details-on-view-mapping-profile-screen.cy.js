@@ -58,7 +58,7 @@ describe('Data Import', () => {
 
     it(
       'C380563 Order field mapping: verify the fund % and currency details on the view screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380563'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);

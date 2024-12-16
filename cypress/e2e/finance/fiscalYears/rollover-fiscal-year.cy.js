@@ -267,7 +267,9 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       'Encumbrance',
       `${firstFund.name} (${firstFund.code})`,
     );
-    cy.visit(TopMenu.fundPath);
+    Funds.closeTransactionDetails();
+    Funds.closeMenu();
+    Funds.closeMenu();
     FinanceHelp.searchByName(secondFund.name);
     Funds.selectFund(secondFund.name);
     Funds.selectPlannedBudgetDetails();

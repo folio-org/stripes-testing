@@ -146,7 +146,7 @@ describe('Data Import', () => {
 
     it(
       'C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C380474'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(
@@ -197,6 +197,7 @@ describe('Data Import', () => {
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          cy.wait(1500);
         });
 
         // create job profile

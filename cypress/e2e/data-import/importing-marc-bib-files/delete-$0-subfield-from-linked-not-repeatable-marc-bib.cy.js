@@ -204,8 +204,10 @@ describe('Data Import', () => {
                   mappingProfile.id = mappingProfileResponse.body.id;
                 });
                 // create Field mapping profile
-                TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
-                SettingsDataImport.goToSettingsDataImport();
+                TopMenuNavigation.openAppFromDropdown(
+                  APPLICATION_NAMES.SETTINGS,
+                  APPLICATION_NAMES.DATA_IMPORT,
+                );
                 SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
                 FieldMappingProfiles.selectMappingProfileFromList(mappingProfile.name);
                 FieldMappingProfileView.edit();
@@ -259,7 +261,7 @@ describe('Data Import', () => {
 
     it(
       'C377001 Delete "$0" subfield from linked not repeatable "MARC Bib" field which is controlled by "MARC Authority" record (when field mapping profile only allows for "$a" update) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C377001'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

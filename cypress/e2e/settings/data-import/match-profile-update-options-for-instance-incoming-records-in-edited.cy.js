@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
@@ -7,8 +8,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -38,10 +38,7 @@ describe('Data Import', () => {
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -54,10 +51,10 @@ describe('Data Import', () => {
 
     it(
       'C411691 Match profile: update options for Instance "Incoming records" in Edited Match Profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C411691'] },
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
 
         // Click a match profile from the list

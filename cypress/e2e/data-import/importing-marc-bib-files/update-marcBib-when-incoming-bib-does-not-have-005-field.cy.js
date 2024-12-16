@@ -112,7 +112,7 @@ describe('Data Import', () => {
 
     it(
       'C415266 Update MARC Bib via Data Import/incoming bib does not have an 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C415266'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.filePathForCreate, testData.fileNameForCreate);
@@ -133,8 +133,10 @@ describe('Data Import', () => {
           testData.instanceHrid = initialInstanceHrId;
 
           // create Field mapping profile
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
           FieldMappingProfileView.closeViewMode(mappingProfile.name);

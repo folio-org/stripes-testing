@@ -63,12 +63,14 @@ describe('MARC', () => {
               users.userProperties = userProperties;
 
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-              cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
               ]);
+
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
@@ -110,7 +112,7 @@ describe('MARC', () => {
 
         it(
           'C405513 Adding/deleting fields and subfields when editing shared "MARC Bib" in member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire'] },
+          { tags: ['criticalPathECS', 'spitfire', 'C405513'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

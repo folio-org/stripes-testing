@@ -36,7 +36,7 @@ describe('Inventory', () => {
 
     it(
       'C409471 (CONSORTIA) Verify the "New order" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409471'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();

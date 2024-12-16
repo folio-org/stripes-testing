@@ -115,7 +115,7 @@ describe('Data Import', () => {
 
     it(
       'C380510 Verify the JSON tab error for the duplicated records for MARC Authorities (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380510'] },
       () => {
         // change 10$a in files to random value
         DataImport.editMarcFile(
@@ -148,8 +148,7 @@ describe('Data Import', () => {
         }
 
         // create field mapping profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryForMarcAuthInMappingProfile(mappingProfile);

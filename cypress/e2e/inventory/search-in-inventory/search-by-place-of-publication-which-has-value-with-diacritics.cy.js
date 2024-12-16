@@ -62,7 +62,7 @@ describe('Inventory', () => {
 
     it(
       'C496181 Search for Instance by "Place of publication" field which has value with diacritics (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C496181'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

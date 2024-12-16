@@ -85,8 +85,10 @@ describe('Data Import', () => {
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
       // create Action profile and link it to Field mapping profile
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
-      SettingsDataImport.goToSettingsDataImport();
+      TopMenuNavigation.openAppFromDropdown(
+        APPLICATION_NAMES.SETTINGS,
+        APPLICATION_NAMES.DATA_IMPORT,
+      );
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
       ActionProfiles.create(actionProfile, mappingProfile.name);
 
@@ -130,7 +132,7 @@ describe('Data Import', () => {
 
     it(
       'C422067 Import "MARC authority" record without "010" field using job profile with MATCH by "010" field for update and with create action (spitfire)',
-      { tags: ['smoke', 'spitfire'] },
+      { tags: ['smoke', 'spitfire', 'C422067'] },
       () => {
         DataImport.uploadFile(marcFiles.marc, marcFiles.fileName);
         JobProfiles.waitFileIsUploaded();

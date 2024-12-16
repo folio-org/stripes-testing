@@ -33,14 +33,14 @@ describe('Notes', () => {
 
   it(
     'C380447 Settings | View a note type (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire', 'C380447'] },
     () => {
       // * "New" button is disabled
       // * "Edit" (pencil) icon doesn't display under "Actions" column
       // * "Delete" (trash can) icon doesn't display under "Actions" column
       NoteTypes.checkNoteTypeButtonsStates({
         name: testData.noteType.name,
-        addNewButton: { disabled: true },
+        addNewButton: { present: false },
         editButton: { present: false },
         deleteButton: { present: false },
       });

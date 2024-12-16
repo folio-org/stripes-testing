@@ -38,7 +38,7 @@ describe('Data Import', () => {
 
     it(
       'C350645 Suppress the data import profiles, being used for deleting MARC Authority record, from the Data Import settings UI (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C350645'] },
       () => {
         profiles.forEach((profile) => {
           DataImport.verifyDataImportProfiles(profile);

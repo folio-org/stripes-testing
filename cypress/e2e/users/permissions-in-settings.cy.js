@@ -47,7 +47,7 @@ describe('Users', () => {
 
   it(
     'C407705 "Settings (Users): Can view transfer criteria" and  "Settings (Users): Can create, edit and remove transfer criteria" permissions are not present in Settings (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C407705'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.openEdit();
@@ -63,7 +63,7 @@ describe('Users', () => {
 
   it(
     'C422020 Verify that following permissions are invisible (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C422020'] },
     () => {
       const permissionsToCheck = [
         'Settings (Users): Can view owners',
@@ -97,7 +97,7 @@ describe('Users', () => {
 
   it(
     'C402341 Verify that display name for "Settings (Users): Can create, edit and remove manual charges" permission is correct (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C402341'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.addPermissions(['Settings (Users): Can create, edit and remove manual charges']);

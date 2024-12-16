@@ -43,6 +43,8 @@ const ermUsagePath = '/eusage';
 const licensesPath = '/licenses';
 const localKbAdmin = '/local-kb-admin';
 const readingRoom = '/reading-room';
+const serials = '/serials-management/serials';
+const linkedDataEditor = '/linked-data-editor/search';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -90,6 +92,8 @@ export default {
   licensesPath,
   localKbAdmin,
   readingRoom,
+  serials,
+  linkedDataEditor,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

@@ -112,7 +112,7 @@ describe('Data Import', () => {
 
     it(
       'C380506 Order field mapping profile: "Create Inventory" physical resource fields are inactivated when Electronic order format is selected on Create screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380506'] },
       () => {
         // #1 Select "Field mapping profiles" -> Click "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -182,7 +182,7 @@ describe('Data Import', () => {
 
     it(
       'C380508 Order field mapping profile: "Create Inventory" physical resource fields are inactivated when Electronic order format is selected on Edit screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380508'] },
       () => {
         // #1 Select "Field mapping profiles" -> Click "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();

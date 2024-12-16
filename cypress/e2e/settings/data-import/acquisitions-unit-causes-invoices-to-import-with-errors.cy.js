@@ -101,7 +101,7 @@ describe('Data Import', () => {
 
     it(
       'C345356 Acquisitions unit causes Invoices to Import with errors (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C345356'] },
       () => {
         AcquisitionUnits.newAcquisitionUnit();
         AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
@@ -110,8 +110,7 @@ describe('Data Import', () => {
         AcquisitionUnits.assignUser(user.username);
 
         // create Field mapping profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);

@@ -1,4 +1,4 @@
-import { RECORD_STATUSES } from '../../../../support/constants';
+import { APPLICATION_NAMES, RECORD_STATUSES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
@@ -8,7 +8,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
@@ -50,7 +50,7 @@ describe('Inventory', () => {
           cy.login(testData.user.username, testData.user.password);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         });
     });
 
@@ -71,19 +71,29 @@ describe('Inventory', () => {
 
     it(
       'C418586 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when updating Local Source = MARC Instance (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C418586'] },
       () => {
+        InventoryInstances.waitContentLoading();
+        cy.wait(2000);
+        cy.reload();
+        cy.wait(4000);
         InventoryInstances.importWithOclc(testData.oclcNumberForImport);
         InventoryInstance.verifyInstanceTitle(testData.localInstanceTitle);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.overlayWithOclc(testData.oclcNumberForOverlay);
+        InventoryInstance.waitLoading();
 
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         Logs.openViewAllLogs();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${testData.user.firstName} ${testData.user.lastName}`);
+        LogsViewAll.waitUIToBeFiltered();
         LogsViewAll.filterJobsByJobProfile(testData.jobProfileName);
+        LogsViewAll.waitUIToBeFiltered();
+        LogsViewAll.viewAllIsOpened();
+        // cy.wait(8000);
         LogsViewAll.openFileDetails(testData.fileName);
+        // cy.wait(4000);
         FileDetails.verifyTitle(testData.instanceTitle, FileDetails.columnNameInResultList.title);
         [
           FileDetails.columnNameInResultList.srsMarc,

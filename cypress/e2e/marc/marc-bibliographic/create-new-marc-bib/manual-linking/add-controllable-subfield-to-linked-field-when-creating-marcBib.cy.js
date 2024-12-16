@@ -41,7 +41,7 @@ describe('MARC', () => {
             rowIndex: 5,
             tag: '100',
             content: '$a test123',
-            boxFourth: '$a C380745 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            boxFourth: '$a C380745 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             boxFifth: '',
             boxSixth: '$0 3052044',
             boxSeventh: '',
@@ -118,7 +118,7 @@ describe('MARC', () => {
 
         it(
           'C422132 Add controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422132'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

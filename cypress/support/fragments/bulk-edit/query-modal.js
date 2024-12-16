@@ -25,42 +25,45 @@ const selectFieldButton = Button(including('Select field'));
 const booleanValues = ['AND'];
 
 export const holdingsFieldValues = {
-  instanceUuid: 'Holdings — Holding — Instance UUID',
+  instanceUuid: 'Holdings — Instance UUID',
 };
 export const instanceFieldValues = {
-  instanceHrid: 'Instances — Instance — Instance HRID',
-  instanceResourceTitle: 'Instances — Instance — Resource title',
+  instanceHrid: 'Instance — Instance HRID',
+  instanceResourceTitle: 'Instance — Resource title',
+  staffSuppress: 'Instance — Staff suppress',
 };
 export const itemFieldValues = {
-  instanceId: 'Items — Instances — Instance UUID',
-  itemStatus: 'Items — Items — Status',
-  itemUuid: 'Items — Items — Item UUID',
-  holdingsId: 'Items — Holdings — UUID',
-  temporaryLocation: 'Items — Temporary location — Name',
+  instanceId: 'Instances — Instance UUID',
+  instanceTitle: 'Instances — Resource title',
+  itemStatus: 'Items — Status',
+  itemUuid: 'Items — Item UUID',
+  holdingsId: 'Holdings — UUID',
+  temporaryLocation: 'Temporary location — Name',
+  itemDiscoverySuppress: 'Items — Suppress from discovery',
 };
 export const usersFieldValues = {
-  expirationDate: 'Users — User — Expiration date',
-  firstName: 'Users — User — First name',
-  lastName: 'Users — User — Last name',
-  patronGroup: 'Users — Group — Name',
-  preferredContactType: 'Users — User — Preferred contact type',
-  userActive: 'Users — User — Active',
-  userBarcode: 'Users — User — Barcode',
+  expirationDate: 'User — Expiration date',
+  firstName: 'User — First name',
+  lastName: 'User — Last name',
+  patronGroup: 'Patron group — Name',
+  preferredContactType: 'User — Preferred contact type',
+  userActive: 'User — Active',
+  userBarcode: 'User — Barcode',
+  userId: 'User — User UUID',
 };
 export const dateTimeOperators = [
   'Select operator',
   'equals',
   'not equal to',
-  '>',
-  '<',
-  '>=',
-  '<=',
+  'greater than',
+  'less than',
+  'greater than or equal to',
+  'less than or equal to',
   'is null/empty',
 ];
 export const stringStoresUuidButMillionOperators = [
   'Select operator',
   'equals',
-  'not equal to',
   'in',
   'not in',
   'is null/empty',
@@ -341,5 +344,25 @@ export default {
 
   buildQueryButtonDisabled(disabled = true) {
     cy.do(buildQueryButton.has({ disabled }));
+  },
+
+  waitForQueryCompleted(allias, maxRetries = 60) {
+    let retries = 0;
+
+    function checkResponse() {
+      return cy.wait(allias, { timeout: 20000 }).then((interception) => {
+        if (interception.response.body.totalRecords === 0) {
+          retries++;
+          if (retries > maxRetries) {
+            throw new Error(
+              'Exceeded maximum retry attempts waiting for totalRecords to not equal 0',
+            );
+          }
+          cy.wait(1000);
+          checkResponse();
+        }
+      });
+    }
+    checkResponse();
   },
 };

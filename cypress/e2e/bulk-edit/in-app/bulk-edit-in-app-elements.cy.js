@@ -2,6 +2,7 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane, {
   itemIdentifiers,
+  ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
@@ -31,6 +32,7 @@ describe('bulk-edit', () => {
         cy.wait(3000);
 
         cy.login(user.username, user.password);
+        cy.wait(10000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.waitLoading();
 
@@ -48,7 +50,7 @@ describe('bulk-edit', () => {
     beforeEach('select item tab', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
       BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+      BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
     });
 
     after('delete test data', () => {
@@ -79,7 +81,10 @@ describe('bulk-edit', () => {
       'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C350941'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
+          'Items',
+          ITEM_IDENTIFIERS.ITEM_BARCODES,
+        );
         BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
         BulkEditSearchPane.waitFileUploading();
 
@@ -116,24 +121,24 @@ describe('bulk-edit', () => {
 
         [
           {
-            identifier: 'Item barcode',
-            label: 'Select a file with item barcode',
+            identifier: 'Item barcodes',
+            label: 'Select a file with item barcodes.',
           },
           {
             identifier: 'Item UUIDs',
-            label: 'Select a file with item UUIDs',
+            label: 'Select a file with item UUIDs.',
           },
           {
-            identifier: 'Item former identifier',
-            label: 'Select a file with item former identifier',
+            identifier: 'Item former identifiers',
+            label: 'Select a file with item former identifiers.',
           },
           {
-            identifier: 'Item accession number',
-            label: 'Select a file with item accession number',
+            identifier: 'Item accession numbers',
+            label: 'Select a file with item accession numbers.',
           },
           {
             identifier: 'Holdings UUIDs',
-            label: 'Select a file with holdings UUIDs',
+            label: 'Select a file with holdings UUIDs.',
           },
         ].forEach((checker) => {
           BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
@@ -150,7 +155,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDefaultFilterState();
 
         BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

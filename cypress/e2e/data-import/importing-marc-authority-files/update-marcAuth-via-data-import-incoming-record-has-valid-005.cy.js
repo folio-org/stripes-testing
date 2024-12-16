@@ -119,7 +119,7 @@ describe('Data Import', () => {
 
     it(
       'C415367 Update MARC Authority via Data Import/incoming record has valid 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C415367'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.editedFileNameForCreate, testData.fileNameForCreate);
@@ -156,8 +156,7 @@ describe('Data Import', () => {
         // create Field mapping profile
         NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
         // create Action profile and link it to Field mapping profile
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.create(actionProfile, mappingProfile.name);
 

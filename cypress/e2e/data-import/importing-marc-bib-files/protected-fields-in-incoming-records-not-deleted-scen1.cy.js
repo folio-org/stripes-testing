@@ -17,8 +17,6 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/i
 import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -65,10 +63,7 @@ describe('Data Import', () => {
           },
         );
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -86,9 +81,9 @@ describe('Data Import', () => {
 
     it(
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C358968'] },
       () => {
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.create(protectedFieldData);

@@ -154,7 +154,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C378881: Update exchange rates on invoice lines with multiple funds (thunderjet) (TaaS)',
+    'C378881 Update exchange rates on invoice lines with multiple funds (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);

@@ -104,7 +104,7 @@ describe('Data Import', () => {
 
     it(
       'C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356841'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -163,8 +163,7 @@ describe('Data Import', () => {
         });
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.verifyActionMenuAbsent();
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.verifyActionMenuAbsent();

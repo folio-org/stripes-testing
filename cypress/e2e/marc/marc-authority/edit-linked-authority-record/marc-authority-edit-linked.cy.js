@@ -104,7 +104,7 @@ describe('MARC', () => {
 
       it(
         'C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C376596'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
@@ -143,8 +143,7 @@ describe('MARC', () => {
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
           InventoryInstance.editMarcBibliographicRecord();
-          QuickMarcEditor.verifyTagFieldAfterLinking(
-            59,
+          QuickMarcEditor.verifyTagFieldAfterLinkingByTag(
             testData.tag700,
             '0',
             '\\',

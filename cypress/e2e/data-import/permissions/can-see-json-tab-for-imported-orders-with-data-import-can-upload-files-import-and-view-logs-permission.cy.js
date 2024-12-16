@@ -141,7 +141,7 @@ describe('Data Import', () => {
 
     it(
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377023'] },
       () => {
         const message = `Import Log for Record 01 (${title})`;
 
@@ -151,7 +151,6 @@ describe('Data Import', () => {
         JsonScreenView.openOrderTab();
         JsonScreenView.verifyContentInTab(message);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();

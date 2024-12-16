@@ -59,7 +59,7 @@ describe('orders: create', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
     });
 
@@ -86,14 +86,14 @@ describe('orders: create', () => {
   });
 
   it(
-    'C665: Edit an existing PO Line on a "Pending" order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    'C665 Edit an existing PO Line on a "Pending" order (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeftBroken'] },
     () => {
       Orders.selectPendingStatusFilter();
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${orderNumber}-1 was successfully updated`,

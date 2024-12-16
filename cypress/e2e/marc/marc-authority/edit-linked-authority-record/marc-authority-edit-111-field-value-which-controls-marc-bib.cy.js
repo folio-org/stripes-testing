@@ -133,7 +133,7 @@ describe('MARC', () => {
 
       it(
         'C374141 Edit tag value ("111") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374141'] },
         () => {
           MarcAuthorities.selectTitle(testData.marcValue);
           MarcAuthority.waitLoading();

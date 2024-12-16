@@ -37,7 +37,7 @@ describe('Data Import', () => {
 
     it(
       'C378883 Verify the ability to import additional files without hanging after stopping a running job and deleting it (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C378883'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.waitLoading();
@@ -47,7 +47,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(bigFileName);
         // TODO wait until at least 1% of the file will be processed
-        cy.wait(25000);
+        cy.wait(45000);
         DataImport.deleteImportJob(bigFileName);
         DataImport.verifyCancelImportJobModal();
         DataImport.confirmDeleteImportJob();
@@ -64,6 +64,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
+        cy.wait(120000);
         Logs.waitFileIsImported(smallFileName);
         Logs.checkJobStatus(smallFileName, JOB_STATUS_NAMES.COMPLETED);
       },

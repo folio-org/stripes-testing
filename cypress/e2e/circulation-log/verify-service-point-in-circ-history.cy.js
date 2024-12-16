@@ -79,7 +79,7 @@ describe('Circulation log', () => {
 
   it(
     'C360106 Verify the Service point in the Item Circulation history (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'C360106'] },
     () => {
       // Go to the "Inventory" => Select "Item" toggle
       InventorySearchAndFilter.switchToItem();

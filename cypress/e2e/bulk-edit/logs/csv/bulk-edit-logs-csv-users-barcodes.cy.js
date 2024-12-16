@@ -107,41 +107,60 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+
+          BulkEditFiles.verifyValueInRowByUUID(
             `*${matchedRecordsFileName}`,
-            [user.barcode, userWithoutPermissions.barcode],
-            'userBarcode',
-            true,
+            'Barcode',
+            user.barcode,
+            'Barcode',
+            user.barcode,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            `*${matchedRecordsFileName}`,
+            'Barcode',
+            userWithoutPermissions.barcode,
+            'Barcode',
+            userWithoutPermissions.barcode,
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
+          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
-            [invalidUserBarcode],
+            [`\uFEFF${invalidUserBarcode}`],
             'firstElement',
             false,
           );
 
           BulkEditLogs.downloadFileWithProposedChanges();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             previewOfProposedChangesFileName.first,
-            [newFirstName, userWithoutPermissions.firstName],
-            'firstName',
-            true,
+            'Barcode',
+            user.barcode,
+            'First name',
+            newFirstName,
           );
-
+          BulkEditFiles.verifyValueInRowByUUID(
+            previewOfProposedChangesFileName.first,
+            'Barcode',
+            userWithoutPermissions.barcode,
+            'First name',
+            userWithoutPermissions.firstName,
+          );
           BulkEditLogs.downloadFileWithUpdatedRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             updatedRecordsFileName,
-            [newFirstName, userWithoutPermissions.firstName],
-            'firstName',
-            true,
+            'Barcode',
+            user.barcode,
+            'First name',
+            newFirstName,
           );
 
           BulkEditLogs.downloadFileWithCommitErrors();
+          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromCommittingFileName,
-            [userWithoutPermissions.barcode],
+            [`\uFEFF${userWithoutPermissions.barcode}`],
             'firstElement',
             false,
           );

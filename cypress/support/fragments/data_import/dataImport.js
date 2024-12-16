@@ -49,7 +49,7 @@ const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 const uploadFile = (filePathName, fileName) => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
-  cy.wait(10000);
+  cy.wait(15000);
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {
@@ -236,11 +236,19 @@ function getCreatedRecordInfo(jobExecutionId) {
 }
 
 function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
-  return cy.okapiRequest({
-    path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
-    searchParams: { limit: 100 },
-    isDefaultSearchParamsRequired: false,
-  });
+  return recurse(
+    () => cy.okapiRequest({
+      path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
+      searchParams: { limit: 100 },
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
+    (response) => response.status === 200,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  );
 }
 
 function getJobStatus(jobExecutionId) {
@@ -328,18 +336,35 @@ function getParentJobExecutionId(sourcePath) {
 }
 
 function getChildJobExecutionId(jobExecutionId) {
-  return cy.okapiRequest({
-    path: `change-manager/jobExecutions/${jobExecutionId}/children`,
-    isDefaultSearchParamsRequired: false,
+  return recurse(
+    () => cy.okapiRequest({
+      path: `change-manager/jobExecutions/${jobExecutionId}/children`,
+      isDefaultSearchParamsRequired: false,
+    }),
+    (response) => response.body.jobExecutions.length > 0,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  ).then((response) => {
+    return response.body.jobExecutions[0].id;
   });
 }
 
 function getRecordSourceId(jobExecutionId) {
-  return cy.okapiRequest({
-    path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
-    isDefaultSearchParamsRequired: false,
-    searchParams: { limit: 100, query: 'order=asc' },
-  });
+  return recurse(
+    () => cy.okapiRequest({
+      path: `metadata-provider/jobLogEntries/${jobExecutionId}`,
+      isDefaultSearchParamsRequired: false,
+      searchParams: { limit: 100, query: 'order=asc' },
+      failOnStatusCode: false,
+    }),
+    (response) => response.body?.entries?.length > 0,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  );
 }
 
 function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) {
@@ -460,15 +485,11 @@ function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
                     delay: 5000,
                   },
                 );
-                getChildJobExecutionId(parentJobExecutionId).then((resp2) => {
-                  const childJobExecutionId = resp2.body.jobExecutions[0].id;
-
+                getChildJobExecutionId(parentJobExecutionId).then((childJobExecutionId) => {
                   return getRecordSourceId(childJobExecutionId).then((resp3) => {
                     const sourceRecords = resp3.body.entries;
                     const infos = [];
 
-                    cy.wait(2000);
-                    // Use Promise.all to wait for all asynchronous operations to complete
                     return Promise.all(
                       sourceRecords.map((record) => {
                         return getCreatedRecordInfoWithSplitFiles(

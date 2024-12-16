@@ -4,7 +4,10 @@ import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import QueryModal, { QUERY_OPERATIONS } from '../../../support/fragments/bulk-edit/query-modal';
+import QueryModal, {
+  QUERY_OPERATIONS,
+  usersFieldValues,
+} from '../../../support/fragments/bulk-edit/query-modal';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -38,11 +41,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.clickBuildQueryButton();
         QueryModal.verify();
-
-        const fieldToBuildQuery = 'Users — User — User UUID';
-
-        QueryModal.selectField(fieldToBuildQuery);
-        QueryModal.verifySelectedField(fieldToBuildQuery);
+        QueryModal.selectField(usersFieldValues.userId);
+        QueryModal.verifySelectedField(usersFieldValues.userId);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.fillInValueTextfield(user.userId);
         cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');

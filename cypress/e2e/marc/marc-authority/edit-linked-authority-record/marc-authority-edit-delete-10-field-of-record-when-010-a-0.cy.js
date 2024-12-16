@@ -5,7 +5,6 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import AreYouSureModal from '../../../../support/fragments/orders/modals/areYouSureModal';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -114,6 +113,9 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked700Field);
           QuickMarcEditor.closeCallout();
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
         });
 
         cy.createTempUser([
@@ -145,7 +147,7 @@ describe('MARC', () => {
 
       it(
         'C374161 Delete "010" field of linked "MARC Authority" record when "010 $a" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C374161'] },
         () => {
           MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
 
@@ -165,13 +167,11 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessageError);
           QuickMarcEditor.closeCallout();
 
           QuickMarcEditor.pressCancel();
-          AreYouSureModal.clickCloseWithoutSavingButton();
           MarcAuthorities.verifyMarcViewPaneIsOpened();
           cy.get('@viewAuthorityPaneContent').then((viewAuthorityPaneContent) => {
             MarcAuthorities.verifyViewPaneContent(viewAuthorityPaneContent);

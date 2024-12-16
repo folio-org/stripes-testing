@@ -7,7 +7,7 @@ describe('lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Loans',
       status: 'Active',
       visibility: 'Shared',
@@ -52,7 +52,7 @@ describe('lists', () => {
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411772'] },
+      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C411772'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

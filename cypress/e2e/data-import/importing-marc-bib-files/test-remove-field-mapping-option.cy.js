@@ -211,7 +211,7 @@ describe('Data Import', () => {
 
     it(
       'C17033 Test ###REMOVE### field mapping option (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C17033'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -376,8 +376,10 @@ describe('Data Import', () => {
             );
 
             // create match profiles
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-            SettingsDataImport.goToSettingsDataImport();
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.DATA_IMPORT,
+            );
             SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
             collectionOfMatchProfiles.forEach((profile) => {
               MatchProfiles.createMatchProfile(profile.matchProfile);

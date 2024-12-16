@@ -55,7 +55,7 @@ describe('MARC', () => {
 
       it(
         'C380646 Derive "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C380646'] },
         () => {
           cy.visit(TopMenu.inventoryPath);
           InventoryInstances.searchByTitle(testData.marcBibTitle);

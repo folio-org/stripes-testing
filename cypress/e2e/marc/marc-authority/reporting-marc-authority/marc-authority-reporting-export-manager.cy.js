@@ -59,6 +59,10 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user and uploading files', () => {
+        cy.getAdminToken();
+        // make sure there are no duplicate authority records in the system
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C357996');
+
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -138,7 +142,7 @@ describe('MARC', () => {
 
       it(
         'C375996 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C375996'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

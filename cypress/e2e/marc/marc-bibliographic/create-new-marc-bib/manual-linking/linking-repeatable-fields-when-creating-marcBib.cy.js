@@ -128,7 +128,7 @@ describe('MARC', () => {
 
         it(
           'C422131 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422131'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

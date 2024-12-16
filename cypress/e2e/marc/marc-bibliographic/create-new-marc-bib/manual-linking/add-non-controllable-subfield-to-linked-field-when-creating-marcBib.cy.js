@@ -60,7 +60,7 @@ describe('MARC', () => {
             boxFourth:
               '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFourthUpdate:
-              '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english $v no. 19. $z England',
+              '$a C380747 Edinburgh tracts in mathematics and mathematical physics $l english',
             boxFifth: '',
             boxFifthUpdate: '',
             boxFifthAfterSave: '',
@@ -131,7 +131,7 @@ describe('MARC', () => {
 
         it(
           'C422133 Add non-controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C422133'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

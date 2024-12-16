@@ -1,5 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES,
+  APPLICATION_NAMES,
   FOLIO_RECORD_TYPE,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
@@ -15,6 +16,7 @@ import SettingsDataImport, {
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../../support/utils/stringTools';
 
@@ -74,14 +76,14 @@ describe('Data Import', () => {
 
     it(
       'C375211 Order field mapping profile: Verify Receiving Workflow value is not deleted when default order line limit setting is changed (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C375211'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
         // #2 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -108,7 +110,7 @@ describe('Data Import', () => {
         SettingsOrders.verifyPurchaseOrderLinesLimitValue(newPurchaseOrderLinesLimit);
 
         // #7 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Find and select the field mapping profile from step 3
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.verifyDefaultPurchaseOrderLinesLimit(

@@ -2,8 +2,13 @@ import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import { JOB_STATUS_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  JOB_STATUS_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../../../support/constants';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -65,7 +70,7 @@ describe('Data Import', () => {
 
     it(
       'C405519 Imported "MARC authority" record from Member tenant is not discoverable in Central tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire'] },
+      { tags: ['criticalPathECS', 'spitfire', 'C405519'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
@@ -78,7 +83,7 @@ describe('Data Import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityID = link.split('/')[5];
         });
-        cy.visit(TopMenu.marcAuthorities);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         MarcAuthorities.waitLoading();
         MarcAuthorities.searchBy('Keyword', searchRecordName);
         MarcAuthorities.verifyResultsRowContent(searchRecordName, type, headingType);

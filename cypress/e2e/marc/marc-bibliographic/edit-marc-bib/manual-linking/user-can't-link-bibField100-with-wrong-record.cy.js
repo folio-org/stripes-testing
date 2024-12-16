@@ -66,7 +66,6 @@ describe('MARC', () => {
         ];
 
         const bib100FieldValues = [
-          32,
           testData.tag100,
           '1',
           '\\',
@@ -79,6 +78,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380449*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440112*');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -119,12 +119,12 @@ describe('MARC', () => {
 
         it(
           'C380449 Verify that user cant link "100" MARC Bib field with wrong record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire'] },
+          { tags: ['criticalPath', 'spitfire', 'C380449'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib100FieldValues);
+            QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(...bib100FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorityBrowse.checkSearchOptions();

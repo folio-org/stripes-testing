@@ -44,6 +44,7 @@ describe('MARC', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
         cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -62,7 +63,7 @@ describe('MARC', () => {
     });
     it(
       'C380635 "Print" option is located below "Export (MARC)" option in "Actions" menu for "MARC authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire'] },
+      { tags: ['extendedPath', 'spitfire', 'C380635'] },
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
         MarcAuthorities.selectFirstRecord();

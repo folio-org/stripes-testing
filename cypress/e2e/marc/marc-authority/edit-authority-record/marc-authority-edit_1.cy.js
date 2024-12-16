@@ -73,7 +73,7 @@ describe('MARC', () => {
 
       it(
         'C350901 Add multiple / delete 1XX tag of "MARC Authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire'] },
+        { tags: ['criticalPath', 'spitfire', 'C350901'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);
@@ -82,7 +82,7 @@ describe('MARC', () => {
           MarcAuthority.deleteTag(testData.authority.rowIndex);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
-          MarcAuthority.clicksaveAndCloseButton();
+          MarcAuthority.clickSaveAndCloseButton();
           QuickMarcEditor.checkCallout('Field 1XX is non-repeatable and required.');
           QuickMarcEditor.undoDelete();
           MarcAuthority.changeTag(testData.authority.rowIndex, testData.authority.tag);

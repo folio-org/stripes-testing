@@ -101,7 +101,6 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.logout();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -128,7 +127,7 @@ describe('MARC', () => {
 
       it(
         'C360111 MARC Authority plug-in | Check that no error displays when the user searches by same search option and updated query (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C360111'] },
         () => {
           MarcAuthorities.verifySearchResultTabletIsAbsent(true);
           MarcAuthorities.searchByParameter(

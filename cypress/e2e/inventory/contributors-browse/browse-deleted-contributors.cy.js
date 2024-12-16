@@ -61,7 +61,7 @@ describe('Inventory', () => {
 
     it(
       'C357021 Verify that deleted Contributor from "MARC Bibliographic" record not displayed at browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire'] },
+      { tags: ['criticalPath', 'spitfire', 'C357021'] },
       () => {
         InventoryInstances.searchByTitle(importedInstanceID[0]);
         InventoryInstances.selectInstance();

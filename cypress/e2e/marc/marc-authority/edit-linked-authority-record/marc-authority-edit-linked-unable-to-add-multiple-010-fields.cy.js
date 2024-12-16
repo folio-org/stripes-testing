@@ -113,7 +113,7 @@ describe('MARC', () => {
 
       it(
         'C375100 Unable to add multiple "010" fields to linked "MARC authority" record (spitfire)(TaaS)',
-        { tags: ['extendedPath', 'spitfire'] },
+        { tags: ['extendedPath', 'spitfire', 'C375100'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchValue);
           MarcAuthorities.selectFirstRecord();

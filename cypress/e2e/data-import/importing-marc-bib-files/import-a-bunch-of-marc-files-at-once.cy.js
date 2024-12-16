@@ -33,7 +33,7 @@ describe('Data Import', () => {
 
     it(
       'C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C6707'] },
       () => {
         [
           {
@@ -54,10 +54,10 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(upload.fileName);
+          cy.wait(80000);
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();
-          cy.wait(80000);
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
           // TODO need to wait until files are filtered

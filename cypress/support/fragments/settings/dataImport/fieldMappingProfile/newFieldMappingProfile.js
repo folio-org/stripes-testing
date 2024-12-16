@@ -26,8 +26,8 @@ import {
   ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   INCOMING_RECORD_NAMES,
+  INSTANCE_STATUS_TERM_NAMES,
   LOCATION_NAMES,
 } from '../../../../constants';
 import getRandomPostfix from '../../../../utils/stringTools';
@@ -55,6 +55,12 @@ const currencyField = TextField('Currency*');
 const vendor = TextField('Vendor*');
 const purchaseOrderLinesLimit = TextField('Purchase order lines limit setting');
 const noteTypeField = TextField('Note type');
+const noteField = TextField('Note');
+const relationshipField = TextField('Relationship');
+const uriField = TextField('URI');
+const linkTextField = TextField('Link text');
+const materialsSpecifiedField = TextField('Materials specified');
+const urlPublicNoteField = TextField('URL public note');
 const reEncumberField = TextField('Re-encumber');
 const purchaseOrderStatus = TextField('Purchase order status*');
 const mustAcknoledgeReceivingNoteField = TextField('Must acknowledge receiving note');
@@ -157,7 +163,9 @@ const addContributor = (profile) => {
     cy.do(Button('Add contributor').click());
     cy.wait(1500);
     cy.do([
+      TextField('Contributor').focus(),
       TextField('Contributor').fillIn(profile.contributor),
+      TextField('Contributor type').focus(),
       TextField('Contributor type').fillIn(`"${profile.contributorType}"`),
     ]);
   }
@@ -168,12 +176,14 @@ const addProductId = (profile) => {
     cy.do(Button('Add product ID and product ID type').click());
     cy.wait(1500);
     cy.do([
+      TextField('Product ID').focus(),
       TextField('Product ID').fillIn(profile.productId),
+      TextField('Product ID type').focus(),
       TextField('Product ID type').fillIn(`"${profile.productIDType}"`),
     ]);
   }
   if (profile.qualifier) {
-    cy.do(TextField('Qualifier').fillIn(profile.qualifier));
+    cy.do([TextField('Qualifier').focus(), TextField('Qualifier').fillIn(profile.qualifier)]);
   }
 };
 
@@ -192,8 +202,11 @@ const addFundDistriction = (profile) => {
     cy.do(Button('Add fund distribution').click());
     cy.wait(1500);
     cy.do([
+      TextField('Fund ID').focus(),
       TextField('Fund ID').fillIn(profile.fundId),
+      TextField('Expense class').focus(),
       TextField('Expense class').fillIn(profile.expenseClass),
+      TextField('Value').focus(),
       TextField('Value').fillIn(`"${profile.value}"`),
       Accordion('Fund distribution').find(Button('%')).click(),
     ]);
@@ -207,12 +220,16 @@ const addLocation = (profile) => {
     cy.do(TextField('Name (code)').fillIn(profile.locationName));
   }
   if (profile.locationQuantityElectronic) {
-    cy.do(
+    cy.do([
+      locationAccordion.find(quantityElectronicField).focus(),
       locationAccordion.find(quantityElectronicField).fillIn(profile.locationQuantityElectronic),
-    );
+    ]);
   }
   if (profile.locationQuantityPhysical) {
-    cy.do(locationAccordion.find(quantityPhysicalField).fillIn(profile.locationQuantityPhysical));
+    cy.do([
+      locationAccordion.find(quantityPhysicalField).focus(),
+      locationAccordion.find(quantityPhysicalField).fillIn(profile.locationQuantityPhysical),
+    ]);
   }
 };
 
@@ -329,10 +346,12 @@ const addItemNotes = (noteType, note, staffOnly) => {
   ]);
   cy.wait(1000);
   cy.do([
-    noteTypeField.fillIn(noteType),
-    TextField('Note').fillIn(note),
     Select({ name: selectName }).focus(),
     Select({ name: selectName }).choose(staffOnly),
+    noteTypeField.focus(),
+    noteTypeField.fillIn(noteType),
+    noteField.focus(),
+    noteField.fillIn(note),
   ]);
 };
 
@@ -410,14 +429,14 @@ export default {
       );
       cy.do([
         Button('Add electronic access').click(),
-        TextField('Relationship').fillIn(`"${profile.relationship}"`),
+        relationshipField.fillIn(`"${profile.relationship}"`),
       ]);
     }
     if (profile.uri) {
-      cy.do(TextField('URI').fillIn(profile.uri));
+      cy.do(uriField.fillIn(profile.uri));
     }
     if (profile.linkText) {
-      cy.do(TextField('Link text').fillIn(profile.linkText));
+      cy.do(linkTextField.fillIn(profile.linkText));
     }
     save();
     cy.expect(saveButton.absent());
@@ -458,9 +477,9 @@ export default {
         );
         cy.do([
           Button('Add electronic access').click(),
-          TextField('Relationship').fillIn(specialMappingProfile.electronicAccess.relationship),
-          TextField('URI').fillIn(specialMappingProfile.electronicAccess.uri),
-          TextField('Link text').fillIn(specialMappingProfile.electronicAccess.linkText),
+          relationshipField.fillIn(specialMappingProfile.electronicAccess.relationship),
+          uriField.fillIn(specialMappingProfile.electronicAccess.uri),
+          linkTextField.fillIn(specialMappingProfile.electronicAccess.linkText),
         ]);
       }
 
@@ -825,11 +844,16 @@ export default {
     cy.do([Button('Add electronic access').click()]);
     cy.wait(1500);
     cy.do([
-      TextField('Relationship').fillIn(relationship),
-      TextField('URI').fillIn(uri),
-      TextField('Link text').fillIn(linkText),
-      TextField('Materials specified').fillIn(materialsSpecified),
-      TextField('URL public note').fillIn(urlPublicNote),
+      relationshipField.focus(),
+      relationshipField.fillIn(relationship),
+      uriField.focus(),
+      uriField.fillIn(uri),
+      linkTextField.focus(),
+      linkTextField.fillIn(linkText),
+      materialsSpecifiedField.focus(),
+      materialsSpecifiedField.fillIn(materialsSpecified),
+      urlPublicNoteField.focus(),
+      urlPublicNoteField.fillIn(urlPublicNote),
     ]);
     if (typeValue === 'Holdings') {
       cy.do([
@@ -904,21 +928,24 @@ export default {
   fillInvoiceDate: (date) => cy.do(TextField('Invoice date*').fillIn(date)),
 
   addHoldingsNotes: (type, note, staffOnly) => {
-    const holdingsNotesFieldName = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
+    const holdingsNoteTypeFieldName =
+      'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
     const selectName =
       'profile.mappingDetails.mappingFields[22].subfields[0].fields[2].booleanFieldAction';
 
     cy.do([
-      Select({ name: holdingsNotesFieldName }).focus(),
-      Select({ name: holdingsNotesFieldName }).choose(actions.addTheseToExisting),
+      Select({ name: holdingsNoteTypeFieldName }).focus(),
+      Select({ name: holdingsNoteTypeFieldName }).choose(actions.addTheseToExisting),
       Button('Add holdings note').click(),
     ]);
     cy.wait(1000);
     cy.do([
-      noteTypeField.fillIn(type),
-      TextField('Note').fillIn(`"${note}"`),
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
+      noteField.focus(),
+      noteField.fillIn(`"${note}"`),
+      noteTypeField.focus(),
+      noteTypeField.fillIn(type),
     ]);
   },
 
@@ -932,7 +959,7 @@ export default {
       Select({ name: noteFieldName }).choose(actions.addTheseToExisting),
       Button('Add check in / check out note').click(),
       loanAndAvailabilityAccordion.find(noteTypeField).fillIn(noteType),
-      loanAndAvailabilityAccordion.find(TextField('Note')).fillIn(note),
+      loanAndAvailabilityAccordion.find(noteField).fillIn(note),
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
@@ -1041,7 +1068,7 @@ export default {
     cy.do(TextField('Former holdings ID').fillIn(`"${name}"`));
   },
 
-  addExpenceClass: (fundDistributionSource) => {
+  addExpenseClass: (fundDistributionSource) => {
     cy.do([
       Select({
         name: 'profile.mappingDetails.mappingFields[27].subfields.0.fields.14.value',

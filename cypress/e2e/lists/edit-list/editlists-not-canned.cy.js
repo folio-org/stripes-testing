@@ -8,7 +8,7 @@ describe('lists', () => {
   describe('Edit list', () => {
     const userData = {};
     const listData = {
-      name: getTestEntityValue('test_list'),
+      name: getTestEntityValue('list'),
       recordType: 'Users',
       status: ['Active', 'Inactive'],
       visibility: 'Private',
@@ -89,7 +89,7 @@ describe('lists', () => {
 
     it(
       'C411734 Edit list: Make the list Inactive (corsair)',
-      { tags: ['smoke', 'corsair', 'C411734'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411734'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -121,7 +121,7 @@ describe('lists', () => {
 
     it(
       'C411735 Edit list: Make the list Active (corsair)',
-      { tags: ['smoke', 'corsair', 'C411735'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411735'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

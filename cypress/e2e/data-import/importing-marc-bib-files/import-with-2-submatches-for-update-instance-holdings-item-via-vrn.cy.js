@@ -5,7 +5,6 @@ import {
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
-  INSTANCE_STATUS_TERM_NAMES,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
@@ -118,7 +117,8 @@ describe('Data Import', () => {
         mappingProfile: {
           name: `C451467 Update Instance via VRN${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE,
+          statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
+          statisticalCodeUI: 'Book, print (books)',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -248,6 +248,7 @@ describe('Data Import', () => {
         collectionOfProfilesForCreate.forEach((profile) => {
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          cy.wait(3000);
         });
 
         // create job profile
@@ -322,7 +323,7 @@ describe('Data Import', () => {
 
     it(
       'C451467 Check Import with 2 submatches for update Instance, Holdings, Item via VRN (folijet)',
-      { tags: ['criticalPathBroken', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C451467'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createInstanceMappingProfile(
@@ -351,6 +352,7 @@ describe('Data Import', () => {
         collectionOfProfilesForUpdate.forEach((profile) => {
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          cy.wait(3000);
         });
 
         // create match profiles
@@ -401,8 +403,8 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-        InstanceRecordView.verifyInstanceStatusTerm(
-          collectionOfProfilesForUpdate[0].mappingProfile.instanceStatusTerm,
+        InstanceRecordView.verifyStatisticalCode(
+          collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI,
         );
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.waitLoading();

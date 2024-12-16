@@ -11,7 +11,7 @@ describe('lists', () => {
 
     beforeEach('Create a user', () => {
       listData = {
-        name: getTestEntityValue('test_list'),
+        name: getTestEntityValue('list'),
         recordType: 'Loans',
       };
       cy.getAdminToken();
@@ -38,7 +38,7 @@ describe('lists', () => {
 
     it(
       'C411704 Create new lists: Private list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411704'] },
+      { tags: ['criticalPath', 'corsair', 'C411704', 'shiftLeft'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
@@ -63,18 +63,30 @@ describe('lists', () => {
     );
 
     it(
-      'C411706 Create new lists: Shared lists (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411706'] },
+      'C411706 C414979 Create new lists: Shared lists (corsair)',
+      { tags: ['criticalPath', 'corsair', 'C411706', 'C414979'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
+
+        Lists.verifyRecordTypes([
+          'Holdings',
+          'Instances',
+          'Items',
+          'Loans',
+          'Organizations',
+          'Purchase order lines',
+          'Users',
+        ]);
+
         Lists.selectRecordType(listData.recordType);
         Lists.selectVisibility(listData.visibility);
         Lists.selectStatus(listData.status);
@@ -94,9 +106,10 @@ describe('lists', () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -119,9 +132,10 @@ describe('lists', () => {
         listData.status = 'Inactive';
         listData.visibility = 'Shared';
 
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
