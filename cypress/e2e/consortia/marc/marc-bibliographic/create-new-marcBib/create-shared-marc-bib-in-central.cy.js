@@ -63,6 +63,8 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
           });
       });
 
@@ -88,7 +90,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
