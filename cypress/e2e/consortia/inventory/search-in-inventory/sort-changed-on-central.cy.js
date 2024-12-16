@@ -75,27 +75,39 @@ describe('Inventory', () => {
             });
           }
         });
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
-            cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-              testData.userProperties = userProperties;
-              instancesData.forEach((instance) => {
-                instance.instanceTypeId = instanceTypes[0].id;
-                instance.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance,
-                }).then((instanceData) => {
-                  createdInstanceIds.push(instanceData.instanceId);
-                });
-              });
-              cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
-              cy.setTenant(Affiliations.College);
-              cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
-                Permissions.uiInventoryViewInstances.gui,
-              ]);
+        cy.getInstanceTypes({ limit: 1 })
+          .then((instanceTypes) => {
+            BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
+              cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+                (userProperties) => {
+                  testData.userProperties = userProperties;
+                  instancesData.forEach((instance) => {
+                    instance.instanceTypeId = instanceTypes[0].id;
+                    instance.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
+                    InventoryInstances.createFolioInstanceViaApi({
+                      instance,
+                    }).then((instanceData) => {
+                      createdInstanceIds.push(instanceData.instanceId);
+                    });
+                  });
+                  cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
+                  cy.setTenant(Affiliations.College);
+                  cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
+                    Permissions.uiInventoryViewInstances.gui,
+                  ]);
+                },
+              );
             });
+          })
+          .then(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            // Workaround: Force to trigger authn/refresh request
+            cy.reload();
+            InventoryInstances.waitContentLoading();
           });
-        });
       });
 
       after('Reset settings, delete data, users', () => {
@@ -118,43 +130,38 @@ describe('Inventory', () => {
         'C543872 Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C543872'] },
         () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            InventoryInstances.searchByTitle(titlePrefix);
-            InventoryInstances.checkResultListSortedByColumn(2);
-            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
-            InventoryInstances.clickActionsButton();
-            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
-            InventoryInstances.actionsSortBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-            InventoryInstances.checkResultListSortedByColumn(1);
-            InventorySearchAndFilter.resetAll();
-            InventorySearchAndFilter.verifyResultPaneEmpty();
-            InventorySearchAndFilter.verifySearchFieldIsEmpty();
-            InventoryInstances.searchByTitle(titlePrefix);
-            InventoryInstances.checkResultListSortedByColumn(2);
-            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
-            InventoryInstances.clickActionsButton();
-            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          InventoryInstances.searchByTitle(titlePrefix);
+          InventoryInstances.checkResultListSortedByColumn(2);
+          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+          InventoryInstances.clickActionsButton();
+          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+          InventoryInstances.actionsSortBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+          InventoryInstances.checkResultListSortedByColumn(1);
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.verifyResultPaneEmpty();
+          InventorySearchAndFilter.verifySearchFieldIsEmpty();
+          InventoryInstances.searchByTitle(titlePrefix);
+          InventoryInstances.checkResultListSortedByColumn(2);
+          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
+          InventoryInstances.clickActionsButton();
+          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            InventoryInstances.searchByTitle(titlePrefix);
-            InventoryInstances.checkResultListSortedByColumn(1);
-            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-            InventoryInstances.clickActionsButton();
-            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-            InventorySearchAndFilter.resetAll();
-            InventorySearchAndFilter.verifyResultPaneEmpty();
-            InventorySearchAndFilter.verifySearchFieldIsEmpty();
-            InventoryInstances.searchByTitle(titlePrefix);
-            InventoryInstances.checkResultListSortedByColumn(1);
-            InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-            InventoryInstances.clickActionsButton();
-            InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
-          });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(titlePrefix);
+          InventoryInstances.checkResultListSortedByColumn(1);
+          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+          InventoryInstances.clickActionsButton();
+          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.verifyResultPaneEmpty();
+          InventorySearchAndFilter.verifySearchFieldIsEmpty();
+          InventoryInstances.searchByTitle(titlePrefix);
+          InventoryInstances.checkResultListSortedByColumn(1);
+          InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
+          InventoryInstances.clickActionsButton();
+          InventoryInstances.verifyActionsSortedBy(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);
         },
       );
     });

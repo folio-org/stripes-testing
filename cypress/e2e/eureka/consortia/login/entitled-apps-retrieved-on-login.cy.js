@@ -33,7 +33,7 @@ describe('Eureka', () => {
           // need to wait for user policy creation to finish
           cy.wait(10000);
           cy.setTenant(Affiliations.College);
-          cy.getApplicationsForTenantApi(Affiliations.Consortia).then((appIds) => {
+          cy.getApplicationsForTenantApi(Affiliations.College).then((appIds) => {
             testData.collegeAppIds = appIds;
           });
           cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, capabsToAssign, []);

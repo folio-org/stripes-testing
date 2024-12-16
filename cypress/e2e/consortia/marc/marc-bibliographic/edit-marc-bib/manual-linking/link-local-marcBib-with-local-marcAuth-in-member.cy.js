@@ -59,6 +59,8 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          cy.setTenant(Affiliations.University);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405560*');
           cy.resetTenant();
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -152,7 +154,8 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.clickSaveAndKeepEditing();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
               linkingTagAndValues.tag,
