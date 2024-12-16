@@ -66,6 +66,7 @@ describe('MARC', () => {
       HoldingsRecordView.close();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.waitLoading();
     });
 
     after(() => {

@@ -85,20 +85,20 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 21,
+        rowIndex: 20,
         value: 'C411802 Marvel comics',
         tag: '630',
         content:
           '$a C411802 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
       },
       {
-        rowIndex: 22,
+        rowIndex: 21,
         value: 'C411802 Speaking Oratory',
         tag: '650',
         content: '$a C411802 Speaking Oratory $b debating $2 fast',
       },
       {
-        rowIndex: 27,
+        rowIndex: 26,
         value: 'C411802 Radio "Vaticana".',
         tag: '710',
         boxFourth: '$a C411802 Radio "Vaticana". $b Hrvatski program',
@@ -213,6 +213,8 @@ describe('Data Import', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
         .then(() => {
@@ -243,11 +245,15 @@ describe('Data Import', () => {
           }).location;
           Locations.createViaApi(collegeLocationData).then((location) => {
             testData.collegeLocation = location;
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: createdAuthorityIDs[0],
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              testData.collegeHoldings.push(holding);
+
+            InventoryHoldings.getHoldingsFolioSource().then((holdingSources) => {
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: createdAuthorityIDs[0],
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: holdingSources.id,
+              }).then((holding) => {
+                testData.collegeHoldings.push(holding);
+              });
             });
           });
 

@@ -104,6 +104,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405927');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -154,6 +155,7 @@ describe('MARC', () => {
             });
           })
           .then(() => {
+            cy.resetTenant();
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -176,6 +178,8 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.pressSaveAndClose();
+                cy.wait(1500);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
