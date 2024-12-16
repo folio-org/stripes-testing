@@ -1396,7 +1396,7 @@ export default {
   },
 
   verifyFilteredOptionsListIncludesOptionsWithText(value) {
-    cy.get('ul[class^="selectionList-"] li').each(($li) => {
+    cy.get('ul[class^="selectionList-"] li:not([class*="groupLabel"])').each(($li) => {
       cy.wrap($li)
         .invoke('text')
         .then((text) => {
@@ -1442,6 +1442,7 @@ export default {
     this.clickOptionsSelection();
 
     const expectedOptions = [
+      ['Administrative note', 'Suppress from discovery'],
       [
         'Action note',
         'Binding',
@@ -1451,10 +1452,21 @@ export default {
         'Provenance',
         'Reproduction',
       ],
-      ['Permanent loan type', 'Temporary loan type'],
+      [
+        'Check in note',
+        'Check out note',
+        'Item status',
+        'Permanent loan type',
+        'Temporary loan type',
+      ],
       ['Permanent item location', 'Temporary item location'],
     ];
-    const expectedGroupLabels = ['Item notes', 'Loan type', 'Location'];
+    const expectedGroupLabels = [
+      'Administrative data',
+      'Item notes',
+      'Loan and availability',
+      'Location',
+    ];
     const groupSelector = 'li[class*="groupLabel"]';
 
     cy.get(groupSelector).each(($groupLabel, ind) => {
