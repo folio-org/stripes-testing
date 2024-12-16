@@ -250,14 +250,12 @@ describe('Bulk-edit', () => {
 
             const holdingHrids = [...folioInstance.holdingHrids, ...marcInstance.holdingHrids];
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-                  holdingHrid,
-                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                  holdingHrid,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
+                holdingHrid,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+                holdingHrid,
+              );
             });
 
             BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
@@ -288,13 +286,11 @@ describe('Bulk-edit', () => {
               { header: localHoldingNoteTypeNameWithAffiliation, value: '' },
             ];
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
-                  holdingHrid,
-                  initialHeaderValues,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
+                holdingHrid,
+                initialHeaderValues,
+              );
             });
 
             BulkEditSearchPane.changeShowColumnCheckbox(
@@ -313,15 +309,13 @@ describe('Bulk-edit', () => {
             BulkEditActions.openActions();
             BulkEditActions.downloadMatchedResults();
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-                  matchedRecordsQueryFileName,
-                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                  holdingHrid,
-                  initialHeaderValues,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+                matchedRecordsQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+                holdingHrid,
+                initialHeaderValues,
+              );
             });
 
             BulkEditActions.openInAppStartBulkEditFrom();
@@ -376,13 +370,11 @@ describe('Bulk-edit', () => {
               },
             ];
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
-                  holdingHrid,
-                  headerValuesToEdit,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+                holdingHrid,
+                headerValuesToEdit,
+              );
             });
 
             BulkEditActions.verifyAreYouSureForm(4);
@@ -402,15 +394,13 @@ describe('Bulk-edit', () => {
 
             BulkEditActions.downloadPreview();
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-                  previewQueryFileName,
-                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                  holdingHrid,
-                  headerValuesToEdit,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+                previewQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+                holdingHrid,
+                headerValuesToEdit,
+              );
             });
             instances.forEach((instance) => {
               BulkEditFiles.verifyValueInRowByUUID(
@@ -443,13 +433,11 @@ describe('Bulk-edit', () => {
               },
             ];
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
-                  holdingHrid,
-                  editedHeaderValues,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+                holdingHrid,
+                editedHeaderValues,
+              );
             });
             instances.forEach((instance) => {
               BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
@@ -494,15 +482,13 @@ describe('Bulk-edit', () => {
             BulkEditActions.openActions();
             BulkEditActions.downloadChangedCSV();
 
-            instances.forEach((instance) => {
-              instance.holdingHrids.forEach((holdingHrid) => {
-                BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-                  changedRecordsQueryFileName,
-                  BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-                  holdingHrid,
-                  editedHeaderValues,
-                );
-              });
+            holdingHrids.forEach((holdingHrid) => {
+              BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+                changedRecordsQueryFileName,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+                holdingHrid,
+                editedHeaderValues,
+              );
             });
             instances.forEach((instance) => {
               BulkEditFiles.verifyHeaderValueInRowByIdentifier(
