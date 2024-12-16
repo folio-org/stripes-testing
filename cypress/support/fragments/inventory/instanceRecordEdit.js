@@ -18,6 +18,7 @@ import {
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InstanceStates from './instanceStates';
+import { INSTANCE_DATE_TYPES } from '../../constants';
 
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save & close');
@@ -44,6 +45,11 @@ const fieldSetRelationSelect = Select({ content: including('Select type') });
 const findInstanceButton = Button({ id: 'find-instance-trigger' });
 const deleteItemButton = Button({ ariaLabel: 'Delete this item' });
 const subjectField = TextField({ name: 'subjects[0].value' });
+const descriptiveDataAccordion = Accordion('Descriptive data');
+const dateTypeSelect = descriptiveDataAccordion.find(Select({ name: 'dates.dateTypeId' }));
+const date1Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date1' }));
+const date2Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date2' }));
+const dateTypePlaceholderOption = 'Select date type';
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -414,5 +420,28 @@ export default {
         .find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }))
         .click(),
     );
+  },
+
+  fillDates: (date1 = '', date2 = '', dateType = null) => {
+    if (dateType) {
+      cy.do(dateTypeSelect.choose(dateType));
+      cy.expect(dateTypeSelect.has({ checkedOptionText: dateType }));
+    }
+    cy.do([date1Field.fillIn(date1), date2Field.fillIn(date2)]);
+    cy.expect([date1Field.has({ value: date1 }), date2Field.has({ value: date2 })]);
+  },
+
+  verifyDateFieldsPresent: () => {
+    cy.expect([dateTypeSelect.exists(), date1Field.exists(), date2Field.exists()]);
+  },
+
+  verifyDateTypeOptions: () => {
+    Object.values(INSTANCE_DATE_TYPES).forEach((dateType) => {
+      cy.expect(dateTypeSelect.has({ content: including(dateType) }));
+    });
+  },
+
+  verifyDateTypePlaceholderOptionSelected: () => {
+    cy.expect(dateTypeSelect.has({ checkedOptionText: dateTypePlaceholderOption }));
   },
 };

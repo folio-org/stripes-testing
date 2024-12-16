@@ -1019,3 +1019,22 @@ export const STAFF_SLIP_NAMES = {
   REQUEST_DELIVERY: 'Request delivery',
   TRANSIT: 'Transit',
 };
+
+export const INSTANCE_DATE_TYPES = {
+  NO: 'No attempt to code',
+  BC: 'No dates given; B.C. date involved',
+  CONTINUING_PUBLISHED: 'Continuing resource currently published',
+  CONTINUING_CEASED: 'Continuing resource ceased publication',
+  DETAILED: 'Detailed date',
+  INCLUSIVE: 'Inclusive dates of collection',
+  RANGE: 'Range of years of bulk of collection',
+  MULTIPLE: 'Multiple dates',
+  UNKNOWN: 'Dates unknown',
+  DISTRIBUTION:
+    'Date of distribution/release/issue and production/recording session when different',
+  QUESTIONABLE: 'Questionable date',
+  REPRINT: 'Reprint/reissue date and original date',
+  SINGLE: 'Single known date/probable date',
+  PUBLICATION: 'Publication date and copyright date',
+  CONTINUING_UNKNOWN: 'Continuing resource status unknown',
+};
