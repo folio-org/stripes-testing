@@ -27,26 +27,29 @@ describe('MARC', () => {
         before('Create users, login', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui]).then(
-            (userProperties) => {
+          cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui])
+            .then((userProperties) => {
               testData.user = userProperties;
               cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-              cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(testData.user.userId, [
                 Permissions.uiSettingsManageAuthorityFiles.gui,
               ]);
+              cy.resetTenant();
+              cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(testData.user.userId, [
                 Permissions.uiSettingsViewAuthorityFiles.gui,
               ]);
+            })
+            .then(() => {
+              cy.resetTenant();
               cy.login(testData.user.username, testData.user.password).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 cy.visit(TopMenu.settingsAuthorityFilesPath);
               });
-            },
-          );
+            });
         });
 
         after('Delete data, users', () => {

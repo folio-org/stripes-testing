@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
@@ -31,6 +32,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -212,6 +214,8 @@ describe('Data Import', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(2000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
         .then(() => {
@@ -274,7 +278,9 @@ describe('Data Import', () => {
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+        ExportFile.waitLoading();
+
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
@@ -290,7 +296,8 @@ describe('Data Import', () => {
         );
 
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(TopMenu.dataImportPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+        DataImport.waitLoading();
         DataImport.verifyUploadState();
         DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
@@ -301,7 +308,8 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitLoading();
         InventorySearchAndFilter.verifyPanesExist();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);

@@ -18,6 +18,8 @@ describe('MARC', () => {
         startWithNumber: '1',
         searchOption: 'Keyword',
         marcValue: 'Create a new Shared MARC authority record with Local authority file test',
+        marcValueShared:
+          'Shared\nCreate a new Shared MARC authority record with Local authority file test',
         headerText: 'Create a new shared MARC authority record',
         AUTHORIZED: 'Authorized',
         sharedIcon: 'Shared',
@@ -78,9 +80,9 @@ describe('MARC', () => {
         cy.resetTenant();
         cy.getAdminToken();
         Users.deleteViaApi(users.userProperties.userId);
-        MarcAuthority.deleteViaAPI(testData.authorityId);
+        MarcAuthority.deleteViaAPI(testData.authorityId, true);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
-        cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
+        cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID, true);
       });
 
       it(
@@ -95,7 +97,9 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
-          MarcAuthority.addNewField(4, newField.tag, newField.content);
+          MarcAuthority.addNewField(3, newField.tag, newField.content);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
@@ -114,7 +118,7 @@ describe('MARC', () => {
 
           MarcAuthorities.chooseAuthoritySourceOption(testData.sourceName);
           MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.sourceName]);
-          MarcAuthorities.selectTitle(testData.marcValue);
+          MarcAuthorities.selectTitle(testData.marcValueShared);
           MarcAuthorities.checkAfterSearch(
             testData.AUTHORIZED,
             `${testData.sharedIcon}${testData.marcValue}`,

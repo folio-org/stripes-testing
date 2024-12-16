@@ -6,12 +6,13 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -129,6 +130,8 @@ describe('MARC', () => {
                 linkingTagAndValues.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -147,7 +150,8 @@ describe('MARC', () => {
         'C407654 Update local linked "MARC Authority" record in member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C407654'] },
         () => {
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+          MarcAuthorities.waitLoading();
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
           MarcAuthorities.selectTitle(testData.authorityTitle);
           MarcAuthority.edit();
@@ -157,9 +161,12 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(2000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitLoading();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -185,13 +192,15 @@ describe('MARC', () => {
           InventoryInstance.verifyNoResultFoundMessage(
             `No results found for "${testData.instanceTitle}". Please check your spelling and filters.`,
           );
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+          MarcAuthorities.waitLoading();
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.updated100FieldValue);
           MarcAuthorities.checkNoResultsMessage(
             `No results found for "${testData.updated100FieldValue}". Please check your spelling and filters.`,
           );
 
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.searchByParameter(
@@ -201,7 +210,8 @@ describe('MARC', () => {
           InventoryInstance.verifyNoResultFoundMessage(
             `No results found for "${testData.instanceTitle}". Please check your spelling and filters.`,
           );
-          cy.visit(TopMenu.marcAuthorities);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+          MarcAuthorities.waitLoading();
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.updated100FieldValue);
           MarcAuthorities.checkNoResultsMessage(
             `No results found for "${testData.updated100FieldValue}". Please check your spelling and filters.`,

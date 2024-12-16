@@ -233,6 +233,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagFieldAfterLinking(...linked700Field);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...notLinked710Field);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
           InventoryInstance.checkSharedTextInDetailView(false);

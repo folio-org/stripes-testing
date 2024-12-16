@@ -6,11 +6,12 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../../support/constants';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -125,7 +126,6 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -134,8 +134,10 @@ describe('MARC', () => {
               Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             ]);
+            cy.resetTenant();
           })
           .then(() => {
+            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
@@ -165,28 +167,36 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
-            linkingInTenants.forEach((tenants) => {
-              ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
-              InventoryInstances.waitContentLoading();
-              tenants.linkingInstances.forEach((instance) => {
-                InventoryInstances.searchByTitle(instance);
-                InventoryInstances.selectInstanceByTitle(instance);
-                cy.wait(2000);
-                InventoryInstance.editMarcBibliographicRecord();
-                QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
-                MarcAuthorities.switchToSearch();
-                InventoryInstance.verifySelectMarcAuthorityModal();
-                InventoryInstance.verifySearchOptions();
-                InventoryInstance.searchResults(linkingTagAndValues.value);
-                InventoryInstance.clickLinkButton();
-                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                  linkingTagAndValues.tag,
-                  linkingTagAndValues.rowIndex,
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitLoading,
+            }).then(() => {
+              linkingInTenants.forEach((tenants) => {
+                ConsortiumManager.switchActiveAffiliation(
+                  tenants.currentTeant,
+                  tenants.openingTenat,
                 );
-                QuickMarcEditor.pressSaveAndClose();
-                QuickMarcEditor.checkAfterSaveAndClose();
+                InventoryInstances.waitContentLoading();
+                tenants.linkingInstances.forEach((instance) => {
+                  InventoryInstances.searchByTitle(instance);
+                  InventoryInstances.selectInstanceByTitle(instance);
+                  cy.wait(2000);
+                  InventoryInstance.editMarcBibliographicRecord();
+                  QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+                  MarcAuthorities.switchToSearch();
+                  InventoryInstance.verifySelectMarcAuthorityModal();
+                  InventoryInstance.verifySearchOptions();
+                  InventoryInstance.searchResults(linkingTagAndValues.value);
+                  InventoryInstance.clickLinkButton();
+                  QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+                    linkingTagAndValues.tag,
+                    linkingTagAndValues.rowIndex,
+                  );
+                  QuickMarcEditor.pressSaveAndClose();
+                  cy.wait(1500);
+                  QuickMarcEditor.pressSaveAndClose();
+                  QuickMarcEditor.checkAfterSaveAndClose();
+                });
               });
             });
           });
@@ -227,9 +237,12 @@ describe('MARC', () => {
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(2000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
-          cy.visit(TopMenu.inventoryPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitLoading();
           instancesToCheckInM1.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);
