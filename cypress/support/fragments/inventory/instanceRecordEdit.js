@@ -422,7 +422,7 @@ export default {
     );
   },
 
-  fillDates: (date1 = '', date2 = '', dateType = null) => {
+  fillDates: (date1 = '', date2 = '', dateType) => {
     if (dateType) {
       cy.do(dateTypeSelect.choose(dateType));
       cy.expect(dateTypeSelect.has({ checkedOptionText: dateType }));
@@ -443,5 +443,13 @@ export default {
 
   verifyDateTypePlaceholderOptionSelected: () => {
     cy.expect(dateTypeSelect.has({ checkedOptionText: dateTypePlaceholderOption }));
+  },
+
+  verifyDateFieldsValues: (date1 = '', date2 = '', dateType = dateTypePlaceholderOption) => {
+    cy.expect([
+      date1Field.has({ value: date1 }),
+      date2Field.has({ value: date2 }),
+      dateTypeSelect.has({ checkedOptionText: dateType }),
+    ]);
   },
 };
