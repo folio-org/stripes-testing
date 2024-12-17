@@ -291,6 +291,7 @@ export default {
   },
   clickSaveCloseButton() {
     cy.do(saveAndCloseButton.click());
+    cy.wait(4000);
   },
   deleteStatisticalCode(statisticalCode) {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());
