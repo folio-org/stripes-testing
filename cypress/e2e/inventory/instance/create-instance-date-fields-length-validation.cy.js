@@ -76,7 +76,8 @@ describe('Inventory', () => {
         InstanceRecordEdit.verifyDateFieldsValidationErrors(false, true);
 
         InstanceRecordEdit.fillDates(testData.date1set[6], testData.date2set[6]);
-        InventoryNewInstance.clickSaveAndCloseButton();
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifySuccessfulMessage();
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
         InstanceRecordView.verifyDates(
           testData.date1set[6],

@@ -48,7 +48,8 @@ describe('Inventory', () => {
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
         InstanceRecordEdit.verifyDateFieldsPresent();
         InstanceRecordEdit.fillDates(testData.date1, undefined, testData.dateType);
-        InventoryNewInstance.clickSaveAndCloseButton();
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifySuccessfulMessage();
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
         InstanceRecordView.verifyDates(testData.date1, undefined, testData.dateType);
       },
