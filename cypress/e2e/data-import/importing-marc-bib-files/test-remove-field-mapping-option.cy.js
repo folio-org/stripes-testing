@@ -109,7 +109,7 @@ describe('Data Import', () => {
     const collectionOfMatchProfiles = [
       {
         matchProfile: {
-          profileName: `autotestMatchHoldings${getRandomPostfix()}`,
+          profileName: `C17033 autotestMatchHoldings${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '901',
             subfield: 'a',
@@ -121,7 +121,7 @@ describe('Data Import', () => {
       },
       {
         matchProfile: {
-          profileName: `autotestMatchItem${getRandomPostfix()}`,
+          profileName: `C17033 autotestMatchItem${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '945',
             subfield: 'a',
