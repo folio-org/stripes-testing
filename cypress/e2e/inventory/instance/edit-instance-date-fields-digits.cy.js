@@ -52,7 +52,7 @@ describe('Inventory', () => {
         InstanceRecordEdit.verifyDateFieldsValues();
         InstanceRecordEdit.verifyDateTypeOptions();
         InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.dateType);
-        InstanceRecordEdit.clickSaveAndCloseButton();
+        InstanceRecordEdit.saveAndClose();
         InstanceRecordEdit.verifySuccessfulMessage();
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
         InstanceRecordView.verifyDates(testData.date1, testData.date2, testData.dateType);
