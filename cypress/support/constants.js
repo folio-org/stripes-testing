@@ -902,6 +902,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ORDER_FORMAT: 'Order format',
     RECEIPT_STATUS: 'Receipt status',
     TAGS: 'Tags',
+    MEMBER: 'Member',
   },
   INVENTORY_INSTANCES: {
     INSTANCE_UUID: 'Instance UUID',
