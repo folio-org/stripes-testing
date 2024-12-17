@@ -674,7 +674,7 @@ export default {
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
   },
 
-  verifyDates(date1 = '-', date2 = '-', dateType = '-') {
+  verifyDates(date1 = 'No value set-', date2 = 'No value set-', dateType = 'No value set-') {
     cy.expect([
       date1KeyValue.has({ value: date1 }),
       date2KeyValue.has({ value: date2 }),
