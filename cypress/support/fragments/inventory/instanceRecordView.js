@@ -43,6 +43,9 @@ const titleDataAccordion = Accordion('Title data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const precedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'precedingTitles' }));
 const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedingTitles' }));
+const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
+const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
+const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -661,5 +664,21 @@ export default {
         )
         .exists(),
     );
+  },
+  verifyResourceIdentifier(type, value, rowIndex) {
+    const identifierRow = Accordion('Identifiers').find(
+      MultiColumnList({ id: 'list-identifiers' }).find(MultiColumnListRow({ index: rowIndex })),
+    );
+
+    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
+    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
+  },
+
+  verifyDates(date1 = '-', date2 = '-', dateType = '-') {
+    cy.expect([
+      date1KeyValue.has({ value: date1 }),
+      date2KeyValue.has({ value: date2 }),
+      dateTypeKeyValue.has({ value: dateType }),
+    ]);
   },
 };

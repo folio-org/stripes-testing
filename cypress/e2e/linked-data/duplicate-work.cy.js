@@ -45,7 +45,7 @@ describe('Citation: duplicate existing work', () => {
       LinkedDataEditor.editWork();
       // duplicate work
       EditResource.duplicateResource();
-      EditResource.setTitle(testData.uniqueTitle);
+      EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       // add instance
       EditResource.openNewInstanceForm();
