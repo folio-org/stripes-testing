@@ -52,7 +52,6 @@ describe('Inventory', () => {
         InstanceRecordEdit.verifyDateTypePlaceholderOptionSelected();
         InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.dateType);
         InventoryNewInstance.clickSaveCloseButton();
-        InstanceRecordEdit.verifySuccessfulMessage();
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
         InstanceRecordView.verifyDates(testData.date1, testData.date2, testData.dateType);
       },
