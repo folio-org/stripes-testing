@@ -46,6 +46,7 @@ const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedi
 const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
+const addItemButton = Button('Add item');
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -531,6 +532,11 @@ export default {
   addHoldings: () => {
     cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
     InventoryNewHoldings.waitLoading();
+  },
+
+  addItem() {
+    cy.expect(addItemButton.exists());
+    cy.do(addItemButton.click());
   },
 
   editMarcBibliographicRecord: () => {
