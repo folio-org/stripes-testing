@@ -11,10 +11,9 @@ import Permissions from '../../../support/dictionary/permissions';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      instanceTitle: `C552504 Auto ${getRandomPostfix()}`,
-      date1: '1881',
-      date2: '2011',
-      dateType: INSTANCE_DATE_TYPES.BC,
+      instanceTitle: `C552514 Auto ${getRandomPostfix()}`,
+      date1: '0981',
+      dateType: INSTANCE_DATE_TYPES.DETAILED,
     };
 
     before('Login', () => {
@@ -42,20 +41,18 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552504 Create Instance with selected Date type and fields Date 1, Date 2 filled by digits (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552504'] },
+      'C552514 Create Instance with selected "Date type" and field "Date 1" filled only (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C552514'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
         InstanceRecordEdit.verifyDateFieldsPresent();
-        InstanceRecordEdit.verifyDateTypeOptions();
-        InstanceRecordEdit.verifyDateTypePlaceholderOptionSelected();
-        InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.dateType);
+        InstanceRecordEdit.fillDates(testData.date1, undefined, testData.dateType);
         InventoryNewInstance.clickSaveCloseButton();
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
-        InstanceRecordView.verifyDates(testData.date1, testData.date2, testData.dateType);
+        InstanceRecordView.verifyDates(testData.date1, undefined, testData.dateType);
       },
     );
   });

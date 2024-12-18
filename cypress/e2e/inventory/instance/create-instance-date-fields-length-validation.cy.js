@@ -11,10 +11,10 @@ import Permissions from '../../../support/dictionary/permissions';
 describe('Inventory', () => {
   describe('Instance', () => {
     const testData = {
-      instanceTitle: `C552504 Auto ${getRandomPostfix()}`,
-      date1: '1881',
-      date2: '2011',
-      dateType: INSTANCE_DATE_TYPES.BC,
+      instanceTitle: `C552518 Auto ${getRandomPostfix()}`,
+      date1set: ['1999u', '1', '12', '12b', '12b6', '12b6', '12b6'],
+      date2set: ['20b27', '9', '199u', '199u', '19', '199', '199u'],
+      dateType: INSTANCE_DATE_TYPES.PUBLICATION,
     };
 
     before('Login', () => {
@@ -42,20 +42,49 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552504 Create Instance with selected Date type and fields Date 1, Date 2 filled by digits (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552504'] },
+      'C552518 Cannot create Instance with more or less than 4 characters in "Date 1" and "Date 2" fields (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C552518'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
         InstanceRecordEdit.verifyDateFieldsPresent();
-        InstanceRecordEdit.verifyDateTypeOptions();
-        InstanceRecordEdit.verifyDateTypePlaceholderOptionSelected();
-        InstanceRecordEdit.fillDates(testData.date1, testData.date2, testData.dateType);
+        InstanceRecordEdit.fillDates(
+          testData.date1set[0],
+          testData.date2set[0],
+          testData.dateType,
+          true,
+        );
+
+        InstanceRecordEdit.fillDates(testData.date1set[1], testData.date2set[1]);
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifyDateFieldsValidationErrors(true, true);
+
+        InstanceRecordEdit.fillDates(testData.date1set[2], testData.date2set[2]);
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifyDateFieldsValidationErrors(true, false);
+
+        InstanceRecordEdit.fillDates(testData.date1set[3], testData.date2set[3]);
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifyDateFieldsValidationErrors(true, false);
+
+        InstanceRecordEdit.fillDates(testData.date1set[4], testData.date2set[4]);
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifyDateFieldsValidationErrors(false, true);
+
+        InstanceRecordEdit.fillDates(testData.date1set[5], testData.date2set[5]);
+        InventoryNewInstance.clickSaveCloseButton();
+        InstanceRecordEdit.verifyDateFieldsValidationErrors(false, true);
+
+        InstanceRecordEdit.fillDates(testData.date1set[6], testData.date2set[6]);
         InventoryNewInstance.clickSaveCloseButton();
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstanceByTitle(testData.instanceTitle);
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
-        InstanceRecordView.verifyDates(testData.date1, testData.date2, testData.dateType);
+        InstanceRecordView.verifyDates(
+          testData.date1set[6],
+          testData.date2set[6],
+          testData.dateType,
+        );
       },
     );
   });
