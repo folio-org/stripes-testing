@@ -1098,7 +1098,7 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+    cy.do(Button({ ariaLabel: `Clear selected ${accordionName} filters` }).click());
   },
 
   checkSharedInstancesInResultList() {
