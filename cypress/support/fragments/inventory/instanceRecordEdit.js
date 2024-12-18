@@ -51,6 +51,7 @@ const date1Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date1'
 const date2Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date2' }));
 const dateTypePlaceholderOption = 'Select date type';
 const dateValueLengthErrorText = 'Date must contain four characters.';
+const saveAndKeepEditing = Button('Save & keep editing');
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -295,6 +296,7 @@ export default {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
     );
+    InteractorsTools.dismissCallout(matching(new RegExp(InstanceStates.instanceSavedSuccessfully)));
   },
   checkCheckboxConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -475,5 +477,10 @@ export default {
         date2Field.has({ errorBorder: true, errorTextRed: true, error: dateValueLengthErrorText }),
       );
     } else cy.expect(date2Field.has({ errorBorder: false, error: undefined }));
+  },
+
+  clickSaveAndKeepEditingButton(saved = true) {
+    cy.do(saveAndKeepEditing.click());
+    if (saved) cy.expect(saveAndKeepEditing.has({ disabled: true }));
   },
 };
