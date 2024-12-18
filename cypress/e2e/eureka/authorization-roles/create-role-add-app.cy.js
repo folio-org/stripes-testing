@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C496128 ${getRandomPostfix()}`,
         originalApplication: 'app-platform-full',
-        newApplication: 'app-consortia',
+        newApplication: 'app-consortia-manager',
         originalCapabilitySets: [
           {
             table: 'Settings',
@@ -59,13 +59,13 @@ describe('Eureka', () => {
         newCapabilities: [
           {
             table: 'Data',
-            resource: 'Consortia Consortium Item',
+            resource: 'UI-Consortia-Settings Consortia Affiliations',
             action: 'Edit',
           },
           {
             table: 'Data',
-            resource: 'Consortia Sharing-Roles Item',
-            action: 'Create',
+            resource: 'UI-Consortia-Settings Consortium-Manager',
+            action: 'View',
           },
         ],
         expectedRowCounts: {

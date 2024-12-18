@@ -19,10 +19,10 @@ describe('Eureka', () => {
             action: 'View',
           },
           {
-            table: 'Settings',
+            table: 'Data',
             application: 'app-consortia',
-            resource: 'Settings Consortia-Settings Enabled',
-            action: 'View',
+            resource: 'Consortia Publications Item',
+            action: 'Delete',
           },
           {
             table: 'Data',
@@ -51,8 +51,8 @@ describe('Eureka', () => {
         ],
         expectedCounts: {
           capabilities: {
-            Data: 2,
-            Settings: 2,
+            Data: 3,
+            Settings: 1,
             Procedural: 2,
           },
         },

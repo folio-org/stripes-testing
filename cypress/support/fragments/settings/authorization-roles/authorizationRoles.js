@@ -169,7 +169,7 @@ export default {
 
   selectApplicationInModal: (appName, isSelected = true) => {
     const targetCheckbox = selectApplicationModal
-      .find(MultiColumnListRow(including(appName), { isContainer: false }))
+      .find(MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }))
       .find(Checkbox());
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));

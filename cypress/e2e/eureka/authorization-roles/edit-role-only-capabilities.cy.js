@@ -82,9 +82,9 @@ describe('Eureka', () => {
           },
           {
             application: 'app-consortia',
-            table: 'Settings',
-            resource: 'Module Consortia-Settings Enabled',
-            action: 'View',
+            table: 'Data',
+            resource: 'Consortia Consortium Item',
+            action: 'Edit',
           },
         ],
         newCapabilitySet: {
@@ -236,7 +236,7 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('10');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('11');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
