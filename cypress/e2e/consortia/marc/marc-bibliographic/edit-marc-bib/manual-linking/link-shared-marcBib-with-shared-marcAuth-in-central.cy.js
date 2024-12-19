@@ -174,6 +174,10 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
+            QuickMarcEditor.deleteField(4);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.confirmDelete();
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
