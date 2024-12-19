@@ -11,19 +11,19 @@ describe('Eureka', () => {
             type: 'staff',
             active: true,
             personal: {
-              lastName: `User C451622 ${getRandomPostfix()}`,
+              lastName: `User C627445 ${getRandomPostfix()}`,
               email: 'testuser@test.org',
               preferredContactTypeId: '002',
             },
           },
-          roleName: `Role C451622 ${getRandomPostfix()}`,
-          noUsernameErrorMessage: 'User without username cannot be created in Keycloak',
+          roleName: `Role C627445 ${getRandomPostfix()}`,
+          noKeycloakErrorMessage: "Keycloak user doesn't exist",
         };
         const userA = { ...testData.userBody };
         const userB = { ...testData.userBody };
         const userC = { ...testData.userBody };
-        userA.username = `userac451622${getRandomPostfix()}`;
-        userC.username = `usercc451622${getRandomPostfix()}`;
+        userA.username = `userac627445${getRandomPostfix()}`;
+        userC.username = `usercc627445${getRandomPostfix()}`;
 
         before('Create data', () => {
           cy.getAdminToken();
@@ -70,19 +70,17 @@ describe('Eureka', () => {
         });
 
         it(
-          'C451622 Assigning users not having Keycloak records for an existing authorization role via API (eureka)',
-          { tags: ['criticalPath', 'eureka', 'C451622'] },
+          'C627445 Assigning users not having Keycloak records for an existing authorization role via API (eureka)',
+          { tags: ['criticalPath', 'eureka', 'C627445'] },
           () => {
             cy.getAdminToken();
-            cy.addRolesToNewUserApi(testData.userAId, [testData.roleId]).then((response) => {
-              expect(response.status).to.eq(201);
-              expect(response.body.userRoles).to.have.lengthOf(1);
-              expect(response.body.userRoles[0].userId).to.eq(testData.userAId);
-              expect(response.body.userRoles[0].roleId).to.eq(testData.roleId);
+            cy.addRolesToNewUserApi(testData.userAId, [testData.roleId], true).then((response) => {
+              expect(response.status).to.eq(404);
+              expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             });
             cy.addRolesToNewUserApi(testData.userBId, [testData.roleId], true).then((response) => {
-              expect(response.status).to.eq(500);
-              expect(response.body.errors[0].message).to.include(testData.noUsernameErrorMessage);
+              expect(response.status).to.eq(404);
+              expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             });
             cy.addRolesToNewUserApi(testData.userCId, [testData.roleId]).then((response) => {
               expect(response.status).to.eq(201);
