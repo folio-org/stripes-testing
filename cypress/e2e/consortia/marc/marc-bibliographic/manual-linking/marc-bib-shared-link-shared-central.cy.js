@@ -131,7 +131,11 @@ describe('MARC', () => {
             linkingTagAndValues.zeroSubfield,
             linkingTagAndValues.seventhBox,
           );
+          QuickMarcEditor.deleteFieldByTagAndCheck('010');
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(2000);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.confirmDeletingFields();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 

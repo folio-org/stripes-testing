@@ -830,6 +830,7 @@ export default {
   },
 
   saveAndCloseRolesModal() {
+    cy.wait(1000);
     cy.do(selectRolesModal.find(saveAndCloseBtn).click());
     cy.expect(selectRolesModal.absent());
   },

@@ -203,7 +203,7 @@ describe('Data Import', () => {
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record found');
 
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
         ExportFile.exportWithDefaultJobProfile(testData.csvFile, 'authority', 'Authorities');
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
@@ -215,7 +215,7 @@ describe('Data Import', () => {
           testData.modifiedMarcFile,
         );
         // upload the exported marc file with 999.f.f.s fields
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_IMPORT);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
         JobProfiles.waitLoadingList();

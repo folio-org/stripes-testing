@@ -176,7 +176,11 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
+            QuickMarcEditor.deleteFieldByTagAndCheck('010');
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(2000);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();
 
@@ -187,6 +191,7 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.addEmptyFields(5);
             QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
