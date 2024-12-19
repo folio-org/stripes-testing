@@ -19,6 +19,11 @@ describe('Eureka', () => {
         capabilitiesInSets: [
           {
             table: 'Data',
+            resource: 'Calendar',
+            action: 'View',
+          },
+          {
+            table: 'Data',
             resource: 'Calendar Endpoint Calendars',
             action: 'View',
           },

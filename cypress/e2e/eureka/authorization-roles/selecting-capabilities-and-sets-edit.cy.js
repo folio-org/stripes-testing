@@ -20,6 +20,11 @@ describe('Eureka', () => {
         capabilitiesInSet: [
           {
             table: 'Data',
+            resource: 'Acquisitions-Units Memberships',
+            action: 'Manage',
+          },
+          {
+            table: 'Data',
             resource: 'Acquisitions-Units Memberships Collection',
             action: 'View',
           },
@@ -68,7 +73,7 @@ describe('Eureka', () => {
             action: 'View',
           },
         ],
-        numberOfCapabilitiesInAdditionalSets: 6,
+        numberOfCapabilitiesInAdditionalSets: 8,
       };
 
       testData.capabilitySet.application = testData.applicationName;
