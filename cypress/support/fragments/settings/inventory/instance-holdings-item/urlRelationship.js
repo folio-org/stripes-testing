@@ -38,6 +38,28 @@ function getListOfURLRelationship() {
 export default {
   getListOfURLRelationship,
 
+  createViaApi(type) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'electronic-access-relationships',
+        body: type,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  deleteViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `electronic-access-relationships/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
+  },
+
   openTabFromInventorySettingsList() {
     cy.do(NavListItem('Inventory').click());
     cy.do(NavListItem('URL relationship').click());
