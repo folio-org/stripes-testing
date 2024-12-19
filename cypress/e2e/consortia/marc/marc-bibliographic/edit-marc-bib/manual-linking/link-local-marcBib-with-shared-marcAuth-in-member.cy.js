@@ -130,7 +130,11 @@ describe('MARC', () => {
                     linkingTagAndValues.tag,
                     linkingTagAndValues.rowIndex,
                   );
+                  QuickMarcEditor.deleteField(4);
                   QuickMarcEditor.pressSaveAndClose();
+                  cy.wait(2000);
+                  QuickMarcEditor.pressSaveAndClose();
+                  QuickMarcEditor.confirmDelete();
                   QuickMarcEditor.checkAfterSaveAndClose();
                 });
 
@@ -199,7 +203,9 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.clickSaveAndKeepEditing();
+
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
               linkingTagAndValues.tag,

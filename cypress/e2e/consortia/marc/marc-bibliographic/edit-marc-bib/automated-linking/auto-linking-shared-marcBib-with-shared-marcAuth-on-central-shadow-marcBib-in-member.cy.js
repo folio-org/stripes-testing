@@ -100,15 +100,8 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="C410818" and (authRefType==("Authorized" or "Auth/Ref"))',
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id, true);
-              });
-            }
+          ['C410818', 'C410755', 'C410749'].forEach((title) => {
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
           });
 
           cy.createTempUser([
@@ -220,9 +213,11 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.notLinked710Field);
+            QuickMarcEditor.deleteField(4);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();
 
@@ -234,6 +229,7 @@ describe('MARC', () => {
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+            QuickMarcEditor.addEmptyFields(4);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);

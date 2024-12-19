@@ -139,16 +139,7 @@ describe('Data Import', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      MarcAuthorities.getMarcAuthoritiesViaApi({
-        limit: 100,
-        query: 'keyword="C407696" and (authRefType==("Authorized" or "Auth/Ref"))',
-      }).then((authorities) => {
-        if (authorities) {
-          authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id, true);
-          });
-        }
-      });
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407696');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -309,7 +300,7 @@ describe('Data Import', () => {
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitLoading();
+        InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.verifyPanesExist();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);

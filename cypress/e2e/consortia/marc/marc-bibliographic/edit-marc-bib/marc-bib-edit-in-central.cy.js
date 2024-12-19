@@ -99,6 +99,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
           QuickMarcEditor.moveFieldUp(18);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
           InventoryInstance.verifyLastUpdatedSource(
@@ -111,6 +113,9 @@ describe('MARC', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          cy.reload();
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);

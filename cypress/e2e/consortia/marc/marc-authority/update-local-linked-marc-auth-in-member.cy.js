@@ -59,6 +59,9 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407654');
+        cy.setTenant(Affiliations.University);
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407654');
         cy.resetTenant();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -109,6 +112,8 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
                 tenantNames.university,

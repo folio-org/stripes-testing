@@ -39,6 +39,8 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        cy.setTenant(Affiliations.University);
+        InventoryInstances.deleteInstanceByTitleViaApi('C405549');
         cy.resetTenant();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -104,6 +106,8 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1200);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
