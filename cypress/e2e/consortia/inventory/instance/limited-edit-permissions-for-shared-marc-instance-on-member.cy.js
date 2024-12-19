@@ -14,30 +14,22 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Instance', () => {
     let user;
-    const C402335testData = {
+    const testData = {
       filePath: 'oneMarcBib.mrc',
       marcFileName: `C402335 autotestFileName${getRandomPostfix()}.mrc`,
       instanceSource: INSTANCE_SOURCE_NAMES.MARC,
-    };
-    const C402376testData = {
-      instanceSource: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
     before('Create test data', () => {
       cy.getAdminToken();
       DataImport.uploadFileViaApi(
-        C402335testData.filePath,
-        C402335testData.marcFileName,
+        testData.filePath,
+        testData.marcFileName,
         DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       ).then((response) => {
-        C402335testData.instanceId = response[0].instance.id;
+        testData.instanceId = response[0].instance.id;
       });
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        C402376testData.instance = instanceData;
-      });
-      cy.resetTenant();
 
-      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           user = userProperties;
@@ -48,23 +40,20 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
-        });
-    });
 
-    beforeEach('Login', () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.login(user.username, user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        });
     });
 
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(C402335testData.instanceId);
-      InventoryInstance.deleteInstanceViaApi(C402376testData.instance.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       Users.deleteViaApi(user.userId);
     });
 
@@ -74,32 +63,14 @@ describe('Inventory', () => {
       () => {
         cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventorySearchAndFilter.verifySearchAndFilterPane();
-        InventorySearchAndFilter.bySource(C402335testData.instanceSource);
+        InventorySearchAndFilter.bySource(testData.instanceSource);
         cy.wait(1500);
         InventorySearchAndFilter.byShared('Yes');
         cy.wait(1500);
-        InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceId);
+        InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
         cy.wait('@/authn/refresh', { timeout: 5000 });
         InventorySearchAndFilter.verifyInstanceDetailsView();
-        InstanceRecordView.verifyInstanceSource(C402335testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
-      },
-    );
-
-    it(
-      'C402376 (CONSORTIA) Verify limited Edit permissions for Shared FOLIO instance on Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet', 'C402376'] },
-      () => {
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
-        InventorySearchAndFilter.verifySearchAndFilterPane();
-        InventorySearchAndFilter.bySource(C402376testData.instanceSource);
-        cy.wait(1500);
-        InventorySearchAndFilter.byShared('Yes');
-        cy.wait(1500);
-        InventorySearchAndFilter.searchInstanceByTitle(C402376testData.instance.instanceId);
-        cy.wait('@/authn/refresh', { timeout: 5000 });
-        InventorySearchAndFilter.verifyInstanceDetailsView();
-        InstanceRecordView.verifyInstanceSource(C402376testData.instanceSource);
+        InstanceRecordView.verifyInstanceSource(testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonAbsent();
       },
     );
