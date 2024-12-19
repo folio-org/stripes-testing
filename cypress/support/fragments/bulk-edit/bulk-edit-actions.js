@@ -787,6 +787,14 @@ export default {
     ]);
   },
 
+  replaceWithAction(option, newValue, rowIndex = 0) {
+    this.selectOption(option, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.verifySecondActionSelected('Replace with', rowIndex);
+    this.fillInSecondTextArea(newValue, rowIndex);
+    this.verifyValueInSecondTextArea(newValue, rowIndex);
+  },
+
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     this.findValue(noteType, rowIndex);
     this.fillInFirstTextArea(oldNote, rowIndex);
