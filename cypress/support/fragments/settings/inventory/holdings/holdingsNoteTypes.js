@@ -47,7 +47,6 @@ export default {
       });
     }
   },
-  
 
   verifyLocalHoldingsNoteTypesInTheList({ name, source = 'local', actions = [] }) {
     const row = MultiColumnListRow({ isContainer: true, content: including(name) });
