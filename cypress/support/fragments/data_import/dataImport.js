@@ -952,4 +952,9 @@ export default {
   verifyUploadSectionHasNoUplodedFiles() {
     cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
   },
+
+  waitLoadingNoInteractors() {
+    cy.expect(sectionPaneJobsTitle.exists());
+    cy.expect(logsPaneHeader.exists());
+  },
 };

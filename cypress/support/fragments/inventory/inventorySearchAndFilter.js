@@ -610,7 +610,7 @@ export default {
   },
 
   resetAll() {
-    cy.do(resetAllBtn.click());
+    cy.do(resetAllButton.click());
     cy.wait(1000);
   },
 

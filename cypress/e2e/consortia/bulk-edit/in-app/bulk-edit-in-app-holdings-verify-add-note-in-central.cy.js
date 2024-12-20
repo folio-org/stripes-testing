@@ -32,8 +32,6 @@ let centralSharedNoteTypeData;
 const callNumberStarts = `${randomFourDigitNumber()}`;
 const folioInstance = {
   title: `C477646 folio instance testBulkEdit_${getRandomPostfix()}`,
-  barcodeInCollege: `Item_College${getRandomPostfix()}`,
-  barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   holdingCallNumberInCollege: `${callNumberStarts}${randomFourDigitNumber()}`,
   holdingCallNumberInUniversity: `${callNumberStarts}${randomFourDigitNumber()}`,
   holdingIds: [],
@@ -41,8 +39,6 @@ const folioInstance = {
 };
 const marcInstance = {
   title: `C477646 marc instance testBulkEdit_${getRandomPostfix()}`,
-  barcodeInCollege: `Item_College${getRandomPostfix()}`,
-  barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   holdingCallNumberInCollege: `${callNumberStarts}${randomFourDigitNumber()}`,
   holdingCallNumberInUniversity: `${callNumberStarts}${randomFourDigitNumber()}`,
   holdingIds: [],

@@ -28,4 +28,13 @@ export default {
     cy.do(NavListItem('Inventory').click());
     cy.expect(inventoryPane.exists());
   },
+
+  goToSettingsInventoryNoInteractors() {
+    cy.xpath("//a[contains(@href, '/settings/inventory')]").click();
+    cy.xpath("//div[@id='paneHeaderapp-settings-nav-pane']").should('be.visible');
+  },
+
+  selectz3950ProfilesNoInteractors() {
+    cy.xpath("//a[contains(@href, '/settings/inventory/targetProfiles')]").click();
+  },
 };
