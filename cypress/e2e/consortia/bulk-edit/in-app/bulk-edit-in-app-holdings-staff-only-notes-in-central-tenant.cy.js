@@ -340,7 +340,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-          const editedHederValueInCollege = [
+          const editedHeaderValueInCollege = [
             {
               header: collegeHoldingNoteTypeNameWithAffiliation,
               value: collegeLocalNoteText,
@@ -350,7 +350,7 @@ describe('Bulk-edit', () => {
               value: `${sharedNoteText} (staff only)`,
             },
           ];
-          const editedHederValueInUniversity = [
+          const editedHeaderValueInUniversity = [
             {
               header: centralSharedHoldingNoteType.payload.name,
               value: `${sharedNoteText} (staff only)`,
@@ -364,13 +364,13 @@ describe('Bulk-edit', () => {
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
               hrid,
-              editedHederValueInCollege,
+              editedHeaderValueInCollege,
             );
           });
           universityHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
               hrid,
-              editedHederValueInUniversity,
+              editedHeaderValueInUniversity,
             );
           });
 
@@ -382,7 +382,7 @@ describe('Bulk-edit', () => {
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              editedHederValueInCollege,
+              editedHeaderValueInCollege,
             );
           });
           universityHoldingHrids.forEach((hrid) => {
@@ -390,7 +390,7 @@ describe('Bulk-edit', () => {
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              editedHederValueInUniversity,
+              editedHeaderValueInUniversity,
             );
           });
 
@@ -400,13 +400,13 @@ describe('Bulk-edit', () => {
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               hrid,
-              editedHederValueInCollege,
+              editedHeaderValueInCollege,
             );
           });
           universityHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               hrid,
-              editedHederValueInUniversity,
+              editedHeaderValueInUniversity,
             );
           });
 
@@ -428,7 +428,7 @@ describe('Bulk-edit', () => {
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              editedHederValueInCollege,
+              editedHeaderValueInCollege,
             );
           });
           universityHoldingHrids.forEach((hrid) => {
@@ -436,7 +436,7 @@ describe('Bulk-edit', () => {
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              editedHederValueInUniversity,
+              editedHeaderValueInUniversity,
             );
           });
 
