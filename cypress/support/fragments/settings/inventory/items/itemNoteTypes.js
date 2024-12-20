@@ -13,28 +13,18 @@ export const reasonsActions = {
 };
 
 export default {
-  createItemNoteTypeViaApi: (bodyOrName) => {
-    if (Cypress.env('ecsEnabled')) {
-      return cy
-        .okapiRequest({
-          method: REQUEST_METHOD.POST,
-          path: 'item-note-types',
-          bodyOrName,
-        })
-        .then((response) => response.body.id);
-    } else {
-      return cy
-        .okapiRequest({
-          method: REQUEST_METHOD.POST,
-          path: 'item-note-types',
-          body: {
-            id: uuid(),
-            name: bodyOrName,
-            source: 'local',
-          },
-        })
-        .then((response) => response.body.id);
-    }
+  createItemNoteTypeViaApi: (typeName) => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'item-note-types',
+        body: {
+          id: uuid(),
+          name: typeName,
+          source: 'local',
+        },
+      })
+      .then((response) => response.body.id);
   },
 
   deleteItemNoteTypeViaApi: (noteTypeId) => {
@@ -46,7 +36,7 @@ export default {
   },
 
   verifyConsortiumItemNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -67,7 +57,7 @@ export default {
   },
 
   verifyLocalItemNoteTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -88,13 +78,13 @@ export default {
   },
 
   verifyItemNoteTypesAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     cy.expect(row.absent());
   },
 
   clickTrashButtonForItemNoteTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ isContainer: true, content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),

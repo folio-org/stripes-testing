@@ -30,7 +30,7 @@ export default {
   }),
 
   verifyConsortiumHoldingsTypeInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -51,7 +51,7 @@ export default {
   },
 
   verifyLocalHoldingsTypeInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -72,13 +72,13 @@ export default {
   },
 
   verifyHoldingsTypesAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     cy.expect(row.absent());
   },
 
   clickTrashButtonForHoldingsType(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ isContainer: true, content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),

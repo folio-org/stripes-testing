@@ -43,6 +43,8 @@ describe('Consortium manager', () => {
   describe('View settings', () => {
     describe('View Departments', () => {
       before('create test data', () => {
+        cy.clearCookies({ domain: null });
+
         cy.getAdminToken();
         DepartmentsConsortiumManager.createViaApi(testData.centralSharedDepartment).then(
           (newDepartment) => {

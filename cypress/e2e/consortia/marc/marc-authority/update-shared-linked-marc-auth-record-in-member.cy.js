@@ -104,16 +104,12 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C407633" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id, true);
-            });
-          }
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407633');
+        InventoryInstances.deleteInstanceByTitleViaApi('C407633');
+        cy.setTenant(Affiliations.University);
+        InventoryInstances.deleteInstanceByTitleViaApi('C407633');
+        cy.resetTenant();
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -169,7 +165,7 @@ describe('MARC', () => {
             cy.resetTenant();
             cy.loginAsAdmin({
               path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitLoading,
+              waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
               linkingInTenants.forEach((tenants) => {
                 ConsortiumManager.switchActiveAffiliation(

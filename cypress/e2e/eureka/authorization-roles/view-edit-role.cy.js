@@ -7,10 +7,10 @@ describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
-        roleName: `Auto Role C424001 ${getRandomPostfix()}`,
-        roleDescription: `Description C424001 ${getRandomPostfix()}`,
-        updatedRoleName: `Auto Role C424001 ${getRandomPostfix()} UPD`,
-        updatedRoleDescription: `Description C424001 ${getRandomPostfix()} UPD`,
+        roleName: `Auto Role C627446 ${getRandomPostfix()}`,
+        roleDescription: `Description C627446 ${getRandomPostfix()}`,
+        updatedRoleName: `Auto Role C627446 ${getRandomPostfix()} UPD`,
+        updatedRoleDescription: `Description C627446 ${getRandomPostfix()} UPD`,
         originalCapabilitySets: [
           {
             application: 'app-platform-complete',
@@ -227,7 +227,7 @@ describe('Eureka', () => {
       });
 
       it(
-        'C424001 Viewing/editing existing authorization role',
+        'C627446 Viewing/editing existing authorization role',
         { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C424001'] },
         () => {
           const roleViewUrl = `${Cypress.config().baseUrl}${TopMenu.settingsAuthorizationRoles}/${

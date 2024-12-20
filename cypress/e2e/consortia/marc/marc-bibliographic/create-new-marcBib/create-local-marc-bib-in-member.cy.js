@@ -56,6 +56,15 @@ describe('MARC', () => {
               Permissions.uiInventoryViewInstances.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
             ]);
+          })
+          .then(() => {
+            cy.resetTenant();
+            cy.login(users.userBProperties.username, users.userBProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
           });
       });
 
@@ -70,11 +79,6 @@ describe('MARC', () => {
         'C422124 Create new Local MARC bib in Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C422124'] },
         () => {
-          cy.resetTenant();
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField(

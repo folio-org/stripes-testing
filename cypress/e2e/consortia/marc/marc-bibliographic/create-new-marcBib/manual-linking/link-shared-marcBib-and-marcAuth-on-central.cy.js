@@ -57,7 +57,8 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
-
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422141');
+          InventoryInstances.deleteInstanceByTitleViaApi('C422141');
           cy.createTempUser([
             Permissions.uiInventoryViewInstances.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -68,7 +69,6 @@ describe('MARC', () => {
           ]).then((userProperties) => {
             users.userAProperties = userProperties;
           });
-
           cy.createTempUser([
             Permissions.uiInventoryViewInstances.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -89,6 +89,8 @@ describe('MARC', () => {
                 path: TopMenu.dataImportPath,
                 waiter: DataImport.waitLoading,
               });
+              cy.reload();
+              DataImport.waitLoading();
               cy.resetTenant();
               marcFiles.forEach((marcFile) => {
                 DataImport.uploadFileViaApi(
