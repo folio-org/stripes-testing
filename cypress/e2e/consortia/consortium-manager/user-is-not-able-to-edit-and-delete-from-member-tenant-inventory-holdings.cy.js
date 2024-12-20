@@ -92,7 +92,6 @@ describe('Consortium manager', () => {
             name: testData.centralSharedHoldingsNoteTypes.payload.name,
             source: 'consortium',
           });
-
           HoldingsNoteTypes.verifyLocalHoldingsNoteTypesInTheList({
             name: testData.collegeLocalHoldingsNoteType.name,
             actions: ['edit', 'trash'],

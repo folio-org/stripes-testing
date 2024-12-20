@@ -43,7 +43,7 @@ export default {
   },
 
   verifyDepartmentsInTheList({ name, code = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -64,12 +64,12 @@ export default {
   },
 
   verifyGroupAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     cy.expect(row.absent());
   },
 
   clickEditButtonForGroup(name) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.do(
       row
@@ -80,7 +80,7 @@ export default {
   },
 
   clickTrashButtonForGroup(name) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.do([
       row

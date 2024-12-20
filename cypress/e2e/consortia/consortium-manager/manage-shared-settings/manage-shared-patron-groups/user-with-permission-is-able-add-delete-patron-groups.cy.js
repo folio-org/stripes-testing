@@ -37,6 +37,7 @@ describe('Consortia', () => {
         const rowDataToCheck = [...Object.values(sharedPatronGroups1), moment().format('l'), 'All'];
 
         before('Create users data', () => {
+          cy.clearCookies({ domain: null });
           cy.getAdminToken()
             .then(() => {
               cy.createTempUser([

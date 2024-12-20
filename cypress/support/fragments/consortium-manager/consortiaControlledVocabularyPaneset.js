@@ -31,6 +31,10 @@ export default {
     cy.expect(newButton.is({ disabled: status }));
   },
 
+  verifyNewButtonAbsent() {
+    cy.expect(newButton.absent());
+  },
+
   verifyEditModeIsActive() {
     this.verifyNewButtonDisabled();
     cy.expect([
@@ -52,6 +56,7 @@ export default {
       this.fillInTextField({ [textFieldName]: value });
     });
     cy.do(isShared && memberLibrariesShare.click());
+    cy.wait(4000);
   },
 
   clickCancel() {
@@ -60,6 +65,7 @@ export default {
 
   clickSave() {
     cy.do(saveButton.click());
+    cy.wait(4000);
   },
 
   confirmDelete() {
@@ -74,16 +80,14 @@ export default {
   performAction(recordName, action) {
     // actions are selected by button name: trash(delete) or edit
     cy.do(
-      MultiColumnListRow({ content: including(recordName) })
+      MultiColumnListRow({ isContainer: true, content: including(recordName) })
         .find(Button({ icon: action }))
         .click(),
     );
   },
 
   verifyRecordInTheList(record, actionButtons = []) {
-    MultiColumnListRow({
-      content: including(record[0]),
-    })
+    MultiColumnListRow({ isContainer: true, content: including(record[0]) })
       .rowIndexInParent()
       .then((rowIndexInParent) => {
         cy.wrap(record).each((text, columnIndex) => {
@@ -165,6 +169,6 @@ export default {
   },
 
   verifyRecordNotInTheList(name) {
-    cy.expect(MultiColumnListRow({ content: including(name) }).absent());
+    cy.expect(MultiColumnListRow({ isContainer: true, content: including(name) }).absent());
   },
 };

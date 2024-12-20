@@ -34,6 +34,7 @@ describe('Consortium manager', () => {
   describe('View settings', () => {
     describe('View Request cancellation reasons', () => {
       before('create test data', () => {
+        cy.clearCookies({ domain: null });
         cy.getAdminToken();
         RequestCancellationReasonsConsortiumManager.createViaApi(testData.centralSharedReason).then(
           (newReason) => {
@@ -66,7 +67,7 @@ describe('Consortium manager', () => {
             waiter: ConsortiumManagerApp.waitLoading,
           });
           SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(7);
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(13);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
 
@@ -118,7 +119,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user400666.username, testData.user400666.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-
+cy.wait(4000);
           CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
           });
@@ -127,10 +128,7 @@ describe('Consortium manager', () => {
             name: testData.collegeLocalReason.name,
             actions: ['edit', 'trash'],
           });
-
-          CancellationReason.clickTrashButtonForReason({
-            name: testData.collegeLocalReason.name,
-          });
+          CancellationReason.clickTrashButtonForReason(testData.collegeLocalReason.name);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
