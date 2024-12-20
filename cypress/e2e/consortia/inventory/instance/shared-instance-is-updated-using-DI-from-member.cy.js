@@ -109,10 +109,10 @@ describe('Inventory', () => {
 
             // download exported marc file
             cy.getAdminToken();
-            cy.getAdminToken();
             cy.setTenant(Affiliations.College).then(() => {
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
               ExportFile.waitLandingPageOpened();
+              cy.wait(5000);
               ExportFile.downloadExportedMarcFileWithRecordHrid(
                 expectedRecordHrid,
                 testData.exportedFileName,

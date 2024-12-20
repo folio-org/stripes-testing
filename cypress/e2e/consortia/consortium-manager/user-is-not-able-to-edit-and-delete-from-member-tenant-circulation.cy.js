@@ -119,7 +119,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user400666.username, testData.user400666.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
-cy.wait(4000);
+          cy.wait(4000);
           CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
           });
