@@ -32,14 +32,16 @@ describe('Inventory', () => {
           cy.assignPermissionsToExistingUser(user.userId, [
             Permissions.uiInventoryViewCreateEditInstances.gui,
           ]);
-
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         });
+    });
+
+    beforeEach('Login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
     });
 
     after('Delete test data', () => {
