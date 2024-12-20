@@ -42,6 +42,7 @@ describe('MARC', () => {
       before('Create test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405142');
         DataImport.uploadFileViaApi(
           marcFile.marc,
           marcFile.fileName,
@@ -124,6 +125,8 @@ describe('MARC', () => {
           MarcAuthority.verifyFieldPositionInView(5, testData.tag010, testData.tag010Value);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          MarcAuthorities.waitLoading();
+          cy.reload();
           MarcAuthorities.waitLoading();
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           MarcAuthorities.searchBeats(testData.updatedTitle);

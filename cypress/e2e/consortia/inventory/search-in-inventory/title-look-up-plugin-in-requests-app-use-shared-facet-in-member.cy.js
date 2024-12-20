@@ -17,6 +17,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 
 function createFOLIOAndUploadMARCInstanceViaApi(titlesFOLIOInstance, marcFile, createdRecordsIds) {
   titlesFOLIOInstance.forEach((title) => {
@@ -97,6 +98,10 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C410702');
+      cy.setTenant(Affiliations.University);
+      InventoryInstances.deleteInstanceByTitleViaApi('C410702');
+      cy.resetTenant();
       cy.createTempUser([
         Permissions.uiInventoryViewInstances.gui,
         Permissions.uiRequestsCreate.gui,
