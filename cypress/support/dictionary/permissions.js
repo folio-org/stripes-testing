@@ -360,31 +360,31 @@ export default {
   // Circulation
   uiCirculationViewCreateEditDelete: {
     internal: 'ui-circulation.settings.edit-circulation-rules',
-    gui: 'Settings (Circ): Can create, edit and remove circulation rules',
+    gui: 'Settings (Circulation): Can create, edit and remove circulation rules',
   },
   uiCirculationSettingsNoticeTemplates: {
     internal: 'ui-circulation.settings.notice-templates',
-    gui: 'Settings (Circ): Can create, edit and remove patron notice templates',
+    gui: 'Settings (Circulation): Can create, edit and remove patron notice templates',
   },
   uiCirculationSettingsNoticePolicies: {
     internal: 'ui-circulation.settings.notice-policies',
-    gui: 'Settings (Circ): Can create, edit and remove notice policies',
+    gui: 'Settings (Circulation): Can create, edit and remove notice policies',
   },
   uiCirculationSettingsOtherSettings: {
     internal: 'ui-circulation.settings.other-settings',
-    gui: 'Settings (Circ): Can create, edit and remove other settings',
+    gui: 'Settings (Circulation): Can create, edit and remove other settings',
   },
   uiCirculationCreateEditRemoveStaffSlips: {
     internal: 'ui-circulation.settings.staff-slips',
-    gui: 'Settings (Circ): Can create, edit and remove staff slips',
+    gui: 'Settings (Circulation): Can create, edit and remove staff slips',
   },
   uiCirculationCreateViewOverdueFinesPolicies: {
     internal: 'ui-circulation.settings.view-overdue-fines-policies',
-    gui: 'Settings (Circ): Can view overdue fine policies',
+    gui: 'Settings (Circulation): Can view overdue fine policies',
   },
   uiCirculationViewCreateEditDeleteFixedDueDateSchedules: {
     internal: 'ui-circulation.settings.fixed-due-date-schedules',
-    gui: 'Settings (Circ): Can create, edit and remove fixed due date schedules',
+    gui: 'Settings (Circulation): Can create, edit and remove fixed due date schedules',
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
@@ -981,11 +981,11 @@ export default {
   },
   settingsCircView: {
     internal: 'ui-circulation.settings.cancellation-reasons',
-    gui: 'Settings (Circ): Can create, edit and remove cancellation reasons',
+    gui: 'Settings (Circulation): Can create, edit and remove cancellation reasons',
   },
   settingsCircCRUDRequestPolicies: {
     internal: 'ui-circulation.settings.request-policies',
-    gui: 'Settings (Circ): Can create, edit and remove request policies',
+    gui: 'Settings (Circulation): Can create, edit and remove request policies',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',
@@ -1117,15 +1117,15 @@ export default {
   },
   uiCirculationSettingsOverdueFinesPolicies: {
     internal: 'ui-circulation.settings.overdue-fines-policies',
-    gui: 'Settings (Circ): Can create, edit and remove overdue fine policies',
+    gui: 'Settings (Circulation): Can create, edit and remove overdue fine policies',
   },
   uiCirculationSettingsLostItemFeesPolicies: {
     internal: 'ui-circulation.settings.lost-item-fees-policies',
-    gui: 'Settings (Circ): Can create, edit and remove lost item fee policies',
+    gui: 'Settings (Circulation): Can create, edit and remove lost item fee policies',
   },
   settingsLoanPoliciesAll: {
     internal: 'settings.loan-policies.all',
-    gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
+    gui: 'Settings (Circulation): Can create, edit and remove loan policies [LEGACY]',
   },
   // Consortia
   settingsConsortiaCanViewNetworkOrdering: {
