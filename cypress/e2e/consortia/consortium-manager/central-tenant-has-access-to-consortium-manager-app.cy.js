@@ -57,7 +57,6 @@ describe('Consortia', () => {
         ConsortiumManager.verifyPaneIncludesSettings(settingsList);
         const randomSetting = Arrays.getRandomElement(settingsList);
         chooseSettingItem(randomSetting, 1);
-        cy.pause();
         cy.wait(4000);
         ConsortiumManager.clickSelectMembers();
         SelectMembers.changeSelectAllCheckbox('check');
