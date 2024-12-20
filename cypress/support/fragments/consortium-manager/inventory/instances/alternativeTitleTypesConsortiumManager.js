@@ -82,5 +82,6 @@ export default {
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
+    cy.wait(4000);
   },
 };

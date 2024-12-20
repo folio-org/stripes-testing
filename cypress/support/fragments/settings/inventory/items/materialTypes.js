@@ -31,7 +31,7 @@ export default {
   },
 
   verifyConsortiumMaterialTypesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -52,7 +52,7 @@ export default {
   },
 
   verifyLocalMaterialTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -73,13 +73,13 @@ export default {
   },
 
   verifyMaterialTypesAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
     cy.expect(row.absent());
   },
 
   clickTrashButtonForMaterialTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ isContainer: true, content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),

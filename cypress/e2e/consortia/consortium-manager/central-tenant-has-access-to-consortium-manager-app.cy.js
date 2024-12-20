@@ -54,9 +54,11 @@ describe('Consortia', () => {
         TopMenuNavigation.navigateToApp('Consortium manager');
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.verifyMembersSelected();
-        ConsortiumManager.verifyPaneIncludesSettings(settingsList.sort());
+        ConsortiumManager.verifyPaneIncludesSettings(settingsList);
         const randomSetting = Arrays.getRandomElement(settingsList);
         chooseSettingItem(randomSetting, 1);
+        cy.pause();
+        cy.wait(4000);
         ConsortiumManager.clickSelectMembers();
         SelectMembers.changeSelectAllCheckbox('check');
         SelectMembers.verifyStatusOfSelectMembersModal(1);

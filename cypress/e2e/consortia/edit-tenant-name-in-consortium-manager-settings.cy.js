@@ -72,7 +72,7 @@ describe('Consortia', () => {
         tenantErrors.code,
         tenantErrors.name,
       );
-      ConsortiumManager.cancelEditingTenantInformation(2);
+      ConsortiumManager.cancelEditingTenantInformation(6);
     },
   );
 });

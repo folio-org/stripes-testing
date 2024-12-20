@@ -130,7 +130,7 @@ export default {
   },
   clickTrashButtonForGroup(name) {
     cy.do(
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ isContainer: true, content: including(name) })
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .find(Button({ icon: 'trash' }))
         .click(),
@@ -218,9 +218,7 @@ export default {
   },
 
   verifyGroupInTheList(record, actionButtons = []) {
-    MultiColumnListRow({
-      content: including(record[0]),
-    })
+    MultiColumnListRow({ isContainer: true, content: including(record[0]) })
       .rowIndexInParent()
       .then((rowIndexInParent) => {
         cy.wrap(record).each((text, columnIndex) => {

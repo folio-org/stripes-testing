@@ -91,9 +91,9 @@ describe('Consortia', () => {
 
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
             AlternativeTitleTypesConsortiumManager.choose();
-
             ConsortiaControlledVocabularyPaneset.createViaUi(true, alternativeTitleTypes3);
             ConsortiaControlledVocabularyPaneset.clickSave();
+
             let rowDataToCheck = [
               alternativeTitleTypes3.name,
               'consortium',
@@ -154,7 +154,7 @@ describe('Consortia', () => {
 
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyListIsEmpty();
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
+            ConsortiaControlledVocabularyPaneset.verifyNewButtonAbsent();
 
             cy.visit(SettingsMenu.alternativeTitleTypes);
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));

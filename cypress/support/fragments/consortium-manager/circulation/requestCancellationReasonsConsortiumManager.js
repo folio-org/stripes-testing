@@ -53,5 +53,6 @@ export default {
     ].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
+    cy.wait(4000);
   },
 };
