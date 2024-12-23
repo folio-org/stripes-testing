@@ -133,6 +133,7 @@ export default {
     ]);
     if (newCode) cy.do(TextField({ name: 'code' }).fillIn(newCode));
     if (newDisplayName) cy.do(TextField({ name: 'discoveryDisplayName' }).fillIn(newDisplayName));
+    cy.wait(3000);
     cy.do(saveAndCloseButton.click());
   },
 

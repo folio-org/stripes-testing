@@ -74,9 +74,9 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
-        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.MISSING);
+        QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
         QueryModal.verifyQueryAreaContent(
-          `(items.status_name not in ("${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.MISSING}"))`,
+          `(items.status_name not in ("${ITEM_STATUS_NAMES.AVAILABLE}","${ITEM_STATUS_NAMES.ON_ORDER}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
