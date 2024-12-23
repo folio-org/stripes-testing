@@ -29,7 +29,7 @@ describe('Inventory', () => {
 
       cy.resetTenant();
       cy.getAdminToken();
-      cy.createTempUser([]).then((userProperties) => {
+      cy.createTempUser([Permissions.uiInventoryViewCreateInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
