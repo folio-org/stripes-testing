@@ -1772,7 +1772,7 @@ export default {
     cy.wait(2000);
     cy.expect([
       Accordion({ id: memberId }).has({ open: isOpen }),
-      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).exists(),
     ]);
   },
 
