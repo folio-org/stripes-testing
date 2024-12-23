@@ -187,6 +187,7 @@ describe('Data Import', () => {
           cy.setTenant(Affiliations.College).then(() => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.waitLandingPageOpened();
+            cy.wait(5000);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               expectedRecordHrid,
               testData.marcFile.exportedFileName,

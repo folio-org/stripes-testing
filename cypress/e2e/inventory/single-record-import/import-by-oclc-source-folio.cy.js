@@ -79,7 +79,6 @@ describe('Inventory', () => {
           `Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`,
         );
         cy.wait(15000);
-        cy.reload();
         InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
         InventoryInstance.verifyLastUpdatedDate();
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
@@ -91,9 +90,12 @@ describe('Inventory', () => {
           date: oclcRecordData.publicationDate,
         });
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
+        InventoryInstance.openIdentifiersAccordion();
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 6);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 7);
+        InventoryInstance.openSubjectAccordion();
         InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
+        InventoryInstance.openInstanceNotesAccordion();
         InventoryInstance.checkInstanceNotes(
           oclcRecordData.notes.noteType,
           oclcRecordData.notes.noteContent,

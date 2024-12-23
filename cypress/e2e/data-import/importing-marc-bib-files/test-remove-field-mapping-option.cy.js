@@ -465,6 +465,7 @@ describe('Data Import', () => {
             FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            ItemRecordView.closeDetailView();
             InventorySearchAndFilter.searchInstanceByHRID(initialInstanceHrId);
             InventoryInstance.openHoldingView();
             HoldingsRecordView.checkTemporaryLocation('-');

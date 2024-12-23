@@ -393,9 +393,6 @@ describe('Data Import', () => {
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkFormerHoldingsId(
             holdingsMappingProfileForUpdate.formerHoldingsId,
           );

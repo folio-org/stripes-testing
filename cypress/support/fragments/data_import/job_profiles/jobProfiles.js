@@ -83,7 +83,7 @@ export default {
 
   selectJobProfile: () => {
     // need to wait until file upload
-    cy.wait(1000);
+    cy.wait(1500);
     cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
     cy.do(paneResults.find(MultiColumnListRow({ index: 0 })).click());
     cy.expect(waitSelector.exists());

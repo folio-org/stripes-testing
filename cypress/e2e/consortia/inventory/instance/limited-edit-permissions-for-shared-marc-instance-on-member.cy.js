@@ -67,7 +67,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.byShared('Yes');
         cy.wait(1500);
         InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
-        cy.wait('@/authn/refresh', { timeout: 5000 });
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonAbsent();
