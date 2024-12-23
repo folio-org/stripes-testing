@@ -70,6 +70,7 @@ describe('Bulk-edit', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
+        cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditItems.gui,
