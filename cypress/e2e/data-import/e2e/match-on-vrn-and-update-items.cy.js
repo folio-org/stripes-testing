@@ -231,11 +231,7 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           'marcFileForC350591.mrc',
           editedMarcFileName,
-          [
-            'Agrarianism and capitalism in early Georgia, 1732-1743 /',
-            '14567-1',
-            'xyzt124245271818912626262',
-          ],
+          ['Cornell University Graduate School records,', '14567-1', 'xyzt124245271818912626262'],
           [uniquePartOfInstanceTitle, item.vrn, itemBarcode],
         );
 
