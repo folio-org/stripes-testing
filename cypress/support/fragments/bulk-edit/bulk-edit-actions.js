@@ -243,7 +243,7 @@ export default {
   downloadPreview() {
     cy.do(downloadPreviewBtn.click());
     // Wait for file to download
-    cy.wait(3000);
+    cy.wait(5000);
   },
 
   verifyDownloadPreviewButtonDisabled(isDisabled = true) {
@@ -994,11 +994,13 @@ export default {
     cy.do(actionsBtn.click());
     cy.wait(500);
     cy.do(Button('Download matched records (CSV)').click());
+    cy.wait(5000);
     BulkEditSearchPane.waitingFileDownload();
   },
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
+    cy.wait(5000);
     BulkEditSearchPane.waitingFileDownload();
   },
 
@@ -1159,6 +1161,7 @@ export default {
 
   downloadChangedCSV() {
     cy.do(downloadChnagedRecordsButton.click());
+    cy.wait(5000);
     BulkEditSearchPane.waitingFileDownload();
   },
 
