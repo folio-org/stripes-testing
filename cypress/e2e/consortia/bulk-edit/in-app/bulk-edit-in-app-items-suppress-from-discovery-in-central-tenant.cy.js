@@ -26,6 +26,7 @@ import QueryModal, {
   QUERY_OPERATIONS,
   itemFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
 let instanceTypeId;
@@ -223,7 +224,7 @@ describe('Bulk-edit', () => {
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
