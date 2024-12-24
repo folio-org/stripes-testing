@@ -76,11 +76,13 @@ describe('bulk-edit', () => {
         BulkEditLogs.resetAll();
         BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
+        cy.wait(2000);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
+        cy.wait(2000);
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();

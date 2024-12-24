@@ -18,6 +18,7 @@ const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         Permissions.bulkEditCsvView.gui,
         Permissions.bulkEditCsvEdit.gui,
@@ -74,6 +75,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
         cy.reload();
+        cy.wait(2000);
         BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
