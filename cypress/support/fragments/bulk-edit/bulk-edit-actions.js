@@ -38,7 +38,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
-const startBulkEditInstanceButton = Button('Instances and Administrative data');
+const startBulkEditInstanceButton = Button('FOLIO Instances');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -787,6 +787,14 @@ export default {
     ]);
   },
 
+  replaceWithAction(option, newValue, rowIndex = 0) {
+    this.selectOption(option, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.verifySecondActionSelected('Replace with', rowIndex);
+    this.fillInSecondTextArea(newValue, rowIndex);
+    this.verifyValueInSecondTextArea(newValue, rowIndex);
+  },
+
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     this.findValue(noteType, rowIndex);
     this.fillInFirstTextArea(oldNote, rowIndex);
@@ -1396,7 +1404,7 @@ export default {
   },
 
   verifyFilteredOptionsListIncludesOptionsWithText(value) {
-    cy.get('ul[class^="selectionList-"] li').each(($li) => {
+    cy.get('ul[class^="selectionList-"] li:not([class*="groupLabel"])').each(($li) => {
       cy.wrap($li)
         .invoke('text')
         .then((text) => {
@@ -1442,6 +1450,7 @@ export default {
     this.clickOptionsSelection();
 
     const expectedOptions = [
+      ['Administrative note', 'Suppress from discovery'],
       [
         'Action note',
         'Binding',
@@ -1451,10 +1460,21 @@ export default {
         'Provenance',
         'Reproduction',
       ],
-      ['Permanent loan type', 'Temporary loan type'],
+      [
+        'Check in note',
+        'Check out note',
+        'Item status',
+        'Permanent loan type',
+        'Temporary loan type',
+      ],
       ['Permanent item location', 'Temporary item location'],
     ];
-    const expectedGroupLabels = ['Item notes', 'Loan type', 'Location'];
+    const expectedGroupLabels = [
+      'Administrative data',
+      'Item notes',
+      'Loan and availability',
+      'Location',
+    ];
     const groupSelector = 'li[class*="groupLabel"]';
 
     cy.get(groupSelector).each(($groupLabel, ind) => {

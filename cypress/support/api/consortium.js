@@ -51,3 +51,15 @@ Cypress.Commands.add('getUserAffiliationsCount', () => {
     });
   });
 });
+
+Cypress.Commands.add('getUserTenants', () => {
+  cy.getConsortiaId().then((consortiaId) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `consortia/${consortiaId}/_self`,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.userTenants;
+    });
+  });
+});

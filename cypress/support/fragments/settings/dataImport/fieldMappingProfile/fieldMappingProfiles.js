@@ -42,7 +42,9 @@ const marcAuthorityUpdateMappingProfile = {
 };
 const openNewMappingProfileForm = () => {
   cy.wait(2000);
-  cy.do([actionsButton.click(), Button('New field mapping profile').click()]);
+  cy.do(actionsButton.click());
+  cy.wait(1000);
+  cy.do(Button('New field mapping profile').click());
 };
 const mappingProfileForDuplicate = {
   gobi: 'GOBI monograph invoice',
@@ -195,7 +197,10 @@ export default {
             cells.push(cellValue);
           });
       })
-      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
+      .then(() => {
+        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
+        cy.expect(isSorted).to.equal(true);
+      });
   },
   ...ResultsPane,
   clickCreateNewFieldMappingProfile() {

@@ -279,8 +279,10 @@ export default {
     cy.expect(rootSection.absent());
   },
   clickSaveAndCloseButton() {
-    cy.wait(500);
+    cy.wait(4000);
+    cy.intercept('GET', '/inventory/instances/*').as('getInstance');
     cy.do(saveAndCloseButton.click());
+    cy.wait('@getInstance', { timeout: 100000 });
     cy.wait(500);
     cy.expect(rootSection.absent());
     cy.wait(2000);
@@ -290,6 +292,7 @@ export default {
     );
   },
   clickSaveCloseButton() {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
   },
   deleteStatisticalCode(statisticalCode) {

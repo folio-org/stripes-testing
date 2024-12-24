@@ -66,7 +66,6 @@ describe('MARC', () => {
         ];
 
         const bib100FieldValues = [
-          32,
           testData.tag100,
           '1',
           '\\',
@@ -125,7 +124,7 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib100FieldValues);
+            QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(...bib100FieldValues);
             InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorityBrowse.checkSearchOptions();

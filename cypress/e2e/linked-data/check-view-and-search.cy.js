@@ -3,7 +3,7 @@ import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEdit
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 
-describe('ui-data-linked-editor - check view and search', () => {
+describe('Citation: check navigation', () => {
   beforeEach(() => {
     cy.loginAsAdmin({
       path: TopMenu.linkedDataEditor,
@@ -20,14 +20,14 @@ describe('ui-data-linked-editor - check view and search', () => {
       // open new resource form
       LinkedDataEditor.openNewResourceForm();
       // navigate back to the main module
-      TopMenuNavigation.navigateToApp('Linked data editor');
+      TopMenuNavigation.openAppFromDropdown('Linked data editor');
       LinkedDataEditor.waitLoading();
       // search by any title
       SearchAndFilter.searchResourceByTitle('*');
       // open work
       LinkedDataEditor.selectFromSearchTable(1);
       // navigate back to the main module
-      TopMenuNavigation.navigateToApp('Linked data editor');
+      TopMenuNavigation.openAppFromDropdown('Linked data editor');
       LinkedDataEditor.waitLoading();
       LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
     },

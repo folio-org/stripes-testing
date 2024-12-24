@@ -33,6 +33,13 @@ export default {
     cy.xpath(workPreviewPanel).should('be.visible');
   },
 
+  editInstanceFromSearchTable: (rowNumber, instanceNumber) => {
+    cy.xpath(
+      `(//div[@class='search-result-entry-container'][${rowNumber}]//table[contains(@class, 'table instance-list')]//button[contains(text(), 'Edit')])[${instanceNumber}]`,
+    ).click();
+    editResource.waitLoading();
+  },
+
   openNewResourceForm: () => {
     cy.xpath(actionsButton).click();
     cy.xpath(newResourceButton).click();
@@ -42,5 +49,20 @@ export default {
   editWork: () => {
     cy.xpath("//div[@class='full-display-container']//button[text()='Edit work']").click();
     editResource.waitLoading();
+  },
+
+  generateValidLccn: () => {
+    // Generate a random starting character which could be a lowercase letter or '_'
+    const firstCharChoices = 'abcdefghijklmnopqrstuvwxyz_';
+    const randomFirstChar = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+    const randomSecondChar = firstCharChoices[Math.floor(Math.random() * firstCharChoices.length)];
+    // Generating a random sequence of 10 digits
+    let randomDigits = '';
+    for (let i = 0; i < 10; i++) {
+      randomDigits += Math.floor(Math.random() * 10);
+    }
+    // Combining first char, second char and digits
+    const patternString = randomFirstChar + randomSecondChar + randomDigits;
+    return patternString;
   },
 };

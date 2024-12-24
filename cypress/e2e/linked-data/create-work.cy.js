@@ -36,22 +36,22 @@ describe('Citation: create work', () => {
       LinkedDataEditor.openNewResourceForm();
       EditResource.waitLoading();
       // change data, but do not enter title
-      EditResource.setPartName(testData.partName);
+      EditResource.setValueForTheField(testData.partName, 'Part name');
       EditResource.saveAndKeepEditing();
       EditResource.checkAlarmDisplayed(true);
       // enter title and keep editing
-      EditResource.setTitle(testData.uniqueTitle);
+      EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       EditResource.checkAlarmDisplayed(false);
-      EditResource.setSummaryNote(testData.summaryNote);
+      EditResource.setValueForTheField(testData.summaryNote, 'Summary note');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
       LinkedDataEditor.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
-      SearchAndFilter.checkSearchResultsByWorkTitle(testData.uniqueTitle);
+      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
       // check that work is not displayed in the inventory
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle, false);
       InventorySearchAndFilter.verifyNoRecordsFound();
     },

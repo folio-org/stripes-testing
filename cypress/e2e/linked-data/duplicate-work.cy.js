@@ -24,6 +24,7 @@ describe('Citation: duplicate existing work', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    InventoryInstances.deleteInstanceByTitleViaApi(testData.uniqueInstanceTitle);
   });
 
   beforeEach(() => {
@@ -43,8 +44,8 @@ describe('Citation: duplicate existing work', () => {
       LinkedDataEditor.selectFromSearchTable(1);
       LinkedDataEditor.editWork();
       // duplicate work
-      EditResource.duplicateWork();
-      EditResource.setTitle(testData.uniqueTitle);
+      EditResource.duplicateResource();
+      EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       // add instance
       EditResource.openNewInstanceForm();
@@ -55,9 +56,9 @@ describe('Citation: duplicate existing work', () => {
       LinkedDataEditor.waitLoading();
       // search created work by title
       SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
-      SearchAndFilter.checkSearchResultsByWorkTitle(testData.uniqueTitle);
+      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
       // check that newly created instance is displayed in the inventory
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
       // check source
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');

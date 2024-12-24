@@ -2,6 +2,7 @@ import newInstance from './newInstance';
 
 const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
 const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
+const viewMarcButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.viewMarc']";
 
 export default {
   waitLoading() {
@@ -24,39 +25,50 @@ export default {
     }
   },
 
-  setPartName(partName) {
+  setValueForTheField(value, field) {
     cy.wait(1000);
-    cy.xpath('//div[@class="label" and text()="Part name"]/../../div/input')
-      .focus()
-      .should('not.be.disabled')
-      .type(partName);
-  },
-
-  setTitle(title) {
-    cy.wait(1000);
-    cy.xpath('//div[@class="label" and text()="Preferred Title for Work"]/../../div/input')
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
       .focus()
       .should('not.be.disabled')
       .clear()
-      .type(title);
+      .type(value);
   },
 
-  setSummaryNote(note) {
+  clearField(field) {
     cy.wait(1000);
-    cy.xpath('//div[@class="label" and text()="Summary note"]/../../div/input')
+    cy.xpath(`//div[@class="label" and text()="${field}"]/../../div/input`)
       .focus()
       .should('not.be.disabled')
-      .type(note);
+      .clear();
   },
 
-  duplicateWork() {
+  duplicateResource() {
     cy.xpath(actionsButton).click();
     cy.xpath(duplicateButton).click();
     cy.xpath("//div[@id='edit-section']").should('be.visible');
   },
 
   openNewInstanceForm() {
-    cy.xpath("//button[@data-testid='create-instance-button']").click();
+    cy.xpath("//button[@data-testid='new-instance']").click();
     newInstance.waitLoading();
+  },
+
+  setEdition(edition) {
+    cy.wait(1000);
+    cy.xpath('//div[@class="label" and text()="Edition Statement"]/../../div/div[2]/input')
+      .focus()
+      .should('not.be.disabled')
+      .clear();
+    // break the chain since test fails here from time to time otherwise
+    cy.wait(1000);
+    cy.xpath('//div[@class="label" and text()="Edition Statement"]/../../div/div[2]/input').type(
+      edition,
+    );
+  },
+
+  viewMarc() {
+    cy.xpath(actionsButton).click();
+    cy.xpath(viewMarcButton).click();
+    cy.xpath("//div[@class='view-marc-modal']").should('be.visible');
   },
 };

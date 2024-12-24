@@ -145,7 +145,7 @@ describe('Data Import', () => {
         Permissions.uiOrdersApprovePurchaseOrders.gui,
         Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.uiInventoryViewCreateEditItems,
+        Permissions.uiInventoryViewCreateEditItems.gui,
         Permissions.uiInventoryViewInstances.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {

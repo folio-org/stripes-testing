@@ -209,7 +209,6 @@ describe('Data Import', () => {
           }),
         ).then((order) => {
           orderNumber = order.poNumber;
-
           // open the PO with POL
           Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
@@ -220,7 +219,7 @@ describe('Data Import', () => {
           OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-          Orders.clearSearchField();
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           OrderDetails.openPolDetails(item.title);
@@ -231,11 +230,7 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           'marcFileForC350591.mrc',
           editedMarcFileName,
-          [
-            'Agrarianism and capitalism in early Georgia, 1732-1743 /',
-            '14567-1',
-            'xyzt124245271818912626262',
-          ],
+          ['Cornell University Graduate School records,', '14567-1', 'xyzt124245271818912626262'],
           [uniquePartOfInstanceTitle, item.vrn, itemBarcode],
         );
 
