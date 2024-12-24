@@ -32,19 +32,31 @@ export default {
   },
 
   checkIsSortedAlphabetically({ array = [], accuracy = 1 } = {}) {
-    const result = array.reduce((acc, it) => {
-      if (acc.length) {
-        const prev = acc[acc.length - 1].value;
-        const current = it.toLowerCase();
+    if (array.length === 0) return true; // An empty array is considered sorted.
 
-        return [...acc, { value: current, order: prev.localeCompare(current) }];
-      } else {
-        return [{ value: it.toLowerCase(), order: 0 }];
+    let outOfOrderCount = 0;
+
+    for (let i = 1; i < array.length; i++) {
+      // Normalize strings: remove non-alphanumeric characters, spaces, and convert to lowercase
+      const prev = array[i - 1]
+        .replace(/[^a-z0-9]/gi, '') // Remove non-alphanumeric characters
+        .toLowerCase();
+      const current = array[i]
+        .replace(/[^a-z0-9]/gi, '') // Remove non-alphanumeric characters
+        .toLowerCase();
+
+      // Compare adjacent elements
+      if (prev.localeCompare(current) > 0) {
+        outOfOrderCount++;
+
+        // Early exit if the accuracy threshold is exceeded
+        if ((outOfOrderCount * 100) / array.length >= accuracy) {
+          return false;
+        }
       }
-    }, []);
+    }
 
-    const invalidOrder = result.filter(({ order }) => order > 0);
-    return (invalidOrder.length * 100) / array.length < accuracy;
+    return true;
   },
 };
 
