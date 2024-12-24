@@ -1615,6 +1615,11 @@ export default {
       .should('include.text', `${userLastName}, ${userFirsttName}`);
   },
 
+  verifyLastUpdatedSourceByUnknownUser: () => {
+    cy.do(Accordion('Administrative data').click());
+    cy.get('div[data-test-updated-by="true"]').should('include.text', 'Unknown user');
+  },
+
   verifyRecordCreatedSource: (userFirsttName, userLastName) => {
     cy.get('div[data-test-created-by="true"]')
       .find('a')
