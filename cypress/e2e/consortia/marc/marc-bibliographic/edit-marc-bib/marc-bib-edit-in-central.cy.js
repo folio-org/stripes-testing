@@ -97,7 +97,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
-          QuickMarcEditor.moveFieldUp(18);
+          QuickMarcEditor.moveFieldUp(17);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
@@ -114,10 +114,7 @@ describe('MARC', () => {
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
-          InventoryInstance.verifyLastUpdatedSource(
-            users.userAProperties.firstName,
-            users.userAProperties.lastName,
-          );
+          InventoryInstance.verifyLastUpdatedSourceByUnknownUser();
           InventoryInstance.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
             testData.tag245,
@@ -135,8 +132,8 @@ describe('MARC', () => {
             users.userAProperties.firstName,
             users.userAProperties.lastName,
           );
-          QuickMarcEditor.verifyTagValue(17, testData.tag504);
-          QuickMarcEditor.verifyTagValue(18, testData.tag500);
+          QuickMarcEditor.verifyTagValue(16, testData.tag504);
+          QuickMarcEditor.verifyTagValue(17, testData.tag500);
         },
       );
     });
