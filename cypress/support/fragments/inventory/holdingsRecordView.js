@@ -199,25 +199,31 @@ export default {
       .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
       .absent(),
   ),
-  checkElectronicAccess: (relationshipValue, uriValue, linkText = '-', urlPublicNote = '-') => {
+  checkElectronicAccess: (
+    relationshipValue,
+    uriValue,
+    linkText = '-',
+    urlPublicNote = '-',
+    rowIndex = 0,
+  ) => {
     cy.expect(
       electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 0, content: relationshipValue }))
         .exists(),
     );
     cy.expect(
       electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 1, content: uriValue }))
         .exists(),
     );
     cy.expect(
       electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: linkText }))
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 2, content: linkText }))
         .exists(),
     );
     cy.expect(
       electronicAccessAccordion
-        .find(MultiColumnListCell({ row: 0, columnIndex: 4, content: urlPublicNote }))
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 4, content: urlPublicNote }))
         .exists(),
     );
   },
