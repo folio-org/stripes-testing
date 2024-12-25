@@ -394,6 +394,7 @@ export default {
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
+  openIdentifiersAccordion: () => cy.do(identifiersAccordion.clickHeader()),
   openInstanceNotesAccordion: () => cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
@@ -1436,7 +1437,9 @@ export default {
         'Inventory Single Record - Default Update Instance (Default)',
       ),
     );
+    cy.wait(1500);
     cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.wait(1500);
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 

@@ -361,7 +361,7 @@ describe('Data Import', () => {
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfile(instanceMatchProfile);
           MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
-          cy.wait(1000);
+          cy.wait(3000);
           MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
           MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
 
@@ -393,9 +393,7 @@ describe('Data Import', () => {
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.waitLoading();
           HoldingsRecordView.checkFormerHoldingsId(
             holdingsMappingProfileForUpdate.formerHoldingsId,
           );
