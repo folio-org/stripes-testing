@@ -36,7 +36,7 @@ describe('Citation: duplicate existing work', () => {
 
   it(
     'C624234 [User journey] LDE - Duplicate existing work',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by any title
       SearchAndFilter.searchResourceByTitle('*');

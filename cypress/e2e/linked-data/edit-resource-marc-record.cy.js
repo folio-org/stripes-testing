@@ -45,7 +45,7 @@ describe('Citation: edit existing instance', () => {
 
   it(
     'C627245 [User journey] LDE - Edit existing resource | create MARC derived record',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // prepare inventory instance created by LDE
       SearchAndFilter.searchResourceByIsbn('*');

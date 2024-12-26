@@ -43,7 +43,7 @@ describe('Citation: duplicate instance', () => {
 
   it(
     'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by any isbn
       SearchAndFilter.searchResourceByIsbn('*');
