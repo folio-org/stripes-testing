@@ -18,7 +18,6 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
-      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -67,7 +66,9 @@ describe('Inventory', () => {
         verifySearchAndFilterPane();
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);
+        cy.wait(1500);
         InventoryNewInstance.clickSaveAndCloseButton();
+        cy.wait(1500);
         InventoryInstance.checkInstanceDetails({
           instanceInformation: [{ key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO }],
         });
