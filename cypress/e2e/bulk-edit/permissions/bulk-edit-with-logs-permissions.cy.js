@@ -44,6 +44,11 @@ describe('bulk-edit', () => {
         BulkEditLogs.checkHoldingsCheckbox();
         BulkEditLogs.checkUsersCheckbox();
         BulkEditLogs.checkItemsCheckbox();
+        // steps have been added to stabilize the test case on the bugfest environment because there are many records there that are no longer available for download
+        cy.wait(5000);
+        BulkEditLogs.sortLogsTableByColumnHeader('Started');
+        BulkEditLogs.sortLogsTableByColumnHeader('Started');
+        cy.wait(5000);
         BulkEditLogs.clickActionsOnTheRow();
         BulkEditLogs.verifyTriggerLogsAction();
       },
