@@ -120,7 +120,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);
         InventorySearchAndFilter.verifyTextFieldInAccordion(Dropdowns.EFFECTIVE_LOCATION, '');
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
@@ -128,7 +128,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
