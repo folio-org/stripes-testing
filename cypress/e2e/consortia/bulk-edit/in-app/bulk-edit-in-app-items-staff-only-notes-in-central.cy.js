@@ -313,6 +313,7 @@ describe('Bulk-edit', () => {
               ITEM_STATUS_NAMES.AVAILABLE,
             );
           });
+
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
           BulkEditActions.openActions();
