@@ -264,9 +264,7 @@ describe('Inventory', () => {
               Permissions.inventoryAll.gui,
             ]);
 
-            cy.loginAsAdmin().then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              cy.visit(TopMenu.dataImportPath);
+            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
               DataImport.verifyUploadState();
               DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileNameImported);
               JobProfiles.waitFileIsUploaded();

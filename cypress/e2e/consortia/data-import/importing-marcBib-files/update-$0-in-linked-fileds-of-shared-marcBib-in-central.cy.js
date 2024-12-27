@@ -85,20 +85,20 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 21,
+        rowIndex: 20,
         value: 'C411802 Marvel comics',
         tag: '630',
         content:
           '$a C411802 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
       },
       {
-        rowIndex: 22,
+        rowIndex: 21,
         value: 'C411802 Speaking Oratory',
         tag: '650',
         content: '$a C411802 Speaking Oratory $b debating $2 fast',
       },
       {
-        rowIndex: 27,
+        rowIndex: 26,
         value: 'C411802 Radio "Vaticana".',
         tag: '710',
         boxFourth: '$a C411802 Radio "Vaticana". $b Hrvatski program',
