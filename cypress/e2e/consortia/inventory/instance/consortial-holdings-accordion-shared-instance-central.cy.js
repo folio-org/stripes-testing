@@ -212,12 +212,12 @@ describe('Inventory', () => {
         InventoryInstance.expandMemberSubHoldings(Affiliations.College);
         InventoryInstance.verifyMemberSubSubHoldingsAccordion(
           Affiliations.College,
-          testData.collegeHoldingsId,
+          testData.collegeHolding.id,
         );
         InventoryInstance.expandMemberSubHoldings(Affiliations.University);
         InventoryInstance.verifyMemberSubSubHoldingsAccordion(
           Affiliations.University,
-          testData.universityHoldingsId,
+          testData.universityHolding.id,
         );
       },
     );
