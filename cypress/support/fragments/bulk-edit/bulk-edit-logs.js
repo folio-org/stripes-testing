@@ -501,6 +501,10 @@ export default {
     ]);
   },
 
+  sortLogsTableByColumnHeader(columnHeader) {
+    cy.do(MultiColumnListHeader(columnHeader).click());
+  },
+
   fillLogsDate(accordion, dataPicker, value) {
     cy.do(Accordion(accordion).find(TextField(dataPicker)).fillIn(value));
   },

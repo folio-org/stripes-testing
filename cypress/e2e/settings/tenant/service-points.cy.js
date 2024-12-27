@@ -1,8 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const newServicePoint = {
@@ -19,7 +20,7 @@ describe('Settings: Tenant', () => {
         user = userProperties;
         cy.login(user.username, user.password);
         cy.wait(2000);
-        cy.visit(TopMenu.settingsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ServicePoints.goToServicePointsTab();
       },
     );

@@ -27,6 +27,7 @@ describe('bulk-edit', () => {
   describe('logs', () => {
     describe('csv approach', () => {
       before('create test data', () => {
+        cy.clearLocalStorage();
         cy.createTempUser([]).then((userProperties) => {
           userWithoutPermissions = userProperties;
         });
