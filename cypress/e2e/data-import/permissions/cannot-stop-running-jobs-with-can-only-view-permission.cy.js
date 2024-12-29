@@ -52,11 +52,11 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
+
         cy.login(userA.username, userA.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        cy.reload();
         cy.wait(3000);
         DataImport.verifyTrashIconInvisibleForUser();
       },

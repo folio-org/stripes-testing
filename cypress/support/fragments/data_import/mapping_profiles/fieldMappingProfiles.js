@@ -160,7 +160,8 @@ export default {
           });
       })
       .then(() => {
-        cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true);
+        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
+        cy.expect(isSorted).to.equal(true);
       });
   },
 };

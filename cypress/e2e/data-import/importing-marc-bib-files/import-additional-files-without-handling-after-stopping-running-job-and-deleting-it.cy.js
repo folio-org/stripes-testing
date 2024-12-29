@@ -47,7 +47,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(bigFileName);
         // TODO wait until at least 1% of the file will be processed
-        cy.wait(45000);
+        cy.wait(65000);
         DataImport.deleteImportJob(bigFileName);
         DataImport.verifyCancelImportJobModal();
         DataImport.confirmDeleteImportJob();
@@ -64,6 +64,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
+        cy.wait(200000);
         Logs.waitFileIsImported(smallFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       },
