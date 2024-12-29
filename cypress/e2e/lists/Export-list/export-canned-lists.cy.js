@@ -3,7 +3,7 @@ import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Export query', () => {
     const userData = {};
 

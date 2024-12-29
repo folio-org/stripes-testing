@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Edit list', () => {
     const firstUser = {};
     const secondUser = {};
@@ -16,7 +16,6 @@ describe('lists', () => {
     };
 
     beforeEach('Create a user', () => {
-      cy.getAdminToken();
       cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
         firstUser.username = userProperties.username;
         firstUser.password = userProperties.password;

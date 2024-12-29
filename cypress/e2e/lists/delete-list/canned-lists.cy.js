@@ -3,12 +3,11 @@ import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Delete list', () => {
     const userData = {};
 
     before('Create a user', () => {
-      cy.getAdminToken();
       cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;

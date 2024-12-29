@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
@@ -15,11 +15,14 @@ describe('lists', () => {
     };
 
     beforeEach('Create a user', () => {
-      cy.getAdminToken();
       cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
+
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
       });
     });
 
@@ -37,9 +40,6 @@ describe('lists', () => {
       'C411770 Delete list: Refresh is in progress (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -64,9 +64,6 @@ describe('lists', () => {
       'C411771 Delete list: Export is in progress (corsair)',
       { tags: ['smoke', 'corsair'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
