@@ -225,6 +225,25 @@ export default {
     });
   },
 
+  checkCirculationNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+    cy.get('#acc06').within(() => {
+      cy.get("[class^='row---']")
+        .eq(rowIndex)
+        .within(() => {
+          cy.get("[class^='col-']")
+            .first()
+            .within(() => {
+              cy.get("[class^='kvRoot-'] [class^='kvValue---']").should('contain', staffOnly);
+            });
+
+          cy.get("[class^='col-']:nth-child(2)").within(() => {
+            cy.get("[class^='kvRoot-'] [class^='kvLabel-']").should('contain', noteType);
+            cy.get("[class^='kvRoot-'] [class^='kvValue-']").should('contain', noteText);
+          });
+        });
+    });
+  },
+
   checkStaffOnlyValueInLoanAccordion(staffOnlyValue) {
     cy.expect(loanAccordion.find(KeyValue('Staff only')).has({ value: staffOnlyValue }));
   },
