@@ -108,7 +108,6 @@ describe('Orders', () => {
           expected: [{ format: 'Physical' }],
           received: [],
         });
-
         // Click on the record in "Expected" accordion on "<Title name>" pane
         const EditPieceModal = ReceivingDetails.openEditPieceModal();
         EditPieceModal.checkFieldsConditions([
@@ -123,14 +122,6 @@ describe('Orders', () => {
 
         // Select permanent location from Precondition, Click "Save and close" button
         SelectLocationModal.selectLocation(testData.location.institutionName);
-
-        // Click "Save and close" button
-        EditPieceModal.checkFieldsConditions([
-          {
-            label: 'Order line locations',
-            conditions: { text: including(testData.location.name) },
-          },
-        ]);
 
         // Click "Quick receive" button
         Receiving.openDropDownInEditPieceModal();

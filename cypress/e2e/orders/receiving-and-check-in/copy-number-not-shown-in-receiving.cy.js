@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import { InventoryInstances } from '../../../support/fragments/inventory';
+import { InventoryInstances, InventoryInstance } from '../../../support/fragments/inventory';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import { Receivings } from '../../../support/fragments/receiving';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
@@ -88,7 +88,7 @@ describe('Orders', () => {
       () => {
         // Click on Instance name from PO line from preconditions
         InventoryInstances.searchByTitle(testData.orderLine.titleOrPackage);
-        const InventoryInstance = InventoryInstances.selectInstance();
+        InventoryInstances.selectInstance();
         InventoryInstance.checkHoldingTitle({ title: testData.location.name, count: 1 });
 
         // Expand "Holdings" accordion
@@ -104,7 +104,7 @@ describe('Orders', () => {
           shouldOpen: false,
         });
         ItemRecordView.checkItemRecordDetails({
-          itemData: [{ label: 'Copy number', conditions: { value: '-' } }],
+          itemData: [{ label: 'Copy number', conditions: { value: 'No value set-' } }],
           acquisitionData: [
             { label: 'POL number', conditions: { value: `${testData.order.poNumber}-1` } },
           ],

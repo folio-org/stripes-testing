@@ -832,8 +832,8 @@ export default {
     cy.getAdminToken();
     cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
       ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-      cy.getFiscalYearsApi({ limit: 1 }).then((response) => {
-        ledger.fiscalYearOneId = response.body.fiscalYears[0].id;
+      cy.getFiscalYearsApi({ limit: 10 }).then((response) => {
+        ledger.fiscalYearOneId = response.body.fiscalYears[1].id;
         cy.createLedgerApi({
           ...ledger,
         });
