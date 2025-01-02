@@ -48,6 +48,7 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -166,6 +167,16 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
+        if (instances.length !== 0) {
+          instances.forEach(({ id }) => {
+            InstanceRecordView.markAsDeletedViaApi(id);
+          });
+        }
+      });
+
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -178,15 +189,12 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
-
         cy.login(userProperties.username, userProperties.password);
       });
     });
 
     after('Delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileForUpdateName}`);
       cy.getAdminToken().then(() => {
         // delete profiles
@@ -260,6 +268,7 @@ describe('Data Import', () => {
         ExportFile.uploadFile(testData.nameForCSVFile);
         ExportFile.exportWithCreatedJobProfile(testData.nameForCSVFile, exportJobProfile);
         ExportFile.downloadExportedMarcFile(testData.exportedFile);
+        FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

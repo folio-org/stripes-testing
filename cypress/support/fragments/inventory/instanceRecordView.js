@@ -554,6 +554,14 @@ export default {
     cy.do(Button({ id: 'quick-export-trigger' }).click());
   },
 
+  markAsDeletedViaApi: (id) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `inventory/instances/${id}/mark-deleted`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   verifyEditInstanceButtonAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).absent());
