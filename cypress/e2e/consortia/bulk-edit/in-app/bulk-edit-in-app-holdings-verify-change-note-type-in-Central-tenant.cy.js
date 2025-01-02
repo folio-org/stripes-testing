@@ -205,6 +205,7 @@ describe('Bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          cy.wait(10000);
         });
       });
 
