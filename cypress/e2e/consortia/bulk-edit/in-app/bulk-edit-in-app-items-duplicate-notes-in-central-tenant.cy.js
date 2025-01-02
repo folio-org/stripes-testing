@@ -48,7 +48,6 @@ const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD')
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
 const previewFileName = `${todayDate}-Updates-Preview-${itemUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
-const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${itemUUIDsFileName}`;
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -174,7 +173,6 @@ describe('Bulk-edit', () => {
           matchedRecordsFileName,
           previewFileName,
           changedRecordsFileName,
-          errorsFromCommittingFileName,
         );
       });
 
