@@ -4,6 +4,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ClassificationBrowse, {
+  defaultClassificationBrowseIdsAlgorithms,
+} from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -18,6 +21,8 @@ describe('Inventory', () => {
         'C468255 Search by Classification (case insensitive check) Instance 3 - LC UPPER case',
         'C468255 Search by Classification (case insensitive check) Instance 4 - LC lower case',
       ],
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm,
     };
 
     const marcFile = {
@@ -33,6 +38,18 @@ describe('Inventory', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
       InventoryInstances.deleteInstanceByTitleViaApi('C468255*');
+
+      // remove all identifier types from target classification browse, if any
+      ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
+        testData.classificationBrowseId,
+      ).then((types) => {
+        testData.originalTypes = types;
+      });
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        [],
+      );
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
@@ -64,6 +81,12 @@ describe('Inventory', () => {
 
     after(() => {
       cy.getAdminToken();
+      // restore the original identifier types for target classification browse
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        testData.originalTypes,
+      );
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });

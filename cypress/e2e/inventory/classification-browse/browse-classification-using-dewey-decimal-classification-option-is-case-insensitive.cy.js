@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -7,6 +7,9 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import ClassificationBrowse, {
+  defaultClassificationBrowseIdsAlgorithms,
+} from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -18,6 +21,8 @@ describe('Inventory', () => {
         'C468258 Search by Classification (case insensitive check) Instance 1 - Dewey UPPER case',
         'C468258 Search by Classification (case insensitive check) Instance 2 - Dewey lower case',
       ],
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
     };
 
     const marcFile = {
@@ -33,6 +38,17 @@ describe('Inventory', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
       InventoryInstances.deleteInstanceByTitleViaApi('C468258*');
+
+      ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
+        testData.classificationBrowseId,
+      ).then((types) => {
+        testData.originalTypes = types;
+      });
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+      );
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
@@ -64,6 +80,12 @@ describe('Inventory', () => {
 
     after(() => {
       cy.getAdminToken();
+      // restore the original identifier types for target classification browse
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        testData.originalTypes,
+      );
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
