@@ -13,6 +13,7 @@
 - Rename the `ui-eholdings.titles-packages.create-delete` and `ui-eholdings.package-title.select-unselect` permissions. Refs UITEST-123.
 - Rename the `ui-notes.item.assign-unassign` permission. Refs UITEST-124.
 - Update `ui-quick-marc.quick-marc-editor.duplicate` and `ui-quick-marc.quick-marc-authority-records.linkUnlink` permissions. Refs UITEST-121.
+- Change `advanced-search` -> `fillQuery` interactor from `ariaLabel` to `dataTestID`. Refs UITEST-127.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 
