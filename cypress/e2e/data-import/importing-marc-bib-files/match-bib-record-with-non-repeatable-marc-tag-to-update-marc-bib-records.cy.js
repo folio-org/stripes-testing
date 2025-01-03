@@ -95,10 +95,10 @@ describe('Data Import', () => {
       },
       {
         matchProfile: {
-          profileName: `C350694 901$a to Holdings HRID match${getRandomPostfix()}`,
+          profileName: `C350694 901$h to Holdings HRID match${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '901',
-            subfield: 'a',
+            subfield: 'h',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
@@ -107,10 +107,10 @@ describe('Data Import', () => {
       },
       {
         matchProfile: {
-          profileName: `C350694 902$a to Item HRID match ${getRandomPostfix()}`,
+          profileName: `C350694 902$i to Item HRID match ${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '902',
-            subfield: 'a',
+            subfield: 'i',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORD_NAMES.ITEM,
@@ -123,7 +123,7 @@ describe('Data Import', () => {
         mappingProfile: {
           name: `C350694 Update instance with status and cat date${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE,
+          instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.OTHER,
           catalogedDate: '###TODAY###',
           catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
         },
@@ -135,26 +135,26 @@ describe('Data Import', () => {
       },
       {
         mappingProfile: {
-          name: `C350694 Update holdings for 901$a match${getRandomPostfix()}`,
+          name: `C350694 Update holdings for 901$h match${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           temporaryLocation: `"${LOCATION_NAMES.ANNEX}"`,
           temporaryLocationUI: LOCATION_NAMES.ANNEX_UI,
         },
         actionProfile: {
-          name: `C350694 Update holdings for 901$a match${getRandomPostfix()}`,
+          name: `C350694 Update holdings for 901$h match${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
       },
       {
         mappingProfile: {
-          name: `C350694 Update item for 902$a match${getRandomPostfix()}`,
+          name: `C350694 Update item for 902$i match${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           adminNotes: 'Add this to existing',
           adminNote: `Test${getRandomPostfix()}`,
         },
         actionProfile: {
-          name: `C350694 Update item for 902$a match${getRandomPostfix()}`,
+          name: `C350694 Update item for 902$i match${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
         },
@@ -183,7 +183,6 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        // Permissions.dataExportSettingsViewOnly.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         Permissions.dataExportViewAddUpdateProfiles.gui,
       ]).then((userProperties) => {
@@ -194,8 +193,8 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.fileForUpdateName}`);
+      FileManager.deleteFileFromDownloadsByMask(testData.exportedFile);
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedFile}`);
       cy.getAdminToken().then(() => {
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -216,7 +215,14 @@ describe('Data Import', () => {
         }).then((instance) => {
           cy.deleteItemViaApi(instance.items[0].id);
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi('32021631').then((instances) => {
+          if (instances.length !== 0) {
+            instances.forEach(({ id }) => {
+              InstanceRecordView.markAsDeletedViaApi(id);
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
         });
       });
     });
@@ -269,6 +275,7 @@ describe('Data Import', () => {
         ExportFile.exportWithCreatedJobProfile(testData.nameForCSVFile, exportJobProfile);
         ExportFile.downloadExportedMarcFile(testData.exportedFile);
         FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
+        FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
@@ -296,7 +303,7 @@ describe('Data Import', () => {
           collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDate,
         );
         NewFieldMappingProfile.fillInstanceStatusTerm(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus,
+          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -380,6 +387,7 @@ describe('Data Import', () => {
         });
         // check updated instance in Inventory
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InstanceRecordView.waitLoading();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           testData.instanceHRID = initialInstanceHrId;
         });
