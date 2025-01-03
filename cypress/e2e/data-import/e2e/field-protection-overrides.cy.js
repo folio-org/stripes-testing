@@ -47,7 +47,7 @@ describe('Data Import', () => {
     let userId = null;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file name to upload
-    const fileNameForCreatingInstance = `C17018autotestFileCreteInstance${getRandomPostfix()}.mrc`;
+    const fileNameForCreatingInstance = `C17018autotestFileCreateInstance${getRandomPostfix()}.mrc`;
     const fileNameForProtect = `C17018 marcFileForC17018-Rev1-Protect${getRandomPostfix()}.mrc`;
     const fileNameForOverride = `C17018 marcFileForC17018-Rev2-Override${getRandomPostfix()}.mrc`;
     const editedFileNameRev1 = `marcFileForC17018-Rev1-Protect${getRandomPostfix()}.mrc`;
