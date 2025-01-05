@@ -37,7 +37,7 @@ const resourceTypeAccordion = Accordion({ id: 'resource' });
 const formatAccordion = Accordion({ id: 'format' });
 const modeOfIssuanceAccordion = Accordion({ id: 'mode' });
 const natureOfContentAccordion = Accordion({ id: 'natureOfContent' });
-const stuffSupressAccordion = Accordion({ id: 'staffSuppress' });
+const staffSuppressAccordion = Accordion({ id: 'staffSuppress' });
 const supressFromDiscoveryAccordion = Accordion({ id: 'instancesDiscoverySuppress' });
 const statisticalCodeAccordionInstanceToggle = Accordion({ id: 'statisticalCodeIds' });
 const dateCreatedAccordion = Accordion({ id: 'createdDate' });
@@ -1046,12 +1046,23 @@ export default {
       });
   },
 
-  selectYesfilterStaffSuppress: () => {
-    cy.do([
-      stuffSupressAccordion.clickHeader(),
-      stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
-    ]);
-    cy.wait(1500);
+  filterByStaffSuppress: (option = 'Yes') => {
+    cy.do(staffSuppressAccordion.clickHeader());
+    if (option === 'Yes') {
+      cy.do(
+        staffSuppressAccordion
+          .find(Checkbox({ id: 'clickable-filter-staffSuppress-true' }))
+          .click(),
+      );
+      cy.wait(2000);
+    } else {
+      cy.do(
+        staffSuppressAccordion
+          .find(Checkbox({ id: 'clickable-filter-staffSuppress-false' }))
+          .click(),
+      );
+      cy.wait(2000);
+    }
   },
 
   clearSharedFilter() {

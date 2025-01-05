@@ -460,7 +460,7 @@ describe('Data Import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
+          InventorySearchAndFilter.filterByStaffSuppress('No');
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');

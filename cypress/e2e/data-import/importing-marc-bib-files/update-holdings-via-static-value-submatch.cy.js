@@ -263,7 +263,7 @@ describe('Data Import', () => {
           instanceHrid = initialInstanceHrId;
 
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
+          InventorySearchAndFilter.filterByStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkFormerHoldingsId(
@@ -369,7 +369,7 @@ describe('Data Import', () => {
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
+          InventorySearchAndFilter.filterByStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkFormerHoldingsId(
