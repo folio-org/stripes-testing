@@ -50,7 +50,6 @@ describe('Inventory', () => {
       HoldingsRecordEdit.saveAndClose();
       HoldingsRecordView.waitLoading();
       HoldingsRecordView.checkHoldingsType(testData.holdingsType);
-      cy.logout();
 
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,

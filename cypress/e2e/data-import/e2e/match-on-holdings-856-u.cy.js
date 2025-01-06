@@ -17,9 +17,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -238,9 +236,7 @@ describe('Data Import', () => {
           Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-          InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.openHoldingView();
+          HoldingsRecordView.waitLoading();
           HoldingsRecordView.checkCallNumber('ONLINE');
         });
       },

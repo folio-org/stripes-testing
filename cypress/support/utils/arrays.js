@@ -32,14 +32,18 @@ export default {
   },
 
   checkIsSortedAlphabetically({ array = [], accuracy = 1 } = {}) {
-    if (array.length === 0) return true;
+    if (array.length === 0) return true; // An empty array is considered sorted.
 
     let outOfOrderCount = 0;
 
     for (let i = 1; i < array.length; i++) {
-      // Normalize strings for comparison: replace hyphens with spaces and trim
-      const prev = array[i - 1].trim().toLowerCase().replace(/-/g, ' ').replace(/\s+/g, ' ');
-      const current = array[i].trim().toLowerCase().replace(/-/g, ' ').replace(/\s+/g, ' ');
+      // Normalize strings: remove non-alphanumeric characters, spaces, and convert to lowercase
+      const prev = array[i - 1]
+        .replace(/[^a-z0-9]/gi, '') // Remove non-alphanumeric characters
+        .toLowerCase();
+      const current = array[i]
+        .replace(/[^a-z0-9]/gi, '') // Remove non-alphanumeric characters
+        .toLowerCase();
 
       // Compare adjacent elements
       if (prev.localeCompare(current) > 0) {

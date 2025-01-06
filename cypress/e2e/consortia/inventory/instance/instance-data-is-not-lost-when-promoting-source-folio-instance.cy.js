@@ -9,6 +9,7 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -132,6 +133,7 @@ describe('Inventory', () => {
         });
         cy.wait(3000);
         InventoryNewInstance.clickSaveAndCloseButton();
+        InteractorsTools.closeCalloutMessage();
         InventoryInstance.checkAllInstanceDetails(
           [
             { key: 'Cataloged date', value: instanceData.today },

@@ -180,7 +180,6 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();
 

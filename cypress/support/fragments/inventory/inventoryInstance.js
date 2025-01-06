@@ -1439,7 +1439,9 @@ export default {
         'Inventory Single Record - Default Update Instance (Default)',
       ),
     );
+    cy.wait(1500);
     cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.wait(1500);
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 

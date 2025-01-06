@@ -1,6 +1,7 @@
 import { DEFAULT_JOB_PROFILE_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -20,16 +21,16 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        DataImport.uploadFileViaApi(filePathToUpload, fileName, jobProfileToRun).then(
-          (response) => {
-            instanceId = response[0].instance.id;
-          },
-        );
-
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileToRun);
+        JobProfiles.runImportFile();
+        Logs.waitFileIsImported(fileName);
       });
     });
 

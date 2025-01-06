@@ -232,6 +232,7 @@ describe('Data Import', () => {
         cy.wait(3000);
         NewJobProfile.saveAndClose();
         JobProfileView.verifyCalloutMessage(calloutMessage);
+        cy.wait(7000);
         JobProfileView.verifyJobProfileOpened();
         cy.wait(7000);
         JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
