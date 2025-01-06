@@ -46,6 +46,7 @@ const succeedingTitles = titleDataAccordion.find(MultiColumnList({ id: 'succeedi
 const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
+const addItemButton = Button('Add item');
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -533,6 +534,11 @@ export default {
     InventoryNewHoldings.waitLoading();
   },
 
+  addItem() {
+    cy.expect(addItemButton.exists());
+    cy.do(addItemButton.click());
+  },
+
   editMarcBibliographicRecord: () => {
     cy.wait(1000);
     cy.do([rootSection.find(actionsButton).click(), Button({ id: 'edit-instance-marc' }).click()]);
@@ -546,6 +552,14 @@ export default {
 
   setRecordForDeletion: () => {
     cy.do(Button({ id: 'quick-export-trigger' }).click());
+  },
+
+  markAsDeletedViaApi: (id) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `inventory/instances/${id}/mark-deleted`,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 
   verifyEditInstanceButtonAbsent() {
