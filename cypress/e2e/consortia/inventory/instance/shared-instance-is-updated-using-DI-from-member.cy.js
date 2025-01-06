@@ -95,8 +95,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.exportInstanceAsMarc();
 
-          // use cy.getToken function to get toket for current tenant
-          cy.getCollegeAdminToken();
           // download exported marc file
           cy.visit(TopMenu.dataExportPath);
           cy.wait(2000);
@@ -108,7 +106,6 @@ describe('Inventory', () => {
           cy.resetTenant();
         });
 
-      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
         .then((userProperties) => {
           testData.user = userProperties;
