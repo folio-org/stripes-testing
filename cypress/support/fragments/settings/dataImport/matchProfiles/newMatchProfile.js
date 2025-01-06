@@ -38,6 +38,7 @@ const optionsList = {
   instanceStatusTerm: 'Admin data: Instance status term',
   holdingsType: 'Admin data: Holdings type',
   identifierOCLC: 'Identifier: OCLC',
+  identifierCanceledLCCN: 'Identifier: Canceled LCCN',
 };
 
 function fillExistingRecordFields(value = '', selector) {
