@@ -1,51 +1,101 @@
 import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import { INSTANCE_SOURCE_NAMES, APPLICATION_NAMES } from '../../support/constants';
+import { INSTANCE_SOURCE_NAMES, APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import ViewMarc from '../../support/fragments/linked-data/viewMarc';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Work from '../../support/fragments/linked-data/work';
+import FileManager from '../../support/utils/fileManager';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('Citation: edit existing instance', () => {
   const source = INSTANCE_SOURCE_NAMES.LDE;
 
   const testData = {
+    marcFilePath: 'marcBibFileForC451572.mrc',
+    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
+    uniqueTitle: `Cypress test ${getRandomPostfix()}`,
+    uniqueIsbn: `ISBN${getRandomLetters(8)}`,
+    uniqueCreator: `Creator-${getRandomLetters(10)}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
+    callNumber: '331.2',
     edition: 'test edition',
   };
 
-  beforeEach(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.linkedDataEditor,
-      waiter: SearchAndFilter.waitLoading,
-    });
+  const resourceData = {
+    creator: testData.uniqueCreator,
+    language: 'spa',
+    classificationNumber: 'PC4112',
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    isbnIdentifier: testData.uniqueIsbn,
+    lccnIdentifier: 'aa1994901234',
+    publisher: 'Scott, Foresman, test',
+    publicationDate: '2024',
+    edition: '3rd ed. test',
+  };
+
+  before('Create test data via API', () => {
+    // Set unique title, ISBN and Creator for searching
+    DataImport.editMarcFile(
+      testData.marcFilePath,
+      testData.modifiedMarcFile,
+      ["!A Alice's Adventures in Wonderland", '123456789123456', 'Neale-Silva, Eduardo'],
+      [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
+    );
+    cy.getAdminToken();
+    DataImport.uploadFileViaApi(
+      testData.modifiedMarcFile,
+      testData.marcFileName,
+      DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+    );
   });
 
   after('Delete test data', () => {
+    FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
+    InventoryInstances.getInstanceIdApi({
+      limit: 1,
+      query: `title="${resourceData.title}"`,
+    }).then((id) => {
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+    });
+    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
+      const filteredInstances = instances.filter(
+        (element) => element.titles[0].value === testData.uniqueTitle,
+      );
+      Work.deleteById(filteredInstances[0].id);
+    });
+    // delete work created in pre-condition
+    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    // delete duplicate instance data
     InventoryInstances.getInstanceIdApi({
       limit: 1,
       query: `title="${testData.uniqueInstanceTitle}"`,
     }).then((id) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
     });
-    Work.getInstancesByTitle(testData.uniqueInstanceTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueInstanceTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
+  });
+
+  beforeEach('Apply test data manually', () => {
+    cy.loginAsAdmin({
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
     });
+    // create test data based on uploaded marc file
+    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
     'C627245 [User journey] LDE - Edit existing resource | create MARC derived record',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // prepare inventory instance created by LDE
       SearchAndFilter.searchResourceByIsbn('*');
@@ -65,6 +115,7 @@ describe('Citation: edit existing instance', () => {
       InventoryInstance.editInstanceInLde();
       // edit edition
       EditResource.waitLoading();
+      cy.wait(5000);
       EditResource.setEdition(testData.edition);
       EditResource.saveAndKeepEditing();
       EditResource.viewMarc();

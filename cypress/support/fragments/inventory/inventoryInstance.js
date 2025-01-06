@@ -825,9 +825,9 @@ export default {
     return ItemRecordEdit;
   },
 
-  fillItemRequiredFields() {
-    cy.do(Select({ id: 'additem_materialType' }).choose('book'));
-    cy.do(Select({ id: 'additem_loanTypePerm' }).choose('Can circulate'));
+  fillItemRequiredFields(permanentLoanType = 'Can circulate', materialType = 'book') {
+    cy.do(Select({ id: 'additem_materialType' }).choose(materialType));
+    cy.do(Select({ id: 'additem_loanTypePerm' }).choose(permanentLoanType));
     cy.expect(Form().find(enabledSaveButton).exists());
   },
 
@@ -1773,7 +1773,7 @@ export default {
     cy.wait(2000);
     cy.expect([
       Accordion({ id: memberId }).has({ open: isOpen }),
-      Accordion({ id: `consortialHoldings.cs00000int_0005.${holdingsId}` }).exists(),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).exists(),
     ]);
   },
 

@@ -1,49 +1,97 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, LOCATION_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES, LOCATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import FileManager from '../../support/utils/fileManager';
+import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
+import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('Citation: duplicate instance', () => {
   const testData = {
+    marcFilePath: 'marcBibFileForC451572.mrc',
+    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
+    uniqueIsbn: `ISBN${getRandomLetters(8)}`,
+    uniqueCreator: `Creator-${getRandomLetters(10)}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
   };
 
+  const resourceData = {
+    creator: testData.uniqueCreator,
+    language: 'spa',
+    classificationNumber: 'PC4112',
+    title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
+    isbnIdentifier: testData.uniqueIsbn,
+    lccnIdentifier: 'aa1994901234',
+    publisher: 'Scott, Foresman, test',
+    publicationDate: '2024',
+    edition: '3rd ed. test',
+  };
+
+  before('Create test data via API', () => {
+    // Set unique title, ISBN and Creator for searching
+    DataImport.editMarcFile(
+      testData.marcFilePath,
+      testData.modifiedMarcFile,
+      ["!A Alice's Adventures in Wonderland", '123456789123456', 'Neale-Silva, Eduardo'],
+      [testData.uniqueTitle, testData.uniqueIsbn, testData.uniqueCreator],
+    );
+    cy.getAdminToken();
+    DataImport.uploadFileViaApi(
+      testData.modifiedMarcFile,
+      testData.marcFileName,
+      DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+    );
+  });
+
   after('Delete test data', () => {
+    FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
+    InventoryInstances.getInstanceIdApi({
+      limit: 1,
+      query: `title="${resourceData.title}"`,
+    }).then((id) => {
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+    });
+    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
+      const filteredInstances = instances.filter(
+        (element) => element.titles[0].value === testData.uniqueTitle,
+      );
+      Work.deleteById(filteredInstances[0].id);
+    });
+    // delete work created in pre-condition
+    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    // delete duplicate instance data
     InventoryInstances.getInstanceIdApi({
       limit: 1,
       query: `title="${testData.uniqueInstanceTitle}"`,
     }).then((id) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
     });
-    Work.getInstancesByTitle(testData.uniqueInstanceTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueInstanceTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
   });
 
-  beforeEach(() => {
+  beforeEach('Apply test data manually', () => {
     cy.loginAsAdmin({
-      path: TopMenu.linkedDataEditor,
-      waiter: SearchAndFilter.waitLoading,
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
     });
+    // create test data based on uploaded marc file
+    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   it(
     'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by any isbn
       SearchAndFilter.searchResourceByIsbn('*');
@@ -63,6 +111,7 @@ describe('Citation: duplicate instance', () => {
       // navigate to the inventory module
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
+      InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
       // Add holdings
       const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
       HoldingsRecordEdit.fillHoldingFields({
