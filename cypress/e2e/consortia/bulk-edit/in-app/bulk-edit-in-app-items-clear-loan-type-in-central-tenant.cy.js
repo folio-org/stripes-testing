@@ -252,7 +252,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(4);
+          BulkEditSearchPane.verifyPaneRecordsCount('4 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           const itemBarcodes = [
