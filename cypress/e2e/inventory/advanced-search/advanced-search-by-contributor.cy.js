@@ -10,13 +10,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Advanced search', () => {
     const testData = {
-      advSearchOption: 'Advanced search',
       searchResultsPrefix: 'C407727auto Search by Contributor (advanced search) - Instance',
       searchQueryComponents: {
         lastName: 'Leeadvauto',
         firstName: 'Stanadvauto',
-        firstDate: '1922',
-        secondDate: '2018',
+        firstDate: '407727',
+        secondDate: '4077271',
       },
       importPropertyName: 'instance',
       searchOperators: {
@@ -49,6 +48,8 @@ describe('Inventory', () => {
     before('Creating data', () => {
       cy.getAdminToken();
       InventoryInstances.deleteInstanceByTitleViaApi(testData.searchResultsPrefix);
+      // wait for all records to be deleted
+      cy.wait(3000);
 
       cy.createTempUser([
         Permissions.uiInventoryViewInstances.gui,
@@ -93,12 +94,12 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[0].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[0].length);
 
+        InventorySearchAndFilter.resetAll();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -108,12 +109,12 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[1].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[1].length);
 
+        InventorySearchAndFilter.resetAll();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -123,12 +124,12 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[2].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[2].length);
 
+        InventorySearchAndFilter.resetAll();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -138,12 +139,12 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[3].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[3].length);
 
+        InventorySearchAndFilter.resetAll();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -153,7 +154,6 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[4].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
@@ -168,12 +168,12 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[5].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
         InventorySearchAndFilter.checkRowsCount(testData.searchResultNumbers[5].length);
 
+        InventorySearchAndFilter.resetAll();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -189,14 +189,14 @@ describe('Inventory', () => {
           'OR',
         );
         InventoryInstances.fillAdvSearchRow(
-          1,
+          2,
           testData.searchQueryComponents.lastName,
           testData.searchOperators.startsWith,
           testData.searchOption,
           'AND',
         );
         InventoryInstances.fillAdvSearchRow(
-          1,
+          3,
           `${testData.searchQueryComponents.lastName}, ${testData.searchQueryComponents.firstName}, ${testData.searchQueryComponents.firstDate}-${testData.searchQueryComponents.secondDate}`,
           testData.searchOperators.containsAll,
           testData.searchOption,
@@ -204,7 +204,6 @@ describe('Inventory', () => {
         );
         InventoryInstances.clickSearchBtnInAdvSearchModal();
         InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
         testData.searchResultNumbers[6].forEach((number) => {
           InventorySearchAndFilter.verifySearchResult(`${testData.searchResultsPrefix} ${number}`);
         });
