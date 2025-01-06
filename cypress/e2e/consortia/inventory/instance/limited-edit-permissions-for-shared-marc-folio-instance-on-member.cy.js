@@ -72,14 +72,12 @@ describe('Inventory', () => {
       'C402335 (CONSORTIA) Verify limited Edit permissions for Shared MARC instance on Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C402335'] },
       () => {
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402335testData.instanceSource);
         cy.wait(1500);
         InventorySearchAndFilter.byShared('Yes');
         cy.wait(1500);
         InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceId);
-        cy.wait('@/authn/refresh', { timeout: 5000 });
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402335testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonAbsent();

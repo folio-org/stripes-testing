@@ -50,6 +50,8 @@ const dateTypeSelect = descriptiveDataAccordion.find(Select({ name: 'dates.dateT
 const date1Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date1' }));
 const date2Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date2' }));
 const dateTypePlaceholderOption = 'Select date type';
+const dateValueLengthErrorText = 'Date must contain four characters.';
+const saveAndKeepEditing = Button('Save & keep editing');
 
 const checkboxes = {
   'Suppress from discovery': supressFromDiscoveryCheckbox,
@@ -294,6 +296,7 @@ export default {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
     );
+    InteractorsTools.dismissCallout(matching(new RegExp(InstanceStates.instanceSavedSuccessfully)));
   },
   checkCheckboxConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -422,13 +425,22 @@ export default {
     );
   },
 
-  fillDates: (date1 = '', date2 = '', dateType = null) => {
+  fillDates: (date1 = '', date2 = '', dateType, isTrimmed = false) => {
     if (dateType) {
       cy.do(dateTypeSelect.choose(dateType));
       cy.expect(dateTypeSelect.has({ checkedOptionText: dateType }));
     }
-    cy.do([date1Field.fillIn(date1), date2Field.fillIn(date2)]);
-    cy.expect([date1Field.has({ value: date1 }), date2Field.has({ value: date2 })]);
+    if (isTrimmed) {
+      cy.get('input[name="dates.date1"]').type(date1);
+      cy.get('input[name="dates.date2"]').type(date2);
+      cy.expect([
+        date1Field.has({ value: date1.slice(0, 4) }),
+        date2Field.has({ value: date2.slice(0, 4) }),
+      ]);
+    } else {
+      cy.do([date1Field.fillIn(date1), date2Field.fillIn(date2)]);
+      cy.expect([date1Field.has({ value: date1 }), date2Field.has({ value: date2 })]);
+    }
   },
 
   verifyDateFieldsPresent: () => {
@@ -443,5 +455,32 @@ export default {
 
   verifyDateTypePlaceholderOptionSelected: () => {
     cy.expect(dateTypeSelect.has({ checkedOptionText: dateTypePlaceholderOption }));
+  },
+
+  verifyDateFieldsValues: (date1 = '', date2 = '', dateType = dateTypePlaceholderOption) => {
+    cy.expect([
+      date1Field.has({ value: date1 }),
+      date2Field.has({ value: date2 }),
+      dateTypeSelect.has({ checkedOptionText: dateType }),
+    ]);
+  },
+
+  verifyDateFieldsValidationErrors: (date1Affected = true, date2Affected = true) => {
+    cy.wait(500);
+    if (date1Affected) {
+      cy.expect(
+        date1Field.has({ errorBorder: true, errorTextRed: true, error: dateValueLengthErrorText }),
+      );
+    } else cy.expect(date1Field.has({ errorBorder: false, error: undefined }));
+    if (date2Affected) {
+      cy.expect(
+        date2Field.has({ errorBorder: true, errorTextRed: true, error: dateValueLengthErrorText }),
+      );
+    } else cy.expect(date2Field.has({ errorBorder: false, error: undefined }));
+  },
+
+  clickSaveAndKeepEditingButton(saved = true) {
+    cy.do(saveAndKeepEditing.click());
+    if (saved) cy.expect(saveAndKeepEditing.has({ disabled: true }));
   },
 };
