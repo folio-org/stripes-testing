@@ -825,9 +825,9 @@ export default {
     return ItemRecordEdit;
   },
 
-  fillItemRequiredFields() {
-    cy.do(Select({ id: 'additem_materialType' }).choose('book'));
-    cy.do(Select({ id: 'additem_loanTypePerm' }).choose('Can circulate'));
+  fillItemRequiredFields(permanentLoanType = 'Can circulate', materialType = 'book') {
+    cy.do(Select({ id: 'additem_materialType' }).choose(materialType));
+    cy.do(Select({ id: 'additem_loanTypePerm' }).choose(permanentLoanType));
     cy.expect(Form().find(enabledSaveButton).exists());
   },
 
