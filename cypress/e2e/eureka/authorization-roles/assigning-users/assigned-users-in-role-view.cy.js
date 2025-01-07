@@ -7,15 +7,11 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleName: `Auto Role C442816 ${getRandomPostfix()}`,
+        roleName: `Auto Role C627248 ${getRandomPostfix()}`,
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'Users', action: 'Manage' },
+        { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
       ];
 
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
@@ -66,8 +62,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C442816 Viewing authorization role with users assigned (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C442816'] },
+        'C627248 Viewing authorization role with users assigned (eureka)',
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627248'] },
         () => {
           const usersCallRegExp = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleId}`,

@@ -14,25 +14,19 @@ describe('Eureka', () => {
       describe('Assigning users', () => {
         const randomString = generateItemBarcode();
         const testData = {
-          lastName: `TestC442842User${randomString}`,
+          lastName: `TestC627399User${randomString}`,
           userEmail: 'test@folio.org',
-          username: `userc448284${randomString}`,
-          roleName: `Auto Role C451629 ${randomString}`,
+          username: `userc627399${randomString}`,
+          roleName: `Auto Role C627399 ${randomString}`,
           promotePath: '/users-keycloak/auth-users',
         };
 
         const capabSetsToAssign = [
-          { type: 'Data', resource: 'UI-Users', action: 'View' },
           { type: 'Data', resource: 'UI-Users', action: 'Create' },
-          { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-          { type: 'Data', resource: 'Roles Users', action: 'Manage' },
+          { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
         ];
         const capabsToAssign = [
-          { type: 'Data', resource: 'UI-Users', action: 'View' },
-          { type: 'Data', resource: 'UI-Users', action: 'Create' },
           { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-          { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
-          { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
           { type: 'Data', resource: 'Users-Bl Users-By-Username Item', action: 'View' },
         ];
 
@@ -66,8 +60,8 @@ describe('Eureka', () => {
         });
 
         it(
-          'C451629 Assigning new user created in UI to an existing authorization role (eureka)',
-          { tags: ['smoke', 'eureka', 'C451629'] },
+          'C627399 Assigning new user created in UI to an existing authorization role (eureka)',
+          { tags: ['smoke', 'eureka', 'C627399'] },
           () => {
             const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';
             Users.clickNewButton();

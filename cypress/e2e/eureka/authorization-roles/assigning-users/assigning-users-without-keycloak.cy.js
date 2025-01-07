@@ -11,21 +11,15 @@ describe('Eureka', () => {
         const userIds = [];
         const userBodies = [];
         const testData = {
-          roleName: `Auto Role C451621 ${randomPostfix}`,
+          roleName: `Auto Role C627395 ${randomPostfix}`,
           promotePath: '/users-keycloak/auth-users',
         };
 
         const capabSetsToAssign = [
-          { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-          { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-          { type: 'Data', resource: 'Users', action: 'Manage' },
+          { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
         ];
 
-        const capabsToAssign = [
-          { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-          { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
-          { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
-        ];
+        const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
         before('Create data', () => {
           cy.getAdminToken();
@@ -34,11 +28,11 @@ describe('Eureka', () => {
               userBodies.push({
                 type: 'staff',
                 active: true,
-                username: `user${i}c451621${randomPostfix}`,
+                username: `user${i}c627395${randomPostfix}`,
                 patronGroup: Cypress.env('userGroups')[i - 1].id,
                 personal: {
-                  lastName: `First ${i} c451621${randomPostfix}`,
-                  firstName: `Last ${i} c451621${randomPostfix}`,
+                  lastName: `First ${i} c627395${randomPostfix}`,
+                  firstName: `Last ${i} c627395${randomPostfix}`,
                   email: 'testuser@test.org',
                   preferredContactTypeId: '002',
                 },
@@ -88,8 +82,8 @@ describe('Eureka', () => {
         });
 
         it(
-          'C451621 Assigning users not having Keycloak records for an existing authorization role (eureka)',
-          { tags: ['smoke', 'eureka', 'C451621'] },
+          'C627395 Assigning users not having Keycloak records for an existing authorization role (eureka)',
+          { tags: ['smoke', 'eureka', 'C627395'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName, false);

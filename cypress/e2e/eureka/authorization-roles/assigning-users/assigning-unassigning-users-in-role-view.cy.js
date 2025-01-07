@@ -7,17 +7,13 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleName: `Auto Role A C442837 ${getRandomPostfix()}`,
+        roleName: `Auto Role A C627398 ${getRandomPostfix()}`,
         filtername: 'Status',
         optionName: 'Active',
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'Users', action: 'Manage' },
+        { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
       ];
 
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
@@ -70,8 +66,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C442837 Assigning/unassigning users for an existing authorization role (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C442837'] },
+        'C627398 Assigning/unassigning users for an existing authorization role (eureka)',
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627398'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
