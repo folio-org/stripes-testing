@@ -30,6 +30,7 @@ import FieldMappingProfileView from '../../../support/fragments/settings/dataImp
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
@@ -39,7 +40,6 @@ import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -49,6 +49,10 @@ describe('Data Import', () => {
       fileNameForCreate: `C476724 marcFileName${getRandomPostfix()}.mrc`,
       exportedFileName: `C476724 marcFileName${getRandomPostfix()}.mrc`,
       fileNameForUpdate: `C476724 marcFileName${getRandomPostfix()}.mrc`,
+      identifier: {
+        type: 'Canceled LCCN',
+        value: 'CNR456',
+      },
     };
     const mappingProfile = {
       name: `C476724 Update Instance with Instance stat code${getRandomPostfix()}`,
@@ -87,14 +91,16 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi('CNR456').then((instances) => {
-          if (instances.length !== 0) {
-            instances.forEach(({ id }) => {
-              InstanceRecordView.markAsDeletedViaApi(id);
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(testData.identifier.value).then(
+          (instances) => {
+            if (instances.length !== 0) {
+              instances.forEach(({ id }) => {
+                InstanceRecordView.markAsDeletedViaApi(id);
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          },
+        );
 
         DataImport.uploadFileViaApi(
           testData.filePathForCreate,
@@ -187,7 +193,11 @@ describe('Data Import', () => {
         );
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-        InstanceRecordView.verifyResourceIdentifier('Canceled LCCN', 'CNR456', 0);
+        InstanceRecordView.verifyResourceIdentifier(
+          testData.identifier.type,
+          testData.identifier.value,
+          0,
+        );
       },
     );
   });
