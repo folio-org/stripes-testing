@@ -19,9 +19,9 @@ describe('Eureka', () => {
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Notes Item Assign-Unassign',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Notes Item',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabilitiesInSets: [
@@ -49,11 +49,6 @@ describe('Eureka', () => {
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Links Collection',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.EDIT,
           },
           {
             table: CAPABILITY_TYPES.DATA,

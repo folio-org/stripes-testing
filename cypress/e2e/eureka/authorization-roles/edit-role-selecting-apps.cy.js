@@ -30,8 +30,8 @@ describe('Eureka', () => {
           {
             application: 'app-platform-full',
             table: 'Data',
-            resource: 'UI-Users Perms',
-            action: 'Edit',
+            resource: 'UI-Users',
+            action: 'View',
           },
           {
             application: 'app-platform-full',

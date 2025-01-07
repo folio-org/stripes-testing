@@ -51,7 +51,8 @@ describe('MARC', () => {
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventorySteps.addMarcHoldingRecord();
-          cy.wait(4000);
+          //  wait for holding record to be created
+          cy.wait(5000);
         });
       });
     });

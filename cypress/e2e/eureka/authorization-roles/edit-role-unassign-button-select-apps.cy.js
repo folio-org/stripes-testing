@@ -19,9 +19,9 @@ describe('Eureka', () => {
           },
           {
             application: applications[1],
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Notes Item Assign-Unassign',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Notes Item',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabilitiesInSets: [
@@ -58,12 +58,6 @@ describe('Eureka', () => {
           {
             application: applications[1],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
@@ -96,12 +90,6 @@ describe('Eureka', () => {
             table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Module Notes Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Notes Item Assign-Unassign',
-            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         capabilities: [
