@@ -705,4 +705,9 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(DropdownMenu().absent());
   },
+
+  checkActionsButtonShown: (isShown = true) => {
+    if (isShown) cy.expect(actionsButton.exists());
+    else cy.expect(actionsButton.absent());
+  },
 };
