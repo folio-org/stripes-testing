@@ -889,6 +889,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ORDER_FORMAT: 'Order format',
     RECEIPT_STATUS: 'Receipt status',
     TAGS: 'Tags',
+    MEMBER: 'Member',
   },
   INVENTORY_INSTANCES: {
     INSTANCE_UUID: 'Instance UUID',
@@ -980,6 +981,8 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     PROVENANCE_NOTE: 'Provenance note',
     MEMBER: 'Member',
     SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    PERMANENT_LOAN_TYPE: 'Permanent loan type',
+    TEMPORARY_LOAN_TYPE: 'Temporary loan type',
   },
 };
 
