@@ -7,11 +7,11 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleName: `Auto Role C627248 ${getRandomPostfix()}`,
+        roleName: `Auto Role C627247 ${getRandomPostfix()}`,
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
+        { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'View' },
       ];
 
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
@@ -62,8 +62,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C627248 Viewing authorization role with users assigned (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627248'] },
+        'C627247 [UIROLES-125] Viewing authorization role by user with users.settings View (eureka)',
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627247'] },
         () => {
           const usersCallRegExp = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleId}`,
@@ -71,7 +71,7 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.roleName);
           cy.intercept(usersCallRegExp).as('users');
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.verifyAssignedUsersAccordion();
+          AuthorizationRoles.verifyAssignedUsersAccordion(true);
           AuthorizationRoles.verifyAssignedUser(
             testData.userA.lastName,
             testData.userA.firstName,

@@ -460,13 +460,14 @@ export default {
     else cy.expect(userRow.absent());
   },
 
-  verifyAssignedUsersAccordion: () => {
+  verifyAssignedUsersAccordion: (viewOnly = false) => {
     cy.expect([
       usersAccordion.has({ open: true }),
-      usersAccordion.find(assignUsersButton).exists(),
       usersAccordion.find(MultiColumnListHeader('Name')).exists(),
       usersAccordion.find(MultiColumnListHeader('Patron group')).exists(),
     ]);
+    if (viewOnly) cy.expect(usersAccordion.find(assignUsersButton).absent());
+    else cy.expect(usersAccordion.find(assignUsersButton).exists());
   },
 
   verifyAssignedUsersAccordionEmpty: () => {

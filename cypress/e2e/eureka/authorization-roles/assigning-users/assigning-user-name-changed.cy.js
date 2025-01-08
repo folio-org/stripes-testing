@@ -68,7 +68,7 @@ describe('Eureka', () => {
       });
 
       it(
-        'C627394 Assigning/unassigning a user for a role after username changed (eureka)',
+        'C627394 [UIROLES-125] Assigning/unassigning a user for a role after username changed while having users.settings Manage (eureka)',
         { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C627394'] },
         () => {
           const usersCallRegExpGetA = new RegExp(
