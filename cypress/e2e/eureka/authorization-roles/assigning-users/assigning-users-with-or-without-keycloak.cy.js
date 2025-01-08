@@ -82,7 +82,7 @@ describe('Eureka', () => {
         });
 
         it(
-          'C627404 Assigning users with/without Keycloak record for an existing authorization role (eureka)',
+          'C627404 [UIROLES-125] Assigning users with/without Keycloak record to an existing authorization role while having users.settings Manage (eureka)',
           { tags: ['criticalPath', 'eureka', 'C627404'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleName);

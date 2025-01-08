@@ -87,7 +87,7 @@ describe('Eureka', () => {
         });
 
         it(
-          'C627403 Assigning users without username for an existing authorization role (eureka)',
+          'C627403 [UIROLES-125] Assigning users without username for an existing authorization role while having users.settings Manage (eureka)',
           { tags: ['criticalPath', 'eureka', 'C627403'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleAName);

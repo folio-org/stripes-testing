@@ -66,7 +66,7 @@ describe('Eureka', () => {
       });
 
       it(
-        'C627398 Assigning/unassigning users for an existing authorization role (eureka)',
+        'C627398 [UIROLES-125] Assigning/unassigning users for an existing authorization role while having users.settings Manage (eureka)',
         { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627398'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);

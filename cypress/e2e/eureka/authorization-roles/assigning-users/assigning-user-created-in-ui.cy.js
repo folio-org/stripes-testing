@@ -60,7 +60,7 @@ describe('Eureka', () => {
         });
 
         it(
-          'C627399 Assigning new user created in UI to an existing authorization role (eureka)',
+          'C627399 [UIROLES-125] Assigning new user created in UI to an existing authorization role while having users.settings Manage (eureka)',
           { tags: ['smoke', 'eureka', 'C627399'] },
           () => {
             const userGroupOption = testData.userGroup.group + ' (' + testData.userGroup.desc + ')';

@@ -65,7 +65,7 @@ describe('Eureka', () => {
       });
 
       it(
-        'C627249 Assigning user to an authorization role which does not have users assigned (eureka)',
+        'C627249 [UIROLES-125] Assigning user to an authorization role which does not have users assigned while having users.settings Manage (eureka)',
         { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627249'] },
         () => {
           const usersCallRegExpGet = new RegExp(
