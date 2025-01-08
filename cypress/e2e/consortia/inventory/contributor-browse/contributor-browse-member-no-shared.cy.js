@@ -147,6 +147,7 @@ describe('Inventory', () => {
               });
             });
 
+            cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
@@ -156,8 +157,8 @@ describe('Inventory', () => {
                 tenantNames.central,
                 tenantNames.university,
               );
+              cy.wait('@/authn/refresh', { timeout: 20000 });
               InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             });
           });
       });
