@@ -21,6 +21,7 @@ const invalidInstanceUUIDsFileName = `invalidInstanceUUIDs_${getRandomPostfix()}
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         Permissions.bulkEditView.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
@@ -81,8 +82,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(invalidInstanceUUIDsFileName);
         BulkEditSearchPane.checkForUploading(invalidInstanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidInstanceUUIDsFileName, 0, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(0);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('0 instance');
         BulkEditSearchPane.verifyNonMatchedResults(invalidInstanceUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrorsExists();

@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(recordsNumber);
-        BulkEditSearchPane.verifyPaneRecordsChangedCount(recordsNumber);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount(`${recordsNumber} user`);
         BulkEditSearchPane.verifyFileNameHeadLine(userBarcodesFileName);
 
         testUsersBarcodes.forEach((userBarcode) => {

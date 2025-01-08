@@ -158,7 +158,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(validInstanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyPaneTitleFileName(validInstanceUUIDsFileName);
-        BulkEditSearchPane.verifyPaneRecordsCount('3');
+        BulkEditSearchPane.verifyPaneRecordsCount('3 instance');
         BulkEditSearchPane.verifyFileNameHeadLine(validInstanceUUIDsFileName);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
           instanceFolio.hrid,
@@ -249,7 +249,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(3);
-        BulkEditSearchPane.verifyPaneRecordsChangedCount(3);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount('3 instance');
         BulkEditSearchPane.verifyPaneTitleFileName(validInstanceUUIDsFileName);
         BulkEditSearchPane.verifyFileNameHeadLine(validInstanceUUIDsFileName);
 

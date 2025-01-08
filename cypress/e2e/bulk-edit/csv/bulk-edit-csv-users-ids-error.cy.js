@@ -13,6 +13,7 @@ const invalidUserUUID = getRandomPostfix();
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
@@ -56,7 +57,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
         BulkEditSearchPane.verifyResultColumnTitles('Email');
 
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox();
       },
     );
   });
