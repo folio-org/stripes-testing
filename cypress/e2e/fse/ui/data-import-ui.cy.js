@@ -14,7 +14,7 @@ describe('fse-data-import - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'data-import'] },
     () => {
       cy.visit(TopMenu.dataImportPath);
-      DataImport.waitLoading();
+      DataImport.waitLoadingNoInteractors();
     },
   );
 });

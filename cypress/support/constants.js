@@ -312,6 +312,7 @@ export const ACCEPTED_DATA_TYPE_NAMES = {
 export const INSTANCE_SOURCE_NAMES = {
   MARC: 'MARC',
   FOLIO: 'FOLIO',
+  LDE: 'LINKED_DATA',
 };
 
 export const PROFILE_TYPE_NAMES = {
@@ -889,6 +890,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ORDER_FORMAT: 'Order format',
     RECEIPT_STATUS: 'Receipt status',
     TAGS: 'Tags',
+    MEMBER: 'Member',
   },
   INVENTORY_INSTANCES: {
     INSTANCE_UUID: 'Instance UUID',
@@ -980,6 +982,8 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     PROVENANCE_NOTE: 'Provenance note',
     MEMBER: 'Member',
     SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    PERMANENT_LOAN_TYPE: 'Permanent loan type',
+    TEMPORARY_LOAN_TYPE: 'Temporary loan type',
   },
 };
 
@@ -1016,4 +1020,23 @@ export const STAFF_SLIP_NAMES = {
   PICK_SLIP: 'Pick slip',
   REQUEST_DELIVERY: 'Request delivery',
   TRANSIT: 'Transit',
+};
+
+export const INSTANCE_DATE_TYPES = {
+  NO: 'No attempt to code',
+  BC: 'No dates given; B.C. date involved',
+  CONTINUING_PUBLISHED: 'Continuing resource currently published',
+  CONTINUING_CEASED: 'Continuing resource ceased publication',
+  DETAILED: 'Detailed date',
+  INCLUSIVE: 'Inclusive dates of collection',
+  RANGE: 'Range of years of bulk of collection',
+  MULTIPLE: 'Multiple dates',
+  UNKNOWN: 'Dates unknown',
+  DISTRIBUTION:
+    'Date of distribution/release/issue and production/recording session when different',
+  QUESTIONABLE: 'Questionable date',
+  REPRINT: 'Reprint/reissue date and original date',
+  SINGLE: 'Single known date/probable date',
+  PUBLICATION: 'Publication date and copyright date',
+  CONTINUING_UNKNOWN: 'Continuing resource status unknown',
 };

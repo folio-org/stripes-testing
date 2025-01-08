@@ -30,20 +30,20 @@ describe('Citation: create work', () => {
 
   it(
     'C624167 [User journey] LDE - Create new work only from blank workform',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // open new resource form
       LinkedDataEditor.openNewResourceForm();
       EditResource.waitLoading();
       // change data, but do not enter title
-      EditResource.setPartName(testData.partName);
+      EditResource.setValueForTheField(testData.partName, 'Part name');
       EditResource.saveAndKeepEditing();
       EditResource.checkAlarmDisplayed(true);
       // enter title and keep editing
-      EditResource.setTitle(testData.uniqueTitle);
+      EditResource.setValueForTheField(testData.uniqueTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       EditResource.checkAlarmDisplayed(false);
-      EditResource.setSummaryNote(testData.summaryNote);
+      EditResource.setValueForTheField(testData.summaryNote, 'Summary note');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
       LinkedDataEditor.waitLoading();

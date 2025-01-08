@@ -13,28 +13,18 @@ export const reasonsActions = {
 };
 
 export default {
-  createItemNoteTypeViaApi: (bodyOrName) => {
-    if (Cypress.env('ecsEnabled')) {
-      return cy
-        .okapiRequest({
-          method: REQUEST_METHOD.POST,
-          path: 'item-note-types',
-          bodyOrName,
-        })
-        .then((response) => response.body.id);
-    } else {
-      return cy
-        .okapiRequest({
-          method: REQUEST_METHOD.POST,
-          path: 'item-note-types',
-          body: {
-            id: uuid(),
-            name: bodyOrName,
-            source: 'local',
-          },
-        })
-        .then((response) => response.body.id);
-    }
+  createItemNoteTypeViaApi: (typeName) => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'item-note-types',
+        body: {
+          id: uuid(),
+          name: typeName,
+          source: 'local',
+        },
+      })
+      .then((response) => response.body.id);
   },
 
   deleteItemNoteTypeViaApi: (noteTypeId) => {

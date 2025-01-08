@@ -1,5 +1,9 @@
 import { Option } from '../../../../interactors';
-import editResource from './editResource';
+import EditResource from './editResource';
+import InventoryInstances from '../inventory/inventoryInstances';
+import InventoryInstance from '../inventory/inventoryInstance';
+import PreviewResource from './previewResource';
+import SearchAndFilter from './searchAndFilter';
 
 const searchSection = "//div[@class='item-search-content']";
 const actionsButton = "//button[@data-testid='search-view-actions-dropdown']";
@@ -37,17 +41,46 @@ export default {
     cy.xpath(
       `(//div[@class='search-result-entry-container'][${rowNumber}]//table[contains(@class, 'table instance-list')]//button[contains(text(), 'Edit')])[${instanceNumber}]`,
     ).click();
-    editResource.waitLoading();
+    EditResource.waitLoading();
   },
 
   openNewResourceForm: () => {
     cy.xpath(actionsButton).click();
     cy.xpath(newResourceButton).click();
-    editResource.waitLoading();
+    EditResource.waitLoading();
   },
 
   editWork: () => {
     cy.xpath("//div[@class='full-display-container']//button[text()='Edit work']").click();
-    editResource.waitLoading();
+    EditResource.waitLoading();
+  },
+
+  generateValidLccn: () => {
+    // Generate a random starting character which could be a lowercase letter or '_'
+    const firstCharChoices = 'abcdefghijklmnopqrstuvwxyz_';
+    const randomFirstChar = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+    const randomSecondChar = firstCharChoices[Math.floor(Math.random() * firstCharChoices.length)];
+    // Generating a random sequence of 10 digits
+    let randomDigits = '';
+    for (let i = 0; i < 10; i++) {
+      randomDigits += Math.floor(Math.random() * 10);
+    }
+    // Combining first char, second char and digits
+    const patternString = randomFirstChar + randomSecondChar + randomDigits;
+    return patternString;
+  },
+
+  createTestWorkDataManuallyBasedOnMarcUpload(title) {
+    // create work based on uploaded marc file
+    InventoryInstances.searchByTitle(title);
+    InventoryInstance.editInstanceInLde();
+    PreviewResource.waitLoading();
+    PreviewResource.clickContinue();
+    // edit edition
+    EditResource.waitLoading();
+    EditResource.setEdition(title);
+    EditResource.saveAndClose();
+    // search for LDE is displayed
+    SearchAndFilter.waitLoading();
   },
 };

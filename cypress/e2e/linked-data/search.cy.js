@@ -6,6 +6,8 @@ import TopMenu from '../../support/fragments/topMenu';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Citation: Search Linked data resources', () => {
   const testData = {
@@ -23,9 +25,10 @@ describe('Citation: Search Linked data resources', () => {
     classificationNumber: 'PC4112',
     title: `${testData.uniqueTitle} TT test35 cultural approach to intermediate Spanish tk1 /`,
     isbnIdentifier: testData.uniqueIsbn,
-    lccnIdentifier: '80021016',
+    lccnIdentifier: 'aa1994901234',
     publisher: 'Scott, Foresman, test',
     publicationDate: '2024',
+    edition: '3rd ed. test',
   };
 
   before('Create test data', () => {
@@ -47,14 +50,30 @@ describe('Citation: Search Linked data resources', () => {
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
     cy.getAdminToken();
+    // delete inventory instance both from inventory and LDE modules
+    // this might change later once corresponding instance will automatically get deleted in linked-data
+    InventoryInstances.getInstanceIdApi({
+      limit: 1,
+      query: `title="${resourceData.title}"`,
+    }).then((id) => {
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
+    });
+    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
+      const filteredInstances = instances.filter(
+        (element) => element.titles[0].value === testData.uniqueTitle,
+      );
+      Work.deleteById(filteredInstances[0].id);
+    });
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
   });
 
   beforeEach(() => {
     cy.loginAsAdmin({
-      path: TopMenu.linkedDataEditor,
-      waiter: LinkedDataEditor.waitLoading,
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
     });
+    // create test data based on uploaded marc file
+    LinkedDataEditor.createTestWorkDataManuallyBasedOnMarcUpload(resourceData.title);
   });
 
   describe('Linked-data Search', () => {

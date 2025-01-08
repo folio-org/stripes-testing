@@ -11,7 +11,9 @@ import {
   or,
 } from '../../../../../interactors';
 
-const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(Button());
+const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(
+  Button({ className: including('navButton') }),
+);
 const switchActiveAffiliationButton = Button('Switch active affiliation');
 
 export default {
@@ -74,32 +76,22 @@ export default {
     ]);
   },
 
-  switchActiveAffiliation(currentTenantName, newTenantName, servicePointName = null) {
-    cy.wait(8000);
+  switchActiveAffiliation(currentTenantName, newTenantName) {
+    cy.wait(10000);
+    cy.expect(myProfileButton.find(HTML({ text: including(currentTenantName) })).exists());
+    cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
+    cy.wait(2000);
     cy.do([
-      Dropdown({ id: 'profileDropdown' })
-        .find(
-          Button({
-            ariaLabel: or(`${currentTenantName}  profile`, `${currentTenantName} Central profile`),
-          }),
-        )
-        .click(),
-      switchActiveAffiliationButton.click(),
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
       SelectionOption(including(newTenantName)).click(),
     ]);
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(Button({ id: 'save-active-affiliation' }).click());
-    cy.wait(6000);
-    cy.expect(
-      Button({
-        ariaLabel: or(`${newTenantName}  profile`, `${newTenantName} ${servicePointName} profile`),
-      })
-        .find(HTML({ text: including(newTenantName) }))
-        .exists(),
-    );
+    cy.wait(8000);
+    cy.expect(myProfileButton.find(HTML({ text: including(newTenantName) })).exists());
+    cy.wait(3000);
   },
 
   switchActiveAffiliationIsAbsent() {

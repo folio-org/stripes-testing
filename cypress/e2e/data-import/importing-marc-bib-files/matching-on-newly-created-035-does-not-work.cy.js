@@ -113,7 +113,7 @@ describe('Data Import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
-        Permissions.uiInventorySingleRecordImport,
+        Permissions.uiInventorySingleRecordImport.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {
         user = userProperties;
