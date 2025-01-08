@@ -11,7 +11,6 @@ import {
   TextField,
   including,
   matching,
-  or,
 } from '../../../../../interactors';
 import {
   DEFAULT_FOLIO_AUTHORITY_FILES,
@@ -179,7 +178,7 @@ const getTargetRowWithFile = (authorityFileName) => {
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: or('aatg,aat', 'aat,aatg'),
+    prefix: 'aat,aatg,aatfg',
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
