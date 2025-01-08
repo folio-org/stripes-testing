@@ -77,7 +77,7 @@ describe('MARC', () => {
               ManageAuthorityFiles.checkAuthorityFilesTableExists();
               ManageAuthorityFiles.verifyTableHeaders();
               ManageAuthorityFiles.checkActiveTooltipButtonShown();
-              ManageAuthorityFiles.checkNewButtonEnabled(false);
+              ManageAuthorityFiles.checkNewButtonShown(false);
               ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
               ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
 
@@ -87,7 +87,7 @@ describe('MARC', () => {
               ManageAuthorityFiles.checkAuthorityFilesTableExists();
               ManageAuthorityFiles.verifyTableHeaders();
               ManageAuthorityFiles.checkActiveTooltipButtonShown();
-              ManageAuthorityFiles.checkNewButtonEnabled(false);
+              ManageAuthorityFiles.checkNewButtonShown(false);
               ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
               ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
             });
@@ -107,7 +107,7 @@ describe('MARC', () => {
               ManageAuthorityFiles.checkAuthorityFilesTableExists();
               ManageAuthorityFiles.verifyTableHeaders();
               ManageAuthorityFiles.checkActiveTooltipButtonShown();
-              ManageAuthorityFiles.checkNewButtonEnabled(false);
+              ManageAuthorityFiles.checkNewButtonShown(false);
               ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
               ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
 
