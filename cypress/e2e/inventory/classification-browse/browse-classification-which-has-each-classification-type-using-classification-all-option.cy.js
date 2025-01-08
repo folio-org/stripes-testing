@@ -7,6 +7,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
+import ClassificationBrowse, {
+  defaultClassificationBrowseIdsAlgorithms,
+} from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -26,6 +29,8 @@ describe('Inventory', () => {
       ],
       classificationOption: 'Classification (all)',
       instanceTitle: 'C468178 Browse by Classification Instance (has each classification type)',
+      classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
+      classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm,
     };
     const localClassificationIdentifierType = {
       name: `C468178 Classification identifier type ${getRandomPostfix()}`,
@@ -38,6 +43,18 @@ describe('Inventory', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
       InventoryInstances.deleteInstanceByTitleViaApi('C468178*');
+
+      // remove all identifier types from target classification browse, if any
+      ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
+        testData.classificationBrowseId,
+      ).then((types) => {
+        testData.originalTypes = types;
+      });
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        [],
+      );
 
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
         (createdUserProperties) => {
@@ -124,6 +141,12 @@ describe('Inventory', () => {
 
     after('Delete user, test data', () => {
       cy.getAdminToken();
+      // restore the original identifier types for target classification browse
+      ClassificationBrowse.updateIdentifierTypesAPI(
+        testData.classificationBrowseId,
+        testData.classificationBrowseAlgorithm,
+        testData.originalTypes,
+      );
       ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
       Users.deleteViaApi(user.userId);
