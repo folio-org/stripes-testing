@@ -545,11 +545,16 @@ export default {
   },
 
   waitContentLoading() {
-    cy.expect([firstRow.exists(), newButton.has({ disabled: or(true, false) })]);
+    cy.expect(firstRow.exists());
     cy.wait(3000);
   },
 
   checkActiveTooltipButtonShown() {
     cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
+  },
+
+  checkNewButtonShown(isShown = true) {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
   },
 };
