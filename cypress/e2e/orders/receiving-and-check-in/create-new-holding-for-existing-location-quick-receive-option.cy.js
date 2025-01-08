@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-
 import { Permissions } from '../../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';

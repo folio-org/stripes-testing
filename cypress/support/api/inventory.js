@@ -13,7 +13,7 @@ const DEFAULT_INSTANCE = {
 const displaySettingsBody = {
   id: uuid(),
   key: 'display-settings',
-  scope: 'ui-inventory.display-settings',
+  scope: 'ui-inventory.display-settings.manage',
   value: {
     defaultSort: '',
   },

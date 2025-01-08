@@ -11,7 +11,6 @@ import {
   TextField,
   including,
   matching,
-  or,
 } from '../../../../../interactors';
 import {
   DEFAULT_FOLIO_AUTHORITY_FILES,
@@ -178,7 +177,7 @@ const getTargetRowWithFile = (authorityFileName) => {
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: or('aat,aatg,aatfg', 'aat,aatg'),
+    prefix: 'aat,aatg,aatfg',
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
@@ -553,11 +552,16 @@ export default {
   },
 
   waitContentLoading() {
-    cy.expect([firstRow.exists()]);
+    cy.expect(firstRow.exists());
     cy.wait(3000);
   },
 
   checkActiveTooltipButtonShown() {
     cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
+  },
+
+  checkNewButtonShown(isShown = true) {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
   },
 };

@@ -72,6 +72,24 @@ describe('MARC', () => {
             cy.login(testData.userA.username, testData.userA.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitContentLoading,
+            }).then(() => {
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ManageAuthorityFiles.checkAuthorityFilesTableExists();
+              ManageAuthorityFiles.verifyTableHeaders();
+              ManageAuthorityFiles.checkActiveTooltipButtonShown();
+              ManageAuthorityFiles.checkNewButtonShown(false);
+              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              cy.visit(TopMenu.settingsAuthorityFilesPath);
+              ManageAuthorityFiles.waitContentLoading();
+              ManageAuthorityFiles.checkAuthorityFilesTableExists();
+              ManageAuthorityFiles.verifyTableHeaders();
+              ManageAuthorityFiles.checkActiveTooltipButtonShown();
+              ManageAuthorityFiles.checkNewButtonShown(false);
+              ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
+              ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
             });
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
@@ -104,6 +122,7 @@ describe('MARC', () => {
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
             ManageAuthorityFiles.verifyTableHeaders();
             ManageAuthorityFiles.checkActiveTooltipButtonShown();
+            ManageAuthorityFiles.checkNewButtonShown(false);
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
             ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
 
