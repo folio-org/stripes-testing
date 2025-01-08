@@ -85,14 +85,6 @@ describe('Inventory', () => {
           testData.classificationBrowseAlgorithm,
           [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
         );
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
-        InventorySearchAndFilter.verifyCallNumberBrowsePane();
       });
     });
 
@@ -115,6 +107,13 @@ describe('Inventory', () => {
       'C468145 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468145'] },
       () => {
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
         );

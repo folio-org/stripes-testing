@@ -172,14 +172,14 @@ const getEditableListRow = (rowNumber) => {
 
 const getTargetRowWithFile = (authorityFileName) => {
   return manageAuthorityFilesPane.find(
-    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: true }),
+    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: false }),
   );
 };
 
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: or('aatg,aat', 'aat,aatg'),
+    prefix: 'aat,aatg,aatfg',
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
@@ -474,7 +474,7 @@ export default {
   checkDefaultSourceFilesExist() {
     defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
       const targetRow = manageAuthorityFilesPane.find(
-        MultiColumnListRow(including(defaultFolioAuthorityFile.name)),
+        MultiColumnListRow(including(defaultFolioAuthorityFile.name), { isContainer: false }),
       );
       cy.expect([
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),

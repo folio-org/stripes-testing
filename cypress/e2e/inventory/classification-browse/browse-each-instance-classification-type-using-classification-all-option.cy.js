@@ -169,14 +169,6 @@ describe('Inventory', () => {
               createdRecordIDs.push(instance.instanceId);
             });
           });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
-        InventorySearchAndFilter.verifyCallNumberBrowsePane();
       });
     });
 
@@ -199,6 +191,13 @@ describe('Inventory', () => {
       'C468150 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option when all identifier types are selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468150'] },
       () => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.classificationValue);
         });
