@@ -51,8 +51,8 @@ import SettingsDataImport, {
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
