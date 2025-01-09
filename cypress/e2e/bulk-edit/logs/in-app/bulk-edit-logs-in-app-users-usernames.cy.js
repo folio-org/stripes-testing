@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
           BulkEditSearchPane.uploadFile(invalidUsernamesFilename);
           BulkEditSearchPane.waitFileUploading();
-          BulkEditSearchPane.verifyErrorLabel(invalidUsernamesFilename, 0, 1);
+          BulkEditSearchPane.verifyErrorLabel(1);
           BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();

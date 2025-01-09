@@ -73,7 +73,8 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
-        BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox();
       },
     );
 

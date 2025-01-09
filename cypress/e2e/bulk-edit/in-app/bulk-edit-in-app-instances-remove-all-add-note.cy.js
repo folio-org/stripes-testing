@@ -154,10 +154,10 @@ describe('bulk-edit', () => {
         });
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          [`${marcInstance.hrid},MARC,,,,${notes.administrativeNote}`],
+          [`${marcInstance.hrid},MARC,,,,,${notes.administrativeNote}`],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, [
-          [`${folioItem.hrid},FOLIO,,,,${notes.administrativeNote}`],
+          [`${folioItem.hrid},FOLIO,,,,,${notes.administrativeNote}`],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, [
           [
@@ -203,7 +203,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(previewFileName, [
-          [`${folioItem.hrid},FOLIO,,,,${notes.administrativeNote}`],
+          [`${folioItem.hrid},FOLIO,,,,,${notes.administrativeNote}`],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, [
           [

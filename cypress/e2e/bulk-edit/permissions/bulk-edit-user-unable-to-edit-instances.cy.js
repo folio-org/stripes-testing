@@ -71,7 +71,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instances', 'Instance HRIDs');
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.verifyMatchedResults(item.instanceHRID);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 instance');
         BulkEditActions.openActions();
         BulkEditActions.startBulkEditInstanceAbsent();
         BulkEditActions.downloadMatchedRecordsExists();

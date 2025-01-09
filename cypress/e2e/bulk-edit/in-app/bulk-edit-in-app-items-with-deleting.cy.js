@@ -90,7 +90,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.verifyActionAfterChangingRecords();
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(itemBarcodesFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditActions.verifySuccessBanner(1);
       },
     );
