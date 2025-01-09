@@ -86,7 +86,7 @@ describe('Data Import', () => {
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
           calloutTypes.success,
         );
-        cy.reload();
+
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
         InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
