@@ -70,6 +70,7 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.verifyNonMatchedResults(
+          uuid,
           'Holdings records that have source "MARC" cannot be changed ',
         );
       },

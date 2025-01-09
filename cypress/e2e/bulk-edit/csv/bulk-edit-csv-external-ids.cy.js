@@ -51,7 +51,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyMatchedResults(user.username);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 user');
 
         BulkEditActions.downloadMatchedResults();
         const newUserName = `testName_${getRandomPostfix()}`;

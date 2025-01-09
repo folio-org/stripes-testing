@@ -159,6 +159,7 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.MODE_OF_ISSUANCE,
             instance.modeOfIssuanceName,
           ],
+          [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STATISTICAL_CODE, ''],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE, value],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE, instance.title],
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INDEX_TITLE, instance.indexTitle],
@@ -244,7 +245,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyPaneRecordsChangedCount(1);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount('1 instance');
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           instance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.STAFF_SUPPRESS,

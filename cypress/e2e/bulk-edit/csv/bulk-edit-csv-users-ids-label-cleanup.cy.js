@@ -52,8 +52,8 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 user');
 
         BulkEditActions.downloadMatchedResults();
         const newName = `testName_${getRandomPostfix()}`;

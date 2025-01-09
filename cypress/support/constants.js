@@ -915,6 +915,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CATALOGED_DATE: 'Cataloged date',
     INSTANCE_STATUS_TERM: 'Instance status term',
     MODE_OF_ISSUANCE: 'Mode of issuance',
+    STATISTICAL_CODE: 'Statistical code',
     ADMINISTRATIVE_NOTE: 'Administrative note',
     INDEX_TITLE: 'Index title',
     SERIES_STATEMENT: 'Series statements',

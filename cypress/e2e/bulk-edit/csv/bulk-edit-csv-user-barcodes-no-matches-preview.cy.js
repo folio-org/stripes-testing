@@ -7,6 +7,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import TopMenu from '../../../support/fragments/topMenu';
 
 let user;
+const invalidUserBarcode = getRandomPostfix();
 const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 
 describe(
@@ -33,7 +34,7 @@ describe(
 
           FileManager.createFile(
             `cypress/fixtures/${invalidUserBarcodesFileName}`,
-            getRandomPostfix(),
+            invalidUserBarcode,
           );
         });
       });
@@ -53,7 +54,8 @@ describe(
           BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditSearchPane.matchedAccordionIsAbsent();
-          BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
+          BulkEditSearchPane.verifyErrorLabel(1);
+          BulkEditSearchPane.verifyNonMatchedResults(invalidUserBarcode);
 
           BulkEditActions.openActions();
           BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
