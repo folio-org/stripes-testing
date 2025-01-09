@@ -115,6 +115,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
           QuickMarcEditor.moveFieldUp(17);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(3000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
           InventoryInstance.verifyLastUpdatedSource(
@@ -138,6 +140,7 @@ describe('MARC', () => {
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245Content);
           InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500Content);
           InventoryViewSource.close();
+          cy.wait(5000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

@@ -71,6 +71,7 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410814');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -176,9 +177,9 @@ describe('MARC', () => {
             );
             QuickMarcEditor.deleteField(4);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.confirmDelete();
-            cy.wait(2000);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             InventoryInstance.verifyRecordAndMarcAuthIcon(
