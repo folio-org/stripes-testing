@@ -20,9 +20,9 @@ describe('Inventory', () => {
 
         const testData = {
           optionToSelect: classificationIdentifierTypesDropdownDefaultOptions[0],
-          classificationBrowseName: defaultClassificationBrowseNames[1],
-          classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
-          classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[1].algorithm,
+          classificationBrowseName: defaultClassificationBrowseNames[0],
+          classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[0].id,
+          classificationBrowseAlgorithm: defaultClassificationBrowseIdsAlgorithms[0].algorithm,
         };
 
         const saveCalloutText = `The Classification browse type ${testData.classificationBrowseName} was successfully updated`;
