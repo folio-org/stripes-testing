@@ -52,7 +52,6 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiInventoryViewInstances.gui,
@@ -61,6 +60,8 @@ describe('MARC', () => {
             ]);
           })
           .then(() => {
+            cy.resetTenant();
+            cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiInventoryViewInstances.gui,
@@ -119,7 +120,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkSharedTextInDetailView(false);
@@ -133,7 +134,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(2000);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkSharedTextInDetailView(false);

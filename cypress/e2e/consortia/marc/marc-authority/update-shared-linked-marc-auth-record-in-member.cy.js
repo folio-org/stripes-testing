@@ -104,10 +104,13 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407633');
-        InventoryInstances.deleteInstanceByTitleViaApi('C407633');
-        cy.setTenant(Affiliations.University);
-        InventoryInstances.deleteInstanceByTitleViaApi('C407633');
+        [Affiliations.College, Affiliations.University, Affiliations.Consortia].forEach(
+          (affiliation) => {
+            cy.setTenant(affiliation);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407633');
+            InventoryInstances.deleteInstanceByTitleViaApi('C407633');
+          },
+        );
         cy.resetTenant();
 
         cy.createTempUser([
@@ -238,7 +241,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitLoading();
+          InventoryInstances.waitContentLoading();
           instancesToCheckInM1.forEach((instance) => {
             InventoryInstances.searchByTitle(instance);
             InventoryInstances.selectInstanceByTitle(instance);

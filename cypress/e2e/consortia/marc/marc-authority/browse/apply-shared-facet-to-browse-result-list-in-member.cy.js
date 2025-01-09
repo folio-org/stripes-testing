@@ -78,29 +78,14 @@ describe('MARC', () => {
       };
 
       before('Create users, data', () => {
-        cy.setTenant(Affiliations.College);
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
-        cy.resetTenant();
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
-            });
-          }
-        });
+        [Affiliations.College, Affiliations.University, Affiliations.Consortia].forEach(
+          (affiliation) => {
+            cy.setTenant(affiliation);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404449');
+          },
+        );
+        cy.resetTenant();
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;
@@ -119,6 +104,7 @@ describe('MARC', () => {
             ]);
           })
           .then(() => {
+            cy.resetTenant();
             cy.loginAsAdmin({
               path: TopMenu.dataImportPath,
               waiter: DataImport.waitLoading,

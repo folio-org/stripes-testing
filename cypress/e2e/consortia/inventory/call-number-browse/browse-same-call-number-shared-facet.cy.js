@@ -85,7 +85,7 @@ describe('Inventory', () => {
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiInventoryViewInstances.gui,
             ]);
-
+            cy.resetTenant();
             cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
               () => {
                 DataImport.verifyUploadState();

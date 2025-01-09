@@ -85,6 +85,14 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        [Affiliations.College, Affiliations.University, Affiliations.Consortia].forEach(
+          (affiliation) => {
+            cy.setTenant(affiliation);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404421');
+          },
+        );
+        cy.resetTenant();
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;

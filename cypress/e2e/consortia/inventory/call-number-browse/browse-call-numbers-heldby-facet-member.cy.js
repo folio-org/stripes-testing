@@ -308,6 +308,7 @@ describe('Inventory', () => {
 
       before('Create user, data', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C404353');
         cy.createTempUser([])
           .then((userProperties) => {
             testData.userProperties = userProperties;
@@ -317,7 +318,7 @@ describe('Inventory', () => {
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.inventoryAll.gui,
             ]);
-
+            cy.resetTenant();
             cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
               () => {
                 DataImport.verifyUploadState();
