@@ -63,31 +63,30 @@ describe('Inventory', () => {
           response.forEach((record) => {
             createdRecordIDs.push(record[marcFile.propertyName].id);
           });
-        });
-      });
+          cy.getAdminToken();
+          cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties2) => {
+            testData.user = userProperties2;
 
-      cy.getAdminToken();
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-        testData.user = userProperties;
+            ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
+              testData.classificationBrowseId,
+            ).then((types) => {
+              testData.originalTypes = types;
+            });
+            ClassificationBrowse.updateIdentifierTypesAPI(
+              testData.classificationBrowseId,
+              testData.classificationBrowseAlgorithm,
+              [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+            );
 
-        ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-          testData.classificationBrowseId,
-        ).then((types) => {
-          testData.originalTypes = types;
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            InventorySearchAndFilter.switchToBrowseTab();
+            InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+            InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          });
         });
-        ClassificationBrowse.updateIdentifierTypesAPI(
-          testData.classificationBrowseId,
-          testData.classificationBrowseAlgorithm,
-          [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
-        );
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
-        InventorySearchAndFilter.verifyCallNumberBrowsePane();
       });
     });
 

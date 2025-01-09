@@ -14,21 +14,16 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleAName: `Auto Role A C451613 ${getRandomPostfix()}`,
-        roleBName: `Auto Role B C451613 ${getRandomPostfix()}`,
-        newUsername: `C451613username${getRandomLetters(6)}`,
-        newLastName: `C451613Last${getRandomLetters(6)}`,
-        newFirstName: `C451613First${getRandomLetters(6)}`,
+        roleAName: `Auto Role A C627394 ${getRandomPostfix()}`,
+        roleBName: `Auto Role B C627394 ${getRandomPostfix()}`,
+        newUsername: `C627394username${getRandomLetters(6)}`,
+        newLastName: `C627394Last${getRandomLetters(6)}`,
+        newFirstName: `C627394First${getRandomLetters(6)}`,
         newEmailAddress: `email${getRandomLetters(6)}@folio.org`,
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-        { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users', action: 'View' },
-        { type: 'Data', resource: 'UI-Users', action: 'Create' },
+        { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
         { type: 'Data', resource: 'UI-Users', action: 'Edit' },
       ];
 
@@ -73,8 +68,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C451613 Assigning/unassigning a user for a role after username changed (eureka)',
-        { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C451613'] },
+        'C627394 [UIROLES-125] Assigning/unassigning a user for a role after username changed while having users.settings Manage (eureka)',
+        { tags: ['extendedPath', 'eureka', 'eurekaPhase1', 'C627394'] },
         () => {
           const usersCallRegExpGetA = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleAId}`,

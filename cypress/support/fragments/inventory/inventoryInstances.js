@@ -60,7 +60,7 @@ const buttonCloseInAdvSearchModal = advSearchModal.find(
   Button({ id: 'advanced-search-modal-close-button' }),
 );
 const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
-const advSearchOperatorSelect = Select({ label: 'Operator*' });
+const advSearchOperatorSelect = Select({ id: including('advanced-search-bool-') });
 const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
 

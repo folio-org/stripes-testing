@@ -11,7 +11,6 @@ import {
   TextField,
   including,
   matching,
-  or,
 } from '../../../../../interactors';
 import {
   DEFAULT_FOLIO_AUTHORITY_FILES,
@@ -172,14 +171,14 @@ const getEditableListRow = (rowNumber) => {
 
 const getTargetRowWithFile = (authorityFileName) => {
   return manageAuthorityFilesPane.find(
-    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: true }),
+    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: false }),
   );
 };
 
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: or('aatg,aat', 'aat,aatg'),
+    prefix: 'aat,aatg,aatfg',
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
@@ -474,7 +473,7 @@ export default {
   checkDefaultSourceFilesExist() {
     defaultFolioAuthorityFiles.forEach((defaultFolioAuthorityFile) => {
       const targetRow = manageAuthorityFilesPane.find(
-        MultiColumnListRow(including(defaultFolioAuthorityFile.name)),
+        MultiColumnListRow(including(defaultFolioAuthorityFile.name), { isContainer: false }),
       );
       cy.expect([
         targetRow.find(MultiColumnListCell(defaultFolioAuthorityFile.prefix)).exists(),
@@ -545,11 +544,16 @@ export default {
   },
 
   waitContentLoading() {
-    cy.expect([firstRow.exists(), newButton.has({ disabled: or(true, false) })]);
+    cy.expect(firstRow.exists());
     cy.wait(3000);
   },
 
   checkActiveTooltipButtonShown() {
     cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
+  },
+
+  checkNewButtonShown(isShown = true) {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
   },
 };
