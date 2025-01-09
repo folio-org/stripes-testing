@@ -36,7 +36,7 @@ describe('Data Import', () => {
     let user;
     const title = 'Earthquakes, mudslides, fires & riots :';
     const jsonErrorMessage =
-      'org.folio.rest.core.exceptions.HttpException: User does not have permissions to manage acquisition units assignments - operation is restricted';
+      'org.folio.rest.core.exceptions.HttpException: User is not a member of the specified acquisitions group - operation is restricted';
     const filePathForCreateOrder = 'marcBibFileForC385666.mrc';
     const marcFileName = `C385666 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
