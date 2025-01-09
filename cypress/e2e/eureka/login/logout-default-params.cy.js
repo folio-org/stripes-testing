@@ -12,8 +12,9 @@ describe('Eureka', () => {
     const userProfileButton = Dropdown({ id: 'profileDropdown' });
     const logoutButton = userProfileButton.find(Button('Log out'));
     const logInAgainButton = Button({ text: 'Log in again' });
+    const errorMessage = HTML({ text: 'Error: server is forbidden, unreachable, or unavailable.' });
 
-    before(() => {
+    beforeEach(() => {
       cy.logoutViaApi();
       cy.clearCookies({ domain: null });
     });
@@ -44,6 +45,26 @@ describe('Eureka', () => {
           passwordInput.has({ value: '' }),
           loginButton.exists(),
         ]);
+      },
+    );
+
+    it(
+      'C630447 A page with error message is shown when logging in if Kong is unavailable (eureka)',
+      { tags: ['extendedPath', 'eureka', 'C630447'] },
+      () => {
+        cy.intercept('GET', /.+authn\/token.+/, { forceNetworkError: true }).as('code');
+        cy.visit('/');
+        cy.expect([
+          usernameInput.has({ value: '' }),
+          passwordInput.has({ value: '' }),
+          loginButton.exists(),
+        ]);
+        cy.do([
+          usernameInput.fillIn(Cypress.env('diku_login')),
+          passwordInput.fillIn(Cypress.env('diku_password')),
+          loginButton.click(),
+        ]);
+        cy.expect([logInAgainButton.exists(), errorMessage.exists()]);
       },
     );
   });
