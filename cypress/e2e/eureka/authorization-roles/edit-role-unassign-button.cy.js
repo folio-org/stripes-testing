@@ -20,11 +20,16 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Notes Item Assign-Unassign',
+            resource: 'UI-Agreements Agreements File',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         capabilitiesInSets: [
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
           {
             table: CAPABILITY_TYPES.DATA,
             resource: 'Calendar Endpoint Calendars',
@@ -47,43 +52,28 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
+            resource: 'Erm Files',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Collection',
+            resource: 'Erm Files Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
+            resource: 'Erm Files Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Erm Files Item',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'UI-Notes Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Notes Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Agreements Agreements File',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         capabilities: [

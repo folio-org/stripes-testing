@@ -19,12 +19,18 @@ describe('Eureka', () => {
           },
           {
             application: applications[1],
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Notes Item Assign-Unassign',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Notes Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabilitiesInSets: [
+          {
+            application: applications[0],
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
           {
             application: applications[0],
             table: CAPABILITY_TYPES.DATA,
@@ -52,18 +58,6 @@ describe('Eureka', () => {
           {
             application: applications[1],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
@@ -75,40 +69,28 @@ describe('Eureka', () => {
           },
           {
             application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            application: applications[1],
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'UI-Notes Item',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Settings Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             application: applications[1],
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Notes Enabled',
+            resource: 'Settings Notes Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             application: applications[1],
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Notes Item Assign-Unassign',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Notes Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabilities: [
           {
             application: applications[0],
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Accounts Cancel',
+            resource: 'Feesfines Accounts Cancel',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {

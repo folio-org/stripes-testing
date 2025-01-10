@@ -75,6 +75,11 @@ describe('Eureka', () => {
         newCapabilitiesInSet: [
           {
             table: 'Data',
+            resource: 'Erm Files',
+            action: 'View',
+          },
+          {
+            table: 'Data',
             resource: 'Erm Files Collection',
             action: 'View',
           },
@@ -92,7 +97,7 @@ describe('Eureka', () => {
           },
           {
             table: 'Procedural',
-            resource: 'Accounts Pay',
+            resource: 'Feesfines Accounts Pay',
             action: 'Execute',
           },
         ],
@@ -102,7 +107,7 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Data: 4,
+            Data: 5,
             Settings: 5,
             Procedural: 3,
           },
