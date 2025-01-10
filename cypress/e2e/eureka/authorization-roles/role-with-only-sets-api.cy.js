@@ -24,6 +24,11 @@ describe('Eureka', () => {
         capabilitiesInSets: [
           {
             table: 'Data',
+            resource: 'Acquisitions-Units Memberships',
+            action: 'Manage',
+          },
+          {
+            table: 'Data',
             resource: 'Acquisitions-Units Memberships Collection',
             action: 'View',
           },
@@ -48,6 +53,11 @@ describe('Eureka', () => {
             action: 'Delete',
           },
           {
+            table: 'Procedural',
+            resource: 'UI-Invoice Invoice Pay',
+            action: 'Execute',
+          },
+          {
             table: 'Data',
             resource: 'Finance Expense-Classes Item',
             action: 'View',
@@ -64,7 +74,8 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Data: 4,
+            Data: 5,
+            Procedural: 1,
           },
         },
         absentCapabilitySetTable: 'Settings',
@@ -158,12 +169,12 @@ describe('Eureka', () => {
           });
           AuthorizationRoles.verifyCapabilityTableAbsent(testData.absentCapabilitySetTable);
           testData.capabilitiesInSets
-            .filter((capab, index) => index < 1 && index > 4)
+            .filter((capab, index) => index < 2 && index > 5)
             .forEach((capability) => {
               AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
             });
           AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
-            testData.capabilitiesInSets[1],
+            testData.capabilitiesInSets[2],
             4,
           );
         },
