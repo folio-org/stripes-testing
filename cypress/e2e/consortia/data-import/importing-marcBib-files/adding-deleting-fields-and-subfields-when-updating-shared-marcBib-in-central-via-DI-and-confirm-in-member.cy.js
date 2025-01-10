@@ -184,7 +184,6 @@ describe('Data Import', () => {
           // download exported marc file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
           ExportFile.waitLandingPageOpened();
-          cy.wait(5000);
           ExportFile.downloadExportedMarcFileWithRecordHrid(
             expectedRecordHrid,
             testData.marcFile.exportedFileName,

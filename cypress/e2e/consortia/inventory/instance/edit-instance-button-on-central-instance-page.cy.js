@@ -19,6 +19,7 @@ describe('Inventory', () => {
     };
 
     before('Create test data', () => {
+      cy.clearCookies({ domain: null });
       cy.getAdminToken();
       StatisticalCodes.createViaApi().then((resp) => {
         testData.statisticalCode = `ARL (Collection stats):    ${resp.code} - ${resp.name}`;

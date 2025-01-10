@@ -281,6 +281,7 @@ export default {
   clickSaveAndCloseButton() {
     cy.do(saveAndCloseButton.click());
     cy.expect(rootSection.absent());
+    cy.wait(2000);
 
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),

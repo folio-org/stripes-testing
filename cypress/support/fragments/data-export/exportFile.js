@@ -71,7 +71,7 @@ const downloadExportedMarcFileWithRecordHrid = (hrid, fileName) => {
   const limit = '100';
   const queryString = new URLSearchParams({ limit, query });
 
-  cy.wait(5000);
+  cy.wait(15000);
   // get file id and job id
   cy.okapiRequest({
     method: 'GET',
