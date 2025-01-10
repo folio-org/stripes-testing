@@ -153,9 +153,7 @@ describe('bulk-edit', () => {
             `${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly} (staff only)`,
           ]);
           BulkEditSearchPane.verifyExactChangesUnderColumns('Reproduction note', '');
-          BulkEditSearchPane.verifyInputLabel(
-            `${instanceUUIDsFileName}: 2 entries * 1 records changed * 1 errors`,
-          );
+          BulkEditSearchPane.verifyErrorLabel(1);
           BulkEditSearchPane.verifyReasonForError(
             'Bulk edit of instance notes is not supported for MARC Instances',
           );

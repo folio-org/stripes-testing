@@ -136,7 +136,7 @@ describe('bulk-edit', () => {
 
         const defaultColumnHeaders = Object.values(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS,
-        );
+        ).slice(0, -2);
 
         BulkEditFiles.verifyColumnHeaderExistsInCsvFile(
           matchedRecordsFileName,

@@ -77,8 +77,8 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
         BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-        BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
 
         const newLocation = 'Annex';
 

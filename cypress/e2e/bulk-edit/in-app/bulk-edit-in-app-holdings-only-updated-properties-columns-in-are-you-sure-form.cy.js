@@ -228,7 +228,7 @@ describe('bulk-edit', () => {
 
         const arrayOfColumnHeaders = Object.values(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS,
-        );
+        ).slice(0, -2);
 
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [

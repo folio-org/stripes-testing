@@ -21,15 +21,18 @@ describe('Inventory', () => {
       instanceLanguage: 'eng',
       titleHeader: 'Title',
       contributorsSortOption: 'Contributors',
-      instanceAccordions: [
-        'Language',
-        'Resource type',
-        'Suppress from discovery',
-        'Source',
-        'Tags',
+      instanceAccordions: ['Effective location (item)', 'Language', 'Resource type'],
+      holdingsAccordions: [
+        'Effective location (item)',
+        'Holdings permanent location',
+        'Holdings type',
       ],
-      holdingsAccordions: ['Holdings type', 'Suppress from discovery', 'Source', 'Tags'],
-      itemAccordions: ['Item status', 'Suppress from discovery', 'Material type', 'Tags'],
+      itemAccordions: [
+        'Item status',
+        'Effective location (item)',
+        'Holdings permanent location',
+        'Material type',
+      ],
       contributorPrefix: `Contributor_C422218_${randomFourDigitNumber()}`,
     };
     const instances = [
