@@ -92,7 +92,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyNonMatchedResults(invalidItemBarcodes);
+        BulkEditSearchPane.verifyNonMatchedResults(
+          invalidItemBarcodes,
+          `Item not found by barcode=${invalidItemBarcodes}`,
+        );
         BulkEditActions.openActions();
       },
     );

@@ -69,8 +69,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);
         BulkEditSearchPane.checkForUploading(itemUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(itemUUIDsFileName, 1, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
 
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

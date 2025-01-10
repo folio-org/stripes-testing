@@ -104,7 +104,7 @@ describe('bulk-edit', () => {
 
         const instanceNoteColumnNames = Object.values(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES,
-        ).slice(22);
+        ).slice(23);
 
         BulkEditSearchPane.verifyInstanceNoteColumns(instanceNoteColumnNames);
         BulkEditActions.openActions();
@@ -186,7 +186,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyPaneRecordsChangedCount(1);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount('1 instance');
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           instance.hrid,
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.WITH_NOTE,

@@ -31,6 +31,7 @@ describe('Inventory', () => {
 
       BrowseContributors.createInstanceWithContributorViaApi(instanceA);
       BrowseContributors.createInstanceWithContributorViaApi(instanceZ);
+      BrowseContributors.waitForContributorToAppear(instanceA.contributors[0].name);
 
       cy.getInstanceById(instanceA.id).then((res) => {
         testData.instanceAProps = res;

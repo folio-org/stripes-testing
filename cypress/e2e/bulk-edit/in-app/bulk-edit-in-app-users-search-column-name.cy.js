@@ -69,8 +69,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(invalidUserUUIDsFileName);
         BulkEditSearchPane.checkForUploading(invalidUserUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidUserUUIDsFileName, 0, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(0);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('0 user');
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrorsExists();
