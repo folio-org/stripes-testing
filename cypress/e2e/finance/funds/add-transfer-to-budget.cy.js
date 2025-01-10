@@ -81,7 +81,14 @@ describe('ui-finance: Transactions', () => {
         `$10.00 was successfully transferred to the budget ${firstBudget.name}`,
       );
       Funds.viewTransactions();
-      Funds.checkTransactionList(firstFund.code);
+      Funds.selectTransactionInList('Transfer');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$10.00',
+        'User',
+        'Transfer',
+        `${firstFund.name} (${firstFund.code})`,
+      );
     },
   );
 });
