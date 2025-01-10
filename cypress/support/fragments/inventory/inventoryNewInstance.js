@@ -280,10 +280,8 @@ export default {
   },
   clickSaveAndCloseButton() {
     cy.wait(4000);
-    cy.intercept('GET', '/inventory/instances/*').as('getInstance');
     cy.do(saveAndCloseButton.click());
-    cy.wait('@getInstance', { timeout: 100000 });
-    cy.wait(500);
+    cy.wait(2000);
     cy.expect(rootSection.absent());
     cy.wait(2000);
 

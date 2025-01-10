@@ -178,9 +178,14 @@ describe('ui-orders: Orders', () => {
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
-      Funds.selectTransactionInList('Encumbrance');
+      Funds.viewTransactions(); Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
+        defaultFiscalYear.code,
+        '($70.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
       Funds.checkStatusInTransactionDetails('Unreleased');
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
