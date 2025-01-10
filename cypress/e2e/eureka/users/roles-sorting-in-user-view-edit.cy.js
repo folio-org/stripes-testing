@@ -31,26 +31,15 @@ describe('Eureka', () => {
     const roleToRemove = testData.allRoleNamesSorted[6];
 
     const capabSetsForTestUser = [
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'Roles', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
+      { type: 'Data', resource: 'UI-Users Roles', action: 'Manage' },
       { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-    ];
-    const capabsForTestUser = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
     ];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
       cy.createTempUser([]).then((createdUserProperties) => {
         testData.tempUser = createdUserProperties;
-        cy.assignCapabilitiesToExistingUser(
-          testData.tempUser.userId,
-          capabsForTestUser,
-          capabSetsForTestUser,
-        );
+        cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsForTestUser);
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
       });
       cy.createTempUser([]).then((createdUserAProperties) => {
