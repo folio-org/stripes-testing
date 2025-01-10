@@ -182,26 +182,35 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
       Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
+        defaultFiscalYear.code,
+        '($70.00)',
+        invoice.invoiceNumber,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
       Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.closeTransactionDetails();
+      Funds.closeMenu();
+      Funds.closeBudgetDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
       Invoices.checkFundInInvoiceLine(firstFund);
       TopMenuNavigation.navigateToApp('Finance');
-      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
-        invoice.invoiceNumber,
-        `${secondFund.name} (${secondFund.code})`,
         '($70.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
     },
