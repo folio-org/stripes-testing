@@ -132,12 +132,6 @@ describe('Eureka', () => {
             resource: 'Circulation Renew-By-Barcode',
             action: 'Execute',
           },
-          {
-            application: 'app-platform-complete',
-            table: 'Procedural',
-            resource: 'UI-Users Loans Renew',
-            action: 'Execute',
-          },
         ],
         newCapabilities: [
           {
@@ -154,7 +148,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Settings: 4,
-            Procedural: 2,
+            Procedural: 1,
             Data: 4,
           },
         },

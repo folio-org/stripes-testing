@@ -18,6 +18,11 @@ describe('Eureka', () => {
         capabilitiesInSets: [
           {
             table: 'Data',
+            resource: 'Calendar',
+            action: 'View',
+          },
+          {
+            table: 'Data',
             resource: 'Calendar Endpoint Calendars',
             action: 'View',
           },
@@ -97,6 +102,9 @@ describe('Eureka', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.getUserRoleIdByNameApi(testData.roleName + ' (duplicate)*').then((roleId) => {
+          cy.deleteAuthorizationRoleApi(roleId);
+        });
       });
 
       it(
