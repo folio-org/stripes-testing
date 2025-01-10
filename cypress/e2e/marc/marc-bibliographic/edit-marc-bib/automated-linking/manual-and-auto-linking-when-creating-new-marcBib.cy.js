@@ -93,6 +93,7 @@ describe('MARC', () => {
           ['C422149*', 'n99036055'].forEach((identifire) => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(identifire);
           });
+          InventoryInstances.deleteInstanceByTitleViaApi('C388565');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -235,6 +236,7 @@ describe('MARC', () => {
 
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
+            BrowseSubjects.waitForBrowseSubjectsToContain(testData.marcValue);
             BrowseSubjects.select();
             BrowseSubjects.browse(testData.marcValue);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.marcValue);

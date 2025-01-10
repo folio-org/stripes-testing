@@ -91,21 +91,6 @@ describe('MARC', () => {
               ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
               ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
             });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ManageAuthorityFiles.checkAuthorityFilesTableExists();
-            ManageAuthorityFiles.verifyTableHeaders();
-            ManageAuthorityFiles.checkActiveTooltipButtonShown();
-            ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-            ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
-
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(TopMenu.settingsAuthorityFilesPath);
-            ManageAuthorityFiles.waitContentLoading();
-            ManageAuthorityFiles.checkAuthorityFilesTableExists();
-            ManageAuthorityFiles.verifyTableHeaders();
-            ManageAuthorityFiles.checkActiveTooltipButtonShown();
-            ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
-            ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
           },
         );
 
