@@ -31,7 +31,8 @@ describe('bulk-edit', () => {
       users.deleteViaApi(userWthViewEditPermissions.userId);
     });
 
-    it(
+    // Test case is not applicable for eureka environment
+    it.skip(
       'C350765 Verify BULK EDIT permissions list (firebird)',
       { tags: ['smoke', 'firebird', 'shiftLeft', 'C350765'] },
       () => {
