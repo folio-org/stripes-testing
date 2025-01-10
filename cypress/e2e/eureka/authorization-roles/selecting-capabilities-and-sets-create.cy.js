@@ -18,6 +18,11 @@ describe('Eureka', () => {
         capabilitiesInSet: [
           {
             table: 'Data',
+            resource: 'Acquisitions-Units Memberships',
+            action: 'Manage',
+          },
+          {
+            table: 'Data',
             resource: 'Acquisitions-Units Memberships Collection',
             action: 'View',
           },

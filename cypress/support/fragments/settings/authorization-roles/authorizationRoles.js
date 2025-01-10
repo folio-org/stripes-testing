@@ -209,7 +209,7 @@ export default {
     const targetCheckbox = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListRow(`${application}${resource}`, { isContainer: false }))
-      .find(MultiColumnListCell({ column: action }))
+      .find(MultiColumnListCell({ column: including(action) }))
       .find(Checkbox({ isWrapper: false }));
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
@@ -221,7 +221,7 @@ export default {
     const targetCheckbox = capabilitiesAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListRow(`${application}${resource}`, { isContainer: false }))
-      .find(MultiColumnListCell({ column: action }))
+      .find(MultiColumnListCell({ column: including(action) }))
       .find(Checkbox({ isWrapper: false }));
     cy.do(targetCheckbox.click());
     cy.expect(targetCheckbox.has({ checked: isSelected }));
