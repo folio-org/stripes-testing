@@ -112,7 +112,6 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.College).then(() => {
               TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
               ExportFile.waitLandingPageOpened();
-              cy.wait(5000);
               ExportFile.downloadExportedMarcFileWithRecordHrid(
                 expectedRecordHrid,
                 testData.exportedFileName,

@@ -282,6 +282,7 @@ describe('Data Import', () => {
 
           // download exported marc file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+          ExportFile.waitLandingPageOpened();
           ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
           FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });

@@ -188,7 +188,6 @@ describe('Data Import', () => {
             // use cy.getToken function to get toket for current tenant
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.waitLandingPageOpened();
-            cy.wait(5000);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
               expectedRecordHrid,
               testData.marcFile.exportedFileName,

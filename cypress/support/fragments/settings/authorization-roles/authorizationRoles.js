@@ -645,6 +645,7 @@ export default {
     InteractorsTools.checkCalloutMessage(duplicateCalloutSuccessText(roleName));
     InteractorsTools.dismissCallout(duplicateCalloutSuccessText(roleName));
     cy.expect(Pane(matching(duplicatedTitleRegExp)).exists());
+    cy.expect(Spinner().absent());
     if (capabilitiesShown) {
       cy.expect([
         Spinner().absent(),
