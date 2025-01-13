@@ -29,7 +29,7 @@ describe('Citation: create work', () => {
   });
 
   it(
-    'C624167 [User journey] LDE - Create new work only from blank workform',
+    'C624167 [User journey] LDE - Create new work only from blank workform (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // open new resource form

@@ -78,7 +78,7 @@ describe('Citation: check navigation', () => {
   });
 
   it(
-    'C491276 Linked Data Editor: Verify user is navigated to Linked data editor home page when Application header icon is clicked',
+    'C491276 Linked Data Editor: Verify user is navigated to Linked data editor home page when Application header icon is clicked (citation)',
     { tags: ['citation', 'linked-data-editor', 'sanity', 'shiftLeft'] },
     () => {
       // check search is displayed with lccn option
