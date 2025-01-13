@@ -43,6 +43,7 @@ describe('Orders', () => {
         Orders.openOrder();
 
         cy.visit(TopMenu.inventoryPath);
+        cy.wait(4000);
         InventorySearchAndFilter.searchByParameter('Title (all)', orderLineTitle);
         InventorySearchAndFilter.verifySearchResult(orderLineTitle);
       });
