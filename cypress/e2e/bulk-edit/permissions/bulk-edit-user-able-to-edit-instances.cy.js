@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance UUID');
         BulkEditSearchPane.verifyMatchedResults(item.instanceId);
         BulkEditActions.openActions();
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 instance');
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);
       },
     );

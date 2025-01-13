@@ -102,7 +102,9 @@ describe('Bulk-edit', () => {
             locationId = res.id;
           });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
-            loanTypeId = res[0].id;
+            loanTypeId = res.filter(
+              (loanType) => loanType.name === LOAN_TYPE_NAMES.CAN_CIRCULATE,
+            )[0].id;
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
             materialTypeId = res.id;

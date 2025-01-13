@@ -189,7 +189,17 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($20.00)');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
+        defaultFiscalYear.code,
+        '($20.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+      Funds.closeTransactionDetails();
+      Funds.closeMenu();
+      Funds.closeBudgetDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
@@ -201,12 +211,13 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Payment');
+      Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
-        firstInvoice.vendorInvoiceNo,
-        `${firstFund.name} (${firstFund.code})`,
         '($50.00)',
+        firstInvoice.vendorInvoiceNo,
+        'Payment',
+        `${firstFund.name} (${firstFund.code})`,
       );
     },
   );

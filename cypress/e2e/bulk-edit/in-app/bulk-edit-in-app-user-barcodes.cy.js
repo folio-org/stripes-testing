@@ -89,7 +89,7 @@ describe('bulk-edit', () => {
         BulkEditActions.replaceEmail('folio123.org', newEmailDomain);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
       },
     );
   });

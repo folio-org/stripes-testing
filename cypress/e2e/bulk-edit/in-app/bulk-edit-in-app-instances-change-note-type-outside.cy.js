@@ -140,12 +140,12 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
           [
-            `${marcInstance.hrid},MARC,,,,${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
+            `${marcInstance.hrid},MARC,,,,,${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
           ],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, [
           [
-            `${folioItem.hrid},FOLIO,,,,${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
+            `${folioItem.hrid},FOLIO,,,,,${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
           ],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, ['With note;adminNote;false']);
@@ -164,7 +164,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           [
-            `${folioItem.hrid},FOLIO,,,,${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
+            `${folioItem.hrid},FOLIO,,,,,${notes.reproductionNote} | ${notes.reproductionNoteStaffOnly}`,
           ],
         ]);
         ExportFile.verifyFileIncludes(changedRecordsFileName, ['With note;adminNote;false']);

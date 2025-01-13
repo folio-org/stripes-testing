@@ -23,7 +23,7 @@ import FileManager from '../../utils/fileManager';
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
-const errorsAccordion = Accordion('Errors');
+const errorsAccordion = Accordion('Errors & warnings');
 const bulkEditsAccordion = Accordion('Bulk edits');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
@@ -598,44 +598,53 @@ export default {
     });
   },
 
-  verifyErrorByIdentifier(identifier, errorText) {
+  verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect([
         errorsAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ content: identifier }))
+          .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
           .exists(),
         errorsAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(HTML(including(errorText)))
+          .find(MultiColumnListCell({ content: status, column: 'Status' }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason', content: reasonMessage }))
           .exists(),
       ]);
     });
   },
 
-  verifyNonMatchedResults(...values) {
+  verifyNonMatchedResults(identifier, reasonMessage = 'No match found ') {
     cy.expect([
-      errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
-      errorsAccordion.find(MultiColumnListHeader('Reason for error')).exists(),
+      errorsAccordion.find(MultiColumnListCell({ column: 'Status', content: 'Error' })).exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Record identifier', content: identifier }))
+        .exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Reason', content: reasonMessage }))
+        .exists(),
     ]);
-    values.forEach((value) => {
-      cy.expect(errorsAccordion.find(MultiColumnListCell({ content: value })).exists());
-    });
   },
 
-  verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
+  verifyErrorLabel(errorsCount, warningsCount = 0) {
+    const errorLabel = `${errorsCount} error${errorsCount !== 1 ? 's' : ''}`;
+    const warningLabel = `${warningsCount} warning${warningsCount !== 1 ? 's' : ''}`;
+
     cy.expect(
-      HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
-        } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
-      ).exists(),
+      errorsAccordion.find(Headline(including(`${errorLabel} * ${warningLabel}`))).exists(),
     );
+  },
+
+  verifyShowWarningsCheckbox(isChecked = false) {
+    cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
   },
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
-      Accordion('Errors')
+      errorsAccordion
         .find(
           HTML(
             `${fileName}: ${
@@ -665,11 +674,7 @@ export default {
   },
 
   verifyReasonForError(errorText) {
-    cy.expect(
-      Accordion('Errors')
-        .find(HTML(including(errorText)))
-        .exists(),
-    );
+    cy.expect(errorsAccordion.find(HTML(including(errorText))).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
@@ -1137,6 +1142,7 @@ export default {
     cy.wait(2000);
   },
   isConfirmButtonDisabled(isDisabled) {
+    cy.wait(500);
     cy.expect(confirmChanges.has({ disabled: isDisabled }));
   },
 
@@ -1177,7 +1183,9 @@ export default {
   searchColumnNameTextfieldDisabled(disabled = true) {
     cy.expect([
       searchColumnNameTextfield.has({ disabled }),
-      Checkbox({ disabled: false }).absent(),
+      DropdownMenu()
+        .find(Checkbox({ disabled: false }))
+        .absent(),
     ]);
   },
 

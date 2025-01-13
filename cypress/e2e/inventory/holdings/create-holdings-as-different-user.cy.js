@@ -22,6 +22,7 @@ describe('Inventory', () => {
       let secondUser;
       let instanceTitle;
       let recordsData;
+      let instanceHRID;
 
       beforeEach('Create test data and login', () => {
         instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
@@ -49,8 +50,9 @@ describe('Inventory', () => {
 
       afterEach('Delete test data', () => {
         cy.getAdminToken().then(() => {
-          cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
             (instance) => {
+              cy.wait(5000);
               cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
               InventoryInstance.deleteInstanceViaApi(instance.id);
             },
@@ -79,6 +81,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
+          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+            instanceHRID = initialInstanceHrId;
+          });
           InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
 
           InventoryInstance.openHoldingView();

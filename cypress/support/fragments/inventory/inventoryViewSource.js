@@ -9,6 +9,12 @@ const rootSection = Section({ id: 'marc-view-pane' });
 const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
 
 const close = () => cy.do(closeButton.click());
+const editMarcBibRecord = () => {
+  cy.wait(1000);
+  cy.do(rootSection.find(Button('Actions')).click());
+  cy.wait(1500);
+  cy.do(Button({ id: 'edit-marc' }).click());
+};
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
 const rowEquals = (rowIndex, expectedText) => cy.expect(rootSection.find(TableRow({ index: rowIndex, innerText: expectedText })).exists());
 
@@ -25,6 +31,7 @@ function extructDataFrom999Field() {
 
 export default {
   close,
+  editMarcBibRecord,
   contains,
   rowEquals,
   extructDataFrom999Field,

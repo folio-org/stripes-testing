@@ -1046,11 +1046,12 @@ export default {
   },
 
   checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).find(MultiSelect()).open());
     cy.expect(
       paneFilterSection
         .find(Accordion(accordionName))
-        .find(Checkbox())
-        .has({ label: matching(/.{1,}\d{1,}/) }),
+        .find(MultiSelectOption())
+        .has({ text: matching(/.{1,}(\d{1,})/) }),
     );
   },
 
