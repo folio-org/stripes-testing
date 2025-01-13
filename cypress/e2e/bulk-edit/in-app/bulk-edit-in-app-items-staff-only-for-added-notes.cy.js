@@ -9,8 +9,14 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { APPLICATION_NAMES, ITEM_NOTES, MATERIAL_TYPE_IDS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  ITEM_NOTES,
+  MATERIAL_TYPE_IDS,
+} from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
 const item = {
@@ -221,21 +227,76 @@ describe('bulk-edit', () => {
           `${notes.reproduction} (staff only)`,
         );
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [
-          `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
-          `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
-          `,${notes.admin},dvd,`,
-        ]);
+
+        const addedNoteHeaderValues = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            value: notes.admin,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PROVENANCE_NOTE,
+            value: notes.provenance,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.REPRODUCTION_NOTE,
+            value: `${notes.reproduction} (staff only)`,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NOTE,
+            value: `${notes.note} (staff only)`,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+            value: notes.action,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BINDING_NOTE,
+            value: `${notes.binding} (staff only)`,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE,
+            value: `${notes.copy} (staff only)`,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+            value: notes.checkIn,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+            value: `${notes.checkOut} (staff only)`,
+          },
+        ];
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.itemBarcode,
+          addedNoteHeaderValues,
+        );
+        // ExportFile.verifyFileIncludes(previewFileName, [
+        //   `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
+        //   `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
+        //   `,${notes.admin},dvd,`,
+        // ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check out note', 'Check in note');
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
-          `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
-          `,${notes.admin},dvd,`,
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.itemBarcode,
+          addedNoteHeaderValues,
+        );
+        // ExportFile.verifyFileIncludes(changedRecordsFileName, [
+        //   `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
+        //   `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
+        //   `,${notes.admin},dvd,`,
+        // ]);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Check out note',
