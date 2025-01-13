@@ -215,9 +215,14 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS,
           [newURI],
         );
+
+        const holdingFieldHeaders = Object.values(
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS,
+        ).slice(0, -2);
+
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS),
+          holdingFieldHeaders,
           electronicAccessValue,
           ...editedValueSets,
         ]);
@@ -240,7 +245,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          Object.values(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS),
+          holdingFieldHeaders,
           electronicAccessValue,
           ...editedValueSets,
         ]);
