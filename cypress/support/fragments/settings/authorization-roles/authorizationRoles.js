@@ -711,4 +711,62 @@ export default {
     if (isShown) cy.expect(actionsButton.exists());
     else cy.expect(actionsButton.absent());
   },
+
+  selectCapabilityColumn: (table, action) => {
+    const targetCheckbox = capabilitiesAccordion
+      .find(capabilityTables[table])
+      .find(MultiColumnListHeader(including(action)))
+      .find(Checkbox());
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: true }));
+  },
+
+  getCapabilityCheckboxCountInColumn: (table, action) => {
+    return cy
+      .get(`div[data-testid="capabilities-${table.toLowerCase()}-type"]`)
+      .eq(1)
+      .find(`input[type="checkbox"][aria-label^="${action} "]`)
+      .then((checkboxes) => {
+        return checkboxes.length;
+      });
+  },
+
+  selectCapabilitySetColumn: (table, action) => {
+    const targetCheckbox = capabilitySetsAccordion
+      .find(capabilityTables[table])
+      .find(MultiColumnListHeader(including(action)))
+      .find(Checkbox());
+    cy.do(targetCheckbox.click());
+    cy.expect(targetCheckbox.has({ checked: true }));
+  },
+
+  getCapabilitySetCheckboxCountInColumn: (table, action) => {
+    return cy
+      .get(`div[data-testid="capabilities-${table.toLowerCase()}-type"]`)
+      .eq(0)
+      .find(`input[type="checkbox"][aria-label^="${action} "]`)
+      .then((checkboxes) => {
+        return checkboxes.length;
+      });
+  },
+
+  verifyNoCheckboxesInCapabilitySetColumn: (table, action) => {
+    const regExp = new RegExp(`^${action} `);
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[table])
+        .find(Checkbox({ label: matching(regExp) }))
+        .absent(),
+    );
+  },
+
+  verifyNoCheckboxesInCapabilityColumn: (table, action) => {
+    const regExp = new RegExp(`^${action} `);
+    cy.expect(
+      capabilitiesAccordion
+        .find(capabilityTables[table])
+        .find(Checkbox({ label: matching(regExp) }))
+        .absent(),
+    );
+  },
 };
