@@ -25,7 +25,7 @@ describe('Eureka', () => {
           ).to.eq(1);
         });
         cy.expect(Heading(including('Welcome')).exists());
-        // TO DO: uncomment the following lines when EUREKA-629 is done
+        // TO DO: uncomment the following step when EUREKA-629 is done
         // cy.get('@samlCall.all').then((calls) => {
         //   expect(calls).to.have.length(0);
         // });
