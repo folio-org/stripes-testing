@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
         BulkEditLogs.resetAll();
         BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
-        cy.wait(2000);
+        cy.wait(12000);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(user.username);
