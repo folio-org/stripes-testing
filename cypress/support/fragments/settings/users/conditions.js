@@ -14,7 +14,7 @@ const resetCondition = (conditionValue) => {
 };
 
 const defaultConditions = {
-  defaultMaximumOustandingFeeFineBalance: {
+  defaultMaximumOutstandingFeeFineBalance: {
     // required field
     id: undefined,
     name: 'Maximum outstanding fee/fine balance',
