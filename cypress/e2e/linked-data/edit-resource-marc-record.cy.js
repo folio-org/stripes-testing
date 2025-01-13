@@ -2,7 +2,11 @@ import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import { INSTANCE_SOURCE_NAMES, APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import {
+  INSTANCE_SOURCE_NAMES,
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../support/constants';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import ViewMarc from '../../support/fragments/linked-data/viewMarc';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
@@ -94,7 +98,7 @@ describe('Citation: edit existing instance', () => {
   });
 
   it(
-    'C627245 [User journey] LDE - Edit existing resource | create MARC derived record',
+    'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // prepare inventory instance created by LDE
@@ -115,7 +119,7 @@ describe('Citation: edit existing instance', () => {
       InventoryInstance.editInstanceInLde();
       // edit edition
       EditResource.waitLoading();
-      cy.wait(5000);
+      cy.wait(6000);
       EditResource.setEdition(testData.edition);
       EditResource.saveAndKeepEditing();
       EditResource.viewMarc();

@@ -3,7 +3,11 @@ import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import { APPLICATION_NAMES, LOCATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  LOCATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+} from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -90,7 +94,7 @@ describe('Citation: duplicate instance', () => {
   });
 
   it(
-    'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings',
+    'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by any isbn
