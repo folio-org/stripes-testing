@@ -158,6 +158,7 @@ describe('ui-orders: Orders', () => {
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
+      Funds.closeTransactionDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -171,12 +172,13 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Pending payment');
+      Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
-        invoice.invoiceNumber,
-        `${firstFund.name} (${firstFund.code})`,
         '($50.00)',
+        invoice.invoiceNumber,
+        'Pending payment',
+        `${firstFund.name} (${firstFund.code})`,
       );
       Funds.clickInfoInTransactionDetails();
     },

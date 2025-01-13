@@ -94,7 +94,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyNonMatchedResults(
           invalidItemBarcodes,
-          `Item not found by barcode=${invalidItemBarcodes}`,
+          `Item not found by barcode=${invalidItemBarcodes} `,
         );
         BulkEditActions.openActions();
       },

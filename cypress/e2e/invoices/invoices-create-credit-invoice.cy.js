@@ -59,7 +59,7 @@ describe('Invoices', () => {
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
       Funds.varifyDetailsInTransaction(
-        'FY2024',
+        'FY2025',
         '$100.00',
         invoice.invoiceNumber,
         'Pending payment',
@@ -76,7 +76,7 @@ describe('Invoices', () => {
       TopMenuNavigation.openAppFromDropdown('Finance');
       Funds.selectTransactionInList('Credit');
       Funds.varifyDetailsInTransactionFundTo(
-        'FY2024',
+        'FY2025',
         '$100.00',
         invoice.invoiceNumber,
         'Credit',

@@ -131,7 +131,6 @@ describe('Invoices', () => {
       OrderLines.addPOLine();
       OrderLines.fillInPOLineInfoWithFund(firstFund);
       OrderLines.backToEditingOrder();
-      Orders.approveOrderbyActions();
       Orders.openOrder();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
