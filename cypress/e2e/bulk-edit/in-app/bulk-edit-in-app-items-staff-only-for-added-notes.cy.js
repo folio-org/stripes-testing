@@ -276,11 +276,6 @@ describe('bulk-edit', () => {
           item.itemBarcode,
           addedNoteHeaderValues,
         );
-        // ExportFile.verifyFileIncludes(previewFileName, [
-        //   `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
-        //   `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
-        //   `,${notes.admin},dvd,`,
-        // ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
@@ -292,11 +287,6 @@ describe('bulk-edit', () => {
           item.itemBarcode,
           addedNoteHeaderValues,
         );
-        // ExportFile.verifyFileIncludes(changedRecordsFileName, [
-        //   `${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only)`,
-        //   `Available,${notes.checkIn},${notes.checkOut} (staff only),`,
-        //   `,${notes.admin},dvd,`,
-        // ]);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyExactChangesUnderColumns(
           'Check out note',
