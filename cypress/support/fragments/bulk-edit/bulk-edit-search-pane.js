@@ -611,7 +611,7 @@ export default {
           .exists(),
         errorsAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ column: 'Reason', content: reasonMessage }))
+          .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
           .exists(),
       ]);
     });
