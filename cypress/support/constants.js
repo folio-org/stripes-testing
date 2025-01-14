@@ -345,6 +345,7 @@ export const VENDOR_NAMES = {
   GOBI: 'GOBI Library Solutions',
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
+  AMAZON: 'Amazon.com',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
