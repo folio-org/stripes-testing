@@ -712,38 +712,44 @@ export default {
     else cy.expect(actionsButton.absent());
   },
 
-  selectCapabilityColumn: (table, action) => {
+  selectCapabilityColumn: (table, action, isSelected = true) => {
     const targetCheckbox = capabilitiesAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListHeader(including(action)))
       .find(Checkbox());
     cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: true }));
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
   getCapabilityCheckboxCountInColumn: (table, action) => {
+    cy.wait(2000);
     return cy
-      .get(`div[data-testid="capabilities-${table.toLowerCase()}-type"]`)
-      .eq(1)
+      .xpath(
+        '//section[starts-with(@class, "accordion--")][.//div[starts-with(@class, "labelArea")][text()="Capabilities"]]',
+      )
+      .find(`div[data-testid="capabilities-${table.toLowerCase()}-type"]`)
       .find(`input[type="checkbox"][aria-label^="${action} "]`)
       .then((checkboxes) => {
         return checkboxes.length;
       });
   },
 
-  selectCapabilitySetColumn: (table, action) => {
+  selectCapabilitySetColumn: (table, action, isSelected = true) => {
     const targetCheckbox = capabilitySetsAccordion
       .find(capabilityTables[table])
       .find(MultiColumnListHeader(including(action)))
       .find(Checkbox());
     cy.do(targetCheckbox.click());
-    cy.expect(targetCheckbox.has({ checked: true }));
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
   getCapabilitySetCheckboxCountInColumn: (table, action) => {
+    cy.wait(2000);
     return cy
-      .get(`div[data-testid="capabilities-${table.toLowerCase()}-type"]`)
-      .eq(0)
+      .xpath(
+        '//section[starts-with(@class, "accordion--")][.//div[starts-with(@class, "labelArea")][text()="Capability sets"]]',
+      )
+      .find(`div[data-testid="capabilities-${table.toLowerCase()}-type"]`)
       .find(`input[type="checkbox"][aria-label^="${action} "]`)
       .then((checkboxes) => {
         return checkboxes.length;

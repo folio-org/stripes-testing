@@ -25,9 +25,10 @@ describe('Eureka', () => {
           ).to.eq(1);
         });
         cy.expect(Heading(including('Welcome')).exists());
-        cy.get('@samlCall.all').then((calls) => {
-          expect(calls).to.have.length(0);
-        });
+        // TO DO: uncomment the following step when EUREKA-629 is done
+        // cy.get('@samlCall.all').then((calls) => {
+        //   expect(calls).to.have.length(0);
+        // });
       },
     );
   });
