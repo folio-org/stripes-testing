@@ -145,6 +145,7 @@ describe('Data Import', () => {
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.verifyPOLDetailsIsOpened();
         OrderLines.checkDonorInformation(donorNames);
+        OrderLines.checkDonorIsAbsent('88888');
       },
     );
   });

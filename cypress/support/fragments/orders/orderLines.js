@@ -2703,11 +2703,19 @@ export default {
 
   checkDonorInformation(donors) {
     for (let i = 0; i < donors.length; i++) {
-      cy.expect([
+      cy.expect(
         Section({ id: 'donorsInformation' })
           .find(MultiColumnListCell({ row: i, column: 'Name' }))
           .has({ content: donors[i] }),
-      ]);
+      );
     }
+  },
+
+  checkDonorIsAbsent(donor) {
+    cy.expect(
+      Section({ id: 'donorsInformation' })
+        .find(MultiColumnListCell({ content: donor }))
+        .absent(),
+    );
   },
 };
