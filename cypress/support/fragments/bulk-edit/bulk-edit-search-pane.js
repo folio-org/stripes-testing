@@ -598,16 +598,20 @@ export default {
     });
   },
 
-  verifyErrorByIdentifier(identifier, errorText) {
+  verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect([
         errorsAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ content: identifier }))
+          .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
           .exists(),
         errorsAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(HTML(including(errorText)))
+          .find(MultiColumnListCell({ content: status, column: 'Status' }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
           .exists(),
       ]);
     });

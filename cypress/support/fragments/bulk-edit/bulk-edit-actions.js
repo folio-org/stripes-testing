@@ -34,7 +34,7 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
-const downloadPreviewBtn = Button('Download preview');
+const downloadPreviewInCSVFormatBtn = Button('Download preview in CSV format');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
@@ -185,7 +185,7 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(downloadPreviewBtn).exists(),
+      areYouSureForm.find(downloadPreviewInCSVFormatBtn).exists(),
       areYouSureForm.find(commitChanges).exists(),
     ]);
     if (cellContent) {
@@ -241,13 +241,13 @@ export default {
   },
 
   downloadPreview() {
-    cy.do(downloadPreviewBtn.click());
+    cy.do(downloadPreviewInCSVFormatBtn.click());
     // Wait for file to download
     cy.wait(3000);
   },
 
   verifyDownloadPreviewButtonDisabled(isDisabled = true) {
-    cy.expect(areYouSureForm.find(downloadPreviewBtn).has({ disabled: isDisabled }));
+    cy.expect(areYouSureForm.find(downloadPreviewInCSVFormatBtn).has({ disabled: isDisabled }));
   },
 
   clickKeepEditingBtn() {

@@ -51,7 +51,7 @@ export default {
   },
 
   editWork: () => {
-    cy.xpath("//div[@class='full-display-container']//button[text()='Edit work']").click();
+    cy.xpath("//div[@class='full-display-control-panel']//button[text()='Edit work']").click();
     EditResource.waitLoading();
   },
 

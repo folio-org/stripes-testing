@@ -469,6 +469,14 @@ export default {
     internal: 'ui-users.feesfines.actions.all',
     gui: 'Users: Can create, edit and remove fees/fines',
   },
+  feesfinesCheckPay: {
+    internal: 'feesfines.accounts.check-pay.post',
+    gui: 'accounts payment check post',
+  },
+  feesfinesPay: {
+    internal: 'feesfines.accounts.pay.post',
+    gui: 'accounts payment post',
+  },
   uiUsersPatronBlocks: {
     internal: 'ui-users.patron-blocks.all',
     gui: 'Users: Can create, edit and remove patron blocks',
