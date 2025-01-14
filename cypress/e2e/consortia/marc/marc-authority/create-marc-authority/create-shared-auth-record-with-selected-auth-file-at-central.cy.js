@@ -12,14 +12,15 @@ import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
+      const randomPostfix = getRandomPostfix();
+      const recordTitle = `Create a new Shared MARC authority record with Local authority file test ${randomPostfix}`;
       const testData = {
-        sourceName: `Test auth source file ${getRandomPostfix()}`,
+        sourceName: `Test auth source file ${randomPostfix}`,
         prefix: getRandomLetters(8),
         startWithNumber: '1',
         searchOption: 'Keyword',
-        marcValue: 'Create a new Shared MARC authority record with Local authority file test',
-        marcValueShared:
-          'Shared\nCreate a new Shared MARC authority record with Local authority file test',
+        marcValue: recordTitle,
+        marcValueShared: `Shared\n${recordTitle}`,
         headerText: 'Create a new shared MARC authority record',
         AUTHORIZED: 'Authorized',
         sharedIcon: 'Shared',
@@ -30,7 +31,7 @@ describe('MARC', () => {
       const newField = {
         rowIndex: 5,
         tag: '110',
-        content: '$a Create a new Shared MARC authority record with Local authority file test',
+        content: `$a ${recordTitle}`,
       };
 
       before('Create users, data', () => {
