@@ -34,8 +34,6 @@ const folioInstance = {
 const marcInstance = {
   title: `C478258 marc instance testBulkEdit_${getRandomPostfix()}`,
 };
-const sharedNoteText = 'Shared note text';
-const collegeLocalNoteText = 'College note text';
 const centralSharedHoldingNoteType = {
   payload: {
     name: `C478258 shared note type ${getRandomPostfix()}`,
@@ -266,17 +264,15 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
           BulkEditActions.openActions();
-          // 4
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
           );
-
-          // 5
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
           );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             true,
@@ -314,8 +310,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 6
-
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
@@ -329,8 +323,6 @@ describe('Bulk-edit', () => {
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
           );
-
-          // 7
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
@@ -351,8 +343,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 8
-
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
@@ -366,17 +356,13 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             collegeHoldingNoteTypeNameWithAffiliation,
           );
-
           BulkEditActions.clickOptionsSelection();
-
           BulkEditActions.noteReplaceWith(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
             notes.adminUpperCase,
             notes.adminLowerCase,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 15
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteReplaceWith(
@@ -386,8 +372,6 @@ describe('Bulk-edit', () => {
             1,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 17
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteReplaceWith(
@@ -397,8 +381,6 @@ describe('Bulk-edit', () => {
             2,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 18
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
@@ -468,10 +450,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // stoped here
-
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(holdingUUIDsFileName, 4, 4, 2);
-          BulkEditSearchPane.verifyNonMatchedResults();
+          BulkEditSearchPane.verifyErrorLabel(2);
 
           universityHoldingIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
@@ -483,20 +462,20 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
+          holdingHrids.forEach((hrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+              changedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              hrid,
+              editedHeaderValues,
+            );
+          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              // editedHeaderValueInCollege,
-            );
-          });
-          universityHoldingHrids.forEach((hrid) => {
-            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-              hrid,
-              // editedHeaderValueInUniversity,
+              collegeEditedHeaderValues,
             );
           });
 
@@ -518,17 +497,33 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.searchHoldingsByHRID(hrid);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
+            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase);
+            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase, 1);
             HoldingsRecordView.checkNotesByType(
               0,
               collegeHoldingNoteType.name,
-              collegeLocalNoteText,
+              notes.collegeLowerCase,
+              'Yes',
+            );
+            HoldingsRecordView.checkNotesByType(
+              0,
+              collegeHoldingNoteType.name,
+              notes.collegeLowerCase,
               'No',
+              1,
             );
             HoldingsRecordView.checkNotesByType(
               1,
               centralSharedHoldingNoteType.payload.name,
-              sharedNoteText,
+              notes.sharedLowerCase,
               'Yes',
+            );
+            HoldingsRecordView.checkNotesByType(
+              1,
+              centralSharedHoldingNoteType.payload.name,
+              notes.sharedLowerCase,
+              'No',
+              1,
             );
           });
 
@@ -540,15 +535,20 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.searchHoldingsByHRID(hrid);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
+            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase);
+            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase, 1);
             HoldingsRecordView.checkNotesByType(
               0,
               centralSharedHoldingNoteType.payload.name,
-              sharedNoteText,
+              notes.sharedLowerCase,
               'Yes',
             );
-            HoldingsRecordView.checkHoldingNoteTypeAbsent(
-              collegeHoldingNoteType.name,
-              collegeLocalNoteText,
+            HoldingsRecordView.checkNotesByType(
+              0,
+              centralSharedHoldingNoteType.payload.name,
+              notes.sharedLowerCase,
+              'No',
+              1,
             );
           });
         },
