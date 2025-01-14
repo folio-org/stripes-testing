@@ -124,7 +124,7 @@ describe('bulk-edit', () => {
             `${folioItem.instanceId},false,true,`,
             `${marcInstances[0].instanceId},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
-            `${marcInstances[1].instanceId},false,,`,
+            `${marcInstances[1].instanceId},false,false`,
           ]);
           BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
@@ -187,7 +187,7 @@ describe('bulk-edit', () => {
             `${folioItem.instanceId},false,true,`,
             `${marcInstances[0].instanceId},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
-            `${marcInstances[1].instanceId},false,,`,
+            `${marcInstances[1].instanceId},false,false`,
           ]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
