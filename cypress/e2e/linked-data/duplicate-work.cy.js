@@ -96,7 +96,7 @@ describe('Citation: duplicate existing work', () => {
   });
 
   it(
-    'C624234 [User journey] LDE - Duplicate existing work',
+    'C624234 [User journey] LDE - Duplicate existing work (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by any title

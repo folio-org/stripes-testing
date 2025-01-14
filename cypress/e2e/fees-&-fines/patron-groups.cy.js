@@ -31,7 +31,7 @@ describe('Fees&Fines', () => {
               testData.username = userProperties.username;
               Conditions.getConditionsViaApi().then((patronBlockConditions) => {
                 const testCondition =
-                  Conditions.defaultConditions.defaultMaximumOustandingFeeFineBalance;
+                  Conditions.defaultConditions.defaultMaximumOutstandingFeeFineBalance;
                 testData.testConditionId = patronBlockConditions.filter(
                   (conditionProperty) => conditionProperty.name === testCondition.name,
                 )[0].id;
