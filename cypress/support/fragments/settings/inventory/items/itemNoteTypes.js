@@ -1,10 +1,5 @@
 import uuid from 'uuid';
-import {
-  Button,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  including,
-} from '../../../../../../interactors';
+import { Button, MultiColumnListRow, including } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 
 export const reasonsActions = {
