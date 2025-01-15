@@ -92,23 +92,23 @@ describe('Consortium manager', () => {
         });
       });
 
-      // after('delete test data', () => {
-      //   cy.setTenant(Affiliations.University);
-      //   cy.getUniversityAdminToken();
-      //   cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
+      after('delete test data', () => {
+        cy.setTenant(Affiliations.University);
+        cy.getUniversityAdminToken();
+        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
 
-      //   cy.resetTenant();
-      //   cy.getAdminToken();
+        cy.resetTenant();
+        cy.getAdminToken();
 
-      //   cy.setTenant(Affiliations.College);
-      //   cy.getCollegeAdminToken();
-      //   cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
+        cy.setTenant(Affiliations.College);
+        cy.getCollegeAdminToken();
+        cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
 
-      //   cy.setTenant(Affiliations.Consortia);
-      //   cy.getAdminToken();
-      //   RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
-      //   Users.deleteViaApi(testData.user400666.userId);
-      // });
+        cy.setTenant(Affiliations.Consortia);
+        cy.getAdminToken();
+        RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
+        Users.deleteViaApi(testData.user400666.userId);
+      });
 
       it(
         'C400666 User is NOT able to edit and delete from member tenant "Circulation" settings shared via "Consortium manager" app (consortia) (thunderjet)',
