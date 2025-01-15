@@ -59,6 +59,8 @@ describe('Inventory', () => {
       'C490900 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has multiple existing "035" fields (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C490900'] },
       () => {
+        cy.reload();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
         InventoryActions.importLoc(loc);
         InstanceRecordView.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
