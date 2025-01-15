@@ -12,7 +12,9 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -27,7 +29,44 @@ describe('Settings: Tenant', () => {
         ServicePoints.createViaApi(servicePoint);
       });
 
-      const location = NewLocation.getDefaultLocation(testData.servicePoints[0].id);
+      const location = {
+        id: uuid(),
+        isActive: true,
+        institutionId: uuid(),
+        institutionName: `1_autotest_institution_${getRandomPostfix()}`,
+        campusId: uuid(),
+        campusName: `1_autotest_campuse_${getRandomPostfix()}`,
+        libraryId: uuid(),
+        libraryName: `1_autotest_library_${getRandomPostfix()}`,
+        servicePointIds: [testData.servicePoints[0].id],
+        name: `1_autotest_location_name_${getRandomPostfix()}`,
+        code: `1_autotest_location_code_${getRandomPostfix()}`,
+        discoveryDisplayName: `1_autotest_name_${getRandomPostfix()}`,
+        primaryServicePoint: testData.servicePoints[0].id,
+      };
+
+      Institutions.createViaApi(
+        Institutions.getDefaultInstitution({
+          id: location.institutionId,
+          name: location.institutionName,
+        }),
+      ).then(() => {
+        Campuses.createViaApi(
+          Campuses.getDefaultCampuse({
+            id: location.campusId,
+            name: location.campusName,
+            institutionId: location.institutionId,
+          }),
+        ).then(() => {
+          Libraries.createViaApi(
+            Libraries.getDefaultLibrary({
+              id: location.libraryId,
+              name: location.libraryName,
+              campusId: location.campusId,
+            }),
+          );
+        });
+      });
 
       [...Array(3).keys()].forEach((index) => {
         testData.locations.push({
@@ -45,7 +84,7 @@ describe('Settings: Tenant', () => {
 
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      cy.visit(TopMenu.settingsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
       Locations.goToLocationsTab();
     });
   });
