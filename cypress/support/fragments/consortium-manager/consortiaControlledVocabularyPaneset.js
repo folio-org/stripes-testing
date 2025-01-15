@@ -81,35 +81,32 @@ export default {
   },
 
   verifyRecordInTheList(record, actionButtons = []) {
-    MultiColumnListRow({
+    cy.then(() => MultiColumnListRow({
       content: including(record[0]),
-    })
-      .rowIndexInParent()
-      .then((rowIndexInParent) => {
-        cy.wrap(record).each((text, columnIndex) => {
-          cy.expect(
-            MultiColumnListRow({ rowIndexInParent })
-              .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
-              .exists(),
-          );
-        });
-
-        const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
-          MultiColumnListCell({ columnIndex: record.length }),
+    }).rowIndexInParent()).then((rowIndexInParent) => {
+      cy.wrap(record).each((text, columnIndex) => {
+        cy.expect(
+          MultiColumnListRow({ rowIndexInParent })
+            .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
+            .exists(),
         );
-
-        if (actionButtons.length === 0) {
-          cy.expect(actionsCell.has({ content: '' }));
-        } else {
-          cy.wrap(Object.values(actionIcons)).each((action) => {
-            if (actionButtons.includes(action)) {
-              cy.expect(actionsCell.find(Button({ icon: action })).exists());
-            } else {
-              cy.expect(actionsCell.find(Button({ icon: action })).absent());
-            }
-          });
-        }
       });
+
+      const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+        MultiColumnListCell({ columnIndex: record.length }),
+      );
+      if (actionButtons.length === 0) {
+        cy.expect(actionsCell.has({ content: '' }));
+      } else {
+        cy.wrap(Object.values(actionIcons)).each((action) => {
+          if (actionButtons.includes(action)) {
+            cy.expect(actionsCell.find(Button({ icon: action })).exists());
+          } else {
+            cy.expect(actionsCell.find(Button({ icon: action })).absent());
+          }
+        });
+      }
+    });
   },
 
   performActionFor(name, tenant, action) {

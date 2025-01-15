@@ -54,7 +54,7 @@ describe('Consortia', () => {
         TopMenuNavigation.navigateToApp('Consortium manager');
         ConsortiumManager.verifyStatusOfConsortiumManager();
         ConsortiumManager.verifyMembersSelected();
-        ConsortiumManager.verifyPaneIncludesSettings(settingsList.sort());
+        ConsortiumManager.verifyPaneIncludesSettings(settingsList);
         const randomSetting = Arrays.getRandomElement(settingsList);
         chooseSettingItem(randomSetting, 1);
         ConsortiumManager.clickSelectMembers();

@@ -115,7 +115,7 @@ describe('Orders', () => {
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         OrderLines.selectPOLInOrder();
