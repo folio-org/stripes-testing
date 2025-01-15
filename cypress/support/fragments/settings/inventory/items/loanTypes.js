@@ -3,7 +3,6 @@ import {
   Button,
   including,
   MultiColumnListRow,
-  MultiColumnListCell,
   Pane,
   HTML,
   PaneHeader,

@@ -1,9 +1,4 @@
-import {
-  Button,
-  including,
-  MultiColumnListRow,
-  MultiColumnListCell,
-} from '../../../../../../interactors';
+import { Button, including, MultiColumnListRow } from '../../../../../../interactors';
 
 export const reasonsActions = {
   edit: 'edit',
