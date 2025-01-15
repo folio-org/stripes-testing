@@ -8,13 +8,20 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 let user;
-const loc = '01012052';
-const instanceTitlePart = 'The history of New England from 1630 to 1649';
-const expectedFields = [
+const locC490900 = '01012052';
+const locC490902 = '68073904';
+const instanceTitlePartC490900 = 'The history of New England from 1630 to 1649';
+const instanceTitlePartC490902 = 'Vanity Fair; introduction and notes by Gilbert Phelps.';
+const expectedFieldsC490900 = [
   { tag: '035', position: 4, content: undefined },
   { tag: '035', position: 6, content: '$9 (DLC)   01012052' },
   { tag: '035', position: 8, content: '$a (OCoLC)2628488' },
 ];
+const expectedFieldsC490902 = [
+  { tag: '035', position: 4, content: '$9 (DLC)   68073904' },
+  { tag: '035', position: 5, content: undefined },
+];
+const createdInstaceIds = [];
 
 describe('Inventory', () => {
   describe('Single record import', () => {
@@ -28,7 +35,7 @@ describe('Inventory', () => {
         cy.toggleLocSingleImportProfileViaAPI();
         InventoryInstances.getInstancesViaApi({
           limit: 100,
-          query: `title="${instanceTitlePart}"`,
+          query: `(title="${instanceTitlePartC490900}" or title="${instanceTitlePartC490902}")`,
         }).then((instances) => {
           if (instances) {
             instances.forEach(({ id }) => {
@@ -44,13 +51,16 @@ describe('Inventory', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
+      cy.reload();
+      cy.wait('@/authn/refresh', { timeout: 20000 });
+      InventoryInstances.waitContentLoading();
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
       cy.toggleLocSingleImportProfileViaAPI(false);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"lccn"=="${loc}"` }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      createdInstaceIds.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
       });
       Users.deleteViaApi(user.userId);
     });
@@ -59,12 +69,27 @@ describe('Inventory', () => {
       'C490900 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has multiple existing "035" fields (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C490900'] },
       () => {
-        cy.reload();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
-        InventoryActions.importLoc(loc);
+        InventoryActions.importLoc(locC490900);
         InstanceRecordView.waitLoading();
+        InventoryInstance.getId().then((id) => createdInstaceIds.push(id));
         InventoryInstance.editMarcBibliographicRecord();
-        expectedFields.forEach((field) => {
+        expectedFieldsC490900.forEach((field) => {
+          QuickMarcEditor.verifyTagValue(field.position, field.tag);
+          if (field.content) QuickMarcEditor.checkContent(field.content, field.position);
+        });
+      },
+    );
+
+    it(
+      'C490902 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has one existing "035" field (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C490902'] },
+      () => {
+        InventoryActions.importLoc(locC490902);
+        InventoryInstance.checkInstanceTitle(instanceTitlePartC490902);
+        InstanceRecordView.waitLoading();
+        InventoryInstance.getId().then((id) => createdInstaceIds.push(id));
+        InventoryInstance.editMarcBibliographicRecord();
+        expectedFieldsC490902.forEach((field) => {
           QuickMarcEditor.verifyTagValue(field.position, field.tag);
           if (field.content) QuickMarcEditor.checkContent(field.content, field.position);
         });
