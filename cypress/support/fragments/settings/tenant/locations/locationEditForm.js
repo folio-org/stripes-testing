@@ -13,6 +13,7 @@ const saveButton = editFormRoot.find(Button('Save & close'));
 export default {
   waitLoading() {
     cy.expect(editFormRoot.exists());
+    cy.wait(1000);
   },
   fillLocationForm({ servicePoint }) {
     this.waitLoading();
