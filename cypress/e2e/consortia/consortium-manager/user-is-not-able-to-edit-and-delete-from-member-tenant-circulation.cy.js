@@ -96,7 +96,6 @@ describe('Consortium manager', () => {
         cy.setTenant(Affiliations.University);
         cy.getUniversityAdminToken();
         cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
-
         cy.resetTenant();
         cy.getAdminToken();
 
