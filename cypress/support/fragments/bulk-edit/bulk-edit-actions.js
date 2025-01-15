@@ -1255,6 +1255,14 @@ export default {
       });
   },
 
+  checkTypeExists(type, rowIndex = 0, whichSelect = 0) {
+    cy.get(`[class^="repeatableField"]:eq(${rowIndex}) #urlRelationship`)
+      .eq(whichSelect)
+      .then(($select) => {
+        expect($select.text()).to.contain(type);
+      });
+  },
+
   verifyCheckboxAbsent() {
     cy.expect(Checkbox().absent());
   },

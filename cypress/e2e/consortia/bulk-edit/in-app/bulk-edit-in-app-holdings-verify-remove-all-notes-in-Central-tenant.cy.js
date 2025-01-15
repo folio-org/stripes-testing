@@ -73,20 +73,16 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]);
-          cy.resetTenant();
-          cy.assignAffiliationToUser(Affiliations.University, user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]);
-          cy.resetTenant();
+          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
+            cy.assignAffiliationToUser(affiliation, user.userId);
+            cy.setTenant(affiliation);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              permissions.bulkEditEdit.gui,
+              permissions.uiInventoryViewCreateEditHoldings.gui,
+            ]);
+            cy.resetTenant();
+          });
+
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
