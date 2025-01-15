@@ -1136,4 +1136,10 @@ export default {
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
     ]);
   },
+
+  verifyBrowseResultPaneEmpty() {
+    cy.expect(
+      inventorySearchResultsPane.find(HTML({ className: including('noResultsMessage-') })).exists(),
+    );
+  },
 };
