@@ -77,6 +77,9 @@ const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const nextClassificationAllButton = Button({
+  id: 'browse-results-list-classificationAll-next-paging-button',
+});
 const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
@@ -1135,5 +1138,9 @@ export default {
       stuffSupressAccordion.clickHeader(),
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
     ]);
+  },
+
+  checkNextButtonForClassificationResultsIsDisplayed: () => {
+    cy.expect(nextClassificationAllButton.exists());
   },
 };
