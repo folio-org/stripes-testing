@@ -66,7 +66,7 @@ describe('Consortium manager', () => {
             waiter: ConsortiumManagerApp.waitLoading,
           });
           SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(7);
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(12);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
 
@@ -92,23 +92,23 @@ describe('Consortium manager', () => {
         });
       });
 
-      after('delete test data', () => {
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
+      // after('delete test data', () => {
+      //   cy.setTenant(Affiliations.University);
+      //   cy.getUniversityAdminToken();
+      //   cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
 
-        cy.resetTenant();
-        cy.getAdminToken();
+      //   cy.resetTenant();
+      //   cy.getAdminToken();
 
-        cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
-        cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
+      //   cy.setTenant(Affiliations.College);
+      //   cy.getCollegeAdminToken();
+      //   cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
 
-        cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
-        RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
-        Users.deleteViaApi(testData.user400666.userId);
-      });
+      //   cy.setTenant(Affiliations.Consortia);
+      //   cy.getAdminToken();
+      //   RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
+      //   Users.deleteViaApi(testData.user400666.userId);
+      // });
 
       it(
         'C400666 User is NOT able to edit and delete from member tenant "Circulation" settings shared via "Consortium manager" app (consortia) (thunderjet)',
@@ -122,15 +122,12 @@ describe('Consortium manager', () => {
           CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
           });
-
           CancellationReason.verifyReasonInTheList({
             name: testData.collegeLocalReason.name,
             actions: ['edit', 'trash'],
           });
 
-          CancellationReason.clickTrashButtonForReason({
-            name: testData.collegeLocalReason.name,
-          });
+          CancellationReason.clickTrashButtonForReason(testData.collegeLocalReason.name);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);

@@ -75,7 +75,7 @@ export default {
             .should('contain.text', publicDescription);
         }
 
-        const actionsCell = $row.find('div[class*="mclCell-"]').eq(4);
+        const actionsCell = $row.find('div[class*="mclCell-"]').eq(3);
         actions.forEach((action) => {
           if (action === 'edit') {
             cy.get(actionsCell).find('button[icon="edit"]').should('exist');
@@ -102,14 +102,13 @@ export default {
   },
 
   clickTrashButtonForReason(name) {
-    const row = EditableListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    cy.do(
-      row
-        .find(actionsCell)
-        .find(Button({ icon: 'trash' }))
-        .click(),
-    );
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .find('div[class*="mclCell-"]')
+      .eq(3)
+      .find('button[icon="trash"]')
+      .click();
   },
 
   clickTrashButtonConfirm() {

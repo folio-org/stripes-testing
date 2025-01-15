@@ -93,7 +93,7 @@ describe('Consortia', () => {
             ConfirmShare.clickConfirm();
             DepartmentsConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(messages.created(sharedDepartment.name, 'All'));
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdDepartment, [
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(sharedDepartment.name, [
               'edit',
               'trash',
             ]);
