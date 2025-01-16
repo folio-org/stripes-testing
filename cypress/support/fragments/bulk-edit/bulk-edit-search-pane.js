@@ -1318,7 +1318,7 @@ export default {
   },
 
   verifyRecordsCountInBulkEditQueryPane(value) {
-    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records matched`)).exists());
   },
 
   verifyBulkEditQueryPaneExists() {
