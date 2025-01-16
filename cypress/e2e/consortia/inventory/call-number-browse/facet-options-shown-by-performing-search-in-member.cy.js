@@ -41,11 +41,14 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.resetTenant();
+          cy.intercept('/authn/refresh').as('/authn/refresh');
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            cy.reload();
+            cy.wait('@/authn/refresh', { timeout: 20000 });
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

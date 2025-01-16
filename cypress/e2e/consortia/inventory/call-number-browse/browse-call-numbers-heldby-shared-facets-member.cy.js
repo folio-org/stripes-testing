@@ -425,13 +425,14 @@ describe('Inventory', () => {
         'C404360 Use "Held by" facet when browsing Call numbers in Consortia tenant (applying "Shared" facet) (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C404360'] },
         () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.waitContentLoading();
-            InventorySearchAndFilter.selectBrowseCallNumbers();
-          });
+          cy.login(testData.userProperties.username, testData.userProperties.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.visit(TopMenu.inventoryPath);
+          InventoryInstances.waitContentLoading();
+          InventorySearchAndFilter.selectBrowseCallNumbers();
           BrowseSubjects.browse(`${callNumberPrefix} M1 Shared 1`);
           allVisibleCNs.forEach((callNumber) => {
             BrowseCallNumber.checkValuePresentInResults(callNumber);

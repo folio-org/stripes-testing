@@ -99,7 +99,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
           QuickMarcEditor.moveFieldUp(17);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
@@ -112,9 +112,10 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          InventoryInstances.waitContentLoading();
           cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();
