@@ -36,3 +36,4 @@ import './z3950';
 import './serials';
 import './usage-reports';
 import './reading-room-access';
+import './lists';
