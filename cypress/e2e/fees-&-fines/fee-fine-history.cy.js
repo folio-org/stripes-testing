@@ -77,6 +77,8 @@ describe('Fees&Fines', () => {
               cy.createTempUser([
                 permissions.uiUsersView.gui,
                 permissions.uiUsersfeefinesCRUD.gui,
+                permissions.feesfinesCheckPay.gui,
+                permissions.feesfinesPay.gui,
                 permissions.uiUsersViewServicePoints.gui,
                 permissions.uiUsersfeefinesView.gui,
                 permissions.uiFeeFinesActions.gui,

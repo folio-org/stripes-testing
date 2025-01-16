@@ -131,4 +131,9 @@ export default {
   checkEditedTenantName(name) {
     cy.xpath(`//div[contains(text(), '${name}')]`).should('be.visible');
   },
+
+  checkOptionsExist() {
+    cy.expect(NavListItem('Membership').exists());
+    cy.expect(NavListItem('Central ordering').exists());
+  },
 };

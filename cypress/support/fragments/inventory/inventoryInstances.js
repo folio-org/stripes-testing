@@ -1072,7 +1072,7 @@ export default {
   },
 
   importWithOclcViaApi: (oclcNumber) => {
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'POST',
       path: 'copycat/imports',
       body: {

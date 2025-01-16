@@ -2,6 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Settings from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SoftwareVersions from '../../../support/fragments/settings/softwareVersions/software-versions';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('fse-settings - UI', () => {
   beforeEach(() => {
@@ -27,6 +28,16 @@ describe('fse-settings - UI', () => {
       cy.visit(SettingsMenu.softwareVersionsPath);
       SoftwareVersions.waitLoading();
       SoftwareVersions.checkErrorNotDisplayed();
+    },
+  );
+
+  it(
+    `TC195765 - verify ECS settings options for ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['ramsons', 'fse', 'ui', 'settings', 'consortia'] },
+    () => {
+      cy.visit(SettingsMenu.consortiumManagerPath);
+      ConsortiumManager.waitLoading();
+      ConsortiumManager.checkOptionsExist();
     },
   );
 });

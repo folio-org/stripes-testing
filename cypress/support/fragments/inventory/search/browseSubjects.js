@@ -250,4 +250,26 @@ export default {
       inventorySearchResultsPane.find(MultiColumnListRow({ content: subjectValue })).absent(),
     );
   },
+
+  waitForSubjectsToAppear(subjectName) {
+    return cy.recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: 'browse/subjects/instances',
+          searchParams: {
+            query: `(value>="${subjectName}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => {
+        return response.body.items.filter((item) => item.value === subjectName).length > 0;
+      },
+      {
+        limit: 15,
+        delay: 5000,
+      },
+    );
+  },
 };

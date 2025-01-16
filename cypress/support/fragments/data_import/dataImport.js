@@ -955,4 +955,8 @@ export default {
     cy.expect(sectionPaneJobsTitle.exists());
     cy.expect(logsPaneHeader.exists());
   },
+
+  checkJobSummaryTableExists() {
+    cy.xpath("//div[@id= 'job-summary-table']").should('be.visible');
+  },
 };

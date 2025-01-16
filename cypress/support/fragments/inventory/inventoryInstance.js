@@ -371,8 +371,11 @@ const checkElectronicAccessValues = (relationshipValue, uriValue, linkText) => {
   );
 };
 
+const validLOC = '01012052';
+
 export default {
   validOCLC,
+  validLOC,
   pressAddHoldingsButton,
   waitLoading,
   openHoldings,
