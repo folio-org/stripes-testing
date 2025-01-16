@@ -1,6 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { MultiColumnList } from '../../../../interactors';
+import { BROWSE_CLASSIFICATION_OPTIONS } from '../../../support/constants';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('fse-inventory - UI', () => {
   beforeEach(() => {
@@ -36,6 +38,21 @@ describe('fse-inventory - UI', () => {
       // reset filters
       InventorySearchAndFilter.resetAll();
       cy.expect(MultiColumnList().absent());
+    },
+  );
+
+  it(
+    `TC195766 - check inventory classifications ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['ramsons', 'fse', 'ui', 'inventory'] },
+    () => {
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.waitLoading();
+      InventorySearchAndFilter.switchToBrowseTab();
+      // select Classification (all)
+      InventorySearchAndFilter.selectBrowseOption(BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL);
+      InventorySearchAndFilter.browseSearch('a');
+      BrowseClassifications.verifySearchResultsTable();
+      InventorySearchAndFilter.checkNextButtonForClassificationResultsIsDisplayed();
     },
   );
 });

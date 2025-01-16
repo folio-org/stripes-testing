@@ -514,7 +514,7 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
     .then(({ body }) => body.holdingsNoteTypes[0].id);
 });
 
-Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
+Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 50) => {
   return cy
     .okapiRequest({
       method: 'GET',
