@@ -243,7 +243,6 @@ describe('Bulk-edit', () => {
 
             BulkEditActions.commitChanges();
             BulkEditActions.verifySuccessBanner(2);
-
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               folioInstance.hrid,
               [addedAdministrativeNote, addedDataQualityNote],
@@ -258,7 +257,6 @@ describe('Bulk-edit', () => {
                 },
               ],
             );
-
             BulkEditSearchPane.verifyErrorLabel(1);
             BulkEditSearchPane.verifyErrorByIdentifier(marcInstance.uuid, errorReason);
             BulkEditActions.openActions();
