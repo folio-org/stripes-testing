@@ -115,11 +115,13 @@ export default {
   },
 
   createViaUi: (userData) => {
+    cy.do([
+      Dropdown('Actions').find(Button()).click(),
+      Button({ id: 'clickable-newuser' }).click(),
+    ]);
     cy.wait(4000);
     return cy
       .do([
-        Dropdown('Actions').find(Button()).click(),
-        Button({ id: 'clickable-newuser' }).click(),
         TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
         TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
         TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),

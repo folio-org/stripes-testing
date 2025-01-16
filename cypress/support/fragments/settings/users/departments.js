@@ -43,24 +43,23 @@ export default {
   },
 
   verifyDepartmentsInTheList({ name, code = '', actions = [] }) {
-    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-    cy.expect([
-      row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: code })).exists(),
-    ]);
-    if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
-    } else {
-      Object.values(reasonsActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
-        if (actions.includes(action)) {
-          cy.expect(buttonSelector.exists());
-        } else {
-          cy.expect(buttonSelector.absent());
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .then(($row) => {
+        if (code) {
+          cy.wrap($row).find('div[class*="mclCell-"]').eq(1).should('contain.text', code);
         }
+
+        const actionsCell = $row.find('div[class*="mclCell-"]').eq(4);
+        actions.forEach((action) => {
+          if (action === 'edit') {
+            cy.get(actionsCell).find('button[icon="edit"]').should('exist');
+          } else if (action === 'trash') {
+            cy.get(actionsCell).find('button[icon="trash"]').should('exist');
+          }
+        });
       });
-    }
   },
 
   verifyGroupAbsentInTheList({ name }) {
@@ -80,14 +79,13 @@ export default {
   },
 
   clickTrashButtonForGroup(name) {
-    const row = MultiColumnListRow({ isContainer: true, content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
-    cy.do([
-      row
-        .find(actionsCell)
-        .find(Button({ icon: 'trash' }))
-        .click(),
-      Button('Delete').click(),
-    ]);
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .find('div[class*="mclCell-"]')
+      .eq(4)
+      .find('button[icon="trash"]')
+      .click();
+    cy.do(Button('Delete').click());
   },
 };

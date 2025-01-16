@@ -322,7 +322,7 @@ describe('Consortium manager', () => {
             ],
             ['edit'],
           );
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.universityLocalDepartment.name,
           );
 
@@ -349,10 +349,10 @@ describe('Consortium manager', () => {
             ['edit'],
           );
 
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.collegeLocalDepartment.name,
           );
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.universityLocalDepartment.name,
           );
         },
@@ -439,10 +439,10 @@ describe('Consortium manager', () => {
             ['edit'],
           );
 
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.collegeLocalDepartment.name,
           );
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
             testData.universityLocalDepartment.name,
           );
         },

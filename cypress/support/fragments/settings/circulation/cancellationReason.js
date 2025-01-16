@@ -96,13 +96,13 @@ export default {
   },
 
   clickTrashButtonForReason(name) {
-    cy.do([
-      MultiColumnListRow({ isContainer: true, content: including(name) })
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'trash' }))
-        .click(),
-      Button('Delete').click(),
-    ]);
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .find('div[class*="mclCell-"]')
+      .eq(3)
+      .find('button[icon="trash"]')
+      .click();
   },
 
   clickTrashButtonConfirm() {

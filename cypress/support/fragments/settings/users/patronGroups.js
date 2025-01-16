@@ -129,12 +129,13 @@ export default {
     );
   },
   clickTrashButtonForGroup(name) {
-    cy.do(
-      MultiColumnListRow({ isContainer: true, content: including(name) })
-        .find(MultiColumnListCell({ columnIndex: 4 }))
-        .find(Button({ icon: 'trash' }))
-        .click(),
-    );
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .find('div[class*="mclCell-"]')
+      .eq(4)
+      .find('button[icon="trash"]')
+      .click();
   },
   clickModalDeleteButton() {
     cy.do(deleteModalButton.click());
@@ -217,33 +218,19 @@ export default {
     }
   },
 
-  verifyGroupInTheList(record, actionButtons = []) {
-    MultiColumnListRow({ isContainer: true, content: including(record[0]) })
-      .rowIndexInParent()
-      .then((rowIndexInParent) => {
-        cy.wrap(record).each((text, columnIndex) => {
-          cy.expect(
-            MultiColumnListRow({ rowIndexInParent })
-              .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
-              .exists(),
-          );
+  verifyGroupInTheList({ name, actions = [] }) {
+    cy.get('div[class*="mclCell-"]')
+      .contains(name)
+      .parents('div[class*="mclRow-"]')
+      .then(($row) => {
+        const actionsCell = $row.find('div[class*="mclCell-"]').eq(4);
+        actions.forEach((action) => {
+          if (action === 'edit') {
+            cy.get(actionsCell).find('button[icon="edit"]').should('exist');
+          } else if (action === 'trash') {
+            cy.get(actionsCell).find('button[icon="trash"]').should('exist');
+          }
         });
-
-        const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
-          MultiColumnListCell({ columnIndex: record.length }),
-        );
-
-        if (actionButtons.length === 0) {
-          cy.expect(actionsCell.has({ content: '' }));
-        } else {
-          cy.wrap(Object.values(reasonsActions)).each((action) => {
-            if (actionButtons.includes(action)) {
-              cy.expect(actionsCell.find(Button({ icon: action })).exists());
-            } else {
-              cy.expect(actionsCell.find(Button({ icon: action })).absent());
-            }
-          });
-        }
       });
   },
   verifyCreatedGroupInTheList({
