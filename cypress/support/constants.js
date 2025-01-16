@@ -985,6 +985,9 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
     PERMANENT_LOAN_TYPE: 'Permanent loan type',
     TEMPORARY_LOAN_TYPE: 'Temporary loan type',
+    COPY_NOTE: 'Copy note',
+    REPRODUCTION_NOTE: 'Reproduction note',
+    NOTE: 'Note',
   },
 };
 

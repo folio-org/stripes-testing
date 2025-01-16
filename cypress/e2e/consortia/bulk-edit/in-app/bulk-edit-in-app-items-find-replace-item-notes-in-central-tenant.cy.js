@@ -32,14 +32,14 @@ let materialTypeId;
 let sourceId;
 let centralSharedNoteTypeData;
 const folioInstance = {
-  title: `C605955 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C478262 folio instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
   holdingIds: [],
 };
 const marcInstance = {
-  title: `C605955 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C478262 marc instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
@@ -57,11 +57,11 @@ const notes = {
 };
 const centralSharedItemNoteType = {
   payload: {
-    name: `C605955 shared note type ${getRandomPostfix()}`,
+    name: `C478262 shared note type ${getRandomPostfix()}`,
   },
 };
 const collegeItemNoteType = {
-  name: `C605955 College NoteType ${getRandomPostfix()}`,
+  name: `C478262 College NoteType ${getRandomPostfix()}`,
 };
 const collegeItemNoteTypeNameWithAffiliation = `${collegeItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
@@ -86,22 +86,16 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditItems.gui,
-          ]);
+          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
+            cy.assignAffiliationToUser(affiliation, user.userId);
+            cy.setTenant(affiliation);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              permissions.bulkEditEdit.gui,
+              permissions.uiInventoryViewCreateEditItems.gui,
+            ]);
+            cy.resetTenant();
+          });
 
-          cy.resetTenant();
-          cy.assignAffiliationToUser(Affiliations.University, user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditItems.gui,
-          ]);
-
-          cy.resetTenant();
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
@@ -302,8 +296,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C605955 Verify "Find & replace" action for Items notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C605955'] },
+        'C478262 Verify "Find & replace" action for Items notes in Central tenant (consortia) (firebird)',
+        { tags: ['smokeECS', 'firebird', 'C478262'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
