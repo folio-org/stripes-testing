@@ -1143,4 +1143,10 @@ export default {
   checkNextButtonForClassificationResultsIsDisplayed: () => {
     cy.expect(nextClassificationAllButton.exists());
   },
+
+  verifyBrowseResultPaneEmpty() {
+    cy.expect(
+      inventorySearchResultsPane.find(HTML({ className: including('noResultsMessage-') })).exists(),
+    );
+  },
 };

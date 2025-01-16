@@ -16,7 +16,7 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${userUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${userUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userUUIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
@@ -30,6 +30,7 @@ describe(
   () => {
     describe('csv approach', () => {
       beforeEach('create test data', () => {
+        cy.clearLocalStorage();
         cy.createTempUser([
           permissions.bulkEditLogsView.gui,
           permissions.bulkEditCsvEdit.gui,
@@ -39,7 +40,7 @@ describe(
           cy.wait(3000);
 
           cy.login(user.username, user.password);
-          cy.wait(5000);
+          cy.wait(10000);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
           BulkEditSearchPane.waitLoading();
 

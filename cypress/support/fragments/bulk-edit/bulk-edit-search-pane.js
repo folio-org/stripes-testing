@@ -611,7 +611,7 @@ export default {
           .exists(),
         errorsAccordion
           .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ column: 'Reason', content: reasonMessage }))
+          .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
           .exists(),
       ]);
     });
@@ -1318,7 +1318,7 @@ export default {
   },
 
   verifyRecordsCountInBulkEditQueryPane(value) {
-    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records matched`)).exists());
   },
 
   verifyBulkEditQueryPaneExists() {
