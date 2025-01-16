@@ -1,10 +1,10 @@
-import NewExpenceClass from '../../../support/fragments/settings/finance/newExpenseClass';
+import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-invoices-settings: Batch Group creation', () => {
-  const expenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const newExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const expenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
+  const newExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   before(() => {
     cy.getAdminToken()
       .then(() => {
