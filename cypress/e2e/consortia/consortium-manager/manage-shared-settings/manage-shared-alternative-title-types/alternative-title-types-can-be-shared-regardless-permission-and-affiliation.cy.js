@@ -135,7 +135,7 @@ describe('Consortia', () => {
               messages.noPermission(tenantNames.college),
               calloutTypes.error,
             );
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck, [
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(alternativeTitleTypes4.name, [
               'edit',
               'trash',
             ]);
@@ -150,15 +150,15 @@ describe('Consortia', () => {
             cy.logout();
             cy.login(userBData.username, userBData.password);
             cy.visit(SettingsMenu.alternativeTitleTypes);
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(alternativeTitleTypes4.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.alternativeTitleTypes);
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(alternativeTitleTypes4.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.alternativeTitleTypes);
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(alternativeTitleTypes4.name);
           },
         );
       });

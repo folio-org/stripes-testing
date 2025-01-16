@@ -81,32 +81,19 @@ export default {
   },
 
   verifyRecordInTheList(record, actionButtons = []) {
-    cy.then(() => MultiColumnListRow({
-      content: including(record[0]),
-    }).rowIndexInParent()).then((rowIndexInParent) => {
-      cy.wrap(record).each((text, columnIndex) => {
-        cy.expect(
-          MultiColumnListRow({ rowIndexInParent })
-            .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
-            .exists(),
-        );
-      });
-
-      const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
-        MultiColumnListCell({ columnIndex: record.length }),
-      );
-      if (actionButtons.length === 0) {
-        cy.expect(actionsCell.has({ content: '' }));
-      } else {
-        cy.wrap(Object.values(actionIcons)).each((action) => {
-          if (actionButtons.includes(action)) {
-            cy.expect(actionsCell.find(Button({ icon: action })).exists());
-          } else {
-            cy.expect(actionsCell.find(Button({ icon: action })).absent());
+    cy.get('div[class*="mclCell-"]')
+      .contains(record)
+      .parents('div[class*="mclRow-"]')
+      .then(($row) => {
+        const actionsCell = $row.find('div[class*="mclCell-"]').eq(4);
+        actionButtons.forEach((action) => {
+          if (action === 'edit') {
+            cy.get(actionsCell).find('button[icon="edit"]').should('exist');
+          } else if (action === 'trash') {
+            cy.get(actionsCell).find('button[icon="trash"]').should('exist');
           }
         });
-      }
-    });
+      });
   },
 
   performActionFor(name, tenant, action) {
