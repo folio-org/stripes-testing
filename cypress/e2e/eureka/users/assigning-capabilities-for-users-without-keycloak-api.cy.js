@@ -9,22 +9,22 @@ describe('Eureka', () => {
         type: 'staff',
         active: true,
         personal: {
-          lastName: `User C451628 ${getRandomPostfix()}`,
+          lastName: `User C627444 ${getRandomPostfix()}`,
           email: 'testuser@test.org',
           preferredContactTypeId: '002',
         },
       },
-      noUsernameErrorMessage: 'User without username cannot be created in Keycloak',
+      noKeycloakErrorMessage: "Keycloak user doesn't exist",
     };
     const userA = { ...testData.userBody };
     const userB = { ...testData.userBody };
     const userC = { ...testData.userBody };
     const userD = { ...testData.userBody };
     const userE = { ...testData.userBody };
-    userA.username = `userac451628${getRandomPostfix()}`;
-    userB.username = `userbc451628${getRandomPostfix()}`;
-    userD.username = `userdc451628${getRandomPostfix()}`;
-    userE.username = `userec451628${getRandomPostfix()}`;
+    userA.username = `userac627444${getRandomPostfix()}`;
+    userB.username = `userbc627444${getRandomPostfix()}`;
+    userD.username = `userdc627444${getRandomPostfix()}`;
+    userE.username = `userec627444${getRandomPostfix()}`;
 
     before('Create data', () => {
       cy.getAdminToken();
@@ -68,33 +68,35 @@ describe('Eureka', () => {
     });
 
     it(
-      'C451628 Assigning capabilities/sets for users not having Keycloak records via API (eureka)',
-      { tags: ['criticalPath', 'eureka', 'C451628'] },
+      'C627444 Assigning capabilities/sets for users not having Keycloak records via API (eureka)',
+      { tags: ['criticalPath', 'eureka', 'C627444'] },
       () => {
         cy.getAdminToken();
-        cy.addCapabilitiesToNewUserApi(testData.userAId, testData.capabilityIds).then(
+        cy.addCapabilitiesToNewUserApi(testData.userAId, testData.capabilityIds, true).then(
           (response) => {
-            expect(response.status).to.eq(201);
+            expect(response.status).to.eq(404);
+            expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             cy.getCapabilitiesForUserApi(testData.userAId).then(({ body, status }) => {
               expect(status).to.eq(200);
-              expect(body.totalRecords).to.eq(testData.capabilityIds.length);
+              expect(body.totalRecords).to.eq(0);
             });
           },
         );
-        cy.addCapabilitySetsToNewUserApi(testData.userBId, testData.capabilitySetIds).then(
+        cy.addCapabilitySetsToNewUserApi(testData.userBId, testData.capabilitySetIds, true).then(
           (response) => {
-            expect(response.status).to.eq(201);
+            expect(response.status).to.eq(404);
+            expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             cy.getCapabilitySetsForUserApi(testData.userBId).then(({ body, status }) => {
               expect(status).to.eq(200);
-              expect(body.totalRecords).to.eq(testData.capabilitySetIds.length);
+              expect(body.totalRecords).to.eq(0);
             });
           },
         );
 
         cy.addCapabilitiesToNewUserApi(testData.userCId, testData.capabilityIds, true).then(
           (response) => {
-            expect(response.status).to.eq(500);
-            expect(response.body.errors[0].message).to.include(testData.noUsernameErrorMessage);
+            expect(response.status).to.eq(404);
+            expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             cy.getCapabilitiesForUserApi(testData.userCId).then(({ body, status }) => {
               expect(status).to.eq(200);
               expect(body.totalRecords).to.eq(0);
@@ -103,8 +105,8 @@ describe('Eureka', () => {
         );
         cy.addCapabilitySetsToNewUserApi(testData.userCId, testData.capabilitySetIds, true).then(
           (response) => {
-            expect(response.status).to.eq(500);
-            expect(response.body.errors[0].message).to.include(testData.noUsernameErrorMessage);
+            expect(response.status).to.eq(404);
+            expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             cy.getCapabilitySetsForUserApi(testData.userCId).then(({ body, status }) => {
               expect(status).to.eq(200);
               expect(body.totalRecords).to.eq(0);
