@@ -99,8 +99,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C632 - Loan Data and Availability (incl. validate Loan type settings) (Folijet)(TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      'C632 Loan Data and Availability (incl. validate Loan type settings) (Folijet)(TaaS)',
+      { tags: ['extendedPath', 'folijet', 'C632'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(location.name);

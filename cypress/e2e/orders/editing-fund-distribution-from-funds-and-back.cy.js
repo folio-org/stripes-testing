@@ -144,7 +144,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C375260: Editing fund distribution from Fund A to Fund B and back to Fund A when related Paid invoices exists (thunderjet) (TaaS)',
+    'C375260 Editing fund distribution from Fund A to Fund B and back to Fund A when related Paid invoices exists (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

@@ -104,10 +104,10 @@ describe('Inventory', () => {
 
     it(
       'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
-      { tags: ['criticalPathECS', 'folijet'] },
+      { tags: ['criticalPathECS', 'folijet', 'C423392'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
-        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
         InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
@@ -126,7 +126,9 @@ describe('Inventory', () => {
         );
         InventoryInstance.openItemByBarcode(testData.itemBarcode);
         ItemRecordView.verifyEffectiveLocationForItemInDetails(testData.locationName);
-        ItemRecordView.verifyHoldingsPermanentLocation(testData.locationName);
+        ItemRecordView.verifyHoldingsPermanentLocation(
+          `${testData.locationName} (${tenantNames.university})`,
+        );
         ItemRecordView.verifyItemEffectiveLocation(testData.locationName);
       },
     );

@@ -107,10 +107,9 @@ describe('Data Import', () => {
 
     it(
       'C2341 Delete an existing match profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2341'] },
       () => {
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.search(matchProfileToCreate.profileName);
         MatchProfiles.selectMatchProfileFromList(matchProfileToCreate.profileName);

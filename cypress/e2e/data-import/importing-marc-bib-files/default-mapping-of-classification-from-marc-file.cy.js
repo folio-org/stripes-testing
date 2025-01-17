@@ -49,7 +49,7 @@ describe('Data Import', () => {
 
     it(
       'C6693 Check the default mapping of Classification from the MARC record to the Inventory Instance Classification fields (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C6693'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);

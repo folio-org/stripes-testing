@@ -296,7 +296,7 @@ describe('Data Import', () => {
 
     it(
       'C356791 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C356791'] },
       () => {
         // create mapping profiles for creating
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -416,8 +416,7 @@ describe('Data Import', () => {
         );
 
         // create mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(

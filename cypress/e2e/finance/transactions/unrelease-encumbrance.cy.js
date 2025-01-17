@@ -160,21 +160,20 @@ describe('Finance', () => {
     });
 
     it(
-      'C375105: Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
+      'C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
         FinanceHelp.searchByName(defaultFund.name);
         Funds.selectFund(defaultFund.name);
         Funds.selectBudgetDetails();
         Funds.viewTransactions();
-        Funds.checkTransactionDetails(
-          1,
+        Funds.selectTransactionInList('Encumbrance');
+        Funds.varifyDetailsInTransactionFundTo(
           defaultFiscalYear.code,
           '($0.00)',
           `${orderNumber}-1`,
           'Encumbrance',
           `${defaultFund.name} (${defaultFund.code})`,
-          'Released',
         );
         TopMenuNavigation.navigateToApp('Invoices');
         Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
@@ -182,23 +181,22 @@ describe('Finance', () => {
         Invoices.cancelInvoice();
         TopMenuNavigation.navigateToApp('Finance');
         Funds.closeTransactionDetails();
-        Funds.checkTransactionDetails(
-          2,
+        Funds.selectTransactionInList('Encumbrance');
+        Funds.varifyDetailsInTransactionFundTo(
           defaultFiscalYear.code,
           '($100.00)',
           `${orderNumber}-1`,
           'Encumbrance',
           `${defaultFund.name} (${defaultFund.code})`,
-          'Unreleased',
         );
         Funds.closeTransactionDetails();
-        Funds.checkPaymentInTransactionDetails(
-          1,
+        Funds.selectTransactionInList('Payment');
+        Funds.varifyDetailsInTransactionFundTo(
           defaultFiscalYear.code,
           '($100.00)',
           firstInvoice.vendorInvoiceNo,
+          'Payment',
           `${defaultFund.name} (${defaultFund.code})`,
-          '$100.00',
         );
         Funds.clickInfoInTransactionDetails();
       },

@@ -47,7 +47,7 @@ describe('Data Import', () => {
 
     it(
       'C10923 Check the default mapping of Preceding/Succeeding titles from the MARC record to the Inventory Instance record (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C10923'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);

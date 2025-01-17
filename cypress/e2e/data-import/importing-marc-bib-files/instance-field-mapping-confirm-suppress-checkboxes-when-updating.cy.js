@@ -156,7 +156,7 @@ describe('Data Import', () => {
 
     it(
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11088'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();
@@ -181,8 +181,7 @@ describe('Data Import', () => {
           InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
         });
         // create mapping profile for update
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileUpdate);

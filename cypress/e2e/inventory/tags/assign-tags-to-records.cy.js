@@ -82,7 +82,7 @@ describe('Inventory', () => {
 
     it(
       'C196770 Assign tags to a Holdings record (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C196770'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToHoldings();
@@ -105,15 +105,15 @@ describe('Inventory', () => {
 
     it(
       'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C367961'] },
       () => {
-        const tags = [...Array(5)].map(() => `tag${getRandomStringCode(10)}`.toLowerCase());
+        const tags = [...Array(5)].map(() => `tag${getRandomStringCode(5)}`.toLowerCase());
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
-          cy.wait(2000);
+          cy.wait(200);
           HoldingsRecordEdit.clearTagsInput();
           cy.wait(500);
           HoldingsRecordEdit.addTag(tag);
@@ -123,8 +123,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords(testData.folioInstances[0].instanceTitle);
         InventoryInstance.openHoldingView();
+        HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
-          cy.wait(2000);
+          cy.wait(1000);
           JobProfileView.removeTag(tag);
         });
       },
@@ -132,7 +133,7 @@ describe('Inventory', () => {
 
     it(
       'C196771 Assign tags to an Item record (volaris)',
-      { tags: ['extendedPath', 'volaris'] },
+      { tags: ['extendedPath', 'volaris', 'C196771'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToItem();

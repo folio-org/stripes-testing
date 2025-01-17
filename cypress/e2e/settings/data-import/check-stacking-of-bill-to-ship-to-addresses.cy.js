@@ -79,7 +79,7 @@ describe('Data Import', () => {
 
     it(
       'C376000 Order field mapping profile: check stacking of Bill to/Ship to addresses (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C376000'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

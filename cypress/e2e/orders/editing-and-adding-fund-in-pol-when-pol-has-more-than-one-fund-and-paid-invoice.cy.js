@@ -163,7 +163,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C376957: Editing and adding fund distribution in PO line when PO line has more than one fund distributions and related Paid invoice exists (thunderjet) (TaaS)',
+    'C376957 Editing and adding fund distribution in PO line when PO line has more than one fund distributions and related Paid invoice exists (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

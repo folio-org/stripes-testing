@@ -38,6 +38,7 @@ const optionsList = {
   instanceStatusTerm: 'Admin data: Instance status term',
   holdingsType: 'Admin data: Holdings type',
   identifierOCLC: 'Identifier: OCLC',
+  identifierCanceledLCCN: 'Identifier: Canceled LCCN',
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -79,7 +80,7 @@ function fillName(profileName) {
   cy.expect(nameTextField.exists());
   cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(5000);
+  cy.wait(6000);
 }
 
 function selectExistingRecordType(existingRecordType) {
@@ -306,6 +307,7 @@ export default {
     incomingStaticRecordValue,
   }) {
     fillName(profileName);
+    cy.wait(1000);
     selectExistingRecordType(existingRecordType);
     fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
     selectMatchCriterion(matchCriterion);

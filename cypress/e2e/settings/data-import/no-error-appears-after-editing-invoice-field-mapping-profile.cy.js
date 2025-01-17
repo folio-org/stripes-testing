@@ -22,7 +22,7 @@ describe('Data Import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      batchGroup: BATCH_GROUP.AMHERST,
+      batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,
     };
@@ -48,7 +48,7 @@ describe('Data Import', () => {
 
     it(
       'C491301 Verify that no error appears after editing Invoice field mapping profile (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C491301'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

@@ -62,7 +62,7 @@ describe('Data Import', () => {
 
     it(
       'C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet'] },
+      { tags: ['criticalPathFlaky', 'folijet', 'C356824'] },
       () => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 
@@ -76,6 +76,7 @@ describe('Data Import', () => {
         Logs.checkFileIsRunning(fileName);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.waitLoading();
         InventoryInstance.startOverlaySourceBibRecord();

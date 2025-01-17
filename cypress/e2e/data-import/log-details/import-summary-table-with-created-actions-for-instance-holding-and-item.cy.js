@@ -122,7 +122,7 @@ describe('Data Import', () => {
 
     it(
       'C430251 Check import summary table with "Created" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C430251'] },
       () => {
         const columnNumbers = {
           summary: '1',

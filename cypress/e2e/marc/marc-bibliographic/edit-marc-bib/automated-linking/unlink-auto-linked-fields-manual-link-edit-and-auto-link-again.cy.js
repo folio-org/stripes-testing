@@ -202,7 +202,7 @@ describe('MARC', () => {
               'Linked to MARC authority\n\t240\t   \t$a Wakanda Forever $0 http://id.loc.gov/authorities/names/n2016004081C388568 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t100\t   \t$a C388568 Robertson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052007C388568 $9',
+              'Linked to MARC authority\n\t100\t   \t$a C388568 Robertson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052007C388568 $9',
             );
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t711\t   \t$a C388568 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169C388568 $9',

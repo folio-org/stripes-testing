@@ -109,7 +109,7 @@ describe('ui-orders: Orders', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.openAppFromDropdown('Invoices');
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
@@ -136,7 +136,7 @@ describe('ui-orders: Orders', () => {
   });
 
   it(
-    'C368478: Editing fund distribution in PO line when related Cancelled from approved invoice exists (thunderjet)',
+    'C368478 Editing fund distribution in PO line when related Cancelled from approved invoice exists (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
@@ -150,7 +150,15 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransactionFundTo(
+        defaultFiscalYear.code,
+        '($70.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+      Funds.closeTransactionDetails();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -164,12 +172,13 @@ describe('ui-orders: Orders', () => {
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Pending payment');
+      Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
-        invoice.invoiceNumber,
-        `${firstFund.name} (${firstFund.code})`,
         '($50.00)',
+        invoice.invoiceNumber,
+        'Pending payment',
+        `${firstFund.name} (${firstFund.code})`,
       );
       Funds.clickInfoInTransactionDetails();
     },

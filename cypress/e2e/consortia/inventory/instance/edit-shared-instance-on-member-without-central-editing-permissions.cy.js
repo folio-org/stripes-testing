@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
@@ -6,7 +7,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
@@ -59,12 +60,13 @@ describe('Inventory', () => {
 
     it(
       'C407750 (CONSORTIA) Verify that user cant edit shared instance on Member tenant without Central tenant Instance editing permission (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['smokeECS', 'folijet', 'C407750'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance1.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
@@ -78,10 +80,10 @@ describe('Inventory', () => {
         InstanceRecordView.verifyResourceTitle(testData.newInstanceTitle);
 
         cy.login(testData.user.username, testData.user.password);
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
+        InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instance2.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

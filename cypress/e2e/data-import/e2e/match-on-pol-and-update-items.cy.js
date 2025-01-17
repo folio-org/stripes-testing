@@ -174,7 +174,7 @@ describe('Data Import', () => {
         Permissions.uiOrdersEdit.gui,
         Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.uiInventoryViewCreateEditItems,
+        Permissions.uiInventoryViewCreateEditItems.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiReceivingViewEditCreate.gui,
@@ -299,7 +299,7 @@ describe('Data Import', () => {
 
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C350590'] },
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -382,16 +382,18 @@ describe('Data Import', () => {
         });
 
         // create mapping and action profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         collectionOfProfiles.forEach((profile) => {
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
           FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
           FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-
-          SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+          cy.wait(3000);
+        });
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        collectionOfProfiles.forEach((profile) => {
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          cy.wait(3000);
         });
 
         // create match profiles

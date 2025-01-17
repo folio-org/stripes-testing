@@ -92,6 +92,7 @@ export default {
   findRowAndClickLink,
 
   suppressedAsDiscoveryIsAbsent() {
+    cy.wait(1000);
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
   },
 
@@ -196,6 +197,10 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
+  checkItemNoteAbsent(noteTypeName) {
+    cy.expect(itemNotesAccordion.find(KeyValue(noteTypeName)).absent());
+  },
+
   checkMultipleItemNotes: (...itemNotes) => {
     itemNotes.forEach((itemNote) => {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);
@@ -221,6 +226,29 @@ export default {
     });
   },
 
+  checkCirculationNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+    cy.get('#acc06').within(() => {
+      cy.get("[class^='row---']")
+        .eq(rowIndex)
+        .within(() => {
+          cy.get("[class^='col-']")
+            .first()
+            .within(() => {
+              cy.get("[class^='kvRoot-'] [class^='kvValue---']").should('contain', staffOnly);
+            });
+
+          cy.get("[class^='col-']:nth-child(2)").within(() => {
+            cy.get("[class^='kvRoot-'] [class^='kvLabel-']").should('contain', noteType);
+            cy.get("[class^='kvRoot-'] [class^='kvValue-']").should('contain', noteText);
+          });
+        });
+    });
+  },
+
+  checkStaffOnlyValueInLoanAccordion(staffOnlyValue) {
+    cy.expect(loanAccordion.find(KeyValue('Staff only')).has({ value: staffOnlyValue }));
+  },
+
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));
@@ -240,8 +268,25 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
   },
 
+  checkBindingNoteWithStaffValue: (note, staffValue = 'No') => {
+    cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
+    cy.contains('section', 'Item notes')
+      .find('div[class*= row]')
+      .contains(note)
+      .find('[class*=kvValue]')
+      .should('have.text', `${staffValue}${note}`);
+  },
+
   checkBindingNote: (note) => {
-    cy.expect(itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }));
+    cy.expect([itemNotesAccordion.find(KeyValue('Binding')).has({ value: note })]);
+  },
+
+  checkActionNote: (note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Action note')).has({ value: note }));
+  },
+
+  checkProvenanceNote: (note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Provenance')).has({ value: note }));
   },
 
   checkBarcode: (barcode) => {

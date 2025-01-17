@@ -39,8 +39,7 @@ describe('Data Import', () => {
         user = userProperties;
         cy.login(user.username, user.password);
       });
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-      SettingsDataImport.goToSettingsDataImport();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
       SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
       MatchProfiles.createMatchProfile(matchProfile);
       MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
@@ -56,7 +55,7 @@ describe('Data Import', () => {
 
     it(
       'C2340 Duplicate an existing match profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2340'] },
       () => {
         MatchProfileView.duplicate();
         NewMatchProfile.selectMatchCriterion(duplicatedMatchProfile.matchCriterion);

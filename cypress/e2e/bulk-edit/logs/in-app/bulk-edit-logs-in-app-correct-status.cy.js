@@ -1,6 +1,8 @@
 import TopMenu from '../../../../support/fragments/topMenu';
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
@@ -10,7 +12,6 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Checkout from '../../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
-import { getLongDelay } from '../../../../support/utils/cypressTools';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
 
 let user;
@@ -71,7 +72,7 @@ describe('bulk-edit', () => {
         { tags: ['extendedPath', 'firebird', 'C380443'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
-          BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+          BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();
@@ -83,9 +84,11 @@ describe('bulk-edit', () => {
           cy.intercept('/bulk-operations/*').as('commitChanges');
           BulkEditActions.commitChanges();
           BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');
-          cy.wait('@commitChanges', getLongDelay()).then((res) => {
-            expect(res.response.body.status).to.eq('COMPLETED_WITH_ERRORS');
-          });
+          BulkEditSearchPane.waitForInterceptedRespose(
+            '@commitChanges',
+            'status',
+            'COMPLETED_WITH_ERRORS',
+          );
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkItemsCheckbox();

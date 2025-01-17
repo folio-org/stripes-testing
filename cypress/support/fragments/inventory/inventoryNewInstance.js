@@ -279,14 +279,18 @@ export default {
     cy.expect(rootSection.absent());
   },
   clickSaveAndCloseButton() {
+    cy.wait(4000);
     cy.do(saveAndCloseButton.click());
+    cy.wait(2000);
     cy.expect(rootSection.absent());
+    cy.wait(2000);
 
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
     );
   },
   clickSaveCloseButton() {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
   },
   deleteStatisticalCode(statisticalCode) {

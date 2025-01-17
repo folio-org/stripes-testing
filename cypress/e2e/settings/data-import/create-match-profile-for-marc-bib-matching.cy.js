@@ -1,4 +1,4 @@
-import { EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
@@ -7,8 +7,7 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -22,11 +21,8 @@ describe('Data Import', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
-        SettingsDataImport.goToSettingsDataImport();
+        cy.login(user.username, user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
       });
     });
@@ -38,7 +34,7 @@ describe('Data Import', () => {
 
     it(
       'C9321 Create match profile for MARC Bib matching to a FOLIO record type (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9321'] },
       () => {
         const matchProfile = {
           profileName: `C9321 001 to Instance HRID ${getRandomPostfix()}`,
@@ -80,7 +76,7 @@ describe('Data Import', () => {
 
     it(
       'C9322 Create match profile for MARC Bib matching to a MARC record type (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9322'] },
       () => {
         const matchProfile = {
           profileName: `C9322 autotest match profile_${getRandomPostfix()}`,
@@ -132,7 +128,7 @@ describe('Data Import', () => {
 
     it(
       'C9323 Create match profile for Static value TEXT match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9323'] },
       () => {
         const matchProfile = {
           profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
@@ -173,7 +169,7 @@ describe('Data Import', () => {
 
     it(
       'C9324 Create match profile for Static value NUMBER match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9324'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -207,7 +203,7 @@ describe('Data Import', () => {
 
     it(
       'C9325 Create match profile for Static value DATE match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9325'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -241,7 +237,7 @@ describe('Data Import', () => {
 
     it(
       'C9326 Create match profile for Static value DATE RANGE match (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C9326'] },
       () => {
         const matchProfile = {
           profileName: `C9325 autotest match profile_${getRandomPostfix()}`,

@@ -96,7 +96,7 @@ describe('Inventory', () => {
 
     it(
       'C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C375122'] },
       () => {
         const calloutMessage = `Record ${testIdentifier} created. Results may take a few moments to become visible in Inventory`;
 
@@ -109,7 +109,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyCalloutMessage(calloutMessage);
         // need to wait because after the import the data in the instance is displayed for a long time
         // https://issues.folio.org/browse/MODCPCT-73
-        cy.wait(10000);
+        cy.wait(15000);
         InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
         InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;

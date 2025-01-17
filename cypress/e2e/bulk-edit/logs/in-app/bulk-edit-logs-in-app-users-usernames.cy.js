@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
           BulkEditSearchPane.uploadFile(invalidUsernamesFilename);
           BulkEditSearchPane.waitFileUploading();
-          BulkEditSearchPane.verifyErrorLabel(invalidUsernamesFilename, 0, 1);
+          BulkEditSearchPane.verifyErrorLabel(1);
           BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
@@ -63,9 +63,10 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(invalidUsernamesFilename, [invalidUsername]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
+          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
-            [invalidUsername],
+            [`\uFEFF${invalidUsername}`],
             'firstElement',
             false,
           );

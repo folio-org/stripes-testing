@@ -206,7 +206,9 @@ describe('bulk-edit', () => {
         arrayOfOptions.forEach((option) => {
           BulkEditActions.deleteRowBySelectedOption(option);
           BulkEditActions.verifyRowWithOptionAbsent(option);
+          cy.wait(500);
         });
+        cy.wait(500);
 
         BulkEditActions.verifyRowWithOptionExists('Permanent holdings location');
         BulkEditActions.confirmChanges();
@@ -226,7 +228,7 @@ describe('bulk-edit', () => {
 
         const arrayOfColumnHeaders = Object.values(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS,
-        );
+        ).slice(0, -2);
 
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [

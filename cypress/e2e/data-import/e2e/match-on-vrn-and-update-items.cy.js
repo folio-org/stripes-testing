@@ -43,7 +43,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Data Import', () => {
   describe('End to end scenarios', () => {
-    const uniquePartOfInstanceTitle = `Agrarianism and capitalism in early Georgia, 1732-1743 /${getRandomPostfix()}`;
+    const uniquePartOfInstanceTitle = `Cornell University Graduate School records,${getRandomPostfix()}`;
     const item = {
       title: `${uniquePartOfInstanceTitle} Jay Jordan Butler.`,
       productId: `xyz${getRandomPostfix()}`,
@@ -181,7 +181,7 @@ describe('Data Import', () => {
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C350591'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -209,7 +209,6 @@ describe('Data Import', () => {
           }),
         ).then((order) => {
           orderNumber = order.poNumber;
-
           // open the PO with POL
           Orders.clearSearchField();
           Orders.searchByParameter('PO number', orderNumber);
@@ -220,7 +219,7 @@ describe('Data Import', () => {
           OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-          Orders.clearSearchField();
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           OrderDetails.openPolDetails(item.title);
@@ -231,17 +230,12 @@ describe('Data Import', () => {
         DataImport.editMarcFile(
           'marcFileForC350591.mrc',
           editedMarcFileName,
-          [
-            'Agrarianism and capitalism in early Georgia, 1732-1743 /',
-            '14567-1',
-            'xyzt124245271818912626262',
-          ],
+          ['Cornell University Graduate School records,', '14567-1', 'xyzt124245271818912626262'],
           [uniquePartOfInstanceTitle, item.vrn, itemBarcode],
         );
 
         // create field mapping profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
           .then(() => {

@@ -59,7 +59,7 @@ describe('orders: create', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
     });
 
@@ -86,7 +86,7 @@ describe('orders: create', () => {
   });
 
   it(
-    'C665: Edit an existing PO Line on a "Pending" order (thunderjet)',
+    'C665 Edit an existing PO Line on a "Pending" order (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeftBroken'] },
     () => {
       Orders.selectPendingStatusFilter();

@@ -28,12 +28,12 @@ describe('Inventory', () => {
 
     it(
       'C598 Create new instance with add "New" (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C598'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(instanceTitle);
         InventoryNewInstance.clickSaveAndCloseButton();
-
+        cy.wait(5000);
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
         cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());

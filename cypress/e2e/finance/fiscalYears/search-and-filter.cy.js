@@ -26,7 +26,7 @@ describe('ui-finance: Fiscal Year', () => {
   });
 
   it(
-    'C4058: Test the search and filter options for fiscal years (thunderjet)',
+    'C4058 Test the search and filter options for fiscal years (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Search Fiscal Year

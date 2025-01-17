@@ -290,6 +290,28 @@ export default {
     });
   },
 
+  waitForContributorToAppear(contributorName) {
+    return cy.recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: 'browse/contributors/instances',
+          searchParams: {
+            query: `(name>="${contributorName}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => {
+        return response.body.items.filter((item) => item.name === contributorName).length > 0;
+      },
+      {
+        limit: 10,
+        delay: 5000,
+      },
+    );
+  },
+
   openInstance(contributor) {
     cy.do(MultiColumnListCell(contributor.name).hrefClick());
   },

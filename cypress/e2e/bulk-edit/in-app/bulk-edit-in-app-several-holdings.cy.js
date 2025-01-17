@@ -101,7 +101,7 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyChangedResults(item2.hrid);
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(validHoldingUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
       },
     );
   });

@@ -28,8 +28,8 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C163919 Configure remote storage (firebird)',
-    { tags: ['smoke', 'firebird', 'C163919'] },
+    'C163919 Configure remote storage (volaris)',
+    { tags: ['smoke', 'volaris', 'C163919'] },
     () => {
       // parametrized providers
       [
@@ -57,8 +57,8 @@ describe('remote-storage-configuration', () => {
   );
 
   it(
-    'C163920 Edit remote storage configuration  (firebird)',
-    { tags: ['smoke', 'firebird', 'C163920'] },
+    'C163920 Edit remote storage configuration  (volaris)',
+    { tags: ['smoke', 'volaris', 'C163920'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const configuration = Configurations.configurations.DematicStagingDirector;

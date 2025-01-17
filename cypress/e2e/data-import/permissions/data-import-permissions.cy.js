@@ -51,19 +51,22 @@ describe('Data Import', () => {
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
-    it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
-      DataImport.waitLoading();
-      Logs.openFileDetails(fileName);
-      FileDetails.checkStatusInColumn(
-        RECORD_STATUSES.CREATED,
-        FileDetails.columnNameInResultList.instance,
-      );
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-      SettingsDataImport.goToSettingsDataImport();
-      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
-      MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
-      MarcFieldProtection.clickNewButton();
-      MarcFieldProtection.cancel();
-    });
+    it(
+      'C492 Data Import permissions (folijet)',
+      { tags: ['extendedPath', 'folijet', 'C492'] },
+      () => {
+        DataImport.waitLoading();
+        Logs.openFileDetails(fileName);
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.CREATED,
+          FileDetails.columnNameInResultList.instance,
+        );
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+        MarcFieldProtection.clickNewButton();
+        MarcFieldProtection.cancel();
+      },
+    );
   });
 });

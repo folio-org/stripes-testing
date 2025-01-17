@@ -24,7 +24,8 @@ describe('Inventory', () => {
       volume: 'v.1',
       enumeration: 'e.2',
       chronology: 'ch.3',
-      shelvingOrderValue: 'PRT 718 V.1 E.2 CH.3 C.4 SUF',
+      shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
+      effectiveItemCallNumber: 'RR 3718',
     };
 
     const itemA1 = {
@@ -264,7 +265,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
-        InventorySearchAndFilter.verifyShelvingOrder(item.itemCallNumber);
+        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumber);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
 
         InventorySearchAndFilter.switchToBrowseTab();

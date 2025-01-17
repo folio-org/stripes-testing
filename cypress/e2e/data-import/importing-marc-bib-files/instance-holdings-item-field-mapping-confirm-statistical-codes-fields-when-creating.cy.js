@@ -132,7 +132,7 @@ describe('Data Import', () => {
 
     it(
       'C11090 Instance Holdings Item field mapping: Confirm the Statistical codes fields when Creating (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11090'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

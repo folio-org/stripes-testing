@@ -338,4 +338,8 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
+  verifyTargetProfilesListDisplayedNoIntearctors() {
+    cy.xpath("//span[contains(text(), 'Z39.50')]").should('be.visible');
+  },
 };

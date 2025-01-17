@@ -145,7 +145,7 @@ describe('Data Import', () => {
 
     it(
       'C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C347830'] },
       () => {
         DataImport.editMarcFile(
           filePathForCreateInstance,
@@ -192,8 +192,7 @@ describe('Data Import', () => {
           3,
         );
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfileWithQualifierAndComparePart(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);

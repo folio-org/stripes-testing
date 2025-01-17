@@ -36,7 +36,7 @@ describe('Inventory', () => {
 
     it(
       'C409466 (CONSORTIA) Verify the "Move holdings/items to another instance" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C409466'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();

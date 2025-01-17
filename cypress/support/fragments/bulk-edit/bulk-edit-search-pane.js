@@ -18,11 +18,12 @@ import {
   Headline,
 } from '../../../../interactors';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
+import FileManager from '../../utils/fileManager';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
-const errorsAccordion = Accordion('Errors');
+const errorsAccordion = Accordion('Errors & warnings');
 const bulkEditsAccordion = Accordion('Bulk edits');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
@@ -56,15 +57,19 @@ export const holdingsIdentifiers = [
 ];
 
 export const itemIdentifiers = [
-  'Item barcode',
+  'Item barcodes',
   'Item UUIDs',
   'Item HRIDs',
-  'Item former identifier',
-  'Item accession number',
+  'Item former identifiers',
+  'Item accession numbers',
   'Holdings UUIDs',
 ];
 
 export const instanceIdentifiers = ['Instance UUIDs', 'Instance HRIDs'];
+
+export const ITEM_IDENTIFIERS = {
+  ITEM_BARCODES: 'Item barcodes',
+};
 
 export default {
   waitLoading() {
@@ -214,7 +219,7 @@ export default {
       lowercase = identifier.charAt(0).toLowerCase() + identifier.slice(1);
     }
     cy.expect([
-      HTML(`Select a file with ${lowercase}`).exists(),
+      HTML(`Select a file with ${lowercase}.`).exists(),
       HTML(`Drag and drop or choose file with ${lowercase}.`).exists(),
     ]);
     this.isDragAndDropAreaDisabled(false);
@@ -225,8 +230,7 @@ export default {
     const lowercaseRecordType = recordType === 'Users' ? recordType : recordType.toLowerCase();
     cy.do(RadioButton(including(lowercaseRecordType)).click());
     this.selectRecordIdentifier(identifier);
-    const modifiedIdentifier = identifier === 'Item barcodes' ? 'item barcode' : identifier;
-    this.verifyAfterChoosingIdentifier(modifiedIdentifier);
+    this.verifyAfterChoosingIdentifier(identifier);
     cy.wait(1000);
   },
 
@@ -387,6 +391,20 @@ export default {
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
   },
 
+  uploadRecentlyDownloadedFile(downloadedFile) {
+    const changedFileName = `downloaded-${downloadedFile}`;
+
+    FileManager.findDownloadedFilesByMask(downloadedFile).then((downloadedFilenames) => {
+      const firstDownloadedFilename = downloadedFilenames[0];
+      FileManager.readFile(firstDownloadedFilename).then((actualContent) => {
+        FileManager.createFile(`cypress/fixtures/${changedFileName}`, actualContent);
+      });
+    });
+    this.uploadFile(changedFileName);
+
+    return cy.wrap(changedFileName);
+  },
+
   waitFileUploading() {
     // it is needed to avoid triggering for previous page list
     cy.wait(3000);
@@ -508,6 +526,19 @@ export default {
     });
   },
 
+  verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(identifier, columnValues) {
+    cy.then(() => areYouSureForm.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          areYouSureForm
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(identifier, columnName, value) {
     cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -516,6 +547,19 @@ export default {
           .find(MultiColumnListCell({ column: columnName, content: value }))
           .exists(),
       );
+    });
+  },
+
+  verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(identifier, columnValues) {
+    cy.then(() => matchedAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          matchedAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
     });
   },
 
@@ -530,6 +574,19 @@ export default {
     });
   },
 
+  verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(identifier, columnValues) {
+    cy.then(() => changesAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnValues.forEach((pair) => {
+        cy.expect(
+          changesAccordion
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyReasonForErrorByIdentifier(identifier, errorText) {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect(
@@ -541,29 +598,53 @@ export default {
     });
   },
 
-  verifyNonMatchedResults(...values) {
-    cy.expect([
-      errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
-      errorsAccordion.find(MultiColumnListHeader('Reason for error')).exists(),
-    ]);
-    values.forEach((value) => {
-      cy.expect(errorsAccordion.find(MultiColumnListCell({ content: value })).exists());
+  verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
+    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      cy.expect([
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ content: status, column: 'Status' }))
+          .exists(),
+        errorsAccordion
+          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+          .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
+          .exists(),
+      ]);
     });
   },
 
-  verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
+  verifyNonMatchedResults(identifier, reasonMessage = 'No match found ') {
+    cy.expect([
+      errorsAccordion.find(MultiColumnListCell({ column: 'Status', content: 'Error' })).exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Record identifier', content: identifier }))
+        .exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Reason', content: reasonMessage }))
+        .exists(),
+    ]);
+  },
+
+  verifyErrorLabel(errorsCount, warningsCount = 0) {
+    const errorLabel = `${errorsCount} error${errorsCount !== 1 ? 's' : ''}`;
+    const warningLabel = `${warningsCount} warning${warningsCount !== 1 ? 's' : ''}`;
+
     cy.expect(
-      HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
-        } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
-      ).exists(),
+      errorsAccordion.find(Headline(including(`${errorLabel} * ${warningLabel}`))).exists(),
     );
+  },
+
+  verifyShowWarningsCheckbox(isChecked = false) {
+    cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
   },
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
-      Accordion('Errors')
+      errorsAccordion
         .find(
           HTML(
             `${fileName}: ${
@@ -593,11 +674,7 @@ export default {
   },
 
   verifyReasonForError(errorText) {
-    cy.expect(
-      Accordion('Errors')
-        .find(HTML(including(errorText)))
-        .exists(),
-    );
+    cy.expect(errorsAccordion.find(HTML(including(errorText))).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
@@ -624,7 +701,7 @@ export default {
     if (instance) {
       cy.expect([
         DropdownMenu().find(Headline('Start bulk edit')).exists(),
-        Button('Instances and Administrative data').exists(),
+        Button('FOLIO Instances').exists(),
       ]);
     } else {
       cy.expect(Button('Start bulk edit').exists());
@@ -947,6 +1024,12 @@ export default {
     cy.expect(DropdownMenu().find(Checkbox(name)).has({ checked: isChecked }));
   },
 
+  verifyCheckboxesInActionsDropdownMenuChecked(isChecked, ...names) {
+    names.forEach((name) => {
+      this.verifyCheckboxInActionsDropdownMenuChecked(name, isChecked);
+    });
+  },
+
   uncheckShowColumnCheckbox(...names) {
     names.forEach((name) => {
       cy.get(`[name='${name}']`).then((element) => {
@@ -990,6 +1073,12 @@ export default {
     cy.expect(matchedAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
+  verifyResultColumnTitlesDoNotIncludeTitles(...titles) {
+    titles.forEach((title) => {
+      this.verifyResultColumnTitlesDoNotInclude(title);
+    });
+  },
+
   verifyAreYouSureColumnTitlesInclude(title) {
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).exists());
   },
@@ -1007,7 +1096,7 @@ export default {
   },
 
   verifyPaneRecordsCount(value) {
-    cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
+    cy.expect(bulkEditPane.find(HTML(`${value} records matched`)).exists());
   },
 
   verifyPaneRecordsChangedCount(value) {
@@ -1053,6 +1142,7 @@ export default {
     cy.wait(2000);
   },
   isConfirmButtonDisabled(isDisabled) {
+    cy.wait(500);
     cy.expect(confirmChanges.has({ disabled: isDisabled }));
   },
 
@@ -1093,7 +1183,9 @@ export default {
   searchColumnNameTextfieldDisabled(disabled = true) {
     cy.expect([
       searchColumnNameTextfield.has({ disabled }),
-      Checkbox({ disabled: false }).absent(),
+      DropdownMenu()
+        .find(Checkbox({ disabled: false }))
+        .absent(),
     ]);
   },
 
@@ -1158,6 +1250,14 @@ export default {
     cy.expect(nextPaginationButton.has({ disabled: isDisabled }));
   },
 
+  verifyPreviousPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(previousPaginationButton).has({ disabled: isDisabled }));
+  },
+
+  verifyNextPaginationButtonInAreYouSureFormDisabled(isDisabled = true) {
+    cy.expect(areYouSureForm.find(nextPaginationButton).has({ disabled: isDisabled }));
+  },
+
   verifyPaginatorInMatchedRecords(recordsNumber, isNextButtonDisabled = true) {
     cy.expect([
       matchedAccordion.find(previousPaginationButton).has({ disabled: true }),
@@ -1218,6 +1318,35 @@ export default {
   },
 
   verifyRecordsCountInBulkEditQueryPane(value) {
-    cy.expect(bulkEditQueryPane.find(HTML(`${value} records match`)).exists());
+    cy.expect(bulkEditQueryPane.find(HTML(`${value} records matched`)).exists());
+  },
+
+  verifyBulkEditQueryPaneExists() {
+    cy.expect(bulkEditQueryPane.exists());
+  },
+
+  verifyQueryHeadLine(query) {
+    cy.expect(bulkEditQueryPane.find(HTML(`Query: ${query}`)).exists());
+  },
+
+  waitForInterceptedRespose(allias, targetProperty, targetValue, maxRetries = 20) {
+    let retries = 0;
+
+    function checkResponse() {
+      cy.wait(allias, { timeout: 20000 }).then((interception) => {
+        if (interception.response.body[targetProperty] !== targetValue) {
+          retries++;
+          if (retries > maxRetries) {
+            throw new Error(
+              `Exceeded maximum retry attempts waiting for ${targetProperty} to have ${targetValue}`,
+            );
+          }
+          cy.wait(1000);
+          checkResponse();
+        }
+        expect(interception.response.body[targetProperty]).to.eq(targetValue);
+      });
+    }
+    checkResponse();
   },
 };

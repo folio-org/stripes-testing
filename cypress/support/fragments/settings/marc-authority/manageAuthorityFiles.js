@@ -68,19 +68,25 @@ const clickNewButton = () => {
 };
 
 const clickEditButton = (authorityFileName) => {
-  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  const targetRow = manageAuthorityFilesPane.find(
+    MultiColumnListRow(including(authorityFileName), { isContainer: true }),
+  );
 
   cy.do(targetRow.find(editButton).click());
 };
 
 const clickDeleteButton = (authorityFileName) => {
-  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  const targetRow = manageAuthorityFilesPane.find(
+    MultiColumnListRow(including(authorityFileName), { isContainer: true }),
+  );
 
   cy.do(targetRow.find(deleteButton).click());
 };
 
 const checkEditButtonInRow = (authorityFileName) => {
-  const targetRow = manageAuthorityFilesPane.find(MultiColumnListRow(including(authorityFileName)));
+  const targetRow = manageAuthorityFilesPane.find(
+    MultiColumnListRow(including(authorityFileName), { isContainer: true }),
+  );
 
   cy.expect(targetRow.find(editButton).exists());
 };
@@ -166,7 +172,7 @@ const getEditableListRow = (rowNumber) => {
 
 const getTargetRowWithFile = (authorityFileName) => {
   return manageAuthorityFilesPane.find(
-    MultiColumnListRow({ innerHTML: including(authorityFileName) }),
+    MultiColumnListRow({ innerHTML: including(authorityFileName), isContainer: true }),
   );
 };
 
@@ -292,9 +298,17 @@ export default {
 
   checkSourceFileExistsByName(fileName, isExist = true) {
     if (isExist) {
-      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).exists());
+      cy.expect(
+        manageAuthorityFilesPane
+          .find(MultiColumnListRow(including(fileName), { isContainer: true }))
+          .exists(),
+      );
     } else {
-      cy.expect(manageAuthorityFilesPane.find(MultiColumnListRow(including(fileName))).absent());
+      cy.expect(
+        manageAuthorityFilesPane
+          .find(MultiColumnListRow(including(fileName), { isContainer: true }))
+          .absent(),
+      );
     }
   },
 
@@ -531,11 +545,16 @@ export default {
   },
 
   waitContentLoading() {
-    cy.expect([firstRow.exists(), newButton.has({ disabled: or(true, false) })]);
+    cy.expect(firstRow.exists());
     cy.wait(3000);
   },
 
   checkActiveTooltipButtonShown() {
     cy.expect(MultiColumnListHeader(tableHeaderTexts[4]).find(tooltipButton).exists());
+  },
+
+  checkNewButtonShown(isShown = true) {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
   },
 };

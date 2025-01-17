@@ -332,7 +332,7 @@ describe('Data Import', () => {
 
     it(
       'C430253 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C430253'] },
       () => {
         const columnNumbers = {
           summary: '1',
@@ -397,8 +397,7 @@ describe('Data Import', () => {
         });
 
         // create mapping profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.createInstanceMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,

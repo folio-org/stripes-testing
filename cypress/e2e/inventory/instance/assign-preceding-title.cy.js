@@ -63,7 +63,7 @@ describe('Inventory', () => {
 
     it(
       'C9215 In Accordion Title --> Test assigning a Preceding title (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft'] },
+      { tags: ['smoke', 'folijet', 'shiftLeft', 'C9215'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();

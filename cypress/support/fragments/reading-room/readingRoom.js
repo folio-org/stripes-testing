@@ -17,7 +17,7 @@ function fillInPatronCard(userBarcode) {
 }
 
 function clickEnterButton() {
-  cy.do(Button({ type: 'submit' }).click());
+  cy.do(rootSection.find(Button('Enter')).click());
 }
 
 export default {
@@ -37,6 +37,21 @@ export default {
   },
   clickAllowedButton() {
     cy.get('#allow-access').click();
+  },
+  clickCancelButton() {
+    cy.get('#cancel').click();
+  },
+  getReadingRoomViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'reading-room/access-log',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        expect(response.status).equals(200);
+        return response;
+      });
   },
 
   verifyUserIsScanned(userfirstName) {
@@ -82,9 +97,13 @@ export default {
       cy.expect([notAllowedButton.exists(), cancelButton.exists()]);
     }
   },
-
   verifyInformationAfterAction() {
     cy.expect(patronBarcodeField.has({ value: '' }));
     cy.get('[class^="borrowerDetails-"]').should('not.exist');
+  },
+
+  checkFieldsDisplayed() {
+    cy.expect(patronBarcodeField.exists());
+    cy.expect(rootSection.find(Button('Enter')).exists());
   },
 };

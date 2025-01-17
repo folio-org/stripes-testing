@@ -68,6 +68,7 @@ Cypress.Commands.add('deleteLedgerApi', (id) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `finance/ledgers/${id}`,
+    failOnStatusCode: false,
   });
 });
 

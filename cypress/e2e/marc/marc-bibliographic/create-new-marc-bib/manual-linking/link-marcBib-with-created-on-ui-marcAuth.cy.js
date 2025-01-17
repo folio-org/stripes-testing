@@ -32,7 +32,7 @@ describe('MARC', () => {
         };
 
         const newFields = [
-          { previousFieldTag: '008', tag: '010', content: '$a n00776439' },
+          { previousFieldTag: '008', tag: '010', content: '$a n  00776439' },
           {
             previousFieldTag: '010',
             tag: '100',
@@ -51,6 +51,8 @@ describe('MARC', () => {
         let userData = {};
 
         before(() => {
+          cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423565');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,

@@ -16,7 +16,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -36,7 +35,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Permissions', () => {
     let user;
-    let instanceId;
     const filePath = 'marcBibFileForC377023.mrc';
     const marcFileName = `C377023 autotestFileName${getRandomPostfix()}.mrc`;
     const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
@@ -135,13 +133,12 @@ describe('Data Import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-        InventoryInstance.deleteInstanceViaApi(instanceId);
       });
     });
 
     it(
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C377023'] },
       () => {
         const message = `Import Log for Record 01 (${title})`;
 
@@ -151,7 +148,6 @@ describe('Data Import', () => {
         JsonScreenView.openOrderTab();
         JsonScreenView.verifyContentInTab(message);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
         Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();

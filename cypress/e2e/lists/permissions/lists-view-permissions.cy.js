@@ -8,8 +8,8 @@ describe('lists', () => {
   describe('permissions', () => {
     const userData = {};
     const listData = {
-      name: `C418651-${getTestEntityValue('test_list')}`,
-      description: `C418651-${getTestEntityValue('test_list_description')}`,
+      name: `C418651-${getTestEntityValue('list')}`,
+      description: `C418651-${getTestEntityValue('desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -52,27 +52,31 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C418651 Lists (Enable): Can view lists (corsair)', { tags: ['smoke', 'corsair', 'C418651'] }, () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.listsPath,
-        waiter: Lists.waitLoading,
-      });
-      Lists.verifyNewButtonDoesNotExist();
-      Lists.verifyListIsPresent(listData.name);
-      Lists.selectActiveLists();
-      Lists.selectInactiveLists();
-      Lists.selectPrivateLists();
-      Lists.selectSharedLists();
-      Lists.selectRecordTypeFilter(listData.recordType);
-      Lists.resetAllFilters();
+    it(
+      'C418651 Lists (Enable): Can view lists (corsair)',
+      { tags: ['smoke', 'corsair', 'C418651'] },
+      () => {
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.listsPath,
+          waiter: Lists.waitLoading,
+        });
+        Lists.verifyNewButtonDoesNotExist();
+        Lists.verifyListIsPresent(listData.name);
+        Lists.selectActiveLists();
+        Lists.selectInactiveLists();
+        Lists.selectPrivateLists();
+        Lists.selectSharedLists();
+        Lists.selectRecordTypeFilter(listData.recordType);
+        Lists.resetAllFilters();
 
-      Lists.openList(listData.name);
-      Lists.openActions();
-      Lists.verifyRefreshListButtonDoesNotExist();
-      Lists.verifyEditListButtonDoesNotExist();
-      Lists.verifyDuplicateListButtonDoesNotExist();
-      Lists.verifyDeleteListButtonDoesNotExist();
-      Lists.verifyExportListButtonDoesNotExist();
-    });
+        Lists.openList(listData.name);
+        Lists.openActions();
+        Lists.verifyRefreshListButtonDoesNotExist();
+        Lists.verifyEditListButtonDoesNotExist();
+        Lists.verifyDuplicateListButtonDoesNotExist();
+        Lists.verifyDeleteListButtonDoesNotExist();
+        Lists.verifyExportListButtonDoesNotExist();
+      },
+    );
   });
 });

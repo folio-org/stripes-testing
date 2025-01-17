@@ -101,7 +101,7 @@ describe('Orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C347860: Check duplicate POL (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+  it('C347860 Check duplicate POL (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.duplicateOrder();

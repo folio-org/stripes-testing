@@ -50,7 +50,7 @@ const marcInstance = {
 const instances = [folioInstance, marcInstance];
 
 describe('Bulk-edit', () => {
-  describe('In-app', () => {
+  describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
@@ -163,6 +163,7 @@ describe('Bulk-edit', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
         InventoryItems.deleteItemViaApi(marcInstance.itemId);

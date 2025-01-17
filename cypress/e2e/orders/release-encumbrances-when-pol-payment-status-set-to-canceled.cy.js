@@ -10,7 +10,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
+import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -35,7 +35,7 @@ describe('Orders', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const allocatedQuantity = '100';
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
@@ -121,7 +121,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C350945: Release encumbrances when POL payment status is set to canceled (no related invoices) (thunderjet) (TaaS)',
+    'C350945 Release encumbrances when POL payment status is set to canceled (no related invoices) (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);

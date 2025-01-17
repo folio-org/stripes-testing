@@ -17,7 +17,10 @@ export default {
     cy.expect(rootModal.exists());
   },
   checkAmount: (amount) => cy.expect(amountTextfield.has({ value: amount.toFixed(2) })),
-  setPaymentMethod: ({ name: paymentMethodName }) => cy.get('div[class^=modal-] select[name=method]').select(paymentMethodName),
+  setPaymentMethod: ({ name: paymentMethodName }) => {
+    cy.get('div[class^=modal-] select[name=method]').select(paymentMethodName);
+    cy.wait(500);
+  },
   fillInAdditionalInformation: (comment) => {
     cy.do(rootModal.find(TextArea({ name: 'comment' })).fillIn(comment));
   },
@@ -33,7 +36,10 @@ export default {
     );
   },
   checkPartialPayConfirmation: () => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
-  setAmount: (amount) => cy.do(amountTextfield.fillIn(amount.toString())),
+  setAmount(amount) {
+    cy.do(amountTextfield.fillIn(amount.toString()));
+    cy.wait(500);
+  },
   back: () => cy.do(
     confirmationModal
       .find(Button({ id: matching('clickable-confirmation-[0-9]+-cancel') }))

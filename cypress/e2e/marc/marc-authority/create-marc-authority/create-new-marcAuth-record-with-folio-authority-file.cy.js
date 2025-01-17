@@ -25,7 +25,7 @@ describe('MARC', () => {
       const users = {};
 
       const newFields = [
-        { previousFieldTag: '008', tag: '010', content: '$a n4332123 $z n1234432333' },
+        { previousFieldTag: '008', tag: '010', content: '$a n4332123 $z n 1234432333' },
         {
           previousFieldTag: '010',
           tag: '100',
@@ -98,6 +98,7 @@ describe('MARC', () => {
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
           MarcAuthorities.checkRecordsResultListIsAbsent();
+          cy.reload();
           MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, testData.marcValue);
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);

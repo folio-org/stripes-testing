@@ -1,5 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  ITEM_IDENTIFIERS,
+} from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -43,7 +45,10 @@ describe('bulk-edit', () => {
       'C359006 Verify populating Item records in "Preview of records matched" using limited permissions(firebird) (TaaS)',
       { tags: ['extendedPath', 'firebird', 'C359006'] },
       () => {
-        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcode');
+        BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
+          'Items',
+          ITEM_IDENTIFIERS.ITEM_BARCODES,
+        );
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);

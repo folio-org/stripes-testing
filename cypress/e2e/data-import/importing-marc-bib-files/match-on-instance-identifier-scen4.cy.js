@@ -145,7 +145,7 @@ describe('Data Import', () => {
 
     it(
       'C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C347831'] },
       () => {
         // change files for create and update instance using random identifier code
         DataImport.editMarcFile(
@@ -202,8 +202,7 @@ describe('Data Import', () => {
           3,
         );
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfileWithQualifierAndExistingRecordField(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);

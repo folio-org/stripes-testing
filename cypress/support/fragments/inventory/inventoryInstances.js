@@ -1,36 +1,38 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import uuid from 'uuid';
 import { HTML, including, matching } from '@interactors/html';
+import uuid from 'uuid';
 import {
-  Section,
-  or,
-  MultiColumnList,
-  Button,
-  Pane,
-  TextField,
-  Checkbox,
-  Modal,
-  Select,
-  TextInput,
-  TextArea,
-  PaneHeader,
-  PaneContent,
-  MultiColumnListHeader,
-  MultiColumnListRow,
   AdvancedSearch,
   AdvancedSearchRow,
+  Button,
+  Checkbox,
+  Modal,
+  MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  MultiSelect,
+  MultiSelectOption,
+  Pane,
+  PaneContent,
+  PaneHeader,
+  Section,
+  Select,
+  TextArea,
+  TextField,
+  TextInput,
+  or,
 } from '../../../../interactors';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
+import Arrays from '../../utils/arrays';
+import FileManager from '../../utils/fileManager';
+import parseMrkFile from '../../utils/parseMrkFile';
+import getRandomPostfix from '../../utils/stringTools';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
-import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
+import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
-import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
-import getRandomPostfix from '../../utils/stringTools';
-import parseMrkFile from '../../utils/parseMrkFile';
-import FileManager from '../../utils/fileManager';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -362,14 +364,13 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
-    cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
-    cy.do(Section({ id: 'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
-    // TODO: clarify with developers what should be waited
-    cy.wait(1500);
-    cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
-    cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
-    cy.do(Checkbox(tagName).click());
+
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tagName)).click());
+    cy.wait(500);
   },
 
   searchAndVerify(value) {
@@ -1071,7 +1072,7 @@ export default {
   },
 
   importWithOclcViaApi: (oclcNumber) => {
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'POST',
       path: 'copycat/imports',
       body: {
@@ -1087,14 +1088,16 @@ export default {
     oclc,
     profile = 'Inventory Single Record - Default Create Instance (Default)',
   ) => {
-    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-import-record' }).click()]);
+    cy.do(actionsButton.click());
+    cy.wait(1500);
+    cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
     cy.expect(singleRecordImportModal.exists());
     cy.do(Select({ name: 'selectedJobProfileId' }).choose(profile));
-    cy.wait(1000);
-    cy.do([
-      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
-      singleRecordImportModal.find(Button('Import')).click(),
-    ]);
+    cy.wait(1500);
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.wait(1500);
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
+    cy.wait(1500);
   },
 
   verifyInstanceDetailsView() {

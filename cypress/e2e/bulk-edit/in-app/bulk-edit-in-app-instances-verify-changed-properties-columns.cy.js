@@ -41,6 +41,7 @@ describe('bulk-edit', () => {
           instance.title,
           instance.itemBarcode,
         );
+        cy.wait(3000);
 
         cy.getInstance({
           limit: 1,

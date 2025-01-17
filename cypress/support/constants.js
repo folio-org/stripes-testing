@@ -1,10 +1,12 @@
 export const APPLICATION_NAMES = {
+  AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
   INVENTORY: 'Inventory',
   INVOICES: 'Invoices',
+  LICENSES: 'Licenses',
   SETTINGS: 'Settings',
   CIRCULATION_LOG: 'Circulation log',
   USERS: 'Users',
@@ -310,6 +312,7 @@ export const ACCEPTED_DATA_TYPE_NAMES = {
 export const INSTANCE_SOURCE_NAMES = {
   MARC: 'MARC',
   FOLIO: 'FOLIO',
+  LDE: 'LINKED_DATA',
 };
 
 export const PROFILE_TYPE_NAMES = {
@@ -342,6 +345,7 @@ export const VENDOR_NAMES = {
   GOBI: 'GOBI Library Solutions',
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
+  AMAZON: 'Amazon.com',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
@@ -887,6 +891,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ORDER_FORMAT: 'Order format',
     RECEIPT_STATUS: 'Receipt status',
     TAGS: 'Tags',
+    MEMBER: 'Member',
   },
   INVENTORY_INSTANCES: {
     INSTANCE_UUID: 'Instance UUID',
@@ -899,6 +904,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     CATALOGED_DATE: 'Cataloged date',
     INSTANCE_STATUS_TERM: 'Instance status term',
     MODE_OF_ISSUANCE: 'Mode of issuance',
+    STATISTICAL_CODE: 'Statistical code',
     ADMINISTRATIVE_NOTE: 'Administrative note',
     INDEX_TITLE: 'Index title',
     SERIES_STATEMENT: 'Series statements',
@@ -965,6 +971,25 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     TYPE_REPORT_PERIOD_COVERED_NOTE: 'Type of report and period covered note',
     WITH_NOTE: 'With note',
   },
+  INVENTORY_ITEMS: {
+    BARCODE: 'Barcode',
+    STATUS: 'Status',
+    ADMINISTRATIVE_NOTE: 'Administrative note',
+    ACTION_NOTE: 'Action note',
+    BINDING_NOTE: 'Binding note',
+    CHECK_IN_NOTE: 'Check in note',
+    CHECK_OUT_NOTE: 'Check out note',
+    ELECTRONIC_BOOKPLATE_NOTE: 'Electronic bookplate note',
+    ITEM_UUID: 'Item UUID',
+    PROVENANCE_NOTE: 'Provenance note',
+    MEMBER: 'Member',
+    SUPPRESS_FROM_DISCOVERY: 'Suppress from discovery',
+    PERMANENT_LOAN_TYPE: 'Permanent loan type',
+    TEMPORARY_LOAN_TYPE: 'Temporary loan type',
+    COPY_NOTE: 'Copy note',
+    REPRODUCTION_NOTE: 'Reproduction note',
+    NOTE: 'Note',
+  },
 };
 
 export const HOLDING_NOTE_TYPES = {
@@ -978,6 +1003,12 @@ export const HOLDING_NOTE_TYPES = {
   PROVENANCE: 'Provenance',
 };
 
+export const ITEM_NOTE_TYPES = {
+  ADMINISTRATIVE_NOTE: 'Administrative note',
+  CHECK_IN_NOTE: 'Check in note',
+  CHECK_OUT_NOTE: 'Check out note',
+};
+
 export const AUTHORITY_FILE_SOURCES = {
   LOCAL: 'Local',
   FOLIO: 'FOLIO',
@@ -988,4 +1019,29 @@ export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   CONTRIBUTORS: 'Contributors',
   DATE: 'Date',
   RELEVANCE: 'Relevance',
+};
+export const STAFF_SLIP_NAMES = {
+  HOLD: 'Hold',
+  PICK_SLIP: 'Pick slip',
+  REQUEST_DELIVERY: 'Request delivery',
+  TRANSIT: 'Transit',
+};
+
+export const INSTANCE_DATE_TYPES = {
+  NO: 'No attempt to code',
+  BC: 'No dates given; B.C. date involved',
+  CONTINUING_PUBLISHED: 'Continuing resource currently published',
+  CONTINUING_CEASED: 'Continuing resource ceased publication',
+  DETAILED: 'Detailed date',
+  INCLUSIVE: 'Inclusive dates of collection',
+  RANGE: 'Range of years of bulk of collection',
+  MULTIPLE: 'Multiple dates',
+  UNKNOWN: 'Dates unknown',
+  DISTRIBUTION:
+    'Date of distribution/release/issue and production/recording session when different',
+  QUESTIONABLE: 'Questionable date',
+  REPRINT: 'Reprint/reissue date and original date',
+  SINGLE: 'Single known date/probable date',
+  PUBLICATION: 'Publication date and copyright date',
+  CONTINUING_UNKNOWN: 'Continuing resource status unknown',
 };

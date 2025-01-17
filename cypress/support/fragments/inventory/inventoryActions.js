@@ -1,13 +1,19 @@
-import { Button, Section, Select, TextField } from '../../../../interactors';
+import { Button, Section, Select, TextField, Modal, or } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const reImportButtonInActions = Button({ id: 'dropdown-clickable-reimport-record' });
 const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
+const locIdInputField = TextField('Enter the Library of Congress identifier');
+const singleImportSuccessCalloutText = (number) => `Record ${number} created. Results may take a few moments to become visible in Inventory`;
+const importProfileSelect = Select({ name: 'selectedJobProfileId' });
+const importModal = Modal({ id: 'import-record-modal' });
+const cancelImportButtonInModal = importModal.find(Button('Cancel'));
 
 function open() {
   cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
@@ -83,6 +89,11 @@ export default {
 
   pressImportInModal(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(importButtonInModal.click());
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage(
+      singleImportSuccessCalloutText(specialOCLCWorldCatidentifier),
+    );
+    InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
@@ -147,5 +158,23 @@ export default {
 
   actionsIsAbsent() {
     return cy.expect(Button('Actions').absent());
+  },
+
+  importLoc(specialLOCidentifier = InventoryInstance.validLOC) {
+    open();
+    cy.do(importButtonInActions.click());
+    cy.expect([
+      importModal.exists(),
+      importTypeSelect.exists(),
+      importProfileSelect.exists(),
+      importButtonInModal.is({ disabled: or(true, false) }),
+      cancelImportButtonInModal.exists(),
+    ]);
+    cy.do(importTypeSelect.choose('Library of Congress'));
+    cy.expect(locIdInputField.exists());
+    this.fillImportFields(specialLOCidentifier);
+    cy.wait(1000);
+    this.pressImportInModal(specialLOCidentifier);
+    InventoryInstance.checkExpectedMARCSource();
   },
 };

@@ -104,7 +104,7 @@ describe('Data Import', () => {
 
     it(
       'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: ['smokeFlaky', 'folijet'] },
+      { tags: ['smokeFlaky', 'folijet', 'C358136'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
@@ -117,6 +117,7 @@ describe('Data Import', () => {
           { from: formattedStart, end: formattedEnd },
           jobProfileId,
         ).then((count) => {
+          cy.wait(1800);
           LogsViewAll.selectAllLogs();
           LogsViewAll.checkIsLogsSelected(count);
           LogsViewAll.unmarcCheckbox(0);

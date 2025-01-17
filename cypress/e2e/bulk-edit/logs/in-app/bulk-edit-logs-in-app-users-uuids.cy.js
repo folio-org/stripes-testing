@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
 
       it(
         'C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'C375245'] },
+        { tags: ['smoke', 'firebird', 'C375245', 'shiftLeft'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);
@@ -104,17 +104,26 @@ describe('bulk-edit', () => {
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
-          BulkEditFiles.verifyMatchedResultFileContent(
+          BulkEditFiles.verifyValueInRowByUUID(
             `*${matchedRecordsFileNameInvalidAndValid}`,
-            [user.userId, userWithoutPermissions.userId],
-            'userId',
-            true,
+            'User id',
+            user.userId,
+            'User name',
+            user.username,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            `*${matchedRecordsFileNameInvalidAndValid}`,
+            'User id',
+            userWithoutPermissions.userId,
+            'User name',
+            userWithoutPermissions.username,
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
-            [invalidUserUUID],
+            // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
+            [`\uFEFF${invalidUserUUID}`],
             'firstElement',
             false,
           );
@@ -138,7 +147,8 @@ describe('bulk-edit', () => {
           BulkEditLogs.downloadFileWithCommitErrors();
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromCommittingFileName,
-            [user.userId],
+            // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
+            [`\uFEFF${user.userId}`],
             'firstElement',
             false,
           );

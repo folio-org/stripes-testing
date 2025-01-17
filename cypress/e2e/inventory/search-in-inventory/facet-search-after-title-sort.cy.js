@@ -19,16 +19,18 @@ describe('Inventory', () => {
       itemTag: `item_tag_${randomFourDigitNumber()}`,
       instanceLanguage: 'eng',
       titleHeader: 'Title',
-      instanceAccordions: [
-        'Language',
-        'Resource type',
-        'Staff suppress',
-        'Suppress from discovery',
-        'Source',
-        'Tags',
+      instanceAccordions: ['Effective location (item)', 'Language', 'Resource type'],
+      holdingsAccordions: [
+        'Effective location (item)',
+        'Holdings permanent location',
+        'Holdings type',
       ],
-      holdingsAccordions: ['Holdings type', 'Suppress from discovery', 'Source', 'Tags'],
-      itemAccordions: ['Item status', 'Suppress from discovery', 'Material type', 'Tags'],
+      itemAccordions: [
+        'Item status',
+        'Effective location (item)',
+        'Holdings permanent location',
+        'Material type',
+      ],
     };
     const instances = [
       {
@@ -122,8 +124,6 @@ describe('Inventory', () => {
       instances.forEach((instance) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
-      // without logout, queries from previous run may persist in search during manual re-run
-      cy.logout();
     });
 
     it(

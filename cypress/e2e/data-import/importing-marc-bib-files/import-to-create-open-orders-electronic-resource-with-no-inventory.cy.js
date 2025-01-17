@@ -94,7 +94,7 @@ describe('Data Import', () => {
 
     it(
       'C380483 Import to create open orders: Electronic resource with NO inventory (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C380483'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

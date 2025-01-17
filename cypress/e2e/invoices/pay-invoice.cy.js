@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 import Helper from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -18,7 +17,7 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const subtotalValue = 100;
@@ -89,9 +88,7 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C3453: Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    const transactionFactory = new Transaction();
-    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.payInvoice();
@@ -101,16 +98,13 @@ describe('Invoices', () => {
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.openTransactions();
-    Funds.checkTransaction(
-      1,
-      transactionFactory.create(
-        'credit',
-        valueInTransactionTable,
-        defaultFund.code,
-        '',
-        'Invoice',
-        '',
-      ),
+    Funds.selectTransactionInList('Credit');
+    Funds.varifyDetailsInTransactionFundTo(
+      defaultFiscalYear.code,
+      '$100.00',
+      invoice.invoiceNumber,
+      'Credit',
+      `${defaultFund.name} (${defaultFund.code})`,
     );
   });
 });

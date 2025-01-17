@@ -145,7 +145,7 @@ describe('Data Import', () => {
         Permissions.uiOrdersApprovePurchaseOrders.gui,
         Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.uiInventoryViewCreateEditItems,
+        Permissions.uiInventoryViewCreateEditItems.gui,
         Permissions.uiInventoryViewInstances.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {
@@ -226,7 +226,7 @@ describe('Data Import', () => {
 
     it(
       'C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
+      { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C350944'] },
       () => {
         // create mapping profiles
         createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);

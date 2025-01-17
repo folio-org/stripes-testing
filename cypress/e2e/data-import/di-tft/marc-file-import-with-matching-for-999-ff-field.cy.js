@@ -139,7 +139,7 @@ describe('Data Import', () => {
 
     it(
       'C411579 MARC file import with matching for 999 ff field (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C411579'] },
       () => {
         FieldMappingProfiles.createInstanceMappingProfile(mappingProfile);
 
@@ -180,8 +180,7 @@ describe('Data Import', () => {
           ExportFile.downloadExportedMarcFileWithRecordHrid(expectedRecordHrid, exportedFileName);
           FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
         });
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileForUpdate);

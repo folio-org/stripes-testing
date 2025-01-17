@@ -20,7 +20,9 @@ import {
   Select,
   TextArea,
   TextField,
+  ValueChipRoot,
   not,
+  MultiSelectMenu,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -70,15 +72,14 @@ const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
-const statisticalCodeAccordion = Accordion({ id: 'itemsStatisticalCodeIds' });
-const holdingsPermanentLocationAccordion = Accordion({
-  id: 'holdingsPermanentLocation',
-});
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const nextClassificationAllButton = Button({
+  id: 'browse-results-list-classificationAll-next-paging-button',
+});
 const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
@@ -110,7 +111,10 @@ const searchHoldingsByHRID = (hrid) => {
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
+  cy.do(TextArea({ id: 'input-inventory-search' }).fillIn(title));
+  cy.wait(500);
+  cy.do(searchButton.click());
+  cy.wait(500);
   InventoryInstance.waitInventoryLoading();
 };
 
@@ -222,21 +226,19 @@ export default {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
     cy.wait(2000);
-    cy.do(
-      effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click(),
-    );
-    cy.expect(
-      effectiveLocationInput
-        .find(Checkbox(values ?? this.effectiveLocation.mainLibrary))
-        .has({ checked: true }),
-    );
+    cy.do([
+      effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(including(values ?? 'Main Library')).click(),
+    ]);
+    cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
   },
 
   byLanguage(lang) {
-    // lang: language object. Example: language.eng
-    return cy.do([
-      languageInput.clickHeader(),
-      languageInput.find(Checkbox(lang ?? this.language.eng)).click(),
+    cy.do(languageInput.clickHeader());
+    cy.wait(1000);
+    cy.do([
+      languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(including(lang ?? 'English(')).click(),
     ]);
   },
 
@@ -609,7 +611,7 @@ export default {
   },
 
   resetAll() {
-    cy.do(resetAllBtn.click());
+    cy.do(resetAllButton.click());
     cy.wait(1000);
   },
 
@@ -655,13 +657,18 @@ export default {
   },
 
   searchTag(tag) {
+    cy.wait(500);
     cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
   },
 
   filterByTag(tag) {
-    this.searchTag(tag);
-    cy.do(instancesTagsSection.find(Checkbox(tag)).click());
-    cy.wait(1000);
+    cy.wait(500);
+    cy.do(tagsAccordionButton.click());
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
   },
 
   verifyTagIsAbsent(tag) {
@@ -706,12 +713,11 @@ export default {
 
   addTag(tag) {
     cy.intercept('PUT', '**/inventory/instances/**').as('addTag');
-    cy.do([
-      MultiSelect({ id: 'input-tag' }).fillIn(tag),
-      MultiSelect().open(),
-      MultiSelectOption(including(tag)).click(),
-    ]);
+    cy.do(MultiSelect({ id: 'input-tag' }).fillIn(tag));
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
     cy.wait('@addTag');
+    cy.wait(500);
   },
 
   verifyTagsView() {
@@ -794,11 +800,15 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-itemsStatisticalCodeIds' }).click());
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
-    cy.do(statisticalCodeAccordion.find(TextField()).fillIn(code));
+    cy.do(MultiSelect({ id: 'itemsStatisticalCodeIds-multiselect' }).fillIn(code));
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
-    statisticalCodeAccordion.find(TextField()).click();
-    cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(code)))
+        .click(),
+    );
+    cy.wait(ONE_SECOND);
   },
 
   browseSearch(searchValue) {
@@ -823,11 +833,8 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
-    cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));
+    cy.do(MultiSelect({ id: 'holdingsPermanentLocation-multiselect' }).fillIn(location));
     // need to wait until data will be loaded
-    cy.wait(ONE_SECOND);
-    holdingsPermanentLocationAccordion.find(TextField()).click();
-    cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
     cy.wait(ONE_SECOND);
   },
 
@@ -1042,11 +1049,12 @@ export default {
   },
 
   checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).find(MultiSelect()).open());
     cy.expect(
       paneFilterSection
         .find(Accordion(accordionName))
-        .find(Checkbox())
-        .has({ label: matching(/.{1,}\d{1,}/) }),
+        .find(MultiSelectOption())
+        .has({ text: matching(/.{1,}(\d{1,})/) }),
     );
   },
 
@@ -1130,5 +1138,15 @@ export default {
       stuffSupressAccordion.clickHeader(),
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
     ]);
+  },
+
+  checkNextButtonForClassificationResultsIsDisplayed: () => {
+    cy.expect(nextClassificationAllButton.exists());
+  },
+
+  verifyBrowseResultPaneEmpty() {
+    cy.expect(
+      inventorySearchResultsPane.find(HTML({ className: including('noResultsMessage-') })).exists(),
+    );
   },
 };

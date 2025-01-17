@@ -211,7 +211,7 @@ describe('Data Import', () => {
 
     it(
       'C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C397983'] },
       () => {
         const fileNameForCreate = `C397983 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397983 autotestFileForUpdate${getRandomPostfix()}.mrc`;
@@ -299,8 +299,7 @@ describe('Data Import', () => {
         );
 
         // create Field mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(
@@ -328,6 +327,7 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -393,7 +393,7 @@ describe('Data Import', () => {
 
     it(
       'C397984 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 1 match (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C397984'] },
       () => {
         const fileNameForCreate = `C397984 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397984 autotestFileForUpdate${getRandomPostfix()}.mrc`;
@@ -467,8 +467,7 @@ describe('Data Import', () => {
         );
 
         // create Field mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(
@@ -548,7 +547,7 @@ describe('Data Import', () => {
 
     it(
       'C397383 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 3 matches (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'C397383'] },
       () => {
         const fileNameForCreate = `C397383 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397383 autotestFileForUpdate${getRandomPostfix()}.mrc`;
@@ -659,8 +658,7 @@ describe('Data Import', () => {
         );
 
         // create Field mapping profiles for updating
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(
@@ -706,10 +704,12 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[2].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
         );
+        cy.wait(1000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,

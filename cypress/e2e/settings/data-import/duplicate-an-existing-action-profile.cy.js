@@ -47,7 +47,7 @@ describe('Data Import', () => {
 
     it(
       'C2345 Duplicate an existing action profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C2345'] },
       () => {
         ActionProfileView.duplicate();
         NewActionProfile.verifyPreviouslyCreatedDataIsDisplayed(actionProfile);

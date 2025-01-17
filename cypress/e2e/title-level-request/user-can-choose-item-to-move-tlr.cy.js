@@ -141,7 +141,7 @@ describe('Title Level Request', () => {
   });
 
   it(
-    'C353980: Check that user can choose the item to which to move Title Level Request (vega)',
+    'C353980 Check that user can choose the item to which to move Title Level Request (vega)',
     { tags: ['criticalPathBroken', 'vega', 'C353980'] },
     () => {
       cy.get('@itemsToMove').each((item) => {

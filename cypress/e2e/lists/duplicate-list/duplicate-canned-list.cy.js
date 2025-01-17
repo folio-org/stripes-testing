@@ -9,8 +9,8 @@ describe('lists', () => {
     const userData = {};
 
     const listData = {
-      name: `C423599-${getTestEntityValue('test_list')}`,
-      description: `C423599-${getTestEntityValue('test_list_description')}`,
+      name: `C423599-${getTestEntityValue('list')}`,
+      description: `C423599-${getTestEntityValue('desc')}`,
       recordType: 'Loans',
       status: 'Active',
       visibility: 'Private',

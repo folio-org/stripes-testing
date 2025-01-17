@@ -47,7 +47,7 @@ describe('MARC', () => {
           },
           {
             rowIndex: 84,
-            value: 'C388642 Robinson and Associates, Inc.',
+            value: 'C388642 Robinson & Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388642 Robinson & Associates, Inc.',
             boxFifth: '',

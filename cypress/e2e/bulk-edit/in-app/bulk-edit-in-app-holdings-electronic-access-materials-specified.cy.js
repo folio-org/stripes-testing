@@ -103,10 +103,11 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction('Remove');
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea(materialsSpecification);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newMaterialsSpecification);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.selectAction('Clear field');
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();

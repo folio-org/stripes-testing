@@ -186,6 +186,7 @@ export default {
   },
   viewCurrentLoans({ openLoans, returnedLoans } = {}) {
     this.expandLoansSection(openLoans, returnedLoans);
+    cy.wait(500);
     this.clickCurrentLoansLink();
   },
   openFeeFines(openFeesFines, closedFeesFines) {
@@ -459,8 +460,10 @@ export default {
   waitLoading: () => cy.expect(rootSection.exists()),
 
   startFeeFine: () => {
+    cy.wait(500);
     cy.do(actionsButton.click());
     cy.do(Button('Create fee/fine').click());
+    cy.wait(500);
   },
 
   startRequest: () => {

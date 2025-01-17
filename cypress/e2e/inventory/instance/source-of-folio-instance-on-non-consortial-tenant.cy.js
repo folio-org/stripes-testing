@@ -9,44 +9,54 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
-  describe('Instance', () => {
-    let user;
-    const instanceSource = INSTANCE_SOURCE_NAMES.FOLIO;
-    const instanceTitle = `C402776 autotestInstance ${getRandomPostfix()}`;
-    const itemBarcode = Helper.getRandomBarcode();
+  describe(
+    'Instance',
+    {
+      retries: {
+        runMode: 1,
+      },
+    },
+    () => {
+      let user;
+      const instanceSource = INSTANCE_SOURCE_NAMES.FOLIO;
+      let instanceTitle;
+      let itemBarcode;
 
-    before('Create test data and login', () => {
-      cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-        (userProperties) => {
-          user = userProperties;
+      beforeEach('Create test data and login', () => {
+        instanceTitle = `C402776 autotestInstance ${getRandomPostfix()}`;
+        itemBarcode = Helper.getRandomBarcode();
+        cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+          (userProperties) => {
+            user = userProperties;
 
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
+          },
+        );
+      });
+
+      afterEach('Delete test data', () => {
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(user.userId);
+          InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        });
+      });
+
+      it(
+        'C402776 (NON-CONSORTIA) Verify the Source of a FOLIO Instance on non-consortial tenant (folijet) (TaaS)',
+        { tags: ['criticalPath', 'folijet', 'shiftLeft', 'C402776'] },
+        () => {
+          InventorySearchAndFilter.verifyPanesExist();
+          InventorySearchAndFilter.instanceTabIsDefault();
+          InventoryInstances.searchBySource(instanceSource);
+          InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyInstanceSource(instanceSource);
         },
       );
-    });
-
-    after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(user.userId);
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-      });
-    });
-
-    it(
-      'C402776 (NON-CONSORTIA) Verify the Source of a FOLIO Instance on non-consortial tenant (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet', 'shiftLeft'] },
-      () => {
-        InventorySearchAndFilter.verifyPanesExist();
-        InventorySearchAndFilter.instanceTabIsDefault();
-        InventoryInstances.searchBySource(instanceSource);
-        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyInstanceSource(instanceSource);
-      },
-    );
-  });
+    },
+  );
 });

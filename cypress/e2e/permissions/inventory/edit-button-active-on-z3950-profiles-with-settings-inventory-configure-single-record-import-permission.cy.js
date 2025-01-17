@@ -26,7 +26,7 @@ describe('Permissions', () => {
 
     it(
       'C494347 Check that "Edit" button active on Z39.50 profiles with "Settings (Inventory): Configure single-record import" permission (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C494347'] },
       () => {
         Z3950TargetProfiles.verifyTargetProfilesListDisplayed();
         Z3950TargetProfiles.openTargetProfile();

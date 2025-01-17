@@ -20,8 +20,8 @@ describe('Inventory', () => {
     const testData = {};
 
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.setTenant(Affiliations.College);
-      cy.getCollegeAdminToken();
       DataImport.uploadFileViaApi(
         marcFile.marc,
         marcFile.fileNameImported,
@@ -31,6 +31,7 @@ describe('Inventory', () => {
       });
 
       cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventoryViewCreateInstances.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -43,6 +44,14 @@ describe('Inventory', () => {
           Permissions.consortiaInventoryShareLocalInstance.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]);
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
     });
 
@@ -55,16 +64,8 @@ describe('Inventory', () => {
 
     it(
       'C411292 (CONSORTIA) Check the action of the "Share local instance" button on Source = MARC Instance on Member tenant (folijet)',
-      { tags: ['extendedPathECS', 'folijet'] },
+      { tags: ['extendedPathECS', 'folijet', 'C411292'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

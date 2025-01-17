@@ -18,6 +18,8 @@ import {
   Keyboard,
   MultiColumnListRow,
   MessageBanner,
+  Option,
+  or,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -32,11 +34,11 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
-const downloadPreviewBtn = Button('Download preview');
+const downloadPreviewInCSVFormatBtn = Button('Download preview in CSV format');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
-const startBulkEditInstanceButton = Button('Instances and Administrative data');
+const startBulkEditInstanceButton = Button('FOLIO Instances');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
@@ -61,11 +63,11 @@ export default {
   },
   openStartBulkEditInstanceForm() {
     cy.do(startBulkEditInstanceButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
   verifyOptionsLength(optionsLength, count) {
     cy.expect(optionsLength).to.eq(count);
@@ -182,7 +184,7 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(downloadPreviewBtn).exists(),
+      areYouSureForm.find(downloadPreviewInCSVFormatBtn).exists(),
       areYouSureForm.find(commitChanges).exists(),
     ]);
     if (cellContent) {
@@ -238,13 +240,13 @@ export default {
   },
 
   downloadPreview() {
-    cy.do(downloadPreviewBtn.click());
+    cy.do(downloadPreviewInCSVFormatBtn.click());
     // Wait for file to download
     cy.wait(3000);
   },
 
   verifyDownloadPreviewButtonDisabled(isDisabled = true) {
-    cy.expect(areYouSureForm.find(downloadPreviewBtn).has({ disabled: isDisabled }));
+    cy.expect(areYouSureForm.find(downloadPreviewInCSVFormatBtn).has({ disabled: isDisabled }));
   },
 
   clickKeepEditingBtn() {
@@ -544,6 +546,7 @@ export default {
       calendarButton.click(),
       TextField().fillIn(formattedDate),
     ]);
+
     // we don't have interactor for this element
     cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
@@ -789,6 +792,14 @@ export default {
     ]);
   },
 
+  replaceWithAction(option, newValue, rowIndex = 0) {
+    this.selectOption(option, rowIndex);
+    this.selectSecondAction('Replace with', rowIndex);
+    this.verifySecondActionSelected('Replace with', rowIndex);
+    this.fillInSecondTextArea(newValue, rowIndex);
+    this.verifyValueInSecondTextArea(newValue, rowIndex);
+  },
+
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     this.findValue(noteType, rowIndex);
     this.fillInFirstTextArea(oldNote, rowIndex);
@@ -827,6 +838,13 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Add note'),
       RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value),
     ]);
+  },
+
+  addItemNoteAndVerify(type, value, rowIndex = 0) {
+    this.addItemNote(type, value, rowIndex);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Add note', rowIndex);
+    this.verifyValueInSecondTextArea(value, rowIndex);
   },
 
   verifyItemCheckInNoteActions(rowIndex = 0) {
@@ -900,6 +918,13 @@ export default {
         .find(Select({ value: '' }))
         .choose(newType),
     ]);
+    this.verifyOptionSelected(type, rowIndex);
+    this.verifySecondActionSelected('Change note type', rowIndex);
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: or('noteHoldingsType', 'noteType', 'noteInstanceType') }))
+        .has({ checkedOptionText: newType }),
+    );
   },
 
   selectNoteTypeWhenChangingIt(newType, rowIndex = 0) {
@@ -1156,21 +1181,6 @@ export default {
     });
   },
 
-  verifyPossibleActionsForSpecificSelect(row, selectIndex, actions) {
-    cy.get(`[data-testid="row-${row}"]`)
-      .find('> * > *')
-      .filter((index, element) => [...element.classList].some((className) => className.startsWith('select')))
-      .eq(selectIndex)
-      .find('> * > *')
-      .filter((index, element) => [...element.classList].some((className) => className.startsWith('selectControl')))
-      .find('option:not([disabled])')
-      .then((options) => {
-        const optionTexts = [...options].map((option) => option.text);
-
-        expect(optionTexts).to.deep.equal(actions);
-      });
-  },
-
   verifyHoldingsOptions() {
     this.clickOptionsSelection();
     cy.expect([
@@ -1247,6 +1257,14 @@ export default {
       .eq(whichSelect)
       .then(($select) => {
         expect($select.text()).to.not.contain(type);
+      });
+  },
+
+  checkTypeExists(type, rowIndex = 0, whichSelect = 0) {
+    cy.get(`[class^="repeatableField"]:eq(${rowIndex}) #urlRelationship`)
+      .eq(whichSelect)
+      .then(($select) => {
+        expect($select.text()).to.contain(type);
       });
   },
 
@@ -1399,7 +1417,7 @@ export default {
   },
 
   verifyFilteredOptionsListIncludesOptionsWithText(value) {
-    cy.get('ul[class^="selectionList-"] li').each(($li) => {
+    cy.get('ul[class^="selectionList-"] li:not([class*="groupLabel"])').each(($li) => {
       cy.wrap($li)
         .invoke('text')
         .then((text) => {
@@ -1430,5 +1448,70 @@ export default {
 
   clickFilteredOption(option) {
     cy.do(SelectionOption(including(option)).click());
+  },
+
+  verifyNoteTypeAbsentInNoteItemTypeDropdown(noteType, rowIndex = 0) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ id: 'noteType' }))
+        .find(Option({ text: noteType }))
+        .absent(),
+    );
+  },
+
+  verifyGroupOptionsInSelectOptionsItemDropdown() {
+    this.clickOptionsSelection();
+
+    const expectedOptions = [
+      ['Administrative note', 'Suppress from discovery'],
+      [
+        'Action note',
+        'Binding',
+        'Copy note',
+        'Electronic bookplate',
+        'Note',
+        'Provenance',
+        'Reproduction',
+      ],
+      [
+        'Check in note',
+        'Check out note',
+        'Item status',
+        'Permanent loan type',
+        'Temporary loan type',
+      ],
+      ['Permanent item location', 'Temporary item location'],
+    ];
+    const expectedGroupLabels = [
+      'Administrative data',
+      'Item notes',
+      'Loan and availability',
+      'Location',
+    ];
+    const groupSelector = 'li[class*="groupLabel"]';
+
+    cy.get(groupSelector).each(($groupLabel, ind) => {
+      const labelName = $groupLabel.text();
+
+      expect(labelName).to.eq(expectedGroupLabels[ind]);
+
+      const optionTexts = [];
+
+      cy.wrap($groupLabel)
+        .nextUntil(groupSelector)
+        .filter('[class*="groupedOption"]')
+        .each(($option) => {
+          cy.wrap($option)
+            .invoke('text')
+            .then((text) => {
+              optionTexts.push(text);
+            });
+        })
+        .then(() => {
+          expectedOptions[ind].forEach((expectedOption) => {
+            expect(optionTexts).to.include(expectedOption);
+          });
+        });
+    });
   },
 };

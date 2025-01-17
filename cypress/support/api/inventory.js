@@ -13,7 +13,7 @@ const DEFAULT_INSTANCE = {
 const displaySettingsBody = {
   id: uuid(),
   key: 'display-settings',
-  scope: 'ui-inventory.display-settings',
+  scope: 'ui-inventory.display-settings.manage',
   value: {
     defaultSort: '',
   },
@@ -168,6 +168,7 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
       id: instanceId,
       ...instance,
     },
+    isDefaultSearchParamsRequired: false,
   }).then(() => {
     cy.wrap(holdings)
       .each((holding, i) => cy.createHolding({
@@ -236,6 +237,9 @@ Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
     path: `holdings-storage/holdings/${holdingsRecordId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
+  }).then(({ response }) => {
+    cy.wait(1000);
+    return response;
   });
 });
 
@@ -290,6 +294,9 @@ Cypress.Commands.add('deleteItemViaApi', (itemId) => {
     path: `inventory/items/${itemId}`,
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
+  }).then(({ response }) => {
+    cy.wait(1000);
+    return response;
   });
 });
 
@@ -507,7 +514,7 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
     .then(({ body }) => body.holdingsNoteTypes[0].id);
 });
 
-Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
+Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 50) => {
   return cy
     .okapiRequest({
       method: 'GET',
@@ -543,7 +550,7 @@ Cypress.Commands.add('getInventoryDisplaySettingsViaAPI', () => {
       method: 'GET',
       path: 'settings/entries',
       searchParams: {
-        query: '(scope==ui-inventory.display-settings and key==display-settings)',
+        query: '(scope==ui-inventory.display-settings.manage and key==display-settings)',
       },
       isDefaultSearchParamsRequired: false,
     })
@@ -581,6 +588,30 @@ Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
       updatedBody = { ...displaySettingsBody };
       updatedBody.value.defaultSort = sortOption;
       cy.setInventoryDisplaySettingsViaAPI(updatedBody);
+    }
+  });
+});
+
+Cypress.Commands.add('getLocSingleImportProfileViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'copycat/profiles',
+  }).then(({ body }) => {
+    return body.profiles.filter((profile) => profile.name === 'Library of Congress')[0];
+  });
+});
+
+Cypress.Commands.add('toggleLocSingleImportProfileViaAPI', (enable = true) => {
+  cy.getLocSingleImportProfileViaAPI().then((profile) => {
+    if (profile.enabled !== enable) {
+      const updatedprofile = { ...profile };
+      updatedprofile.enabled = enable;
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `copycat/profiles/${profile.id}`,
+        body: updatedprofile,
+        isDefaultSearchParamsRequired: false,
+      });
     }
   });
 });

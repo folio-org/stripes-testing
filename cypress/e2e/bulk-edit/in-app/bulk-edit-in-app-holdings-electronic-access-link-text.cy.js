@@ -18,7 +18,8 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const textWithSpecialCharacters = 'Te;st: [sample] li*nk$text';
-const newLinkText = 'New link text';
+const newLinkText = 'Special characters';
+const replacedLinkText = `${newLinkText} [sample] li*nk$text`;
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
 const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
@@ -106,31 +107,33 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Remove');
-        BulkEditActions.fillInFirstTextArea(textWithSpecialCharacters);
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.fillInFirstTextArea('Te;st:');
         BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newLinkText);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
-        BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [newLinkText]);
+        BulkEditActions.verifyChangesInAreYouSureForm('Electronic access', [replacedLinkText]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [newLinkText]);
+        ExportFile.verifyFileIncludes(previewFileName, [replacedLinkText]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns('Electronic access', newLinkText);
+        BulkEditSearchPane.verifyChangesUnderColumns('Electronic access', replacedLinkText);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [newLinkText]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [replacedLinkText]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.verifyElectronicAccess(newLinkText);
+        HoldingsRecordView.verifyElectronicAccess(replacedLinkText);
       },
     );
   });

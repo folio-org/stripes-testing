@@ -76,7 +76,7 @@ describe('Data Import', () => {
 
     it(
       'C380444 Order field mapping profile: "Create Inventory" fields are inactivated when Order status is Open (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380444'] },
       () => {
         // #1 Select "Field mapping profiles" -> Click "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -150,7 +150,7 @@ describe('Data Import', () => {
 
     it(
       'C380445 Order field mapping profile: "Create Inventory" fields are inactivated when Order status is Open in editing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C380445'] },
       () => {
         // #1 Select "Field mapping profiles" -> Click "Actions" button -> Select "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();

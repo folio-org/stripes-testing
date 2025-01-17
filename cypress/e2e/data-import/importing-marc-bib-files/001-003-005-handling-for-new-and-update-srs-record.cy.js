@@ -143,11 +143,11 @@ describe('Data Import', () => {
 
     it(
       'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'C17039'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
+        DataImport.uploadFile('marcFileForC17039.mrc', nameMarcFileForCreate);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -190,7 +190,7 @@ describe('Data Import', () => {
           InventoryViewSource.extructDataFrom999Field().then((uuid) => {
             // change file using uuid for 999 field
             DataImport.editMarcFile(
-              'marcFilrForC17039With999Field.mrc',
+              'marcFileForC17039With999Field.mrc',
               editedMarcFileName,
               ['instanceUuid', 'srsUuid'],
               [uuid[0], uuid[1]],
@@ -198,8 +198,10 @@ describe('Data Import', () => {
           });
 
           // create match profile
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-          SettingsDataImport.goToSettingsDataImport();
+          TopMenuNavigation.navigateToApp(
+            APPLICATION_NAMES.SETTINGS,
+            APPLICATION_NAMES.DATA_IMPORT,
+          );
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
           MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
           MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
@@ -252,6 +254,7 @@ describe('Data Import', () => {
 
           // check instance is updated
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.checkIsInstanceUpdated();
@@ -260,10 +263,12 @@ describe('Data Import', () => {
           InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
           InventoryViewSource.notContains('003\t');
           InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
+          InventoryViewSource.close();
         });
 
         // export instance
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.closeInstanceDetailPane();

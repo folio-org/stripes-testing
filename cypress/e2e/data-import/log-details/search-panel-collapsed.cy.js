@@ -33,7 +33,7 @@ describe('Data Import', () => {
 
     it(
       'C357057 Check that "Search/Filter" panel on the  "View all" page is saved collapsed state after returning from another application. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C357057'] },
       () => {
         // #1 Go to the "Data import" app
         // The "Data import" page is displayed

@@ -59,6 +59,7 @@ describe('agreements', () => {
           false,
         );
 
+        cy.wait(2000);
         NewAgreementLine.saveAndClose();
         AgreementLineInformation.verifyDescription(agreementLineDescription);
 

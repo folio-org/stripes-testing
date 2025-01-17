@@ -88,11 +88,10 @@ describe('Data Import', () => {
 
     it(
       'C11116 Unlinking a match or action profile from a job profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
+      { tags: ['extendedPath', 'folijet', 'C11116'] },
       () => {
         // create 3 action profiles
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsDataImport.goToSettingsDataImport();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         collectionOfActionProfiles.forEach((profile) => {
           ActionProfiles.create(profile, mappingProfile.name);
