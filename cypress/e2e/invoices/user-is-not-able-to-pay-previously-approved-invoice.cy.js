@@ -11,7 +11,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
+import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -33,7 +33,7 @@ describe('Invoices', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const allocatedQuantity = '100';
   defaultFiscalYear.code = defaultFiscalYear.code.slice(0, -1) + '1';
   let user;

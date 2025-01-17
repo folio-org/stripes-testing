@@ -8,7 +8,7 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
+import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
@@ -54,7 +54,7 @@ describe('Invoices', () => {
     status: 'Inactive',
   };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const invoiceLine = {
     ...NewInvoiceLine.defaultUiInvoiceLine,
     subTotal: '2',

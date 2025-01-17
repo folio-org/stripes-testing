@@ -10,7 +10,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
+import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -23,7 +23,7 @@ describe('Invoices', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const firstOrder = { ...NewOrder.defaultOneTimeOrder, approved: true, reEncumber: true };
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';

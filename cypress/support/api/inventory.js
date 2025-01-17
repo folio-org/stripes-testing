@@ -514,7 +514,7 @@ Cypress.Commands.add('getHoldingNoteTypeIdViaAPI', (holdingNoteTypeName) => {
     .then(({ body }) => body.holdingsNoteTypes[0].id);
 });
 
-Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 20) => {
+Cypress.Commands.add('getInstanceDateTypesViaAPI', (limit = 50) => {
   return cy
     .okapiRequest({
       method: 'GET',
@@ -588,6 +588,30 @@ Cypress.Commands.add('setupInventoryDefaultSortViaAPI', (sortOption) => {
       updatedBody = { ...displaySettingsBody };
       updatedBody.value.defaultSort = sortOption;
       cy.setInventoryDisplaySettingsViaAPI(updatedBody);
+    }
+  });
+});
+
+Cypress.Commands.add('getLocSingleImportProfileViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'copycat/profiles',
+  }).then(({ body }) => {
+    return body.profiles.filter((profile) => profile.name === 'Library of Congress')[0];
+  });
+});
+
+Cypress.Commands.add('toggleLocSingleImportProfileViaAPI', (enable = true) => {
+  cy.getLocSingleImportProfileViaAPI().then((profile) => {
+    if (profile.enabled !== enable) {
+      const updatedprofile = { ...profile };
+      updatedprofile.enabled = enable;
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `copycat/profiles/${profile.id}`,
+        body: updatedprofile,
+        isDefaultSearchParamsRequired: false,
+      });
     }
   });
 });

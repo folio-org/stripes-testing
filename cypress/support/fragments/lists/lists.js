@@ -69,6 +69,13 @@ export default {
     cy.wait(2000);
   },
 
+  filtersWaitLoading: () => {
+    cy.expect(activeCheckbox.exists());
+    cy.expect(inactiveCheckbox.exists());
+    cy.expect(sharedCheckbox.exists());
+    cy.expect(privateCheckbox.exists());
+  },
+
   waitForSpinnerToDisappear() {
     cy.get('[class^="spinner"]').should('not.exist');
   },
