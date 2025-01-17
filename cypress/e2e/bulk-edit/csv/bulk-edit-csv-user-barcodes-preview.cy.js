@@ -25,7 +25,7 @@ describe(
           permissions.uiUsersView.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          cy.wait(5000);
+          cy.wait(10000);
 
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
