@@ -82,7 +82,6 @@ describe('Orders', () => {
 
     defaultOrder.vendor = firstOrganization.name;
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-    cy.pause();
 
     Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
@@ -125,14 +124,11 @@ describe('Orders', () => {
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
       OrderLines.openDonorInformationSection();
-      cy.pause();
       OrderLines.deleteDonor(firstOrganization.name);
-      cy.pause();
 
       OrderLines.saveOrderLine();
       OrderLines.editPOLInOrder();
       OrderLines.openDonorInformationSection();
-      cy.pause();
 
       OrderLines.deleteDonor(secondOrganization.name);
       OrderLines.saveOrderLine();

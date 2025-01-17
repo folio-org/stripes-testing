@@ -129,7 +129,7 @@ describe('Consortia', () => {
               calloutTypes.error,
             );
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [...Object.values(firstCancelReason), 'All'],
+              firstCancelReason.name,
               ['edit', 'trash'],
             );
 
@@ -145,21 +145,21 @@ describe('Consortia', () => {
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              Object.values(firstCancelReason),
+              firstCancelReason.name,
             );
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              Object.values(firstCancelReason),
+              firstCancelReason.name,
             );
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              Object.values(firstCancelReason),
+              firstCancelReason.name,
             );
           },
         );

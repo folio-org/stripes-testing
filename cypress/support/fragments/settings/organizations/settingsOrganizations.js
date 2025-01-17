@@ -37,16 +37,14 @@ export default {
   checkButtonNewInTypesIsDisabled: () => {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
-        .find(Button({ id: 'clickable-add-types' }))
-        .is({ disabled: true }),
+        .find(Button({ id: 'clickable-add-types' })).absent(),
     );
   },
 
   checkButtonNewInCategoriesIsDisabled: () => {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
-        .find(Button({ id: 'clickable-add-categories' }))
-        .is({ disabled: true }),
+        .find(Button({ id: 'clickable-add-categories' })).absent(),
     );
   },
 
