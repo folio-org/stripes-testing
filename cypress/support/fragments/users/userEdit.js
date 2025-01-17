@@ -831,6 +831,7 @@ export default {
   saveAndCloseRolesModal() {
     cy.do(selectRolesModal.find(saveAndCloseBtn).click());
     cy.expect(selectRolesModal.absent());
+    cy.wait(1000);
   },
 
   verifyUserRoleNames(roleNames) {
