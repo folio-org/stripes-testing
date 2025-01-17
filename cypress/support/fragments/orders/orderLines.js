@@ -2700,4 +2700,22 @@ export default {
       cy.get('input[type="checkbox"]').should('have.prop', 'checked', status);
     });
   },
+
+  checkDonorInformation(donors) {
+    for (let i = 0; i < donors.length; i++) {
+      cy.expect(
+        Section({ id: 'donorsInformation' })
+          .find(MultiColumnListCell({ row: i, column: 'Name' }))
+          .has({ content: donors[i] }),
+      );
+    }
+  },
+
+  checkDonorIsAbsent(donor) {
+    cy.expect(
+      Section({ id: 'donorsInformation' })
+        .find(MultiColumnListCell({ content: donor }))
+        .absent(),
+    );
+  },
 };

@@ -2,7 +2,7 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import NewExpenceClass from '../../../support/fragments/settings/finance/newExpenseClass';
+import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -10,7 +10,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Funds', () => {
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const firstExpenseClass = { ...NewExpenseClass.defaultUiBatchGroup };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
