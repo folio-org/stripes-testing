@@ -52,9 +52,8 @@ describe('fse-data-import - UI', () => {
       JobProfiles.waitLoadingList();
       // delete uploaded file without starting job
       JobProfiles.deleteUploadedFile(testData.marcFile.fileName);
-      cy.wait(2000);
+      cy.wait(5000);
       JobProfiles.verifyDeleteUploadedFileModal();
-      cy.wait(2000);
       JobProfiles.confirmDeleteUploadedFile();
       DataImport.waitLoadingNoInteractors();
     },
