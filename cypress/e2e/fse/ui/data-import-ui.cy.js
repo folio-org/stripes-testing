@@ -36,7 +36,7 @@ describe('fse-data-import - UI', () => {
 
   it(
     `TC195768 - check data-import file upload for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'data-import'] },
+    { tags: ['fse', 'ui', 'data-import'] },
     () => {
       // upload small marc file
       const testData = {
