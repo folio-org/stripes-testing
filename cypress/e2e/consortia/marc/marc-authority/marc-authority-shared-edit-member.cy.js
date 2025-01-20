@@ -43,6 +43,7 @@ describe('MARC', () => {
         before('Create test data', () => {
           cy.getAdminToken();
           cy.resetTenant();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405537');
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -82,6 +83,10 @@ describe('MARC', () => {
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               MarcAuthorities.waitLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              cy.intercept('/authn/refresh').as('/authn/refresh');
+              cy.reload();
+              cy.wait('@/authn/refresh', { timeout: 20000 });
+              MarcAuthorities.waitLoading();
             });
           });
         });

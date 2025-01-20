@@ -134,10 +134,13 @@ describe('MARC', () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
             cy.reload();
+            cy.wait('@/authn/refresh', { timeout: 20000 });
+            QuickMarcEditor.waitLoading();
             cy.wait(3000);
             QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+              cy.intercept('POST', '/records-editor/validate').as('validate');
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait('@validate', { timeout: 10000 });
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.deleteConfirmationPresented();
               QuickMarcEditor.confirmDelete();

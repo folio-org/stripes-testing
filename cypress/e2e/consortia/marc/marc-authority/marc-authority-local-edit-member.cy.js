@@ -25,7 +25,7 @@ describe('MARC', () => {
             'Alexandre, Dumas, C405544 1802-1870. Trois mousquetaires. English (First Avenue Editions (Firm))',
           updatedTitle: `Alexandre, Dumas, C405544 1802-1870, ${randomFourDigits}`,
           updatedTag100Value: `$a Alexandre, Dumas, C405544 $d 1802-1870, ${randomFourDigits} $l English (First Avenue Editions (Firm)) $e Novelist ${randomFourDigits}`,
-          tag400Value: `$a Аляксандр Дзюма ${randomFourDigits} $d 1802-1870`,
+          tag400Value: `$a Аляксандр Дзюма C405544 ${randomFourDigits} $d 1802-1870`,
           tag035Value: '$a (OCoLC)oca12345405544',
           tag670Value: '$a Alexandre, Dumas. C405544 The three musketeers [ER], ©2014',
           viewLocalRecordText: 'Local MARC authority record',
@@ -48,6 +48,7 @@ describe('MARC', () => {
           }).then(() => {
             DataImport.waitLoading();
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405544');
             DataImport.uploadFileViaApi(
               marcFile.marc,
               marcFile.fileName,
@@ -85,6 +86,10 @@ describe('MARC', () => {
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+                MarcAuthorities.waitLoading();
+                cy.intercept('/authn/refresh').as('/authn/refresh');
+                cy.reload();
+                cy.wait('@/authn/refresh', { timeout: 20000 });
                 MarcAuthorities.waitLoading();
               });
             },
