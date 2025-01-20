@@ -21,7 +21,7 @@ const hridValues = {};
 const testData = {};
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceHRIDFileName}`;
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,

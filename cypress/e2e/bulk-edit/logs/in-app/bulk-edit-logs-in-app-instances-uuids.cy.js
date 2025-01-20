@@ -21,7 +21,7 @@ let user;
 const testData = {};
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${instanceUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const folioItem = {

@@ -25,7 +25,7 @@ const instance = {
 const staffSuppressOption = 'Staff suppress';
 const instancUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instancUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instancUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instancUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instancUUIDsFileName}`;
 
 describe('bulk-edit', () => {

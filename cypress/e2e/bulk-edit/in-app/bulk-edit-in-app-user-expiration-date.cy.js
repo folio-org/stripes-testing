@@ -18,7 +18,7 @@ const futureDatewithSlashes = DateTools.getFormattedDateWithSlashes({ date: futu
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${userBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

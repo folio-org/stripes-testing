@@ -16,7 +16,7 @@ const futureDate = DateTools.getFutureWeekDateObj();
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${userBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

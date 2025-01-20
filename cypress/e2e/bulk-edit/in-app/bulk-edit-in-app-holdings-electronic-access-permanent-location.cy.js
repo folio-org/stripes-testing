@@ -31,7 +31,7 @@ const secondItem = {
 };
 const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingsHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingsHRIDFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingsHRIDFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingsHRIDFileName}`;
 const firstElectronicAccess = {
   linkText: 'firstElectronicAccess-linkText',

@@ -159,7 +159,7 @@ describe('Bulk-edit', () => {
             )[1];
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
-            previewQueryFileName = `*-Updates-Preview-Query-${interceptedUuid}.csv`;
+            previewQueryFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
             changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
@@ -297,7 +297,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.uploadRecentlyDownloadedFile(identifiersQueryFilename).then(
               (changedFileName) => {
                 downloadedFileNameForUpload = changedFileName;
-                previewFileName = `*-Updates-Preview-${downloadedFileNameForUpload}`;
+                previewFileName = `*-Updates-Preview-CSV-${downloadedFileNameForUpload}`;
                 changedRecordsFileName = `*-Changed-Records-${downloadedFileNameForUpload}`;
 
                 instances.forEach((instance) => {
