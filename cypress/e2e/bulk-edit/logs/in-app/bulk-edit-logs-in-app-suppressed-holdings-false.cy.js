@@ -23,7 +23,7 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
 };
 const matchedRecordsFileName = `Matched-Records-${itemBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {

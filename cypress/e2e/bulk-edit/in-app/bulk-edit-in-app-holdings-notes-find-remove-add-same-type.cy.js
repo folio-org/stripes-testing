@@ -25,7 +25,7 @@ const item = {
 };
 const holdingHRIDsFileName = `holdingHRIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${holdingHRIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingHRIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingHRIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingHRIDsFileName}`;
 
 describe('bulk-edit', () => {

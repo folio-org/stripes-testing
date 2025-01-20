@@ -32,7 +32,7 @@ const filterOtions = {
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${instanceUUIDsFileName}`;
 
 describe('bulk-edit', () => {

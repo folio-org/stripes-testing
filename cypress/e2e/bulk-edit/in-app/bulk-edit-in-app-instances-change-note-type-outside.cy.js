@@ -24,7 +24,7 @@ const notes = {
 
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
 const folioItem = {

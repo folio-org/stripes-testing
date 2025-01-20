@@ -62,7 +62,7 @@ const getReasonForError = (itemId, tenantName) => {
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${holdingUUIDsFileName}`;
 const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${holdingUUIDsFileName}`;
 

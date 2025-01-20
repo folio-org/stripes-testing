@@ -21,7 +21,7 @@ const holdingsNote = 'Line-1\nLine-2\nLine-3\nLine-4';
 const holdingsHRIDFileName = `holdingsHRID_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingsHRIDFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingsHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingsHRIDFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingsHRIDFileName}`;
 
 for (let i = 0; i < 3; i++) {
   items.push({

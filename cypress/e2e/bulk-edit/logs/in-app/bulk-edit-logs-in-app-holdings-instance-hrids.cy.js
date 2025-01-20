@@ -19,7 +19,7 @@ const invalidInstanceHRID = `123-${getRandomPostfix()}`;
 const validAndInvalidInstanceHRIDsFileName = `validAndInvalidInstanceHRIDS-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validAndInvalidInstanceHRIDsFileName}`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${validAndInvalidInstanceHRIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validAndInvalidInstanceHRIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${validAndInvalidInstanceHRIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validAndInvalidInstanceHRIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${validAndInvalidInstanceHRIDsFileName}`;
 

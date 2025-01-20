@@ -17,7 +17,7 @@ let addressTypeId;
 let addressType;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 

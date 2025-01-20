@@ -31,7 +31,7 @@ const instance = {
 const callNumber = 'R11.A38\\';
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${itemUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
 
 describe('bulk-edit', () => {

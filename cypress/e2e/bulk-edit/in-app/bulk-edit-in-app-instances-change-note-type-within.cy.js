@@ -21,7 +21,7 @@ const notes = {
 
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
 const folioItem = {
@@ -88,7 +88,7 @@ describe('bulk-edit', () => {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-          cy.wait(10000);
+          cy.wait(15000);
         });
       });
 

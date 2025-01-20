@@ -17,7 +17,7 @@ const invalidUserUUID = `invalidUserUUID_${getRandomPostfix()}`;
 const invalidAndValidUserUUIDsFileName = `invalidAndValidUserUUIDS_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserUUIDsFileName}`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${invalidAndValidUserUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserUUIDsFileName}`;
 

@@ -20,7 +20,7 @@ const customFieldName = `customFieldName-${getRandomPostfix()}`;
 const customFieldText = `customFieldText\n${getRandomPostfix()}`;
 const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${userBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

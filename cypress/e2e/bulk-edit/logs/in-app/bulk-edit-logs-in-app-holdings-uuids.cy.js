@@ -18,7 +18,7 @@ let user;
 let uuid;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameValid = `Matched-Records-${validHoldingUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validHoldingUUIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${validHoldingUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validHoldingUUIDsFileName}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,

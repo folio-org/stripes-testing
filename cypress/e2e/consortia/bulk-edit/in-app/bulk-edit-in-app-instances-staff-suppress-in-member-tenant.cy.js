@@ -13,7 +13,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
-import { tenantNames } from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
@@ -37,11 +37,11 @@ const actions = {
   setFalse: 'Set false',
 };
 const folioInstance = {
-  title: `C477642_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C566118_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  title: `C477642_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C566118_${postfix} marc instance testBulkEdit_${getRandomPostfix()}`,
 };
 const instances = [folioInstance, marcInstance];
 
@@ -58,6 +58,16 @@ describe('Bulk-edit', () => {
           permissions.bulkEditLogsView.gui,
         ]).then((userProperties) => {
           user = userProperties;
+
+          cy.assignAffiliationToUser(Affiliations.College, user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(user.userId, [
+            permissions.bulkEditEdit.gui,
+            permissions.uiInventoryViewCreateEditInstances.gui,
+            permissions.enableStaffSuppressFacet.gui,
+            permissions.bulkEditQueryView.gui,
+            permissions.bulkEditLogsView.gui,
+          ]);
 
           cy.getInstanceTypes({ limit: 1 })
             .then((instanceTypes) => {
@@ -83,30 +93,29 @@ describe('Bulk-edit', () => {
                     marcInstance.hrid = instanceData.hrid;
                   });
 
-                  instances.forEach((instance) => {
-                    cy.getInstanceById(instance.uuid).then((body) => {
-                      body.staffSuppress = false;
-                      cy.updateInstance(body);
-                    });
-                  });
-
+                  cy.resetTenant();
                   cy.login(user.username, user.password, {
                     path: TopMenu.bulkEditPath,
                     waiter: BulkEditSearchPane.waitLoading,
                   });
                   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                  ConsortiumManager.switchActiveAffiliation(
+                    tenantNames.central,
+                    tenantNames.college,
+                  );
+                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
                   BulkEditSearchPane.openQuerySearch();
                   BulkEditSearchPane.checkInstanceRadio();
                   BulkEditSearchPane.clickBuildQueryButton();
                   QueryModal.verify();
                   QueryModal.selectField(instanceFieldValues.staffSuppress);
                   QueryModal.verifySelectedField(instanceFieldValues.staffSuppress);
-                  QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-                  QueryModal.chooseValueSelect('False');
+                  QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
+                  QueryModal.chooseValueSelect('True');
                   QueryModal.addNewRow();
                   QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
                   QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
-                  QueryModal.fillInValueTextfield(`C477642_${postfix}`, 1);
+                  QueryModal.fillInValueTextfield(`C566118_${postfix}`, 1);
                   cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as(
                     'getPreview',
                   );
@@ -120,10 +129,13 @@ describe('Bulk-edit', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
+        cy.setTenant(Affiliations.College);
         InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
         InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
+        cy.resetTenant();
+        Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/downloaded-${identifiersQueryFilename}`);
         FileManager.deleteFileFromDownloadsByMask(
           identifiersQueryFilename,
@@ -136,8 +148,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477642 Verify "Staff suppress" action for Instances in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C477642'] },
+        'C566118 Verify "Staff suppress" action for Instances in Member tenant (consortia) (firebird)',
+        { tags: ['smokeECS', 'firebird', 'C566118'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
@@ -151,9 +163,9 @@ describe('Bulk-edit', () => {
             changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(2);
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.staff_suppress == "false") AND (instance.title starts with "C477642_${postfix}")`,
+              `(instance.staff_suppress != "true") AND (instance.title starts with "C566118_${postfix}")`,
             );
 
             instances.forEach((instance) => {
