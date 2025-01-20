@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Lists from '../../../support/fragments/lists/lists';
 
-describe('fse-licenses - UI', () => {
+describe('fse-lists - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
