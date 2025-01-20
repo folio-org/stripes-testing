@@ -17,8 +17,8 @@ const matchedRecordsFileName = `Matched-Records-${invalidAndValidUserBarcodesFil
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${invalidAndValidUserBarcodesFileName}`,
-  second: `*-Updates-Preview-${editedFileName}`,
+  first: `*-Updates-Preview-CSV-${invalidAndValidUserBarcodesFileName}`,
+  second: `*-Updates-Preview-CSV-${editedFileName}`,
 };
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserBarcodesFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserBarcodesFileName}`;

@@ -13,8 +13,8 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${userUUIDsFileName}`,
-  second: `*-Updates-Preview-${editedFileName}`,
+  first: `*-Updates-Preview-CSV-${userUUIDsFileName}`,
+  second: `*-Updates-Preview-CSV-${editedFileName}`,
 };
 const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 

@@ -226,7 +226,7 @@ describe('Bulk-edit', () => {
             )[1];
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `${today}-Matched-Records-Query-${interceptedUuid}.csv`;
-            previewQueryFileName = `${today}-Updates-Preview-Query-${interceptedUuid}.csv`;
+            previewQueryFileName = `${today}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
             changedRecordsQueryFileName = `${today}-Changed-Records-Query-${interceptedUuid}.csv`;
             errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
 

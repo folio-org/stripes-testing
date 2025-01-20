@@ -61,7 +61,7 @@ const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${holdingUUIDsFileName}`;
 const getReasonForError = (holdingId) => {
@@ -318,7 +318,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL Relationship');
-          BulkEditActions.selectSecondAction('Find (full field search)');
+          BulkEditActions.selectSecondAction('Find');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);
           BulkEditActions.selectSecondAction('Replace with');

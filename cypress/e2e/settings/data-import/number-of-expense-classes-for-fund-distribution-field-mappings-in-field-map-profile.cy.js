@@ -8,43 +8,43 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Settings', () => {
-    const firstExpencseClassData = {
+    const firstexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const secondExpencseClassData = {
+    const secondexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const thirdExpencseClassData = {
+    const thirdexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const forthExpencseClassData = {
+    const forthexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const fifthExpencseClassData = {
+    const fifthexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const sixthExpencseClassData = {
+    const sixthexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const seventhExpencseClassData = {
+    const seventhexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const eighthExpencseClassData = {
+    const eighthexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const ninethExpencseClassData = {
+    const ninethexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
-    const tenthExpencseClassData = {
+    const tenthexpenseClassData = {
       name: `autotestExpenseClass_${getRandomPostfix()}`,
       code: `autotestExpenseClassCode_${getRandomPostfix()}`,
     };
@@ -59,16 +59,16 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken().then(() => {
         cy.wrap([
-          firstExpencseClassData,
-          secondExpencseClassData,
-          thirdExpencseClassData,
-          forthExpencseClassData,
-          fifthExpencseClassData,
-          sixthExpencseClassData,
-          seventhExpencseClassData,
-          eighthExpencseClassData,
-          ninethExpencseClassData,
-          tenthExpencseClassData,
+          firstexpenseClassData,
+          secondexpenseClassData,
+          thirdexpenseClassData,
+          forthexpenseClassData,
+          fifthexpenseClassData,
+          sixthexpenseClassData,
+          seventhexpenseClassData,
+          eighthexpenseClassData,
+          ninethexpenseClassData,
+          tenthexpenseClassData,
         ]).each((expenseClass) => {
           NewExpenseClass.createViaApi(expenseClass).then((response) => expenseClassIds.push(response));
         });
@@ -95,16 +95,16 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.addExpenseClass(mappingProfile.fundDistributionSource);
         cy.wrap([
-          firstExpencseClassData.name,
-          secondExpencseClassData.name,
-          thirdExpencseClassData.name,
-          forthExpencseClassData.name,
-          fifthExpencseClassData.name,
-          sixthExpencseClassData.name,
-          seventhExpencseClassData.name,
-          eighthExpencseClassData.name,
-          ninethExpencseClassData.name,
-          tenthExpencseClassData.name,
+          firstexpenseClassData.name,
+          secondexpenseClassData.name,
+          thirdexpenseClassData.name,
+          forthexpenseClassData.name,
+          fifthexpenseClassData.name,
+          sixthexpenseClassData.name,
+          seventhexpenseClassData.name,
+          eighthexpenseClassData.name,
+          ninethexpenseClassData.name,
+          tenthexpenseClassData.name,
         ]).each((expenseClassName) => {
           NewFieldMappingProfile.verifyExpenseClassesIsPresentedInDropdown(expenseClassName);
         });

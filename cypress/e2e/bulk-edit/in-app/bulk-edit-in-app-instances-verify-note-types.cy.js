@@ -42,17 +42,12 @@ const actionsToSelect = {
 const actionOptions = [
   'Add note',
   'Change note type',
-  'Find (full field search)',
+  'Find',
   'Mark as staff only',
   'Remove all',
   'Remove mark as staff only',
 ];
-const administrativeNoteActionOptions = [
-  'Add note',
-  'Change note type',
-  'Find (full field search)',
-  'Remove all',
-];
+const administrativeNoteActionOptions = ['Add note', 'Change note type', 'Find', 'Remove all'];
 const setOfColumnValues = [
   {
     noteColumn: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
@@ -72,7 +67,7 @@ const setOfColumnValues = [
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${instanceUUIDsFileName}`;
 
 describe('bulk-edit', () => {

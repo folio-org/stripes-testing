@@ -291,9 +291,7 @@ export default {
     // because this is possible by design
     // that's why we need waiting until previous file will be uploaded, reload page and delete uploaded file
     waitLoading();
-    cy.wait(10000);
-    cy.reload();
-    cy.wait(5000);
+    cy.wait(15000);
     cy.allure().startStep('Delete files before upload file');
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
       (isDeleteFilesButtonExists) => {
@@ -506,5 +504,9 @@ export default {
   waitLoadingNoInteractors() {
     cy.expect(sectionPaneJobsTitle.exists());
     cy.expect(logsPaneHeader.exists());
+  },
+
+  checkJobSummaryTableExists() {
+    cy.xpath("//div[@id= 'job-summary-table']").should('be.visible');
   },
 };

@@ -17,7 +17,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 let user;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validItemUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validItemUUIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${validItemUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,

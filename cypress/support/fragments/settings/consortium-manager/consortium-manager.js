@@ -91,7 +91,7 @@ export default {
     cy.do(Button({ id: 'save-active-affiliation' }).click());
     cy.wait(8000);
     cy.expect(myProfileButton.find(HTML({ text: including(newTenantName) })).exists());
-    cy.wait(3000);
+    cy.wait(4000);
   },
 
   switchActiveAffiliationIsAbsent() {
@@ -130,5 +130,10 @@ export default {
 
   checkEditedTenantName(name) {
     cy.xpath(`//div[contains(text(), '${name}')]`).should('be.visible');
+  },
+
+  checkOptionsExist() {
+    cy.expect(NavListItem('Membership').exists());
+    cy.expect(NavListItem('Central ordering').exists());
   },
 };

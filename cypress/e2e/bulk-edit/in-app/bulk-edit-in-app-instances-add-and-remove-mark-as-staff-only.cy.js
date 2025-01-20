@@ -188,7 +188,7 @@ describe('bulk-edit', () => {
           cy.wrap(identifiersQueryFilename).as('identifiersQueryFilename');
           const matchedRecordsFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
           cy.wrap(matchedRecordsFileName).as('matchedRecordsFileName');
-          const previewFileName = `*-Updates-Preview-Query-${interceptedUuid}.csv`;
+          const previewFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
           cy.wrap(previewFileName).as('previewFileName');
           const changedRecordsFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
           cy.wrap(changedRecordsFileName).as('changedRecordsFileName');
