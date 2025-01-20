@@ -29,9 +29,8 @@ export default {
   changeDefaultSortOption(option) {
     cy.do(defaultSortSelect.choose(option));
     this.verifySelectedDefaultSortOption(option);
-    cy.intercept({ method: /PUT|POST/, url: /settings\/entries.*/ }).as('saveCall');
+    this.checkSaveButtonEnabled();
     cy.do(saveButton.click());
-    cy.wait('@saveCall', { timeout: 15000 });
   },
 
   checkSaveButtonEnabled(isEnabled = true) {
@@ -46,5 +45,6 @@ export default {
   checkAfterSaveSuccess() {
     this.checkSuccessCallout();
     this.checkSaveButtonEnabled(false);
+    cy.wait(1000);
   },
 };
