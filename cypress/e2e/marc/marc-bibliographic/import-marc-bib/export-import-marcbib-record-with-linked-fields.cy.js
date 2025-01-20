@@ -39,30 +39,21 @@ describe('MARC', () => {
           propertyName: 'authority',
         },
       ];
-      const testData = {
-        createdInstanceIDs: [],
-        createdAuthorityIDs: [],
-      };
+
+      const testData = {};
       const exportedInstanceFileName = `C369080 exportedMarcInstanceFile${getRandomPostfix()}.mrc`;
       const updatedInstanceFileName = `C369080 updatedMarcInstanceFile${getRandomPostfix()}.mrc`;
-
+      const markfileWithout999Field = {
+        marc: updatedInstanceFileName,
+        fileName: `C369080testMarcBibWithout999Field.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
+        propertyName: 'instance',
+      };
       before(() => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C369080');
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C369080');
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              if (marcFile.propertyName === 'instance') testData.createdInstanceIDs.push(record[marcFile.propertyName].id);
-              if (marcFile.propertyName === 'authority') testData.createdAuthorityIDs.push(record[marcFile.propertyName].id);
-            });
-          });
-        });
-
+        DataImport.uploadFilesViaApi(marcFiles).then((ids) => Object.assign(testData, ids));
         cy.createTempUser([
           permissions.moduleDataImportEnabled.gui,
           permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -77,8 +68,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C369080');
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C369080');
-        cy.log('User to delete: ', testData.userProperties);
-        Users.deleteViaApi(testData.userProperties.userId);
+        if (testData?.userProperties?.userId) Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
@@ -89,15 +79,12 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.log(JSON.stringify(testData));
           InventoryInstances.searchByTitle(testData.createdInstanceIDs[0]);
-
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
 
           InventoryInstance.verifyAndClickLinkIcon('100');
           InventoryInstance.clickLinkButton();
-
           InventoryInstance.verifyAndClickLinkIcon('650');
           InventoryInstance.clickLinkButton();
 
@@ -107,16 +94,13 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
-
           InventoryInstances.selectInstanceCheckboxByIndex(0);
-
           InventoryInstances.exportInstanceMarc();
-          // ExportFile.downloadCSVFile(`C369080 exportedCSVFile${getRandomPostfix()}.csv`, 'QuickInstanceExport*');
+
           cy.intercept('/data-export/quick-export').as('getHrid');
           cy.wait('@getHrid', getLongDelay()).then((resp) => {
             const expectedRecordHrid = resp.response.body.jobExecutionHrId;
 
-            // download exported marc file
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.waitLandingPageOpened();
             ExportFile.downloadExportedMarcFileWithRecordHrid(
@@ -124,12 +108,10 @@ describe('MARC', () => {
               exportedInstanceFileName,
             );
             FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
-
             ExportFile.verifyFileIncludes(
               exportedInstanceFileName,
               [...testData.createdAuthorityIDs].map((id) => `9${id}`),
             ); // 9 - subfield $9 with linked Authority ID
-
             ExportFile.removeMarcField({
               inputFileName: exportedInstanceFileName,
               outputFileName: updatedInstanceFileName,
@@ -139,18 +121,9 @@ describe('MARC', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           DataImport.waitLoading();
 
-          DataImport.uploadFileViaApi(
-            updatedInstanceFileName,
-            `C369080testMarcBib2.${getRandomPostfix()}.mrc`,
-            DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdInstanceIDs.push(record.instance.id);
-            });
-
+          DataImport.uploadFilesViaApi(markfileWithout999Field).then(({ createdInstanceIDs }) => {
             TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitLoading();
-            InventoryInstances.searchByTitle(testData.createdInstanceIDs[1]);
+            InventoryInstances.searchByTitle(createdInstanceIDs[0]);
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
 
             InventoryInstance.editMarcBibliographicRecord();
