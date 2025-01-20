@@ -198,6 +198,8 @@ export default {
       });
   },
   deleteUploadedFileXpath: (fileName) => {
-    cy.xpath(`//span[contains(text(), '${fileName}')]/../button[@icon='trash']`).click();
+    cy.xpath(`//span[contains(text(), '${fileName}')]/../button[@icon='trash']`).click({
+      force: true,
+    });
   },
 };
