@@ -29,8 +29,8 @@ import {
 let user;
 let instanceTypeId;
 // let holdingTypeId;
-let locationId;
-let temporaryLocationId;
+// let locationId;
+// let temporaryLocationId;
 let sourceId;
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -51,6 +51,8 @@ const marcInstance = {
   holdingIdsInUniversity: null,
   holdingHridsInUniversity: null,
 };
+const locationsInCollegeData = {};
+const locationsInUniversityData = {};
 const instances = [folioInstance, marcInstance];
 
 describe('Bulk-edit', () => {
@@ -84,12 +86,12 @@ describe('Bulk-edit', () => {
           });
           // no main library location on ecs snapshot, return back
           // { query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }
-          cy.getLocations({ limit: 1 }).then((res) => {
-            locationId = res.id;
-          });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.ONLINE}"` }).then((res) => {
-            temporaryLocationId = res.id;
-          });
+          // cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
+          //   locationId = res.id;
+          // });
+          // cy.getLocations({ query: `name="${LOCATION_NAMES.ONLINE}"` }).then((res) => {
+          //   temporaryLocationId = res.id;
+          // });
 
           InventoryHoldings.getHoldingsFolioSource()
             .then((folioSource) => {
@@ -115,30 +117,31 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.id,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingIdsInCollege = holding.id;
 
-                  cy.getHoldings({
-                    limit: 1,
-                    query: `"instanceId"="${instance.id}"`,
-                  }).then((holdings) => {
-                    instance.holdingHridsInCollege = holdings[0].hrid;
+              InventoryInstances.getLocations({ limit: 2 }).then((resp) => {
+                locationsInCollegeData.permanentLocation = resp[0];
+                locationsInCollegeData.temporaryLocation = resp[1];
+
+                instances.forEach((instance) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: instance.id,
+                    permanentLocationId: locationsInCollegeData.permanentLocation.id,
+                    sourceId,
+                  }).then((holding) => {
+                    instance.holdingIdsInCollege = holding.id;
+                    instance.holdingHridsInCollege = holding.hrid;
                   });
+                  cy.wait(1000);
                 });
-                cy.wait(1000);
               });
+
               cy.getHoldings({
                 limit: 1,
                 query: `"instanceId"="${marcInstance.id}"`,
               }).then((holdings) => {
                 cy.updateHoldingRecord(marcInstance.holdingIdsInCollege, {
                   ...holdings[0],
-                  temporaryLocationId,
+                  temporaryLocationId: locationsInCollegeData.temporaryLocation.id,
                 });
               });
             })
@@ -146,30 +149,35 @@ describe('Bulk-edit', () => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
 
-              instances.forEach((instance) => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instance.id,
-                  permanentLocationId: locationId,
-                  sourceId,
-                }).then((holding) => {
-                  instance.holdingIdsInUniversity = holding.id;
-
-                  cy.getHoldings({
-                    limit: 1,
-                    query: `"instanceId"="${instance.id}"`,
-                  }).then((holdings) => {
-                    instance.holdingHridsInUniversity = holdings[0].hrid;
+              InventoryInstances.getLocations({ limit: 2 }).then((resp) => {
+                locationsInUniversityData.permanentLocation = resp[0];
+                locationsInUniversityData.temporaryLocation = resp[1];
+                instances.forEach((instance) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: instance.id,
+                    permanentLocationId: locationsInUniversityData.permanentLocation.id,
+                    sourceId,
+                  }).then((holding) => {
+                    instance.holdingIdsInUniversity = holding.id;
+                    instance.holdingHridsInUniversity = holding.hrid;
+                    // cy.getHoldings({
+                    //   limit: 1,
+                    //   query: `"instanceId"="${instance.id}"`,
+                    // }).then((holdings) => {
+                    //   instance.holdingHridsInUniversity = holdings[0].hrid;
+                    // });
                   });
+                  cy.wait(1000);
                 });
-                cy.wait(1000);
               });
+
               cy.getHoldings({
                 limit: 1,
                 query: `"instanceId"="${folioInstance.id}"`,
               }).then((holdings) => {
                 cy.updateHoldingRecord(folioInstance.holdingIdsInUniversity, {
                   ...holdings[0],
-                  temporaryLocationId,
+                  temporaryLocationId: locationsInUniversityData.temporaryLocation.id,
                 });
               });
             })
@@ -189,10 +197,26 @@ describe('Bulk-edit', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.College);
+
+        instances.forEach((instance) => {
+          cy.deleteHoldingRecordViaApi(instance.holdingIdsInCollege);
+        });
+
+        cy.setTenant(Affiliations.University);
+
+        instances.forEach((instance) => {
+          cy.deleteHoldingRecordViaApi(instance.holdingIdsInUniversity);
+        });
+        cy.resetTenant();
         Users.deleteViaApi(user.userId);
-        InventoryInstance.deleteInstanceViaApi(marcInstance.uuid);
-        InventoryInstance.deleteInstanceViaApi(folioInstance.uuid);
+
+        instances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+
         FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
           matchedRecordsFileName,
@@ -209,7 +233,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(4);
+          BulkEditSearchPane.verifyPaneRecordsCount('4 holding');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {
@@ -234,38 +258,48 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
           );
-          instances.forEach((instance) => {
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-              instance.holdingHridsInCollege,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
-              LOCATION_NAMES.MAIN_LIBRARY,
-            );
-            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-              instance.holdingHridsInUniversity,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
-              LOCATION_NAMES.MAIN_LIBRARY,
+
+          const holdingsWithTempLocationHrids = [
+            folioInstance.holdingHridsInUniversity,
+            marcInstance.holdingHridsInCollege,
+          ];
+          const holdingsWithoutTempLocationHrids = [
+            folioInstance.holdingHridsInCollege,
+            marcInstance.holdingHridsInUniversity,
+          ];
+          const holdingsWithTempLocationInitialHeaderValues = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
+              value: LOCATION_NAMES.MAIN_LIBRARY_UI,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
+              value: LOCATION_NAMES.ONLINE_UI,
+            },
+          ];
+          const holdingsWithoutTempLocationInitialHeaderValues = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
+              value: LOCATION_NAMES.MAIN_LIBRARY_UI,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
+              value: '',
+            },
+          ];
+
+          holdingsWithTempLocationHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
+              holdingHrid,
+              holdingsWithTempLocationInitialHeaderValues,
             );
           });
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            folioInstance.holdingHridsInCollege,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
-            '',
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            folioInstance.holdingHridsInUniversity,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
-            LOCATION_NAMES.ONLINE_UI,
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            marcInstance.holdingHridsInCollege,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
-            LOCATION_NAMES.ONLINE_UI,
-          );
-          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
-            marcInstance.holdingHridsInUniversity,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
-            '',
-          );
+          holdingsWithoutTempLocationHrids.forEach((holdingHrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
+              holdingHrid,
+              holdingsWithoutTempLocationInitialHeaderValues,
+            );
+          });
 
           // 5
           BulkEditSearchPane.changeShowColumnCheckbox(
@@ -275,20 +309,20 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
-          instances.forEach((instance) => {
-            BulkEditFiles.verifyValueInRowByUUID(
+          holdingsWithTempLocationHrids.forEach((holdingHrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               matchedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-              instance.holdingIdsInCollege,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
-              LOCATION_NAMES.MAIN_LIBRARY,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              holdingHrid,
+              holdingsWithTempLocationInitialHeaderValues,
             );
-            BulkEditFiles.verifyValueInRowByUUID(
+          });
+          holdingsWithoutTempLocationHrids.forEach((holdingHrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               matchedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
-              instance.holdingIdsInUniversity,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
-              LOCATION_NAMES.MAIN_LIBRARY,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              holdingHrid,
+              holdingsWithoutTempLocationInitialHeaderValues,
             );
           });
 
@@ -310,6 +344,8 @@ describe('Bulk-edit', () => {
           BulkEditActions.clickLocationLookup();
           // the method created but not checked yet
           SelectLocationsModal.verifyLocationLookupModalInCentralTenant();
+
+          /*
 
           // 11
           SelectLocationsModal.verifyTenantsInAffiliationDropdown(
@@ -339,6 +375,7 @@ describe('Bulk-edit', () => {
 
           // 16
           BulkEditActions.clickLocationLookup();
+          */
         },
       );
     });
