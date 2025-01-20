@@ -42,7 +42,7 @@ const instances = [folioInstance, marcInstance];
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${instanceUUIDsFileName}`;
 
 describe('Bulk-edit', () => {

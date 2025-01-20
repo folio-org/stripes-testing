@@ -26,7 +26,7 @@ const item = {
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
   servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),

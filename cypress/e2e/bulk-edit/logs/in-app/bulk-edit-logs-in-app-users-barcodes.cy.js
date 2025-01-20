@@ -16,7 +16,7 @@ let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
 const validUserBarcodesFileName = `validUserBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validUserBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validUserBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${validUserBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validUserBarcodesFileName}`;
 
 const newExpirationDate = {

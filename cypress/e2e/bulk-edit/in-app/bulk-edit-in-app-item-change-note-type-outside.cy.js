@@ -28,7 +28,7 @@ const item = {
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {
