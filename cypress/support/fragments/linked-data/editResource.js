@@ -3,6 +3,7 @@ import newInstance from './newInstance';
 const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
 const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
 const viewMarcButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.viewMarc']";
+const editWorkButton = "//button[text()='Edit work']";
 
 export default {
   waitLoading() {
@@ -70,5 +71,14 @@ export default {
     cy.xpath(actionsButton).click();
     cy.xpath(viewMarcButton).click();
     cy.xpath("//div[@class='view-marc-modal']").should('be.visible');
+  },
+
+  clickEditWork() {
+    cy.xpath(editWorkButton).click();
+    cy.xpath("//div[@id='edit-section']").should('be.visible');
+  },
+
+  changeCreatorOfWork() {
+    cy.xpath("(//button[contains(@data-testid, 'changeComplexFieldValue')])[1]").click();
   },
 };
