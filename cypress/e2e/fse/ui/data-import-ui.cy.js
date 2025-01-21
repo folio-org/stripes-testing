@@ -51,7 +51,8 @@ describe('fse-data-import - UI', () => {
       DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
       JobProfiles.waitLoadingList();
       // delete uploaded file without starting job
-      JobProfiles.deleteUploadedFileXpath(testData.marcFile.fileName);
+      JobProfiles.deleteUploadedFile(testData.marcFile.fileName);
+      JobProfiles.verifyDeleteUploadedFileModal();
       JobProfiles.confirmDeleteUploadedFile();
       DataImport.waitLoadingNoInteractors();
     },
