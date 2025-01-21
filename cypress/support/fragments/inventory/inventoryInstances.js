@@ -42,6 +42,10 @@ const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
   Checkbox({ ariaLabel: 'Select instance' }),
 );
+const instanceCheckbox = (idx) => inventoriesList
+  .find(MultiColumnListRow({ index: idx }))
+  .find(Checkbox({ ariaLabel: 'Select instance' }));
+
 const singleRecordImportModal = Modal('Single record import');
 const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
@@ -186,6 +190,7 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
   .filter((option, index) => index <= 11);
 
 const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
+const exportInstanceMarcButton = Button({ id: 'dropdown-clickable-export-marc' });
 
 const defaultField008Values = {
   Alph: '\\',
@@ -345,6 +350,10 @@ export default {
     InventoryNewInstance.waitLoading();
 
     return InventoryNewInstance;
+  },
+
+  exportInstanceMarc() {
+    cy.do([actionsButton.click(), exportInstanceMarcButton.click()]);
   },
   resetAllFilters: () => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
@@ -1385,6 +1394,10 @@ export default {
       selectAllInstancesCheckbox.exists(),
       selectAllInstancesCheckbox.has({ checked: selected }),
     ]);
+  },
+
+  selectInstanceCheckboxByIndex(index) {
+    cy.do([instanceCheckbox(index).click()]);
   },
 
   checkSearchResultCount(text) {
