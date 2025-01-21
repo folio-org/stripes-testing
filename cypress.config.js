@@ -20,7 +20,6 @@ const reportportalOptions = {
 };
 
 module.exports = defineConfig({
-  watchForFileChanges: false,
   retries: {
     runMode: 0,
     openMode: 0,
@@ -39,6 +38,8 @@ module.exports = defineConfig({
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
+    z3950_login: 'z3950Admin',
+    z3950_password: 'password',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,

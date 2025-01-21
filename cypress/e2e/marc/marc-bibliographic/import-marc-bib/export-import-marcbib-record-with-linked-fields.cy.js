@@ -59,22 +59,9 @@ describe('MARC', () => {
           permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           permissions.inventoryAll.gui,
+          permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]).then((userProperties) => {
           testData.userProperties = userProperties;
-        });
-      });
-
-      after(() => {
-        cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi('C369080');
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C369080');
-        if (testData?.userProperties?.userId) Users.deleteViaApi(testData.userProperties.userId);
-      });
-
-      it(
-        'C369080 Export and Import "MARC Bibliographic" record with linked fields (which have $9 with UUID) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C369080'] },
-        () => {
           cy.loginAsAdmin({
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -93,7 +80,30 @@ describe('MARC', () => {
           cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
-          InventoryInstance.waitLoading();
+          cy.logout();
+        });
+      });
+
+      after(() => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C369080');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C369080');
+        if (testData?.userProperties?.userId) Users.deleteViaApi(testData.userProperties.userId);
+        FileManager.deleteFileFromDownloadsByMask('C369080*');
+        FileManager.deleteFile(`cypress/fixtures/${exportedInstanceFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${updatedInstanceFileName}`);
+      });
+
+      it(
+        'C369080 Export and Import "MARC Bibliographic" record with linked fields (which have $9 with UUID) (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C369080'] },
+        () => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+
+          InventoryInstances.searchByTitle(testData.createdInstanceIDs[0]);
           InventoryInstances.selectInstanceCheckboxByIndex(0);
           InventoryInstances.exportInstanceMarc();
 
@@ -122,13 +132,13 @@ describe('MARC', () => {
           DataImport.waitLoading();
 
           DataImport.uploadFilesViaApi(markfileWithout999Field).then(({ createdInstanceIDs }) => {
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.searchByTitle(createdInstanceIDs[0]);
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
 
             InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.checkLinkButtonExist('100');
-            QuickMarcEditor.checkLinkButtonExist('650');
+            QuickMarcEditor.checkLinkButtonDontExist('100');
+            QuickMarcEditor.checkLinkButtonDontExist('650');
           });
         },
       );
