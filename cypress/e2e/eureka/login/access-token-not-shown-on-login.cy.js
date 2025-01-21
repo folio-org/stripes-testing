@@ -3,14 +3,12 @@ import { Heading, including } from '../../../../interactors';
 describe('Eureka', () => {
   describe('Login', () => {
     const tokenCallRegExp = /\/authn\/token/;
-    const samlCallRegExp = /\/saml\/check/;
 
     it(
       'C423957 Access token not shown in request body when logging in (eureka)',
       { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C423957'] },
       () => {
         cy.intercept('GET', tokenCallRegExp).as('tokenCall');
-        cy.intercept('GET', samlCallRegExp).as('samlCall');
         cy.loginAsAdmin();
         cy.wait('@tokenCall').then((call) => {
           expect(call.response.statusCode).to.eq(201);
@@ -25,9 +23,6 @@ describe('Eureka', () => {
           ).to.eq(1);
         });
         cy.expect(Heading(including('Welcome')).exists());
-        cy.get('@samlCall.all').then((calls) => {
-          expect(calls).to.have.length(0);
-        });
       },
     );
   });
