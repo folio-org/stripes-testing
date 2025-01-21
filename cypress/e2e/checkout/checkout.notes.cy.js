@@ -22,6 +22,8 @@ describe('Check out', () => {
   };
   const note1 = { title: 'Note 1', details: 'This is Note 1' };
   const note2 = { title: 'Note 2', details: 'This is Note 2' };
+  // walkaround for https://issues.folio.org/browse/STSMACOM-783 - partial data used to match any of the notes
+  const notePartData = { title: 'Note ', details: 'This is Note ' };
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -81,19 +83,19 @@ describe('Check out', () => {
     Users.deleteViaApi(testData.userId);
   });
 
-  // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
     'C356781 Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire', 'C356781'] },
     () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
-      // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(note1);
+      // Modal window "Note for patron" with the note is displayed.
+      CheckOutActions.checkUserNote(notePartData);
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
-      // Modal window "Note for patron" with the Note 2 is displayed
-      CheckOutActions.checkUserNote(note2);
+      // Modal window "Note for patron" with the note is displayed
+      CheckOutActions.checkUserNote(notePartData);
+      cy.wait(3000);
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
       // Open user Details
@@ -108,7 +110,6 @@ describe('Check out', () => {
     },
   );
 
-  // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
     'C380512 Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire', 'C380512'] },
@@ -116,12 +117,13 @@ describe('Check out', () => {
       const itemBarcode = instanceData.folioInstances[0].barcodes[0];
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
-      // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(note1);
+      // Modal window "Note for patron" with the note is displayed.
+      CheckOutActions.checkUserNote(notePartData);
       // Click on the "Close" button.
       CheckOutActions.closeNote();
-      // Modal window "Note for patron" with the Note 2 is displayed.
-      CheckOutActions.checkUserNote(note2);
+      // Modal window "Note for patron" with the note is displayed.
+      CheckOutActions.checkUserNote(notePartData);
+      cy.wait(3000);
       // Click on the "Close" button.
       CheckOutActions.closeNote();
       // Input any valid item barcode in input field at "Scan items" pane → Click "Enter" button

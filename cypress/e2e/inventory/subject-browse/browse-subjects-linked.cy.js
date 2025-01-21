@@ -49,6 +49,7 @@ describe('Inventory', () => {
         Permissions.moduleDataImportEnabled.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+        InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
 
         cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
         marcFiles.forEach((marcFile) => {

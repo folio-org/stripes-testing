@@ -17,7 +17,7 @@ import ClassificationBrowse, {
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
-      classificationOption: 'Library of Congress classification',
+      classificationOption: 'Dewey Decimal classification',
       searchQueries: ['M1 33A', 'm1 33a'],
       searchResults: ['m1 33a', 'M1 33A'],
       instanceTitles: [
