@@ -62,6 +62,7 @@ export default {
     resourceTitle = `autotest_instance_title_${getRandomPostfix()}`,
     resourceType = deafultResouceType,
   ) {
+    cy.wait(1000);
     fillResourceTitle(resourceTitle);
     fillResourceType(resourceType);
     cy.wait(300);

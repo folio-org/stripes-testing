@@ -92,6 +92,7 @@ export default {
   findRowAndClickLink,
 
   suppressedAsDiscoveryIsAbsent() {
+    cy.wait(1000);
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
   },
 

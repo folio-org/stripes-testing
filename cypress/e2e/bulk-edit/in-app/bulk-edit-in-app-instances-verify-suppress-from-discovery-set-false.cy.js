@@ -56,7 +56,7 @@ const createdInstanceIds = [];
 const createdInstanceHrids = [];
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${today}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${today}-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `${today}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `${today}-Changed-Records-${instanceUUIDsFileName}`;
 const errorsFromMatchingFileName = `${today}-Matching-Records-Errors-${instanceUUIDsFileName}`;
 

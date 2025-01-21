@@ -56,7 +56,7 @@ const collegeItemLoanType = {
 const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${itemUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemUUIDsFileName}`;
 

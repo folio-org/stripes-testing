@@ -16,7 +16,7 @@ let user;
 const externalId = getRandomPostfix();
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userExternalIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userExternalIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userExternalIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${userExternalIDsFileName}`;
 
 describe('bulk-edit', () => {

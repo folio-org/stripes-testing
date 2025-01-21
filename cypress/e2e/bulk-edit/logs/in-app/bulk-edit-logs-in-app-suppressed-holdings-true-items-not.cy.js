@@ -23,7 +23,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${instanceHRIDFileName}`;
 
 describe('bulk-edit', () => {

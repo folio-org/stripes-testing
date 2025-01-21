@@ -25,7 +25,7 @@ const item = {
 };
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${itemUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
 
 describe('bulk-edit', () => {

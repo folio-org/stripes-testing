@@ -13,7 +13,7 @@ import { INSTANCE_NOTE_IDS } from '../../../support/constants';
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,

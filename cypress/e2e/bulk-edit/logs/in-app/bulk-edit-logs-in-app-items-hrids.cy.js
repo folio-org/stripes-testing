@@ -21,7 +21,7 @@ let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${itemHRIDsFileName}`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemHRIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${itemHRIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${itemHRIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${itemHRIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemHRIDsFileName}`;
 

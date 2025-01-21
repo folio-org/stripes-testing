@@ -13,7 +13,7 @@ import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const barcode = `barcode-${getRandomPostfix()}`;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,

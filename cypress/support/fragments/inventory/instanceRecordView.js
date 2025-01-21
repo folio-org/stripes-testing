@@ -397,6 +397,7 @@ export default {
   },
 
   verifyNotMarkAsStaffSuppressed() {
+    cy.wait(1000);
     cy.expect(
       rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).absent(),
     );

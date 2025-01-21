@@ -20,7 +20,7 @@ let user;
 
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validItemBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validItemBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${validItemBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validItemBarcodesFileName}`;
 
 const inventoryEntity = {

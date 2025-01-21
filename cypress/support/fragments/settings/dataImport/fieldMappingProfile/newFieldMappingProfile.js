@@ -34,8 +34,10 @@ import getRandomPostfix from '../../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const searchButton = Button('Search');
+const addDonorButton = Button('Add donor');
 const organizationLookUpButton = Button('Organization look-up');
 const organizationModal = Modal('Select Organization');
+const addDonorsModal = Modal('Add donors');
 const staffSuppressSelect = Select('Staff suppress');
 const suppressFromDiscoverySelect = Select('Suppress from discovery');
 const previouslyHeldSelect = Select('Previously held');
@@ -233,15 +235,48 @@ const addLocation = (profile) => {
   }
 };
 
+const addDonor = (profile) => {
+  if (profile.donor) {
+    for (let i = 0; i < profile.donor.length; i++) {
+      if (profile.donor[i].existingStatus === true) {
+        cy.do(addDonorButton.click());
+        cy.expect(Button('Donor look-up').exists());
+        cy.do(
+          Button({
+            id: `profile.mappingDetails.mappingFields[44].subfields.${i}.fields.0.value-plugin`,
+          }).click(),
+        );
+        cy.expect(addDonorsModal.exists());
+        cy.do(
+          addDonorsModal
+            .find(TextField({ id: 'input-record-search' }))
+            .fillIn(profile.donor[i].value),
+        );
+        cy.wait(1000);
+        cy.do(addDonorsModal.find(searchButton).click());
+        cy.expect(addDonorsModal.find(HTML(including('1 record found'))).exists());
+        cy.do(MultiColumnListCell(profile.donor[i].value).click({ row: 0, columnIndex: 0 }));
+      } else {
+        cy.do([
+          addDonorButton.click(),
+          TextField({
+            name: `profile.mappingDetails.mappingFields[44].subfields.${i}.fields.0.value`,
+          }).fillIn(profile.donor[i].value),
+        ]);
+      }
+    }
+  }
+};
+
 const addVendor = (profile) => {
   cy.wait(1000);
   cy.do([
     orderInformationAccordion.find(organizationLookUpButton).click(),
     organizationModal.find(searchField).fillIn(profile.vendor),
     organizationModal.find(searchButton).click(),
-    organizationModal.find(HTML(including('1 record found'))).exists(),
-    MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
   ]);
+  cy.expect(organizationModal.find(HTML(including('1 record found'))).exists());
+  cy.do(MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }));
 };
 
 const addMaterialSupplier = (profile) => {
@@ -367,6 +402,7 @@ export default {
   addVendorReferenceNumber,
   addFundDistriction,
   addLocation,
+  addDonor,
   addVendor,
   addMaterialSupplier,
   addAccessProvider,
@@ -730,6 +766,7 @@ export default {
     if (profile.accessProvider) {
       cy.do(TextField('Access provider').fillIn(`"${profile.accessProvider}"`));
     }
+    addDonor(profile);
   },
 
   fillTextFieldInAccordion: (accordionName, fieldName, value) => {

@@ -647,7 +647,7 @@ export default {
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
-    const options = ['Add note', 'Remove all', 'Find (full field search)', 'Change note type'];
+    const options = ['Add note', 'Remove all', 'Find', 'Change note type'];
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -781,9 +781,7 @@ export default {
     cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.action)
-        .choose('Find (full field search)'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
     ]);
   },
 
@@ -848,7 +846,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find (full field search)',
+      'Find',
       'Change note type',
       'Duplicate to',
     ];
@@ -870,7 +868,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find (full field search)',
+      'Find',
       'Change note type',
     ];
     cy.do([

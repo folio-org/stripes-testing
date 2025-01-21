@@ -31,7 +31,7 @@ describe('bulk-edit', () => {
     const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
     const matchedRecordsFileName = `${todayFormattedDate}-Matched-Records-${itemBarcodesFileName}`;
     const changedRecordsFileName = `${todayFormattedDate}-Changed-Records-${itemBarcodesFileName}`;
-    const previewFileName = `${todayFormattedDate}-Updates-Preview-${itemBarcodesFileName}`;
+    const previewFileName = `${todayFormattedDate}-Updates-Preview-CSV-${itemBarcodesFileName}`;
     const locationName = `Location / ${getRandomPostfix()}`;
 
     before('Create test data', () => {

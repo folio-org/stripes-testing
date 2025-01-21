@@ -28,7 +28,7 @@ const instance = {
   itemBarcode: getRandomPostfix(),
 };
 const actionsToSelect = {
-  find: 'Find (full field search)',
+  find: 'Find',
   remove: 'Remove',
   removeAll: 'Remove all',
 };
@@ -48,7 +48,7 @@ const editedValueSets = [
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 
 function verifyFileContent(fileName, headerValuePairs) {
