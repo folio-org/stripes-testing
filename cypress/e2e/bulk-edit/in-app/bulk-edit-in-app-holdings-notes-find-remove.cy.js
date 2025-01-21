@@ -26,20 +26,15 @@ const instance = {
   itemBarcode: getRandomPostfix(),
 };
 const actionsToSelect = {
-  find: 'Find (full field search)',
+  find: 'Find',
   remove: 'Remove',
 };
-const administrativeNoteActionOptions = [
-  'Add note',
-  'Change note type',
-  'Find (full field search)',
-  'Remove all',
-];
+const administrativeNoteActionOptions = ['Add note', 'Change note type', 'Find', 'Remove all'];
 const secondActionOptions = ['Remove', 'Replace with'];
 const reproductionNoteActionOptions = [
   'Add note',
   'Change note type',
-  'Find (full field search)',
+  'Find',
   'Mark as staff only',
   'Remove all',
   'Remove mark as staff only',
@@ -55,7 +50,7 @@ const editedValueSets = [
 ];
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceHRIDFileName}`;
 
 function verifyFileContent(fileName, headerValuePairs) {

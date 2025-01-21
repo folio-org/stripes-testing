@@ -28,7 +28,7 @@ const todayDateLocalized = DateTools.getFormattedDate({ date: new Date() }, 'M/D
 const staffSuppressOption = 'Staff suppress';
 const instanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceHRIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceHRIDsFileName}`;
 
 describe('bulk-edit', () => {

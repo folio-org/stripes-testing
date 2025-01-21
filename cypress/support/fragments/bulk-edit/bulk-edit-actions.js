@@ -34,7 +34,7 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
-const downloadPreviewBtn = Button('Download preview');
+const downloadPreviewInCSVFormatBtn = Button('Download preview in CSV format');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
@@ -185,7 +185,7 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(downloadPreviewBtn).exists(),
+      areYouSureForm.find(downloadPreviewInCSVFormatBtn).exists(),
       areYouSureForm.find(commitChanges).exists(),
     ]);
     if (cellContent) {
@@ -241,13 +241,13 @@ export default {
   },
 
   downloadPreview() {
-    cy.do(downloadPreviewBtn.click());
+    cy.do(downloadPreviewInCSVFormatBtn.click());
     // Wait for file to download
     cy.wait(3000);
   },
 
   verifyDownloadPreviewButtonDisabled(isDisabled = true) {
-    cy.expect(areYouSureForm.find(downloadPreviewBtn).has({ disabled: isDisabled }));
+    cy.expect(areYouSureForm.find(downloadPreviewInCSVFormatBtn).has({ disabled: isDisabled }));
   },
 
   clickKeepEditingBtn() {
@@ -647,7 +647,7 @@ export default {
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
-    const options = ['Add note', 'Remove all', 'Find (full field search)', 'Change note type'];
+    const options = ['Add note', 'Remove all', 'Find', 'Change note type'];
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -781,9 +781,7 @@ export default {
     cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.action)
-        .choose('Find (full field search)'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
     ]);
   },
 
@@ -848,7 +846,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find (full field search)',
+      'Find',
       'Change note type',
       'Duplicate to',
     ];
@@ -870,7 +868,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find (full field search)',
+      'Find',
       'Change note type',
     ];
     cy.do([
@@ -1252,6 +1250,14 @@ export default {
       .eq(whichSelect)
       .then(($select) => {
         expect($select.text()).to.not.contain(type);
+      });
+  },
+
+  checkTypeExists(type, rowIndex = 0, whichSelect = 0) {
+    cy.get(`[class^="repeatableField"]:eq(${rowIndex}) #urlRelationship`)
+      .eq(whichSelect)
+      .then(($select) => {
+        expect($select.text()).to.contain(type);
       });
   },
 

@@ -23,7 +23,7 @@ const item = {
   locationId: LOCATION_IDS.ANNEX,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

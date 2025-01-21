@@ -26,7 +26,7 @@ const customFieldData = {
   label2: `label2;${getRandomPostfix()}`,
 };
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {

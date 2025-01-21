@@ -67,7 +67,7 @@ const getReasonForError = (itemId) => {
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${itemUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${itemUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
 const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${itemUUIDsFileName}`;
 
@@ -83,22 +83,16 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditItems.gui,
-          ]);
+          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
+            cy.assignAffiliationToUser(affiliation, user.userId);
+            cy.setTenant(affiliation);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              permissions.bulkEditEdit.gui,
+              permissions.uiInventoryViewCreateEditItems.gui,
+            ]);
+            cy.resetTenant();
+          });
 
-          cy.resetTenant();
-          cy.assignAffiliationToUser(Affiliations.University, user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditItems.gui,
-          ]);
-
-          cy.resetTenant();
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });

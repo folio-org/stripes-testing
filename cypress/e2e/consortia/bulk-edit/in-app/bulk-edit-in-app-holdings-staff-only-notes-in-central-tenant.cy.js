@@ -49,7 +49,7 @@ const instances = [folioInstance, marcInstance];
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${holdingUUIDsFileName}`;
 const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${holdingUUIDsFileName}`;
 const getReasonForError = (itemId, tenantName) => {
@@ -68,20 +68,16 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]);
-          cy.resetTenant();
-          cy.assignAffiliationToUser(Affiliations.University, user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]);
-          cy.resetTenant();
+          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
+            cy.assignAffiliationToUser(affiliation, user.userId);
+            cy.setTenant(affiliation);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              permissions.bulkEditEdit.gui,
+              permissions.uiInventoryViewCreateEditHoldings.gui,
+            ]);
+            cy.resetTenant();
+          });
+
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });

@@ -243,6 +243,8 @@ describe('Patron notices', () => {
               Permissions.uiCirculationSettingsNoticePolicies.gui,
               Permissions.uiUsersfeefinesCRUD.gui,
               Permissions.uiUserAccounts.gui,
+              Permissions.feesfinesCheckPay.gui,
+              Permissions.feesfinesPay.gui,
             ],
             patronGroup.name,
           )

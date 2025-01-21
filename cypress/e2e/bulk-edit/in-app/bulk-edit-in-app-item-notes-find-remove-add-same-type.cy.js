@@ -20,7 +20,7 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
-const previewFileName = `*-Updates-Preview-${itemHRIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemHRIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemHRIDsFileName}`;
 
 describe('bulk-edit', () => {

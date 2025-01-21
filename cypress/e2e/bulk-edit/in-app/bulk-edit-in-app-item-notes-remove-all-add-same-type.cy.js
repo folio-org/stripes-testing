@@ -1,7 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -10,7 +10,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES, MATERIAL_TYPE_IDS } from '../../../support/constants';
+import {
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  ITEM_NOTES,
+  MATERIAL_TYPE_IDS,
+} from '../../../support/constants';
 
 let user;
 
@@ -29,7 +33,7 @@ const item = {
 };
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemHRIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${itemHRIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${itemHRIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemHRIDsFileName}`;
 
 describe('bulk-edit', () => {
@@ -99,11 +103,30 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `,${notes.admin},dvd,`,
-          `,${notes.copy},${notes.electronicBookplate}`,
-          `,${notes.checkIn},${notes.checkOut},`,
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.barcode,
+          [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+              value: notes.admin,
+            },
+            { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE, value: notes.copy },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
+              value: notes.electronicBookplate,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+              value: notes.checkIn,
+            },
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+              value: notes.checkOut,
+            },
+          ],
+        );
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
           'Copy note',
@@ -128,11 +151,37 @@ describe('bulk-edit', () => {
           notes.electronicBookplate,
         ]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [
-          ',,dvd,',
-          `,${notes.action},,,`,
-          'Available,,,',
-        ]);
+
+        const editedHeaderValues = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            value: '',
+          },
+          { header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE, value: '' },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ELECTRONIC_BOOKPLATE_NOTE,
+            value: notes.electronicBookplate,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+            value: notes.action,
+          },
+        ];
+
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.barcode,
+          editedHeaderValues,
+        );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', '');
@@ -146,11 +195,13 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          ',,dvd,',
-          `,${notes.action},,,`,
-          'Available,,,',
-        ]);
+
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.barcode,
+          editedHeaderValues,
+        );
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();

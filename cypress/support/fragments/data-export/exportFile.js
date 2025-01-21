@@ -21,6 +21,70 @@ const downloadCSVFile = (fileName, mask) => {
   });
 };
 
+const removeMarcField = ({ inputFileName, outputFileName, fieldTag }) => {
+  return FileManager.readFile(`cypress/fixtures/${inputFileName}`).then((marcData) => {
+    // Extract the leader (first 24 bytes)
+    const leaderLength = 24;
+    const leader = marcData.slice(0, leaderLength);
+    const FIELD_TERMINATOR = String.fromCharCode(30); // ASCII 30 (field terminator)
+    const RECORD_TERMINATOR = String.fromCharCode(29); // ASCII 29 (record terminator)
+
+    // Extract the directory and the record body
+    const terminatorIndex = marcData.indexOf(FIELD_TERMINATOR);
+    const directory = marcData.slice(leaderLength, terminatorIndex);
+    let recordBody = marcData.slice(terminatorIndex + 1, -1);
+
+    // Parse the directory into entries
+    const entryLength = 12; // Each directory entry is 12 characters
+    const entries = [];
+    for (let i = 0; i < directory.length; i += entryLength) {
+      const entry = directory.slice(i, i + entryLength);
+      entries.push({
+        tag: entry.slice(0, 3),
+        length: parseInt(entry.slice(3, 7), 10),
+        position: parseInt(entry.slice(7, 12), 10),
+      });
+    }
+
+    // Find the field to remove
+    const fieldToRemove = entries.find((entry) => entry.tag === fieldTag);
+    if (!fieldToRemove) {
+      cy.log(`Field ${fieldTag} not found in the MARC record.`);
+      return marcData;
+    }
+
+    // Remove the field from the record body
+    const start = fieldToRemove.position;
+    const end = start + fieldToRemove.length;
+    recordBody = recordBody.slice(0, start) + recordBody.slice(end);
+
+    // Update the directory by removing the entry and recalculating positions
+    const updatedEntries = entries
+      .filter((entry) => entry.tag !== fieldTag)
+      .map((entry) => {
+        if (entry.position > fieldToRemove.position) {
+          entry.position -= fieldToRemove.length;
+        }
+        return entry;
+      });
+
+    // Reconstruct the directory
+    const updatedDirectory = updatedEntries
+      .map((entry) => {
+        const length = String(entry.length).padStart(4, '0');
+        const position = String(entry.position).padStart(5, '0');
+        return `${entry.tag}${length}${position}`;
+      })
+      .join('');
+
+    // Reconstruct the MARC record
+    const updatedMarcData =
+      leader + updatedDirectory + FIELD_TERMINATOR + recordBody + RECORD_TERMINATOR;
+
+    return FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedMarcData);
+  });
+};
+
 const downloadExportedMarcFile = (fileName) => {
   const query =
     '(status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL)) sortby completedDate/sort.descending';
@@ -126,7 +190,7 @@ export default {
   downloadExportedMarcFileWithRecordHrid,
   waitLandingPageOpened,
   uploadFile,
-
+  removeMarcField,
   exportWithDefaultJobProfile: (
     fileName,
     jobType = 'instances',

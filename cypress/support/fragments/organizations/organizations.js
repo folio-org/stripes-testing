@@ -491,6 +491,13 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  addDonorInfoViaApi: (organizationId, requestData) => cy.okapiRequest({
+    method: 'PUT',
+    path: `organizations/organizations/${organizationId}`,
+    isDefaultSearchParamsRequired: false,
+    body: requestData,
+  }),
+
   getOrganizationViaApi: (searchParams) => cy
     .okapiRequest({
       path: 'organizations/organizations',
