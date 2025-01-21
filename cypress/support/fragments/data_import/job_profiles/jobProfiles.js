@@ -197,9 +197,4 @@ export default {
         cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
       });
   },
-  deleteUploadedFileXpath: (fileName) => {
-    cy.xpath(`//span[contains(text(), '${fileName}')]/../button[@icon='trash']`).click({
-      force: true,
-    });
-  },
 };
