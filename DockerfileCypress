@@ -8,3 +8,21 @@ FROM cypress/factory:3.5.4
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
 RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential
+# Install Chromium and necessary dependencies for running Cypress
+RUN apt-get update && apt-get install -y \
+    chromium-browser \
+    chromium-chromedriver \
+    fonts-freefont-ttf \
+    libgtk2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    libnotify-dev \
+    libgconf-2-4 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libxtst6 \
+    xauth \
+    xvfb \
+    # Clean up
+    && rm -rf /var/lib/apt/lists/*
