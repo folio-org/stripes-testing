@@ -78,7 +78,9 @@ export default {
     cy.xpath("//div[@id='edit-section']").should('be.visible');
   },
 
-  changeCreatorOfWork() {
-    cy.xpath("(//button[contains(@data-testid, 'changeComplexFieldValue')])[1]").click();
+  changeCreatorOfWork(buttonNumber) {
+    cy.xpath(
+      `(//button[contains(@data-testid, 'changeComplexFieldValue')])[${buttonNumber}]`,
+    ).click();
   },
 };

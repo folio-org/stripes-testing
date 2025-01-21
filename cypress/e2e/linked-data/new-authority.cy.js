@@ -148,6 +148,11 @@ describe('Citation: create work', () => {
       EditResource.waitLoading();
       // change authority to newly created one
       EditResource.clickEditWork();
+      InventoryInstance.verifySelectMarcAuthorityModal();
+      InventoryInstance.fillInAndSearchResults('C380565 Starr, Lisa');
+      InventoryInstance.checkResultsListPaneHeader();
+      InventoryInstance.checkSearchResultsTable();
+      InventoryInstance.selectRecord();
     },
   );
 });
