@@ -370,7 +370,6 @@ export default {
     return cy
       .then(() => proxySelect.checkedOptionText())
       .then((selectedProxy) => {
-        cy.log(selectedProxy);
         cy.getEholdingsProxiesViaAPI().then((existingProxies) => {
           const notSelectedProxy = existingProxies.filter(
             (existingProxy) => existingProxy !== selectedProxy,
