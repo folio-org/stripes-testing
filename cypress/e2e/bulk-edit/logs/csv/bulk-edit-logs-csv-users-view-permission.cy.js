@@ -47,7 +47,8 @@ describe('bulk-edit', () => {
         );
       });
 
-      it(
+      // Test case Not applicable for eureka
+      it.skip(
         'C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission (firebird)',
         { tags: ['criticalPath', 'firebird', 'C380562'] },
         () => {

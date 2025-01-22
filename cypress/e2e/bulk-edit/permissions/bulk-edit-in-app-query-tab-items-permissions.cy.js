@@ -35,7 +35,8 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it(
+    // Test case Not applicable for eureka
+    it.skip(
       'C376991 Verify Query tab permissions (In app items) (firebird)',
       { tags: ['criticalPath', 'firebird', 'C376991'] },
       () => {
