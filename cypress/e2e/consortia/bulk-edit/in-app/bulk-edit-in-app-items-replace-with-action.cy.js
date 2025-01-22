@@ -26,6 +26,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
@@ -95,7 +96,7 @@ describe('Bulk-edit', () => {
           cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
+          cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {

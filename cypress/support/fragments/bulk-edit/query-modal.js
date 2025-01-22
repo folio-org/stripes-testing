@@ -325,7 +325,8 @@ export default {
       cy.wrap($element)
         .invoke('text')
         .then((text) => {
-          const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
+          const totalRecords = text.match(/\d{1,3}(,\d{3})*|\d+/g)[0];
+          const previewRecords = Number(text.match(/\d{1,3}(,\d{3})*|\d+/g)[1]);
           const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
           expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
           expect(previewLabel).to.equal(

@@ -25,7 +25,8 @@ describe('Data Export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
+  // Test case Not applicable for eureka
+  it.skip(
     'C389473 Verify that "Settings (Data export): Can view only" permission is searchable and renamed (firebird) (Taas)',
     { tags: ['firebird', 'extendedPath', 'C389473'] },
     () => {
