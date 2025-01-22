@@ -41,6 +41,9 @@ export default {
   },
 
   verifyJobProfileInTheTable(jobProfileName) {
+    cy.wait(2000);
+    // Scroll in case the list of results is long
+    cy.get('#search-results-list [class^=mclScrollable]').scrollTo('bottom');
     cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })));
   },
 
@@ -61,6 +64,8 @@ export default {
   },
 
   clickProfileNameFromTheList(name) {
+    // Scroll in case the list of results is long
+    cy.get('#search-results-list [class^=mclScrollable]').scrollTo('bottom');
     cy.do(MultiColumnListCell(including(name)).click());
   },
 

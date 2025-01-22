@@ -151,6 +151,9 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
+    cy.wait(2000);
+    // Scroll in case the list of results is long
+    cy.get('#search-results-list [class^=mclScrollable]').scrollTo('bottom');
     cy.expect(MultiColumnListRow(including(name)).exists());
   },
 
