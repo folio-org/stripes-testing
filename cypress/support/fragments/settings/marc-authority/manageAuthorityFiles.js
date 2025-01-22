@@ -233,7 +233,7 @@ const defaultFolioAuthorityFiles = [
     name: DEFAULT_FOLIO_AUTHORITY_FILES.MEDICAL_SUBJECT_HEADINGS,
     prefix: 'D',
     startsWith: '',
-    baseUrl: 'https://id.nlm.nih.gov/mesh/1/',
+    baseUrl: 'https://id.nlm.nih.gov/mesh/',
   },
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.RARE_BOOKS_AND_MANUSCRIPTS_SECTION,

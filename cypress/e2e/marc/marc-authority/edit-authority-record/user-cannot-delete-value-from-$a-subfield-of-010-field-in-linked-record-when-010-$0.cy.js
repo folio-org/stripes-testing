@@ -22,7 +22,7 @@ describe('MARC', () => {
           keyword: 'Keyword',
           nameTitle: 'C376936 Roberts',
         },
-        errorMessage: 'Cannot remove 010 $a for this record.',
+        errorMessage: 'Cannot delete 010. It is required.',
         bib700AfterLinkingToAuth100: [
           56,
           '700',
@@ -152,12 +152,11 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
+          QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
+          QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.pressCancel();
           MarcAuthorities.checkDetailViewIncludesText(
             `${testData.subfieldPrefix} ${testData.tag010content}`,

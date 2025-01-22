@@ -167,7 +167,7 @@ describe('Data Import', () => {
           .then(() => {
             TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-            InventoryInstances.selectInstance();
+            InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
             InventoryInstance.editMarcBibliographicRecord();
             linkingTagAndValues.forEach((linking) => {
               QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
@@ -245,7 +245,7 @@ describe('Data Import', () => {
       { tags: ['extendedPath', 'spitfire', 'C374189'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -278,8 +278,8 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.searchByTitle(testData.instanceTitle);
-        InventoryInstances.selectInstance();
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated110Field);

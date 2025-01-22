@@ -17,14 +17,14 @@ describe('MARC', () => {
         tag100: '100',
         tag010: '010',
         tag010NewValue: '$a  00000912  $z n 2005070769',
-        authority100FieldValue: 'Erbil, H. Yıldırım',
+        authority100FieldValue: 'C376595 Auto Erbil, H. Yıldırım',
         searchOption: 'Keyword',
         linked100Field: [
           16,
           '100',
           '1',
           '\\',
-          '$a Erbil, H. Yıldırım',
+          '$a C376595 Auto Erbil, H. Yıldırım',
           '',
           '$0 http://id.loc.gov/authorities/names/n00000912',
           '',
@@ -34,7 +34,7 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a Erbil, H. Yıldırım',
+          '$a C376595 Auto Erbil, H. Yıldırım',
           '',
           '$0 http://id.loc.gov/authorities/names/n00000911',
           '',
@@ -58,7 +58,7 @@ describe('MARC', () => {
           fileName: `C376595 testMarcFileC376595${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           propertyName: 'authority',
-          authorityHeading: 'Erbil, H. Yıldırım',
+          authorityHeading: 'C376595 Auto Erbil, H. Yıldırım',
         },
       ];
 
@@ -67,6 +67,7 @@ describe('MARC', () => {
       before('Create test data', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376595*');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(

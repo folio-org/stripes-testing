@@ -12,6 +12,7 @@ import {
   MultiSelect,
   MultiSelectMenu,
   including,
+  ValueChipRoot,
 } from '../../../../../../interactors';
 
 const classificationBrowseSectionName = 'Classification browse';
@@ -201,10 +202,11 @@ export default {
     cy.do(MultiSelectMenu().find(MultiSelectOption(option)).click());
   },
 
-  checkOptionSelectedInClassificationIdentifierTypesDropdown(browseOption, option) {
+  checkOptionSelectedInClassificationIdentifierTypesDropdown(browseOption, optionsArray) {
     const targetRow = this.getTargetRowWithClassificationName(browseOption);
-
-    cy.expect(targetRow.find(MultiSelect({ selected: option })).exists());
+    optionsArray.forEach((option) => {
+      cy.expect(targetRow.find(ValueChipRoot(option)).exists());
+    });
   },
 
   clickSaveButtonInBrowseOption(browseOption) {

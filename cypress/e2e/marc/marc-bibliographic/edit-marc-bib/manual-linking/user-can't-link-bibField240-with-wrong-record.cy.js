@@ -160,6 +160,7 @@ describe('MARC', () => {
               QuickMarcEditor.checkCallout(testData.errorMessage);
               InventoryInstance.verifySelectMarcAuthorityModal();
               MarcAuthorities.closeAuthoritySourceOption();
+              MarcAuthorities.verifyNoSourceOptionsSelected();
             });
           },
         );
