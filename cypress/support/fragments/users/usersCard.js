@@ -651,6 +651,7 @@ export default {
   },
 
   selectRolesAffiliation(affiliation) {
+    cy.wait(1000);
     cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
     this.checkSelectedRolesAffiliation(affiliation);
   },
