@@ -12,7 +12,8 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 let firstUser;
 let secondUser;
 
-describe('bulk-edit', () => {
+// Test cases Not applicable for eureka
+describe.skip('bulk-edit', () => {
   describe('permissions', () => {
     before('create test data', () => {
       cy.createTempUser([

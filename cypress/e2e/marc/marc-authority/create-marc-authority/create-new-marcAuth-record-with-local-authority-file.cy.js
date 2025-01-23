@@ -119,6 +119,8 @@ describe('MARC', () => {
           // 7 Close the detail view pane by clicking on "X" icon placed in the left upper corner of the pane
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
+          // workaround for an issue when detailed view is not opened when using a filter after record creation - team won't fix it
+          cy.reload();
 
           // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
           MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');

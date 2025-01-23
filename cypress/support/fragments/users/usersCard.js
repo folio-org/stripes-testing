@@ -21,6 +21,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  or,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -61,6 +62,7 @@ const usersPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const profilePictureCard = Image({ alt: 'Profile picture' });
 const lastNameField = KeyValue('Last name');
 const firstNameField = KeyValue('First name');
+const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 
 export default {
   errors,
@@ -640,5 +642,16 @@ export default {
       rootSection.find(lastNameField).has({ value: lastName }),
       rootSection.find(firstNameField).has({ value: firstName }),
     ]);
+  },
+
+  checkSelectedRolesAffiliation(affiliation) {
+    cy.expect(
+      rolesAffiliationSelect.has({ singleValue: or(affiliation, `${affiliation} (Primary)`) }),
+    );
+  },
+
+  selectRolesAffiliation(affiliation) {
+    cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
+    this.checkSelectedRolesAffiliation(affiliation);
   },
 };

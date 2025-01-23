@@ -60,7 +60,8 @@ export default {
       TENANTS.ADDRESSES,
       TENANTS.LANGUAGE_AND_LOCALIZATION,
       TENANTS.PREFERRED_PLUGINS,
-      TENANTS.SSO_SETTINGS,
+      // there is no 'SSO settings' module in eureka env https://folio-org.atlassian.net/browse/EUREKA-480
+      // TENANTS.SSO_SETTINGS,
       TENANTS.SERVICE_POINTS,
     ].forEach((item) => {
       if (exist) {

@@ -1662,4 +1662,8 @@ export default {
       });
     });
   },
+
+  verifyNoSourceOptionsSelected() {
+    cy.expect(sourceFileAccordion.find(ValueChipRoot()).absent());
+  },
 };

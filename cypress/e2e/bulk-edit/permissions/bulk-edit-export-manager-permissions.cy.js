@@ -52,7 +52,8 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it(
+    // Test case Not applicable for eureka
+    it.skip(
       'C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
       { tags: ['criticalPath', 'firebird', 'C353978'] },
       () => {

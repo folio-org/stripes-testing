@@ -19,9 +19,9 @@ describe('eHoldings', () => {
     before('Creating usera and creating data', () => {
       cy.createTempUser([
         Permissions.uiAgreementsAgreementsEdit.gui,
-        Permissions.uiAgreementsSearchAndView,
+        Permissions.uiAgreementsSearchAndView.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
-        Permissions.uiAgreementsSearch,
+        Permissions.uiAgreementsSearch.gui,
       ])
         .then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;

@@ -22,6 +22,8 @@ const cancelButton = Button('Cancel');
 
 export default {
   clickProfileNameFromTheList(name) {
+    // Scroll in case the list of results is long
+    cy.get('#search-results-list [class^=mclScrollable]').scrollTo('bottom');
     cy.do(MultiColumnListCell(including(name)).click());
   },
 
