@@ -1,6 +1,6 @@
-import { INSTANCE_DATE_TYPES } from '../../../support/constants';
-import { Permissions } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
+import { INSTANCE_DATE_TYPES } from '../../../../support/constants';
+import { Permissions } from '../../../../support/dictionary';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Settings', () => {
