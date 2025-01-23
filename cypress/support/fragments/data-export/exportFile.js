@@ -1,8 +1,19 @@
 import { HTML } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
-import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
+import {
+  Button,
+  Modal,
+  MultiColumnListCell,
+  Pane,
+  Select,
+  TextField,
+} from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
+
+const paneResults = Pane({ id: 'pane-results' });
+const searchButton = Button('Search');
+const searchField = TextField({ id: 'input-search-field' });
 
 const downloadCSVFile = (fileName, mask) => {
   // retry until file has been downloaded
@@ -120,12 +131,22 @@ const uploadFile = (fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
 };
 
+const search = (jobProfileTitle) => {
+  cy.wait(1500);
+  cy.do(paneResults.find(searchField).focus());
+  cy.wait(1500);
+  cy.expect(paneResults.find(searchField).exists());
+  cy.wait(1500);
+  cy.do([paneResults.find(searchField).fillIn(jobProfileTitle), searchButton.click()]);
+};
+
 export default {
   downloadCSVFile,
   downloadExportedMarcFile,
   downloadExportedMarcFileWithRecordHrid,
   waitLandingPageOpened,
   uploadFile,
+  search,
 
   exportWithDefaultJobProfile: (
     fileName,
@@ -133,6 +154,7 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
+    search(`Default ${jobType} export job profile`);
     cy.do([
       MultiColumnListCell({
         content: `Default ${jobType} export job profile`,

@@ -18,6 +18,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import {
@@ -167,10 +168,11 @@ describe('Data Import', () => {
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
-          InventorySearchAndFilter.resetAll();
+
           InventorySearchAndFilter.waitLoading();
           // check fields are absent in the view source
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InventoryInstances.selectInstance();
           InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.verifyResourceIdentifier(
             resourceIdentifiers[0].type,
@@ -258,6 +260,7 @@ describe('Data Import', () => {
           InventoryViewSource.close();
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InventoryInstances.selectInstance();
           InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.checkIsInstanceUpdated();
           // verify table data in marc bibliographic source
@@ -270,8 +273,8 @@ describe('Data Import', () => {
 
         // export instance
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+        InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
@@ -308,6 +311,8 @@ describe('Data Import', () => {
         // check instance is updated
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+        InventoryInstances.selectInstance();
+        InstanceRecordView.verifyInstancePaneExists();
         InventoryInstance.checkIsInstanceUpdated();
 
         // verify table data in marc bibliographic source
