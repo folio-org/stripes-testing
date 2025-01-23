@@ -13,26 +13,14 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      roleAName: `Auto Role A C466113 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C466113 ${getRandomPostfix()}`,
-      roleCName: `Auto Role C C466113 ${getRandomPostfix()}`,
+      roleAName: `Auto Role A C633471 ${getRandomPostfix()}`,
+      roleBName: `Auto Role B C633471 ${getRandomPostfix()}`,
+      roleCName: `Auto Role C C633471 ${getRandomPostfix()}`,
     };
 
-    const capabSetsToAssign = [
-      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-    ];
+    const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
 
-    const capabsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-      { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
-    ];
+    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
@@ -98,8 +86,8 @@ describe('Eureka', () => {
     });
 
     it(
-      'C466113 Assigning roles to a user when editing user (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C466113'] },
+      'C633471 [UIU-3301] Assigning roles to a user when editing user while having ui-users.roles - Manage (eureka)',
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C633471'] },
       () => {
         UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('0');

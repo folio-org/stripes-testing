@@ -12,18 +12,12 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      role0Name: `Auto Role 0 C464314 ${getRandomPostfix()}`,
-      roleAName: `Auto Role A C464314 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C464314 ${getRandomPostfix()}`,
+      role0Name: `Auto Role 0 C627435 ${getRandomPostfix()}`,
+      roleAName: `Auto Role A C627435 ${getRandomPostfix()}`,
+      roleBName: `Auto Role B C627435 ${getRandomPostfix()}`,
     };
 
-    const capabSetsToAssign = [
-      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-    ];
+    const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
 
     const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
@@ -94,8 +88,8 @@ describe('Eureka', () => {
     });
 
     it(
-      'C464314 Assigned roles shown in user detailed view (eureka)',
-      { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C464314'] },
+      'C627435 [UIU-3301] Assigned roles shown in user detailed view while having ui-users.roles - Manage (eureka)',
+      { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C627435'] },
       () => {
         UsersSearchPane.selectUserFromList(testData.userB.username);
         UsersCard.verifyUserRolesCounter('1');

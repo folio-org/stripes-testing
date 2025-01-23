@@ -14,37 +14,26 @@ describe('Eureka', () => {
   describe('Users', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleAName: `Auto Role A C499897 ${randomPostfix}`,
-      roleBName: `Auto Role B C499897 ${randomPostfix}`,
+      roleAName: `Auto Role A C627437 ${randomPostfix}`,
+      roleBName: `Auto Role B C627437 ${randomPostfix}`,
       promotePath: '/users-keycloak/auth-users',
       userBody: {
         type: 'staff',
         active: true,
-        username: `userc499897${randomPostfix}`,
+        username: `userc627437${randomPostfix}`,
         patronGroup: '',
         personal: {
-          lastName: `Last c499897 ${randomPostfix}`,
-          firstName: `First c499897 ${randomPostfix}`,
+          lastName: `Last c627437 ${randomPostfix}`,
+          firstName: `First c627437 ${randomPostfix}`,
           email: 'testuser@test.org',
           preferredContactTypeId: '002',
         },
       },
     };
 
-    const capabSetsToAssign = [
-      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-    ];
+    const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
 
-    const capabsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-      { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
-    ];
+    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
@@ -87,8 +76,8 @@ describe('Eureka', () => {
     });
 
     it(
-      'C499897 Assigning roles to a user without Keycloak record when editing user (eureka)',
-      { tags: ['smoke', 'eureka', 'C499897'] },
+      'C627437 [UIU-3301] Assigning roles to a user without Keycloak record when editing user while having ui-users.roles - Manage (eureka)',
+      { tags: ['smoke', 'eureka', 'C627437'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.userBody.username);
         UsersSearchPane.selectUserFromList(testData.userBody.username);

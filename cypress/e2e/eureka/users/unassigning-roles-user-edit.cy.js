@@ -13,27 +13,15 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 describe('Eureka', () => {
   describe('Users', () => {
     const testData = {
-      roleAName: `Auto Role A C466114 ${getRandomPostfix()}`,
-      roleBName: `Auto Role B C466114 ${getRandomPostfix()}`,
-      roleCName: `Auto Role C C466114 ${getRandomPostfix()}`,
-      roleDName: `Auto Role D C466114 ${getRandomPostfix()}`,
+      roleAName: `Auto Role A C627439 ${getRandomPostfix()}`,
+      roleBName: `Auto Role B C627439 ${getRandomPostfix()}`,
+      roleCName: `Auto Role C C627439 ${getRandomPostfix()}`,
+      roleDName: `Auto Role D C627439 ${getRandomPostfix()}`,
     };
 
-    const capabSetsToAssign = [
-      { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
-      { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-    ];
+    const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
 
-    const capabsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-      { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-      { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
-    ];
+    const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
@@ -121,8 +109,8 @@ describe('Eureka', () => {
     });
 
     it(
-      'C466114 Unassigning roles when editing user (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C466114'] },
+      'C627439 [UIU-3301] Unassigning roles when editing user while having ui-users.roles - Manage (eureka)',
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627439'] },
       () => {
         UsersCard.verifyUserRolesCounter('4');
         UserEdit.openEdit();

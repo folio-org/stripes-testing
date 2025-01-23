@@ -30,10 +30,7 @@ describe('Eureka', () => {
 
     const roleToRemove = testData.allRoleNamesSorted[6];
 
-    const capabSetsForTestUser = [
-      { type: 'Data', resource: 'UI-Users Roles', action: 'Manage' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
-    ];
+    const capabSetsForTestUser = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
 
     before('Create users, roles', () => {
       cy.getAdminToken();
@@ -75,8 +72,8 @@ describe('Eureka', () => {
     });
 
     it(
-      'C476793 Roles rows are sorted when viewing/editing a user (eureka)',
-      { tags: ['extendedPath', 'eureka', 'C476793'] },
+      'C627440 [UIU-3301] Roles rows are sorted when viewing/editing a user while having ui-users.roles - Manage (eureka)',
+      { tags: ['extendedPath', 'eureka', 'C627440'] },
       () => {
         UsersCard.verifyUserRolesCounter(originalRoleNamesRandomized.length + '');
         UsersCard.clickUserRolesAccordion();
