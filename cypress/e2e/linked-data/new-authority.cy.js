@@ -2,7 +2,11 @@ import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import EditResource from '../../support/fragments/linked-data/editResource';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  MARC_AUTHORITY_SEARCH_OPTIONS,
+} from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
@@ -13,6 +17,8 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import PreviewResource from '../../support/fragments/linked-data/previewResource';
 import FileManager from '../../support/utils/fileManager';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
+import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 
 describe('Citation: create work', () => {
   const testData = {
@@ -109,10 +115,10 @@ describe('Citation: create work', () => {
   });
 
   it(
-    'Cxxxx [User journey] LDE - Create new MARC authority (citation)',
+    'C633470 [User journey] LDE - Create new MARC authority (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // create new authority
+      // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();
       QuickMarcEditor.checkPaneheaderContains(testData.headerText);
       QuickMarcEditor.verifyAuthorityLookUpButton();
@@ -139,7 +145,7 @@ describe('Citation: create work', () => {
       MarcAuthority.getId().then((id) => {
         testData.authorityId = id;
       });
-      // search for inventory item and edit it in LDE
+      // search for inventory item (created in precondition via data import) and edit it in LDE
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       InventoryInstances.searchByTitle(testData.uniqueTitle);
       InventoryInstance.editInstanceInLde();
@@ -148,11 +154,25 @@ describe('Citation: create work', () => {
       EditResource.waitLoading();
       // change authority to newly created one
       EditResource.clickEditWork();
-      InventoryInstance.verifySelectMarcAuthorityModal();
-      InventoryInstance.fillInAndSearchResults('C380565 Starr, Lisa');
-      InventoryInstance.checkResultsListPaneHeader();
-      InventoryInstance.checkSearchResultsTable();
-      InventoryInstance.selectRecord();
+      // change first creator of work section
+      EditResource.selectChangeCreatorOfWork(1);
+      EditResource.switchToSearchTabMarcAuthModal();
+      // search by personal name
+      EditResource.selectSearchParameterMarcAuthModal(MARC_AUTHORITY_SEARCH_OPTIONS.PERSONAL_NAME);
+      EditResource.searchMarcAuthority(testData.marcValue);
+      EditResource.selectAssignMarcAuthorityButton(1);
+      EditResource.saveAndClose();
+      // LDE filters are displayed indicating that edit form was closed
+      SearchAndFilter.waitLoading();
+      // search created work by title
+      SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
+      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueTitle);
+      // open work
+      LinkedDataEditor.selectFromSearchTable(1);
+      LinkedDataEditor.editWork();
+      EditResource.waitLoading();
+      // check that marc value is displayed on the 'creator of work' section
+      EditResource.checkLabelTextValue('Creator of Work', testData.marcValue);
     },
   );
 });
