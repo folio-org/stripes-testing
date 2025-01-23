@@ -3,6 +3,7 @@ import { recurse } from 'cypress-recurse';
 import { Button, Modal, MultiColumnListCell, Pane, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
+import SelectJobProfile from './selectJobProfile';
 
 const downloadCSVFile = (fileName, mask) => {
   // retry until file has been downloaded
@@ -133,6 +134,7 @@ export default {
     selectType = 'Instances',
     fileType = '.csv',
   ) => {
+    SelectJobProfile.searchForAJobProfile(`Default ${jobType} export job profile`);
     cy.do([
       MultiColumnListCell({
         content: `Default ${jobType} export job profile`,

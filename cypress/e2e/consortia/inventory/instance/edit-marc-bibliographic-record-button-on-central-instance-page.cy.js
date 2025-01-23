@@ -60,12 +60,12 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventoryInstance.waitLoading();
-        cy.wait('@/authn/refresh', { timeout: 5000 });
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.waitLoading();
+        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
+        cy.wait('@/authn/refresh', { timeout: 5000 });
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({
