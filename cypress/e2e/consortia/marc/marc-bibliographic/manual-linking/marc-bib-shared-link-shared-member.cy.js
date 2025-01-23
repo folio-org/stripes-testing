@@ -63,7 +63,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(linkingTagAndValues.authorityHeading);
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -93,16 +93,14 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileNameImported,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileNameImported,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
