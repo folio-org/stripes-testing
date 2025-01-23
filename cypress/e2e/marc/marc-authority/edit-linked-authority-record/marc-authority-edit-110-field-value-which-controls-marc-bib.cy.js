@@ -20,7 +20,7 @@ describe('MARC', () => {
         tagsForChanging: ['100', '101', '110', '111', '130', '150', '151', '155'],
         createdRecordIDs: [],
         searchOption: 'Keyword',
-        marcValue: 'Best, Pete,',
+        marcValue: 'C374139 Best, Pete,',
         errorMessageAfterChangingTag:
           'Cannot change the saved MARC authority field 110 because it controls a bibliographic field(s). To change this 1XX, you must unlink all controlled bibliographic fields.',
         errorMessageAfterSaving: 'Record cannot be saved without 1XX field.',

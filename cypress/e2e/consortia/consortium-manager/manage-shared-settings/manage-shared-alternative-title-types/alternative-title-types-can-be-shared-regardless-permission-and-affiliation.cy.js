@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { calloutTypes } from '../../../../../../interactors';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConsortiumManagerApp, {
@@ -120,12 +119,6 @@ describe('Consortia', () => {
               name: alternativeTitleTypes4.name,
             });
             ConsortiaControlledVocabularyPaneset.clickSave();
-            const rowDataToCheck = [
-              alternativeTitleTypes4.name,
-              'consortium',
-              moment().format('l'),
-              'All',
-            ];
 
             ConfirmShare.waitLoadingConfirmShareToAll(alternativeTitleTypes4.name);
             ConfirmShare.clickConfirm();
@@ -135,10 +128,10 @@ describe('Consortia', () => {
               messages.noPermission(tenantNames.college),
               calloutTypes.error,
             );
-            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(alternativeTitleTypes4.name, [
-              'edit',
-              'trash',
-            ]);
+            ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+              alternativeTitleTypes4.name,
+              ['edit', 'trash'],
+            );
 
             ConsortiaControlledVocabularyPaneset.createViaUi(true, alternativeTitleTypes5);
             ConsortiaControlledVocabularyPaneset.clickSave();

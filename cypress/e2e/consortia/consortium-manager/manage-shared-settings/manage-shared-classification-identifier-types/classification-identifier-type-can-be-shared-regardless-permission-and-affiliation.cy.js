@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { calloutTypes } from '../../../../../../interactors';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConsortiumManagerApp, {
@@ -123,12 +122,6 @@ describe('Consortia', () => {
               name: classificationType4.name,
             });
             ConsortiaControlledVocabularyPaneset.clickSave();
-            const createdCIT = [
-              classificationType4.name,
-              'consortium',
-              moment().format('l'),
-              'All',
-            ];
 
             ConfirmShare.waitLoadingConfirmShareToAll(classificationType4.name);
             ConfirmShare.clickConfirm();

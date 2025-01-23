@@ -97,6 +97,8 @@ describe('MARC', () => {
           MarcAuthority.contains(newFields[0].content);
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
+          // workaround for an issue when detailed view is not opened when using a filter after record creation - team won't fix it
+          cy.reload();
           MarcAuthorities.checkRecordsResultListIsAbsent();
           MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, testData.marcValue);
