@@ -88,7 +88,7 @@ describe('Inventory', () => {
         cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-
+        BrowseContributors.waitForContributorToAppear(testData.contributorName);
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
         BrowseContributors.searchRecordByName(testData.contributorName);
@@ -108,6 +108,8 @@ describe('Inventory', () => {
         cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.constinueWithSaveAndCheckInstanceRecord();
+
+        BrowseContributors.waitForContributorToAppear(testData.contributorName, false);
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();

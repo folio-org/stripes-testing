@@ -82,6 +82,11 @@ describe('Inventory', () => {
 
     before('Creating user and instance with item with call number', () => {
       cy.getAdminToken().then(() => {
+        InventoryInstances.getInstancesViaApi({ query: 'title="instanceForRecord_"' }).then(
+          (inst) => {
+            inst.forEach((instance) => InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id));
+          },
+        );
         cy.createTempUser([permissions.inventoryAll.gui, permissions.uiCallNumberBrowse.gui]).then(
           (userProperties) => {
             testData.user = userProperties;
