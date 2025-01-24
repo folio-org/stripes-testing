@@ -787,13 +787,21 @@ export default {
     cy.expect(userRolesAccordion.has({ counter: expectedCount }));
   },
 
-  clickUserRolesAccordion(isExpanded = true) {
+  clickUserRolesAccordion(isExpanded = true, isEditable = true) {
     cy.do(userRolesAccordion.clickHeader());
-    cy.expect([
-      userRolesAccordion.has({ open: isExpanded }),
-      addRolesButton.exists(),
-      unassignAllRolesButton.has({ disabled: or(true, false) }),
-    ]);
+    cy.expect(userRolesAccordion.has({ open: isExpanded }));
+    if (isEditable) {
+      cy.expect([
+        addRolesButton.exists(),
+        unassignAllRolesButton.has({ disabled: or(true, false) }),
+      ]);
+    } else {
+      cy.expect([
+        addRolesButton.absent(),
+        unassignAllRolesButton.absent(),
+        userRoleDeleteIcon.absent(),
+      ]);
+    }
   },
 
   verifyUserRolesAccordionEmpty() {
@@ -834,27 +842,19 @@ export default {
     cy.wait(1000);
   },
 
-  verifyUserRoleNames(roleNames) {
+  verifyUserRoleNames(roleNames, isEditable = true) {
     roleNames.forEach((roleName) => {
-      cy.expect(
-        userRolesAccordion
-          .find(
-            ListItem(including(roleName)).find(
-              Button({ id: including('clickable-remove-user-role') }),
-            ),
-          )
-          .exists(),
-      );
+      const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+      if (isEditable) cy.expect(roleItem.find(userRoleDeleteIcon).exists());
+      else cy.expect(roleItem.exists());
     });
   },
 
-  verifyUserRoleNamesOrdered(roleNames) {
+  verifyUserRoleNamesOrdered(roleNames, isEditable = true) {
     roleNames.forEach((roleName, index) => {
-      cy.expect(
-        userRolesAccordion
-          .find(ListItem(including(roleName), { index }).find(userRoleDeleteIcon))
-          .exists(),
-      );
+      const roleItem = userRolesAccordion.find(ListItem(including(roleName), { index }));
+      if (isEditable) cy.expect(roleItem.find(userRoleDeleteIcon).exists());
+      else cy.expect(roleItem.exists());
     });
   },
 
