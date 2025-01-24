@@ -101,7 +101,6 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('URL Relationship');
         BulkEditActions.deleteRow(1);
-
         BulkEditActions.selectOption('URL Relationship');
         BulkEditActions.selectSecondAction('Find (full field search)');
         BulkEditActions.verifyActionSelected('Find (full field search)');
