@@ -15,6 +15,7 @@ const team = {
   Vega: 9,
   Volaris: 13,
   Corsair: 19,
+  Eureka: 21,
 };
 
 async function getTestHistory(api, caseId, runId) {
