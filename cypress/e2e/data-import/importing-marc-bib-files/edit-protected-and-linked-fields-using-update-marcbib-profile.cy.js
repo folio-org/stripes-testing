@@ -93,11 +93,11 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 16,
-        value: 'C380511 Ludwig one, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig v., Beethoven, 1770-1827',
         tag: '100',
       },
       {
-        rowIndex: 18,
+        rowIndex: 17,
         value:
           'C380511 Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',

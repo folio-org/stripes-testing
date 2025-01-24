@@ -102,6 +102,8 @@ describe('Inventory', () => {
         );
         InstanceRecordEdit.saveAndClose();
 
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
+
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
@@ -158,6 +160,8 @@ describe('Inventory', () => {
         );
         InstanceRecordEdit.saveAndClose();
 
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
+
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
@@ -188,6 +192,8 @@ describe('Inventory', () => {
           testData.contributor.types.architect,
         );
         InstanceRecordEdit.saveAndClose();
+
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
