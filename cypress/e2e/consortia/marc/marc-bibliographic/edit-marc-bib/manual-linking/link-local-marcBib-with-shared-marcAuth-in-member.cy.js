@@ -131,6 +131,8 @@ describe('MARC', () => {
                     linkingTagAndValues.rowIndex,
                   );
                   QuickMarcEditor.pressSaveAndClose();
+                  cy.wait(1500);
+                  QuickMarcEditor.pressSaveAndClose();
                   QuickMarcEditor.checkAfterSaveAndClose();
                 });
 
@@ -199,6 +201,8 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
+            QuickMarcEditor.clickSaveAndKeepEditing();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(

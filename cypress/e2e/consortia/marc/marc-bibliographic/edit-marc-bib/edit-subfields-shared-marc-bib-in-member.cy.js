@@ -132,6 +132,8 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(1500);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);

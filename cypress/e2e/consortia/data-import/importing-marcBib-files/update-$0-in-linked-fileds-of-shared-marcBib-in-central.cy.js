@@ -210,6 +210,8 @@ describe('Data Import', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
         .then(() => {
@@ -235,23 +237,27 @@ describe('Data Import', () => {
         .then(() => {
           // adding Holdings in College for shared Instance
           cy.setTenant(Affiliations.College);
-          const collegeLocationData = Locations.getDefaultLocation({
-            servicePointId: ServicePoints.getDefaultServicePoint().id,
-          }).location;
-          Locations.createViaApi(collegeLocationData).then((location) => {
-            testData.collegeLocation = location;
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: createdAuthorityIDs[0],
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              testData.collegeHoldings.push(holding);
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            const universityHoldingsSourceId = folioSource.id;
+            const collegeLocationData = Locations.getDefaultLocation({
+              servicePointId: ServicePoints.getDefaultServicePoint().id,
+            }).location;
+            Locations.createViaApi(collegeLocationData).then((location) => {
+              testData.collegeLocation = location;
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: createdAuthorityIDs[0],
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: universityHoldingsSourceId,
+              }).then((holding) => {
+                testData.collegeHoldings.push(holding);
+              });
             });
-          });
 
-          cy.resetTenant();
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+            cy.resetTenant();
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
     });

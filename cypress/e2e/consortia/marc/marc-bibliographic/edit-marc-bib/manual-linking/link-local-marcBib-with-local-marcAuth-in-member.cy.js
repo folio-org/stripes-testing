@@ -79,6 +79,7 @@ describe('MARC', () => {
               cy.resetTenant();
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405560');
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -152,6 +153,8 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
+            QuickMarcEditor.clickSaveAndKeepEditing();
+            cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
