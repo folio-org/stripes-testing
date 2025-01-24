@@ -190,7 +190,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {
@@ -304,7 +304,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {

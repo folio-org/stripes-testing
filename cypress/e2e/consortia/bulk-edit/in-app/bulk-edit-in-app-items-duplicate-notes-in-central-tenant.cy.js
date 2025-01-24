@@ -183,7 +183,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           const itemBarcodes = [folioInstance.barcodeInCollege, marcInstance.barcodeInCollege];
@@ -294,7 +294,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           itemBarcodes.forEach((barcode) => {

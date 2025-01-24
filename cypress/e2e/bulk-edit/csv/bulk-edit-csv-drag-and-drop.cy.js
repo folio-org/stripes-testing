@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyMatchedResults(testData.user.username);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 user');
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

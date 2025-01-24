@@ -800,8 +800,9 @@ export default {
     this.fillInSecondTextArea(newNote, rowIndex);
   },
 
-  electronicAccessReplaceWith(property, oldValue, newValue, rowIndex = 0) {
-    this.findValue(property, rowIndex);
+  urlRelationshipReplaceWith(oldValue, newValue, rowIndex = 0) {
+    this.selectOption('URL Relationship');
+    this.selectSecondAction('Find (full field search)');
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
@@ -990,6 +991,7 @@ export default {
     cy.wait(2000);
     cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
+    cy.wait(1000);
   },
 
   saveAndClose() {

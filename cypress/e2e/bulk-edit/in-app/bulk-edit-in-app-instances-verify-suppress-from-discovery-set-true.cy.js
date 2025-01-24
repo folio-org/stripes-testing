@@ -262,7 +262,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);
-        BulkEditSearchPane.verifyPaneRecordsCount('6');
+        BulkEditSearchPane.verifyPaneRecordsCount('6 instance');
         BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
 
         createdInstanceHrids.forEach((instanceHrid) => {
@@ -273,7 +273,7 @@ describe('bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyErrorLabel(instanceUUIDsFileName, 6, 5);
+        BulkEditSearchPane.verifyErrorLabel(5);
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
