@@ -129,6 +129,8 @@ describe('MARC', () => {
                 linkingTagAndValues.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
           });
@@ -156,6 +158,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(1);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);

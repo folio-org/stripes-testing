@@ -80,6 +80,7 @@ describe('MARC', () => {
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(testData.authorityId);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
+        cy.wait(5000);
         cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
       });
 
@@ -95,7 +96,9 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
-          MarcAuthority.addNewField(4, newField.tag, newField.content);
+          MarcAuthority.addNewFieldAfterExistingByTag('008', newField.tag, newField.content);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
@@ -114,7 +117,7 @@ describe('MARC', () => {
 
           MarcAuthorities.chooseAuthoritySourceOption(testData.sourceName);
           MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.sourceName]);
-          MarcAuthorities.selectTitle(testData.marcValue);
+          MarcAuthorities.selectIncludingTitle(testData.marcValue);
           MarcAuthorities.checkAfterSearch(
             testData.AUTHORIZED,
             `${testData.sharedIcon}${testData.marcValue}`,

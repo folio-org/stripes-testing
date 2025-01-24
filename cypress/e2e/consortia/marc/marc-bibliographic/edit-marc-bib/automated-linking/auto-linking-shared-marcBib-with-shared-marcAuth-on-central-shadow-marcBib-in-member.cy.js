@@ -155,16 +155,20 @@ describe('MARC', () => {
             .then(() => {
               // adding Holdings in College for shared Instance
               cy.setTenant(Affiliations.College);
-              const collegeLocationData = Locations.getDefaultLocation({
-                servicePointId: ServicePoints.getDefaultServicePoint().id,
-              }).location;
-              Locations.createViaApi(collegeLocationData).then((location) => {
-                testData.collegeLocation = location;
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: createdRecordIDs[0],
-                  permanentLocationId: testData.collegeLocation.id,
-                }).then((holding) => {
-                  testData.collegeHoldings.push(holding);
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                const collegeHoldingsSourceId = folioSource.id;
+                const collegeLocationData = Locations.getDefaultLocation({
+                  servicePointId: ServicePoints.getDefaultServicePoint().id,
+                }).location;
+                Locations.createViaApi(collegeLocationData).then((location) => {
+                  testData.collegeLocation = location;
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: createdRecordIDs[0],
+                    permanentLocationId: testData.collegeLocation.id,
+                    sourceId: collegeHoldingsSourceId,
+                  }).then((holding) => {
+                    testData.collegeHoldings.push(holding);
+                  });
                 });
               });
 
@@ -213,6 +217,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.notLinked710Field);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();

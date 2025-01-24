@@ -72,50 +72,55 @@ describe('Inventory', () => {
                   testData.contributorTypeName = contributorTypes[0].name;
 
                   cy.setTenant(Affiliations.College);
-                  InventoryInstance.createInstanceViaApi({
-                    instanceTitle: testData.localInstanceTitle,
-                  }).then((body) => {
-                    cy.getInstanceById(body.instanceData.instanceId).then((body2) => {
-                      const requestBodyLocal = body2;
-                      requestBodyLocal.contributors = [
-                        {
-                          name: `${contributorPrefix} 1`,
-                          contributorNameTypeId: contributorNameTypes[0].id,
-                          contributorTypeId: contributorTypes[0].id,
-                          contributorTypeText: '',
-                          primary: false,
-                        },
-                        {
-                          name: `${contributorPrefix} 2`,
-                          contributorNameTypeId: contributorNameTypes[0].id,
-                          contributorTypeId: contributorTypes[0].id,
-                          contributorTypeText: '',
-                          primary: false,
-                        },
-                      ];
-                      cy.updateInstance(requestBodyLocal);
-                    });
-                    testData.localInstanceId = body.instanceData.instanceId;
+                  InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                    const collegeHoldingsSourceId = folioSource.id;
+                    InventoryInstance.createInstanceViaApi({
+                      instanceTitle: testData.localInstanceTitle,
+                    }).then((body) => {
+                      cy.getInstanceById(body.instanceData.instanceId).then((body2) => {
+                        const requestBodyLocal = body2;
+                        requestBodyLocal.contributors = [
+                          {
+                            name: `${contributorPrefix} 1`,
+                            contributorNameTypeId: contributorNameTypes[0].id,
+                            contributorTypeId: contributorTypes[0].id,
+                            contributorTypeText: '',
+                            primary: false,
+                          },
+                          {
+                            name: `${contributorPrefix} 2`,
+                            contributorNameTypeId: contributorNameTypes[0].id,
+                            contributorTypeId: contributorTypes[0].id,
+                            contributorTypeText: '',
+                            primary: false,
+                          },
+                        ];
+                        cy.updateInstance(requestBodyLocal);
+                      });
+                      testData.localInstanceId = body.instanceData.instanceId;
 
-                    // adding Holdings in College for shared Instance
-                    cy.setTenant(Affiliations.College);
-                    const collegeLocationData = Locations.getDefaultLocation({
-                      servicePointId: ServicePoints.getDefaultServicePoint().id,
-                    }).location;
-                    Locations.createViaApi(collegeLocationData).then((location) => {
-                      testData.collegeLocation = location;
-                      InventoryHoldings.createHoldingRecordViaApi({
-                        instanceId: testData.sharedInstanceId,
-                        permanentLocationId: testData.collegeLocation.id,
-                      }).then((holding) => {
-                        testData.collegeHoldings.push(holding);
-
-                        // adding Holdings in College for local Instance
+                      // adding Holdings in College for shared Instance
+                      cy.setTenant(Affiliations.College);
+                      const collegeLocationData = Locations.getDefaultLocation({
+                        servicePointId: ServicePoints.getDefaultServicePoint().id,
+                      }).location;
+                      Locations.createViaApi(collegeLocationData).then((location) => {
+                        testData.collegeLocation = location;
                         InventoryHoldings.createHoldingRecordViaApi({
-                          instanceId: testData.localInstanceId,
+                          instanceId: testData.sharedInstanceId,
                           permanentLocationId: testData.collegeLocation.id,
-                        }).then((holding2) => {
-                          testData.collegeHoldings.push(holding2);
+                          sourceId: collegeHoldingsSourceId,
+                        }).then((holding) => {
+                          testData.collegeHoldings.push(holding);
+
+                          // adding Holdings in College for local Instance
+                          InventoryHoldings.createHoldingRecordViaApi({
+                            instanceId: testData.localInstanceId,
+                            permanentLocationId: testData.collegeLocation.id,
+                            sourceId: collegeHoldingsSourceId,
+                          }).then((holding2) => {
+                            testData.collegeHoldings.push(holding2);
+                          });
                         });
                       });
                     });
@@ -123,16 +128,20 @@ describe('Inventory', () => {
 
                   // adding Holdings in University for shared Instance
                   cy.setTenant(Affiliations.University);
-                  const universityLocationData = Locations.getDefaultLocation({
-                    servicePointId: ServicePoints.getDefaultServicePoint().id,
-                  }).location;
-                  Locations.createViaApi(universityLocationData).then((location) => {
-                    testData.universityLocation = location;
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: testData.sharedInstanceId,
-                      permanentLocationId: location.id,
-                    }).then((holding) => {
-                      testData.universityHoldings.push(holding);
+                  InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                    const universityHoldingsSourceId = folioSource.id;
+                    const universityLocationData = Locations.getDefaultLocation({
+                      servicePointId: ServicePoints.getDefaultServicePoint().id,
+                    }).location;
+                    Locations.createViaApi(universityLocationData).then((location) => {
+                      testData.universityLocation = location;
+                      InventoryHoldings.createHoldingRecordViaApi({
+                        instanceId: testData.sharedInstanceId,
+                        permanentLocationId: location.id,
+                        sourceId: universityHoldingsSourceId,
+                      }).then((holding) => {
+                        testData.universityHoldings.push(holding);
+                      });
                     });
                   });
                 });

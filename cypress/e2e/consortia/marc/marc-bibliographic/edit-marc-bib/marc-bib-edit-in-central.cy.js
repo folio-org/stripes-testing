@@ -99,6 +99,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
           QuickMarcEditor.moveFieldUp(17);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
           InventoryInstance.verifyLastUpdatedSource(

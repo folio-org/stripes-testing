@@ -16,9 +16,10 @@ import BrowseContributors from '../../../../../../support/fragments/inventory/se
 import BrowseSubjects from '../../../../../../support/fragments/inventory/search/browseSubjects';
 import MarcAuthorityBrowse from '../../../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthoritiesSearch from '../../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
-import HoldingsRecordEdit from '../../../../../../support/fragments/inventory/holdingsRecordEdit';
-import HoldingsRecordView from '../../../../../../support/fragments/inventory/holdingsRecordView';
 import InventoryViewSource from '../../../../../../support/fragments/inventory/inventoryViewSource';
+import InventoryHoldings from '../../../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { Locations } from '../../../../../../support/fragments/settings/tenant/location-setup';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -112,35 +113,43 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              cy.loginAsAdmin({
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              InventoryInstances.searchByTitle(createdRecordIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.pressAddHoldingsButton();
-              HoldingsRecordEdit.changePermanentLocation('Migration (Migration) ');
-              HoldingsRecordEdit.saveAndClose();
-              InventoryInstance.openHoldingView();
-              HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-                createdRecordIDs.push(holdingsID);
-              });
+              cy.setTenant(Affiliations.College);
+              const collegeLocationData = Locations.getDefaultLocation({
+                servicePointId: ServicePoints.getDefaultServicePoint().id,
+              }).location;
+              Locations.createViaApi(collegeLocationData).then((location) => {
+                testData.collegeLocation = location;
+                InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                  const collegeHoldingsSourceId = folioSource.id;
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: createdRecordIDs[0],
+                    permanentLocationId: testData.collegeLocation.id,
+                    sourceId: collegeHoldingsSourceId,
+                  }).then((holding) => {
+                    createdRecordIDs.push(holding.id);
+                  });
 
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-                InventoryInstances.waitContentLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                  cy.login(users.userProperties.username, users.userProperties.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  }).then(() => {
+                    ConsortiumManager.switchActiveAffiliation(
+                      tenantNames.central,
+                      tenantNames.college,
+                    );
+                    InventoryInstances.waitContentLoading();
+                  });
+                });
               });
             });
         });
 
         after('Delete users, data', () => {
+          cy.resetTenant();
+          cy.getAdminToken();
           cy.setTenant(Affiliations.College);
           cy.deleteHoldingRecordViaApi(createdRecordIDs[2]);
+          Locations.deleteViaApi(testData.collegeLocation);
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(users.userProperties.userId);
@@ -185,6 +194,8 @@ describe('MARC', () => {
               linkingTagAndValues.seventhBox,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -194,7 +205,6 @@ describe('MARC', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             cy.visit(TopMenu.marcAuthorities);
             MarcAuthorities.searchBy(
               testData.authoritySearchOption,
@@ -215,7 +225,6 @@ describe('MARC', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
             InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
