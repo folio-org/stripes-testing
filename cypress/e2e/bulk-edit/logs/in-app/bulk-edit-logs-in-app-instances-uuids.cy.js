@@ -124,7 +124,7 @@ describe('bulk-edit', () => {
             `${folioItem.instanceId},false,true,`,
             `${marcInstances[0].instanceId},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
-            `${marcInstances[1].instanceId},false,,`,
+            `${marcInstances[1].instanceId},false,false,`,
           ]);
           BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
@@ -152,11 +152,13 @@ describe('bulk-edit', () => {
             unsuppressedFolioItem.instanceId,
             marcInstances[1].instanceId,
           );
-          BulkEditSearchPane.verifyNonMatchedResults(
-            folioItem.instanceId,
-            marcInstances[0].instanceId,
-          );
-          BulkEditSearchPane.verifyErrorLabelAfterChanges(instanceUUIDsFileName, 2, 2);
+
+          BulkEditSearchPane.verifyErrorLabel(2);
+
+          [folioItem.instanceId, marcInstances[0].instanceId].forEach((instanceId) => {
+            BulkEditSearchPane.verifyErrorByIdentifier(instanceId, 'No change in value required');
+          });
+
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
           BulkEditActions.downloadErrors();
@@ -187,7 +189,7 @@ describe('bulk-edit', () => {
             `${folioItem.instanceId},false,true,`,
             `${marcInstances[0].instanceId},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
-            `${marcInstances[1].instanceId},false,,`,
+            `${marcInstances[1].instanceId},false,false,`,
           ]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
