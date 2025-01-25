@@ -64,7 +64,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyErrorLabel(invalidHoldingUUIDsFileName, 0, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(0);
+        BulkEditSearchPane.verifyPaneRecordsCount('0 holding');
         BulkEditSearchPane.verifyNonMatchedResults();
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsAbsent();
