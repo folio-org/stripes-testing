@@ -28,7 +28,7 @@ describe('MARC', () => {
     const marcFiles = [
       {
         marc: 'marcAuthFileForC358994.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C358994testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
       },
@@ -37,6 +37,7 @@ describe('MARC', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C358994');
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

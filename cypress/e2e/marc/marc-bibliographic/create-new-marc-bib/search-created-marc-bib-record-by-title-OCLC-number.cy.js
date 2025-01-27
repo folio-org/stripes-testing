@@ -23,6 +23,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
       before(() => {
+        InventoryInstances.deleteInstanceByTitleViaApi(testData.instanceTitle);
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,

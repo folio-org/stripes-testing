@@ -81,7 +81,6 @@ describe('Check out', () => {
     Users.deleteViaApi(testData.userId);
   });
 
-  // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
     'C356781 Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire', 'C356781'] },
@@ -108,7 +107,6 @@ describe('Check out', () => {
     },
   );
 
-  // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
     'C380512 Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire', 'C380512'] },
