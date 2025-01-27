@@ -14,7 +14,6 @@ describe('fse-lists - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'lists'] },
     () => {
       cy.visit(TopMenu.listsPath);
-      Lists.waitForSpinnerToDisappear();
       // check filters displayed (as we can't use standard waitLoading for tenants with non-English localization)
       Lists.filtersWaitLoading();
     },

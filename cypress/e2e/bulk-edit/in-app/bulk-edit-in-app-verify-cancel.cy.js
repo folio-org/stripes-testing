@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.checkForUploading(usernamesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(usernamesFileName, 1, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 user');
         BulkEditSearchPane.verifyMatchedResults(user.username);
 
         // Click "Actions" menu

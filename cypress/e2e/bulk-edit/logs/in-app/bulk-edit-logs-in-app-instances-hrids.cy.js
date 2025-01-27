@@ -136,7 +136,12 @@ describe('bulk-edit', () => {
           ]);
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(0);
-          BulkEditSearchPane.verifyErrorLabelAfterChanges(instanceHRIDFileName, 0, 2);
+          BulkEditSearchPane.verifyErrorLabel(2);
+
+          [hridValues.folioHrid, hridValues.marcHrid].forEach((hrid) => {
+            BulkEditSearchPane.verifyErrorByIdentifier(hrid, 'No change in value required');
+          });
+
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [

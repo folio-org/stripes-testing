@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 0, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(0);
+        BulkEditSearchPane.verifyPaneRecordsCount('0 user');
         BulkEditSearchPane.verifyNonMatchedResults();
 
         // Navigate to the "Export manager" app
