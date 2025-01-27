@@ -196,7 +196,7 @@ Cypress.Commands.add(
                           ).length > 0
                         )
                       ) {
-                        cy.log(`WARNING! No capabilities/sets found for "${permissionName}"`);
+                        throw Error(`No capabilities/sets found for "${permissionName}"`);
                       }
                     });
 
