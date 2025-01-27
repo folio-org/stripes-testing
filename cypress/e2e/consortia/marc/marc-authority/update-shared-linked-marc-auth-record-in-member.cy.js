@@ -227,6 +227,8 @@ describe('MARC', () => {
             MarcAuthorities.waitLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
+          cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);
           MarcAuthorities.selectTitle(`Shared\n${testData.authorityTitle}`);
           MarcAuthority.edit();

@@ -116,6 +116,10 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
+              cy.intercept('/authn/refresh').as('/authn/refresh');
+              cy.reload();
+              cy.wait('@/authn/refresh', { timeout: 20000 });
+              InventoryInstances.waitContentLoading();
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
@@ -134,6 +138,7 @@ describe('MARC', () => {
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                InventoryInstances.waitContentLoading();
               });
             });
         });

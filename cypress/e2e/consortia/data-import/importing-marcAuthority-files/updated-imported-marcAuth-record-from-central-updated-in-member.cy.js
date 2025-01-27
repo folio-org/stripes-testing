@@ -1,16 +1,13 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   APPLICATION_NAMES,
-  ACTION_NAMES_IN_ACTION_PROFILE,
   EXISTING_RECORD_NAMES,
-  FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import ActionProfiles from '../../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -32,16 +29,14 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import SettingsDataImport, {
-  SETTINGS_TABS,
-} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
+import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       tag377: '377',
-      addedField: '400 0 $a Данте Алигери $d 1265-1321',
-      updated1XXField: '$a Dante Alighieri, $d 1265-1321, $t Divine Comedy',
+      addedField: '$a Данте Алигери $d 1265-1321',
+      updated1XXField: '$a C405144 Dante Alighieri, $d 1265-1321, $t Divine Comedy',
       deletedSubfield: '$zno 98058852',
       createdRecordIDs: [],
       marcValue: 'C405144 Dante Alighieri, 1265-1321',
@@ -61,9 +56,9 @@ describe('Data Import', () => {
       name: `C405144 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
     };
     const actionProfile = {
-      typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
+      folioRecordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
       name: `C405144 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      action: 'UPDATE',
     };
     const matchProfile = {
       profileName: `C405144 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
@@ -98,6 +93,27 @@ describe('Data Import', () => {
       },
     ];
 
+    function replace999SubfieldsInPreupdatedFile(
+      exportedFileName,
+      preUpdatedFileName,
+      finalFileName,
+    ) {
+      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
+        const lines = actualContent.split('');
+        const field999data = lines[lines.length - 2];
+        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
+          const content = updatedContent.split('\n');
+          let firstString = content[0].slice();
+          firstString = firstString.replace(
+            'ffsa642331c-3c1b-433a-8987-989da645295eiba51b701-e5e2-478f-afb0-9b4102c562dd',
+            field999data,
+          );
+          content[0] = firstString;
+          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+        });
+      });
+    }
+
     const users = {};
 
     before('Create test data and login', () => {
@@ -126,48 +142,42 @@ describe('Data Import', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);
           cy.resetTenant();
-        });
-
-      cy.loginAsAdmin();
-      // create Match profile
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
-
-      // create Field mapping profile
-      NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
-
-      // create Action profile and link it to Field mapping profile
-      TopMenuNavigation.openAppFromDropdown(
-        APPLICATION_NAMES.SETTINGS,
-        APPLICATION_NAMES.DATA_IMPORT,
-      );
-      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-
-      // create Job profile
-      TopMenuNavigation.openAppFromDropdown(
-        APPLICATION_NAMES.SETTINGS,
-        APPLICATION_NAMES.DATA_IMPORT,
-      );
-      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-      JobProfiles.openNewJobProfileForm();
-      NewJobProfile.fillJobProfile(jobProfile);
-      NewJobProfile.linkMatchProfile(matchProfile.profileName);
-      NewJobProfile.linkActionProfileForMatches(actionProfile.name);
-      // wait for the action profile to be linked
-      cy.wait(1000);
-      NewJobProfile.saveAndClose();
-
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+        })
+        .then(() => {
+          NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile).then(
+            (mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(
+                actionProfile,
+                mappingProfileResponse.body.id,
+              ).then((actionProfileResponse) => {
+                NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+                  matchProfile,
+                ).then((matchProfileResponse) => {
+                  NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                    jobProfile.profileName,
+                    matchProfileResponse.body.id,
+                    actionProfileResponse.body.id,
+                  );
+                });
+              });
+            },
+          );
+        })
+        .then(() => {
+          cy.resetTenant();
+          cy.getAdminToken();
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
+            });
           });
         });
-      });
     });
 
     after('Delete test data', () => {
@@ -210,7 +220,7 @@ describe('Data Import', () => {
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file
-        DataImport.replace999SubfieldsInPreupdatedFile(
+        replace999SubfieldsInPreupdatedFile(
           testData.exportedMarcFile,
           testData.marcFileForModify,
           testData.modifiedMarcFile,
@@ -225,10 +235,10 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
         Logs.checkJobStatus(testData.uploadModifiedMarcFile, 'Completed');
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
-        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        Logs.verifyInstanceStatus(0, 6, RECORD_STATUSES.UPDATED);
+        Logs.clickOnHotLink(0, 6, RECORD_STATUSES.UPDATED);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
 
@@ -238,8 +248,8 @@ describe('Data Import', () => {
         });
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
       },
