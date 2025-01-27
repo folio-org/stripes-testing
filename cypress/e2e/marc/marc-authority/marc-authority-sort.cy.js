@@ -72,6 +72,7 @@ describe('MARC', () => {
     };
 
     before(() => {
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Type of heading test');
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
         (createdUserProperties) => {
           testData.userProperties = createdUserProperties;
