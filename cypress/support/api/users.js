@@ -186,18 +186,16 @@ Cypress.Commands.add(
                     capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
 
                     permissionNames.forEach((permissionName) => {
-                      if (
-                        !(
-                          responseCapabs.body.capabilities.filter(
-                            (capab) => capab.permission === permissionName,
-                          ).length > 0 ||
+                      // eslint-disable-next-line no-unused-expressions
+                      cy.expect(
+                        responseCapabs.body.capabilities.filter(
+                          (capab) => capab.permission === permissionName,
+                        ).length > 0 ||
                           responseSets.body.capabilitySets.filter(
                             (set) => set.permission === permissionName,
-                          ).length > 0
-                        )
-                      ) {
-                        throw Error(`No capabilities/sets found for "${permissionName}"`);
-                      }
+                          ).length > 0,
+                        `Capabilities/sets found for "${permissionName}"`,
+                      ).to.be.true;
                     });
 
                     if (capabilitiesIds.length === 0) {
