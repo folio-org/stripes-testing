@@ -67,9 +67,9 @@ describe('Inventory', () => {
     describe('Case-insensitive checks', () => {
       before('Create test data, login', () => {
         cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi('C380454');
-        InventoryInstances.deleteInstanceByTitleViaApi('C464068');
-
+        ['C464068', 'C380454 '].forEach((instanceTitle) => {
+          InventoryInstances.deleteInstanceByTitleViaApi(instanceTitle);
+        });
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
           testData.user = userProperties;
 

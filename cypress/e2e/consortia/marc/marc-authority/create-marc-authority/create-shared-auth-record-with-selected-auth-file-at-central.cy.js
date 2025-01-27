@@ -98,7 +98,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
           QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
-          MarcAuthority.addNewField(3, newField.tag, newField.content);
+          MarcAuthority.addNewFieldAfterExistingByTag('008', newField.tag, newField.content);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();

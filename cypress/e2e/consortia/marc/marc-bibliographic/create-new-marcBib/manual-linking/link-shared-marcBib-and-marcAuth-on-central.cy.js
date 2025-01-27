@@ -23,7 +23,7 @@ describe('MARC', () => {
             tag245: '245',
           },
           fieldContents: {
-            tag245Content: 'C422141 Created Shared Instance with linked field',
+            tag245Content: `C422141 Created Shared Instance with linked field ${getRandomPostfix()}`,
           },
           authorityTitle: 'C422141 Dante Alighieri, 1265-1321',
           searchOption: 'Personal name',
@@ -58,7 +58,6 @@ describe('MARC', () => {
         before('Create users, data', () => {
           cy.getAdminToken();
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422141');
-          InventoryInstances.deleteInstanceByTitleViaApi('C422141');
           cy.createTempUser([
             Permissions.uiInventoryViewInstances.gui,
             Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,

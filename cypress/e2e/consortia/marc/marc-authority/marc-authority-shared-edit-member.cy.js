@@ -129,7 +129,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickArrowDownButton(4);
             QuickMarcEditor.verifyTagValue(5, testData.tag010);
             MarcAuthority.clickSaveAndCloseButton();
-            cy.wait(2000);
+            cy.wait(1500);
             MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkDeleteModal(1);
             MarcAuthority.continueWithSaveAndCheck();

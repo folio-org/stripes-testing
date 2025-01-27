@@ -243,34 +243,30 @@ describe('Inventory', () => {
             // 1 Local "Instance" record with source = "MARC" should have "Holdings" records created on Member 1 tenant
 
             cy.setTenant(Affiliations.College);
-
-            InventoryHoldings.getHoldingsFolioSource()
-              .then((folioSource) => {
-                testData.folioSourceId = folioSource.id;
-              })
-              .then(() => {
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: sharedFOLIOInstancesFromCentral[1].testInstanceId,
-                  permanentLocationId: testData.collegeLocation.id,
-                  sourceId: testData.folioSourceId,
-                }).then((holding) => {
-                  createdHoldingsCollege.push(holding.id);
-                });
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: marcFiles[0].createdRecordsId[1],
-                  permanentLocationId: testData.collegeLocation.id,
-                  sourceId: testData.folioSourceId,
-                }).then((holding) => {
-                  createdHoldingsCollege.push(holding.id);
-                });
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: marcFiles[1].createdRecordsId[0],
-                  permanentLocationId: testData.collegeLocation.id,
-                  sourceId: testData.folioSourceId,
-                }).then((holding) => {
-                  createdHoldingsCollege.push(holding.id);
-                });
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              const collegeHoldingsSourceId = folioSource.id;
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: sharedFOLIOInstancesFromCentral[1].testInstanceId,
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: collegeHoldingsSourceId,
+              }).then((holding) => {
+                createdHoldingsCollege.push(holding.id);
               });
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: marcFiles[0].createdRecordsId[1],
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: collegeHoldingsSourceId,
+              }).then((holding) => {
+                createdHoldingsCollege.push(holding.id);
+              });
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: marcFiles[1].createdRecordsId[0],
+                permanentLocationId: testData.collegeLocation.id,
+                sourceId: collegeHoldingsSourceId,
+              }).then((holding) => {
+                createdHoldingsCollege.push(holding.id);
+              });
+            });
           })
           .then(() => {
             // 1 Shared "Instance" record with source = "MARC" and 1 Shared "Instance" record with source = "FOLIO"
@@ -278,27 +274,29 @@ describe('Inventory', () => {
             // 1 Local "Instance" record with source = "MARC" should have "Holdings" records created on Member 2 tenant
 
             cy.setTenant(Affiliations.University);
-
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: sharedFOLIOInstancesFromCentral[2].testInstanceId,
-              permanentLocationId: testData.universityLocation.id,
-              sourceId: testData.folioSourceId,
-            }).then((holding) => {
-              createdHoldingsUniversity.push(holding.id);
-            });
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: marcFiles[0].createdRecordsId[2],
-              permanentLocationId: testData.universityLocation.id,
-              sourceId: testData.folioSourceId,
-            }).then((holding) => {
-              createdHoldingsUniversity.push(holding.id);
-            });
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: marcFiles[2].createdRecordsId[0],
-              permanentLocationId: testData.universityLocation.id,
-              sourceId: testData.folioSourceId,
-            }).then((holding) => {
-              createdHoldingsUniversity.push(holding.id);
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              const universityHoldingsSourceId = folioSource.id;
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: sharedFOLIOInstancesFromCentral[2].testInstanceId,
+                permanentLocationId: testData.universityLocation.id,
+                sourceId: universityHoldingsSourceId,
+              }).then((holding) => {
+                createdHoldingsUniversity.push(holding.id);
+              });
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: marcFiles[0].createdRecordsId[2],
+                permanentLocationId: testData.universityLocation.id,
+                sourceId: universityHoldingsSourceId,
+              }).then((holding) => {
+                createdHoldingsUniversity.push(holding.id);
+              });
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: marcFiles[2].createdRecordsId[0],
+                permanentLocationId: testData.universityLocation.id,
+                sourceId: universityHoldingsSourceId,
+              }).then((holding) => {
+                createdHoldingsUniversity.push(holding.id);
+              });
             });
           });
 

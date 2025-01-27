@@ -148,24 +148,21 @@ describe('MARC', () => {
             .then(() => {
               // adding Holdings in College for shared Instance
               cy.setTenant(Affiliations.College);
-              const collegeLocationData = Locations.getDefaultLocation({
-                servicePointId: ServicePoints.getDefaultServicePoint().id,
-              }).location;
-              Locations.createViaApi(collegeLocationData).then((location) => {
-                testData.collegeLocation = location;
-                InventoryHoldings.getHoldingsFolioSource()
-                  .then((folioSource) => {
-                    testData.folioSourceId = folioSource.id;
-                  })
-                  .then(() => {
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: createdRecordIDs[0],
-                      permanentLocationId: testData.collegeLocation.id,
-                      sourceId: testData.folioSourceId,
-                    }).then((holding) => {
-                      testData.collegeHoldings.push(holding);
-                    });
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                const collegeHoldingsSourceId = folioSource.id;
+                const collegeLocationData = Locations.getDefaultLocation({
+                  servicePointId: ServicePoints.getDefaultServicePoint().id,
+                }).location;
+                Locations.createViaApi(collegeLocationData).then((location) => {
+                  testData.collegeLocation = location;
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: createdRecordIDs[0],
+                    permanentLocationId: testData.collegeLocation.id,
+                    sourceId: collegeHoldingsSourceId,
+                  }).then((holding) => {
+                    testData.collegeHoldings.push(holding);
                   });
+                });
               });
 
               cy.login(users.userProperties.username, users.userProperties.password, {

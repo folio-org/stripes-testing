@@ -205,7 +205,8 @@ describe('MARC', () => {
             );
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.clickSaveAndKeepEditing();
-
+            cy.wait(1500);
+            QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
               linkingTagAndValues.tag,
