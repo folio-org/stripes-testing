@@ -1805,4 +1805,11 @@ export default {
     cy.do(editInLdeButton.click());
     cy.wait(1000);
   },
+
+  checkEditInstanceInLdeButtonNotDisplayed: () => {
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.expect(editInLdeButton.absent());
+    cy.wait(1000);
+  },
 };

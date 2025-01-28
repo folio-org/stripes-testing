@@ -20,12 +20,12 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 
-describe('Citation: create work', () => {
+describe('Citation: MARC Authority integration', () => {
   const testData = {
     // lde related test data
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C633470 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C633470 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
