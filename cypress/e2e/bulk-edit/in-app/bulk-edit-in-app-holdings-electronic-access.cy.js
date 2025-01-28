@@ -109,8 +109,7 @@ describe('bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.electronicAccessReplaceWith(
-          'URL Relationship',
+        BulkEditActions.urlRelationshipReplaceWith(
           electronicAccessRelationshipName.RESOURCE,
           electronicAccessRelationshipName.VERSION_OF_RESOURCE,
         );

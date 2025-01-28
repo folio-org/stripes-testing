@@ -238,7 +238,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyPaneRecordsChangedCount(1);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount('1 item');
 
         updatedNotesHeaderValueSets.forEach((updatedNoteHeaderValue) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(

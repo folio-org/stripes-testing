@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         //  Check the result of uploading the .csv file with Items barcodes
         BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
         //  Click "Actions" menu => Select "Start Bulk edit" option
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();

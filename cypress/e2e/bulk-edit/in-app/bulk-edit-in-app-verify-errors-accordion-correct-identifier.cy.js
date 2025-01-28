@@ -128,7 +128,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.checkForUploading(instanceHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyPaneRecordsCount(2);
+        BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
 
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyMatchedResultFileContent(
