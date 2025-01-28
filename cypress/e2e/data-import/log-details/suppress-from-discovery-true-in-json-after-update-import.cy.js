@@ -1,13 +1,14 @@
 import {
+  ACTION_NAMES_IN_ACTION_PROFILE,
   APPLICATION_NAMES,
+  DEFAULT_JOB_PROFILE_NAMES,
+  EXISTING_RECORD_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  EXISTING_RECORD_NAMES,
-  ACTION_NAMES_IN_ACTION_PROFILE,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -15,7 +16,9 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -25,19 +28,16 @@ import {
 import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { getLongDelay } from '../../../support/utils/cypressTools';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Log details', () => {
