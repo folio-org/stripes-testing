@@ -5,6 +5,7 @@ import {
   RECORD_STATUSES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
+  ACTION_NAMES_IN_ACTION_PROFILE,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -61,6 +62,7 @@ describe('Data Import', () => {
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C594483 instance action profile ${getRandomPostfix()}`,
+      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
     };
     const matchProfile = {
       profileName: `C468186 001-to-001 match ${getRandomPostfix()}`,
