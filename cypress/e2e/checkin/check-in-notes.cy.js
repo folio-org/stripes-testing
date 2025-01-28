@@ -32,7 +32,10 @@ describe('Check in', () => {
       note1.source = record;
       note2.source = record;
     });
-    cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
+    cy.createTempUser([
+      Permissions.checkinAll.gui,
+      Permissions.uiInventoryViewInstances.gui
+    ]).then((userProperties) => {
       userData = userProperties;
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);

@@ -55,6 +55,7 @@ describe('Loans', () => {
         Permissions.loansRenewOverride.gui,
         Permissions.uiUserLoansChangeDueDate.gui,
         Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
         testData.folioInstances.forEach((itemData) => {

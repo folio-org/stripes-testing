@@ -84,6 +84,7 @@ describe('Loans', () => {
         permissions.uiUsersView.gui,
         permissions.uiUsersDeclareItemLost.gui,
         permissions.uiUsersLoansClaimReturned.gui,
+        permissions.uiInventoryViewInstances.gui,
       ])
         .then((userProperties) => {
           userData = userProperties;

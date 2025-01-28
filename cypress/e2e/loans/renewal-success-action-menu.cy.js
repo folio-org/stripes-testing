@@ -35,7 +35,12 @@ describe('Loans', () => {
         });
       });
       itemBarcode = testData.folioInstances[0].barcodes[0];
-      cy.createTempUser([Permissions.loansView.gui, Permissions.loansRenew.gui]).then(
+      cy.createTempUser([
+        Permissions.loansView.gui,
+        Permissions.loansRenew.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.usersLoansRenewThroughOverride.gui,
+      ]).then(
         (userProperties) => {
           testData.user = userProperties;
           UserEdit.addServicePointViaApi(

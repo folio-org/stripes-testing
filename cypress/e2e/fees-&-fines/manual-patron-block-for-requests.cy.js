@@ -43,6 +43,7 @@ describe('Fees&Fines', () => {
         Permissions.uiUsersView.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiRequestsAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ])
         .then((userProperties) => {
           userData.user1 = userProperties;
@@ -61,6 +62,7 @@ describe('Fees&Fines', () => {
         Permissions.uiUsersView.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiRequestsAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ])
         .then((userProperties) => {
           userData.user2 = userProperties;
@@ -82,6 +84,7 @@ describe('Fees&Fines', () => {
         Permissions.uiUsersView.gui,
         Permissions.usersViewRequests.gui,
         Permissions.uiRequestsAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ])
         .then((userProperties) => {
           userData.user3 = userProperties;

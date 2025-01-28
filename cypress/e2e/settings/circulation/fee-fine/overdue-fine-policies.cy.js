@@ -169,6 +169,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
         permissions.loansAll.gui,
         permissions.uiUsersfeefinesView.gui,
         permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+        permissions.uiInventoryViewInstances.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {

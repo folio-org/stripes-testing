@@ -32,6 +32,7 @@ describe('Users', () => {
         query: `(${'displayName'}=="${[
           permissions.checkoutAll.gui,
           permissions.uiUsersView.gui,
+          permissions.uiInventoryViewInstances.gui,
         ].join(`")or(${'displayName'}=="`)}"))"`,
       }).then((permissionsResponse) => {
         Users.createViaApi({

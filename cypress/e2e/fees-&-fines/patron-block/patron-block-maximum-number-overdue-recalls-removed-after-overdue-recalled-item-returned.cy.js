@@ -159,6 +159,7 @@ describe('Fees&Fines', () => {
           permissions.checkinAll.gui,
           permissions.checkoutAll.gui,
           permissions.uiUsersView.gui,
+          permissions.uiInventoryViewInstances.gui,
         ],
         patronGroup.name,
       )

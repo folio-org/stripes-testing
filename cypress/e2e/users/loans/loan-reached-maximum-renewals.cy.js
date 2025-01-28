@@ -82,7 +82,12 @@ describe('Loans', () => {
           });
         });
 
-      cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui]).then(
+      cy.createTempUser([
+        permissions.loansView.gui,
+        permissions.loansRenew.gui,
+        permissions.uiInventoryViewInstances.gui,
+        permissions.usersLoansRenewThroughOverride.gui,
+      ]).then(
         ({ username, password, userId, barcode: userBarcode }) => {
           firstUser = {
             username,
@@ -129,6 +134,8 @@ describe('Loans', () => {
         permissions.loansView.gui,
         permissions.loansRenew.gui,
         permissions.loansRenewOverride.gui,
+        permissions.uiInventoryViewInstances.gui,
+        permissions.usersLoansRenewThroughOverride.gui,
       ]).then(({ username, password, userId, barcode: userBarcode }) => {
         secondUser = {
           username,

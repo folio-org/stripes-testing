@@ -16,7 +16,7 @@ describe('Check in', () => {
   let ITEM_BARCODE;
 
   before('Create test data', () => {
-    cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.checkinAll.gui, Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
       userData = userProperties;
 
       cy.getAdminToken();

@@ -65,6 +65,8 @@ describe('Fees&Fines', () => {
         Permissions.uiUsersView.gui,
         Permissions.uiUsersViewLoans.gui,
         Permissions.loansRenew.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.usersLoansRenewThroughOverride.gui,
       ])
         .then((userProperties) => {
           userData.user1 = userProperties;
@@ -88,6 +90,8 @@ describe('Fees&Fines', () => {
         Permissions.uiUsersView.gui,
         Permissions.uiUsersViewLoans.gui,
         Permissions.loansRenew.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.usersLoansRenewThroughOverride.gui,
       ])
         .then((userProperties) => {
           userData.user2 = userProperties;
@@ -114,6 +118,8 @@ describe('Fees&Fines', () => {
         Permissions.uiUsersView.gui,
         Permissions.uiUsersViewLoans.gui,
         Permissions.loansRenew.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.usersLoansRenewThroughOverride.gui,
       ])
         .then((userProperties) => {
           userData.user3 = userProperties;

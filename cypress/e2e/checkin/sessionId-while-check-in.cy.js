@@ -16,10 +16,10 @@ import { getNewItem } from '../../support/fragments/inventory/item';
 describe('Check In - Actions ', () => {
   const userData = [
     {
-      permissions: [permissions.checkinAll.gui, permissions.checkoutAll.gui],
+      permissions: [permissions.checkinAll.gui, permissions.checkoutAll.gui, permissions.uiInventoryViewInstances.gui],
     },
     {
-      permissions: [permissions.checkinAll.gui],
+      permissions: [permissions.checkinAll.gui, permissions.uiInventoryViewInstances.gui],
     },
   ];
   const itemData = {

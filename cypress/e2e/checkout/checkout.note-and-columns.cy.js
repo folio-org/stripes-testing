@@ -36,7 +36,7 @@ describe('Check out', () => {
         location,
       });
     });
-    cy.createTempUser([Permissions.checkoutCirculatingItems.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.checkoutCirculatingItems.gui, Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
       testData.user = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,

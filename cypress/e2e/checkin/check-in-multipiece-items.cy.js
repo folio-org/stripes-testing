@@ -18,7 +18,7 @@ let itemBarcodes;
 
 describe('Check In', () => {
   before('create inventory instances', () => {
-    cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.checkinAll.gui, Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
         InventoryInstances.getMaterialTypes({ limit: 1 })

@@ -147,6 +147,7 @@ describe('Patron notices', () => {
             permissions.uiCirculationSettingsOtherSettings.gui,
             permissions.uiCirculationSettingsNoticeTemplates.gui,
             permissions.uiCirculationSettingsNoticePolicies.gui,
+            permissions.uiInventoryViewInstances.gui,
           ],
           patronGroup.name,
         )

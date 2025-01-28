@@ -148,6 +148,7 @@ describe('Title level Request', () => {
             permissions.checkoutAll.gui,
             permissions.inventoryAll.gui,
             permissions.uiUsersView.gui,
+            permissions.uiInventoryViewInstances.gui,
           ],
           testData.patronGroup.name,
         ).then((userPropertiesForMainUser) => {

@@ -75,7 +75,7 @@ describe('Check out', () => {
           testInstanceIds = specialInstanceIds;
         });
       });
-    cy.createTempUser([permissions.checkoutCirculatingItems.gui])
+    cy.createTempUser([permissions.checkoutCirculatingItems.gui, permissions.uiInventoryViewInstances.gui])
       .then((userProperties) => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaultServicePoint();

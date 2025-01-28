@@ -213,6 +213,7 @@ describe('Fees&Fines', () => {
           permissions.uiUsersView.gui,
           permissions.okapiTimersPatch.gui,
           permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+          permissions.uiInventoryViewInstances.gui,
         ],
         patronGroup.name,
       ).then((userProperties) => {

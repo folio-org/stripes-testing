@@ -79,7 +79,12 @@ describe('Renewal', () => {
       })
       .then(() => {
         // create first user
-        cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui]).then(
+        cy.createTempUser([
+          permissions.loansView.gui,
+          permissions.loansRenew.gui,
+          permissions.uiInventoryViewInstances.gui,
+          permissions.usersLoansRenewThroughOverride.gui,
+        ]).then(
           (userProperties) => {
             renewUserData.lastName = userProperties.username;
             renewUserData.id = userProperties.userId;
@@ -93,6 +98,8 @@ describe('Renewal', () => {
           permissions.loansView.gui,
           permissions.loansRenew.gui,
           permissions.loansRenewOverride.gui,
+          permissions.uiInventoryViewInstances.gui,
+          permissions.usersLoansRenewThroughOverride.gui,
         ]).then((userProperties) => {
           renewOverrideUserData.lastName = userProperties.username;
           renewOverrideUserData.id = userProperties.userId;

@@ -128,6 +128,7 @@ describe('Fees&Fines', () => {
       cy.createTempUser([
         permissions.checkoutCirculatingItems.gui,
         permissions.uiCirculationSettingsOtherSettings.gui,
+        permissions.uiInventoryViewInstances.gui,
       ])
         .then((userProperties) => {
           user = userProperties;

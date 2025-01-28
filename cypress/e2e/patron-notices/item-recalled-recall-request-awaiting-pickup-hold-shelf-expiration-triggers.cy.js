@@ -245,6 +245,7 @@ describe('Patron notices', () => {
             permissions.okapiTimersPatch.gui,
             permissions.checkinAll.gui,
             permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+            permissions.uiInventoryViewInstances.gui,
           ],
           patronGroup.name,
         )

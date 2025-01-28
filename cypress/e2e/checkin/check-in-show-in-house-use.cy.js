@@ -45,7 +45,7 @@ describe('Check in', () => {
     itemAData = testData.folioInstances[0].items[0];
     itemBData = testData.folioInstances[0].items[1];
     itemCData = testData.folioInstances[0].items[2];
-    cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.checkinAll.gui, Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
       testData.user = userProperties;
       UserEdit.addServicePointsViaApi(
         [testData.servicePoint.id, testData.itemServicePoint1.id],

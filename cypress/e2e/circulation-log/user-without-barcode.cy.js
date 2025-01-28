@@ -57,6 +57,7 @@ describe('Circulation log', () => {
         Permissions.circulationLogAll.gui,
         Permissions.checkinAll.gui,
         Permissions.inventoryAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ];
       cy.getPermissionsApi({
         query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,

@@ -35,6 +35,7 @@ describe('Loans', () => {
         Permissions.loansAll.gui,
         Permissions.checkoutAll.gui,
         Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         checkOutUser = userProperties;
         cy.getAdminToken()

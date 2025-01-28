@@ -56,7 +56,12 @@ describe('Loans', () => {
             },
           );
         });
-      cy.createTempUser([Permissions.loansView.gui, Permissions.loansRenew.gui]).then(
+      cy.createTempUser([
+        Permissions.loansView.gui,
+        Permissions.loansRenew.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.usersLoansRenewThroughOverride.gui
+      ]).then(
         (userProperties) => {
           testData.user = userProperties;
           UserEdit.addServicePointViaApi(testData.servicePoint.id, testData.user.userId);

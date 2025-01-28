@@ -34,7 +34,7 @@ describe('Check in backdate', () => {
       });
     });
     itemBarcode = testData.folioInstances[0].barcodes[0];
-    cy.createTempUser([Permissions.checkinAll.gui, Permissions.loansView.gui]).then(
+    cy.createTempUser([Permissions.checkinAll.gui, Permissions.loansView.gui, Permissions.uiInventoryViewInstances.gui]).then(
       (userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);

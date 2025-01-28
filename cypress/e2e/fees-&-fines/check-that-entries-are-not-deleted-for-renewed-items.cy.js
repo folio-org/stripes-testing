@@ -116,6 +116,7 @@ describe('Fees&Fines', () => {
         Permissions.loansRenewOverride.gui,
         Permissions.loansAll.gui,
         Permissions.uiUsersDeclareItemLost.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ]).then((user) => {
         testData.user = user;
         UserEdit.addServicePointViaApi(

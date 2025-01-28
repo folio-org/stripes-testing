@@ -87,6 +87,7 @@ describe('Circulation log', () => {
         Permissions.circulationLogAll.gui,
         Permissions.checkoutAll.gui,
         Permissions.checkinAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         userData = userProperties;
         InventoryInstances.getMaterialTypes({ limit: 3 })

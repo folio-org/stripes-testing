@@ -75,7 +75,7 @@ describe('Renewal', () => {
       })
       .then(() => {
         // create user
-        cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui]).then(
+        cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui, permissions.uiInventoryViewInstances.gui]).then(
           (userProperties) => {
             renewUserData.lastName = userProperties.username;
             renewUserData.id = userProperties.userId;
