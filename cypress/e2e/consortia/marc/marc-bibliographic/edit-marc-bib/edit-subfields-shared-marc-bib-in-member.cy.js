@@ -101,7 +101,6 @@ describe('MARC', () => {
                 cy.wait('@/authn/refresh', { timeout: 20000 });
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
-                InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               });
             });
@@ -209,6 +208,7 @@ describe('MARC', () => {
 
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
+            BrowseSubjects.waitForBrowseSubjectsToContain(testData.expectedSubjectName);
             BrowseSubjects.select();
             BrowseSubjects.browse(testData.expectedSubjectName);
             BrowseSubjects.checkValueIsBold(testData.expectedSubjectName);
