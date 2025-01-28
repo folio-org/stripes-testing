@@ -142,6 +142,8 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].updatedAuthorityHeading);
           MarcAuthorities.checkResultList([marcFiles[1].updatedAuthorityHeading]);
           MarcAuthorities.verifyNumberOfTitles(5, '1');
+          cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
           InventoryInstance.waitInstanceRecordViewOpened(marcFiles[0].instanceTitle);
           InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
