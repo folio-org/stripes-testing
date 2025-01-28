@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 user');
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 

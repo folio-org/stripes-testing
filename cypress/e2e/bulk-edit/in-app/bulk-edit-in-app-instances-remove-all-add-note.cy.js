@@ -196,8 +196,8 @@ describe('bulk-edit', () => {
           `${notes.exhibitionsNote} (staff only)`,
         );
 
-        BulkEditSearchPane.verifyErrorLabelInErrorAccordion(instanceUUIDsFileName, 2, 2, 3);
-        BulkEditSearchPane.verifyNonMatchedResults(marcInstance.instanceId);
+        BulkEditSearchPane.verifyErrorLabel(3);
+        BulkEditSearchPane.verifyNonMatchedResults(marcInstance.instanceId, `${reasonForError} `);
         BulkEditSearchPane.verifyReasonForError(reasonForError);
 
         BulkEditActions.openActions();

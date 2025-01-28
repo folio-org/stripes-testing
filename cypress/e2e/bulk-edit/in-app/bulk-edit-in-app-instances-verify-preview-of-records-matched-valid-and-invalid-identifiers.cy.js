@@ -101,7 +101,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);
-        BulkEditSearchPane.verifyPaneRecordsCount(`${numberOfRecords}`);
+        BulkEditSearchPane.verifyPaneRecordsCount(`${numberOfRecords} instance`);
         BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
 
         createdInstanceHrids.forEach((instanceHrid, index) => {
@@ -112,11 +112,11 @@ describe('bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyErrorLabel(
-          instanceUUIDsFileName,
-          numberOfRecords,
-          numberOfRecords,
-        );
+        BulkEditSearchPane.verifyErrorLabel(10);
+
+        invalidInstanceIds.forEach((invalidInstanceId) => {
+          BulkEditSearchPane.verifyNonMatchedResults(invalidInstanceId);
+        });
 
         createdInstanceHrids.forEach((instanceHrid) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -144,12 +144,6 @@ describe('bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TYPE,
             instanceTypeName,
           );
-        });
-
-        BulkEditSearchPane.verifyNonMatchedResults();
-
-        invalidInstanceIds.forEach((invalidInstanceId) => {
-          BulkEditSearchPane.verifyReasonForErrorByIdentifier(invalidInstanceId, 'No match found ');
         });
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(true, true);
