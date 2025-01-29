@@ -1,6 +1,5 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
-  JOB_STATUS_NAMES,
   INVENTORY_DEFAULT_SORT_OPTIONS,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
@@ -12,11 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-
 const testData = {
-  dateColumnName: 'Date',
   searchQuery: 'C553003 Autotest',
   titleHeader: 'Title',
   dateHeader: 'Date',
@@ -59,7 +54,6 @@ const marcFile = {
   fileName: `testMarcFileC553003.${getRandomPostfix()}.mrc`,
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
   propertyName: 'instance',
-  numberOfRecords: 30,
 };
 
 const createdInstanceIds = [];
@@ -86,35 +80,16 @@ describe('Inventory', () => {
         Permissions.dataImportUploadAll.gui,
       ]).then((userProperties) => {
         userForImport = userProperties;
-
-        cy.login(userForImport.username, userForImport.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFile.fileName);
-        Logs.checkJobStatus(marcFile.fileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        for (let i = 0; i < marcFile.numberOfRecords; i++) {
-          Logs.getCreatedItemsID(i).then((link) => {
-            createdInstanceIds.push(link.split('/')[5]);
+        cy.getToken(userForImport.username, userForImport.password, false);
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdInstanceIds.push(record[marcFile.propertyName].id);
           });
-        }
-        // cy.getToken(userForImport.username, userForImport.password, false);
-        // DataImport.uploadFileViaApi(
-        //   marcFile.marc,
-        //   marcFile.fileName,
-        //   marcFile.jobProfileToRun,
-        // ).then((response) => {
-        //   response.forEach((record) => {
-        //     createdInstanceIds.push(record[marcFile.propertyName].id);
-        //   });
-        // });
+        });
       });
     });
 
@@ -150,12 +125,12 @@ describe('Inventory', () => {
         InventoryInstances.actionsSortBy(testData.dateHeader);
         InventoryInstances.checkColumnHeaderSort(testData.dateHeader);
         testData.datesSorted.forEach((date, index) => {
-          InventoryInstances.verifyValueInColumnForRow(index, testData.dateColumnName, date);
+          InventoryInstances.verifyValueInColumnForRow(index, testData.dateHeader, date);
         });
         InventoryInstances.clickColumnHeader(testData.dateHeader);
         InventoryInstances.checkColumnHeaderSort(testData.dateHeader, false);
         testData.datesSorted.toReversed().forEach((date, index) => {
-          InventoryInstances.verifyValueInColumnForRow(index, testData.dateColumnName, date);
+          InventoryInstances.verifyValueInColumnForRow(index, testData.dateHeader, date);
         });
 
         InventorySearchAndFilter.switchToHoldings();
@@ -168,12 +143,12 @@ describe('Inventory', () => {
         InventoryInstances.actionsSortBy(testData.dateHeader);
         InventoryInstances.checkColumnHeaderSort(testData.dateHeader);
         testData.datesSorted.forEach((date, index) => {
-          InventoryInstances.verifyValueInColumnForRow(index, testData.dateColumnName, date);
+          InventoryInstances.verifyValueInColumnForRow(index, testData.dateHeader, date);
         });
         InventoryInstances.clickColumnHeader(testData.dateHeader);
         InventoryInstances.checkColumnHeaderSort(testData.dateHeader, false);
         testData.datesSorted.toReversed().forEach((date, index) => {
-          InventoryInstances.verifyValueInColumnForRow(index, testData.dateColumnName, date);
+          InventoryInstances.verifyValueInColumnForRow(index, testData.dateHeader, date);
         });
 
         InventorySearchAndFilter.switchToItem();
@@ -186,12 +161,12 @@ describe('Inventory', () => {
         InventoryInstances.actionsSortBy(testData.dateHeader);
         InventoryInstances.checkColumnHeaderSort(testData.dateHeader);
         testData.datesSorted.forEach((date, index) => {
-          InventoryInstances.verifyValueInColumnForRow(index, testData.dateColumnName, date);
+          InventoryInstances.verifyValueInColumnForRow(index, testData.dateHeader, date);
         });
         InventoryInstances.clickColumnHeader(testData.dateHeader);
         InventoryInstances.checkColumnHeaderSort(testData.dateHeader, false);
         testData.datesSorted.toReversed().forEach((date, index) => {
-          InventoryInstances.verifyValueInColumnForRow(index, testData.dateColumnName, date);
+          InventoryInstances.verifyValueInColumnForRow(index, testData.dateHeader, date);
         });
       },
     );
