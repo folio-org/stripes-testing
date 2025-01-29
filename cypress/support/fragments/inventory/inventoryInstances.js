@@ -1547,4 +1547,15 @@ export default {
         .has({ content: expectedValue.toString() }),
     );
   },
+
+  verifyValueInColumnForRow(rowIndex, columnName, expectedValue) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        index: rowIndex,
+      })
+        .find(MultiColumnListCell({ column: columnName }))
+        .has({ content: expectedValue.toString() }),
+    );
+  },
 };
