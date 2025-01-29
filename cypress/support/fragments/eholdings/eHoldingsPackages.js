@@ -34,7 +34,6 @@ const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
 const chooseParameterField = Select('Select a field to search');
 const subjectKeyValue = KeyValue('Subjects');
-const availableProxies = ['chalmers', 'Inherited - None', 'ezproxY-T', 'MJProxy'];
 const proxySelect = Select('Proxy');
 const customCoverageDate = KeyValue('Custom coverage dates');
 const startDateInput = TextField({ id: 'begin-coverage-0' });
@@ -365,14 +364,16 @@ export default {
 
   changePackageRecordProxy: () => {
     return cy
-      .then(() => proxySelect.value())
+      .then(() => proxySelect.checkedOptionText())
       .then((selectedProxy) => {
-        const notSelectedProxy = availableProxies.filter(
-          (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
-        )[0];
-        cy.do(proxySelect.choose(notSelectedProxy));
-        cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
-        return cy.wrap(notSelectedProxy);
+        cy.getEholdingsProxiesViaAPI().then((existingProxies) => {
+          const notSelectedProxy = existingProxies.filter(
+            (existingProxy) => existingProxy !== selectedProxy,
+          )[0];
+          cy.do(proxySelect.choose(notSelectedProxy));
+          cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
+          return cy.wrap(notSelectedProxy);
+        });
       });
   },
 
