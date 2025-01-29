@@ -20,6 +20,7 @@ describe('Check out', () => {
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
   };
+  const notePrefixes = { title: 'Note ', details: 'This is Note ' };
   const note1 = { title: 'Note 1', details: 'This is Note 1' };
   const note2 = { title: 'Note 2', details: 'This is Note 2' };
 
@@ -88,16 +89,18 @@ describe('Check out', () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
       // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(note1);
+      CheckOutActions.checkUserNote(notePrefixes);
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
       // Modal window "Note for patron" with the Note 2 is displayed
-      CheckOutActions.checkUserNote(note2);
+      CheckOutActions.checkUserNote(notePrefixes);
       // Click on the "Delete note" button.
       CheckOutActions.deleteNote();
+      CheckOutActions.checkNoteModalNotDisplayed();
       // Open user Details
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
+      UsersSearchPane.resetAllFilters();
       UsersSearchPane.searchByUsername(testData.username);
       UsersSearchPane.waitLoading();
       // Scroll down to "Notes" accordion button and click on it.
@@ -115,11 +118,11 @@ describe('Check out', () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
       // Modal window "Note for patron" with the Note 1 is displayed.
-      CheckOutActions.checkUserNote(note1);
+      CheckOutActions.checkUserNote(notePrefixes);
       // Click on the "Close" button.
       CheckOutActions.closeNote();
       // Modal window "Note for patron" with the Note 2 is displayed.
-      CheckOutActions.checkUserNote(note2);
+      CheckOutActions.checkUserNote(notePrefixes);
       // Click on the "Close" button.
       CheckOutActions.closeNote();
       // Input any valid item barcode in input field at "Scan items" pane → Click "Enter" button
