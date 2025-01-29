@@ -15,3 +15,22 @@ Cypress.Commands.add('getEHoldingsTitlesViaAPI', (titleName) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getEholdingsProxiesViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'eholdings/root-proxy',
+    isDefaultSearchParamsRequired: false,
+  }).then((rootResponse) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'eholdings/proxy-types?limit=15',
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.data.map((proxy) => {
+        if (proxy.attributes.id === rootResponse.body.data.attributes.proxyTypeId) return `Inherited - ${proxy.attributes.name}`;
+        else return proxy.attributes.name;
+      });
+    });
+  });
+});
