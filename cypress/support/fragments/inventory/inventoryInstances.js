@@ -1551,7 +1551,7 @@ export default {
   verifyValueInColumnForRow(rowIndex, columnName, expectedValue) {
     cy.expect(
       MultiColumnListRow({
-        isContainer: true,
+        isContainer: false,
         index: rowIndex,
       })
         .find(MultiColumnListCell({ column: columnName }))
