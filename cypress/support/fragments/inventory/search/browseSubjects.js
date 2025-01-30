@@ -251,7 +251,7 @@ export default {
     );
   },
 
-  waitForSubjectsToAppear(subjectName) {
+  waitForSubjectToAppear(subjectName, isPresent = true) {
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -264,11 +264,15 @@ export default {
         });
       },
       (response) => {
-        return response.body.items.filter((item) => item.value === subjectName).length > 0;
+        const foundSubjects = response.body.items.filter((item) => {
+          return item.value === subjectName;
+        });
+        return isPresent ? foundSubjects.length > 0 : foundSubjects.length === 0;
       },
       {
-        limit: 15,
+        limit: 12,
         delay: 5000,
+        timeout: 60000,
       },
     );
   },

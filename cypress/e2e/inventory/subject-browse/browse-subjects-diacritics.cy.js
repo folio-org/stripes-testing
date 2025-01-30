@@ -53,7 +53,7 @@ describe('Inventory', () => {
           waiter: InventorySearchAndFilter.waitLoading,
         });
         InventorySearchAndFilter.switchToBrowseTab();
-        BrowseSubjects.waitForSubjectsToAppear(testData.queries[0]);
+        BrowseSubjects.waitForSubjectToAppear(testData.queries[0]);
       });
     });
 
