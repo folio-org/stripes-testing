@@ -151,6 +151,8 @@ describe('Inventory', () => {
       'C422238 Verify that subject from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local subject, but another tenant has) (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C422238'] },
       () => {
+        cy.reload();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
         BrowseSubjects.waitForBrowseSubjectsToContain(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.waitForBrowseSubjectsToContain(testData.sharedInstance.subjects[1].value);
         InventorySearchAndFilter.switchToBrowseTab();
@@ -168,6 +170,7 @@ describe('Inventory', () => {
           false,
         );
 
+        BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.browse(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.checkValueIsBold(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(

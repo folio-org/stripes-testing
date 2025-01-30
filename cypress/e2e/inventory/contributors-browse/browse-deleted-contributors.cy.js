@@ -114,6 +114,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
         BrowseContributors.browse(testData.contributorName);
+        BrowseContributors.waitForContributorToAppear(testData.contributorName);
         InventorySearchAndFilter.verifySearchResult(`${testData.contributorName}would be here`);
       },
     );

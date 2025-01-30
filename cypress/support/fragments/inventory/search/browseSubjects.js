@@ -274,4 +274,30 @@ export default {
       { limit: 12, timeout: 60000, delay: 5000 },
     );
   },
+
+  waitForSubjectToAppear(subjectName, isPresent = true) {
+    return cy.recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: 'browse/subjects/instances',
+          searchParams: {
+            query: `(value>="${subjectName}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => {
+        const foundSubjects = response.body.items.filter((item) => {
+          return item.value === subjectName;
+        });
+        return isPresent ? foundSubjects.length > 0 : foundSubjects.length === 0;
+      },
+      {
+        limit: 12,
+        delay: 5000,
+        timeout: 60000,
+      },
+    );
+  },
 };

@@ -10,6 +10,7 @@ import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/st
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
+      const recordTitle = `C423528 Create a new MARC authority record with Local authority file autotest ${getRandomPostfix()}`;
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
       const headerText = 'Create a new MARC authority record';
@@ -17,10 +18,8 @@ describe('MARC', () => {
       const newField = {
         previousFieldTag: '008',
         tag: '100',
-        content: '$a C423528 Create a new MARC authority record with Local authority file test',
+        content: `$a ${recordTitle}`,
       };
-      const recordTitle =
-        'C423528 Create a new MARC authority record with Local authority file test';
       const localAuthFile = {
         name: `C423528 auth source file active ${randomPostfix}`,
         prefix: getRandomLetters(8),
@@ -123,6 +122,8 @@ describe('MARC', () => {
           // workaround for an issue when detailed view is not opened when using a filter after record creation - team won't fix it
           cy.reload();
 
+          cy.reload();
+          MarcAuthorities.waitLoading();
           // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
           MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
           MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);

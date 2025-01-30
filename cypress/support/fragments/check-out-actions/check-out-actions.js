@@ -258,6 +258,7 @@ export default {
     );
   },
   deleteNote: () => {
+    cy.wait(1000);
     cy.do(Button('Delete note').click());
   },
   closeNote: () => {
