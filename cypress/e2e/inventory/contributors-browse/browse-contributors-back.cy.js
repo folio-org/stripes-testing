@@ -96,6 +96,7 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
         BrowseContributors.browse(testData.contributor.namePrefix);
         BrowseContributors.checkNonExactSearchResultForARow(testData.contributor.namePrefix);
         BrowseContributors.openRecord(testData.contributor.name);

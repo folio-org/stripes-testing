@@ -105,6 +105,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
         BrowseContributors.browse(testData.contributor.name);
         BrowseContributors.checkSearchResultRow(
           testData.contributor.name,
@@ -161,6 +162,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
         BrowseContributors.browse(testData.contributor.name);
         BrowseContributors.checkSearchResultRecord(testData.contributor.name);
         BrowseContributors.checkSearchResultRow(
@@ -191,6 +193,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
         BrowseContributors.browse(testData.contributor.name);
         BrowseContributors.checkSearchResultRecord(testData.contributor.name);
         BrowseContributors.checkSearchResultRow(
@@ -212,6 +215,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name, false);
         BrowseContributors.browse(testData.contributor.name);
         InventorySearchAndFilter.verifySearchResult(`${testData.contributor.name}would be here`);
       },
