@@ -1,6 +1,5 @@
-import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../support/constants';
+import { APPLICATION_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import DataImport from '../../support/fragments/data_import/dataImport';
 import EHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -18,14 +17,6 @@ describe('eHoldings', () => {
     successCallout: 'New tag created',
   };
 
-  const marcFiles = [
-    {
-      marc: 'marcBibFileForC376614.mrc',
-      fileName: `testMarcFileC376614${getRandomPostfix()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-    },
-  ];
-
   const createdRecordIDs = [];
 
   before('Creating user', () => {
@@ -36,20 +27,8 @@ describe('eHoldings', () => {
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record.instance.id);
-              });
-            });
-          },
-        );
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        createdRecordIDs.push(instanceData.instanceId);
       });
     });
   });

@@ -306,8 +306,9 @@ export default {
         return response.body.items.filter((item) => item.name === contributorName).length > 0;
       },
       {
-        limit: 10,
+        limit: 12,
         delay: 5000,
+        timeout: 60000,
       },
     );
   },
