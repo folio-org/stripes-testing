@@ -9,14 +9,15 @@ import Users from '../../../support/fragments/users/users';
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const instanceTitle = 'C466294 Instance Autotest';
-    const exactQuery = 'Wærn, Hakon Autotest C';
+    const contributorPrefix = 'Wærn, Hakon Autotest';
+    const exactQuery = `${contributorPrefix} C`;
     const nonExactQuery = `${exactQuery} Extra`;
-    const exactQueryNoDiacritics = 'Waern, Hakon Autotest C';
+    const exactQueryNoDiacritics = exactQuery.replace('æ', 'ae');
     const nonExactQueryNoDiacritics = `${exactQueryNoDiacritics} Extra`;
     const additionalContributorValues = [
-      'Waern, Hakon Autotest A',
-      'Waern, Hakon Autotest B',
-      'Waern, Hakon Autotest D',
+      `${contributorPrefix.replace('æ', 'ae')} A`,
+      `${contributorPrefix.replace('æ', 'ae')} B`,
+      `${contributorPrefix.replace('æ', 'ae')} D`,
     ];
     let user;
     let createdInstanceId;
