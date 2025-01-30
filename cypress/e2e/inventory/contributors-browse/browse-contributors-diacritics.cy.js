@@ -9,12 +9,23 @@ import Users from '../../../support/fragments/users/users';
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const instanceTitle = 'C466294 Instance Autotest';
-    const exactQuery = 'Wærn, Hakon Autotest B';
-    const additionalContributorValues = ['Waern, Hakon Autotest A', 'Waern, Hakon Autotest C'];
+    const exactQuery = 'Wærn, Hakon Autotest C';
     const nonExactQuery = `${exactQuery} Extra`;
+    const exactQueryNoDiacritics = 'Waern, Hakon Autotest C';
+    const nonExactQueryNoDiacritics = `${exactQueryNoDiacritics} Extra`;
+    const additionalContributorValues = [
+      'Waern, Hakon Autotest A',
+      'Waern, Hakon Autotest B',
+      'Waern, Hakon Autotest D',
+    ];
     let user;
     let createdInstanceId;
-    const browseQueries = [exactQuery, nonExactQuery, exactQuery, nonExactQuery];
+    const browseQueries = [
+      exactQuery,
+      nonExactQuery,
+      exactQueryNoDiacritics,
+      nonExactQueryNoDiacritics,
+    ];
 
     before('Creating user and test data', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
@@ -62,6 +73,13 @@ describe('Inventory', () => {
                       primary: false,
                     },
                     {
+                      name: additionalContributorValues[2],
+                      contributorNameTypeId: contributorNameTypes[0].id,
+                      contributorTypeId: contributorTypes[0].id,
+                      contributorTypeText: '',
+                      primary: false,
+                    },
+                    {
                       name: 'abc1',
                       contributorNameTypeId: contributorNameTypes[0].id,
                       contributorTypeId: contributorTypes[0].id,
@@ -90,7 +108,6 @@ describe('Inventory', () => {
                     path: TopMenu.inventoryPath,
                     waiter: InventoryInstances.waitContentLoading,
                   });
-                  InventorySearchAndFilter.selectBrowseContributors();
                 });
               });
             });
@@ -111,18 +128,22 @@ describe('Inventory', () => {
       () => {
         BrowseContributors.waitForContributorToAppear(exactQuery, true);
         browseQueries.forEach((query) => {
-          if (query === exactQuery) {
-            BrowseContributors.browse(query);
-            BrowseContributors.checkSearchResultRecord(query);
-            BrowseContributors.checkRowValue(4, additionalContributorValues[0]);
-            BrowseContributors.checkRowValue(6, additionalContributorValues[1]);
-          } else {
-            BrowseContributors.browse(query);
-            BrowseContributors.checkNonExactMatchPlaceholder(query);
+          InventorySearchAndFilter.selectBrowseContributors();
+          BrowseContributors.browse(query);
+          if (query === exactQuery || query === exactQueryNoDiacritics) {
+            BrowseContributors.checkSearchResultRecord(exactQuery);
             BrowseContributors.checkRowValue(3, additionalContributorValues[0]);
+            BrowseContributors.checkRowValue(4, additionalContributorValues[1]);
+            BrowseContributors.checkRowValue(6, additionalContributorValues[2]);
+          } else {
+            BrowseContributors.checkNonExactMatchPlaceholder(query);
+            BrowseContributors.checkRowValue(2, additionalContributorValues[0]);
+            BrowseContributors.checkRowValue(3, additionalContributorValues[1]);
             BrowseContributors.checkRowValue(4, exactQuery);
-            BrowseContributors.checkRowValue(6, additionalContributorValues[1]);
+            BrowseContributors.checkRowValue(6, additionalContributorValues[2]);
           }
+          BrowseContributors.resetAllInSearchPane();
+          InventorySearchAndFilter.verifyKeywordsAsDefault();
         });
       },
     );
