@@ -290,8 +290,7 @@ export default {
     });
   },
 
-  waitForContributorToAppear(contributorName, waitLonger = false) {
-    const timeout = waitLonger ? 75_000 : 60_000;
+  waitForContributorToAppear(contributorName, isPresent = true) {
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -304,12 +303,15 @@ export default {
         });
       },
       (response) => {
-        return response.body.items.filter((item) => item.name === contributorName).length > 0;
+        const foundContributors = response.body.items.filter((item) => {
+          return item.name === contributorName;
+        });
+        return isPresent ? foundContributors.length > 0 : foundContributors.length === 0;
       },
       {
         limit: 15,
         delay: 5000,
-        timeout,
+        timeout: 70000,
       },
     );
   },

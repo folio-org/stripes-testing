@@ -127,7 +127,7 @@ describe('Inventory', () => {
       'C466294 Browse contributors which has diacritics (spitfire)',
       { tags: ['extendedPath', 'spitfire', 'C466294'] },
       () => {
-        BrowseContributors.waitForContributorToAppear(exactQuery, true);
+        BrowseContributors.waitForContributorToAppear(exactQuery);
         browseQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseContributors();
           BrowseContributors.browse(query);
