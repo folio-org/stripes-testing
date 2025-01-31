@@ -55,6 +55,7 @@ describe('Inventory', () => {
       'C350393 Verify selecting row from Browse Result list (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C350393'] },
       () => {
+        BrowseSubjects.waitForSubjectToAppear(item.instanceSubjectName);
         BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);
         BrowseSubjects.verifyClickTakesToInventory(item.instanceSubjectName);
       },
