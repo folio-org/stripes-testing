@@ -290,7 +290,7 @@ export default {
     });
   },
 
-  waitForContributorToAppear(contributorName) {
+  waitForContributorToAppear(contributorName, isPresent = true) {
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -303,12 +303,15 @@ export default {
         });
       },
       (response) => {
-        return response.body.items.filter((item) => item.name === contributorName).length > 0;
+        const foundContributors = response.body.items.filter((item) => {
+          return item.name === contributorName;
+        });
+        return isPresent ? foundContributors.length > 0 : foundContributors.length === 0;
       },
       {
-        limit: 12,
+        limit: 15,
         delay: 5000,
-        timeout: 60000,
+        timeout: 70000,
       },
     );
   },
@@ -410,5 +413,13 @@ export default {
 
   checkValueAbsentInResults(contributorName) {
     cy.expect(browseContributorsResultsList.find(MultiColumnListCell(contributorName)).absent());
+  },
+
+  checkRowValue(rowNumber, value) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex: 0 }).has({
+        innerHTML: including(value),
+      }),
+    );
   },
 };
