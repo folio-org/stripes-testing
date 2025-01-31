@@ -4,8 +4,6 @@ import { APPLICATION_NAMES, INVENTORY_DEFAULT_SORT_OPTIONS } from '../../../supp
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -86,9 +84,6 @@ describe('Inventory', () => {
           StatisticalCodes.createViaApi().then((statCode) => {
             instances[0].statisticalCodeId = statCode.id;
           });
-          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          instances[0].defaultLocation = Location.getDefaultLocation(servicePoint.id);
-          Location.createViaApi(instances[0].defaultLocation);
         })
         .then(() => {
           instances.forEach((instance, index) => {
@@ -113,7 +108,7 @@ describe('Inventory', () => {
               holdings: [
                 {
                   holdingsTypeId: instances[0].holdingTypeId,
-                  permanentLocationId: instances[0].defaultLocation.id,
+                  permanentLocationId: instances[0].locationId,
                   tags: {
                     tagList: [testData.holdingsTag],
                   },
@@ -153,12 +148,6 @@ describe('Inventory', () => {
       instances.forEach((instance) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
-      Location.deleteInstitutionCampusLibraryLocationViaApi(
-        instances[0].defaultLocation.institutionId,
-        instances[0].defaultLocation.campusId,
-        instances[0].defaultLocation.libraryId,
-        instances[0].defaultLocation.id,
-      );
       StatisticalCodes.deleteViaApi(instances[0].statisticalCodeId);
     });
 
