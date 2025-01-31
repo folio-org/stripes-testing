@@ -44,7 +44,6 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       cy.setTenant(Affiliations.College).then(() => {
-        cy.getCollegeAdminToken();
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -60,7 +59,7 @@ describe('Inventory', () => {
     };
 
     it(
-      'C405563 (CONSORTIA) (CONSORTIA) Verify the action for creating new local records for Member tenant (consortia) (folijet)',
+      'C405563 (CONSORTIA) Verify the action for creating new local records for Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C405563'] },
       () => {
         verifySearchAndFilterPane();
