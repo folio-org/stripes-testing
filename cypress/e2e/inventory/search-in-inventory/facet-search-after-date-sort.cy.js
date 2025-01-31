@@ -159,6 +159,7 @@ describe('Inventory', () => {
         instances[0].defaultLocation.libraryId,
         instances[0].defaultLocation.id,
       );
+      StatisticalCodes.deleteViaApi(instances[0].statisticalCodeId);
     });
 
     it(
