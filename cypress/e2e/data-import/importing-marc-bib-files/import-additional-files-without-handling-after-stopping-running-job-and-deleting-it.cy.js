@@ -37,7 +37,7 @@ describe('Data Import', () => {
 
     it(
       'C378883 Verify the ability to import additional files without hanging after stopping a running job and deleting it (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet', 'C378883'] },
+      { tags: ['criticalPath', 'folijet', 'C378883'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.waitLoading();

@@ -58,7 +58,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C380646'] },
         () => {
           cy.visit(TopMenu.inventoryPath);
-          InventoryInstances.searchByTitle(testData.marcBibTitle);
+          InventoryInstances.searchByTitle(createdRecordIDs);
           InventoryInstance.selectTopRecord();
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.addNewField('010', '$a   766384', 6);

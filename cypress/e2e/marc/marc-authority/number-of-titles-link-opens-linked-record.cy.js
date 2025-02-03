@@ -20,7 +20,7 @@ const testData = {
   instanceIDs: [],
   authorityIDs: [],
   tag: '111',
-  marcValue: 'Mediterranean Conference on Medical and Biological Engineering',
+  marcValue: 'C375263 Autotest Mediterranean Conference on Medical and Biological Engineering',
   instanceTitle:
     'Mediterranean conference on medical and biological engineering and computing 2013 / Laura M. Roa Romero, editor.',
   authorizedTypes: {
@@ -31,14 +31,14 @@ const testData = {
 const marcFiles = [
   {
     marc: 'marcBibC375263.mrc',
-    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    fileName: `testMarcFileC375263.${getRandomPostfix()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     numOfRecords: 1,
     propertyName: 'instance',
   },
   {
     marc: 'marcAuthC375263.mrc',
-    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    fileName: `testMarcFileC375263.${getRandomPostfix()}.mrc`,
     jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
     numOfRecords: 1,
     propertyName: 'authority',
@@ -60,16 +60,7 @@ describe('MARC', () => {
         }
       });
 
-      MarcAuthorities.getMarcAuthoritiesViaApi({
-        limit: 100,
-        query: `keyword="${testData.marcValue}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-      }).then((authorities) => {
-        if (authorities) {
-          authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
-          });
-        }
-      });
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375263*');
 
       marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(

@@ -23,14 +23,14 @@ describe('MARC', () => {
         },
         instanceTitle:
           'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Stravinsky. Theme & variations / Rossini.',
-        authTitles: ['Mostly Stravinsky Festival'],
+        authTitles: ['C380434 Autotest Mostly Stravinsky Festival'],
         authRows: {
           stravinskyAuth: {
-            title: 'Mostly Stravinsky Festival',
+            title: 'C380434 Autotest Mostly Stravinsky Festival',
             tag: '111',
           },
           stravinskyRef: {
-            title: 'Mostly Stravinsky Festival Orchestra',
+            title: 'C380434 Autotest Mostly Stravinsky Festival Orchestra',
             tag: '411',
           },
         },
@@ -75,16 +75,7 @@ describe('MARC', () => {
             }
           });
           testData.authTitles.forEach((query) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
-                });
-              }
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
           });
 
           testData.marcFiles.forEach((marcFile) => {
@@ -131,7 +122,10 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag711);
           MarcAuthorities.clickReset();
-          MarcAuthorities.searchBy('Corporate/Conference name', 'Mostly Stravinsky');
+          MarcAuthorities.searchBy(
+            'Corporate/Conference name',
+            'C380434 Autotest Mostly Stravinsky',
+          );
           MarcAuthorities.verifySearchResultTabletIsAbsent(false);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: testData.authorizedColumnName,

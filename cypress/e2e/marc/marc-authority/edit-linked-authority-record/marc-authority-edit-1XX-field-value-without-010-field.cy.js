@@ -150,7 +150,7 @@ describe('MARC', () => {
           InventoryInstance.viewSource();
           InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${testData.tag611}\t`);
           InventoryViewSource.contains(
-            '$a C374158 Vatican Council $c Basilica di San Pietro in Vaticano)',
+            '$a C374158 Vatican Council $n (2nd : $d 1962-1966 : $c Basilica di San Pietro in Vaticano)',
           );
         },
       );

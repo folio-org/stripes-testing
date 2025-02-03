@@ -26,7 +26,7 @@ describe('MARC', () => {
         updatedTag100Value: `$a Dante Alighieri C405142, $d 1265-2024, $t Divine Comedy ${randomFourDigits}`,
         updatedTag046Value: '$g 847-111-2024 $2 xqcd',
         tag400Value: `$a Данте Алигери C405142 ${randomFourDigits} $d 1265-1321`,
-        tag010Value: '$a n78095495405142',
+        tag010Value: '$a n  78405142',
         tag377Value: '$a itaC405142',
         viewSharedRecordText: 'Shared MARC authority record',
         editSharedRecordText: 'Edit shared MARC authority record',
