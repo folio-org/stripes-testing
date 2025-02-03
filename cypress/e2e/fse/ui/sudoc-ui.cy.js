@@ -13,7 +13,7 @@ describe('fse-sudoc - UI for productions tenants', () => {
   });
 
   it(
-    `TCxxx - verify that sudoc page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195780 - verify that sudoc page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['mod-sudoc', 'fse', 'ui'] },
     () => {
       Sudoc.checkTableDisplayed();
