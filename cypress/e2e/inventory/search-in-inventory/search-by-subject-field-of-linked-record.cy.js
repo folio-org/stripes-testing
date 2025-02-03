@@ -58,14 +58,14 @@ const testData = {
   marcFiles: [
     {
       marc: 'marcBibC375259.mrc',
-      fileName: `testMarcFileC375259.${randomFourDigitNumber()}.mrc`,
+      fileName: `C375259 testMarcFile.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
       numberOfRecords: 7,
       propertyName: 'instance',
     },
     {
       marc: 'marcAuthC375259.mrc',
-      fileName: `testMarcFileAuth100C375259.${randomFourDigitNumber()}.mrc`,
+      fileName: `C375259 testMarcFileAuth100.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
       numberOfRecords: 7,
       propertyName: 'authority',
@@ -77,41 +77,41 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: testData.searchQueryBeforeTest,
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+      testData.searchAuthorityQueries.forEach((query) => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: testData.searchQueryBeforeTest,
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
             });
           }
         });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
+      });
+      testData.marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.recordIDs.push(record[marcFile.propertyName].id);
           });
-        });
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.recordIDs.push(record[marcFile.propertyName].id);
-            });
-          });
+          cy.wait(3000);
         });
       });
+      cy.loginAsAdmin();
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
@@ -132,8 +132,12 @@ describe('Inventory', () => {
       }
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
-      cy.logout();
     });
 
     after('Delete test data', () => {
@@ -151,10 +155,6 @@ describe('Inventory', () => {
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375259'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[0],

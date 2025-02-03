@@ -169,6 +169,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifySearchResult(query);
             InventorySearchAndFilter.clickResetAllButton();
           } else if (query === 'BJ1533.C5') {
+            cy.wait(2000);
             InventorySearchAndFilter.verifySearchResult(query);
             InventorySearchAndFilter.selectFoundItemFromBrowse(query);
             InventorySearchAndFilter.verifySearchOptionAndQuery(
