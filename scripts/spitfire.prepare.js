@@ -122,6 +122,7 @@ async function deleteItemsForHoldings(holdingsId) {
   settledDeletePromises.forEach((settledPromise) => {
     if (settledPromise.status === 'rejected') console.log(JSON.stringify(settledPromise.reason));
   });
+  await wait(500);
 }
 
 async function deleteHoldingsForInstance(instanceId) {
@@ -143,6 +144,7 @@ async function deleteHoldingsForInstance(instanceId) {
   settledDeletePromises.forEach((settledPromise) => {
     if (settledPromise.status === 'rejected') console.log(JSON.stringify(settledPromise.reason));
   });
+  await wait(500);
 }
 
 async function removeAutotestInstances() {
@@ -171,7 +173,7 @@ async function removeAutotestInstances() {
     deletePromisesBatches.push(batch);
   }
   for (const [index, promisesBatch] of deletePromisesBatches.entries()) {
-    if (!(index % 6)) await getToken();
+    if (!((index + 1) % 6)) await getToken();
     await Promise.allSettled(promisesBatch);
     await wait(1500);
   }
@@ -197,6 +199,23 @@ async function removeAutotestAuthorities() {
   await getToken();
 }
 
+async function removeAuthoritiesWithSpecificSource(sourceFileId) {
+  const authoritiesWithSource = await axios({
+    url: `/search/authorities?limit=500&query=(sourceFileId==("${sourceFileId}"))`,
+  });
+  if (authoritiesWithSource.data.authorities.length <= 100) {
+    for (const [index, authority] of authoritiesWithSource.data.authorities.entries()) {
+      if (!((index + 1) % 15)) await wait(1500);
+      await axios({
+        method: 'DELETE',
+        url: `/authority-storage/authorities/${authority.id}`,
+        validateStatus: () => true,
+      });
+    }
+    await wait(500);
+  }
+}
+
 async function removeUserAuthoritySourceFiles() {
   const response = await axios({
     url: '/authority-source-files?limit=200',
@@ -208,6 +227,7 @@ async function removeUserAuthoritySourceFiles() {
   let counter = 1;
   for (const sourceFile of userSourceFiles) {
     if (!(counter % 15)) await wait(1500);
+    await removeAuthoritiesWithSpecificSource(sourceFile.id);
     await axios({
       method: 'DELETE',
       url: `/authority-source-files/${sourceFile.id}`,
