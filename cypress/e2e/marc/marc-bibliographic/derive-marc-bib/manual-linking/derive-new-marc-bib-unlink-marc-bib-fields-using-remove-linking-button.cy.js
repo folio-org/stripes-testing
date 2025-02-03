@@ -4,10 +4,8 @@ import DataImport from '../../../../../support/fragments/data_import/dataImport'
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
@@ -69,12 +67,11 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
+        cy.loginAsAdmin();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((createdUserProperties) => {
             testData.preconditionUserId = createdUserProperties.userId;
-            // make sure there are no duplicate authority records in the system
-            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
-
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,
@@ -125,13 +122,13 @@ describe('MARC', () => {
       });
 
       after('Deleting created user and data', () => {
-        cy.getAdminToken();
-        Users.deleteViaApi(testData.user.userId);
-        Users.deleteViaApi(testData.preconditionUserId);
-        InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-        createdRecordIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
-        });
+        // cy.getAdminToken();
+        // Users.deleteViaApi(testData.user.userId);
+        // Users.deleteViaApi(testData.preconditionUserId);
+        // InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+        // createdRecordIDs.forEach((id, index) => {
+        //   if (index) MarcAuthority.deleteViaAPI(id);
+        // });
       });
 
       it(

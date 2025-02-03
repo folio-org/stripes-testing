@@ -290,7 +290,7 @@ export default {
     });
   },
 
-  waitForContributorToAppear(contributorName, isPresent = true) {
+  waitForContributorToAppear(contributorName, isPresent = true, isLinked = false) {
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -306,7 +306,12 @@ export default {
         const foundContributors = response.body.items.filter((item) => {
           return item.name === contributorName;
         });
-        return isPresent ? foundContributors.length > 0 : foundContributors.length === 0;
+
+        return isPresent && foundContributors.length > 0
+          ? isLinked
+            ? foundContributors.some((item) => item.authorityId && item.authorityId !== '')
+            : true
+          : foundContributors.length === 0;
       },
       {
         limit: 12,
