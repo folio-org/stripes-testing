@@ -11,7 +11,8 @@ describe('fse-local-kbAdmin - UI', () => {
 
   it(
     `TC195333 - verify that marc local KB admin page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'folio_local-kb-admin'] },
+    // TOOD: return 'folio_local-kb-admin' tag later, investigation on the module installation needed
+    { tags: ['fse', 'ui'] },
     () => {
       cy.visit(TopMenu.localKbAdmin);
       LocalKbAdmin.waitLoading();

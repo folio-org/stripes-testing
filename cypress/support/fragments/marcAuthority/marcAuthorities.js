@@ -1659,4 +1659,12 @@ export default {
       });
     });
   },
+
+  setAuthoritySourceFileActivityViaAPI(sourceFileName, isActive = true) {
+    cy.getAuthoritySourceFileDataViaAPI(sourceFileName).then(({ id, _version, selectable }) => {
+      if (isActive !== selectable) {
+        cy.setActiveAuthoritySourceFileViaAPI(id, _version, isActive);
+      }
+    });
+  },
 };
