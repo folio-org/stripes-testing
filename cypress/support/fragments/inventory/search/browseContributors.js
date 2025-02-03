@@ -309,8 +309,9 @@ export default {
         return isPresent ? foundContributors.length > 0 : foundContributors.length === 0;
       },
       {
-        limit: 10,
+        limit: 12,
         delay: 5000,
+        timeout: 60000,
       },
     );
   },

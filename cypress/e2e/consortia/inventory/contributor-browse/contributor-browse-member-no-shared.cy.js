@@ -187,6 +187,8 @@ describe('Inventory', () => {
         'C422237 Verify that contributors from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local contributor, but another tenant has) (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C422237'] },
         () => {
+          cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(testData.contributorBrowseoption);
           InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
@@ -201,6 +203,7 @@ describe('Inventory', () => {
             'No',
             false,
           );
+          BrowseContributors.waitForContributorToAppear(`${contributorPrefix} 1`);
           BrowseContributors.browse(`${contributorPrefix} 1`);
           BrowseContributors.checkSearchResultRecord(`${contributorPrefix} 1`);
           BrowseContributors.checkSearchResultRow(
