@@ -47,6 +47,7 @@ const localKbAdmin = '/local-kb-admin';
 const readingRoom = '/reading-room';
 const serials = '/serials-management/serials';
 const linkedDataEditor = '/linked-data-editor/search';
+const sudocPath = '/sudoc';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -98,6 +99,7 @@ export default {
   readingRoom,
   serials,
   linkedDataEditor,
+  sudocPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());
