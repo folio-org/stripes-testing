@@ -105,6 +105,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(1500);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
           InventoryInstance.viewSource();
