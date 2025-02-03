@@ -36,6 +36,7 @@ describe('MARC', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C584448*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Adventures of Huckleberry');
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
