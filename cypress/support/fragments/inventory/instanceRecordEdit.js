@@ -483,7 +483,7 @@ export default {
     if (saved) cy.expect(saveAndKeepEditing.has({ disabled: true }));
   },
 
-  removeClassificationValue(classificationValue) {
+  removeClassificationNumber(classificationValue) {
     cy.do(RepeatableFieldItem({ inputValue: classificationValue }).find(deleteButton).click());
     cy.expect(RepeatableFieldItem({ inputValue: classificationValue }).absent());
   },

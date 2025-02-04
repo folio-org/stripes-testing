@@ -20,7 +20,7 @@ describe('Inventory', () => {
       instance: {
         instanceTitle: `C471477 Autotest Instance ${randomPostfix}`,
         classificationType: CLASSIFICATION_IDENTIFIER_TYPES.ADDITIONAL_DEWEY,
-        classificationValue: `YC471477number ${randomPostfix}`,
+        classificationNumber: `YC471477number ${randomPostfix}`,
       },
       classificationOption: 'Classification (all)',
       classificationIdentifierTypeName: 'Additional Dewey',
@@ -60,7 +60,7 @@ describe('Inventory', () => {
                   title: testData.instance.instanceTitle,
                   classifications: [
                     {
-                      classificationNumber: testData.instance.classificationValue,
+                      classificationNumber: testData.instance.classificationNumber,
                       classificationTypeId: testData.instance.classificationType,
                     },
                   ],
@@ -98,31 +98,31 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         BrowseClassifications.waitForClassificationNumberToAppear(
-          testData.instance.classificationValue,
+          testData.instance.classificationNumber,
         );
-        InventorySearchAndFilter.browseSearch(testData.instance.classificationValue);
+        InventorySearchAndFilter.browseSearch(testData.instance.classificationNumber);
         BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifySearchResultIncludingValue(
-          testData.instance.classificationValue,
+          testData.instance.classificationNumber,
         );
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.instance.classificationValue);
+        BrowseClassifications.selectFoundValueByRow(5, testData.instance.classificationNumber);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instance.instanceTitle);
         InventoryInstances.selectInstanceById(createdRecordId);
 
         InventoryInstance.verifyClassificationValueInView(
           testData.classificationIdentifierTypeName,
-          testData.instance.classificationValue,
+          testData.instance.classificationNumber,
         );
 
         InstanceRecordView.edit();
-        InstanceRecordEdit.removeClassificationValue(testData.instance.classificationValue);
+        InstanceRecordEdit.removeClassificationNumber(testData.instance.classificationNumber);
         InstanceRecordEdit.saveAndClose();
         InventoryInstance.checkInstanceTitle(testData.instance.instanceTitle);
 
         InventoryInstance.verifyClassificationValueInView(
           testData.classificationIdentifierTypeName,
-          testData.instance.classificationValue,
+          testData.instance.classificationNumber,
           false,
         );
 
@@ -130,14 +130,14 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
         InventorySearchAndFilter.clickResetAllButton();
         BrowseClassifications.waitForClassificationNumberToAppear(
-          testData.instance.classificationValue,
+          testData.instance.classificationNumber,
           false,
         );
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
-        InventorySearchAndFilter.browseSearch(testData.instance.classificationValue);
+        InventorySearchAndFilter.browseSearch(testData.instance.classificationNumber);
         BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifyContentNotExistInSearchResult(
-          testData.instance.classificationValue,
+          testData.instance.classificationNumber,
         );
       },
     );
