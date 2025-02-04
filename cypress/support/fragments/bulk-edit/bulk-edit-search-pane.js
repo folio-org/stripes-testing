@@ -642,6 +642,12 @@ export default {
     cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
   },
 
+  verifyShowWarningsCheckboxDisabled() {
+    cy.expect(
+      errorsAccordion.find(Checkbox({ labelText: 'Show warnings', disabled: true })).exists(),
+    );
+  },
+
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       errorsAccordion
