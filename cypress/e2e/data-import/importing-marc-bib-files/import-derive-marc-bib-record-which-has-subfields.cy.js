@@ -70,6 +70,7 @@ describe('Data Import', () => {
         QuickMarcEditor.updateExistingFieldContent(9, testData.new050fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(10, testData.new082fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(13, testData.new260fieldRecord);
+        cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
