@@ -1,6 +1,57 @@
 import FileManager from '../../utils/fileManager';
+import DateTools from '../../utils/dateTools';
+
+const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 export default {
+  getMatchedRecordsFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Matched-Records-${fileName}`;
+    } else {
+      return `*-Matched-Records-${fileName}`;
+    }
+  },
+
+  getPreviewFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
+    } else {
+      return `*-Updates-Preview-CSV-${fileName}`;
+    }
+  },
+
+  getChangedRecordsFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Changed-Records-CSV-${fileName}`;
+    } else {
+      return `*-Changed-Records-CSV-${fileName}`;
+    }
+  },
+
+  getPreviewOfProposedChangesFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
+    } else {
+      return `*-Updates-Preview-CSV-${fileName}`;
+    }
+  },
+
+  getErrorsFromCommittingFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Committing-changes-Errors-${fileName}`;
+    } else {
+      return `*-Committing-changes-Errors-${fileName}`;
+    }
+  },
+
+  getErrorsFromMatchingFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Matching-Records-Errors-${fileName}`;
+    } else {
+      return `*-Matching-Records-Errors-${fileName}`;
+    }
+  },
+
   verifyMatchedResultFileContent(
     fileName,
     expectedResult,

@@ -7,6 +7,7 @@ import Users from '../../../support/fragments/users/users';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import DateTools from '../../../support/utils/dateTools';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
@@ -14,10 +15,11 @@ let user;
 let updatedDate;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${userUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${userUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userUUIDsFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
+const previewOfProposedChangesFileName =
+  BulkEditFiles.getPreviewOfProposedChangesFileName(userUUIDsFileName);
+const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userUUIDsFileName);
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe(
@@ -40,7 +42,7 @@ describe(
           cy.wait(3000);
 
           cy.login(user.username, user.password);
-          cy.wait(10000);
+          cy.wait(15000);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
           BulkEditSearchPane.waitLoading();
 
