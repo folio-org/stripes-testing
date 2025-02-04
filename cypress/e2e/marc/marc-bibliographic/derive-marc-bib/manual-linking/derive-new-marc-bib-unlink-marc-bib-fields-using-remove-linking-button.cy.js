@@ -4,8 +4,10 @@ import DataImport from '../../../../../support/fragments/data_import/dataImport'
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 
@@ -122,13 +124,13 @@ describe('MARC', () => {
       });
 
       after('Deleting created user and data', () => {
-        // cy.getAdminToken();
-        // Users.deleteViaApi(testData.user.userId);
-        // Users.deleteViaApi(testData.preconditionUserId);
-        // InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-        // createdRecordIDs.forEach((id, index) => {
-        //   if (index) MarcAuthority.deleteViaAPI(id);
-        // });
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.preconditionUserId);
+        InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+        createdRecordIDs.forEach((id, index) => {
+          if (index) MarcAuthority.deleteViaAPI(id);
+        });
       });
 
       it(
