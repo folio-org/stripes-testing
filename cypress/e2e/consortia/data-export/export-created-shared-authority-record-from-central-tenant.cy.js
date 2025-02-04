@@ -1,5 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
-import { tenantNames } from '../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -14,8 +14,14 @@ import FileManager from '../../../support/utils/fileManager';
 
 describe('Data Export', () => {
   describe('Export of Shared MARC authority record', () => {
-    const sourceName = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
-    const users = {};
+    const LC_NAME_AUTHORITY_FILE = DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE;
+    const userPermissionSet = [
+      Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
+    ];
+    let users = {};
     const authorityIdentifier = 'n2009073240';
     const newFields = [
       { previousFieldTag: '008', tag: '010', content: `$a ${authorityIdentifier}` },
@@ -33,20 +39,28 @@ describe('Data Export', () => {
       { previousFieldTag: '400', tag: '500', content: '$a C436898La familia' },
     ];
     const exportedInstanceFileName = `C436898 exportedMarcAuthFile${getRandomPostfix()}.mrc`;
+    const rawMrcFileData = [
+      'an 2009073240',
+      '12a794564',
+      'aC436898John DoecSir,d1909-1965leng',
+      'aC436898Huan DoecSenior,d1909-1965leng',
+      'aC436898La familia',
+    ];
 
     before('Create users, data', () => {
       cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authorityIdentifier);
-      MarcAuthorities.setAuthoritySourceFileActivityViaAPI(sourceName);
-      cy.createTempUser([
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordCreate.gui,
-      ]).then((userProperties) => {
-        users.userProperties = userProperties;
+      MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE);
+      cy.createTempUser(userPermissionSet).then((userProperties) => {
+        users = userProperties;
 
-        cy.login(users.userProperties.username, users.userProperties.password, {
+        cy.affiliateUserToTenant({
+          tenantId: Affiliations.College,
+          userId: users.userId,
+          permissions: userPermissionSet,
+        });
+
+        cy.login(users.username, users.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
         }).then(() => {
@@ -58,23 +72,22 @@ describe('Data Export', () => {
     after('Delete users, data', () => {
       cy.resetTenant();
       cy.getAdminToken();
-      if (users.userProperties?.userId) Users.deleteViaApi(users.userProperties.userId);
+      if (users?.userId) Users.deleteViaApi(users.userId);
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authorityIdentifier);
-      FileManager.deleteFileFromDownloadsByMask(['QuickAuthorityExport*']);
+      FileManager.deleteFileFromDownloadsByMask('QuickAuthorityExport*');
       FileManager.deleteFileFromDownloadsByMask(exportedInstanceFileName);
       FileManager.deleteFile(`cypress/fixtures/${exportedInstanceFileName}`);
     });
 
     it(
-      'C436898 Export of created Shared MARC authority record from Central tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C436898'] },
+      'C436898 C436899 Export of created Shared MARC authority record from Central and Member tenant (consortia) (spitfire)',
+      { tags: ['criticalPathECS', 'spitfire', 'C436898', 'C436899'] },
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains('Create a new shared MARC authority record');
-        QuickMarcEditor.verifyAuthorityLookUpButton();
         QuickMarcEditor.clickAuthorityLookUpButton();
-        QuickMarcEditor.selectAuthorityFile(sourceName);
-        QuickMarcEditor.verifyAuthorityFileSelected(sourceName);
+        QuickMarcEditor.selectAuthorityFile(LC_NAME_AUTHORITY_FILE);
+        QuickMarcEditor.verifyAuthorityFileSelected(LC_NAME_AUTHORITY_FILE);
         QuickMarcEditor.clickSaveAndCloseInModal();
 
         newFields.forEach((newField) => {
@@ -95,24 +108,52 @@ describe('Data Export', () => {
         MarcAuthorities.closeMarcViewPane();
         MarcAuthorities.searchBy('Keyword', authorityIdentifier);
 
+        // Check Shared MARC authority export on Central tenant
         cy.intercept('/data-export/quick-export').as('getHrid');
         MarcAuthorities.checkSelectAuthorityRecordCheckbox('C436898La familia');
         MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record selected');
         MarcAuthorities.exportSelected();
 
-        cy.wait('@getHrid', 10_000).then((resp) => {
-          const exportedHrid = resp.response.body.jobExecutionHrId;
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-          ExportFile.waitLandingPageOpened();
-          ExportFile.downloadExportedMarcFileWithRecordHrid(exportedHrid, exportedInstanceFileName);
-          ExportFile.verifyFileIncludes(exportedInstanceFileName, [
-            'an 2009073240',
-            '12a794564',
-            'aC436898John DoecSir,d1909-1965leng',
-            'aC436898Huan DoecSenior,d1909-1965leng',
-            'aC436898La familia',
-          ]);
-        });
+        cy.wait('@getHrid', 10_000).then(
+          ({
+            response: {
+              body: { jobExecutionHrId },
+            },
+          }) => {
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              jobExecutionHrId,
+              exportedInstanceFileName,
+            );
+            ExportFile.verifyFileIncludes(exportedInstanceFileName, rawMrcFileData);
+          },
+        );
+
+        // Check Shared MARC authority export on Member tenant
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        cy.setTenant(Affiliations.College);
+
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+        MarcAuthorities.searchBy('Keyword', authorityIdentifier);
+
+        MarcAuthorities.checkSelectAuthorityRecordCheckbox('C436898La familia');
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record selected');
+        MarcAuthorities.exportSelected();
+
+        cy.wait('@getHrid', 10_000).then(
+          ({
+            response: {
+              body: { jobExecutionHrId },
+            },
+          }) => {
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              jobExecutionHrId,
+              exportedInstanceFileName,
+            );
+            ExportFile.verifyFileIncludes(exportedInstanceFileName, rawMrcFileData);
+          },
+        );
       },
     );
   });
