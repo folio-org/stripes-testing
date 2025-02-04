@@ -5,6 +5,7 @@ import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../support/utils/fileManager';
@@ -24,9 +25,9 @@ const item = {
   firstBarcode: barcode,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
-const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName);
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
   servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),

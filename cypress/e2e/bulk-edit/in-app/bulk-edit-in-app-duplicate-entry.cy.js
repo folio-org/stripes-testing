@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -17,7 +18,9 @@ const invalidBarcode = getRandomPostfix();
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const invalidUserBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUserBarcodesFileName}`;
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  invalidUserBarcodesFileName,
+);
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),

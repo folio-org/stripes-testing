@@ -8,6 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -46,8 +47,8 @@ const newBarcodes = [
 ];
 const itemsToEdit = [newBarcodes[0], newBarcodes[2], newBarcodes[4]];
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

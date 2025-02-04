@@ -5,15 +5,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const birthdate = '1970-12-02';
 const birthdateSlashFormat = '12/2/1970';
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
