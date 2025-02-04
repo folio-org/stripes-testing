@@ -11,7 +11,9 @@ import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs
 let user;
 const invalidHoldingHRID = getRandomPostfix();
 const invalidHoldingHRIDsFileName = `invalidHoldingHRIDs_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidHoldingHRIDsFileName}*`;
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  invalidHoldingHRIDsFileName,
+);
 
 describe('bulk-edit', () => {
   describe('logs', () => {
@@ -67,7 +69,7 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
             // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-            [`\uFEFF${invalidHoldingHRID}`],
+            ['\uFEFFERROR', invalidHoldingHRID],
             'firstElement',
             false,
           );

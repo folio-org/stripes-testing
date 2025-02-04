@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
@@ -20,7 +21,7 @@ const item = {
   barcode: getRandomPostfix(),
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*Changed-Records-${itemBarcodesFileName}`;
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
