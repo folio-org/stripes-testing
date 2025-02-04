@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
+        applicationName: 'app-platform-minimal',
         firstSelectedCapabilitySet: {
           table: 'Data',
           resource: 'Configuration',
@@ -91,6 +91,11 @@ describe('Eureka', () => {
             resource: 'UI-Notes Settings',
             action: 'Edit',
           },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
+            action: 'View',
+          },
         ],
         expectedCounts: {
           capabilitySets: {
@@ -99,13 +104,10 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 6,
-            Settings: 2,
+            Settings: 3,
           },
         },
       };
-
-      testData.firstSelectedCapabilitySet.application = testData.applicationName;
-      testData.secondSelectedCapabilitySet.application = testData.applicationName;
 
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
@@ -113,16 +115,10 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
@@ -147,8 +143,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName);
           AuthorizationRoles.clickSaveInModal();
-          // TO DO: uncomment when apps will be split (action takes too much resources with all lines in one app)
-          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.firstSelectedCapabilitySet);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.secondSelectedCapabilitySet);
           testData.capabilitiesInSelectedSets.forEach((capability) => {

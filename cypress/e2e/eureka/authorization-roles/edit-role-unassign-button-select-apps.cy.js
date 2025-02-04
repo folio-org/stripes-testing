@@ -7,18 +7,16 @@ import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
-      const applications = ['app-consortia', 'app-platform-full'];
+      const applications = ['app-complete', 'app-platform-minimal'];
       const testData = {
         roleName: `Auto Role C553052 ${getRandomPostfix()}`,
         capabilitySets: [
           {
-            application: applications[0],
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Consortia Inventory Local Sharing-Instances',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Acquisitions-Units Units',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
@@ -26,67 +24,66 @@ describe('Eureka', () => {
         ],
         capabilitiesInSets: [
           {
-            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Instances Collection',
+            resource: 'Acquisitions-Units Units',
+            action: CAPABILITY_ACTIONS.MANAGE,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Acquisitions-Units Units Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Instances Item',
+            resource: 'Acquisitions-Units Units Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Instances Item',
+            resource: 'Acquisitions-Units Units Item',
+            action: CAPABILITY_ACTIONS.EDIT,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Acquisitions-Units Units Item',
             action: CAPABILITY_ACTIONS.CREATE,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Inventory-Storage Authorities Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
+            resource: 'Acquisitions-Units Units Item',
+            action: CAPABILITY_ACTIONS.DELETE,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Links Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.DATA,
             resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Module Notes Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
@@ -94,13 +91,11 @@ describe('Eureka', () => {
         ],
         capabilities: [
           {
-            application: applications[0],
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Consortia Sharing-Roles Item',
+            resource: 'Accounts Item',
             action: CAPABILITY_ACTIONS.CREATE,
           },
           {
-            application: applications[1],
             table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'Roles Collection',
             action: CAPABILITY_ACTIONS.EXECUTE,
@@ -111,21 +106,27 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings Admin',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Capabilities',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Role-Capability-Sets',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
       ];
-
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create roles, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
         });
         cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
@@ -162,7 +163,7 @@ describe('Eureka', () => {
 
       it(
         'C553052 Unassign all capabilities/sets from existing role using dedicated button (selected and deselected applications) (eureka)',
-        { tags: ['extendedPath', 'eureka', 'eurekaTemporaryECS', 'C553052'] },
+        { tags: ['extendedPath', 'eureka', 'C553052'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);

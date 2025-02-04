@@ -11,24 +11,21 @@ describe('Eureka', () => {
         roleDescription: `Description C436929 ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C436929 ${getRandomPostfix()} UPD`,
         updatedRoleDescription: `Description C436929 ${getRandomPostfix()} UPD`,
-        originalApplications: ['app-platform-full', 'app-consortia'],
+        originalApplications: ['app-platform-complete', 'app-platform-minimal'],
         originalCapabilitySets: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar',
             action: 'View',
           },
           {
-            application: 'app-consortia',
             table: 'Procedural',
-            resource: 'Consortia Inventory Local Sharing-Instances',
+            resource: 'UI-Notes Item Assign-Unassign',
             action: 'Execute',
           },
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Calendar Endpoint Calendars',
             action: 'View',
@@ -49,67 +46,72 @@ describe('Eureka', () => {
             action: 'View',
           },
           {
-            application: 'app-consortia',
             table: 'Data',
-            resource: 'Consortia Sharing-Instances Collection',
+            resource: 'Note Links Collection',
             action: 'View',
           },
           {
-            application: 'app-consortia',
             table: 'Data',
-            resource: 'Consortia Sharing-Instances Item',
+            resource: 'Note Links Collection',
+            action: 'Edit',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Types Collection',
             action: 'View',
           },
           {
-            application: 'app-consortia',
             table: 'Data',
-            resource: 'Consortia Sharing-Instances Item',
-            action: 'Create',
+            resource: 'Notes Collection',
+            action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
-            resource: 'Inventory-Storage Authorities Collection',
+            resource: 'Notes Item',
             action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'UI-Notes Item',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Module Notes Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Procedural',
+            resource: 'UI-Notes Item Assign-Unassign',
+            action: 'Execute',
           },
         ],
         originalCapabilities: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Owners Item',
             action: 'Create',
           },
           {
-            application: 'app-consortia',
             table: 'Data',
-            resource: 'Consortia Consortium Item',
+            resource: 'Policies Item',
             action: 'Edit',
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-full',
           table: 'Settings',
           resource: 'UI-Tags Settings',
           action: 'View',
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Tags Enabled',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Configuration Entries Collection',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'Settings Tags Enabled',
             action: 'View',
           },
         ],
@@ -130,16 +132,10 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
@@ -170,7 +166,7 @@ describe('Eureka', () => {
         });
       });
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[0]}-.{1,}or.{1,}${testData.originalApplications[1]}-.{1,}\\)`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[1]}-.{1,}or.{1,}${testData.originalApplications[0]}-.{1,}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
@@ -184,7 +180,7 @@ describe('Eureka', () => {
 
       it(
         'C436929 Editing existing authorization role (not updating capabilities)',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C436929'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C436929'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
@@ -236,7 +232,7 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('11');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('15');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);

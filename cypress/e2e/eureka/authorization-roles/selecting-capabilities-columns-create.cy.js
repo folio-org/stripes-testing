@@ -9,7 +9,7 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C624253 ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
+        applicationName: 'app-platform-minimal',
         capabilitySetsColumnToSelect: {
           type: CAPABILITY_TYPES.DATA,
           action: CAPABILITY_ACTIONS.VIEW,
@@ -47,22 +47,10 @@ describe('Eureka', () => {
         },
       ];
 
-      const capabsForTestUser = [
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-      ];
-
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsForTestUser,
-            capabSetsForTestUser,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,

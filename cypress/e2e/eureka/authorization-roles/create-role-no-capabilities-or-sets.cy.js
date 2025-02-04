@@ -9,8 +9,8 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430264 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        firstApplicationName: 'app-platform-full',
-        secondApplicationName: 'app-consortia',
+        firstApplicationName: 'app-dcb',
+        secondApplicationName: 'app-erm-usage',
       };
 
       const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.firstApplicationName}-.{1,}or.{1,}${testData.secondApplicationName}-.{1,}\\)`;
@@ -23,16 +23,10 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
@@ -51,7 +45,7 @@ describe('Eureka', () => {
 
       it(
         'C430264 Selecting applications when creating new authorization role (no capabilities selected) (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C430264'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C430264'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);
@@ -65,12 +59,10 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveInModal();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
-          // TO DO: uncomment the following step when applications will be divided into multiple small entities
-          // Currently, two apps used here include all existing capabilities/sets, and handling them requires unreasonable amount of resources
-          // AuthorizationRoles.verifyAppNamesInCapabilityTables([
-          //   testData.firstApplicationName,
-          //   testData.secondApplicationName,
-          // ]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([
+            testData.firstApplicationName,
+            testData.secondApplicationName,
+          ]);
           cy.wait(2000);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveCreate(testData.roleName, testData.roleDescription);

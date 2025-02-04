@@ -11,13 +11,11 @@ describe('Eureka', () => {
         capabilitySets: [
           {
             table: 'Data',
-            application: 'app-platform-full',
             resource: 'Acquisitions-Units Memberships',
             action: 'Manage',
           },
           {
             table: 'Settings',
-            application: 'app-platform-full',
             resource: 'UI-Authorization-Policies Settings Admin',
             action: 'View',
           },
@@ -30,16 +28,10 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before('Creating user, login', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,

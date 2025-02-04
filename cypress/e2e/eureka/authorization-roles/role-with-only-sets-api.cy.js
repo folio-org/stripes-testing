@@ -8,7 +8,6 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C464313 ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
         capabilitySets: [
           {
             table: 'Data',
@@ -62,6 +61,11 @@ describe('Eureka', () => {
             resource: 'UI-Invoice Invoice Pay',
             action: 'Execute',
           },
+          {
+            table: 'Procedural',
+            resource: 'Invoice Item Pay',
+            action: 'Execute',
+          },
         ],
         expectedRowCounts: {
           capabilitySets: {
@@ -70,7 +74,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 5,
-            Procedural: 1,
+            Procedural: 2,
           },
         },
         absentCapabilitySetTable: 'Settings',
@@ -78,29 +82,16 @@ describe('Eureka', () => {
         capabIds: [],
       };
 
-      testData.capabilitySets.forEach((set) => {
-        set.application = testData.applicationName;
-      });
-      testData.capabilitiesInSets.forEach((capab) => {
-        capab.application = testData.applicationName;
-      });
-
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
         { type: 'Data', resource: 'Capabilities', action: 'Manage' },
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
             testData.roleId = role.id;

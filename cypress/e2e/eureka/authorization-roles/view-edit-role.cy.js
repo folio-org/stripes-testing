@@ -13,13 +13,11 @@ describe('Eureka', () => {
         updatedRoleDescription: `Description C424001 ${getRandomPostfix()} UPD`,
         originalCapabilitySets: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Settings',
             resource: 'UI-Notes Settings',
             action: 'View',
@@ -27,107 +25,95 @@ describe('Eureka', () => {
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Licenses Custprops Compare',
             action: 'Execute',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Amendments Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Amendments Item',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Item LinkedAgreements',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Licenses Licenses Item',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Note Types Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Note Types Item',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Notes Enabled',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Settings',
             resource: 'UI-Notes Settings',
+            action: 'View',
+          },
+          {
+            table: 'Settings',
+            resource: 'Settings Enabled',
             action: 'View',
           },
         ],
         originalCapabilities: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Erm Agreements Item',
             action: 'Create',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Erm Agreements Item',
             action: 'Delete',
           },
           {
-            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Login Password',
             action: 'Execute',
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-full',
           table: 'Data',
           resource: 'UI-Users Loans-Renew',
           action: 'Create',
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'Inventory-Storage Location-Units Libraries Collection',
             action: 'View',
           },
           {
-            application: 'app-platform-full',
             table: 'Procedural',
             resource: 'Circulation Renew-By-Barcode',
             action: 'Execute',
           },
           {
-            application: 'app-platform-full',
             table: 'Data',
             resource: 'UI-Users Loans-Renew',
             action: 'Create',
@@ -135,7 +121,6 @@ describe('Eureka', () => {
         ],
         newCapabilities: [
           {
-            application: 'app-platform-full',
             table: 'Settings',
             resource: 'Settings Developer Enabled',
             action: 'View',
@@ -147,7 +132,7 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Settings: 3,
+            Settings: 4,
             Procedural: 1,
             Data: 5,
           },
@@ -170,16 +155,10 @@ describe('Eureka', () => {
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Edit' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {

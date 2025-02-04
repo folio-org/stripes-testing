@@ -2,108 +2,84 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
-  describe('Settings', () => {
+  describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C430262 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        // TO DO: rewrite using >1 original apps when more apps will be consistently available
-        originalApplications: ['app-consortia'],
-        newApplication: 'app-platform-full',
+        originalApplications: ['app-platform-minimal', 'app-dcb'],
+        newApplication: 'app-erm-usage',
         originalCapabilitySets: [
           {
-            application: 'app-consortia',
-            table: 'Procedural',
-            resource: 'Consortia Inventory Local Sharing-Instances',
-            action: 'Execute',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Capabilities',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
         ],
         originalCapabilitiesInSets: [
           {
-            application: 'app-consortia',
-            table: 'Data',
-            resource: 'Consortia Sharing-Instances Collection',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Capabilities',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
-            application: 'app-consortia',
-            table: 'Data',
-            resource: 'Consortia Sharing-Instances Item',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Capabilities Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: 'app-consortia',
-            table: 'Data',
-            resource: 'Consortia Sharing-Instances Item',
-            action: 'Create',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Capabilities Item',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Capability-Sets Capabilities Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Capability-Sets Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         originalCapabilities: [
           {
-            application: 'app-consortia',
-            table: 'Data',
-            resource: 'Consortia Consortium Item',
-            action: 'Edit',
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Auth Token',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
-            application: 'app-consortia',
-            table: 'Data',
-            resource: 'Consortia Sharing-Roles Item',
-            action: 'Create',
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Dcb Transactions',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         newCapabilitySet: {
-          application: 'app-platform-full',
-          table: 'Settings',
-          resource: 'UI-Tags Settings',
-          action: 'View',
+          table: CAPABILITY_TYPES.SETTINGS,
+          resource: 'Module Erm-Usage Enabled',
+          action: CAPABILITY_ACTIONS.VIEW,
         },
         newCapabilitiesInSet: [
           {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'Settings Tags Enabled',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Data',
-            resource: 'Configuration Entries Collection',
-            action: 'View',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'UI-Tags Settings',
-            action: 'View',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Module Erm-Usage Enabled',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         newCapabilities: [
           {
-            application: 'app-platform-full',
-            table: 'Procedural',
-            resource: 'Login Password',
-            action: 'Execute',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Aggregatorsettings Item',
+            action: CAPABILITY_ACTIONS.EDIT,
           },
           {
-            application: 'app-platform-full',
-            table: 'Data',
-            resource: 'UI-Tags',
-            action: 'Edit',
-          },
-          {
-            application: 'app-platform-full',
-            table: 'Data',
-            resource: 'UI-Tags',
-            action: 'Manage',
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Ermusageharvester Periodic',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         expectedRowCounts: {
@@ -111,34 +87,32 @@ describe('Eureka', () => {
             Settings: 1,
           },
           capabilities: {
-            Settings: 3,
-            Procedural: 1,
-            Data: 2,
+            Settings: 1,
+            Procedural: 2,
+            Data: 5,
           },
         },
-        absentCapabilitySetTables: ['Data', 'Procedural'],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.PROCEDURAL],
         capabSetIds: [],
         capabIds: [],
       };
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.newApplication}-.{1,}\\)`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[1]}-.{1,}or.{1,}${testData.newApplication}-.{1,}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Edit' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings',
+          action: CAPABILITY_ACTIONS.EDIT,
+        },
       ];
-
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
@@ -179,7 +153,7 @@ describe('Eureka', () => {
 
       it(
         'C430262 Selecting/deselecting applications when editing authorization role',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C430262'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C430262'] },
         () => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.searchRole(testData.roleName);
@@ -204,8 +178,10 @@ describe('Eureka', () => {
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
           cy.wait(2000);
-          // TO DO: uncomment when "full" app will be split in multiple apps
-          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([
+            testData.newApplication,
+            testData.originalApplications[1],
+          ]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.newCapabilitySet);
           testData.newCapabilities.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);
@@ -243,9 +219,9 @@ describe('Eureka', () => {
           testData.newCapabilitiesInSet.forEach((capability) => {
             AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
           });
-          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.newCapabilities[0], 1);
-          // 2 checkboxes for the same row because same resource but different actions
-          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.newCapabilities[1], 2);
+          testData.newCapabilities.forEach((capability) => {
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
+          });
         },
       );
     });

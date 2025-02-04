@@ -8,7 +8,7 @@ describe('Eureka', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Original role C554636 ${getRandomPostfix()}`,
-        application: 'app-platform-full',
+        application: 'app-platform-complete',
         capabilitySets: [
           {
             table: 'Data',
@@ -54,31 +54,15 @@ describe('Eureka', () => {
         capabSetIds: [],
       };
 
-      testData.capabilitySets.forEach((set) => {
-        set.application = testData.application;
-      });
-      testData.capabilitiesInSets.forEach((capab) => {
-        capab.application = testData.application;
-      });
-      testData.capabilities.forEach((capab) => {
-        capab.application = testData.application;
-      });
-
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Create' },
         { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'View' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before('Create user, data', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
             testData.roleId = role.id;

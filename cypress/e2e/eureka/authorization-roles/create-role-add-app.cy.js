@@ -2,70 +2,66 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
-  describe('Settings', () => {
+  describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C496128 ${getRandomPostfix()}`,
-        originalApplication: 'app-platform-full',
-        newApplication: 'app-consortia-manager',
+        originalApplication: 'app-platform-minimal',
+        newApplication: 'app-platform-complete',
         originalCapabilitySets: [
           {
-            table: 'Settings',
+            table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Settings Developer Enabled',
-            action: 'View',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Settings',
+            table: CAPABILITY_TYPES.SETTINGS,
             resource: 'Settings Authorization-Roles Enabled',
-            action: 'View',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         originalCapabilities: [
           {
-            table: 'Procedural',
+            table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'Validation Validate',
-            action: 'Execute',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
-            table: 'Procedural',
+            table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'Users-keycloak Password-Reset-Link Validate',
-            action: 'Execute',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         newCapabilitySet: {
-          table: 'Settings',
-          resource: 'UI-Consortia-Settings Settings Membership',
-          action: 'View',
+          table: CAPABILITY_TYPES.SETTINGS,
+          resource: 'Erm Settings',
+          action: CAPABILITY_ACTIONS.VIEW,
         },
         newCapabilitiesInSet: [
           {
-            table: 'Settings',
-            resource: 'Settings Consortia-Settings Enabled',
-            action: 'View',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Erm Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'UI-Consortia-Settings Settings Membership',
-            action: 'View',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Erm Settings Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         newCapabilities: [
           {
-            table: 'Data',
-            resource: 'UI-Consortia-Settings Consortia Affiliations',
-            action: 'Edit',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Accounts Item',
+            action: CAPABILITY_ACTIONS.EDIT,
           },
           {
-            table: 'Data',
-            resource: 'UI-Consortia-Settings Consortium-Manager',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Accounts Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         expectedRowCounts: {
@@ -74,45 +70,37 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 2,
-            Settings: 5,
+            Settings: 4,
             Procedural: 2,
           },
         },
-        absentCapabilitySetTables: ['Data', 'Procedural'],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.PROCEDURAL],
         capabSetIds: [],
         capabIds: [],
       };
 
-      testData.originalCapabilitySets.forEach((set) => {
-        set.application = testData.originalApplication;
-      });
-      testData.originalCapabilities.forEach((capab) => {
-        capab.application = testData.originalApplication;
-      });
-      testData.newCapabilitySet.application = testData.newApplication;
-      testData.newCapabilitiesInSet.forEach((capab) => {
-        capab.application = testData.newApplication;
-      });
-      testData.newCapabilities.forEach((capab) => {
-        capab.application = testData.newApplication;
-      });
-
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings Admin',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Capabilities',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Role-Capability-Sets',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
       ];
-
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create user, login', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
@@ -133,7 +121,7 @@ describe('Eureka', () => {
 
       it(
         'C496123 Adding application when creating authorization role',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C496123'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C496123'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName);

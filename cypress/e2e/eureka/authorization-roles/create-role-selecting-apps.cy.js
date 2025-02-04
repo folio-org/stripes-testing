@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -9,49 +10,38 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430260 ${getRandomPostfix()}`,
         roleDescription: `Description C430260 ${getRandomPostfix()}`,
-        firstApplicationName: 'app-platform-full',
-        secondApplicationName: 'app-consortia',
+        firstApplicationName: 'app-dcb',
+        secondApplicationName: 'app-erm-usage',
         capabilities: [
           {
-            table: 'Data',
-            application: 'app-platform-full',
-            resource: 'Erm Entitlements Item',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Circulation-Item',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
-            table: 'Data',
-            application: 'app-consortia',
-            resource: 'Consortia Publications Item',
-            action: 'Delete',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'Module Erm-Usage Enabled',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Data',
-            application: 'app-consortia',
-            resource: 'Consortia Consortium Item',
-            action: 'Edit',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Dcb Transactions Status',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Settings',
-            application: 'app-platform-full',
-            resource: 'UI-Tags Settings',
-            action: 'View',
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Dcb Transactions',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
-            table: 'Procedural',
-            application: 'app-platform-full',
-            resource: 'Erm Packages Collection',
-            action: 'Execute',
-          },
-          {
-            table: 'Procedural',
-            application: 'app-platform-full',
-            resource: 'Users-bl Password-Reset-Link Reset',
-            action: 'Execute',
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Counterreports Download Item Get',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         expectedCounts: {
           capabilities: {
-            Data: 3,
+            Data: 2,
             Settings: 1,
             Procedural: 2,
           },
@@ -63,21 +53,27 @@ describe('Eureka', () => {
       );
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings Admin',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Capabilities',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Role-Capability-Sets',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
       ];
-
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
@@ -97,7 +93,7 @@ describe('Eureka', () => {
 
       it(
         'C430260 Selecting applications when creating new authorization role (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C430260'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C430260'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);
@@ -110,12 +106,10 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveInModal();
           AuthorizationRoles.waitCapabilitiesShown();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
-          // TO DO: uncomment the following step when applications will be divided into multiple small entities
-          // Currently, two apps used here include all existing capabilities/sets, and handling them requires unreasonable amount of resources
-          // AuthorizationRoles.verifyAppNamesInCapabilityTables([
-          //   testData.firstApplicationName,
-          //   testData.secondApplicationName,
-          // ]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([
+            testData.firstApplicationName,
+            testData.secondApplicationName,
+          ]);
           testData.capabilities.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);
           });

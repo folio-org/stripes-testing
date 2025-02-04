@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C434129 ${getRandomPostfix()}`,
         roleDescription: `Description C434129 ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
+        applicationName: 'app-platform-complete',
         capabilitySet: {
           table: 'Data',
           resource: 'Acquisitions-Units Memberships',
@@ -61,14 +61,6 @@ describe('Eureka', () => {
         ],
       };
 
-      testData.capabilitySet.application = testData.applicationName;
-      testData.capabilitiesInSet.forEach((capability) => {
-        capability.application = testData.applicationName;
-      });
-      testData.additionalCapabilities.forEach((capability) => {
-        capability.application = testData.applicationName;
-      });
-
       const capabilitiesInSetToRemainSelected = testData.capabilitiesInSet.filter(
         (capab, index) => index > 2,
       );
@@ -82,16 +74,10 @@ describe('Eureka', () => {
         { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsForTestUser,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,

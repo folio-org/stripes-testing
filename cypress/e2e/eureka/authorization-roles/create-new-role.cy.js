@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C423998 ${getRandomPostfix()}`,
         roleDescription: `Description C423998 ${getRandomPostfix()}`,
-        applicationName: 'app-platform-full',
+        applicationName: 'app-platform-minimal',
         capabilitySet: {
           table: 'Settings',
           resource: 'UI-Tags Settings',
@@ -62,28 +62,14 @@ describe('Eureka', () => {
         absentCapabilityTables: ['Procedural'],
       };
 
-      testData.capabilitySet.application = testData.applicationName;
-      testData.capabilitiesInSet.forEach((capability) => {
-        capability.application = testData.applicationName;
-      });
-      testData.capabilitiesToSelect.forEach((capability) => {
-        capability.application = testData.applicationName;
-      });
-
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Create' },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
-
       before('Creating user, login', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
@@ -109,8 +95,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName);
           AuthorizationRoles.clickSaveInModal();
-          // TO DO: uncomment when apps will be split (action takes too much resources with all lines in one app)
-          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.capabilitySet);
           testData.capabilitiesToSelect.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);
