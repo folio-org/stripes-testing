@@ -131,9 +131,10 @@ describe('Bulk-edit', () => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
 
-              InventoryInstances.getLocations({ limit: 2 }).then((resp) => {
-                locationsInUniversityData.permanentLocation = resp[0];
-                locationsInUniversityData.temporaryLocation = resp[1];
+              InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
+                const locations = resp.filter((location) => location.name !== 'DCB');
+                locationsInCollegeData.permanentLocation = locations[0];
+                locationsInCollegeData.temporaryLocation = locations[1];
                 instances.forEach((instance) => {
                   InventoryHoldings.createHoldingRecordViaApi({
                     instanceId: instance.id,
@@ -210,7 +211,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          // BulkEditSearchPane.verifyPaneRecordsCount('4 holding');
+          BulkEditSearchPane.verifyPaneRecordsCount('4 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {
