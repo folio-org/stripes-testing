@@ -68,6 +68,8 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(marcFiles[1].authorityHeading);
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

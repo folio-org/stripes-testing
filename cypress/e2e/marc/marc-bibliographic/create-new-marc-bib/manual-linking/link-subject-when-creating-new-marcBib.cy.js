@@ -191,6 +191,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            BrowseSubjects.waitForSubjectToAppear(newFields[0].valueAfterSave, true, true);
             BrowseSubjects.browse(newFields[0].valueAfterSave);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(newFields[0].valueAfterSave);
           },

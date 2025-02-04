@@ -10,21 +10,21 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
-      searchOptions: ['Keyword', 'Name-title'],
+      searchOptions: ['Keyword', 'Genre'],
       recordType: 'Authorized',
-      marcValue: 'C584448 Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
+      marcValue: 'C584455 Science fiction television programs',
       searchQueries: [
-        'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
-        'Adventures of Huckleberry Finn Twain, Mark, 1835-1910.',
-        'Adventures of Huckleberry Twain 1835-1910.',
-        'Adventures of Huckleberry Twain Marc 1835-1910.',
+        'Science fiction television programs',
+        'television programs science fiction',
+        'television programs fiction',
+        'tv programs fiction',
       ],
-      invalidQuery: 'Adventures of Huckleberry Twain Marc 1835-1910.',
+      invalidQuery: 'tv programs fiction',
     };
     const marcFiles = [
       {
-        marc: 'marcAuthFileForC584448.mrc',
-        fileName: `testMarcFileC584448.${getRandomPostfix()}.mrc`,
+        marc: 'marcAuthFileForC584455.mrc',
+        fileName: `testMarcFileC584455.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
       },
@@ -35,8 +35,7 @@ describe('MARC', () => {
     before('Create user, test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C584448*');
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Adventures of Huckleberry');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C584455*');
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
@@ -79,10 +78,9 @@ describe('MARC', () => {
     });
 
     it(
-      'C584448 Verify that "Name-title" search option uses "all" search operator ("Twain, Mark" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584448'] },
+      'C584455 Verify that "Genre" search option uses "all" search operator ("Science fiction" case) (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C584455'] },
       () => {
-        // execute search by "Keyword" option
         testData.searchOptions.forEach((option) => {
           testData.searchQueries.forEach((query) => {
             MarcAuthorities.searchByParameter(option, query);

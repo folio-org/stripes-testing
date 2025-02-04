@@ -284,6 +284,7 @@ describe('MARC', () => {
               BrowseContributors.select();
               // Fill in the search box with contributor name from any linked field, ex.: "Lee, Stan, 1922-2018"
               // Click on the "Search" button.
+              BrowseContributors.waitForContributorToAppear('Lee, Stan, 1922-2018', true, true);
               BrowseContributors.browse('Lee, Stan, 1922-2018');
               BrowseSubjects.checkRowWithValueAndAuthorityIconExists('Lee, Stan, 1922-2018');
               // 11 Click on the highlighted in bold contributor in the browse result list.

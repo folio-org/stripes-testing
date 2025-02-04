@@ -326,6 +326,8 @@ export default {
         .has({ disabled: true }),
     );
     cy.do(saveAndCloseButton.click());
+    cy.wait(1500);
+    cy.do(saveAndCloseButton.click());
     cy.expect(
       Callout(
         'This record has successfully saved and is in process. Changes may not appear immediately.',
