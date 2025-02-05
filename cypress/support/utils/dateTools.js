@@ -46,16 +46,13 @@ export default {
 
   getCurrentDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate(),
-    )}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
   getCurrentDateInPreviusMonthForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth())}/${padWithZero(
-      currentDate.getDate(),
-    )}/${currentDate.getFullYear()}`;
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
   getRandomFiscalYearCodeForRollover: (min, max) => {
@@ -113,9 +110,7 @@ export default {
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 3);
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate(),
-    )}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
   getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
@@ -151,15 +146,12 @@ export default {
 
   getPreviousDayDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    let day = currentDate.getDate() - 1;
-    let month = currentDate.getMonth() + 1;
-    let year = currentDate.getFullYear();
-    if (day <= 0) {
-      const lastMonth = new Date(year, month - 2, 1);
-      year = lastMonth.getFullYear();
-      month = lastMonth.getMonth() + 1;
-      day = lastMonth.getDate() + day;
-    }
+    currentDate.setDate(currentDate.getDate() - 1);
+
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 

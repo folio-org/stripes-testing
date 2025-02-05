@@ -52,7 +52,7 @@ const getDefaultLocation = ({
     campusName: campus.name,
     libraryId: library.id,
     libraryName: library.name,
-    name: `autotest_location_name_${getRandomPostfix()}`,
+    name: `a_autotest_location_name_${getRandomPostfix()}`,
     code: `autotest_location_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
     // servicePointIds must have real Servi point id
