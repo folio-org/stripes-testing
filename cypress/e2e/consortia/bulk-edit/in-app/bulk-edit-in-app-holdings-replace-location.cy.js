@@ -44,7 +44,7 @@ const getReasonForErrorTemporaryLocation = (holdingId, tenantName) => {
 };
 
 describe('Bulk-edit', () => {
-  describe('Query', () => {
+  describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
