@@ -38,9 +38,11 @@ const actionsToSelect = {
   setTrue: 'Set true',
 };
 const validInstanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${validInstanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${validInstanceUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${validInstanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  validInstanceUUIDsFileName,
+);
+const previewFileName = BulkEditFiles.getPreviewFileName(validInstanceUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validInstanceUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
