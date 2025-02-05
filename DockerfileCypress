@@ -8,3 +8,20 @@ FROM cypress/factory:3.5.4
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
 RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    wget \
+    xdg-utils \
+    software-properties-common \
+    gnupg2 
+
+# Add the necessary repository to install the latest Chromium browser and Chromedriver
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64,arm64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
+RUN apt -f install
+
+RUN apt-get update && apt-get install -y \
+    chromium \

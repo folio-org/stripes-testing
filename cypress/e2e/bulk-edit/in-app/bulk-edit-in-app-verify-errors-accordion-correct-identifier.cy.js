@@ -22,7 +22,7 @@ let tempLocation;
 let instanceHRID;
 const instanceHRIDFileName = `instanceHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${instanceHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
 
 const item = {
   annexId: LOCATION_IDS.ANNEX,
@@ -128,7 +128,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.checkForUploading(instanceHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyPaneRecordsCount(2);
+        BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
 
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyMatchedResultFileContent(

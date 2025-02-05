@@ -23,7 +23,7 @@ const item = {
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 const firstElectronicAccess = {
   linkText: 'test-linkText',
@@ -122,7 +122,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.selectOption('URL public note');
-        let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
+        let possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyTheActionOptions(possibleActions);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.fillInSecondTextArea(newElectronicAccessFields.publicNote);
@@ -131,14 +131,14 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction('Clear field', 1);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Link text', 2);
-        BulkEditActions.selectSecondAction('Find (full field search)', 2);
+        BulkEditActions.selectSecondAction('Find', 2);
         BulkEditActions.fillInFirstTextArea(firstElectronicAccess.linkText, 2);
         possibleActions = ['Remove', 'Replace with'];
         BulkEditActions.verifyTheSecondActionOptions(possibleActions, 2);
         BulkEditActions.selectSecondAction('Remove', 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.selectOption('Materials specified', 3);
-        BulkEditActions.selectSecondAction('Find (full field search)', 3);
+        BulkEditActions.selectSecondAction('Find', 3);
         BulkEditActions.fillInFirstTextArea(firstElectronicAccess.materialsSpecification, 3);
         BulkEditActions.selectSecondAction('Replace with', 3);
         BulkEditActions.fillInSecondTextArea(newElectronicAccessFields.materialsSpecification, 3);

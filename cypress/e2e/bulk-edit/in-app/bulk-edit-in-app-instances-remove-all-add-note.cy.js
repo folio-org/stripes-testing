@@ -18,7 +18,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
 const folioItem = {
@@ -196,8 +196,8 @@ describe('bulk-edit', () => {
           `${notes.exhibitionsNote} (staff only)`,
         );
 
-        BulkEditSearchPane.verifyErrorLabelInErrorAccordion(instanceUUIDsFileName, 2, 2, 3);
-        BulkEditSearchPane.verifyNonMatchedResults(marcInstance.instanceId);
+        BulkEditSearchPane.verifyErrorLabel(3);
+        BulkEditSearchPane.verifyNonMatchedResults(marcInstance.instanceId, `${reasonForError} `);
         BulkEditSearchPane.verifyReasonForError(reasonForError);
 
         BulkEditActions.openActions();

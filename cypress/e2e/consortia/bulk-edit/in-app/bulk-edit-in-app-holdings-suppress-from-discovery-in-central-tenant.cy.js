@@ -32,7 +32,7 @@ let holdingSource;
 const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${today}-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `${today}-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `${today}-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `${today}-Changed-Records-${holdingUUIDsFileName}`;
 const suppressFromDiscovery = 'Suppress from discovery';
 const actions = {
@@ -190,7 +190,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {
@@ -304,7 +304,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {

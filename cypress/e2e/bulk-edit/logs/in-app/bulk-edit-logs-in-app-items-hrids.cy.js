@@ -19,11 +19,14 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${itemHRIDsFileName}`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemHRIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${itemHRIDsFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${itemHRIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemHRIDsFileName}`;
+const matchedRecordsFileNameInvalidAndValid =
+  BulkEditFiles.getMatchedRecordsFileName(itemHRIDsFileName);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(itemHRIDsFileName);
+const previewOfProposedChangesFileName =
+  BulkEditFiles.getPreviewOfProposedChangesFileName(itemHRIDsFileName);
+const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(itemHRIDsFileName);
 
 const invalidItemHRID = getRandomPostfix();
 const instance = {
@@ -200,7 +203,7 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
             // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-            [`\uFEFF${invalidItemHRID}`],
+            ['\uFEFFERROR', invalidItemHRID],
             'firstElement',
             false,
           );

@@ -30,16 +30,11 @@ const notes = {
 const actionsToSelect = {
   removeAll: 'Remove all',
 };
-const administrativeNoteActionOptions = [
-  'Add note',
-  'Change note type',
-  'Find (full field search)',
-  'Remove all',
-];
+const administrativeNoteActionOptions = ['Add note', 'Change note type', 'Find', 'Remove all'];
 const copyNoteActionOptions = [
   'Add note',
   'Change note type',
-  'Find (full field search)',
+  'Find',
   'Mark as staff only',
   'Remove all',
   'Remove mark as staff only',
@@ -54,7 +49,7 @@ const removedValueSets = [
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 
 function verifyFileContent(fileName, headerValuePairs) {

@@ -23,7 +23,7 @@ const item = {
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 const electronicAccess = [
   {
@@ -109,8 +109,7 @@ describe('bulk-edit', () => {
         );
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, electronicAccess[0].publicNote);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.electronicAccessReplaceWith(
-          'URL Relationship',
+        BulkEditActions.urlRelationshipReplaceWith(
           electronicAccessRelationshipName.RESOURCE,
           electronicAccessRelationshipName.VERSION_OF_RESOURCE,
         );

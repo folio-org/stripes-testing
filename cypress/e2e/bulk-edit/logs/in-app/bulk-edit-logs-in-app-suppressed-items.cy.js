@@ -19,9 +19,10 @@ import { APPLICATION_NAMES } from '../../../../support/constants';
 let user;
 
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `Matched-Records-${validItemBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validItemBarcodesFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${validItemBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(validItemBarcodesFileName);
+const previewOfProposedChangesFileName =
+  BulkEditFiles.getPreviewOfProposedChangesFileName(validItemBarcodesFileName);
+const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validItemBarcodesFileName);
 
 const inventoryEntity = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,

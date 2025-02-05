@@ -38,7 +38,7 @@ const instance = {
 const electronicBookplateActionOptions = [
   'Add note',
   'Change note type',
-  'Find (full field search)',
+  'Find',
   'Mark as staff only',
   'Remove all',
   'Remove mark as staff only',
@@ -46,7 +46,7 @@ const electronicBookplateActionOptions = [
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${itemBarcodesFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {
@@ -238,7 +238,7 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyPaneRecordsChangedCount(1);
+        BulkEditSearchPane.verifyPaneRecordsChangedCount('1 item');
 
         updatedNotesHeaderValueSets.forEach((updatedNoteHeaderValue) => {
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(

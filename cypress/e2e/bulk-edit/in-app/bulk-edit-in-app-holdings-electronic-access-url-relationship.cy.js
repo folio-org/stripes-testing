@@ -23,7 +23,7 @@ const item = {
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
 
 describe('bulk-edit', () => {
@@ -101,7 +101,9 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyNewBulkEditRow();
         BulkEditActions.verifyOptionAbsentInNewRow('URL Relationship');
         BulkEditActions.deleteRow(1);
-        BulkEditActions.findValue('URL Relationship');
+        BulkEditActions.selectOption('URL Relationship');
+        BulkEditActions.selectSecondAction('Find (full field search)');
+        BulkEditActions.verifyActionSelected('Find (full field search)');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Remove');

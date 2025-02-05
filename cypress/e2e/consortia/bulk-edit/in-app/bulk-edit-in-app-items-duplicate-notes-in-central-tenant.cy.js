@@ -19,6 +19,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
@@ -46,7 +47,7 @@ const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${itemUUIDsFileName}`;
+const previewFileName = `${todayDate}-Updates-Preview-CSV-${itemUUIDsFileName}`;
 const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
 
 describe('Bulk-edit', () => {
@@ -75,7 +76,7 @@ describe('Bulk-edit', () => {
           cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
+          cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
@@ -183,7 +184,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           const itemBarcodes = [folioInstance.barcodeInCollege, marcInstance.barcodeInCollege];
@@ -294,7 +295,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           itemBarcodes.forEach((barcode) => {

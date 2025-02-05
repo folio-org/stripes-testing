@@ -39,7 +39,7 @@ const actionsToSelect = {
 };
 const validInstanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${validInstanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${validInstanceUUIDsFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${validInstanceUUIDsFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${validInstanceUUIDsFileName}`;
 
 describe('bulk-edit', () => {

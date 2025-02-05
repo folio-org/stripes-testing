@@ -19,7 +19,7 @@ let addressType;
 const todayDate = new Date();
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
