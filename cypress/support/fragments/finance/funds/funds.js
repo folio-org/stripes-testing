@@ -75,7 +75,7 @@ const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 
 export default {
   defaultUiFund: {
-    name: `autotest_fund_${getRandomPostfix()}`,
+    name: `a_autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',

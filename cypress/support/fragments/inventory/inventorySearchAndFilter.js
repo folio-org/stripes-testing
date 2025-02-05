@@ -805,6 +805,7 @@ export default {
 
   browseSearch(searchValue) {
     cy.do([browseSearchInputField.fillIn(searchValue), searchButton.click()]);
+    cy.wait(1500);
   },
 
   clickEditInstance() {
