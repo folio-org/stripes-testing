@@ -22,23 +22,16 @@ let user;
 let instanceTypeId;
 let sourceId;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(holdingUUIDsFileName);
 const folioInstance = {
   title: `C494363 folio instance testBulkEdit_${getRandomPostfix()}`,
-  holdingIdsInCollege: null,
-  holdingHridsInCollege: null,
-  holdingIdsInUniversity: null,
-  holdingHridsInUniversity: null,
 };
 const marcInstance = {
   title: `C494363 marc instance testBulkEdit_${getRandomPostfix()}`,
-  holdingIdsInCollege: null,
-  holdingHridsInCollege: null,
-  holdingIdsInUniversity: null,
-  holdingHridsInUniversity: null,
 };
 const locationsInCollegeData = {};
 const locationsInUniversityData = {};
@@ -74,7 +67,6 @@ describe('Bulk-edit', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
-
           InventoryHoldings.getHoldingsFolioSource()
             .then((folioSource) => {
               sourceId = folioSource.id;
@@ -100,9 +92,10 @@ describe('Bulk-edit', () => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
 
-              InventoryInstances.getLocations({ limit: 2 }).then((resp) => {
-                locationsInCollegeData.permanentLocation = resp[0];
-                locationsInCollegeData.temporaryLocation = resp[1];
+              InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
+                const locations = resp.filter((location) => location.name !== 'DCB');
+                locationsInCollegeData.permanentLocation = locations[0];
+                locationsInCollegeData.temporaryLocation = locations[1];
 
                 instances.forEach((instance) => {
                   InventoryHoldings.createHoldingRecordViaApi({
@@ -133,9 +126,9 @@ describe('Bulk-edit', () => {
 
               InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
                 const locations = resp.filter((location) => location.name !== 'DCB');
-                cy.log(locations);
                 locationsInUniversityData.permanentLocation = locations[0];
                 locationsInUniversityData.temporaryLocation = locations[1];
+
                 instances.forEach((instance) => {
                   InventoryHoldings.createHoldingRecordViaApi({
                     instanceId: instance.id,
@@ -148,7 +141,6 @@ describe('Bulk-edit', () => {
                   cy.wait(1000);
                 });
               });
-
               cy.getHoldings({
                 limit: 1,
                 query: `"instanceId"="${folioInstance.id}"`,
@@ -188,6 +180,7 @@ describe('Bulk-edit', () => {
         instances.forEach((instance) => {
           cy.deleteHoldingRecordViaApi(instance.holdingIdsInUniversity);
         });
+
         cy.resetTenant();
         Users.deleteViaApi(user.userId);
 
@@ -230,8 +223,6 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
           BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-
-          // 4
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
@@ -272,7 +263,6 @@ describe('Bulk-edit', () => {
             },
           );
 
-          // 5
           BulkEditSearchPane.changeShowColumnCheckbox(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION,
@@ -324,66 +314,46 @@ describe('Bulk-edit', () => {
             },
           );
 
-          // 6
           BulkEditActions.openInAppStartBulkEditFrom();
           BulkEditSearchPane.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 7
           BulkEditActions.selectOption('Permanent holdings location');
           BulkEditSearchPane.verifyInputLabel('Permanent holdings location');
           BulkEditActions.replaceWithIsDisabled();
-
-          // 8,9,10
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup();
           SelectLocationsModal.verifySelectLocationModalExists();
           SelectLocationsModal.verifyLocationLookupModalElementsInCentralTenant();
-
-          // 11
           SelectLocationsModal.verifyTenantsInAffiliationDropdown(
             tenantNames.college,
             tenantNames.university,
           );
-
-          // 12
           SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
           SelectLocationsModal.selectLocation(locationsInCollegeData.temporaryLocation.name);
           SelectLocationsModal.verifySelectLocationModalExists(false);
-
-          BulkEditActions.verifySelectedLocation(
+          BulkEditActions.verifyLocationValue(
             `${locationsInCollegeData.temporaryLocation.name} (${Affiliations.College})`,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 13
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
-
-          // 14
           BulkEditActions.selectOption('Temporary holdings location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary holdings location', 1);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
-
-          // 15
           BulkEditActions.selectSecondAction('Replace with', 1);
           BulkEditActions.locationLookupExists();
-
-          // 16
           BulkEditActions.clickLocationLookup(1);
           SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
           SelectLocationsModal.selectLocation(locationsInCollegeData.permanentLocation.name);
           SelectLocationsModal.verifySelectLocationModalExists(false);
-          BulkEditActions.verifySelectedLocation(
+          BulkEditActions.verifyLocationValue(
             `${locationsInCollegeData.permanentLocation.name} (${Affiliations.College})`,
             1,
           );
           BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-          // 17
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
           BulkEditActions.verifyAreYouSureForm(4);
@@ -398,7 +368,6 @@ describe('Bulk-edit', () => {
               value: locationsInCollegeData.permanentLocation.name,
             },
           ];
-
           const holdingHrids = [
             folioInstance.holdingHridsInCollege,
             folioInstance.holdingHridsInUniversity,
@@ -413,7 +382,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 18
           BulkEditActions.downloadPreview();
 
           holdingHrids.forEach((holdingHrid) => {
@@ -425,7 +393,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 19
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(2);
 
@@ -436,15 +403,16 @@ describe('Bulk-edit', () => {
             );
           });
 
-          //  BulkEditSearchPane.verifyErrorLabel(4);
+          BulkEditSearchPane.verifyErrorLabel(4);
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyReasonForError(
-              instance.holdingIdsInUniversity,
               getReasonForErrorPermanentLocation(
                 instance.holdingIdsInUniversity,
                 Affiliations.University,
               ),
+            );
+            BulkEditSearchPane.verifyReasonForError(
               getReasonForErrorTemporaryLocation(
                 instance.holdingIdsInUniversity,
                 Affiliations.University,
@@ -452,7 +420,6 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 22
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
@@ -465,13 +432,12 @@ describe('Bulk-edit', () => {
             );
           });
 
-          // 23
           BulkEditActions.downloadErrors();
 
           instances.forEach((instance) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${instance.holdingIdsInUniversity},${getReasonForErrorPermanentLocation(instance.holdingIdsInUniversity, Affiliations.University)}`,
-              `${instance.holdingIdsInUniversity},${getReasonForErrorTemporaryLocation(instance.holdingIdsInUniversity, Affiliations.University)}`,
+              `ERROR,${instance.holdingIdsInUniversity},${getReasonForErrorPermanentLocation(instance.holdingIdsInUniversity, Affiliations.University)}`,
+              `ERROR,${instance.holdingIdsInUniversity},${getReasonForErrorTemporaryLocation(instance.holdingIdsInUniversity, Affiliations.University)}`,
             ]);
           });
 
@@ -494,6 +460,7 @@ describe('Bulk-edit', () => {
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.searchHoldingsByHRID(folioInstance.holdingHridsInUniversity);

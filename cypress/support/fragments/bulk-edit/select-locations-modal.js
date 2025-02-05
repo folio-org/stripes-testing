@@ -27,6 +27,20 @@ const campusAccordion = Accordion('Campus');
 const libraryAccordion = Accordion('Library');
 
 export default {
+  scrollListOfResults(direction) {
+    cy.wait(1000);
+    const scrollableSelector = '#list-plugin-find-records [class^=mclScrollable-]';
+
+    cy.get(scrollableSelector).then(($element) => {
+      // Check if the element is scrollable
+      const hasScrollbar = $element.get(0).scrollHeight > $element.get(0).clientHeight;
+
+      if (hasScrollbar) {
+        cy.get(scrollableSelector).scrollTo(direction);
+      }
+    });
+  },
+
   verifyLocationLookupModalElementsInCentralTenant() {
     cy.expect([
       selectLocationsModal.exists(),
@@ -61,8 +75,8 @@ export default {
       selectLocationsModal.find(MultiColumnListHeader('Code')).exists(),
     ]);
 
-    // need to scroll to the right to verify the rest of the columns
-    cy.get('#list-plugin-find-records [class^=mclScrollable-]').scrollTo('right');
+    // need to scroll to the right to verify the rest of the columns in case long location names
+    this.scrollListOfResults('right');
 
     cy.expect([
       selectLocationsModal.find(MultiColumnListHeader('Institution')).exists(),
@@ -74,7 +88,7 @@ export default {
 
   expandSelectAffiliationAccordion() {
     cy.do(selectLocationsModal.find(selectAffiliationButton).click());
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   verifyTenantsInAffiliationDropdown(...tenants) {
@@ -101,7 +115,7 @@ export default {
 
   selectLocation(locationName) {
     // need to scroll down if the list of locations is long
-    cy.get('#list-plugin-find-records [class^=mclScrollable-]').scrollTo('bottom');
+    this.scrollListOfResults('bottom');
     cy.do(MultiColumnListCell({ content: locationName }).click());
   },
 

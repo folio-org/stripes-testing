@@ -381,19 +381,6 @@ export default {
     cy.do(locationLookupModal.find(saveAndCloseButton).click());
   },
 
-  verifySelectedLocation(locationName, rowIndex = 0) {
-    cy.wait(2000);
-    cy.do(
-      RepeatableFieldItem({ index: rowIndex }).perform((element) => {
-        const selectedLocationText = element.querySelector(
-          '#selected-locations-esc-item',
-        ).textContent;
-
-        expect(selectedLocationText).to.equal(locationName);
-      }),
-    );
-  },
-
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
