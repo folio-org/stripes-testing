@@ -18,6 +18,7 @@ export default {
           payload: {
             id,
             name: type.payload.name,
+            source: 'local',
           },
         },
       }).then(() => {
