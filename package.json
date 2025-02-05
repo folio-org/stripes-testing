@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "4.9.0",
+  "version": "5.0.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "license": "Apache-2.0",
@@ -43,7 +43,7 @@
     "@cypress/request": "2.88.7",
     "@cypress/webpack-batteries-included-preprocessor": "^3.0.5",
     "@cypress/webpack-preprocessor": "^5.4.4",
-    "@folio/eslint-config-stripes": "^7.1.0",
+    "@folio/eslint-config-stripes": "^8.0.0",
     "@interactors/html": "1.0.0",
     "@interactors/keyboard": "1.0.0",
     "@interactors/with-cypress": "1.0.0",
