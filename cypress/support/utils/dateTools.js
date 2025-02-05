@@ -147,11 +147,11 @@ export default {
   getPreviousDayDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - 1);
-  
+
     const day = currentDate.getDate();
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
-  
+
     return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
