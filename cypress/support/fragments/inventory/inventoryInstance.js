@@ -1808,6 +1808,13 @@ export default {
     cy.wait(1000);
   },
 
+  checkEditInstanceInLdeButtonNotDisplayed: () => {
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.expect(editInLdeButton.absent());
+    cy.wait(1000);
+  },
+
   verifyClassificationValueInView: (identifierType, value, isPresent = true) => {
     const targetRow = classificationAccordion.find(
       MultiColumnListRow({ content: and(including(identifierType), including(value)) }),

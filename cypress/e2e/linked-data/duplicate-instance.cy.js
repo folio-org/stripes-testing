@@ -16,11 +16,11 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 
-describe('Citation: duplicate instance', () => {
+describe('Citation: duplicate resource', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C624280 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C624280 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,

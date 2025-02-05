@@ -20,12 +20,12 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 
-describe('Citation: create work', () => {
+describe('Citation: MARC Authority integration', () => {
   const testData = {
     // lde related test data
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C633470 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C633470 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
@@ -34,7 +34,7 @@ describe('Citation: create work', () => {
     // new authority related test data
     sourceName: 'LC Name Authority file (LCNAF)',
     searchOption: 'Keyword',
-    marcValue: 'Create a new MARC authority record with FOLIO authority file test',
+    marcValue: `Create a new MARC authority record with FOLIO authority file test ${getRandomPostfix()}`,
     tag001: '001',
     tag010: '010',
     tag100: '100',
@@ -61,7 +61,7 @@ describe('Citation: create work', () => {
     {
       previousFieldTag: '010',
       tag: '100',
-      content: '$a Create a new MARC authority record with FOLIO authority file test',
+      content: `$a ${testData.marcValue}`,
     },
   ];
 
