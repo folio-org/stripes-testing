@@ -17,10 +17,11 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(instanceUUIDsFileName);
 const folioItem = {
   instanceName: `C468192 folio instance testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,

@@ -17,7 +17,6 @@ import {
 } from '../../../support/constants';
 
 let user;
-
 const notes = {
   admin: 'Admin_Note_text',
   copy: 'copy-Note_text',
@@ -26,15 +25,14 @@ const notes = {
   checkOut: 'checkOut-Note_text',
   action: 'action-Note_text',
 };
-
 const item = {
   barcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${itemHRIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${itemHRIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemHRIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemHRIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
