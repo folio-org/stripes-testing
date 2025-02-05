@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -16,7 +18,6 @@ import InventoryItems from '../../../../support/fragments/inventory/item/invento
 import LoanTypes from '../../../../support/fragments/settings/inventory/items/loanTypes';
 import LoanTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/items/loanTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
@@ -57,15 +58,14 @@ const collegeItemLoanType = {
 };
 const collegeItemLoanTypeNameWithAffiliation = `${collegeItemLoanType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const getReasonForError = (itemId) => {
-  return `${itemId} cannot be updated because the record is associated with ${Affiliations.University} and temporary loan type is not associated with this tenant.`;
-};
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${itemUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
-const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
+const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
+  itemUUIDsFileName,
+  true,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -501,13 +501,16 @@ describe('Bulk-edit', () => {
             marcInstance.barcodeInUniversity,
             marcInstanceItemInUniversityEditedHeaderValues,
           );
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 2);
-          BulkEditSearchPane.verifyNonMatchedResults();
+          BulkEditSearchPane.verifyErrorLabel(2);
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               instance.itemIds[1],
-              getReasonForError(instance.itemIds[1]),
+              getReasonForTenantNotAssociatedError(
+                instance.itemIds[1],
+                Affiliations.University,
+                'temporary loan type',
+              ),
             );
           });
 
@@ -539,7 +542,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${instance.itemIds[1]},${getReasonForError(instance.itemIds[1])}`,
+              `${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'temporary loan type')}`,
             ]);
           });
 

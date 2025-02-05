@@ -14,7 +14,6 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
@@ -40,10 +39,9 @@ const marcInstance = {
 const createdInstanceHrids = [];
 const instances = [folioInstance, marcInstance];
 const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {

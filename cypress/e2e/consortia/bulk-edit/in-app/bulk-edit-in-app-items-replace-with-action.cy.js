@@ -228,11 +228,11 @@ describe('Bulk-edit', () => {
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `${today}-Matched-Records-Query-${interceptedUuid}.csv`;
             previewQueryFileName = `${today}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `${today}-Changed-Records-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `${today}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
             errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(4);
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 item');
             BulkEditSearchPane.verifyQueryHeadLine(
               `(items.status_name in ("Available","Checked out")) AND (instances.title starts with "C496144_${postfix}")`,
             );

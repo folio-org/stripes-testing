@@ -24,9 +24,15 @@ const recordIdentifier = 'Instance HRIDs';
 const errorText = 'Duplicate entry';
 const firstInstanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const secondInstanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
-const firstMatchedRecordsFileName = `*-Matched-Records-${firstInstanceUUIDsFileName}`;
-const secondMatchedRecordsFileName = `*-Matched-Records-${secondInstanceHRIDsFileName}`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${secondInstanceHRIDsFileName}`;
+const firstMatchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(
+  firstInstanceUUIDsFileName,
+);
+const secondMatchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(
+  secondInstanceHRIDsFileName,
+);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  secondInstanceHRIDsFileName,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
