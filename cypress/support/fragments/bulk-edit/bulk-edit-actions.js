@@ -50,7 +50,6 @@ const newEmail = TextField({ testid: 'input-email-1' });
 const closeAreYouSureModalButton = areYouSureForm.find(Button({ icon: 'times' }));
 const selectNoteHoldingTypeDropdown = Select({ id: 'noteHoldingsType' });
 const saveAndCloseButton = Button('Save & close');
-
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -377,9 +376,11 @@ export default {
   locationLookupModalCancel() {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
+
   locationLookupModalSaveAndClose() {
     cy.do(locationLookupModal.find(saveAndCloseButton).click());
   },
+
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -401,6 +402,7 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
+
   selectLocation(location, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
@@ -411,6 +413,7 @@ export default {
     ]);
     BulkEditSearchPane.isConfirmButtonDisabled(false);
   },
+
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -429,6 +432,7 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
+
   clickSelectedLocation(currentLocation, newLocation) {
     cy.do([
       Button(including(`Select control\n${currentLocation}`)).click(),
@@ -436,6 +440,7 @@ export default {
       SelectionOption(including(newLocation)).click(),
     ]);
   },
+
   clearPermanentLocation(type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
