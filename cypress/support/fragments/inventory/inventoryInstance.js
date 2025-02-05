@@ -27,6 +27,7 @@ import {
   Select,
   TextArea,
   TextField,
+  and,
   calloutTypes,
   including,
   matching,
@@ -153,6 +154,7 @@ const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authoriti
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
 const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
+const classificationAccordion = Accordion('Classification');
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -1811,5 +1813,13 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(editInLdeButton.absent());
     cy.wait(1000);
+  },
+
+  verifyClassificationValueInView: (identifierType, value, isPresent = true) => {
+    const targetRow = classificationAccordion.find(
+      MultiColumnListRow({ content: and(including(identifierType), including(value)) }),
+    );
+    if (isPresent) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
   },
 };

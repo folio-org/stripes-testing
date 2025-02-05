@@ -30,9 +30,9 @@ const secondItem = {
   itemBarcode: `secondItem-itemBarcode${getRandomPostfix()}`,
 };
 const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingsHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingsHRIDFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingsHRIDFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingsHRIDFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingsHRIDFileName);
 const firstElectronicAccess = {
   linkText: 'firstElectronicAccess-linkText',
   relationshipId: electronicAccessRelationshipId.RESOURCE,

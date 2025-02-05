@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
         BulkEditSearchPane.verifyErrorLabel(1);
-        BulkEditSearchPane.verifyShowWarningsCheckbox();
+        BulkEditSearchPane.verifyShowWarningsCheckboxDisabled();
       },
     );
 
