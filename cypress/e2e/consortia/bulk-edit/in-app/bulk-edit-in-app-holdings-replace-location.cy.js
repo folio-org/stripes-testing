@@ -133,8 +133,9 @@ describe('Bulk-edit', () => {
 
               InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
                 const locations = resp.filter((location) => location.name !== 'DCB');
-                locationsInCollegeData.permanentLocation = locations[0];
-                locationsInCollegeData.temporaryLocation = locations[1];
+                cy.log(locations);
+                locationsInUniversityData.permanentLocation = locations[0];
+                locationsInUniversityData.temporaryLocation = locations[1];
                 instances.forEach((instance) => {
                   InventoryHoldings.createHoldingRecordViaApi({
                     instanceId: instance.id,
