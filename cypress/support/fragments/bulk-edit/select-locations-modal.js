@@ -116,7 +116,7 @@ export default {
   selectLocation(locationName) {
     // need to scroll down if the list of locations is long
     this.scrollListOfResults('bottom');
-    cy.do(MultiColumnListCell({ content: locationName }).click());
+    cy.do(selectLocationsModal.find(MultiColumnListCell({ content: locationName })).click());
   },
 
   verifySelectLocationModalExists(isExist = true) {
