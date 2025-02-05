@@ -142,7 +142,24 @@ export default {
     });
   },
 
+  scrollDownIfListOfResultsIsLong() {
+    cy.wait(2000);
+    // Scroll in case the list of results is long
+    const scrollableSelector = '#search-results-list [class^=mclScrollable]';
+
+    cy.get(scrollableSelector).then(($element) => {
+      // Check if the element is scrollable
+      const hasVerticalScrollbar = $element.get(0).scrollHeight > $element.get(0).clientHeight;
+
+      if (hasVerticalScrollbar) {
+        cy.get(scrollableSelector).scrollTo('bottom');
+      }
+    });
+  },
+
   verifyDefaultProfiles() {
+    this.scrollDownIfListOfResultsIsLong();
+
     cy.expect([
       MultiColumnListRow(including('Default authority mapping profileAuthority')).exists(),
       MultiColumnListRow(including('Default holdings mapping profileHoldings')).exists(),
@@ -151,9 +168,8 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
-    cy.wait(2000);
-    // Scroll in case the list of results is long
-    cy.get('#search-results-list [class^=mclScrollable]').scrollTo('bottom');
+    this.scrollDownIfListOfResultsIsLong();
+
     cy.expect(MultiColumnListRow(including(name)).exists());
   },
 
