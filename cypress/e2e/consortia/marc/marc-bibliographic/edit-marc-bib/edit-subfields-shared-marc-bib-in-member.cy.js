@@ -208,7 +208,7 @@ describe('MARC', () => {
 
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
-            BrowseSubjects.waitForBrowseSubjectsToContain(testData.expectedSubjectName);
+            BrowseSubjects.waitForSubjectToAppear(testData.expectedSubjectName);
             BrowseSubjects.select();
             BrowseSubjects.browse(testData.expectedSubjectName);
             BrowseSubjects.checkValueIsBold(testData.expectedSubjectName);

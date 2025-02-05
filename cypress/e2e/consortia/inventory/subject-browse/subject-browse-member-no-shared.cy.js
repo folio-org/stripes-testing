@@ -153,8 +153,8 @@ describe('Inventory', () => {
       () => {
         cy.reload();
         cy.wait('@/authn/refresh', { timeout: 20000 });
-        BrowseSubjects.waitForBrowseSubjectsToContain(testData.sharedInstance.subjects[0].value);
-        BrowseSubjects.waitForBrowseSubjectsToContain(testData.sharedInstance.subjects[1].value);
+        BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[0].value);
+        BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[1].value);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(testData.subjectBrowseoption);
         InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
