@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -24,7 +25,7 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

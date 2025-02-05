@@ -4,7 +4,6 @@ import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import DateTools from '../../../support/utils/dateTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -43,11 +42,13 @@ const electronicBookplateActionOptions = [
   'Remove all',
   'Remove mark as staff only',
 ];
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${itemBarcodesFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${itemBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName, true);
+const previewFileName = BulkEditFiles.getPreviewOfProposedChangesFileName(
+  itemBarcodesFileName,
+  true,
+);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName, true);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
