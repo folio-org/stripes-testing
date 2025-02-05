@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import SelectLocationsModal from '../../../../support/fragments/bulk-edit/select-locations-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -36,12 +38,10 @@ const marcInstance = {
 const locationsInCollegeData = {};
 const locationsInUniversityData = {};
 const instances = [folioInstance, marcInstance];
-const getReasonForErrorPermanentLocation = (holdingId, tenantName) => {
-  return `${holdingId} cannot be updated because the record is associated with ${tenantName} and permanent location is not associated with this tenant.`;
-};
-const getReasonForErrorTemporaryLocation = (holdingId, tenantName) => {
-  return `${holdingId} cannot be updated because the record is associated with ${tenantName} and temporary location is not associated with this tenant.`;
-};
+const userPermissions = [
+  permissions.bulkEditEdit.gui,
+  permissions.uiInventoryViewCreateEditHoldings.gui,
+];
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -55,13 +55,11 @@ describe('Bulk-edit', () => {
           user = userProperties;
 
           [Affiliations.College, Affiliations.University].forEach((affiliation) => {
-            cy.assignAffiliationToUser(affiliation, user.userId);
-            cy.setTenant(affiliation);
-            cy.assignPermissionsToExistingUser(user.userId, [
-              permissions.bulkEditEdit.gui,
-              permissions.uiInventoryViewCreateEditHoldings.gui,
-            ]);
-            cy.resetTenant();
+            cy.affiliateUserToTenant({
+              tenantId: affiliation,
+              userId: user.userId,
+              permissions: userPermissions,
+            });
           });
 
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
@@ -407,15 +405,17 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyReasonForError(
-              getReasonForErrorPermanentLocation(
+              getReasonForTenantNotAssociatedError(
                 instance.holdingIdsInUniversity,
                 Affiliations.University,
+                'permanent location',
               ),
             );
             BulkEditSearchPane.verifyReasonForError(
-              getReasonForErrorTemporaryLocation(
+              getReasonForTenantNotAssociatedError(
                 instance.holdingIdsInUniversity,
                 Affiliations.University,
+                'temporary location',
               ),
             );
           });
@@ -436,8 +436,8 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `ERROR,${instance.holdingIdsInUniversity},${getReasonForErrorPermanentLocation(instance.holdingIdsInUniversity, Affiliations.University)}`,
-              `ERROR,${instance.holdingIdsInUniversity},${getReasonForErrorTemporaryLocation(instance.holdingIdsInUniversity, Affiliations.University)}`,
+              `ERROR,${instance.holdingIdsInUniversity},${getReasonForTenantNotAssociatedError(instance.holdingIdsInUniversity, Affiliations.University, 'permanent location')}`,
+              `ERROR,${instance.holdingIdsInUniversity},${getReasonForTenantNotAssociatedError(instance.holdingIdsInUniversity, Affiliations.University, 'temporary location')}`,
             ]);
           });
 

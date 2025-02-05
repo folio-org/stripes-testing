@@ -55,10 +55,11 @@ const collegeItemLoanType = {
 };
 const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${itemUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(itemUUIDsFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
