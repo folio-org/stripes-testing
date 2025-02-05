@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -20,8 +21,9 @@ for (let i = 0; i < 6; i++) {
   });
 }
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
+const errorsFromMatchingFileName =
+  BulkEditFiles.getErrorsFromMatchingFileName(itemBarcodesFileName);
 
 // Test cannot be automated after test case update
 describe.skip('bulk-edit', () => {
