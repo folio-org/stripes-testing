@@ -65,7 +65,7 @@ describe('Citation: LDE permissions', () => {
   });
 
   it(
-    'Cxxxxx [User journey] LDE - no LDE permissions for the User (citation)',
+    'C651425 [User journey] LDE - no LDE permissions for the User (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance

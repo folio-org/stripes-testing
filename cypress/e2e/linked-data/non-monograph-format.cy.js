@@ -4,13 +4,15 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import TopMenu from '../../support/fragments/topMenu';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Citation: LDE permissions', () => {
   const testData = {
     // MARC file with 'integrating resource' mode of issuance
     marcFilePath: 'marcBibFileIntegrationResource.mrc',
-    modifiedMarcFile: `Cxxxxx editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `Cxxxxx marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C651426 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C651426 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
@@ -49,10 +51,15 @@ describe('Citation: LDE permissions', () => {
     });
   });
 
-  beforeEach(() => {});
+  beforeEach(() => {
+    cy.loginAsAdmin({
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
+    });
+  });
 
   it(
-    'Cxxxxx [User journey] LDE - non-monograph format (citation)',
+    'C651426 [User journey] LDE - non-monograph format (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance

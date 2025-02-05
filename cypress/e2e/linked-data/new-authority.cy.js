@@ -34,7 +34,7 @@ describe('Citation: MARC Authority integration', () => {
     // new authority related test data
     sourceName: 'LC Name Authority file (LCNAF)',
     searchOption: 'Keyword',
-    marcValue: 'Create a new MARC authority record with FOLIO authority file test',
+    marcValue: `Create a new MARC authority record with FOLIO authority file test ${getRandomPostfix()}`,
     tag001: '001',
     tag010: '010',
     tag100: '100',
@@ -61,7 +61,7 @@ describe('Citation: MARC Authority integration', () => {
     {
       previousFieldTag: '010',
       tag: '100',
-      content: '$a Create a new MARC authority record with FOLIO authority file test',
+      content: `$a ${testData.marcValue}`,
     },
   ];
 
