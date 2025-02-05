@@ -291,6 +291,11 @@ export default {
   },
 
   waitForContributorToAppear(contributorName, isPresent = true, isLinked = false) {
+    const hasLinkedItem = (items) => {
+      return items.some((item) => {
+        return item.authorityId && item.authorityId !== '';
+      });
+    };
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -307,11 +312,15 @@ export default {
           return item.name === contributorName;
         });
 
-        return isPresent && foundContributors.length > 0
-          ? isLinked
-            ? foundContributors.some((item) => item.authorityId && item.authorityId !== '')
-            : true
-          : foundContributors.length === 0;
+        if (isPresent) {
+          if (isLinked) {
+            return hasLinkedItem(foundContributors);
+          } else {
+            return foundContributors.length > 0 && !hasLinkedItem(foundContributors);
+          }
+        } else {
+          return foundContributors.length === 0;
+        }
       },
       {
         limit: 12,

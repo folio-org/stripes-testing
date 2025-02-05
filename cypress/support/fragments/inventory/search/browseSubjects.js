@@ -251,14 +251,19 @@ export default {
     );
   },
 
-  waitForSubjectToAppear(subjectName, isPresent = true) {
+  waitForSubjectToAppear(subjectName, isPresent = true, isLinked = false) {
+    const hasLinkedItem = (items) => {
+      return items.some((item) => {
+        return item.authorityId && item.authorityId !== '';
+      });
+    };
     return cy.recurse(
       () => {
         return cy.okapiRequest({
           method: 'GET',
           path: 'browse/subjects/instances',
           searchParams: {
-            query: `(value>="${subjectName}")`,
+            query: `(value>="${subjectName.replace(/"/g, '""')}")`,
           },
           isDefaultSearchParamsRequired: false,
         });
@@ -267,7 +272,16 @@ export default {
         const foundSubjects = response.body.items.filter((item) => {
           return item.value === subjectName;
         });
-        return isPresent ? foundSubjects.length > 0 : foundSubjects.length === 0;
+
+        if (isPresent) {
+          if (isLinked) {
+            return hasLinkedItem(foundSubjects);
+          } else {
+            return foundSubjects.length > 0 && !hasLinkedItem(foundSubjects);
+          }
+        } else {
+          return foundSubjects.length === 0;
+        }
       },
       {
         limit: 12,
