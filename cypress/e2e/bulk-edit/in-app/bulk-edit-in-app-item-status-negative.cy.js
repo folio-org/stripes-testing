@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -25,7 +26,8 @@ const item = {
   barcode: getRandomPostfix(),
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemBarcodesFileName}`;
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(itemBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

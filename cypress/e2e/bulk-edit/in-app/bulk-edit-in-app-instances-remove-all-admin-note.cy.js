@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -15,9 +16,9 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,

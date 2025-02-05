@@ -23,7 +23,7 @@ for (let i = 0; i < 8; i++) {
 }
 
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
 let fileContent = '';
 
 describe('bulk-edit', () => {
