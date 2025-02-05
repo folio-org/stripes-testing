@@ -91,6 +91,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422149*');
+          InventoryInstances.deleteInstanceByTitleViaApi('C388565');
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -234,6 +235,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            BrowseSubjects.waitForSubjectToAppear(testData.marcValue, true, true);
             BrowseSubjects.browse(testData.marcValue);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.marcValue);
             InventorySearchAndFilter.selectFoundItemFromBrowseResultList(testData.marcValue);
