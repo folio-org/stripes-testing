@@ -2815,9 +2815,10 @@ export default {
   },
 
   checkDropdownMarkedAsInvalid(tag, dropdownLabel, isMarked = true) {
-    const targetDropdown = QuickMarcEditorRow({ tagValue: tag }).find(
-      Select({ label: including(dropdownLabel), valid: false }),
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: including(dropdownLabel), valid: !isMarked }))
+        .exists(),
     );
-    cy.expect(targetDropdown[isMarked ? 'exists' : 'absent']());
   },
 };
