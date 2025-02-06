@@ -87,8 +87,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
-        // wait for values to be available in browse
-        cy.wait(5000);
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.searchQuery,
+          testData.classificationBrowseId,
+        );
       });
     });
 

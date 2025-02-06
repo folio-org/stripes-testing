@@ -14,6 +14,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -177,6 +178,18 @@ describe('Inventory', () => {
               createdRecordIDs.push(instance.instanceId);
             });
           });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.localInstnaceClassificationValue,
+          testData.classificationBrowseId,
+        );
       });
     });
 
@@ -199,13 +212,6 @@ describe('Inventory', () => {
       'C468155 Only one Classification identifier type could be found in the browse result list by "Classification (all)" browse option when only one Classification identifier type is selected in settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468155'] },
       () => {
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
-        InventorySearchAndFilter.verifyCallNumberBrowsePane();
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
         });

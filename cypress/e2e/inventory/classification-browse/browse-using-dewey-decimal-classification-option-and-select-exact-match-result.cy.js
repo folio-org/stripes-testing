@@ -72,21 +72,25 @@ describe('Inventory', () => {
             ).then((types) => {
               testData.originalTypes = types;
             });
-            ClassificationBrowse.updateIdentifierTypesAPI(
-              testData.classificationBrowseId,
-              testData.classificationBrowseAlgorithm,
-              [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
-            );
-
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            InventorySearchAndFilter.switchToBrowseTab();
-            InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
-            InventorySearchAndFilter.verifyCallNumberBrowsePane();
           });
         });
+        ClassificationBrowse.updateIdentifierTypesAPI(
+          testData.classificationBrowseId,
+          testData.classificationBrowseAlgorithm,
+          [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+        );
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+        InventorySearchAndFilter.verifyCallNumberBrowsePane();
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.searchQuery,
+          testData.classificationBrowseId,
+        );
       });
     });
 

@@ -77,30 +77,37 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
 
-  waitForClassificationNumberToAppear(classificationNumber, isPresent = true) {
+  waitForClassificationNumberToAppear(
+    classificationNumber,
+    classificationBrowseId = 'all',
+    isPresent = true,
+  ) {
     return cy.recurse(
       () => {
         return cy.okapiRequest({
           method: 'GET',
-          path: 'browse/classification-numbers/all/instances',
+          path: `browse/classification-numbers/${classificationBrowseId}/instances`,
           searchParams: {
-            query: `(number>="${classificationNumber}")`,
+            query: `(number>="${classificationNumber.replace(/"/g, '""')}")`,
           },
           isDefaultSearchParamsRequired: false,
         });
       },
       (response) => {
-        const foundClassificationNumbers = response.body.items.filter((item) => {
+        const foundNumbers = response.body.items.filter((item) => {
           return item.classificationNumber === classificationNumber;
         });
-        return isPresent
-          ? foundClassificationNumbers.length > 0
-          : foundClassificationNumbers.length === 0;
+        if (isPresent) {
+          return foundNumbers.length > 0;
+        } else {
+          return foundNumbers.length === 0;
+        }
       },
       {
-        limit: 15,
+        limit: 12,
         delay: 5000,
-        timeout: 70000,
+        timeout: 60000,
+        error: `Classification number did not appear: "${classificationNumber}"`,
       },
     );
   },
