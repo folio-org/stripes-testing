@@ -1,16 +1,12 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane, {
-  getReasonForTenantNotAssociatedError,
-} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import SelectLocationsModal from '../../../../support/fragments/bulk-edit/select-locations-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
@@ -38,14 +34,14 @@ const userPermissions = [
   permissions.uiInventoryViewCreateEditItems.gui,
 ];
 const folioInstance = {
-  title: `C496116 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C496117 folio instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
   holdingIds: [],
 };
 const marcInstance = {
-  title: `C496116 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `C496117 marc instance testBulkEdit_${getRandomPostfix()}`,
   barcodeInCollege: `Item_College${getRandomPostfix()}`,
   barcodeInUniversity: `Item_University${getRandomPostfix()}`,
   itemIds: [],
@@ -53,13 +49,9 @@ const marcInstance = {
 };
 const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
-const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
-const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
-  itemUUIDsFileName,
-  true,
-);
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -138,6 +130,14 @@ describe('Bulk-edit', () => {
                   holdingsRecordId: instance.holdingIds[0],
                   materialType: { id: materialTypeId },
                   permanentLoanType: { id: loanTypeId },
+                  permanentLocation: {
+                    id: locationsInCollegeData.permanentLocation.id,
+                    name: locationsInCollegeData.permanentLocation.name,
+                  },
+                  temporaryLocation: {
+                    id: locationsInCollegeData.temporaryLocation.id,
+                    name: locationsInCollegeData.temporaryLocation.name,
+                  },
                   status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 }).then((item) => {
                   instance.itemIds.push(item.id);
@@ -233,13 +233,12 @@ describe('Bulk-edit', () => {
           matchedRecordsFileName,
           previewFileName,
           changedRecordsFileName,
-          errorsFromCommittingFileName,
         );
       });
 
       it(
-        'C496116 Verify "Replace with" action for Items location in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496116'] },
+        'C496117 Verify "Clear" action for Items location in Central tenant (consortia) (firebird)',
+        { tags: ['smokeECS', 'firebird', 'C496117'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
@@ -278,11 +277,11 @@ describe('Bulk-edit', () => {
           const itemInCollegeInitialHeaderValues = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
-              value: '',
+              value: locationsInCollegeData.permanentLocation.name,
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_TEMPORARY_LOCATION,
-              value: '',
+              value: locationsInCollegeData.temporaryLocation.name,
             },
           ];
 
@@ -347,38 +346,13 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.isConfirmButtonDisabled(true);
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
-          BulkEditActions.selectSecondAction('Replace with');
-          BulkEditActions.verifySelectLocationDisabled();
-          BulkEditActions.locationLookupExists();
-          BulkEditActions.clickLocationLookup();
-          SelectLocationsModal.verifySelectLocationModalExists();
-          SelectLocationsModal.verifyLocationLookupModalElementsInCentralTenant();
-          SelectLocationsModal.verifyTenantsInAffiliationDropdown(
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
-          SelectLocationsModal.selectLocation(locationsInCollegeData.permanentLocation.name);
-          SelectLocationsModal.verifySelectLocationModalExists(false);
-          BulkEditActions.verifyLocationValue(
-            `${locationsInCollegeData.permanentLocation.name} (${Affiliations.College})`,
-          );
+          BulkEditActions.selectSecondAction('Clear field');
           BulkEditSearchPane.isConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary item location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary item location', 1);
-          BulkEditActions.selectSecondAction('Replace with', 1);
-          BulkEditActions.verifySelectLocationDisabled(1);
-          BulkEditActions.locationLookupExists();
-          BulkEditActions.clickLocationLookup(1);
-          SelectLocationsModal.selectTenantInAffiliationDropdown(tenantNames.college);
-          SelectLocationsModal.selectLocation(locationsInCollegeData.temporaryLocation.name);
-          SelectLocationsModal.verifySelectLocationModalExists(false);
-          BulkEditActions.verifyLocationValue(
-            `${locationsInCollegeData.temporaryLocation.name} (${Affiliations.College})`,
-            1,
-          );
+          BulkEditActions.selectSecondAction('Clear field', 1);
           BulkEditSearchPane.isConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
@@ -387,11 +361,11 @@ describe('Bulk-edit', () => {
           const headerValuesToEdit = [
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
-              value: locationsInCollegeData.permanentLocation.name,
+              value: '',
             },
             {
               header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_TEMPORARY_LOCATION,
-              value: locationsInCollegeData.temporaryLocation.name,
+              value: '',
             },
           ];
 
@@ -415,56 +389,26 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.commitChanges();
-          BulkEditActions.verifySuccessBanner(2);
+          BulkEditActions.verifySuccessBanner(4);
 
-          instances.forEach((instance) => {
+          itemBarcodes.forEach((itemBarcode) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
-              instance.barcodeInCollege,
+              itemBarcode,
               headerValuesToEdit,
-            );
-          });
-
-          BulkEditSearchPane.verifyErrorLabel(4);
-
-          instances.forEach((instance) => {
-            BulkEditSearchPane.verifyReasonForError(
-              getReasonForTenantNotAssociatedError(
-                instance.itemIds[1],
-                Affiliations.University,
-                'permanent location',
-              ),
-            );
-            BulkEditSearchPane.verifyReasonForError(
-              getReasonForTenantNotAssociatedError(
-                instance.itemIds[1],
-                Affiliations.University,
-                'temporary location',
-              ),
             );
           });
 
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
-          instances.forEach((instance) => {
+          itemBarcodes.forEach((itemBarcode) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
-              instance.barcodeInCollege,
+              itemBarcode,
               headerValuesToEdit,
             );
           });
-
-          BulkEditActions.downloadErrors();
-
-          instances.forEach((instance) => {
-            ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `ERROR,${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'permanent location')}`,
-              `ERROR,${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'temporary location')}`,
-            ]);
-          });
-
-          BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 4);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
@@ -474,8 +418,8 @@ describe('Bulk-edit', () => {
             InventoryInstance.openHoldings(['']);
             InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
-            ItemRecordView.verifyPermanentLocation(locationsInCollegeData.permanentLocation.name);
-            ItemRecordView.verifyTemporaryLocation(locationsInCollegeData.temporaryLocation.name);
+            ItemRecordView.verifyPermanentLocation('No value set-');
+            ItemRecordView.verifyTemporaryLocation('No value set-');
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
@@ -486,12 +430,8 @@ describe('Bulk-edit', () => {
             InventoryInstance.openHoldings(['']);
             InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
-            ItemRecordView.verifyPermanentLocation(
-              locationsInUniversityData.permanentLocation.name,
-            );
-            ItemRecordView.verifyTemporaryLocation(
-              locationsInUniversityData.temporaryLocation.name,
-            );
+            ItemRecordView.verifyPermanentLocation('No value set-');
+            ItemRecordView.verifyTemporaryLocation('No value set-');
           });
         },
       );
