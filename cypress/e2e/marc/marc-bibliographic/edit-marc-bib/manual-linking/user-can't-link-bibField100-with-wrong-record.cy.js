@@ -10,6 +10,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -202,6 +203,7 @@ describe('MARC', () => {
               testData.authorityFieldValue.field150,
             );
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
+            MarcAuthoritiesSearch.selectExcludeReferencesFilter();
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();

@@ -94,6 +94,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.positiveSearchQuery,
+          testData.classificationBrowseId,
+        );
       });
     });
 
