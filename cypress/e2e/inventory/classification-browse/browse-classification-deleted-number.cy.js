@@ -131,6 +131,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickResetAllButton();
         BrowseClassifications.waitForClassificationNumberToAppear(
           testData.instance.classificationNumber,
+          testData.classificationBrowseId,
           false,
         );
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
