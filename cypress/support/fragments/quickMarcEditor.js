@@ -2814,7 +2814,7 @@ export default {
     });
   },
 
-  dropdownMarkedAsInvalid(tag, dropdownLabel, isMarked = true) {
+  checkDropdownMarkedAsInvalid(tag, dropdownLabel, isMarked = true) {
     const targetDropdown = QuickMarcEditorRow({ tagValue: tag }).find(
       Select({ label: including(dropdownLabel), valid: false }),
     );
