@@ -37,7 +37,7 @@ module.exports = defineConfig({
     EDGE_API_KEY: '',
     OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio-aqa',
-    diku_password: 'Folio-aqa1',
+    diku_password: 'folio-aqa',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     is_kiwi_release: false,
