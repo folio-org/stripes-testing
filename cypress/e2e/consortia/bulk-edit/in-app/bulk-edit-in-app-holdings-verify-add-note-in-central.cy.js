@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -57,9 +59,6 @@ const localHoldingNoteType = {
 };
 const localHoldingNoteTypeNameWithAffiliation = `${localHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const getReasonForError = (holdingId) => {
-  return `${holdingId} cannot be updated because the record is associated with ${Affiliations.University} and note type is not associated with this tenant.`;
-};
 let identifiersQueryFilename;
 let matchedRecordsQueryFileName;
 let previewQueryFileName;
@@ -228,11 +227,11 @@ describe('Bulk-edit', () => {
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
             previewQueryFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
             errorsFromCommittingFileName = `*-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(4);
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
               `(holdings.call_number starts with "${callNumberStarts}")`,
             );
@@ -458,13 +457,16 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyErrorLabelInErrorAccordion('Bulk edit query', 4, 4, 2);
-            BulkEditSearchPane.verifyNonMatchedResults();
+            BulkEditSearchPane.verifyErrorLabel(2);
 
             instances.forEach((instance) => {
               BulkEditSearchPane.verifyErrorByIdentifier(
                 instance.holdingIds[1],
-                getReasonForError(instance.holdingIds[1]),
+                getReasonForTenantNotAssociatedError(
+                  instance.holdingIds[1],
+                  Affiliations.University,
+                  'note type',
+                ),
               );
             });
 
@@ -517,7 +519,7 @@ describe('Bulk-edit', () => {
 
             instances.forEach((instance) => {
               ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-                `${instance.holdingIds[1]},${getReasonForError(instance.holdingIds[1])}`,
+                `${instance.holdingIds[1]},${getReasonForTenantNotAssociatedError(instance.holdingIds[1], Affiliations.University, 'note type')}`,
               ]);
             });
 

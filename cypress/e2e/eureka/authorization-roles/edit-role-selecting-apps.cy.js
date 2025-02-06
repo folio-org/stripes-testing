@@ -2,69 +2,76 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
-  describe('Settings', () => {
+  describe(CAPABILITY_TYPES.SETTINGS, () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `Auto Role C430265 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        // TO DO: rewrite using >1 original apps when more apps will be consistently available
-        originalApplications: ['app-platform-full'],
-        newApplication: 'app-consortia',
+        originalApplications: ['app-platform-complete', 'app-dcb'],
+        newApplication: 'app-erm-usage',
         originalCapabilities: [
           {
-            application: 'app-platform-full',
-            table: 'Data',
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Owners Item',
-            action: 'Create',
+            action: CAPABILITY_ACTIONS.CREATE,
           },
           {
-            application: 'app-platform-full',
-            table: 'Procedural',
+            table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'Orders Item Approve',
-            action: 'Execute',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
-            application: 'app-platform-full',
-            table: 'Data',
+            table: CAPABILITY_TYPES.DATA,
             resource: 'UI-Users',
-            action: 'View',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            application: 'app-platform-full',
-            table: 'Settings',
-            resource: 'Erm Settings',
-            action: 'View',
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'Dcb Transactions',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
-        absentCapabilityTables: ['Data', 'Settings', 'Procedural'],
+        expectedRowCounts: {
+          capabilities: {
+            Procedural: 1,
+          },
+        },
+        absentCapabilityTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
         capabIds: [],
       };
 
       const capabilityCallRegExp = new RegExp(
-        `\\/capabilities\\?limit=\\d{1,}&query=\\applicationId==\\(${testData.newApplication}-.{1,}\\)`,
+        `\\/capabilities\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[1]}-.{1,}or.{1,}${testData.newApplication}-.{1,}\\)`,
       );
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings Admin',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Capabilities',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Role-Capability-Sets',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
       ];
-
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create role, user', () => {
         cy.clearCookies({ domain: null });
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi().then((role) => {
             testData.roleName = role.name;
@@ -95,7 +102,7 @@ describe('Eureka', () => {
 
       it(
         'C430265 Selecting/deselecting applications when editing authorization role (no capabilities selected)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'eurekaTemporaryECS', 'C430265'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C430265'] },
         () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
@@ -120,13 +127,19 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveInModal();
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait(3000);
-          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.newApplication]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([
+            testData.originalApplications[1],
+            testData.newApplication,
+          ]);
           AuthorizationRoles.clickSaveButton();
           AuthorizationRoles.checkAfterSaveEdit(
             testData.updatedRoleName,
             testData.updateRoleDescription,
           );
-          AuthorizationRoles.clickOnCapabilitiesAccordion(false);
+          AuthorizationRoles.clickOnCapabilitiesAccordion();
+          Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
+            AuthorizationRoles.checkCountOfCapabilityRows(table, count);
+          });
           testData.absentCapabilityTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilityTableAbsent(table);
           });

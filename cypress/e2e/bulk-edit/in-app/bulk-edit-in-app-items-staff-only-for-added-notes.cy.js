@@ -24,9 +24,9 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${itemUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
 const notes = {
   electronicBookplate: 'electronicBookplateNote',
   admin: 'adminNote',

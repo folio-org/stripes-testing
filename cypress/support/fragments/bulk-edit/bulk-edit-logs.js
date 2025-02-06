@@ -41,9 +41,9 @@ const errorsEncounteredBtn = DropdownMenu().find(
 );
 const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching records'));
 const previewPorposedChangesBtn = DropdownMenu().find(
-  Button('File with the preview of proposed changes'),
+  Button('File with the preview of proposed changes (CSV)'),
 );
-const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
+const updatedRecordBtn = DropdownMenu().find(Button('File with updated records (CSV)'));
 const errorsCommittingBtn = DropdownMenu().find(
   Button('File with errors encountered when committing the changes'),
 );

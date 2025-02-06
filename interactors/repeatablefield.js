@@ -50,4 +50,5 @@ export const RepeatableFieldItem = HTML.extend('repeatable field item')
     content: (el) => el.textContent,
     index: (el) => [...el.parentElement.children].indexOf(el),
     singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
+    inputValue: (el) => el.querySelector('input').value,
   });

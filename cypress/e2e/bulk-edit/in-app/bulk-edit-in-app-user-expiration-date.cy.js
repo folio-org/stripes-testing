@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
@@ -17,8 +18,8 @@ const futureDatewithDashes = DateTools.getFormattedDate({ date: futureDate });
 const futureDatewithSlashes = DateTools.getFormattedDateWithSlashes({ date: futureDate });
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

@@ -100,7 +100,7 @@ describe('Eureka', () => {
               cy.intercept('POST', `${testData.promotePath}/${testData.userId}`).as('promote');
               AuthorizationRoles.clickConfirmInPromoteUsersModal();
               cy.wait('@promote').its('response.statusCode').should('eq', 201);
-              AuthorizationRoles.verifyAssignedUsersAccordion(1);
+              AuthorizationRoles.verifyAssignedUsersAccordion();
               AuthorizationRoles.verifyAssignedUser(
                 testData.lastName,
                 null,
