@@ -1514,4 +1514,12 @@ export default {
         });
     });
   },
+
+  verifySelectLocationDisabled(rowIndex = 0, isDisabled = true) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'locations-esc' }))
+        .has({ disabled: isDisabled }),
+    );
+  },
 };

@@ -1001,6 +1001,8 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     COPY_NOTE: 'Copy note',
     REPRODUCTION_NOTE: 'Reproduction note',
     NOTE: 'Note',
+    ITEM_PERMANENT_LOCATION: 'Item permanent location',
+    ITEM_TEMPORARY_LOCATION: 'Item temporary location',
   },
 };
 
