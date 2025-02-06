@@ -269,6 +269,13 @@ export default {
         const uuidHeaderIndex = headers.indexOf(uuidHeader);
         const targetHeaderIndex = headers.indexOf(targetHeader);
 
+        if (uuidHeaderIndex === -1) {
+          throw new Error(`UUID header "${uuidHeader}" not found in the file.`);
+        }
+        if (targetHeaderIndex === -1) {
+          throw new Error(`Target header "${targetHeader}" not found in the file.`);
+        }
+
         // Find the target row by UUID
         const targetRow = rows.find((row) => {
           const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
@@ -300,6 +307,10 @@ export default {
         // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
         const identifierHeaderIndex = headers.indexOf(identifierHeader);
 
+        if (identifierHeaderIndex === -1) {
+          throw new Error(`Header "${identifierHeader}" not found in the file.`);
+        }
+
         // Find the target row by UUID
         const targetRow = rows.find((row) => {
           const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
@@ -314,6 +325,11 @@ export default {
 
         targetValues.forEach((pair) => {
           const targetHeaderIndex = headers.indexOf(pair.header);
+
+          if (targetHeaderIndex === -1) {
+            throw new Error(`Target header "${pair.header}" not found in the file.`);
+          }
+
           const actualValue = cells[targetHeaderIndex];
 
           expect(actualValue).to.equal(pair.value);
