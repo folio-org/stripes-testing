@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -12,12 +13,30 @@ describe('Eureka', () => {
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-        { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-        { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings Admin',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Capabilities',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Role-Capability-Sets',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
       ];
 
-      const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
+      const capabsToAssign = [
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'Settings Enabled',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
+      ];
 
       before(() => {
         cy.createTempUser([]).then((createdUserProperties) => {
