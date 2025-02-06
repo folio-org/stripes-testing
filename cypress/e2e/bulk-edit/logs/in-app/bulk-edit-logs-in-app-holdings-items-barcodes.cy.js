@@ -18,7 +18,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${itemBarcodesFileName}`;
 
 const instance = {

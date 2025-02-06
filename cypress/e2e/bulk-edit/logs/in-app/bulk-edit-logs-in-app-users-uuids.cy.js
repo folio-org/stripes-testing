@@ -15,11 +15,21 @@ let user;
 let userWithoutPermissions;
 const invalidUserUUID = `invalidUserUUID_${getRandomPostfix()}`;
 const invalidAndValidUserUUIDsFileName = `invalidAndValidUserUUIDS_${getRandomPostfix()}.csv`;
-const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserUUIDsFileName}`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserUUIDsFileName}`;
+const matchedRecordsFileNameInvalidAndValid = BulkEditFiles.getMatchedRecordsFileName(
+  invalidAndValidUserUUIDsFileName,
+);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  invalidAndValidUserUUIDsFileName,
+);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewOfProposedChangesFileName(
+  invalidAndValidUserUUIDsFileName,
+);
+const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
+  invalidAndValidUserUUIDsFileName,
+);
+const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
+  invalidAndValidUserUUIDsFileName,
+);
 
 describe('bulk-edit', () => {
   describe('logs', () => {
@@ -123,7 +133,7 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromMatchingFileName,
             // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-            [`\uFEFF${invalidUserUUID}`],
+            ['\uFEFFERROR', invalidUserUUID],
             'firstElement',
             false,
           );
@@ -148,7 +158,7 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyMatchedResultFileContent(
             errorsFromCommittingFileName,
             // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-            [`\uFEFF${user.userId}`],
+            ['\uFEFFWARNING', user.userId],
             'firstElement',
             false,
           );

@@ -5,6 +5,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -12,7 +13,7 @@ describe('MARC', () => {
       const testData = {
         sourceName: 'LC Name Authority file (LCNAF)',
         searchOption: 'Keyword',
-        marcValue: 'Create a new MARC authority record with FOLIO authority file test',
+        marcValue: `Create a new MARC authority record with FOLIO authority file autotest ${getRandomPostfix()}`,
         tag001: '001',
         tag010: '010',
         tag100: '100',
@@ -29,7 +30,7 @@ describe('MARC', () => {
         {
           previousFieldTag: '010',
           tag: '100',
-          content: '$a Create a new MARC authority record with FOLIO authority file test',
+          content: `$a ${testData.marcValue}`,
         },
       ];
 
@@ -99,6 +100,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
           MarcAuthorities.checkRecordsResultListIsAbsent();
           cy.reload();
+          MarcAuthorities.waitLoading();
           MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
           MarcAuthorities.checkAfterSearch(testData.AUTHORIZED, testData.marcValue);
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);

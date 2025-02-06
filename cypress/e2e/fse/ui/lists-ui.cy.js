@@ -1,7 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Lists from '../../../support/fragments/lists/lists';
 
-describe('fse-licenses - UI', () => {
+describe('fse-lists - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -14,7 +14,6 @@ describe('fse-licenses - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'lists'] },
     () => {
       cy.visit(TopMenu.listsPath);
-      Lists.waitForSpinnerToDisappear();
       // check filters displayed (as we can't use standard waitLoading for tenants with non-English localization)
       Lists.filtersWaitLoading();
     },

@@ -5,7 +5,6 @@ import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import DateTools from '../../../support/utils/dateTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -50,15 +49,17 @@ const actionOptions = {
   setFalse: 'Set false',
   setTrue: 'Set true',
 };
-const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const invalidInstanceIds = [];
 const createdInstanceIds = [];
 const createdInstanceHrids = [];
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${today}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${today}-Updates-Preview-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `${today}-Changed-Records-${instanceUUIDsFileName}`;
-const errorsFromMatchingFileName = `${today}-Matching-Records-Errors-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  instanceUUIDsFileName,
+  true,
+);
 
 // generate invalid instance ids
 for (let i = 1; i <= 5; i++) {
@@ -262,7 +263,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);
-        BulkEditSearchPane.verifyPaneRecordsCount('6');
+        BulkEditSearchPane.verifyPaneRecordsCount('6 instance');
         BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
 
         createdInstanceHrids.forEach((instanceHrid) => {
@@ -273,7 +274,7 @@ describe('bulk-edit', () => {
           );
         });
 
-        BulkEditSearchPane.verifyErrorLabel(instanceUUIDsFileName, 6, 5);
+        BulkEditSearchPane.verifyErrorLabel(5);
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,

@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
@@ -19,9 +20,9 @@ const items = [];
 const holdingsHRIDs = [];
 const holdingsNote = 'Line-1\nLine-2\nLine-3\nLine-4';
 const holdingsHRIDFileName = `holdingsHRID_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingsHRIDFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingsHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingsHRIDFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingsHRIDFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingsHRIDFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
 
 for (let i = 0; i < 3; i++) {
   items.push({

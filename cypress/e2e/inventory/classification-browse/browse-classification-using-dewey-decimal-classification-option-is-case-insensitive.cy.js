@@ -1,4 +1,7 @@
-import { DEFAULT_JOB_PROFILE_NAMES, CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  CLASSIFICATION_IDENTIFIER_TYPES,
+} from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -10,6 +13,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -75,6 +79,12 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
+        testData.searchResults.forEach((query) => {
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            query,
+            testData.classificationBrowseId,
+          );
+        });
       });
     });
 

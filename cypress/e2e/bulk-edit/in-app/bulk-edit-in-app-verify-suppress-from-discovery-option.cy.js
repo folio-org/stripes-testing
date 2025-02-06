@@ -2,6 +2,7 @@ import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -19,8 +20,9 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
+const previewOfProposedChangesFileName =
+  BulkEditFiles.getPreviewOfProposedChangesFileName(instanceHRIDFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

@@ -47,24 +47,19 @@ const optionsForChangingNoteType = {
     'Reproduction',
   ],
 };
-const administrativeNoteActionOptions = [
-  'Add note',
-  'Change note type',
-  'Find (full field search)',
-  'Remove all',
-];
+const administrativeNoteActionOptions = ['Add note', 'Change note type', 'Find', 'Remove all'];
 const electronicBookplateActionOptions = [
   'Add note',
   'Change note type',
-  'Find (full field search)',
+  'Find',
   'Mark as staff only',
   'Remove all',
   'Remove mark as staff only',
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

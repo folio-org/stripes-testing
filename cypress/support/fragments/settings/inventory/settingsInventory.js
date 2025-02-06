@@ -11,6 +11,7 @@ export const INVENTORY_SETTINGS_TABS = {
   INSTANCE_STATUS_TYPE: 'Instance status types',
   LOAN_TYPES: 'Loan types',
   STATISTICAL_CODES: 'Statistical codes',
+  DISPLAY_SETTINGS: 'Display settings',
 };
 
 export default {

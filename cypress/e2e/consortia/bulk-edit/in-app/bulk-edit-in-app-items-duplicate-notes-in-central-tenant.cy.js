@@ -13,12 +13,12 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
@@ -44,10 +44,9 @@ const checkInNoteFirstText = 'Check in note first text';
 const checkInNoteSecondText = 'Check in note second text';
 const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${itemUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -75,7 +74,7 @@ describe('Bulk-edit', () => {
           cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
+          cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
@@ -183,7 +182,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           const itemBarcodes = [folioInstance.barcodeInCollege, marcInstance.barcodeInCollege];
@@ -294,7 +293,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           itemBarcodes.forEach((barcode) => {

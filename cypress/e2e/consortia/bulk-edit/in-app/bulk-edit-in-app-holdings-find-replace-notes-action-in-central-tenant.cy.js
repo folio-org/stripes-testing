@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -14,7 +16,6 @@ import HoldingsRecordView from '../../../../support/fragments/inventory/holdings
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import HoldingsNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/holdings/holdingsNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
@@ -52,15 +53,14 @@ const notes = {
 };
 const collegeHoldingNoteTypeNameWithAffiliation = `${collegeHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${holdingUUIDsFileName}`;
-const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${holdingUUIDsFileName}`;
-const getReasonForError = (itemId, tenantName) => {
-  return `${itemId} cannot be updated because the record is associated with ${tenantName} and note type is not associated with this tenant.`;
-};
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName, true);
+const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
+  holdingUUIDsFileName,
+  true,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -248,7 +248,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('4 holding');
+          BulkEditSearchPane.verifyPaneRecordsCount('4 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           const holdingHrids = [...collegeHoldingHrids, ...universityHoldingHrids];
@@ -455,7 +455,7 @@ describe('Bulk-edit', () => {
           universityHoldingIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               id,
-              getReasonForError(id, Affiliations.University),
+              getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type'),
             );
           });
 
@@ -483,7 +483,7 @@ describe('Bulk-edit', () => {
 
           universityHoldingIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForError(id, Affiliations.University)}`,
+              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 

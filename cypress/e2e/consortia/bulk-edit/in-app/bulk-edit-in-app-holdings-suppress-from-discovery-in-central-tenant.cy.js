@@ -2,7 +2,6 @@ import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
@@ -29,11 +28,10 @@ let collegeLocation;
 let collegeMaterialTypeId;
 let collegeLoanTypeId;
 let holdingSource;
-const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${today}-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `${today}-Updates-Preview-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `${today}-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName, true);
 const suppressFromDiscovery = 'Suppress from discovery';
 const actions = {
   setFalse: 'Set false',
@@ -190,7 +188,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {
@@ -304,7 +302,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(2);
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {

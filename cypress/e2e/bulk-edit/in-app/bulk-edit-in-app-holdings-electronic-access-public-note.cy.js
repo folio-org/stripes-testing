@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -20,9 +21,9 @@ const item = {
 const publicNote = 'publicNote';
 const newPublicNote = 'new publicNote';
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -90,7 +91,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.isSelectActionAbsent();
         BulkEditActions.selectOption('URL public note');
-        let possibleActions = ['Clear field', 'Find (full field search)', 'Replace with'];
+        let possibleActions = ['Clear field', 'Find', 'Replace with'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Clear field');
         BulkEditActions.addNewBulkEditFilterString();

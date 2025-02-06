@@ -24,9 +24,15 @@ const recordIdentifier = 'Instance HRIDs';
 const errorText = 'Duplicate entry';
 const firstInstanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
 const secondInstanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
-const firstMatchedRecordsFileName = `*-Matched-Records-${firstInstanceUUIDsFileName}`;
-const secondMatchedRecordsFileName = `*-Matched-Records-${secondInstanceHRIDsFileName}`;
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${secondInstanceHRIDsFileName}`;
+const firstMatchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(
+  firstInstanceUUIDsFileName,
+);
+const secondMatchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(
+  secondInstanceHRIDsFileName,
+);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  secondInstanceHRIDsFileName,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -116,7 +122,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.uploadFile(firstInstanceUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditSearchPane.verifyPaneTitleFileName(firstInstanceUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('1');
+          BulkEditSearchPane.verifyPaneRecordsCount('1 instance');
           BulkEditSearchPane.verifyFileNameHeadLine(firstInstanceUUIDsFileName);
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
             firstInstance.hrid,
@@ -156,7 +162,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.uploadFile(secondInstanceHRIDsFileName);
           BulkEditSearchPane.waitFileUploading();
           BulkEditSearchPane.verifyPaneTitleFileName(secondInstanceHRIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('1');
+          BulkEditSearchPane.verifyPaneRecordsCount('1 instance');
           BulkEditSearchPane.verifyFileNameHeadLine(secondInstanceHRIDsFileName);
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
             secondInstance.hrid,

@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BulkEditSearchPane, {
   instanceIdentifiers,
@@ -27,9 +28,9 @@ const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD')
 const todayDateLocalized = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 const staffSuppressOption = 'Staff suppress';
 const instanceHRIDsFileName = `instanceHRIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instanceHRIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceHRIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

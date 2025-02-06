@@ -45,10 +45,9 @@ const fieldSetRelationSelect = Select({ content: including('Select type') });
 const findInstanceButton = Button({ id: 'find-instance-trigger' });
 const deleteItemButton = Button({ ariaLabel: 'Delete this item' });
 const subjectField = TextField({ name: 'subjects[0].value' });
-const descriptiveDataAccordion = Accordion('Descriptive data');
-const dateTypeSelect = descriptiveDataAccordion.find(Select({ name: 'dates.dateTypeId' }));
-const date1Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date1' }));
-const date2Field = descriptiveDataAccordion.find(TextField({ name: 'dates.date2' }));
+const dateTypeSelect = Select({ name: 'dates.dateTypeId' });
+const date1Field = TextField({ name: 'dates.date1' });
+const date2Field = TextField({ name: 'dates.date2' });
 const dateTypePlaceholderOption = 'Select date type';
 const dateValueLengthErrorText = 'Date must contain four characters.';
 const saveAndKeepEditing = Button('Save & keep editing');
@@ -482,5 +481,10 @@ export default {
   clickSaveAndKeepEditingButton(saved = true) {
     cy.do(saveAndKeepEditing.click());
     if (saved) cy.expect(saveAndKeepEditing.has({ disabled: true }));
+  },
+
+  removeClassificationNumber(classificationValue) {
+    cy.do(RepeatableFieldItem({ inputValue: classificationValue }).find(deleteButton).click());
+    cy.expect(RepeatableFieldItem({ inputValue: classificationValue }).absent());
   },
 };

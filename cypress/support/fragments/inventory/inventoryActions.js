@@ -109,7 +109,10 @@ export default {
   },
 
   verifySavedUUIDs(actualUUIDs, expectedUUIDs) {
-    const formattedActualUUIDs = actualUUIDs.replaceAll('"', '').split('\n');
+    const formattedActualUUIDs = actualUUIDs
+      .replaceAll('"', '')
+      .split('\n')
+      .map((uuid) => uuid.trim());
     expect(expectedUUIDs).to.deep.equal(formattedActualUUIDs);
   },
 
@@ -152,7 +155,10 @@ export default {
   },
 
   verifyInstancesMARC(actualIDs, expectedIDs) {
-    const formattedActualUUIDs = actualIDs.replaceAll('"', '').split('\n');
+    const formattedActualUUIDs = actualIDs
+      .replaceAll('"', '')
+      .split('\n')
+      .map((uuid) => uuid.trim());
     expect(expectedIDs).to.deep.equal(formattedActualUUIDs);
   },
 

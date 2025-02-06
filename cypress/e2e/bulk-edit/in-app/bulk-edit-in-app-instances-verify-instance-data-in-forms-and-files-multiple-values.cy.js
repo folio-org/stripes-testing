@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -24,9 +25,9 @@ const instance = {
 };
 const staffSuppressOption = 'Staff suppress';
 const instancUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instancUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instancUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instancUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instancUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instancUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instancUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

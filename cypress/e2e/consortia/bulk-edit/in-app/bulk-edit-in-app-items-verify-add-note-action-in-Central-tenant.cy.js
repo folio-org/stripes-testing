@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -22,6 +24,7 @@ import {
   APPLICATION_NAMES,
   BULK_EDIT_TABLE_COLUMN_HEADERS,
   ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
 } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
@@ -61,15 +64,18 @@ const localItemNoteType = {
 };
 const localItemNoteTypeNameWithAffiliation = `${localItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const getReasonForError = (itemId) => {
-  return `${itemId} cannot be updated because the record is associated with ${Affiliations.University} and note type is not associated with this tenant.`;
-};
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-${itemUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
-const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(todayDate, itemUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
+  todayDate,
+  itemUUIDsFileName,
+);
+const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
+  todayDate,
+  itemUUIDsFileName,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -99,7 +105,7 @@ describe('Bulk-edit', () => {
           cy.getLocations({ query: 'name="DCB"' }).then((res) => {
             locationId = res.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
+          cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
@@ -256,7 +262,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(itemUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount(4);
+          BulkEditSearchPane.verifyPaneRecordsCount('4 item');
           BulkEditSearchPane.verifyFileNameHeadLine(itemUUIDsFileName);
 
           const itemBarcodes = [
@@ -529,7 +535,11 @@ describe('Bulk-edit', () => {
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               instance.itemIds[1],
-              getReasonForError(instance.itemIds[1]),
+              getReasonForTenantNotAssociatedError(
+                instance.itemIds[1],
+                Affiliations.University,
+                'note type',
+              ),
             );
           });
 
@@ -581,7 +591,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${instance.itemIds[1]},${getReasonForError(instance.itemIds[1])}`,
+              `${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'note type')}`,
             ]);
           });
 

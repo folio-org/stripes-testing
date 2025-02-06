@@ -26,20 +26,15 @@ const instance = {
   itemBarcode: getRandomPostfix(),
 };
 const actionsToSelect = {
-  find: 'Find (full field search)',
+  find: 'Find',
   remove: 'Remove',
 };
-const administrativeNoteActionOptions = [
-  'Add note',
-  'Change note type',
-  'Find (full field search)',
-  'Remove all',
-];
+const administrativeNoteActionOptions = ['Add note', 'Change note type', 'Find', 'Remove all'];
 const secondActionOptions = ['Remove', 'Replace with'];
 const reproductionNoteActionOptions = [
   'Add note',
   'Change note type',
-  'Find (full field search)',
+  'Find',
   'Mark as staff only',
   'Remove all',
   'Remove mark as staff only',
@@ -54,9 +49,9 @@ const editedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, noteText],
 ];
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instanceHRIDFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceHRIDFileName);
 
 function verifyFileContent(fileName, headerValuePairs) {
   headerValuePairs.forEach((pair) => {

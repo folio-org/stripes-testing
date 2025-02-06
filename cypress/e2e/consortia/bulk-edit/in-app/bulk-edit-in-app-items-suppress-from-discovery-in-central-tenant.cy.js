@@ -229,11 +229,11 @@ describe('Bulk-edit', () => {
             )[1];
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
-            previewQueryFileName = `*-Updates-Preview-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
+            previewQueryFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(2);
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 item');
             BulkEditSearchPane.verifyQueryHeadLine(
               `(items.discovery_suppress != "true") AND (instances.title starts with "C496127_${postfix}")`,
             );
@@ -348,8 +348,8 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.uploadRecentlyDownloadedFile(identifiersQueryFilename).then(
               (changedFileName) => {
                 downloadedFileNameForUpload = changedFileName;
-                previewFileName = `*-Updates-Preview-${downloadedFileNameForUpload}`;
-                changedRecordsFileName = `*-Changed-Records-${downloadedFileNameForUpload}`;
+                previewFileName = `*-Updates-Preview-CSV-${downloadedFileNameForUpload}`;
+                changedRecordsFileName = `*-Changed-Records-CSV-${downloadedFileNameForUpload}`;
                 BulkEditActions.openActions();
                 BulkEditSearchPane.changeShowColumnCheckbox(
                   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,

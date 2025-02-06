@@ -32,8 +32,8 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const holdingsHRIDFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
-const previewFileName = `*-Updates-Preview-${holdingsHRIDFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingsHRIDFileName}`;
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingsHRIDFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

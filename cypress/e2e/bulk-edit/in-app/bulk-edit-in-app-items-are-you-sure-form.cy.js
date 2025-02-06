@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -23,7 +24,8 @@ const item = {
   locationId: LOCATION_IDS.ANNEX,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const previewOfProposedChangesFileName =
+  BulkEditFiles.getPreviewOfProposedChangesFileName(itemBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

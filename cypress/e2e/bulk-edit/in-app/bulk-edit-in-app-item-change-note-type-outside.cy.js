@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -27,9 +28,9 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

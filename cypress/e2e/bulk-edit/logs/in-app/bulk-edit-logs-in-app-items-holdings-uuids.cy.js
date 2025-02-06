@@ -17,7 +17,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameValid = `Matched-Records-${validHoldingUUIDsFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${validHoldingUUIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${validHoldingUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validHoldingUUIDsFileName}`;
 
 const inventoryEntity = {

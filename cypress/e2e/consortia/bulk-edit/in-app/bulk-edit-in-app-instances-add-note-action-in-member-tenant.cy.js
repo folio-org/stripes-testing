@@ -152,8 +152,8 @@ describe('Bulk-edit', () => {
             )[1];
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
-            previewQueryFileName = `*-Updates-Preview-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
+            previewQueryFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
             errorsFromCommittingFileName = `*-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();

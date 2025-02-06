@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
@@ -18,9 +19,9 @@ let addressTypeId;
 let addressType;
 const todayDate = new Date();
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${userBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName);
+const previewOfProposedChangesFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
+const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

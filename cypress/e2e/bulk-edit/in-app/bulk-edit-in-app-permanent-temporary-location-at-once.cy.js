@@ -5,6 +5,7 @@ import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../support/utils/fileManager';
@@ -24,9 +25,9 @@ const item = {
   firstBarcode: barcode,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
-const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName);
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
   servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -90,7 +91,7 @@ describe('bulk-edit', () => {
         // Download matched records
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.verifyMatchedResults(item.firstBarcode);
-        BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditSearchPane.verifyPaneRecordsCount('1 item');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyRowIcons();
         // Select "Temporary item location" from "Options" dropdown and "Replace with" option from "Select option" dropdown;

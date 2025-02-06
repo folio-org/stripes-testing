@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -65,14 +67,12 @@ const collegeItemNoteType = {
 };
 const collegeItemNoteTypeNameWithAffiliation = `${collegeItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const getReasonForError = (itemId) => {
-  return `${itemId} cannot be updated because the record is associated with ${Affiliations.University} and note type is not associated with this tenant. `;
-};
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${itemUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(itemUUIDsFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -534,7 +534,11 @@ describe('Bulk-edit', () => {
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               instance.itemIds[1],
-              getReasonForError(instance.itemIds[1]),
+              getReasonForTenantNotAssociatedError(
+                instance.itemIds[1],
+                Affiliations.University,
+                'note type',
+              ),
             );
           });
 
@@ -562,7 +566,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${instance.itemIds[1]},${getReasonForError(instance.itemIds[1]).trim()}`,
+              `${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'note type').trim()}`,
             ]);
           });
 

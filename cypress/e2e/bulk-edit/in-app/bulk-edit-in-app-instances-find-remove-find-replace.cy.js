@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -12,8 +13,8 @@ import { INSTANCE_NOTE_IDS } from '../../../support/constants';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
@@ -23,7 +24,6 @@ const marcInstance = {
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const newReproductionNote = 'NEW reproduction note  ~,!,@,#,$,%,^,&,(,),~,{.[,]<},>,ø, Æ, §,';
-
 const notes = {
   dissertationNote: 'Test instance note',
   dissertationNoteStaffOnly: 'test instance note',

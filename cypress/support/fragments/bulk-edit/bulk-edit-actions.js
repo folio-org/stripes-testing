@@ -50,7 +50,6 @@ const newEmail = TextField({ testid: 'input-email-1' });
 const closeAreYouSureModalButton = areYouSureForm.find(Button({ icon: 'times' }));
 const selectNoteHoldingTypeDropdown = Select({ id: 'noteHoldingsType' });
 const saveAndCloseButton = Button('Save & close');
-
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -377,9 +376,11 @@ export default {
   locationLookupModalCancel() {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
+
   locationLookupModalSaveAndClose() {
     cy.do(locationLookupModal.find(saveAndCloseButton).click());
   },
+
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -401,6 +402,7 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
+
   selectLocation(location, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
@@ -411,6 +413,7 @@ export default {
     ]);
     BulkEditSearchPane.isConfirmButtonDisabled(false);
   },
+
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -429,6 +432,7 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
+
   clickSelectedLocation(currentLocation, newLocation) {
     cy.do([
       Button(including(`Select control\n${currentLocation}`)).click(),
@@ -436,6 +440,7 @@ export default {
       SelectionOption(including(newLocation)).click(),
     ]);
   },
+
   clearPermanentLocation(type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -647,7 +652,7 @@ export default {
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
-    const options = ['Add note', 'Remove all', 'Find (full field search)', 'Change note type'];
+    const options = ['Add note', 'Remove all', 'Find', 'Change note type'];
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -781,9 +786,7 @@ export default {
     cy.wait(2000);
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.action)
-        .choose('Find (full field search)'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
     ]);
   },
 
@@ -802,8 +805,9 @@ export default {
     this.fillInSecondTextArea(newNote, rowIndex);
   },
 
-  electronicAccessReplaceWith(property, oldValue, newValue, rowIndex = 0) {
-    this.findValue(property, rowIndex);
+  urlRelationshipReplaceWith(oldValue, newValue, rowIndex = 0) {
+    this.selectOption('URL Relationship');
+    this.selectSecondAction('Find (full field search)');
     cy.wait(2000);
     this.selectFromUnchangedSelect(oldValue, rowIndex);
     this.selectSecondAction('Replace with', rowIndex);
@@ -848,7 +852,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find (full field search)',
+      'Find',
       'Change note type',
       'Duplicate to',
     ];
@@ -870,7 +874,7 @@ export default {
       'Remove mark as staff only',
       'Add note',
       'Remove all',
-      'Find (full field search)',
+      'Find',
       'Change note type',
     ];
     cy.do([
@@ -992,6 +996,7 @@ export default {
     cy.wait(2000);
     cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
+    cy.wait(1000);
   },
 
   saveAndClose() {
@@ -1508,5 +1513,13 @@ export default {
           });
         });
     });
+  },
+
+  verifySelectLocationDisabled(rowIndex = 0, isDisabled = true) {
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'locations-esc' }))
+        .has({ disabled: isDisabled }),
+    );
   },
 };

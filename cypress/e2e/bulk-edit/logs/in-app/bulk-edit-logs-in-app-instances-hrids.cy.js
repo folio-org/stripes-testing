@@ -21,7 +21,7 @@ const hridValues = {};
 const testData = {};
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
+const previewFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceHRIDFileName}`;
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -136,7 +136,12 @@ describe('bulk-edit', () => {
           ]);
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(0);
-          BulkEditSearchPane.verifyErrorLabelAfterChanges(instanceHRIDFileName, 0, 2);
+          BulkEditSearchPane.verifyErrorLabel(2);
+
+          [hridValues.folioHrid, hridValues.marcHrid].forEach((hrid) => {
+            BulkEditSearchPane.verifyErrorByIdentifier(hrid, 'No change in value required');
+          });
+
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
