@@ -97,8 +97,8 @@ describe('Citation: duplicate resource', () => {
     'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // search by any isbn
-      SearchAndFilter.searchResourceByIsbn('*');
+      // search by title for work created in precondition
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open instance for editing
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // duplicate instance

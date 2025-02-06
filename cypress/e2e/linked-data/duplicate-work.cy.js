@@ -99,8 +99,8 @@ describe('Citation: duplicate resource', () => {
     'C624234 [User journey] LDE - Duplicate existing work (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // search by any title
-      SearchAndFilter.searchResourceByTitle('*');
+      // search by title for work created in precondition
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work for editing
       LinkedDataEditor.selectFromSearchTable(1);
       LinkedDataEditor.editWork();
@@ -109,7 +109,7 @@ describe('Citation: duplicate resource', () => {
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       // add instance
-      EditResource.openNewInstanceForm();
+      EditResource.openNewInstanceFormViaActions();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
