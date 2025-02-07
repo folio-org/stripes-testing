@@ -7,7 +7,7 @@ describe('Eureka - Prepare for testing', () => {
       tags: ['clearCookies', 'eureka'],
     },
     () => {
-      // workaround for EUREKA-396 - otherwise tests may fail in consecutive runs for different tenants
+      // workaround for EUREKA-396 - otherwise tests may fail in consecutive runs for different tenants:
       if (Cypress.env('eureka')) cy.clearCookies({ domain: null });
     },
   );
