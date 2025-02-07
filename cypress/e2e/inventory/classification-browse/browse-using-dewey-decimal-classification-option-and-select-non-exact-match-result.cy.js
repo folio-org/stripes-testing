@@ -20,8 +20,8 @@ describe('Inventory', () => {
     const testData = {
       classificationOption: 'Dewey Decimal classification',
       querySearchOption: 'Query search',
-      negativeSearchQuery: '974.70049755423123',
-      positiveSearchQuery: '974.7004975542',
+      negativeSearchQuery: '974.70044681453123',
+      positiveSearchQuery: '974.7004468145',
       instanceTitle:
         'C468145 Stories of Oka : land, film, and literature / Isabelle St-Amand ; translated by S.E. Stewart.',
       classificationBrowseId: defaultClassificationBrowseIdsAlgorithms[1].id,
@@ -55,7 +55,6 @@ describe('Inventory', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
       InventoryInstances.deleteInstanceByTitleViaApi('C468145');
-      InventoryInstances.deleteInstanceByTitleViaApi('C468142');
 
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
