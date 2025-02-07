@@ -346,3 +346,13 @@ Cypress.Commands.add('getCapabilitySetsForRoleApi', (roleId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getAuthorizationRoles', () => {
+  cy.okapiRequest({
+    path: 'roles?limit=500',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    cy.wrap(body.roles).as('roles');
+  });
+  return cy.get('@roles');
+});

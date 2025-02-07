@@ -803,4 +803,14 @@ export default {
         .absent(),
     );
   },
+
+  verifyRolesCount: (count) => {
+    cy.expect(rolesPane.find(MultiColumnList()).has({ rowCount: count }));
+  },
+
+  checkRoleFound: (roleName, isFound = true) => {
+    const targetRow = rolesPane.find(HTML(roleName, { className: including('root') }));
+    if (isFound) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+  },
 };
