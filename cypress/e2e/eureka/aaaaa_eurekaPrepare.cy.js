@@ -1,6 +1,7 @@
 import Affiliations from '../../support/dictionary/affiliations';
 
 describe('Eureka - Prepare for testing', () => {
+  // assign an admin role to the user in the specified tenant
   function assignAdminRole(affiliation, userId) {
     cy.clearCookies({ domain: null });
     cy.setTenant(affiliation);
