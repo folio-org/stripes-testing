@@ -96,16 +96,29 @@ export default {
     cy.expect(rootPane.find(MultiColumnListCell({ content: subjectSourceName })).absent());
   },
 
-  getViaApi(searchParams) {
+  getViaApi() {
     return cy
       .okapiRequest({
-        method: 'GET',
-        path: '',
-        searchParams,
+        method: 'POST',
+        path: 'consortia/1f06c60e-4431-432d-97a4-ca2bc6b152cb/publications',
+        body: {
+          url: '/subject-sources?limit=2000&offset=0',
+          method: 'GET',
+          tenants: ['cs00000int', 'cs00000int_0001'],
+          payload: {},
+        },
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
-        return response.body;
+        return response.body.id;
       });
+  },
+
+  deleteViaApi(publicationId) {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `consortia/1f06c60e-4431-432d-97a4-ca2bc6b152cb/publications/${publicationId}`,
+    });
   },
 
   verifyNewRowForSubjectSourceInTheList() {
