@@ -1762,13 +1762,12 @@ export default {
     cy.expect(Callout(callout).exists());
   },
 
-  checkErrorMessage(rowIndex, errorMessage) {
-    cy.wait(1000);
-    cy.expect(
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(HTML(including(errorMessage)))
-        .exists(),
+  checkErrorMessage(rowIndex, errorMessage, isShown = true) {
+    const errorElement = QuickMarcEditorRow({ index: rowIndex }).find(
+      HTML(including(errorMessage)),
     );
+    cy.wait(1000);
+    cy.expect(errorElement[isShown ? 'exists' : 'absent']());
   },
 
   checkErrorMessageForField(index, errorMessage) {
@@ -2813,5 +2812,13 @@ export default {
           .has({ checkedOptionText: option }),
       );
     });
+  },
+
+  checkDropdownMarkedAsInvalid(tag, dropdownLabel, isMarked = true) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: including(dropdownLabel), valid: !isMarked }))
+        .exists(),
+    );
   },
 };
