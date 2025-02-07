@@ -71,9 +71,11 @@ describe('Consortia', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userA.userId);
           Users.deleteViaApi(userB.userId);
-          SubjectSourcesConsortiumManager.getViaApi().then((id) => {
-            SubjectSourcesConsortiumManager.deleteViaApi(id);
-          });
+          SubjectSourcesConsortiumManager.getSourceSubjectIdViaApi(subjectSourceNames[0]).then(
+            (id) => {
+              SubjectSourcesConsortiumManager.deleteViaApi(id, subjectSourceNames[0]);
+            },
+          );
         });
 
         it(

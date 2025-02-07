@@ -96,7 +96,7 @@ export default {
     cy.expect(rootPane.find(MultiColumnListCell({ content: subjectSourceName })).absent());
   },
 
-  getViaApi() {
+  getSourceSubjectIdViaApi(name) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -104,20 +104,52 @@ export default {
         body: {
           url: '/subject-sources?limit=2000&offset=0',
           method: 'GET',
-          tenants: ['cs00000int', 'cs00000int_0001'],
+          tenants: [
+            'cs00000int',
+            'cs00000int_0001',
+            'cs00000int_0006',
+            'cs00000int_0007',
+            'cs00000int_0011',
+            'cs00000int_0009',
+            'cs00000int_0002',
+            'cs00000int_0008',
+            'cs00000int_0003',
+            'cs00000int_0004',
+            'cs00000int_0005',
+            'cs00000int_0010',
+          ],
           payload: {},
         },
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
-        return response.body.id;
+        return cy
+          .okapiRequest({
+            path: `consortia/1f06c60e-4431-432d-97a4-ca2bc6b152cb/publications/${response.body.id}/results`,
+            isDefaultSearchParamsRequired: false,
+          })
+          .then((resp) => {
+            const parsedResponse = JSON.parse(resp.body.publicationResults[0].response);
+            const item = parsedResponse.subjectSources.find((obj) => obj.name === name);
+            return item.id;
+          });
       });
   },
 
-  deleteViaApi(publicationId) {
+  deleteViaApi(publicationId, name) {
     cy.okapiRequest({
       method: 'DELETE',
-      path: `consortia/1f06c60e-4431-432d-97a4-ca2bc6b152cb/publications/${publicationId}`,
+      path: `consortia/1f06c60e-4431-432d-97a4-ca2bc6b152cb/sharing/settings/${publicationId}`,
+      body: {
+        url: '/subject-sources',
+        settingId: publicationId,
+        payload: {
+          id: publicationId,
+          name,
+          source: 'consortium',
+        },
+      },
+      isDefaultSearchParamsRequired: false,
     });
   },
 
