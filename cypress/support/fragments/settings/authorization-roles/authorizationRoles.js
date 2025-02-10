@@ -22,6 +22,7 @@ import {
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
+import { AUTHORIZATION_ROLES_COLUMNS } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
 const newButton = Button('+ New');
@@ -120,7 +121,9 @@ export default {
   },
 
   waitContentLoading: () => {
-    cy.expect(rolesPane.find(MultiColumnListHeader('Name')).exists());
+    AUTHORIZATION_ROLES_COLUMNS.forEach((columnName) => {
+      cy.expect(rolesPane.find(MultiColumnListHeader(columnName)).exists());
+    });
   },
 
   clickNewButton: () => {
@@ -812,5 +815,18 @@ export default {
     const targetRow = rolesPane.find(HTML(roleName, { className: including('root') }));
     if (isFound) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
+  },
+
+  verifyRoleRow: (roleName, roleDescription, updated, updatedBy) => {
+    cy.do(
+      rolesPane.find(MultiColumnListCell(roleName)).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect([
+          rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
+          rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists(),
+          rolesPane.find(MultiColumnListCell(updatedBy, { row: rowNumber })).exists(),
+        ]);
+      }),
+    );
   },
 };
