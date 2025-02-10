@@ -398,23 +398,23 @@ describe('Bulk-edit', () => {
             marcInstanceItemInUniversityInitialHeaderValues,
           );
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.fillPermanentLoanType(centralSharedLoanType.payload.name);
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             collegeItemLoanTypeNameWithAffiliation,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.fillTemporaryLoanType(collegeItemLoanTypeNameWithAffiliation, 1);
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedLoanType.payload.name,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

@@ -316,25 +316,25 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
 
           const fieldsToClear = ['URL Relationship', 'URI', 'Link text', 'Materials specified'];
 
           fieldsToClear.forEach((field, rowIndex) => {
             BulkEditActions.selectOption(field, rowIndex);
             BulkEditActions.selectSecondAction('Clear field', rowIndex);
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(rowIndex + 1);
           });
 
           BulkEditActions.selectOption('URL public note', 4);
           BulkEditActions.selectSecondAction('Clear field', 4);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

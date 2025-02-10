@@ -175,7 +175,7 @@ describe('bulk-edit', () => {
           `${noteText.checkOutNote} (staff only)`,
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyGroupOptionsInSelectOptionsItemDropdown();
@@ -183,13 +183,13 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyItemOptions();
         BulkEditActions.changeNoteType(noteTypes.administrative, noteTypes.action);
         BulkEditActions.verifyNoteTypeAbsentInNoteItemTypeDropdown(noteTypes.administrative);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.changeNoteType(noteTypes.checkIn, noteTypes.binding, 1);
         BulkEditActions.verifyItemCheckInNoteActions(1);
         BulkEditActions.verifyNoteTypeAbsentInNoteItemTypeDropdown(noteTypes.checkIn, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.changeNoteType(noteTypes.electronicBookplate, noteTypes.provenance, 2);
@@ -198,7 +198,7 @@ describe('bulk-edit', () => {
           2,
         );
         BulkEditActions.verifyTheActionOptions(electronicBookplateActionOptions, 2);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         const updatedNotesHeaderValueSets = [
           [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE, noteText.administrative],

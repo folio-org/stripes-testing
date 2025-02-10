@@ -313,11 +313,11 @@ describe('Bulk-edit', () => {
           );
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('Permanent holdings location');
           BulkEditSearchPane.verifyInputLabel('Permanent holdings location');
           BulkEditActions.replaceWithIsDisabled();
@@ -335,12 +335,12 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyLocationValue(
             `${locationsInCollegeData.temporaryLocation.name} (${Affiliations.College})`,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary holdings location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary holdings location', 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectSecondAction('Replace with', 1);
           BulkEditActions.locationLookupExists();
           BulkEditActions.clickLocationLookup(1);
@@ -351,7 +351,7 @@ describe('Bulk-edit', () => {
             `${locationsInCollegeData.permanentLocation.name} (${Affiliations.College})`,
             1,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
           BulkEditActions.verifyAreYouSureForm(4);

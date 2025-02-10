@@ -102,15 +102,15 @@ describe('bulk-edit', () => {
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Remove');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea(materialsSpecification);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newMaterialsSpecification);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectAction('Clear field');
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',

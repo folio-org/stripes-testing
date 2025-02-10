@@ -314,11 +314,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedHoldingNoteType.payload.name,
@@ -328,11 +328,11 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.markAsStaffOnly(centralSharedHoldingNoteType.payload.name);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.removeMarkAsStaffOnly(collegeHoldingNoteTypeNameWithAffiliation, 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

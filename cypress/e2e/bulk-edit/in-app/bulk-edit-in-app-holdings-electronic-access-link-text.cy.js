@@ -100,21 +100,21 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyOptionAbsentInNewRow('Link text');
         BulkEditActions.deleteRow(1);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newLinkText);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.findValue('Link text');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Remove');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea('Te;st:');
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInSecondTextArea(newLinkText);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',

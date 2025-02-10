@@ -100,16 +100,16 @@ describe('bulk-edit', () => {
         BulkEditActions.deleteRow(1);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.fillInSecondTextArea(publicNote);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.findValue('URL public note');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea(publicNote);
         BulkEditActions.fillInSecondTextArea(newPublicNote);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Remove');
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
