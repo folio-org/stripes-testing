@@ -26,6 +26,7 @@ const rootSection = Pane({ title: 'New request' });
 const itemInformationAccordion = Accordion('Item information');
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
+const newMediatedRequestButton = Button('New mediated request');
 const itemBarcodeInput = TextField({ name: 'item.barcode' });
 const instanceHridInput = TextField({ name: 'instance.hrid' });
 const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
@@ -56,6 +57,10 @@ function openNewRequestPane() {
   cy.do([actionsButton.click(), newRequestButton.click()]);
 }
 
+function openNewMediatedRequestPane() {
+  cy.do([actionsButton.click(), newMediatedRequestButton.click()]);
+}
+
 function printPickSlips() {
   cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
   InteractorsTools.checkCalloutMessage(
@@ -66,6 +71,7 @@ function printPickSlips() {
 export default {
   addRequester,
   openNewRequestPane,
+  openNewMediatedRequestPane,
   printPickSlips,
 
   waitForInstanceOrItemSpinnerToDisappear() {
@@ -77,6 +83,12 @@ export default {
     cy.wait(1000);
     cy.get('#new-requester-info [class^="spinner"]').should('not.exist');
     cy.wait(500);
+  },
+
+  unselectTitleLevelRequest() {
+    cy.wait(1000);
+    cy.do(titleLevelRequest.uncheckIfSelected());
+    cy.wait(1000);
   },
 
   fillRequiredFields(newRequest) {
@@ -180,8 +192,8 @@ export default {
     this.waitForInstanceOrItemSpinnerToDisappear();
   },
 
-  enterHridInfo(hrid) {
-    cy.do(titleLevelRequest.click());
+  enterHridInfo(hrid, selectTLR = true) {
+    if (selectTLR) cy.do(titleLevelRequest.click());
     cy.wait(1000);
     try {
       cy.do(instanceHridInput.fillIn(hrid));
@@ -327,6 +339,26 @@ export default {
     cy.wait('@getUsers');
     this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
+
+  enterEcsRequesterInfoWithRequestType(
+    newRequest,
+    requestType = REQUEST_TYPES.PAGE,
+    fulfillmentPreference = 'Hold Shelf',
+  ) {
+    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.wait(2000);
+    cy.do(enterRequesterBarcodeButton.click());
+    this.waitForRequesterSpinnerToDisappear();
+    cy.wait(1000);
+    this.chooseRequestType(requestType);
+    cy.wait(1000);
+    cy.do(Select({ name: 'fulfillmentPreference' }).choose(fulfillmentPreference));
+    cy.wait(1000);
+    cy.expect(selectServicePoint.exists());
+    cy.wait(5000);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
+  },
+
   checkPatronblockedModal(reason) {
     cy.expect(
       Modal(' Patron blocked from requesting').has({

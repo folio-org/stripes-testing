@@ -537,6 +537,7 @@ export default {
   },
   // Requests
   uiRequestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
+  uiRequestsMediatedAll: { internal: 'ui-requests-mediated.all', gui: 'UI-Requests-Mediated' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
