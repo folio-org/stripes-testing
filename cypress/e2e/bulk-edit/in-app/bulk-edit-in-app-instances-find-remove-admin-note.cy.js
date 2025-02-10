@@ -109,8 +109,7 @@ describe('bulk-edit', () => {
         ]);
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        // TODO: uncomment line
-        // BulkEditActions.verifyItemAdminstrativeNoteActions();
+        BulkEditActions.verifyItemAdminstrativeNoteActions();
         BulkEditActions.noteRemove('Administrative note', adminNote);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
