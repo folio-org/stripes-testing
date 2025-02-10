@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -60,13 +62,11 @@ const electronicAccessTableHeaders = 'RelationshipURILink textMaterials specifie
 const electronicAccessTableHeadersInFile =
   'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${holdingUUIDsFileName}`;
-const getReasonForError = (holdingId) => {
-  return `${holdingId} cannot be updated because the record is associated with ${Affiliations.University} and URL relationship is not associated with this tenant.`;
-};
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(holdingUUIDsFileName);
 const getRowsInCsvFileMatchingHrids = (csvFileData, hrids) => {
   return csvFileData.filter((row) => {
     return hrids.some((hrid) => {
@@ -241,7 +241,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('4 holding');
+          BulkEditSearchPane.verifyPaneRecordsCount('4 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           const holdingHrids = [...collegeHoldingHrids, ...universityHoldingHrids];
@@ -318,7 +318,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyCancelButtonDisabled(false);
           BulkEditSearchPane.isConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL Relationship');
-          BulkEditActions.selectSecondAction('Find');
+          BulkEditActions.selectSecondAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
           BulkEditActions.selectFromUnchangedSelect(sharedUrlRelationship.payload.name);
           BulkEditActions.selectSecondAction('Replace with');
@@ -400,7 +400,11 @@ describe('Bulk-edit', () => {
           universityHoldingIds.forEach((universityHoldingId) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               universityHoldingId,
-              getReasonForError(universityHoldingId),
+              getReasonForTenantNotAssociatedError(
+                universityHoldingId,
+                Affiliations.University,
+                'URL relationship',
+              ),
             );
           });
 
@@ -436,7 +440,11 @@ describe('Bulk-edit', () => {
 
           universityHoldingIds.forEach((universityHoldingId) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${universityHoldingId},${getReasonForError(universityHoldingId)}`,
+              `${universityHoldingId},${getReasonForTenantNotAssociatedError(
+                universityHoldingId,
+                Affiliations.University,
+                'URL relationship',
+              )}`,
             ]);
           });
 

@@ -62,6 +62,8 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440115*');
+
           cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
