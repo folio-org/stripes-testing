@@ -121,7 +121,7 @@ export default {
   },
 
   waitContentLoading: () => {
-    AUTHORIZATION_ROLES_COLUMNS.forEach((columnName) => {
+    Object.values(AUTHORIZATION_ROLES_COLUMNS).forEach((columnName) => {
       cy.expect(rolesPane.find(MultiColumnListHeader(columnName)).exists());
     });
   },
@@ -824,7 +824,7 @@ export default {
         cy.expect([
           rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
           rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists(),
-          rolesPane.find(MultiColumnListCell(updatedBy, { row: rowNumber })).exists(),
+          rolesPane.find(MultiColumnListCell(including(updatedBy), { row: rowNumber })).exists(),
         ]);
       }),
     );

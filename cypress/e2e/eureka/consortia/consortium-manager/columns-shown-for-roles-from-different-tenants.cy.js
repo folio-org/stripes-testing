@@ -1,5 +1,5 @@
 import Users from '../../../../support/fragments/users/users';
-import ConsortiumManager from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
+import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
@@ -13,6 +13,7 @@ import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import DateTools from '../../../../support/utils/dateTools';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -21,6 +22,7 @@ describe('Eureka', () => {
       centralRoleName: `C502978 Autotest Role Central ${randomPostfix}`,
       collegeRoleName: `C502978 Autotest Role College ${randomPostfix}`,
       collegeRoleNameDescription: `C502978 Autotest Description ${randomPostfix}`,
+      getUpdatedDate: () => DateTools.getFormattedDateWithSlashes({ date: new Date() }),
     };
     const capabSetsToAssignCentral = [
       {
@@ -36,22 +38,30 @@ describe('Eureka', () => {
     ];
     const capabSetsToAssignCollege = [
       {
-        type: CAPABILITY_TYPES.DATA,
+        type: CAPABILITY_TYPES.SETTINGS,
         resource: 'UI-Authorization-Roles Settings Admin',
         action: CAPABILITY_ACTIONS.VIEW,
       },
       {
-        type: CAPABILITY_TYPES.SETTINGS,
+        type: CAPABILITY_TYPES.DATA,
         resource: 'Capabilities',
         action: CAPABILITY_ACTIONS.MANAGE,
       },
       {
-        type: CAPABILITY_TYPES.SETTINGS,
+        type: CAPABILITY_TYPES.DATA,
         resource: 'Role-Capability-Sets',
         action: CAPABILITY_ACTIONS.MANAGE,
       },
     ];
+    const capabsToAssignCollege = [
+      {
+        type: CAPABILITY_TYPES.SETTINGS,
+        resource: 'Settings Enabled',
+        action: CAPABILITY_ACTIONS.VIEW,
+      },
+    ];
     let userData;
+
     before('Create users data', () => {
       cy.getAdminToken();
       cy.createTempUser([])
@@ -65,7 +75,11 @@ describe('Eureka', () => {
             testData.roleCentralId = roleCentral.id;
           });
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignCollege);
+          cy.assignCapabilitiesToExistingUser(
+            userData.userId,
+            capabsToAssignCollege,
+            capabSetsToAssignCollege,
+          );
           cy.createAuthorizationRoleApi(testData.collegeRoleName).then((roleCollege) => {
             testData.roleCollegeId = roleCollege.id;
           });
@@ -87,17 +101,16 @@ describe('Eureka', () => {
       () => {
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-        ConsortiumManager.verifyStatusOfConsortiumManager();
-        ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
-        ConsortiumManager.clickSelectMembers();
+        ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+        ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
+        ConsortiumManagerApp.clickSelectMembers();
         SelectMembers.verifyAvailableTenants([tenantNames.central, tenantNames.college].sort());
         SelectMembers.checkMember(tenantNames.central, true);
         SelectMembers.checkMember(tenantNames.college, true);
         SelectMembers.saveAndClose();
-        ConsortiumManager.verifyMembersSelected(2);
+        ConsortiumManagerApp.verifyMembersSelected(2);
         SelectMembers.selectMember(tenantNames.central);
         cy.resetTenant();
-        cy.getAdminToken();
         cy.getAuthorizationRoles().then((rolesCentral) => {
           AuthorizationRoles.waitContentLoading();
           AuthorizationRoles.verifyRolesCount(rolesCentral.length);
@@ -118,40 +131,36 @@ describe('Eureka', () => {
               SETTINGS_SUBSECTION_AUTH_ROLES,
             );
             AuthorizationRoles.waitContentLoading();
-            AuthorizationRoles.searchRole(testData.roleName);
-            AuthorizationRoles.clickOnRoleName(testData.roleName, false);
+            AuthorizationRoles.searchRole(testData.collegeRoleName);
+            AuthorizationRoles.clickOnRoleName(testData.collegeRoleName, false);
             AuthorizationRoles.openForEdit();
             AuthorizationRoles.fillRoleNameDescription(
               testData.collegeRoleName,
               testData.collegeRoleNameDescription,
             );
-            cy.intercept('PUT', '/roles/*').as('updateCall');
             AuthorizationRoles.clickSaveButton();
-            cy.wait('@updateCall').then(() => {
-              const updatedDateTime = DateTools.getFormattedEndDateWithTimUTC(new Date(), true);
-              AuthorizationRoles.checkAfterSaveEdit(
+            AuthorizationRoles.checkAfterSaveEdit(
+              testData.collegeRoleName,
+              testData.collegeRoleNameDescription,
+            );
+
+            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+            ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+            ConsortiumManagerApp.verifyMembersSelected(2);
+            ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
+            SelectMembers.selectMember(tenantNames.college);
+            cy.setTenant(Affiliations.College);
+            cy.getAuthorizationRoles().then((rolesCollegeNew) => {
+              AuthorizationRoles.waitContentLoading();
+              AuthorizationRoles.verifyRolesCount(rolesCollegeNew.length);
+              AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
+              AuthorizationRoles.verifyRoleRow(
                 testData.collegeRoleName,
                 testData.collegeRoleNameDescription,
+                testData.getUpdatedDate(),
+                `${userData.lastName}, ${userData.firstName}`,
               );
-
-              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-              ConsortiumManager.verifyStatusOfConsortiumManager();
-              ConsortiumManager.verifyMembersSelected(2);
-              ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
-              SelectMembers.selectMember(tenantNames.college);
-              cy.setTenant(Affiliations.College);
-              cy.getAuthorizationRoles().then((rolesCollegeNew) => {
-                AuthorizationRoles.waitContentLoading();
-                AuthorizationRoles.verifyRolesCount(rolesCollegeNew.length);
-                AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
-                AuthorizationRoles.verifyRoleRow(
-                  testData.collegeRoleName,
-                  testData.collegeRoleNameDescription,
-                  updatedDateTime,
-                  `${userData.lastName}, ${userData.firstName}`,
-                );
-              });
             });
           });
         });

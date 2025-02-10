@@ -1,4 +1,3 @@
-import Permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 import ConsortiumManager from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
@@ -44,10 +43,7 @@ describe('Eureka', () => {
     let userData;
     before('Create users data', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.consortiaSettingsConsortiumManagerView.gui,
-        Permissions.uiUsersViewPermissionSets.gui,
-      ])
+      cy.createTempUser([])
         .then((userProperties) => {
           userData = userProperties;
           cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignCentral);
@@ -102,7 +98,6 @@ describe('Eureka', () => {
         ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         SelectMembers.selectMember(tenantNames.central);
         cy.resetTenant();
-        cy.getAdminToken();
         cy.getAuthorizationRoles().then((rolesCentral) => {
           AuthorizationRoles.verifyRolesCount(rolesCentral.length);
           AuthorizationRoles.checkRoleFound(testData.centralRoleName);
