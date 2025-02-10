@@ -22,6 +22,7 @@ import EHoldingsResourceView from './eHoldingsResourceView';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import FilterTitlesModal from './modals/filterTitlesModal';
 import NoteEditForm from '../notes/existingNoteEdit';
+import Spinner from '../../../../interactors/spinner';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
@@ -69,7 +70,12 @@ export default {
   },
 
   waitLoading() {
-    cy.expect([packageInformationSection.exists(), Button('Actions').exists()]);
+    cy.expect([
+      packageInformationSection.exists(),
+      Button('Actions').exists(),
+      titlesSection.find(Spinner()).exists(),
+      titlesSection.find(Spinner()).absent(),
+    ]);
   },
 
   openExportModal({ exportDisabled = false } = {}) {
