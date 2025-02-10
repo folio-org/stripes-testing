@@ -6,7 +6,7 @@ function titleContainsId(title, testCaseIds) {
     return false;
   }
   for (let i = 0; i < testCaseIds.length; i++) {
-    if (title.includes(testCaseIds[i])) {
+    if (title.includes(testCaseIds[i]) + ' ') {
       return true;
     }
   }

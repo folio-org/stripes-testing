@@ -36,7 +36,8 @@ function parseCommand() {
       tests.forEach((test) => {
         if (
           selectedStatus.includes(test.status_id) &&
-          selectedTeams.includes(test.custom_dev_team)
+          selectedTeams.includes(test.custom_dev_team) &&
+          !test.defects
         ) {
           ids.push('C' + test.case_id);
         }
