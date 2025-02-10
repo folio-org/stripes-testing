@@ -41,7 +41,7 @@ describe('MARC', () => {
             boxSeventh: '',
             searchOption: 'Uniform title',
             marcValue:
-              'C380727 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
+              'C380727 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
             valueAfterSave:
               'C380727 Edinburgh tracts in mathematics and mathematical physics english',
           },
