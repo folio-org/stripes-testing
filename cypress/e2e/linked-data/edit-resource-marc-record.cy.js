@@ -101,8 +101,8 @@ describe('Citation: MARC Authority integration', () => {
     'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // prepare inventory instance created by LDE
-      SearchAndFilter.searchResourceByIsbn('*');
+      // search by title for work created in precondition
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       EditResource.duplicateResource();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');

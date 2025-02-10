@@ -1,7 +1,10 @@
 import newInstance from './newInstance';
 
 const actionsButton = "//button[@data-testid='edit-control-actions-toggle']";
+const instanceActionsButton = "//button[@data-testid='preview-actions-dropdown']";
 const duplicateButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.duplicate']";
+const newInstanceActionsButton =
+  "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
 const viewMarcButton = "//button[@data-testid='edit-control-actions-toggle__option-ld.viewMarc']";
 const editWorkButton = "//button[text()='Edit work']";
 const selectMarcAuthModal =
@@ -16,10 +19,12 @@ export default {
 
   saveAndKeepEditing() {
     cy.xpath('//button[@data-testid="save-record-and-keep-editing"]').click();
+    cy.wait(1000);
   },
 
   saveAndClose() {
     cy.xpath('//button[@data-testid="save-record-and-close"]').click();
+    cy.wait(1000);
   },
 
   checkAlarmDisplayed(isDisplayed) {
@@ -53,8 +58,9 @@ export default {
     cy.xpath(editResourceSection).should('be.visible');
   },
 
-  openNewInstanceForm() {
-    cy.xpath("//button[@data-testid='new-instance']").click();
+  openNewInstanceFormViaActions() {
+    cy.xpath(instanceActionsButton).click();
+    cy.xpath(newInstanceActionsButton).click();
     newInstance.waitLoading();
   },
 
