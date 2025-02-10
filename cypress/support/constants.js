@@ -17,6 +17,7 @@ export const APPLICATION_NAMES = {
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',
+  CONSORTIUM_MANAGER: 'Consortium manager',
 };
 
 export const REQUEST_METHOD = {
