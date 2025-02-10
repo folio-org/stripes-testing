@@ -657,4 +657,9 @@ export default {
     cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
     this.checkSelectedRolesAffiliation(affiliation);
   },
+
+  close() {
+    cy.do(rootSection.find(Button({ icon: 'times' })).click());
+    cy.expect(rootSection.absent());
+  },
 };

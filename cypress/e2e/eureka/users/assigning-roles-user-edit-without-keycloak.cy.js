@@ -130,6 +130,8 @@ describe('Eureka', () => {
           testData.userBody.personal.lastName,
           testData.userBody.personal.firstName,
         );
+        UsersCard.close();
+        UsersSearchPane.selectUserFromList(testData.userBody.username);
         UsersCard.verifyUserRolesCounter('2');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);

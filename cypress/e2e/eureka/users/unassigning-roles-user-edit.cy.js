@@ -135,6 +135,9 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNamesOrdered([testData.roleAName, testData.roleCName]);
         UserEdit.saveAndClose();
         UserEdit.checkUserEditPaneOpened(false);
+        UsersCard.close();
+        UsersSearchPane.searchByKeywords(testData.userA.username);
+        UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('2');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
@@ -177,8 +180,10 @@ describe('Eureka', () => {
         UserEdit.verifyUserRolesRowsCount(2);
         UserEdit.unassignAllRoles();
         UserEdit.verifyUserRolesAccordionEmpty();
-        cy.intercept('GET', '/roles/users*').as('rolesCall');
         UserEdit.saveAndClose();
+        UsersCard.close();
+        cy.intercept('GET', '/roles/users*').as('rolesCall');
+        UsersSearchPane.selectUserFromList(testData.userA.username);
         cy.wait('@rolesCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);
           expect(call.response.body.userRoles).to.have.lengthOf(0);
