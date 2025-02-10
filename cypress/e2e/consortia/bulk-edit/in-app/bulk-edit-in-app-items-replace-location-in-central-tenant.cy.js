@@ -340,11 +340,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
           BulkEditActions.selectSecondAction('Replace with');
@@ -363,7 +363,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyLocationValue(
             `${locationsInCollegeData.permanentLocation.name} (${Affiliations.College})`,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary item location', 1);
@@ -379,7 +379,7 @@ describe('Bulk-edit', () => {
             `${locationsInCollegeData.temporaryLocation.name} (${Affiliations.College})`,
             1,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
           BulkEditActions.verifyAreYouSureForm(4);

@@ -208,14 +208,14 @@ describe('bulk-edit', () => {
         });
 
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption('Suppress from discovery');
         BulkEditActions.selectSecondAction(actionsToSelect.setTrue);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(3);
 

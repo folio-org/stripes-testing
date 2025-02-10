@@ -208,17 +208,17 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openStartBulkEditInstanceForm();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
-            BulkEditSearchPane.isConfirmButtonDisabled(true);
+            BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.selectOption(staffSuppressOption);
             BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
             BulkEditActions.selectSecondAction(actions.setTrue);
             BulkEditActions.verifySecondActionSelected(actions.setTrue);
             BulkEditActions.verifyCheckboxAbsent();
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
@@ -315,7 +315,7 @@ describe('Bulk-edit', () => {
                 BulkEditActions.selectSecondAction(actions.setFalse);
                 BulkEditActions.verifySecondActionSelected(actions.setFalse);
                 BulkEditActions.verifyCheckboxAbsent();
-                BulkEditSearchPane.isConfirmButtonDisabled(false);
+                BulkEditActions.verifyConfirmButtonDisabled(false);
                 BulkEditActions.confirmChanges();
                 BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 

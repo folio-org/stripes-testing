@@ -102,7 +102,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.fillPermanentLoanType('Selected');
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         BulkEditActions.confirmChanges();
         BulkEditActions.clickKeepEditingBtn();

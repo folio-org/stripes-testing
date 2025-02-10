@@ -125,7 +125,7 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyInputLabel('Staff suppress');
           BulkEditActions.selectSecondAction('Set false');
           BulkEditActions.verifyCheckboxAbsent();
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyAreYouSureForm(2, folioItem.instanceId);
           BulkEditActions.verifyAreYouSureForm(2, marcInstances[0].instanceId);

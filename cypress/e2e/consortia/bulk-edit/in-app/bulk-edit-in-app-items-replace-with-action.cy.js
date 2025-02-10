@@ -276,15 +276,15 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openInAppStartBulkEditFrom();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
-            BulkEditSearchPane.isConfirmButtonDisabled(true);
+            BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
             BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);
             BulkEditActions.replaceWithIsDisabled();
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

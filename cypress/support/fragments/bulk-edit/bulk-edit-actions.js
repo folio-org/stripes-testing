@@ -29,6 +29,7 @@ const bulkEditsAccordion = Accordion('Bulk edits');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
+const confirmChanges = Button('Confirm changes');
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
@@ -61,30 +62,43 @@ export default {
   openStartBulkEditForm() {
     cy.do(startBulkEditLocalButton.click());
   },
+
   openStartBulkEditInstanceForm() {
     cy.do(startBulkEditInstanceButton.click());
     cy.wait(2000);
   },
+
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
   },
+
   verifyOptionsLength(optionsLength, count) {
     cy.expect(optionsLength).to.eq(count);
   },
+
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
+
   startBulkEditLocalAbsent() {
     cy.expect(startBulkEditLocalButton.absent());
   },
+
   startBulkEditInstanceAbsent() {
     cy.expect(startBulkEditInstanceButton.absent());
   },
+
   closeBulkEditInAppForm() {
     cy.do(cancelBtn.click());
     cy.wait(1000);
   },
+
+  verifyConfirmButtonDisabled(isDisabled) {
+    cy.wait(500);
+    cy.expect(confirmChanges.has({ disabled: isDisabled }));
+  },
+
   selectOption(optionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -169,7 +183,7 @@ export default {
 
   isDisabledRowIcons(isDisabled) {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
-    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    this.verifyConfirmButtonDisabled(true);
   },
 
   deleteRow(rowIndex = 0) {
@@ -347,9 +361,9 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    this.verifyConfirmButtonDisabled(true);
     cy.do(oldEmail.fillIn(oldEmailDomain));
-    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    this.verifyConfirmButtonDisabled(true);
     cy.do(newEmail.fillIn(newEmailDomain));
   },
 
@@ -411,7 +425,7 @@ export default {
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
-    BulkEditSearchPane.isConfirmButtonDisabled(false);
+    this.isConfirmButtonDisabled(false);
   },
 
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
@@ -1297,6 +1311,10 @@ export default {
     );
   },
 
+  verifyBulkEditsAccordionExists() {
+    cy.expect(bulkEditsAccordion.exists());
+  },
+
   verifyCancelButtonDisabled(isDisabled = true) {
     cy.expect(cancelButton.has({ disabled: isDisabled }));
   },
@@ -1521,5 +1539,13 @@ export default {
         .find(Button({ id: 'locations-esc' }))
         .has({ disabled: isDisabled }),
     );
+  },
+
+  verifyInitialStateBulkEditForm() {
+    this.verifyBulkEditsAccordionExists();
+    this.verifyOptionsDropdown();
+    this.verifyRowIcons();
+    this.verifyCancelButtonDisabled(false);
+    this.verifyConfirmButtonDisabled(true);
   },
 };
