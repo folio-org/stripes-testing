@@ -261,17 +261,17 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openInAppStartBulkEditFrom();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
-            BulkEditSearchPane.isConfirmButtonDisabled(true);
+            BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.selectOption(suppressFromDiscovery);
             BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
             BulkEditActions.verifyTheActionOptions(Object.values(actions));
             BulkEditActions.selectSecondAction(actions.setTrue);
             BulkEditActions.verifySecondActionSelected(actions.setTrue);
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
@@ -368,7 +368,7 @@ describe('Bulk-edit', () => {
                 BulkEditSearchPane.verifyInputLabel(suppressFromDiscovery);
                 BulkEditActions.selectSecondAction(actions.setFalse);
                 BulkEditActions.verifySecondActionSelected(actions.setFalse);
-                BulkEditSearchPane.isConfirmButtonDisabled(false);
+                BulkEditActions.verifyConfirmButtonDisabled(false);
                 BulkEditActions.confirmChanges();
                 BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 

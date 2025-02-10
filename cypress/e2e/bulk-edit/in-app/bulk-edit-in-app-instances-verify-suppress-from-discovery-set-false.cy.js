@@ -306,7 +306,7 @@ describe('bulk-edit', () => {
         });
 
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(optionToSelect.suppressFromDiscovery);
@@ -315,7 +315,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction(actionOptions.setTrue);
         BulkEditActions.verifySecondActionSelected(actionOptions.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(6);
         BulkEditActions.verifyAreYouSureForm(6);
@@ -345,7 +345,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction(actionOptions.setFalse);
         BulkEditActions.verifySecondActionSelected(actionOptions.setFalse);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(6);
         BulkEditActions.verifyAreYouSureForm(6);

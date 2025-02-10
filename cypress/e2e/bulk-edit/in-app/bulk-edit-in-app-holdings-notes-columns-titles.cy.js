@@ -83,7 +83,7 @@ function addNoteInBulkEdit(rowNumber, holdingNoteType, noteText) {
   BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote, rowNumber);
   BulkEditActions.fillInSecondTextArea(noteText, rowNumber);
   BulkEditActions.verifyValueInSecondTextArea(noteText, rowNumber);
-  BulkEditSearchPane.isConfirmButtonDisabled(false);
+  BulkEditActions.verifyConfirmButtonDisabled(false);
 }
 
 describe('bulk-edit', () => {
@@ -148,7 +148,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [instance.holdingsUUID]);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyHoldingsOptions();
@@ -158,7 +158,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
         BulkEditActions.fillInSecondTextArea(notes.administrative);
         BulkEditActions.verifyValueInSecondTextArea(notes.administrative);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         notesToAdd.forEach((noteToAdd) => {
           addNoteInBulkEdit(...noteToAdd);

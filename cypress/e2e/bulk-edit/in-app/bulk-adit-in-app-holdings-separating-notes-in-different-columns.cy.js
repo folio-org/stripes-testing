@@ -172,7 +172,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         verifyFileContent(matchedRecordsFileName, initialValueSets);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE);
@@ -183,13 +183,13 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyActionSelected(actionsToSelect.find);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.remove);
         BulkEditActions.verifyValueInFirstTextArea(notesText.copyNote);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.removeAll, 1);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.removeAll, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(

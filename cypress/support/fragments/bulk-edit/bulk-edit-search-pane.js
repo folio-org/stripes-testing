@@ -24,7 +24,6 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors & warnings');
-const bulkEditsAccordion = Accordion('Bulk edits');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -40,7 +39,6 @@ const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
 const setCriteriaPane = Pane('Set criteria');
 const saveAndClose = Button('Save & close');
-const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 const areYouSureForm = Modal('Are you sure?');
@@ -1151,10 +1149,6 @@ export default {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
   },
-  isConfirmButtonDisabled(isDisabled) {
-    cy.wait(500);
-    cy.expect(confirmChanges.has({ disabled: isDisabled }));
-  },
 
   clickBuildQueryButton() {
     cy.wait(2000);
@@ -1246,10 +1240,6 @@ export default {
 
         return numberOfRecords;
       });
-  },
-
-  verifyBulkEditsAccordionExists() {
-    cy.expect(bulkEditsAccordion.exists());
   },
 
   verifyPreviousPaginationButtonDisabled(isDisabled = true) {

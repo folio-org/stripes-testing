@@ -624,14 +624,24 @@ export default {
     cy.expect(Button({ id: 'quick-export-trigger' }).absent());
   },
 
-  checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+  checkMultipleItemNotesWithStaffOnly: (
+    rowIndex,
+    staffOnly,
+    noteType,
+    noteText,
+    rowIndexInNote = 0,
+  ) => {
     cy.get('#instance-details-notes').within(() => {
       cy.get(`[id="list-instance-notes-${rowIndex}"]`).within(() => {
         cy.get('[role="columnheader"]').eq(1).should('have.text', noteType);
 
-        cy.get('[role="gridcell"]').eq(0).should('contain', staffOnly);
+        cy.get(`[data-row-index=row-${rowIndexInNote}] [role="gridcell"]`)
+          .eq(0)
+          .should('contain', staffOnly);
 
-        cy.get('[role="gridcell"]').eq(1).should('contain', noteText);
+        cy.get(`[data-row-index=row-${rowIndexInNote}] [role="gridcell"]`)
+          .eq(1)
+          .should('contain', noteText);
       });
     });
   },
