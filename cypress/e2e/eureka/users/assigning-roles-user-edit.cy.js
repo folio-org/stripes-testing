@@ -108,8 +108,10 @@ describe('Eureka', () => {
         UserEdit.saveAndCloseRolesModal();
         UserEdit.verifyUserRoleNamesOrdered([testData.roleBName, testData.roleCName]);
         UserEdit.verifyUserRolesRowsCount(2);
-        cy.intercept('GET', '/roles/users*').as('rolesCall');
         UserEdit.saveAndClose();
+        UsersCard.close();
+        cy.intercept('GET', '/roles/users*').as('rolesCall');
+        UsersSearchPane.selectUserFromList(testData.userA.username);
         cy.wait('@rolesCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);
           expect(call.response.body.userRoles).to.have.lengthOf(2);
