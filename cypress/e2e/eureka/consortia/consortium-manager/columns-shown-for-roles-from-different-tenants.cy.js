@@ -139,6 +139,7 @@ describe('Eureka', () => {
               testData.collegeRoleNameDescription,
             );
             AuthorizationRoles.clickSaveButton();
+            const updatedDate = testData.getUpdatedDate();
             AuthorizationRoles.checkAfterSaveEdit(
               testData.collegeRoleName,
               testData.collegeRoleNameDescription,
@@ -158,7 +159,7 @@ describe('Eureka', () => {
               AuthorizationRoles.verifyRoleRow(
                 testData.collegeRoleName,
                 testData.collegeRoleNameDescription,
-                testData.getUpdatedDate(),
+                updatedDate,
                 `${userData.lastName}, ${userData.firstName}`,
               );
             });
