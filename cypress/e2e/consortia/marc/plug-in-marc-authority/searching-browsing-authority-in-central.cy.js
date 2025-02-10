@@ -123,6 +123,9 @@ describe('MARC', () => {
       'C404417 Searching/browsing for "MARC Authority" records in "MARC Authority" plug-in on Central tenant (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire', 'C404417'] },
       () => {
+        cy.reload();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
+        InventoryInstance.verifyInstanceTitle(marcFiles[0].title);
         // 1 Click "Actions" button in the third pane → Select "Edit MARC bibliographic record" option.
         InventoryInstance.editMarcBibliographicRecord();
 

@@ -55,6 +55,8 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C359596');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -123,6 +125,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributorName, true, true);
         BrowseContributors.browse(testData.contributorName);
         BrowseContributors.checkAuthorityIconAndValueDisplayedForMultipleRows(
           2,

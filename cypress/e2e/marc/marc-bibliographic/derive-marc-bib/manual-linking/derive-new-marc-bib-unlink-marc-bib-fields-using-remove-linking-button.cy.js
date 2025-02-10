@@ -68,14 +68,11 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
-        cy.getAdminToken();
-        // make sure there are no duplicate authority records in the system
+        cy.loginAsAdmin();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
-
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((createdUserProperties) => {
             testData.preconditionUserId = createdUserProperties.userId;
-
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
                 marcFile.marc,

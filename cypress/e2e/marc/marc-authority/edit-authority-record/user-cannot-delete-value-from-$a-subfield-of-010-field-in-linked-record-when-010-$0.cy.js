@@ -64,16 +64,7 @@ describe('MARC', () => {
             testData.preconditionUserId = userProperties.userId;
 
             // make sure there are no duplicate authority records in the system
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: 'keyword="C376936"',
-            }).then((records) => {
-              records.forEach((record) => {
-                if (record.authRefType === 'Authorized') {
-                  MarcAuthority.deleteViaAPI(record.id);
-                }
-              });
-            });
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376936*');
 
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(

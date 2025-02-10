@@ -306,7 +306,7 @@ export default {
     cy.expect(HTML('This field is protected.').exists());
   },
 
-  checkAddNew001Tag: (rowIndex, content) => {
+  checkAddNew001Tag: (rowIndex, content, noValidation = false) => {
     // need to wait until all data loaded
     cy.wait(2000);
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click());
@@ -326,6 +326,10 @@ export default {
         .has({ disabled: true }),
     );
     cy.do(saveAndCloseButton.click());
+    if (!noValidation) {
+      cy.wait(1500);
+      cy.do(saveAndCloseButton.click());
+    }
     cy.expect(
       Callout(
         'This record has successfully saved and is in process. Changes may not appear immediately.',

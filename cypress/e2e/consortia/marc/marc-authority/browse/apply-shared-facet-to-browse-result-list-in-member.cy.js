@@ -141,6 +141,9 @@ describe('MARC', () => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              cy.intercept('/authn/refresh').as('/authn/refresh');
+              cy.reload();
+              cy.wait('@/authn/refresh', { timeout: 20000 });
               MarcAuthorities.switchToBrowse();
               MarcAuthorities.selectSearchOptionInDropdown(
                 MARC_AUTHORITY_BROWSE_OPTIONS.PERSONAL_NAME,

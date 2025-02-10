@@ -98,6 +98,7 @@ describe('Inventory', () => {
         Permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+        InventoryInstances.deleteInstanceByTitleViaApi('C496183');
 
         cy.getUserToken(testData.user.username, testData.user.password);
         DataImport.uploadFileViaApi(

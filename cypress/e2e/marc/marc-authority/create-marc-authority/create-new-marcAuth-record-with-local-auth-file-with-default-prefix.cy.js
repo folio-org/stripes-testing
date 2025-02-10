@@ -16,10 +16,10 @@ describe('MARC', () => {
         previousFieldTag: '008',
         tag: '111',
         content:
-          '$a C423559 Create a new MARC authority record with Local authority file which includes default prefix in it',
+          '$a C423559 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it',
       };
       const recordTitle =
-        'C423559 Create a new MARC authority record with Local authority file which includes default prefix in it';
+        'C423559 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it';
       const localAuthFile = {
         name: `C423559 auth source file active ${randomPostfix}`,
         prefix: `na${getRandomLetters(6)}`,
@@ -115,8 +115,9 @@ describe('MARC', () => {
           // 7 Close the detail view pane by clicking on "X" icon placed in the left upper corner of the pane
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
-          // workaround for an issue when detailed view is not opened when using a filter after record creation - team won't fix it
+
           cy.reload();
+          MarcAuthorities.waitLoading();
           // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
           MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
           MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);

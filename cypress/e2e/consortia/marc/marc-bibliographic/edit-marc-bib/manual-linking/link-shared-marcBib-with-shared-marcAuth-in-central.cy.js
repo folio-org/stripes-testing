@@ -186,7 +186,9 @@ describe('MARC', () => {
               testData.contributor,
               `${testData.linkAuthorityIcon}\n${linkingTagAndValues.authorityHeading}`,
             );
-
+            cy.reload();
+            cy.wait('@/authn/refresh', { timeout: 20000 });
+            InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

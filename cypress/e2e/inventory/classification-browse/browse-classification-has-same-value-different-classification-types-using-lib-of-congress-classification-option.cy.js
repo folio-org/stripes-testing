@@ -153,6 +153,10 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
           InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            testData.classificationValue,
+            testData.classificationBrowseId,
+          );
         },
       );
     });
@@ -174,7 +178,7 @@ describe('Inventory', () => {
 
     it(
       'C468160 Browse for classification which has the same value but different classification types using "Library of Congress classification" browse option when only "LC" and "Local" classification types are selected in Settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468159'] },
+      { tags: ['criticalPath', 'spitfire', 'C468160'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,

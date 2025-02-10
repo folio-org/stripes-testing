@@ -10,6 +10,7 @@ import { CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -139,6 +140,14 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
           InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          testData.searchQueries
+            .filter((query, index) => [4, 5, 10].includes(index))
+            .forEach((query) => {
+              BrowseClassifications.waitForClassificationNumberToAppear(
+                query,
+                testData.classificationBrowseId,
+              );
+            });
         },
       );
     });
@@ -169,6 +178,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifySearchResult(query);
             InventorySearchAndFilter.clickResetAllButton();
           } else if (query === 'BJ1533.C5') {
+            cy.wait(2000);
             InventorySearchAndFilter.verifySearchResult(query);
             InventorySearchAndFilter.selectFoundItemFromBrowse(query);
             InventorySearchAndFilter.verifySearchOptionAndQuery(

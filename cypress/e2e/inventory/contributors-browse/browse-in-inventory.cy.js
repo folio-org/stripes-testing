@@ -112,7 +112,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         BrowseContributors.select();
-        BrowseContributors.waitForContributorToAppear(testData.contributorName);
+        BrowseContributors.waitForContributorToAppear(testData.contributorName, true, true);
         BrowseContributors.browse(testData.contributorName);
         BrowseContributors.checkAuthorityIconAndValueDisplayed(testData.contributorName);
       },

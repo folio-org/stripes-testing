@@ -146,17 +146,20 @@ describe('Data Import', () => {
         rowIndex: 16,
         value: 'C380519 Ludwig one, Beethoven, 1770-1827',
         tag: 100,
+        option: 'Personal name',
       },
       {
         rowIndex: 17,
         value:
           'C380519 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
         tag: 240,
+        option: 'Keyword',
       },
       {
         rowIndex: 49,
         value: 'C380519 Hewitt, Angela, 1958-',
         tag: 700,
+        option: 'Personal name',
       },
     ];
     const createdAuthorityIDs = [];
@@ -201,7 +204,7 @@ describe('Data Import', () => {
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();
               InventoryInstance.verifySearchOptions();
-              InventoryInstance.searchResults(linking.value);
+              InventoryInstance.searchResultsWithOption(linking.option, linking.value);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });

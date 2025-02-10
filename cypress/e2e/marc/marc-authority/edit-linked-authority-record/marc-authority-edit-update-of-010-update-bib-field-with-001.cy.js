@@ -69,6 +69,8 @@ describe('MARC', () => {
           testData.preconditionUserId = userProperties.userId;
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376595*');
 
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(marcFiles[1].authorityHeading);
+
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,

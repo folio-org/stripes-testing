@@ -113,6 +113,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         BrowseSubjects.select();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, true);
         BrowseSubjects.browse(testData.subjectName);
         BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.subjectName);
         BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.subjectName);
@@ -130,6 +131,7 @@ describe('Inventory', () => {
         QuickMarcEditor.checkAfterSaveAndClose();
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false);
         BrowseSubjects.browse(testData.subjectName);
         BrowseSubjects.checkNoAuthorityIconDisplayedForRow(5, testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);

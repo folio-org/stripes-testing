@@ -142,13 +142,15 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].updatedAuthorityHeading);
           MarcAuthorities.checkResultList([marcFiles[1].updatedAuthorityHeading]);
           MarcAuthorities.verifyNumberOfTitles(5, '1');
+          cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
           InventoryInstance.waitInstanceRecordViewOpened(marcFiles[0].instanceTitle);
           InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
           InventoryInstance.viewSource();
           InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${testData.tag611}\t`);
           InventoryViewSource.contains(
-            '$a C374158 Vatican Council $c Basilica di San Pietro in Vaticano)',
+            '$a C374158 Vatican Council $n (2nd : $d 1962-1966 : $c Basilica di San Pietro in Vaticano)',
           );
         },
       );

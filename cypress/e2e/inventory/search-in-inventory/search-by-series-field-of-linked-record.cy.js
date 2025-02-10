@@ -39,9 +39,9 @@ const testData = {
     'series == "Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, Inspector Banks series ; 1950-2022',
+    'Robinson, Peter, 1950-2022 Inspector Banks series ; 24.',
     'Robinson & Associates, Inc.',
-    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers Robinson College, Cambridge)',
+    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers (1988 : Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',
   ],
   searchResults: [
@@ -126,6 +126,7 @@ describe('Inventory', () => {
               testData.recordIDs.push(record[marcFile.propertyName].id);
             });
           });
+          cy.wait(3000);
         });
       });
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
@@ -148,8 +149,12 @@ describe('Inventory', () => {
       }
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
+
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
-      cy.logout();
     });
 
     after('Delete test data', () => {
@@ -167,10 +172,6 @@ describe('Inventory', () => {
       'C375258 Query search | Search by "Series" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375258'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[0],

@@ -7,8 +7,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -20,6 +18,7 @@ const testData = {
   propertyName: 'instance',
   instanceTitle: 'C387462The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
+  tag582: '852',
 };
 
 let instanceId;
@@ -35,20 +34,12 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getAdminToken().then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
-            (servicePoint) => {
-              testData.servicePointId = servicePoint[0].id;
-              NewLocation.createViaApi(
-                NewLocation.getDefaultLocation(testData.servicePointId),
-              ).then((res) => {
-                testData.location = res;
-              });
-            },
-          );
+        cy.getLocations({ limit: 200 }).then(() => {
+          testData.locationCode = Cypress.env('locations').filter(
+            (location) => location.isActive,
+          )[0].code;
         });
 
-        cy.getAdminToken();
         DataImport.uploadFileViaApi(
           testData.marc,
           testData.fileName,
@@ -57,11 +48,11 @@ describe('MARC', () => {
           response.forEach((record) => {
             instanceId = record[testData.propertyName].id;
           });
-        });
 
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
     });
@@ -81,13 +72,13 @@ describe('MARC', () => {
         InventorySearchAndFilter.clickSearch();
         InventoryInstance.selectTopRecord();
         InventoryInstance.goToMarcHoldingRecordAdding();
-        QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
-        MarcAuthority.checkAddNew001Tag(5, '$a test');
+        QuickMarcEditor.updateExistingField(testData.tag582, `$b ${testData.locationCode}`);
+        MarcAuthority.checkAddNew001Tag(5, '$a test', true);
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.close();
         InventoryInstance.goToMarcHoldingRecordAdding();
-        QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
-        MarcAuthority.checkAddNew001Tag(5, '$a test');
+        QuickMarcEditor.updateExistingField(testData.tag582, `$b ${testData.locationCode}`);
+        MarcAuthority.checkAddNew001Tag(5, '$a test', true);
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.verifyOnlyOne001FieldAreDisplayed();
       },

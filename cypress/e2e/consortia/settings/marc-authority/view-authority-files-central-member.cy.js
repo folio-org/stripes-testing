@@ -90,6 +90,7 @@ describe('MARC', () => {
               ManageAuthorityFiles.checkNewButtonShown(false);
               ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
               ManageAuthorityFiles.checkAuthorityFilesTableNotEditable();
+              cy.logout();
             });
           },
         );
@@ -113,6 +114,7 @@ describe('MARC', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
             ConsortiumManagerApp.verifyChooseSettingsIsDisplayed();
+            cy.logout();
           },
         );
       });

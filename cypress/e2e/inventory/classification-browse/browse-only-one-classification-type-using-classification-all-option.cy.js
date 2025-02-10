@@ -14,6 +14,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -185,6 +186,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.localInstnaceClassificationValue,
+          testData.classificationBrowseId,
+        );
       });
     });
 

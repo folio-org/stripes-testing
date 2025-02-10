@@ -10,6 +10,7 @@ import ClassificationBrowse, {
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
@@ -76,6 +77,12 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
+        testData.searchResults.forEach((query) => {
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            query,
+            testData.classificationBrowseId,
+          );
+        });
       });
     });
 

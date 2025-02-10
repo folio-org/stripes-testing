@@ -23,6 +23,28 @@ const item = {
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 
+function waitForCommitCompletedAndVerify(allias, maxRetries = 10) {
+  let retries = 0;
+
+  function checkResponse() {
+    return cy.wait(allias, { timeout: getLongDelay() }).then((interception) => {
+      if (interception.response.body.status !== 'COMPLETED_WITH_ERRORS') {
+        retries++;
+        if (retries > maxRetries) {
+          throw new Error(
+            'Exceeded maximum retry attempts waiting for status to equal "COMPLETED_WITH_ERRORS"',
+          );
+        }
+        cy.wait(1000);
+        checkResponse();
+      } else {
+        expect(interception.response.body.status).to.eq('COMPLETED_WITH_ERRORS');
+      }
+    });
+  }
+  checkResponse();
+}
+
 describe('bulk-edit', () => {
   describe('logs', () => {
     describe('in-app approach', () => {
@@ -58,6 +80,7 @@ describe('bulk-edit', () => {
 
       after('delete test data', () => {
         cy.getAdminToken();
+        FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
         CheckInActions.checkinItemViaApi({
           itemBarcode: item.barcode,
           servicePointId,
@@ -65,7 +88,6 @@ describe('bulk-edit', () => {
         });
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
         Users.deleteViaApi(user.userId);
-        FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       });
 
       it(
@@ -85,9 +107,7 @@ describe('bulk-edit', () => {
           cy.intercept('/bulk-operations/*').as('commitChanges');
           BulkEditActions.commitChanges();
           BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');
-          cy.wait('@commitChanges', getLongDelay()).then((res) => {
-            expect(res.response.body.status).to.eq('COMPLETED_WITH_ERRORS');
-          });
+          waitForCommitCompletedAndVerify('@commitChanges');
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkItemsCheckbox();

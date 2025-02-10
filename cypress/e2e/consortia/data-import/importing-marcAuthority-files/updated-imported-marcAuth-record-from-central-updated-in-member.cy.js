@@ -246,6 +246,9 @@ describe('Data Import', () => {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
         });
+        cy.reload();
+        cy.wait('@/authn/refresh', { timeout: 20000 });
+        MarcAuthorities.waitLoading();
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);
         MarcAuthority.contains(testData.addedField);

@@ -91,6 +91,7 @@ describe('Inventory', () => {
         BrowseContributors.waitForContributorToAppear(testData.contributorName);
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributorName);
         BrowseContributors.searchRecordByName(testData.contributorName);
         BrowseContributors.checkSearchResultRecord(testData.contributorName);
 
@@ -113,6 +114,7 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
+        BrowseContributors.waitForContributorToAppear(testData.contributorName, false);
         BrowseContributors.browse(testData.contributorName);
         InventorySearchAndFilter.verifySearchResult(`${testData.contributorName}would be here`);
       },

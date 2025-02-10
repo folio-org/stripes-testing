@@ -1100,7 +1100,7 @@ export default {
   },
 
   createInstanceViaApi({
-    instanceTitle = `Instance ${getRandomPostfix()}`,
+    instanceTitle = `Instance Autotest ${getRandomPostfix()}`,
     instanceId = uuid(),
     instanceTypeId,
     contributors,
