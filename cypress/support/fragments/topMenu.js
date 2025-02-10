@@ -20,6 +20,7 @@ const organizationsPath = '/organizations';
 const marcAuthorities = '/marc-authorities';
 const inventorySettingsFastAddPath = '/settings/inventory/fastAdd';
 const requestsPath = '/requests';
+const mediatedRequestsPath = '/requests-mediated/mediated-requests-activities';
 const usersPath = '/users';
 const checkInPath = '/checkin';
 const checkOutPath = '/checkout';
@@ -72,6 +73,7 @@ export default {
   marcAuthorities,
   inventorySettingsFastAddPath,
   requestsPath,
+  mediatedRequestsPath,
   usersPath,
   checkInPath,
   checkOutPath,
