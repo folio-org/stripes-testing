@@ -71,6 +71,10 @@ export const ITEM_IDENTIFIERS = {
   ITEM_BARCODES: 'Item barcodes',
 };
 
+export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId, propertyName) => {
+  return `${entityIdentifier} cannot be updated because the record is associated with ${tenantId} and ${propertyName} is not associated with this tenant.`;
+};
+
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
@@ -640,6 +644,12 @@ export default {
 
   verifyShowWarningsCheckbox(isChecked = false) {
     cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
+  },
+
+  verifyShowWarningsCheckboxDisabled() {
+    cy.expect(
+      errorsAccordion.find(Checkbox({ labelText: 'Show warnings', disabled: true })).exists(),
+    );
   },
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {

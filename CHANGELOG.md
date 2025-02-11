@@ -1,6 +1,8 @@
 # Change history for stripes-testing
 
-## 4.9.0 IN PROGRESS
+## 5.0.0 IN PROGRESS
+
+* *BREAKING* upgrade `@folio/eslint-config-stripes`
 
 ## 4.8.0 IN PROGRESS
 

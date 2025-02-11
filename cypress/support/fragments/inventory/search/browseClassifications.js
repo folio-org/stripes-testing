@@ -76,4 +76,39 @@ export default {
   selectFoundValueByRow(rowIndex, value) {
     cy.do(MultiColumnListCell({ row: rowIndex, content: value }).find(Button()).click());
   },
+
+  waitForClassificationNumberToAppear(
+    classificationNumber,
+    classificationBrowseId = 'all',
+    isPresent = true,
+  ) {
+    return cy.recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `browse/classification-numbers/${classificationBrowseId}/instances`,
+          searchParams: {
+            query: `(number>="${classificationNumber.replace(/"/g, '""')}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => {
+        const foundNumbers = response.body.items.filter((item) => {
+          return item.classificationNumber === classificationNumber;
+        });
+        if (isPresent) {
+          return foundNumbers.length > 0;
+        } else {
+          return foundNumbers.length === 0;
+        }
+      },
+      {
+        limit: 12,
+        delay: 5000,
+        timeout: 60000,
+        error: `Classification number did not appear: "${classificationNumber}"`,
+      },
+    );
+  },
 };

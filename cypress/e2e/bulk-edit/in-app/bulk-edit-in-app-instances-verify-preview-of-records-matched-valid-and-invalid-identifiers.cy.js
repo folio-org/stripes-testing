@@ -1,10 +1,10 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import DateTools from '../../../support/utils/dateTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -16,15 +16,17 @@ import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../support/constants';
 let user;
 let instanceTypeId;
 let instanceTypeName;
-const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const numberOfRecords = 10;
 const createdInstanceTitles = [];
 const invalidInstanceIds = [];
 const createdInstanceIds = [];
 const createdInstanceHrids = [];
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${today}-Matched-Records-${instanceUUIDsFileName}`;
-const errorsFromMatchingFileName = `${today}-Matching-Records-Errors-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  instanceUUIDsFileName,
+  true,
+);
 
 // generate instance titles and invalid instance ids
 for (let i = 1; i <= numberOfRecords; i++) {

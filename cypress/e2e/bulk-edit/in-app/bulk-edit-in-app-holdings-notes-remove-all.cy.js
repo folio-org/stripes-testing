@@ -48,9 +48,9 @@ const removedValueSets = [
   [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE, ''],
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 function verifyFileContent(fileName, headerValuePairs) {
   headerValuePairs.forEach((pair) => {
