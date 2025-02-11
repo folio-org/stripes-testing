@@ -5,12 +5,12 @@ import { getLongDelay } from '../../../support/utils/cypressTools';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import parseMrcFileContentAndVerify from '../../../support/utils/parseMrcFileContent';
 
 let user;
 let exportedFileName;
@@ -36,31 +36,26 @@ describe('Data Export', () => {
           localAuthFiles.prefix,
           localAuthFiles.startWithNumber,
           localAuthFiles.sourceName,
-        )
-          .then((authoritySourceFileId) => {
-            localAuthFiles.id = authoritySourceFileId;
-          })
-          .then(() => {
-            // create authority record
-            MarcAuthorities.createMarcAuthorityViaAPI(
-              localAuthFiles.prefix,
-              localAuthFiles.hridStartsWith,
-              authorityFields,
-            ).then((createdRecordId) => {
-              createdAuthorityId = createdRecordId;
-              cy.wait(3000);
-            });
-          })
-          .then(() => {
-            MarcAuthority.deleteViaAPI(createdAuthorityId);
-          })
-          .then(() => {
-            cy.login(user.username, user.password, {
-              path: TopMenu.dataExportPath,
-              waiter: DataExportLogs.waitLoading,
-            });
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          });
+        ).then((authoritySourceFileId) => {
+          localAuthFiles.id = authoritySourceFileId;
+        });
+        // create authority record
+        MarcAuthorities.createMarcAuthorityViaAPI(
+          localAuthFiles.prefix,
+          localAuthFiles.hridStartsWith,
+          authorityFields,
+        ).then((createdRecordId) => {
+          createdAuthorityId = createdRecordId;
+          cy.wait(3000);
+          // delete authority record
+          MarcAuthority.deleteViaAPI(createdAuthorityId);
+        });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
     });
 
@@ -103,10 +98,24 @@ describe('Data Export', () => {
               'Deleted authority',
             );
             DataExportLogs.clickButtonWithText(exportedFileName);
-            ExportFile.verifyFileIncludes('deleted-authority-records*', [
-              title,
-              createdAuthorityId,
-            ]);
+
+            cy.expect(exportedFileName).to.include('deleted-authority-records');
+
+            const assertionsOnFileContent = [
+              (record) => expect(record.leader).to.exist,
+              (record) => expect(record.get('001')).to.exist,
+              (record) => expect(record.get('005')).to.exist,
+              (record) => expect(record.get('008')).to.exist,
+              (record) => expect(record.get('100')).to.exist,
+              (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
+              (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
+              (record) => expect(record.get('999')).to.exist,
+              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
+              (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
+              (record) => expect(record.get('999')[0].subf[1][1]).to.eq(createdAuthorityId),
+            ];
+
+            parseMrcFileContentAndVerify(exportedFileName, 0, assertionsOnFileContent, 1);
           });
         });
       },
