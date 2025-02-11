@@ -1075,3 +1075,10 @@ export const INSTANCE_DATE_TYPES = {
   PUBLICATION: 'Publication date and copyright date',
   CONTINUING_UNKNOWN: 'Continuing resource status unknown',
 };
+
+export const AUTHORIZATION_ROLES_COLUMNS = {
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  UPDATED: 'Updated',
+  UPDATED_BY: 'Updated by',
+};
