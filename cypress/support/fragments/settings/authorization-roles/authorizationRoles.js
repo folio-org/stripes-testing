@@ -124,6 +124,7 @@ export default {
     Object.values(AUTHORIZATION_ROLES_COLUMNS).forEach((columnName) => {
       cy.expect(rolesPane.find(MultiColumnListHeader(columnName)).exists());
     });
+    cy.expect([roleSearchInputField.exists(), roleSearchButton.exists()]);
   },
 
   clickNewButton: () => {
@@ -401,6 +402,7 @@ export default {
 
   searchRole: (roleName) => {
     cy.do([roleSearchInputField.fillIn(roleName), roleSearchButton.click()]);
+    cy.wait(1000);
   },
 
   checkCapabilitiesAccordionCounter: (expectedCount, regExp = false) => {
@@ -808,7 +810,8 @@ export default {
   },
 
   verifyRolesCount: (count) => {
-    cy.expect(rolesPane.find(MultiColumnList()).has({ rowCount: count }));
+    if (count === 0) cy.expect(rolesPane.find(MultiColumnList()).absent());
+    else cy.expect(rolesPane.find(MultiColumnList()).has({ rowCount: count }));
   },
 
   checkRoleFound: (roleName, isFound = true) => {
