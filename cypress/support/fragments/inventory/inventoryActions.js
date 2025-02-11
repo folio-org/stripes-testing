@@ -10,7 +10,7 @@ const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const locIdInputField = TextField('Enter the Library of Congress identifier');
-const singleImportSuccessCalloutText = (number) => `Record ${number} created. Results may take a few moments to become visible in Inventory`;
+const singleImportSuccessCalloutText = (number, overlay) => `Record ${number} ${overlay ? 'updated' : 'created'}. Results may take a few moments to become visible in Inventory`;
 const importProfileSelect = Select({ name: 'selectedJobProfileId' });
 const importModal = Modal({ id: 'import-record-modal' });
 const cancelImportButtonInModal = importModal.find(Button('Cancel'));
@@ -87,11 +87,14 @@ export default {
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
   },
 
-  pressImportInModal(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
+  pressImportInModal(
+    specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id,
+    overlay = false,
+  ) {
     cy.do(importButtonInModal.click());
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(
-      singleImportSuccessCalloutText(specialOCLCWorldCatidentifier),
+      singleImportSuccessCalloutText(specialOCLCWorldCatidentifier, overlay),
     );
     InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);

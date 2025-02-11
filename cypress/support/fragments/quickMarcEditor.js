@@ -2138,9 +2138,11 @@ export default {
     cy.expect(Callout(callOutText).exists());
   },
 
-  closeCallout() {
-    cy.do(Callout().find(closeButton).click());
-    cy.expect(Callout().absent());
+  closeCallout(text) {
+    if (text) cy.do(Callout(text).find(closeButton).click());
+    else cy.do(Callout().find(closeButton).click());
+    if (text) cy.expect(Callout(text).absent());
+    else cy.expect(Callout().absent());
   },
 
   verifyInvalidLDRCalloutLink() {
