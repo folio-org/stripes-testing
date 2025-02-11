@@ -164,6 +164,11 @@ export default {
     cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value), searchButton.click()]);
   },
 
+  receiveOrderLinesViaActions: () => {
+    expandActionsDropdownInPOL();
+    cy.do([Button('Receive').click()]);
+  },
+
   clickOnOrderLines: () => {
     cy.do([orderLineButton.click()]);
   },
