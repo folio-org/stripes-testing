@@ -1082,3 +1082,10 @@ export const AUTHORIZATION_ROLES_COLUMNS = {
   UPDATED: 'Updated',
   UPDATED_BY: 'Updated by',
 };
+
+export const AUTHORIZATION_POLICIES_COLUMNS = {
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  UPDATED: 'Updated',
+  UPDATED_BY: 'Updated by',
+};

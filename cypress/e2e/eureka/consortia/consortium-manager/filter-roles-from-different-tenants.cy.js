@@ -118,9 +118,9 @@ describe('Eureka', () => {
         ConsortiumManagerApp.clickSelectMembers();
         SelectMembers.verifyAvailableTenants([tenantNames.central, tenantNames.college].sort());
         SelectMembers.checkMember(tenantNames.central, true);
-        SelectMembers.checkMember(tenantNames.college, true);
+        SelectMembers.checkMember(tenantNames.college, false);
         SelectMembers.saveAndClose();
-        ConsortiumManagerApp.verifyMembersSelected(2);
+        ConsortiumManagerApp.verifyMembersSelected(1);
 
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.waitContentLoading();
@@ -144,6 +144,10 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.collegeRoleName);
         AuthorizationRoles.verifyRolesCount(0);
 
+        ConsortiumManagerApp.clickSelectMembers();
+        SelectMembers.checkMember(tenantNames.college, true);
+        SelectMembers.saveAndClose();
+        ConsortiumManagerApp.verifyMembersSelected(2);
         SelectMembers.selectMember(tenantNames.college);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.checkRoleFound(testData.collegeRoleName);

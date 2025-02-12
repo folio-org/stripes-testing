@@ -401,6 +401,7 @@ export default {
   },
 
   searchRole: (roleName) => {
+    cy.expect(Spinner().absent());
     cy.do([roleSearchInputField.fillIn(roleName), roleSearchButton.click()]);
     cy.wait(1000);
   },
