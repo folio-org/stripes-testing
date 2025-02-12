@@ -70,7 +70,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 2,
-            Settings: 5,
+            Settings: 4,
             Procedural: 2,
           },
         },
@@ -129,8 +129,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.originalApplication);
           AuthorizationRoles.clickSaveInModal();
-          // TO DO: uncomment when "full" application will be split in multiple apps
-          // AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.originalApplication]);
+          AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.originalApplication]);
           testData.originalCapabilitySets.forEach((capabilitySet) => {
             AuthorizationRoles.selectCapabilitySetCheckbox(capabilitySet);
           });

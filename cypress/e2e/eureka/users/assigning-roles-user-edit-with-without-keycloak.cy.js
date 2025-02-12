@@ -150,6 +150,12 @@ describe('Eureka', () => {
           userBodies[0].personal.lastName,
           userBodies[0].personal.firstName,
         );
+        UsersCard.close();
+        UsersSearchPane.selectUserFromList(userBodies[0].username);
+        UsersCard.verifyUserLastFirstNameInCard(
+          userBodies[0].personal.lastName,
+          userBodies[0].personal.firstName,
+        );
         UsersCard.verifyUserRolesCounter('1');
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
@@ -206,6 +212,12 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNames([testData.roleName]);
         UserEdit.verifyUserRolesRowsCount(1);
         UserEdit.saveUserEditForm();
+        UsersCard.verifyUserLastFirstNameInCard(
+          userBodies[2].personal.lastName,
+          userBodies[2].personal.firstName,
+        );
+        UsersCard.close();
+        UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(
           userBodies[2].personal.lastName,
           userBodies[2].personal.firstName,

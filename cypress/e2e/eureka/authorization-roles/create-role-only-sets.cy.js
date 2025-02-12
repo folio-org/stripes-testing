@@ -88,11 +88,6 @@ describe('Eureka', () => {
           },
           {
             table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
             resource: 'UI-Notes Settings',
             action: 'Edit',
           },
@@ -104,7 +99,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 6,
-            Settings: 3,
+            Settings: 2,
           },
         },
       };

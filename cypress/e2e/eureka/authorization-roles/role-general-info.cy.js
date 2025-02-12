@@ -92,7 +92,7 @@ describe('Eureka', () => {
               path: TopMenu.settingsAuthorizationRoles,
               waiter: AuthorizationRoles.waitContentLoading,
             });
-            AuthorizationRoles.waitContentLoading();
+            AuthorizationRoles.waitLoading();
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);
             AuthorizationRoles.verifyGeneralInformationWhenCollapsed(createdDateTime);

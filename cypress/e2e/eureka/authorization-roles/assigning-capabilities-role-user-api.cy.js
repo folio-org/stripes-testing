@@ -76,11 +76,9 @@ describe('Eureka', () => {
           );
           cy.getCapabilitiesForUserApi(testData.userA.userId).then(({ status, body }) => {
             expect(status).to.eq(200);
-            expect(body.userCapabilities).to.have.lengthOf(testData.capabIds.length);
+            expect(body.capabilities).to.have.lengthOf(testData.capabIds.length);
             testData.capabIds.forEach((capabId) => {
-              expect(
-                body.userCapabilities.filter((capab) => capab.capabilityId === capabId),
-              ).to.have.lengthOf(1);
+              expect(body.capabilities.filter((capab) => capab.id === capabId)).to.have.lengthOf(1);
             });
           });
           cy.updateCapabilitiesForRoleApi(testData.roleAId, [
@@ -106,9 +104,9 @@ describe('Eureka', () => {
           );
           cy.getCapabilitiesForUserApi(testData.userA.userId).then(({ status, body }) => {
             expect(status).to.eq(200);
-            expect(body.userCapabilities).to.have.lengthOf(1);
+            expect(body.capabilities).to.have.lengthOf(1);
             expect(
-              body.userCapabilities.filter((capab) => capab.capabilityId === testData.capabIds[0]),
+              body.capabilities.filter((capab) => capab.id === testData.capabIds[0]),
             ).to.have.lengthOf(1);
           });
         },
@@ -150,11 +148,9 @@ describe('Eureka', () => {
           );
           cy.getCapabilitySetsForUserApi(testData.userB.userId).then(({ status, body }) => {
             expect(status).to.eq(200);
-            expect(body.userCapabilitySets).to.have.lengthOf(1);
+            expect(body.capabilitySets).to.have.lengthOf(1);
             expect(
-              body.userCapabilitySets.filter(
-                (capabSet) => capabSet.capabilitySetId === testData.capabSetIds[0],
-              ),
+              body.capabilitySets.filter((capabSet) => capabSet.id === testData.capabSetIds[0]),
             ).to.have.lengthOf(1);
           });
           cy.updateCapabilitySetsForRoleApi(testData.roleBId, [testData.capabSetIds[2]]).then(
@@ -177,16 +173,12 @@ describe('Eureka', () => {
           });
           cy.getCapabilitySetsForUserApi(testData.userB.userId).then(({ status, body }) => {
             expect(status).to.eq(200);
-            expect(body.userCapabilitySets).to.have.lengthOf(2);
+            expect(body.capabilitySets).to.have.lengthOf(2);
             expect(
-              body.userCapabilitySets.filter(
-                (capabSet) => capabSet.capabilitySetId === testData.capabSetIds[1],
-              ),
+              body.capabilitySets.filter((capabSet) => capabSet.id === testData.capabSetIds[1]),
             ).to.have.lengthOf(1);
             expect(
-              body.userCapabilitySets.filter(
-                (capabSet) => capabSet.capabilitySetId === testData.capabSetIds[2],
-              ),
+              body.capabilitySets.filter((capabSet) => capabSet.id === testData.capabSetIds[2]),
             ).to.have.lengthOf(1);
           });
         },

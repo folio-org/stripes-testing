@@ -208,15 +208,15 @@ Cypress.Commands.add('getAuthorizationRolesForUserApi', (userId) => {
   });
 });
 
-Cypress.Commands.add('getCapabilitiesForUserApi', (userId) => {
+Cypress.Commands.add('getCapabilitiesForUserApi', (userId, ignoreErrors = false) => {
   cy.okapiRequest({
-    path: 'users/capabilities',
+    path: `users/${userId}/capabilities`,
     searchParams: {
-      query: `userId==${userId}`,
       limit: 10,
       offset: 0,
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then(({ status, body }) => {
     return {
       status,
@@ -225,15 +225,15 @@ Cypress.Commands.add('getCapabilitiesForUserApi', (userId) => {
   });
 });
 
-Cypress.Commands.add('getCapabilitySetsForUserApi', (userId) => {
+Cypress.Commands.add('getCapabilitySetsForUserApi', (userId, ignoreErrors = false) => {
   cy.okapiRequest({
-    path: 'users/capability-sets',
+    path: `users/${userId}/capability-sets`,
     searchParams: {
-      query: `userId==${userId}`,
       limit: 10,
       offset: 0,
     },
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   }).then(({ status, body }) => {
     return {
       status,

@@ -105,7 +105,7 @@ describe('Eureka', () => {
           InteractorsTools.checkCalloutExists(testData.putErrorMessage2, testData.errorCalloutType);
 
           cy.reload();
-          AuthorizationRoles.waitContentLoading();
+          AuthorizationRoles.waitLoading();
           AuthorizationRoles.searchRole(testData.roleBName);
           AuthorizationRoles.clickOnRoleName(testData.roleBName);
           AuthorizationRoles.clickAssignUsersButton();
