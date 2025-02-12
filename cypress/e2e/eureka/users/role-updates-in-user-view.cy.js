@@ -128,7 +128,7 @@ describe('Eureka', () => {
         UsersCard.verifyUserRoleNames([testData.roleBName, testData.roleCName]);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
-        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.waitLoading();
         AuthorizationRoles.searchRole(testData.roleBName);
         AuthorizationRoles.clickOnRoleName(testData.roleBName);
         AuthorizationRoles.verifyAssignedUser(testData.userA.lastName, testData.userA.firstName);

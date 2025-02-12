@@ -19,7 +19,7 @@ describe('Eureka', () => {
           },
           {
             table: 'Settings',
-            resource: 'UI-Notes Settings',
+            resource: 'Module Agreements Enabled',
             action: 'View',
           },
         ],
@@ -37,6 +37,11 @@ describe('Eureka', () => {
           {
             table: 'Data',
             resource: 'Licenses Amendments Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Licenses Licenses',
             action: 'View',
           },
           {
@@ -61,22 +66,37 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Note Types Item',
+            resource: 'Erm Refdata',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Erm Refdata Category Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Erm Refdata Category Item',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Erm Refdata Value Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Configuration Entries Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Tags Collection',
             action: 'View',
           },
           {
             table: 'Settings',
-            resource: 'Settings Notes Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'UI-Notes Settings',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Settings Enabled',
+            resource: 'Module Agreements Enabled',
             action: 'View',
           },
         ],
@@ -132,9 +152,9 @@ describe('Eureka', () => {
             Data: 1,
           },
           capabilities: {
-            Settings: 4,
+            Settings: 2,
+            Data: 10,
             Procedural: 1,
-            Data: 5,
           },
         },
         absentCapabilitySetTables: ['Procedural'],
@@ -148,7 +168,7 @@ describe('Eureka', () => {
         testData.originalCapabilities[2],
       ];
       const originalCapabilitiesInSecondSet = testData.originalCapabilitiesInSets.filter(
-        (capab, index) => index > 5,
+        (capab, index) => index > 6,
       );
 
       const capabSetsToAssign = [

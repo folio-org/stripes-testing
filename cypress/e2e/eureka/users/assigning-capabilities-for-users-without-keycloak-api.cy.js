@@ -76,9 +76,8 @@ describe('Eureka', () => {
           (response) => {
             expect(response.status).to.eq(404);
             expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            cy.getCapabilitiesForUserApi(testData.userAId).then(({ body, status }) => {
-              expect(status).to.eq(200);
-              expect(body.totalRecords).to.eq(0);
+            cy.getCapabilitiesForUserApi(testData.userAId, true).then(({ status }) => {
+              expect(status).to.eq(404);
             });
           },
         );
@@ -86,9 +85,8 @@ describe('Eureka', () => {
           (response) => {
             expect(response.status).to.eq(404);
             expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            cy.getCapabilitySetsForUserApi(testData.userBId).then(({ body, status }) => {
-              expect(status).to.eq(200);
-              expect(body.totalRecords).to.eq(0);
+            cy.getCapabilitySetsForUserApi(testData.userBId, true).then(({ status }) => {
+              expect(status).to.eq(404);
             });
           },
         );
@@ -97,9 +95,8 @@ describe('Eureka', () => {
           (response) => {
             expect(response.status).to.eq(404);
             expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            cy.getCapabilitiesForUserApi(testData.userCId).then(({ body, status }) => {
-              expect(status).to.eq(200);
-              expect(body.totalRecords).to.eq(0);
+            cy.getCapabilitiesForUserApi(testData.userCId, true).then(({ status }) => {
+              expect(status).to.eq(404);
             });
           },
         );
@@ -107,9 +104,8 @@ describe('Eureka', () => {
           (response) => {
             expect(response.status).to.eq(404);
             expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            cy.getCapabilitySetsForUserApi(testData.userCId).then(({ body, status }) => {
-              expect(status).to.eq(200);
-              expect(body.totalRecords).to.eq(0);
+            cy.getCapabilitySetsForUserApi(testData.userCId, true).then(({ status }) => {
+              expect(status).to.eq(404);
             });
           },
         );
