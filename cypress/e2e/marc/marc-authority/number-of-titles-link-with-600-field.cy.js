@@ -55,20 +55,11 @@ describe('MARC', () => {
       }).then((instances) => {
         if (instances) {
           instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
+            InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
           });
         }
       });
-      MarcAuthorities.getMarcAuthoritiesViaApi({
-        limit: 100,
-        query: `keyword="${testData.marcValue}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-      }).then((authorities) => {
-        if (authorities) {
-          authorities.forEach(({ id }) => {
-            MarcAuthority.deleteViaAPI(id);
-          });
-        }
-      });
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.marcValue);
 
       marcFiles.forEach((marcFile) => {
         DataImport.uploadFileViaApi(

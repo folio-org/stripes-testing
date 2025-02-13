@@ -144,7 +144,7 @@ describe('MARC', () => {
 
           // Save edits and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -158,7 +158,7 @@ describe('MARC', () => {
 
           // Save added field and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -173,7 +173,7 @@ describe('MARC', () => {
 
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
@@ -189,7 +189,7 @@ describe('MARC', () => {
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
@@ -201,7 +201,7 @@ describe('MARC', () => {
 
           // Save field reordering and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
