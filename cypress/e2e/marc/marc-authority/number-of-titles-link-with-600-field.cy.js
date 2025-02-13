@@ -89,7 +89,7 @@ describe('MARC', () => {
       cy.loginAsAdmin();
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag);

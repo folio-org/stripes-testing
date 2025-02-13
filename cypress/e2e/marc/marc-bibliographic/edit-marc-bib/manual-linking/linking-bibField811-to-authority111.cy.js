@@ -125,6 +125,8 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag811);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib811LinkedFieldValues);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1500);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifySeriesStatement(
               0,

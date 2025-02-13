@@ -48,7 +48,7 @@ const testData = {
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
     'Radio "Vaticana". Hrvatski program test',
-    'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
+    'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
     'Marvel comics ComiCon',
     'Speaking Oratory--debating',
     'Clear Creek (Tex.)',
@@ -94,7 +94,7 @@ describe('Inventory', () => {
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });

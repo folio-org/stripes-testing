@@ -74,7 +74,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -136,6 +136,7 @@ describe('Inventory', () => {
         });
 
         InventorySearchAndFilter.selectBrowseSubjects();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectHeading[0], true, true);
         InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
         BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
           5,

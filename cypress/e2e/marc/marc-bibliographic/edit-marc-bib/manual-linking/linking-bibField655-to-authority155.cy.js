@@ -19,7 +19,7 @@ describe('MARC', () => {
       describe('Manual linking', () => {
         const testData = {
           tag655: '655',
-          authorityValue: 'C380766 Drama Genre',
+          authorityValue: 'C380766 Drama--Genre',
           authorityHeading: 'C380766 Drama',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
