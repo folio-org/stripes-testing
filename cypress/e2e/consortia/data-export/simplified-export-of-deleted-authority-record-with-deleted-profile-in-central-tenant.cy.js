@@ -103,13 +103,11 @@ describe('Data Export', () => {
 
             const assertionsOnFileContent = [
               (record) => expect(record.leader).to.exist,
-              (record) => expect(record.get('001')).to.exist,
-              (record) => expect(record.get('005')).to.exist,
-              (record) => expect(record.get('008')).to.exist,
-              (record) => expect(record.get('100')).to.exist,
+              (record) => expect(record.get('001')).to.not.be.empty,
+              (record) => expect(record.get('005')).to.not.be.empty,
+              (record) => expect(record.get('008')).to.not.be.empty,
               (record) => expect(record.get('100')[0].subf[0][0]).to.eq('a'),
               (record) => expect(record.get('100')[0].subf[0][1]).to.eq(title),
-              (record) => expect(record.get('999')).to.exist,
               (record) => expect(record.get('999')[0].subf[0][0]).to.eq('s'),
               (record) => expect(record.get('999')[0].subf[1][0]).to.eq('i'),
               (record) => expect(record.get('999')[0].subf[1][1]).to.eq(createdAuthorityId),
