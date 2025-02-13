@@ -31,16 +31,16 @@ const getDefaultLocation = ({
 } = {}) => {
   const institution = Institutions.getDefaultInstitution({
     id: institutionId,
-    name: `autotest_institution_${getRandomPostfix()}`,
+    name: `aautotest_institution_${getRandomPostfix()}`,
   });
   const campus = Campuses.getDefaultCampuse({
     id: campusId,
-    name: `autotest_campuse_${getRandomPostfix()}`,
+    name: `aautotest_campuse_${getRandomPostfix()}`,
     institutionId: institution.id,
   });
   const library = Libraries.getDefaultLibrary({
     id: libraryId,
-    name: `autotest_library_${getRandomPostfix()}`,
+    name: `aautotest_library_${getRandomPostfix()}`,
     campusId: campus.id,
   });
   const location = {
@@ -52,9 +52,9 @@ const getDefaultLocation = ({
     campusName: campus.name,
     libraryId: library.id,
     libraryName: library.name,
-    name: `autotest_location_name_${getRandomPostfix()}`,
-    code: `autotest_location_code_${getRandomPostfix()}`,
-    discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
+    name: `aautotest_location_name_${getRandomPostfix()}`,
+    code: `aautotest_location_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `aautotest_name_${getRandomPostfix()}`,
     // servicePointIds must have real Servi point id
     servicePointIds: secondaryServicePointId
       ? [servicePointId, secondaryServicePointId]

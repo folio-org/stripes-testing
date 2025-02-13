@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Export query', () => {
     const userData = {};
     const listData = {
@@ -15,11 +15,14 @@ describe('lists', () => {
     };
 
     beforeEach('Create a user', () => {
-      cy.getAdminToken();
       cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
+
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
       });
     });
 
@@ -37,9 +40,6 @@ describe('lists', () => {
       'C411809 Export list: Not canned lists (corsair)',
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -63,9 +63,6 @@ describe('lists', () => {
       'C411811 Export list: Inactive lists',
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -83,9 +80,6 @@ describe('lists', () => {
       'C411812 Export list: Refresh is in progress',
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -105,9 +99,6 @@ describe('lists', () => {
       'C411813 Export list: Edit is in progress, when the list contains records',
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -128,9 +119,6 @@ describe('lists', () => {
       "C411830 Export list: Edit is in progress, when the list doesn't have query",
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -148,9 +136,6 @@ describe('lists', () => {
       "C411819 Export list: The list doesn't contain query",
       { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -167,9 +152,6 @@ describe('lists', () => {
       'C411837 Export list: Edit is in progress, when the list has active query with 0 records',
       { tags: ['criticalPath', 'corsair', 'eurekaPhase1'] },
       () => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

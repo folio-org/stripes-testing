@@ -171,7 +171,7 @@ describe('Data Import', () => {
         Permissions.uiOrdersEdit.gui,
         Permissions.uiInventoryViewCreateEditHoldings.gui,
         Permissions.uiInventoryViewCreateEditInstances.gui,
-        Permissions.uiInventoryViewCreateEditItems,
+        Permissions.uiInventoryViewCreateEditItems.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiReceivingViewEditCreate.gui,

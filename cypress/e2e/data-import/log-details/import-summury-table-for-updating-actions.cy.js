@@ -353,7 +353,7 @@ describe('Data Import', () => {
 
           // download .csv file
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
+          InventorySearchAndFilter.filterByStaffSuppress('No');
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InventorySearchAndFilter.saveUUIDs();

@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Edit list', () => {
     const userData = {};
     const listData = {

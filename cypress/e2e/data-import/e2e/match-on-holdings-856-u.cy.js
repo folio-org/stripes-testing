@@ -218,7 +218,7 @@ describe('Data Import', () => {
         Logs.checkStatusOfJobProfile();
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.selectYesfilterStaffSuppress();
+        InventorySearchAndFilter.filterByStaffSuppress('No');
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.openHoldingView();

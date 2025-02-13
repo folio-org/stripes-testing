@@ -3,7 +3,7 @@ import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Add new list', () => {
     const userData = {};
     const listData = {

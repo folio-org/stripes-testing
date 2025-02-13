@@ -99,19 +99,19 @@ function getAllLogsColumnsResults(nameOfColumn) {
       index = 4;
       break;
     case 'Job profile':
-      index = 5;
-      break;
-    case 'Started running':
       index = 6;
       break;
-    case 'Ended running':
+    case 'Started running':
       index = 7;
       break;
-    case 'Run by':
+    case 'Ended running':
       index = 8;
       break;
-    case 'ID':
+    case 'Run by':
       index = 9;
+      break;
+    case 'ID':
+      index = 10;
       break;
     default:
       index = 2;

@@ -126,7 +126,7 @@ describe('Data Import', () => {
           instanceHrid = initialInstanceHrId;
 
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.selectYesfilterStaffSuppress();
+          InventorySearchAndFilter.filterByStaffSuppress();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
           InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);

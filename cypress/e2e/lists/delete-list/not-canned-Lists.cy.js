@@ -3,7 +3,7 @@ import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
@@ -21,21 +21,25 @@ describe('lists', () => {
         userData.userId = userProperties.userId;
       });
     });
-    it('C411768 Delete list: Positive case (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.saveList();
-      Lists.actionButton();
-      cy.contains('Delete list').click();
-      Lists.DeleteListModal();
-      cy.contains(`List ${listData.name} deleted.`);
-    });
+    it(
+      'C411768 Delete list: Positive case (corsair)',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.saveList();
+        Lists.actionButton();
+        cy.contains('Delete list').click();
+        Lists.DeleteListModal();
+        cy.contains(`List ${listData.name} deleted.`);
+      },
+    );
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',

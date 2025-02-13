@@ -15,3 +15,8 @@ allure-results
 
 videos
 .vs
+
+.env
+report.txt
+scripts/update_permission_names/permissions_backups/*
+scripts/update_permission_names/permissions.mjs

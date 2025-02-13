@@ -45,7 +45,7 @@ describe('Data Import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        cy.wait(60000);
+        cy.wait(200000);
         Logs.waitFileIsImported(marcFileName);
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },

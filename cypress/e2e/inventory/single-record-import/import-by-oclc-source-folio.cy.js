@@ -13,7 +13,7 @@ let user;
 let instanceRecord;
 const OCLCAuthentication = '100481406/PAOLF';
 const oclcRecordData = {
-  title: 'Cooking Light Soups & Stew [electronic resource].',
+  title: 'Cooking Light Soups & Stew.',
   language: 'English',
   publisher: 'TI Inc. Books',
   placeOfPublication: 'Chicago',
@@ -76,7 +76,6 @@ describe('Inventory', () => {
           `Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`,
         );
         cy.wait(15000);
-        cy.reload();
         InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
         InventoryInstance.verifyLastUpdatedDate();
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
@@ -88,9 +87,12 @@ describe('Inventory', () => {
           date: oclcRecordData.publicationDate,
         });
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
-        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
-        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
+        InventoryInstance.openIdentifiersAccordion();
+        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 6);
+        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 7);
+        InventoryInstance.openSubjectAccordion();
         InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
+        InventoryInstance.openInstanceNotesAccordion();
         InventoryInstance.checkInstanceNotes(
           oclcRecordData.notes.noteType,
           oclcRecordData.notes.noteContent,

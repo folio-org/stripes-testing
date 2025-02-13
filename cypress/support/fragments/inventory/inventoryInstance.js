@@ -373,6 +373,8 @@ export default {
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
+  openIdentifiersAccordion: () => cy.do(identifiersAccordion.clickHeader()),
+  openInstanceNotesAccordion: () => cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -508,9 +510,11 @@ export default {
     cy.do(paneResultsSection.find(actionsBtn).click());
     cy.do(actionsMenuSection.find(importRecord).click());
     cy.expect(importRecordModal.exists());
+    cy.wait(1500);
     cy.do(
       TextField({ label: including('Enter the OCLC WorldCat identifier') }).fillIn(validOCLC.id),
     );
+    cy.wait(1500);
     cy.do(importRecordModal.find(importButton).click());
     cy.expect(instanceDetailsSection.exists());
   },
@@ -1334,11 +1338,11 @@ export default {
     oclc,
     defaultJobProfile = 'Inventory Single Record - Default Update Instance (Default)',
   ) => {
-    cy.do([
-      Select({ name: 'selectedJobProfileId' }).choose(defaultJobProfile),
-      singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc),
-      singleRecordImportModal.find(Button('Import')).click(),
-    ]);
+    cy.do(Select({ name: 'selectedJobProfileId' }).choose(defaultJobProfile));
+    cy.wait(1500);
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.wait(1500);
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {

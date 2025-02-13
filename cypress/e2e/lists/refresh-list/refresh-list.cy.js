@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Refresh lists', () => {
     const userData = {};
     const listData = {
@@ -33,21 +33,25 @@ describe('lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411822  Refresh list: Inactive lists (corsair)', { tags: ['smoke', 'corsair', 'eurekaPhase1'] }, () => {
-      cy.login(userData.username, userData.password);
-      cy.visit(TopMenu.listsPath);
-      Lists.waitLoading();
-      Lists.openNewListPane();
-      Lists.setName(listData.name);
-      Lists.setDescription(listData.name);
-      Lists.selectRecordType(listData.recordType);
-      Lists.selectVisibility(listData.visibility);
-      Lists.selectStatus(listData.status[1]);
-      Lists.buildQuery();
-      Lists.queryBuilderActions();
-      Lists.actionButton();
-      cy.contains('Refresh list').should('be.disabled');
-    });
+    it(
+      'C411822  Refresh list: Inactive lists (corsair)',
+      { tags: ['smoke', 'corsair', 'eurekaPhase1'] },
+      () => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+        Lists.openNewListPane();
+        Lists.setName(listData.name);
+        Lists.setDescription(listData.name);
+        Lists.selectRecordType(listData.recordType);
+        Lists.selectVisibility(listData.visibility);
+        Lists.selectStatus(listData.status[1]);
+        Lists.buildQuery();
+        Lists.queryBuilderActions();
+        Lists.actionButton();
+        cy.contains('Refresh list').should('be.disabled');
+      },
+    );
 
     it(
       "C411823 Refresh list: The list doesn't contain query (corsair)",

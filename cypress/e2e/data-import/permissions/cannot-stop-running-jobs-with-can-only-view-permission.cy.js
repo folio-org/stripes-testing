@@ -58,7 +58,6 @@ describe('Data Import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
-        cy.reload();
         cy.wait(3000);
         DataImport.verifyTrashIconInvisibleForUser();
       },
