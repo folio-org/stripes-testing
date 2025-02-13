@@ -166,13 +166,11 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
           );
-
           BulkEditActions.openStartBulkEditMarcInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditMarcFieldsForm(
             instanceUUIDsFileName,
             '1 instance',
           );
-
           BulkEditActions.fillInTagAndIndexesAndSubfield('583', '0', '\\', 'a');
           BulkEditActions.selectActionForMarcInstance('Add');
           BulkEditActions.fillInDataTextAreaForMarcInstance('Action note');
@@ -326,16 +324,16 @@ describe('Bulk-edit', () => {
             notes.addedAction,
           );
           InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-            2,
-            'No',
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
-            'Mémoire de stage (3e cycle) Université de Nantes',
-          );
-          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
             1,
             'No',
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DATA_QUALITY_NOTE,
             notes.editedDataQuailty,
+          );
+          InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
+            2,
+            'No',
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
+            'Mémoire de stage (3e cycle) Université de Nantes',
           );
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.firstLocalReplaced);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.secondLocalRemoved);
