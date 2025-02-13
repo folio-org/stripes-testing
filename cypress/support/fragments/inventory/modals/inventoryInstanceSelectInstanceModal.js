@@ -43,4 +43,11 @@ export default {
     cy.do(rootModal.find(MultiColumnList()).click({ row: rowNumber }));
     cy.expect(rootModal.absent());
   },
+
+  verifyModalExists: () => {
+    cy.expect(rootModal.exists());
+  },
+  verifySharedFacetExistsInFilter() {
+    cy.do(rootModal.find(Button({ id: 'accordion-toggle-button-shared' })).exists());
+  },
 };
