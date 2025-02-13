@@ -1379,6 +1379,7 @@ export default {
     cy.do(actionsButton.click());
     cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
+    cy.wait(2000);
   },
 
   checkShareLocalInstanceButtonIsAbsent() {

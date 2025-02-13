@@ -4,3 +4,18 @@ Cypress.Commands.add('dataExportGetJobByStatus', (jobStatus) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('runDataExportAuthorityDeleted', (query) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-export/export-authority-deleted',
+      body: {
+        offset: 0,
+        limit: 2000,
+        query,
+      },
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response);
+});

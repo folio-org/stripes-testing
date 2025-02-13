@@ -77,16 +77,18 @@ export default {
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
+    cy.wait(4000);
   },
 
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('diku'),
+      userSearchModal.find(searchTextField).fillIn(Cypress.env('diku_login')),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
+    cy.wait(4000);
   },
 
   unAssignUser: (userName, AUName) => {

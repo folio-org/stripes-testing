@@ -48,6 +48,7 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
         });
 
+        cy.getAdminToken();
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
           invoice.accountingCode = organization.erpCode;
@@ -81,7 +82,7 @@ describe('Invoices', () => {
 
   it(
     'C350937 Update accordion labels and logic on Invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

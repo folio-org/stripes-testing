@@ -1,6 +1,11 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -17,6 +22,7 @@ import Requests from '../../support/fragments/requests/requests';
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -87,8 +93,10 @@ describe('Circulation log', () => {
     id: uuid(),
   };
   const goToCircLogApp = (filterName) => {
-    cy.visit(TopMenu.circulationLogPath);
+    TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+    cy.wait(2000);
     SearchPane.waitLoading();
+    SearchPane.resetResults();
     SearchPane.setFilterOptionFromAccordion('loan', filterName);
     SearchPane.searchByItemBarcode(testData.itemBarcode);
     return SearchPane.findResultRowIndexByContent(filterName);

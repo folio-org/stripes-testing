@@ -48,6 +48,7 @@ describe('Finance: Ledgers', () => {
           Budgets.createViaApi(firstBudget);
         });
 
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
           secondBudget.fundId = secondFundResponse.fund.id;
@@ -76,7 +77,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C411576 Ledger summary calculation after allocation movement to 0 budget (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

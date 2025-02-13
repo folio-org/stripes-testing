@@ -216,7 +216,7 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openStartBulkEditInstanceForm();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.selectOption('Suppress from discovery');
@@ -230,7 +230,7 @@ describe('Bulk-edit', () => {
               BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
             }
 
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
             BulkEditActions.verifyAreYouSureForm(2);

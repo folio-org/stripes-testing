@@ -59,7 +59,7 @@ describe('ui-finance: Orders', () => {
 
   it(
     'C163929 Test acquisition unit restrictions for Order records (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

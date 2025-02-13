@@ -108,7 +108,7 @@ describe('Finance', () => {
 
     it(
       'C360116 "Increase/decrease in allocation" amounts for funds related to the same ledger should not be displayed in ledger Financial summary (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Click on **"Fund B"** name on "Fund" pane
         FinanceHelper.searchByName(funds.b.name);

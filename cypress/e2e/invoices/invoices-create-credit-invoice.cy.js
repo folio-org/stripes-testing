@@ -41,11 +41,12 @@ describe('Invoices', () => {
 
   it(
     'C343209 Create, approve and pay a credit invoice (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
       Invoices.addFundDistributionToLine(invoiceLine, fund);
+      cy.getAdminToken();
       Approvals.setApprovePayValue(false);
       cy.wait(4000);
       Invoices.approveInvoice();

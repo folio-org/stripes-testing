@@ -390,11 +390,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedItemNoteType.payload.name,
@@ -404,23 +404,23 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.ADMINISTRATIVE_NOTE);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteRemoveAll(centralSharedItemNoteType.payload.name, 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.CHECK_IN_NOTE, 2);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.CHECK_OUT_NOTE, 3);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(4);
           BulkEditActions.noteRemoveAll(collegeItemNoteTypeNameWithAffiliation, 4);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

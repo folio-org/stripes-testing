@@ -58,6 +58,7 @@ describe('Invoices', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
+        cy.getAdminToken();
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -118,7 +119,7 @@ describe('Invoices', () => {
 
   it(
     'C376007 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as Included in) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

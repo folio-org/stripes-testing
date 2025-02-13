@@ -14,17 +14,13 @@ describe('Consortia', () => {
   let user;
 
   before('Create users, data', () => {
+    cy.setTenant(Affiliations.Consortia);
     cy.getAdminToken();
-
     cy.createTempUser([Permissions.consortiaSettingsSettingsMembershipEdit.gui])
       .then((userProperties) => {
         user = userProperties;
       })
       .then(() => {
-        cy.setTenant(Affiliations.Consortia);
-        cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.consortiaSettingsSettingsMembershipEdit.gui,
-        ]);
         cy.login(user.username, user.password, {
           path: SettingsMenu.consortiumManagerPath,
           waiter: ConsortiumManager.waitLoading,
@@ -68,7 +64,7 @@ describe('Consortia', () => {
         tenantNames.professional,
       );
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-E`, character151);
+      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-ED`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(
         2,
         tenantErrors.code,

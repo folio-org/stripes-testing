@@ -170,7 +170,7 @@ describe('Inventory', () => {
 
     it(
       'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C400616'] },
+      { tags: ['criticalPath', 'spitfire', 'C400616', 'eurekaPhase1'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
@@ -241,7 +241,7 @@ describe('Inventory', () => {
 
     it(
       'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C414977'] },
+      { tags: ['criticalPath', 'spitfire', 'C414977', 'eurekaPhase1'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,

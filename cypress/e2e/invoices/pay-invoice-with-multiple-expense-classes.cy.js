@@ -37,7 +37,7 @@ describe('Invoices', () => {
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
-
+    cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -109,7 +109,7 @@ describe('Invoices', () => {
 
   it(
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);

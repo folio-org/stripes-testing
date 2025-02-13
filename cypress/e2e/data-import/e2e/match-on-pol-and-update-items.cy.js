@@ -52,6 +52,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -206,6 +207,8 @@ describe('Data Import', () => {
               });
               ServicePoints.getViaApi().then((servicePoint) => {
                 servicePointId = servicePoint[0].id;
+
+                UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
                 NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
                   (res) => {
                     location = res;
@@ -353,6 +356,7 @@ describe('Data Import', () => {
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
             Orders.resetFilters();
+            Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);
             Orders.checkIsOrderCreated(secondOrderNumber);
             // open the second PO
             openOrder(secondOrderNumber);

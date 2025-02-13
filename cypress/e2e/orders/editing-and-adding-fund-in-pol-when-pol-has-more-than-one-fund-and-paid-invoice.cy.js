@@ -79,6 +79,7 @@ describe('Orders', () => {
           Funds.addBudget(allocatedQuantity);
         });
 
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
@@ -164,7 +165,7 @@ describe('Orders', () => {
 
   it(
     'C376957 Editing and adding fund distribution in PO line when PO line has more than one fund distributions and related Paid invoice exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

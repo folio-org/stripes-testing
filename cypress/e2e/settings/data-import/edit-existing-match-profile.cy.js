@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
+import { EXISTING_RECORD_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
@@ -8,6 +8,8 @@ import NewMatchProfile from '../../../support/fragments/settings/dataImport/matc
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -29,13 +31,17 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(matchProfile);
-
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password);
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          matchProfile,
+        );
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
 

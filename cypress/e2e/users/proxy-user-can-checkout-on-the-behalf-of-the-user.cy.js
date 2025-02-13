@@ -81,7 +81,7 @@ describe('Users', () => {
 
   it(
     'C433 Test that proxy user can checkout on the behalf of the user (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C433'] },
+    { tags: ['criticalPath', 'volaris', 'C433', 'eurekaPhase1'] },
     () => {
       CheckOutActions.checkOutUser(usersData.userProxy.barcode);
       CheckOutActions.chooseActingPatron(usersData.userSponsor.lastName);

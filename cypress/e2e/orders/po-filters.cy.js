@@ -38,6 +38,7 @@ describe('orders: Test PO filters', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
       cy.loginAsAdmin();
+      cy.getAdminToken();
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
@@ -74,7 +75,7 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C6718 Test the PO filters with open Order [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         filter.filterActions();
         Orders.checkSearchResults(orderNumber);

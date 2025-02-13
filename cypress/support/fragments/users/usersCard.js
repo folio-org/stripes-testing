@@ -18,8 +18,10 @@ import {
   Section,
   Selection,
   SelectionList,
+  Spinner,
   TextArea,
   TextField,
+  or,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -54,7 +56,13 @@ const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfine
 const createRequestButton = Button('Create request');
 const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
+const userRolesAccordion = rootSection.find(Accordion('User roles'));
+const userRolesEmptyText = 'No user roles found';
+const usersPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const profilePictureCard = Image({ alt: 'Profile picture' });
+const lastNameField = KeyValue('Last name');
+const firstNameField = KeyValue('First name');
+const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
 
 export default {
   errors,
@@ -438,7 +446,8 @@ export default {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: `users/${userId}`,
+        path: `${usersPath}/${userId}`,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
   },
@@ -577,6 +586,44 @@ export default {
     cy.expect(userInformationSection.exists());
   },
 
+  verifyUserPermissionsAccordion(isShown = false) {
+    // wait until accordions loaded
+    cy.wait(1000);
+    if (isShown) {
+      cy.expect(permissionAccordion.exists());
+      cy.expect(permissionAccordion.has({ open: false }));
+    } else cy.expect(permissionAccordion.absent());
+  },
+
+  verifyUserRolesCounter(expectedCount) {
+    cy.expect([
+      userRolesAccordion.find(Spinner()).absent(),
+      userRolesAccordion.has({ counter: expectedCount }),
+    ]);
+  },
+
+  clickUserRolesAccordion(isExpanded = true) {
+    cy.do(userRolesAccordion.clickHeader());
+    cy.expect(userRolesAccordion.has({ open: isExpanded }));
+  },
+
+  verifyUserRoleNames(roleNames) {
+    roleNames.forEach((roleName) => {
+      cy.expect(userRolesAccordion.find(HTML(roleName)).exists());
+    });
+  },
+
+  verifyUserRoleNamesOrdered(roleNames) {
+    roleNames.forEach((roleName, index) => {
+      cy.expect(userRolesAccordion.find(ListItem(including(roleName), { index })).exists());
+    });
+  },
+
+  verifyUserRolesAccordionEmpty() {
+    cy.wait(2000);
+    cy.expect(userRolesAccordion.find(HTML(userRolesEmptyText)).exists());
+  },
+
   verifyProfilePictureIsPresent(url) {
     cy.expect(rootSection.find(profilePictureCard).has({ src: including(url) }));
   },
@@ -591,5 +638,28 @@ export default {
 
   verifyProfilePictureIsAbsent() {
     cy.expect(profilePictureCard.absent());
+  },
+
+  verifyUserLastFirstNameInCard(lastName, firstName = '-') {
+    cy.expect([
+      rootSection.find(lastNameField).has({ value: lastName }),
+      rootSection.find(firstNameField).has({ value: firstName }),
+    ]);
+  },
+
+  checkSelectedRolesAffiliation(affiliation) {
+    cy.expect(
+      rolesAffiliationSelect.has({ singleValue: or(affiliation, `${affiliation} (Primary)`) }),
+    );
+  },
+
+  selectRolesAffiliation(affiliation) {
+    cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
+    this.checkSelectedRolesAffiliation(affiliation);
+  },
+
+  close() {
+    cy.do(rootSection.find(Button({ icon: 'times' })).click());
+    cy.expect(rootSection.absent());
   },
 };

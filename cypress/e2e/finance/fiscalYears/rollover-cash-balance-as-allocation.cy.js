@@ -215,7 +215,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C376601 Rollover cash balance as allocation ("Allocation" option is active) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

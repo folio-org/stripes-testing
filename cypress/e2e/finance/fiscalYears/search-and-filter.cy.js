@@ -27,7 +27,7 @@ describe('ui-finance: Fiscal Year', () => {
 
   it(
     'C4058 Test the search and filter options for fiscal years (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Search Fiscal Year
       FinanceHelp.searchByAll(defaultFiscalYear.name);

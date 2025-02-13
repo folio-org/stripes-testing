@@ -72,7 +72,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Content);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.error245Required);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.closeCallout(testData.error245Required);
           QuickMarcEditor.updateExistingField(testData.tag245, '');
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.error245Required);

@@ -45,7 +45,7 @@ describe('Consortia', () => {
         });
       cy.reload();
       ConsortiumManager.switchActiveAffiliationExists();
-      ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
     },
   );

@@ -80,7 +80,7 @@ describe('Orders', () => {
 
     it(
       'C374122 Editing title in "Receiving" app (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Search for selected title from Preconditions item #2
         Receivings.searchByParameter({

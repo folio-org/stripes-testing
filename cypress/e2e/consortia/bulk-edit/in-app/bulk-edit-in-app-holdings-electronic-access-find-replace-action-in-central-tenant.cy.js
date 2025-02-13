@@ -312,11 +312,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('URL Relationship');
           BulkEditActions.selectSecondAction('Find (full field search)');
           BulkEditActions.checkTypeExists(localUrlRelationshipNameWithAffiliation);
@@ -324,7 +324,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.selectSecondAction('Replace with');
           BulkEditActions.checkTypeNotExist(sharedUrlRelationship.payload.name, 0, 1);
           BulkEditActions.selectFromUnchangedSelect(localUrlRelationshipNameWithAffiliation);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteReplaceWith('URI', 'HTTPS', 'https', 1);
@@ -332,19 +332,19 @@ describe('Bulk-edit', () => {
           const options = ['Remove', 'Replace with'];
 
           BulkEditActions.verifyTheSecondActionOptions(options);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteReplaceWith('Link text', 'Te;st:', 'te;st:', 2);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.noteReplaceWith('Materials specified', 'Test', 'test', 3);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(4);
           BulkEditActions.noteReplaceWith('URL public note', 'URL', 'url', 4);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

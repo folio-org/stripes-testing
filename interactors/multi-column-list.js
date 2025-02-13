@@ -23,6 +23,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     // indexRow filter is a workaround for folio parts where we have data-row-inner=true (for some reason)
     indexRow: (el) => el.parentElement.getAttribute('data-row-index'),
     ariaRowIndex: (el) => +el.getAttribute('aria-rowindex'),
+    checkboxCount: (el) => [...el.querySelectorAll('input[type=checkbox]')].length,
     innerHTML: (el) => el.innerHTML,
     ariaLabel: (el) => el.getAttribute('aria-label'),
   });
@@ -81,6 +82,7 @@ export const MultiColumnList = HTML.extend('multi column list')
   .filters({
     columns,
     id: (el) => el.querySelector('[role=grid]').id,
+    dataTestId: (el) => el.parentElement.getAttribute('data-testid'),
     columnCount: (el) => columns(el).length,
     rowCount: (el) => el.querySelectorAll('[class*=mclRow-]').length,
     height: (el) => el.offsetHeight,

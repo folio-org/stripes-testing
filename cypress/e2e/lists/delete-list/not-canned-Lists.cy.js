@@ -52,7 +52,7 @@ describe('lists', () => {
 
     it(
       'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C411772'] },
+      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C411772', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

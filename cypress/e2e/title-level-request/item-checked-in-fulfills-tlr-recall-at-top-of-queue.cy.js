@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
@@ -15,6 +15,7 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
@@ -173,6 +174,7 @@ describe('Request queue. TLR', () => {
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       InventoryInstance.checkNewRequestAtNewPane();
+      NewRequest.waitForInstanceOrItemSpinnerToDisappear();
       NewRequest.enterRequesterInfoWithRequestType(
         {
           requesterBarcode: users.mainUser.barcode,
@@ -183,13 +185,13 @@ describe('Request queue. TLR', () => {
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
 
-      cy.visit(TopMenu.checkInPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.itemBarcodes[1]);
       ConfirmItemInModal.confirmInTransitModal();
       CheckInActions.endCheckInSessionAndCheckDetailsOfCheckInAreCleared();
 
-      cy.visit(TopMenu.requestsPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.waitLoading();
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);

@@ -51,6 +51,7 @@ describe('Orders', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -82,7 +83,7 @@ describe('Orders', () => {
 
   it(
     'C8357 Create purchase order in foreign currency (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
