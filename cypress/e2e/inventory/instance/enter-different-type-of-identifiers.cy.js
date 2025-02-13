@@ -65,6 +65,7 @@ describe('Inventory', () => {
           searchAndOpenInstance('Title (all)', instanceTitle);
           InventoryInstance.editInstance();
           InstanceRecordEdit.addIdentifier(element.identifier, resourceIdentifier, element.line);
+          InventoryInstance.waitLoading();
           searchAndOpenInstance(
             'Keyword (title, contributor, identifier, HRID, UUID)',
             resourceIdentifier,

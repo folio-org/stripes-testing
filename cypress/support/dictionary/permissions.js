@@ -132,7 +132,7 @@ export default {
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
-    internal: 'browse.call-numbers.instances.collection.get',
+    internal: 'ui-inventory.call-number-browse.view',
     gui: 'Call number browse: View permissions ',
   },
   uiSubjectBrowse: {
