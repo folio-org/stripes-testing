@@ -608,6 +608,11 @@ export default {
     cy.expect(Button({ id: 'move-instance' }).absent());
   },
 
+  verifyMoveHoldingsItemsToAnotherInstanceOptionExists() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'move-instance' }).exists());
+  },
+
   verifyInstanceHeader(header) {
     cy.get('#paneHeaderpane-instancedetails')
       .find('[class*="paneTitleLabel-"]')
