@@ -324,11 +324,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedHoldingNoteType.payload.name,
@@ -338,15 +338,15 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.noteRemoveAll(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteRemoveAll(centralSharedHoldingNoteType.payload.name, 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteRemoveAll(collegeHoldingNoteTypeNameWithAffiliation, 2);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

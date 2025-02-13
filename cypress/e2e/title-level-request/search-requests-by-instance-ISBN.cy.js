@@ -111,7 +111,8 @@ describe('Requests', () => {
 
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
 
-            cy.login(userData.username, userData.password);
+            cy.login(userData.username, userData.password,
+              { path: TopMenu.requestsPath, waiter: Requests.waitLoading });
           });
       });
   });
@@ -142,7 +143,6 @@ describe('Requests', () => {
     'C343043 Search for Requests by Instance ISBN (Normalized) (vega)',
     { tags: ['criticalPath', 'vega', 'C343043'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(ISBN);
       Requests.verifyRequestIsPresent(itemData.instanceTitle);

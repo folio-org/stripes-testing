@@ -101,15 +101,19 @@ describe('Orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C347860 Check duplicate POL (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.duplicateOrder();
-    InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
-    Orders.checkDuplicatedOrder(
-      organization.name,
-      `${user.username}, testPermFirst testMiddleName`,
-    );
-    Orders.deleteOrderViaActions();
-  });
+  it(
+    'C347860 Check duplicate POL (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.duplicateOrder();
+      InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
+      Orders.checkDuplicatedOrder(
+        organization.name,
+        `${user.username}, testPermFirst testMiddleName`,
+      );
+      Orders.deleteOrderViaActions();
+    },
+  );
 });

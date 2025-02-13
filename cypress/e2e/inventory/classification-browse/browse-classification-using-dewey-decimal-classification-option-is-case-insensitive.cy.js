@@ -1,6 +1,7 @@
 import {
   DEFAULT_JOB_PROFILE_NAMES,
   CLASSIFICATION_IDENTIFIER_TYPES,
+  BROWSE_CLASSIFICATION_OPTIONS,
 } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -18,7 +19,7 @@ import BrowseClassifications from '../../../support/fragments/inventory/search/b
 describe('Inventory', () => {
   describe('Instance classification browse', () => {
     const testData = {
-      classificationOption: 'Library of Congress classification',
+      classificationOption: BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
       searchQueries: ['M1 33A', 'm1 33a'],
       searchResults: ['m1 33a', 'M1 33A'],
       instanceTitles: [

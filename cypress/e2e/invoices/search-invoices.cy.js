@@ -70,6 +70,7 @@ describe('Invoices', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -125,6 +126,7 @@ describe('Invoices', () => {
     Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
@@ -132,7 +134,7 @@ describe('Invoices', () => {
 
   it(
     'C6723 Test the invoice searches (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByParameter('All', invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

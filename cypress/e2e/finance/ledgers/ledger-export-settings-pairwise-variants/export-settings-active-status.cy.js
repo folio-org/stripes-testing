@@ -66,6 +66,7 @@ describe('Finance: Ledgers', () => {
         });
       });
 
+      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -145,7 +146,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C350974 Ledger export settings: last year Fund with budget, Electronic (Active) Class, Export settings- Active status (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

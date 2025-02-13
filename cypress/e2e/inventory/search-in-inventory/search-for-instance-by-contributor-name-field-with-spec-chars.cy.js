@@ -42,17 +42,16 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFileViaApi(
-          testData.marcFile.marc,
-          testData.marcFile.fileName,
-          testData.marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
-          });
+      DataImport.uploadFileViaApi(
+        testData.marcFile.marc,
+        testData.marcFile.fileName,
+        testData.marcFile.jobProfileToRun,
+      ).then((response) => {
+        response.forEach((record) => {
+          testData.instanceIDs.push(record[testData.marcFile.propertyName].id);
         });
       });
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
         cy.login(testData.user.username, testData.user.password, {
@@ -72,7 +71,7 @@ describe('Inventory', () => {
 
     it(
       'C368043 Search for "Instance" by "Contributor name" field with special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C368043'] },
+      { tags: ['criticalPath', 'spitfire', 'C368043', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);

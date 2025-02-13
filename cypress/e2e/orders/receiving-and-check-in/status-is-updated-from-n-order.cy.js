@@ -68,7 +68,7 @@ describe('Orders', () => {
 
     it(
       'C737 Validate when receiving a piece that the item status is updated from "On order" (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

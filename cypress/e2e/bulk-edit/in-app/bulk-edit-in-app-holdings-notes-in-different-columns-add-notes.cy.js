@@ -157,7 +157,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         verifyFileContent(matchedRecordsFileName, initialValueSets);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ACTION_NOTE);
@@ -166,7 +166,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.add);
         BulkEditActions.fillInSecondTextArea(notesText.actionNoteNew);
         BulkEditActions.verifyValueInSecondTextArea(notesText.actionNoteNew);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(newNoteType, 1);
@@ -174,7 +174,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.add, 1);
         BulkEditActions.fillInSecondTextArea(notesText.newNoteText, 1);
         BulkEditActions.verifyValueInSecondTextArea(notesText.newNoteText, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureFormByRowExactMatch(

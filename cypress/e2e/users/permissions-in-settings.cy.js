@@ -97,7 +97,7 @@ describe('Users', () => {
 
   it(
     'C402341 Verify that display name for "Settings (Users): Can create, edit and remove manual charges" permission is correct (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C402341'] },
+    { tags: ['extendedPath', 'volaris', 'C402341', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.addPermissions(['Settings (Users): Can create, edit and remove manual charges']);

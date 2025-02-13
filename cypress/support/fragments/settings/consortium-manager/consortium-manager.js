@@ -8,7 +8,6 @@ import {
   including,
   HTML,
   Dropdown,
-  or,
 } from '../../../../../interactors';
 
 const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(
@@ -108,14 +107,10 @@ export default {
     cy.do(myProfileButton.click());
   },
 
-  checkCurrentTenantInTopMenu(tenantName, servicePointName = null) {
+  checkCurrentTenantInTopMenu(tenantName) {
     cy.expect(
       Dropdown({ id: 'profileDropdown' })
-        .find(
-          Button({
-            ariaLabel: or(`${tenantName}  profile`, `${tenantName} ${servicePointName} profile`),
-          }),
-        )
+        .find(HTML({ text: tenantName }))
         .exists(),
     );
   },

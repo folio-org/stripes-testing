@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
           permissions.bulkEditEdit.gui,
           permissions.bulkEditUpdateRecords.gui,
         ];
-        const csvDeletePermission = permissions.bulkEditCsvDelete.gui;
+        const csvDeletePermission = 'Bulk Edit: (CSV) Delete';
 
         UsersSearchPane.searchByKeywords(userWthViewEditPermissions.barcode);
         UsersSearchPane.openUser(userWthViewEditPermissions.userId);

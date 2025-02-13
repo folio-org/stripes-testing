@@ -803,7 +803,7 @@ export default {
     if (boolean) {
       cy.expect([
         AdvancedSearchRow({ index: row })
-          .find(Select({ label: 'Operator*' }))
+          .find(Select({ id: including('advanced-search-bool-') }))
           .has({ content: including(boolean) }),
       ]);
     }

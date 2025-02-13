@@ -164,7 +164,9 @@ export default {
             // TODO: can't see not complete package in response now
             // && specialPackage.attributes?.packageType !== 'Complete'
             // TODO: potencial issue with this package
-            !['123Library eBooks'].includes(specialPackage?.attributes?.name),
+            !['123Library eBooks', '19th Century Literature and Culture'].includes(
+              specialPackage?.attributes?.name,
+            ),
         )
         .map((customePackage) => ({ id: customePackage.id, name: customePackage.attributes.name }));
       cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
@@ -184,7 +186,9 @@ export default {
             specialPackage?.attributes?.name &&
             specialPackage.attributes?.packageType !== 'Complete' &&
             // TODO: potencial issue with this package
-            !['123Library eBooks'].includes(specialPackage?.attributes?.name),
+            !['123Library eBooks', '19th Century Literature and Culture'].includes(
+              specialPackage?.attributes?.name,
+            ),
         )
         .map((customePackage) => ({ id: customePackage.id, name: customePackage.attributes.name }));
       cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');

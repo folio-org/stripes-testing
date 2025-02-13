@@ -112,7 +112,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
         BulkEditActions.selectSecondAction('Set false');
         BulkEditActions.verifyCheckboxAbsent();
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '2 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',

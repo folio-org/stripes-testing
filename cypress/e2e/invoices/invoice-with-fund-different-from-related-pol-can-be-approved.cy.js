@@ -66,6 +66,7 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
         });
         cy.visit(TopMenu.fundPath);
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
@@ -136,7 +137,7 @@ describe('Invoices', () => {
 
   it(
     'C378895 An invoice with fund distribution different from related PO line can be approved (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

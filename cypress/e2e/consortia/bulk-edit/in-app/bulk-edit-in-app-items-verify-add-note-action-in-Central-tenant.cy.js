@@ -352,11 +352,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedItemNoteType.payload.name,
@@ -366,7 +366,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.addItemNoteAndVerify('Administrative note', administrativeNoteText);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.addItemNoteAndVerify(
@@ -376,7 +376,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyStaffOnlyCheckbox(false, 1);
           BulkEditActions.checkStaffOnlyCheckbox(1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.addItemNoteAndVerify(
@@ -384,18 +384,18 @@ describe('Bulk-edit', () => {
             localNoteText,
             2,
           );
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.addItemNoteAndVerify('Check in note', checkInNoteText, 3);
           BulkEditActions.verifyStaffOnlyCheckbox(false, 3);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(4);
           BulkEditActions.addItemNoteAndVerify('Check out note', checkOutNoteText, 4);
           BulkEditActions.verifyStaffOnlyCheckbox(false, 4);
           BulkEditActions.checkStaffOnlyCheckbox(4);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

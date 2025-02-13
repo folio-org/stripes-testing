@@ -20,6 +20,7 @@ const organizationsPath = '/organizations';
 const marcAuthorities = '/marc-authorities';
 const inventorySettingsFastAddPath = '/settings/inventory/fastAdd';
 const requestsPath = '/requests';
+const mediatedRequestsPath = '/requests-mediated/mediated-requests-activities';
 const usersPath = '/users';
 const checkInPath = '/checkin';
 const checkOutPath = '/checkout';
@@ -37,6 +38,8 @@ const listsPath = '/lists';
 const coursesPath = '/cr/courses';
 const consortiumManagerPath = '/consortia-settings';
 const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
+const settingsAuthorizationRoles = '/settings/authorization-roles';
+const settingsAuthorizationPolicies = '/settings/authorization-policies';
 const dashboardPath = '/dashboard';
 const ermComparisonPath = '/comparisons-erm';
 const ermUsagePath = '/eusage';
@@ -70,6 +73,7 @@ export default {
   marcAuthorities,
   inventorySettingsFastAddPath,
   requestsPath,
+  mediatedRequestsPath,
   usersPath,
   checkInPath,
   checkOutPath,
@@ -87,6 +91,8 @@ export default {
   consortiumManagerPath,
   coursesPath,
   settingsAuthorityFilesPath,
+  settingsAuthorizationRoles,
+  settingsAuthorizationPolicies,
   dashboardPath,
   ermComparisonPath,
   ermUsagePath,

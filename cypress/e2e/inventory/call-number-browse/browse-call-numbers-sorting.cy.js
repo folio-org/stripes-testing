@@ -55,7 +55,7 @@ describe('Inventory', () => {
 
     it.skip(
       'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C388549'] },
+      { tags: ['criticalPath', 'spitfire', 'C388549', 'eurekaPhase1'] },
       () => {
         const holdingsCallNumbers = ['FIC WAL', 'B WASHINGTON', 'FIC CLE', 'B JORDAN', 'SC BRU'];
         const itemsCallNumbers = ['SC VIV', 'FIC DAN', 'DVD F GON', 'B OBAMA', 'SC DAH'];

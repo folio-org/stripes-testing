@@ -17,6 +17,7 @@ export const APPLICATION_NAMES = {
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',
+  CONSORTIUM_MANAGER: 'Consortium manager',
 };
 
 export const REQUEST_METHOD = {
@@ -773,6 +774,18 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
 };
 
+export const AUTHORIZATION_POLICY_TYPES = {
+  USER: 'user',
+  ROLE: 'role',
+  TIME: 'time',
+};
+
+export const AUTHORIZATION_POLICY_SOURCES = {
+  USER: 'USER',
+  SYSTEM: 'SYSTEM',
+  CONSORTIUM: 'CONSORTIUM',
+};
+
 export const patronGroupNames = {
   STAFF: 'staff',
   FACULTY: 'faculty',
@@ -1016,6 +1029,21 @@ export const AUTHORITY_FILE_SOURCES = {
   FOLIO: 'FOLIO',
 };
 
+export const CAPABILITY_TYPES = {
+  DATA: 'Data',
+  SETTINGS: 'Settings',
+  PROCEDURAL: 'Procedural',
+};
+
+export const CAPABILITY_ACTIONS = {
+  VIEW: 'View',
+  CREATE: 'Create',
+  EDIT: 'Edit',
+  DELETE: 'Delete',
+  EXECUTE: 'Execute',
+  MANAGE: 'Manage',
+};
+
 export const INVENTORY_DEFAULT_SORT_OPTIONS = {
   TITLE: 'Title',
   CONTRIBUTORS: 'Contributors',
@@ -1046,4 +1074,18 @@ export const INSTANCE_DATE_TYPES = {
   SINGLE: 'Single known date/probable date',
   PUBLICATION: 'Publication date and copyright date',
   CONTINUING_UNKNOWN: 'Continuing resource status unknown',
+};
+
+export const AUTHORIZATION_ROLES_COLUMNS = {
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  UPDATED: 'Updated',
+  UPDATED_BY: 'Updated by',
+};
+
+export const AUTHORIZATION_POLICIES_COLUMNS = {
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  UPDATED: 'Updated',
+  UPDATED_BY: 'Updated by',
 };

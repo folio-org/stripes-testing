@@ -12,15 +12,19 @@ describe('ui-finance: Funds', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4052 Create a new fund (thunderjet)', { tags: ['smoke', 'thunderjet', 'shiftLeft'] }, () => {
-    Funds.createFundViaUI(fund).then((createdLedger) => {
-      createdLedgerId = createdLedger.id;
-      Funds.deleteFundViaActions();
-      // should not create fund without mandatory fields
-      const testFundName = `autotest_fund_${getRandomPostfix()}`;
-      Funds.tryToCreateFundWithoutMandatoryFields(testFundName);
-      FinanceHelp.searchByName(testFundName);
-      Funds.checkZeroSearchResultsHeader();
-    });
-  });
+  it(
+    'C4052 Create a new fund (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    () => {
+      Funds.createFundViaUI(fund).then((createdLedger) => {
+        createdLedgerId = createdLedger.id;
+        Funds.deleteFundViaActions();
+        // should not create fund without mandatory fields
+        const testFundName = `autotest_fund_${getRandomPostfix()}`;
+        Funds.tryToCreateFundWithoutMandatoryFields(testFundName);
+        FinanceHelp.searchByName(testFundName);
+        Funds.checkZeroSearchResultsHeader();
+      });
+    },
+  );
 });

@@ -58,7 +58,6 @@ describe('Invoices', () => {
     cy.getProductIdTypes({ query: 'name=="ISBN"' }).then((productIdType) => {
       orderLine.details.productIds[0].productIdType = productIdType.id;
     });
-
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
     });
@@ -76,7 +75,7 @@ describe('Invoices', () => {
 
   it(
     'C350389 Test purchase order line plugin search (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
       Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);

@@ -15,7 +15,7 @@ import {
   REQUEST_TYPES,
   ITEM_STATUS_NAMES,
 } from '../../constants';
-import getRandomPostfix from '../../utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../utils/stringTools';
 import users from '../users/users';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
@@ -138,6 +138,7 @@ export default {
     const userData = {
       active: true,
       barcode: uuid(),
+      username: `user${getRandomLetters(14)}`,
       personal: {
         preferredContactTypeId: '002',
         lastName: `test_user_${uuid()}`,

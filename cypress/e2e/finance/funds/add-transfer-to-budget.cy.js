@@ -71,7 +71,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);

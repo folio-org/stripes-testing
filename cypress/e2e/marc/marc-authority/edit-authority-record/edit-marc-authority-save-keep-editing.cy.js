@@ -188,6 +188,9 @@ describe('MARC', () => {
 
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(1500);
+          QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
 

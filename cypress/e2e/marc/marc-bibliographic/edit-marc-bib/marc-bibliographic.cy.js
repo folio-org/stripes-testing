@@ -153,7 +153,7 @@ describe('MARC', () => {
           () => {
             InventoryInstance.startOverlaySourceBibRecord();
             InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
-            InventoryActions.pressImportInModal();
+            InventoryActions.pressImportInModal(undefined, true);
 
             InventoryInstance.checkExpectedOCLCPresence();
             InventoryInstance.checkExpectedMARCSource();
@@ -177,7 +177,7 @@ describe('MARC', () => {
               testRecord.tag,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(2500);
             QuickMarcEditor.pressSaveAndClose();
             // Wait for the content to be loaded.
             cy.wait(4000);

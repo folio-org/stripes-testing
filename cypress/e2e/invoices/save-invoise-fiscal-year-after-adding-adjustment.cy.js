@@ -84,7 +84,7 @@ describe('Invoices', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
+        cy.getAdminToken();
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -187,7 +187,7 @@ describe('Invoices', () => {
 
   it(
     'C396373 Save invoice fiscal year after adding adjustment on invoice level if FY was undefined and pay against previous FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.createRolloverInvoiceWithAjustmentAndFund(
         invoice,

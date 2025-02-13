@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -20,6 +20,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -199,6 +200,7 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
         cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+        cy.wait(5000);
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
@@ -235,8 +237,10 @@ describe('Patron notices', () => {
           });
         });
 
-        cy.getToken(userData.username, userData.password);
-        cy.visit(TopMenu.requestsPath);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.requestsPath,
+          waiter: Requests.waitLoading,
+        });
         Requests.waitLoading();
         NewRequest.openNewRequestPane();
         NewRequest.waitLoadingNewRequestPage();
@@ -254,20 +258,22 @@ describe('Patron notices', () => {
         NewRequest.saveRequestAndClose();
         NewRequest.waitLoading();
 
-        cy.visit(TopMenu.circulationLogPath);
+        cy.wait(10000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         checkNoticeIsSent(
           searchResultsData(
             `Template: ${noticeTemplates.pageRequest.name}. Triggering event: Paging request.`,
           ),
         );
 
-        cy.visit(TopMenu.requestsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
         Requests.waitLoading();
         Requests.findCreatedRequest(itemData.title);
         Requests.selectFirstRequest(itemData.title);
         Requests.cancelRequest();
 
-        cy.visit(TopMenu.circulationLogPath);
+        cy.wait(10000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
         checkNoticeIsSent(
           searchResultsData(
             `Template: ${noticeTemplates.cancelRequest.name}. Triggering event: Request cancellation.`,

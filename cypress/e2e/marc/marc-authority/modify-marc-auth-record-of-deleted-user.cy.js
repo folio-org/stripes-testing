@@ -28,7 +28,7 @@ describe('MARC', () => {
     const marcFiles = [
       {
         marc: 'marcAuthFileForC358994.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        fileName: `C358994testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         numOfRecords: 1,
       },
@@ -37,6 +37,9 @@ describe('MARC', () => {
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C358994');
+
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -109,7 +112,6 @@ describe('MARC', () => {
         Users.successMessageAfterDeletion(
           `User ${user.userAProperties.username}, ${user.userCProperties.preferredFirstName} testMiddleName deleted successfully.`,
         );
-
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.selectTitle(testData.marcValue);

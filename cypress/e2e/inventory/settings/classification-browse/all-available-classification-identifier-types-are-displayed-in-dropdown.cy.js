@@ -52,7 +52,7 @@ describe('Inventory', () => {
 
       it(
         `C451642 All available "Classification identifier types" are displayed in "Classification identifier types" 
-            multi-select dropdown element of each "Classification browse" option on "Classification browse" pane (spitfire)`,
+            multi-select dropdown element of each "Classification browse" option on "Classification browse" pane. (spitfire)`,
         { tags: ['criticalPath', 'spitfire', 'C451642'] },
         () => {
           defaultClassificationBrowseNames.forEach((classificationBrowseName) => {
