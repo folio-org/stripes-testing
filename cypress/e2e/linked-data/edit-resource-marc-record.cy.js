@@ -17,13 +17,13 @@ import FileManager from '../../support/utils/fileManager';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import DataImport from '../../support/fragments/data_import/dataImport';
 
-describe('Citation: edit existing instance', () => {
+describe('Citation: MARC Authority integration', () => {
   const source = INSTANCE_SOURCE_NAMES.LDE;
 
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C627245 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C627245 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
@@ -101,8 +101,8 @@ describe('Citation: edit existing instance', () => {
     'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // prepare inventory instance created by LDE
-      SearchAndFilter.searchResourceByIsbn('*');
+      // search by title for work created in precondition
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       EditResource.duplicateResource();
       EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');

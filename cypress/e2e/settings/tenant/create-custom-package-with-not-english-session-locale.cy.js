@@ -64,7 +64,7 @@ describe('eHoldings', () => {
       EHoldingsSearch.switchToPackages('Paquetes');
       EHoldingsPackages.verifyCustomPackage(
         testData.dataForFirstPackage.packageName,
-        'Mixed Content',
+        'Contenido mixto',
         testData.dataForFirstPackage.calloutMessage,
       );
       EHoldingsPackageView.close();

@@ -179,10 +179,10 @@ export default {
     cy.expect(targetRow.find(classificationIdentifierTypesDropdown).has({ open: true }));
   },
 
-  checkClassificationIdentifierTypesDropdownOption(dropdownOption) {
+  checkClassificationIdentifierTypesDropdownOption(dropdownOption, isPresent = true) {
     cy.then(() => MultiSelectMenu().optionList()).then((options) => {
       cy.wrap(options).then(
-        (opts) => expect(opts.some((opt) => opt.includes(dropdownOption))).to.be.true,
+        (opts) => expect(opts.some((opt) => opt.includes(dropdownOption))).to.be[`${isPresent}`],
       );
     });
   },

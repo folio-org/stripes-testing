@@ -19,8 +19,8 @@ describe('ui-finance: Funds', () => {
     allocated: 100,
   };
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
+    cy.getAdminToken();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
@@ -43,6 +43,7 @@ describe('ui-finance: Funds', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.getAdminToken();
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
@@ -64,7 +65,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C15858 Add expense class to budget (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(defaultFund.name);

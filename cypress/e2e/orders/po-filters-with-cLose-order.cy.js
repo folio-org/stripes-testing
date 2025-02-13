@@ -32,6 +32,7 @@ describe('orders: Test PO filters', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
       cy.loginAsAdmin();
+      cy.getAdminToken();
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
@@ -78,7 +79,7 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C350906 Test the PO filters with closed Order [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
         filter.filterActions();
         Orders.checkSearchResultsWithClosedOrder(orderNumber);

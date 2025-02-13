@@ -14,13 +14,14 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import SelectInstanceModal from '../../../support/fragments/requests/selectInstanceModal';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
 const testData = {};
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
@@ -105,7 +106,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyInputLabel('Staff suppress');
         BulkEditActions.selectSecondAction('Set true');
         BulkEditActions.verifyCheckboxAbsent();
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '2 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',

@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -14,7 +16,6 @@ import HoldingsRecordView from '../../../../support/fragments/inventory/holdings
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import HoldingsNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/holdings/holdingsNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
@@ -51,15 +52,14 @@ const collegeHoldingNoteType = {
 };
 const collegeHoldingNoteTypeNameWithAffiliation = `${collegeHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const getReasonForError = (itemId, tenantName) => {
-  return `${itemId} cannot be updated because the record is associated with ${tenantName} and note type is not associated with this tenant.`;
-};
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${holdingUUIDsFileName}`;
-const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName, true);
+const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
+  holdingUUIDsFileName,
+  true,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -324,11 +324,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedHoldingNoteType.payload.name,
@@ -338,15 +338,15 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.noteRemoveAll(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteRemoveAll(centralSharedHoldingNoteType.payload.name, 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteRemoveAll(collegeHoldingNoteTypeNameWithAffiliation, 2);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
@@ -431,7 +431,7 @@ describe('Bulk-edit', () => {
           universityHoldingIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               id,
-              getReasonForError(id, Affiliations.University),
+              getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type'),
             );
           });
 
@@ -459,7 +459,7 @@ describe('Bulk-edit', () => {
 
           universityHoldingIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForError(id, Affiliations.University)}`,
+              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 

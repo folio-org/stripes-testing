@@ -803,7 +803,7 @@ export default {
     if (boolean) {
       cy.expect([
         AdvancedSearchRow({ index: row })
-          .find(Select({ label: 'Operator*' }))
+          .find(Select({ id: including('advanced-search-bool-') }))
           .has({ content: including(boolean) }),
       ]);
     }
@@ -1657,6 +1657,14 @@ export default {
           resolve(createdMarcAuthorityId);
         });
       });
+    });
+  },
+
+  setAuthoritySourceFileActivityViaAPI(sourceFileName, isActive = true) {
+    cy.getAuthoritySourceFileDataViaAPI(sourceFileName).then(({ id, _version, selectable }) => {
+      if (isActive !== selectable) {
+        cy.setActiveAuthoritySourceFileViaAPI(id, _version, isActive);
+      }
     });
   },
 };

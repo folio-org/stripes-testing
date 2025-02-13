@@ -102,7 +102,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399083 Verify that selected settings remain for "Locations" (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C399083'] },
+    { tags: ['extendedPath', 'firebird', 'C399083', 'eurekaPhase1'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

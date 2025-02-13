@@ -29,7 +29,7 @@ describe('Invoices', () => {
 
   it(
     'C2326 Manually create invoice line (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);

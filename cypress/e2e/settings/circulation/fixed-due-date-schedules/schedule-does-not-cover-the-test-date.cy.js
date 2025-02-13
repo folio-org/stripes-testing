@@ -80,6 +80,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         Users.createViaApi({
           active: true,
           barcode: USER_BARCODE,
+          username: `username_${getRandomPostfix()}`,
           personal: {
             preferredContactTypeId: '002',
             lastName: `Test user ${getRandomPostfix()}`,

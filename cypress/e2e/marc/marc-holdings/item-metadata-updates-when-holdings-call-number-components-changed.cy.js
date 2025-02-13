@@ -99,27 +99,27 @@ describe('MARC', () => {
         });
       });
       cy.logout();
-
-      cy.createTempUser([
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-        Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-
-        ItemRecordNew.createViaApi({
-          holdingsId: testData.holdingsId,
-          itemBarcode: testData.itemBarcode,
-          materialTypeId: testData.materialTypeId,
-          permanentLoanTypeId: testData.loanTypeId,
-        }).then((res) => {
-          testData.createdItemData = res;
+      cy.getAdminToken().then(() => {
+        cy.createTempUser([
+          Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+          Permissions.inventoryAll.gui,
+        ]).then((userProperties) => {
+          testData.user = userProperties;
+          ItemRecordNew.createViaApi({
+            holdingsId: testData.holdingsId,
+            itemBarcode: testData.itemBarcode,
+            materialTypeId: testData.materialTypeId,
+            permanentLoanTypeId: testData.loanTypeId,
+          }).then((res) => {
+            testData.createdItemData = res;
+          });
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+          InventoryInstances.selectInstance();
         });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-        InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-        InventoryInstances.selectInstance();
       });
     });
 

@@ -149,7 +149,7 @@ describe('Data Import', () => {
         }).location;
         Locations.createViaApi(collegeLocationData).then((location) => {
           testData.collegeLocation = location;
-          InventoryHoldings.getHoldingSources({ query: '(name=="MARK")' }).then(
+          InventoryHoldings.getHoldingSources({ query: '(name=="MARC")' }).then(
             (holdingSources) => {
               InventoryHoldings.createHoldingRecordViaApi({
                 instanceId: testData.sharedInstanceId,

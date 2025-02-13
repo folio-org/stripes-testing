@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -20,7 +21,7 @@ const item = {
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -101,7 +102,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.fillPermanentLoanType('Selected');
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         BulkEditActions.confirmChanges();
         BulkEditActions.clickKeepEditingBtn();

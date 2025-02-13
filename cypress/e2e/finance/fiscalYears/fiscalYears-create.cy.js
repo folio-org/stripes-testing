@@ -14,7 +14,7 @@ describe('ui-finance: Fiscal Year', () => {
 
   it(
     'C4051 Create a new fiscal year (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1', 'shiftLeft'] },
     () => {
       const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
       FiscalYears.createDefaultFiscalYear(defaultFiscalYear);

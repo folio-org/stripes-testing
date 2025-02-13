@@ -47,7 +47,7 @@ describe('MARC', () => {
           },
           {
             rowIndex: 87,
-            value: 'C388535 Robinson & Associates, Inc.',
+            value: 'C388535 Robinson and Associates, Inc.',
             tag: 710,
             boxFourth: '$a C388535 Robinson & Associates, Inc.',
             boxFifth: '',
@@ -192,8 +192,10 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(createdRecordsIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();

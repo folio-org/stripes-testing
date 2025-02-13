@@ -26,6 +26,7 @@ export const messages = {
 };
 
 export const settingsItems = {
+  authorizationRoles: 'Authorization roles',
   circulation: 'Circulation',
   dataExport: 'Data export',
   dataImport: 'Data import',

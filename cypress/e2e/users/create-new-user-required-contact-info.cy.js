@@ -39,7 +39,7 @@ describe('Users', () => {
 
   it(
     'C421 Create: new user; required: contact info, email, phone, external system ID, address (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C421'] },
+    { tags: ['criticalPath', 'volaris', 'C421', 'eurekaPhase1'] },
     () => {
       Users.createViaUi(user).then((id) => {
         user.id = id;

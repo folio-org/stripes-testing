@@ -100,8 +100,9 @@ describe('Invoices', () => {
 
   it(
     'C350952 Allow editing of subscription dates and subscription info after an invoice is approved/paid (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      cy.getAdminToken();
       Approvals.setApprovePayValue(false);
 
       // Search invoice in the table
@@ -155,6 +156,7 @@ describe('Invoices', () => {
       InvoiceLineEditForm.clickSaveButton();
 
       // Activate "Approve and pay in one click"
+      cy.getAdminToken();
       Approvals.setApprovePayValue(true);
 
       // Go back to "Invoices" app and open "Invoice #2" details pane

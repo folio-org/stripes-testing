@@ -53,7 +53,7 @@ describe('ui-finance: Groups', () => {
           firstBudget.fundId = firstFundResponse.fund.id;
           Budgets.createViaApi(firstBudget);
         });
-
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
           secondBudget.fundId = secondFundResponse.fund.id;
@@ -94,7 +94,7 @@ describe('ui-finance: Groups', () => {
 
   it(
     'C347878 Add multiple funds to a group with plugin  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultGroup.name);
       Groups.selectGroup(defaultGroup.name);

@@ -5,7 +5,7 @@ describe('Users', () => {
   describe('Custom Fields (Users)', () => {
     it(
       'C409509 Verify that labels are present on the input box of log in (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C409509'] },
+      { tags: ['extendedPath', 'volaris', 'C409509', 'eurekaPhase1'] },
       () => {
         cy.visit('/');
         Login.openForgotPassword();

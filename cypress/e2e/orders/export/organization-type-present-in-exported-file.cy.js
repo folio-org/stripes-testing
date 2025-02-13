@@ -69,7 +69,7 @@ describe('Orders', () => {
 
     it(
       'C353621 "Organization type" is present in exported .csv order (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Search for the order from Preconditions
         Orders.searchByParameter('PO number', testData.order.poNumber);

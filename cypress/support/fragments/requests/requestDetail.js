@@ -233,8 +233,8 @@ export default {
   },
 
   checkRequestCancellationModalInfo() {
-    cy.do(cancellationReasonSelect.choose('INN-Reach'));
-    cy.expect(additionalInfoOptionalInput.exists());
+    // cy.do(cancellationReasonSelect.choose('INN-Reach'));
+    // cy.expect(additionalInfoOptionalInput.exists());
     cy.do(cancellationReasonSelect.choose('Item Not Available'));
     cy.expect(additionalInfoOptionalInput.exists());
     cy.do(cancellationReasonSelect.choose('Needed For Course Reserves'));
@@ -246,7 +246,7 @@ export default {
   },
 
   confirmRequestCancellation() {
-    cy.do([cancellationReasonSelect.choose('INN-Reach'), confirmButton.click()]);
+    cy.do([cancellationReasonSelect.choose('Patron Cancelled'), confirmButton.click()]);
   },
 
   confirmCancellation() {

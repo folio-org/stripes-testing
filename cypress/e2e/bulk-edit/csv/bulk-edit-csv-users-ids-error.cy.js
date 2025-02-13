@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyResultColumnTitles('Email');
 
         BulkEditSearchPane.verifyErrorLabel(1);
-        BulkEditSearchPane.verifyShowWarningsCheckbox();
+        BulkEditSearchPane.verifyShowWarningsCheckboxDisabled();
       },
     );
   });

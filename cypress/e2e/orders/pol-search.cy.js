@@ -86,6 +86,7 @@ describe('orders: Test Po line search', () => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.loginAsAdmin();
+    cy.getAdminToken();
     cy.createOrderApi(order).then(() => {
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
         orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
@@ -116,7 +117,7 @@ describe('orders: Test Po line search', () => {
   // TODO: add extra TC in testrail about it
   it(
     'C6719 Test the POL searches(Only test POL name search) (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO line number', orderLineNumber);
       Orders.checkOrderlineSearchResults(orderLineNumber);

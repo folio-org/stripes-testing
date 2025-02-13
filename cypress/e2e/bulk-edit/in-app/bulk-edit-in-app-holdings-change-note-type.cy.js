@@ -57,9 +57,9 @@ const electronicBookplateActionOptions = [
   'Remove mark as staff only',
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -164,11 +164,11 @@ describe('bulk-edit', () => {
         );
 
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyCancelButtonDisabled(false);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
 
         BulkEditActions.changeNoteType(
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
@@ -179,7 +179,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyTheOptionsForChangingNoteType(
           optionsForChangingNoteType.administrative,
         );
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow();
@@ -195,7 +195,7 @@ describe('bulk-edit', () => {
           1,
         );
 
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(

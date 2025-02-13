@@ -93,7 +93,7 @@ describe('bulk-edit', () => {
         const oldEmailDomain = 'test@folio.org';
         const newEmailDomain = 'test@example.org)';
         BulkEditActions.replaceEmail(oldEmailDomain, newEmailDomain);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         BulkEditActions.confirmChanges();
         // Click "Keep editing" button on  the "Are you sure?" form

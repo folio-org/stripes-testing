@@ -4,7 +4,6 @@ import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files'
 import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import DateTools from '../../../support/utils/dateTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -29,11 +28,10 @@ const filterOtions = {
   nonExisting: 'non-existing',
   with: 'with',
 };
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -117,7 +115,7 @@ describe('bulk-edit', () => {
           instance.title,
         );
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifySelectOptionsInstanceSortedAlphabetically();
@@ -167,7 +165,7 @@ describe('bulk-edit', () => {
         BulkEditActions.fillInSecondTextArea(noteText);
         BulkEditActions.verifyValueInSecondTextArea(noteText);
         BulkEditActions.verifySecondActionSelected(actionToSelect);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(

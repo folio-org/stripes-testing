@@ -74,6 +74,7 @@ describe('Invoices', () => {
     });
 
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
+    cy.getAdminToken();
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -216,7 +217,7 @@ describe('Invoices', () => {
 
   it(
     'C388564 Approve and pay invoice created in current FY for previous FY without related order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.createRolloverInvoiceWithFY(invoice, organization.name, firstFiscalYear);
       Invoices.createInvoiceLineWithFund(invoiceLine, defaultFund);
@@ -229,6 +230,7 @@ describe('Invoices', () => {
       organization.status = 'Active';
       Organizations.editOrganization();
       Organizations.changeOrganizationStatus(organization.status);
+      Organizations.waitLoading();
 
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);

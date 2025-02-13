@@ -59,7 +59,7 @@ describe('Invoices', () => {
 
   it(
     'C163930 Test acquisition unit restrictions for Invoice records (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

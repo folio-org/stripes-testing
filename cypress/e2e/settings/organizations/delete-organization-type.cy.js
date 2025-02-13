@@ -27,7 +27,7 @@ describe('Organizations: Settings (Organizations)', () => {
 
   it(
     'C367990 Delete organization type (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       SettingsOrganizations.selectTypes();
       SettingsOrganizations.deleteType(type);

@@ -31,7 +31,7 @@ export default {
     cy.wait(500);
     cy.do(MultiSelect({ id: 'itemStatus-multiselect' }).toggle());
     cy.wait(500);
-    cy.do(MultiSelectOption(including(statusName)).click());
+    cy.do(MultiSelectOption(including(`${statusName}(`)).click());
     cy.wait(1500);
   },
 

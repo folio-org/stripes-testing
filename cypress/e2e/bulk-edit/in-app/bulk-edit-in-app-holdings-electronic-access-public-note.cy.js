@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -20,9 +21,9 @@ const item = {
 const publicNote = 'publicNote';
 const newPublicNote = 'new publicNote';
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -99,16 +100,16 @@ describe('bulk-edit', () => {
         BulkEditActions.deleteRow(1);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.fillInSecondTextArea(publicNote);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.findValue('URL public note');
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Replace with');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillInFirstTextArea(publicNote);
         BulkEditActions.fillInSecondTextArea(newPublicNote);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Remove');
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(

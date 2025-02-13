@@ -342,6 +342,7 @@ export default {
       this.chooseCategory(template.category.name);
     }
 
+    cy.wait(2000);
     this.checkPreview(template.previewText);
     cy.wait(2000);
     this.saveAndClose();

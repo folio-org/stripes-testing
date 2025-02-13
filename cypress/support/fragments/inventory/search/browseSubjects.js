@@ -251,24 +251,42 @@ export default {
     );
   },
 
-  waitForSubjectsToAppear(subjectName) {
+  waitForSubjectToAppear(subjectName, isPresent = true, isLinked = false) {
+    const hasLinkedItem = (items) => {
+      return items.some((item) => {
+        return item.authorityId && item.authorityId !== '';
+      });
+    };
     return cy.recurse(
       () => {
         return cy.okapiRequest({
           method: 'GET',
           path: 'browse/subjects/instances',
           searchParams: {
-            query: `(value>="${subjectName}")`,
+            query: `(value>="${subjectName.replace(/"/g, '""')}")`,
           },
           isDefaultSearchParamsRequired: false,
         });
       },
       (response) => {
-        return response.body.items.filter((item) => item.value === subjectName).length > 0;
+        const foundSubjects = response.body.items.filter((item) => {
+          return item.value === subjectName;
+        });
+
+        if (isPresent) {
+          if (isLinked) {
+            return hasLinkedItem(foundSubjects);
+          } else {
+            return foundSubjects.length > 0 && !hasLinkedItem(foundSubjects);
+          }
+        } else {
+          return foundSubjects.length === 0;
+        }
       },
       {
-        limit: 15,
+        limit: 12,
         delay: 5000,
+        timeout: 60000,
       },
     );
   },

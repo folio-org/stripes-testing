@@ -1,6 +1,8 @@
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditSearchPane, {
+  getReasonForTenantNotAssociatedError,
+} from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -16,7 +18,6 @@ import InventoryItems from '../../../../support/fragments/inventory/item/invento
 import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import ItemNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
@@ -63,15 +64,14 @@ const collegeItemNoteType = {
 };
 const collegeItemNoteTypeNameWithAffiliation = `${collegeItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
-const getReasonForError = (itemId, tenantName) => {
-  return `${itemId} cannot be updated because the record is associated with ${tenantName} and note type is not associated with this tenant.`;
-};
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${itemUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${itemUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${itemUUIDsFileName}`;
-const errorsFromCommittingFileName = `${todayDate}-Committing-changes-Errors-${itemUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
+const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
+  itemUUIDsFileName,
+  true,
+);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -390,11 +390,11 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedItemNoteType.payload.name,
@@ -404,23 +404,23 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.ADMINISTRATIVE_NOTE);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.noteRemoveAll(centralSharedItemNoteType.payload.name, 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.CHECK_IN_NOTE, 2);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(3);
           BulkEditActions.noteRemoveAll(ITEM_NOTE_TYPES.CHECK_OUT_NOTE, 3);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(4);
           BulkEditActions.noteRemoveAll(collegeItemNoteTypeNameWithAffiliation, 4);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
@@ -477,13 +477,12 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 2);
-          BulkEditSearchPane.verifyNonMatchedResults();
+          BulkEditSearchPane.verifyErrorLabel(2);
 
           universityItemIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               id,
-              getReasonForError(id, Affiliations.University),
+              getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type'),
             );
           });
 
@@ -503,7 +502,7 @@ describe('Bulk-edit', () => {
 
           universityItemIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForError(id, Affiliations.University)}`,
+              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 

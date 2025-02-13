@@ -57,7 +57,7 @@ describe('Finance: Funds', () => {
         });
       });
     });
-
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -95,7 +95,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C374188 Available balance can NOT be made a negative number by PO when ledger "Enforce all budget encumbrance limits" option is active (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
         firstOrder.id = firstOrderResponse.id;

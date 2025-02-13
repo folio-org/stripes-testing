@@ -51,6 +51,8 @@ describe('MARC', () => {
           Logs.openFileDetails(fileName);
           Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventorySteps.addMarcHoldingRecord();
+          //  wait for holding record to be created
+          cy.wait(5000);
         });
       });
     });
@@ -147,6 +149,7 @@ describe('MARC', () => {
             calloutTypes.error,
           );
           QuickMarcEditor.pressCancel();
+          QuickMarcEditor.closeWithoutSavingInEditConformation();
           HoldingsRecordView.viewSource();
           InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
         });

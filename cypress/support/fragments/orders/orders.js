@@ -21,6 +21,7 @@ import {
   Section,
   Card,
   PaneContent,
+  Spinner,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -44,7 +45,7 @@ const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-const admin = 'administrator';
+const admin = 'ADMINISTRATOR, Diku_admin';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -78,7 +79,7 @@ export default {
     cy.do(searchButton.click());
   },
   clearSearchField() {
-    cy.get('#input-record-search').clear();
+    cy.get('#orders-filters-pane-content').find('#input-record-search').clear();
   },
   waitLoading() {
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
@@ -930,6 +931,10 @@ export default {
   checkExistingPOInOrdersList: (POL) => {
     cy.wait(4000);
     cy.expect(ordersResultsPane.find(MultiColumnListCell(POL)).exists());
+  },
+
+  waitOrdersListLoading: () => {
+    cy.expect([ordersResultsPane.find(Spinner()).absent(), ordersList.exists()]);
   },
 
   selectOrdersNavigation: () => {

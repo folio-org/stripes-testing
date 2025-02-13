@@ -43,7 +43,7 @@ describe('Finance: Ledgers', () => {
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
         });
       });
-
+      cy.getAdminToken();
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
       });
@@ -92,7 +92,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353213 Ledger export settings: last year Fund with NO budget, NO Classes, Export settings-Inactive status (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

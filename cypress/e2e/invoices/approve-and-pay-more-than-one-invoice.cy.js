@@ -74,6 +74,7 @@ describe('Invoices', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -151,7 +152,7 @@ describe('Invoices', () => {
 
   it(
     'C366537 Approve & pay more than one invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(firstInvoice.invoiceNumber);
       Invoices.selectInvoice(firstInvoice.invoiceNumber);

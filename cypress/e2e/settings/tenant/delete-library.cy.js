@@ -5,7 +5,7 @@ import Campuses from '../../../support/fragments/settings/tenant/location-setup/
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import interactorsTools from '../../../support/utils/interactorsTools';
@@ -77,7 +77,7 @@ describe('Settings: Tenant', () => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      TopMenuNavigation.navigateToApp('Settings');
+      cy.visit(TopMenu.settingsPath);
     });
   });
 
@@ -99,45 +99,49 @@ describe('Settings: Tenant', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C374195 Delete Library (thunderjet) (TaaS)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    TenantPane.goToTenantTab();
-    cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
-    TenantPane.selectTenant(TENANTS.LIBRARIES);
+  it(
+    'C374195 Delete Library (thunderjet) (TaaS)',
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      TenantPane.goToTenantTab();
+      cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
+      TenantPane.selectTenant(TENANTS.LIBRARIES);
 
-    // #1 Select Institution from Preconditions item #1 in "Institution" dropdown on "Campuses" pane
-    Libraries.selectOption('Institution', testData.institutions[0]);
-    // #2 Select Campus from Preconditions item #2 in "Campus" dropdown
-    Libraries.selectOption('Campus', testData.campuses[0]);
-    Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
+      // #1 Select Institution from Preconditions item #1 in "Institution" dropdown on "Campuses" pane
+      Libraries.selectOption('Institution', testData.institutions[0]);
+      // #2 Select Campus from Preconditions item #2 in "Campus" dropdown
+      Libraries.selectOption('Campus', testData.campuses[0]);
+      Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
 
-    // #3 Click "Delete" icon for **"Library A"** record
-    const DeleteModal = Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
-    DeleteModal.verifyModalView(`The library ${testData.libraries[0].name} will be deleted.`);
+      // #3 Click "Delete" icon for **"Library A"** record
+      const DeleteModal = Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
+      DeleteModal.verifyModalView(`The library ${testData.libraries[0].name} will be deleted.`);
 
-    // #4 Click "Cancel" button
-    DeleteModal.cancel();
-    Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
+      // #4 Click "Cancel" button
+      DeleteModal.cancel();
+      Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
 
-    // #5 - #6 Click "Delete" icon for **"Library A"** record one more time -> Click "Delete" button
-    Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
-    DeleteModal.confirm();
-    ExceptionModal.verifyExceptionMessage(
-      'This library cannot be deleted, as it is in use by one or more records.',
-    );
+      // #5 - #6 Click "Delete" icon for **"Library A"** record one more time -> Click "Delete" button
+      Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
+      DeleteModal.confirm();
+      ExceptionModal.verifyExceptionMessage(
+        'This library cannot be deleted, as it is in use by one or more records.',
+      );
 
-    // #7 Click "Okay" button
-    ExceptionModal.clickOkayButton();
+      // #7 Click "Okay" button
+      ExceptionModal.clickOkayButton();
 
-    // #8 - #9 Click "Delete" icon for **"Library B"** record -> Click "Delete" button
-    Libraries.clickDeleteBtn({ record: testData.libraries[1].name });
-    DeleteModal.confirm();
+      // #8 - #9 Click "Delete" icon for **"Library B"** record -> Click "Delete" button
+      Libraries.clickDeleteBtn({ record: testData.libraries[1].name });
+      DeleteModal.confirm();
 
-    // * Toast message "The library **"Library B"** was successfully deleted" appears
-    interactorsTools.checkCalloutMessage(
-      `The library ${testData.libraries[1].name} was successfully deleted`,
-    );
-    // * **"Library B"** record was deleted and NOT displaying in "Libraries" table
-    Libraries.checkRecordIsAbsent(testData.libraries[1].name);
-    testData.libraries.pop();
-  });
+      // * Toast message "The library **"Library B"** was successfully deleted" appears
+      interactorsTools.checkCalloutMessage(
+        `The library ${testData.libraries[1].name} was successfully deleted`,
+      );
+      // * **"Library B"** record was deleted and NOT displaying in "Libraries" table
+      Libraries.checkRecordIsAbsent(testData.libraries[1].name);
+      testData.libraries.pop();
+    },
+  );
 });

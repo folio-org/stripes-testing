@@ -214,6 +214,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            BrowseSubjects.waitForSubjectToAppear(authority.titleWithLinkIcon, true, true);
             BrowseSubjects.browse(authority.titleWithoutLinkIcon);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(authority.titleWithLinkIcon);
             BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(

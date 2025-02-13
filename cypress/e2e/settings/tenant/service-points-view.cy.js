@@ -11,8 +11,8 @@ import LocationEditForm from '../../../support/fragments/settings/tenant/locatio
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
@@ -83,7 +83,7 @@ describe('Settings: Tenant', () => {
 
       cy.login(testData.user.username, testData.user.password);
       cy.wait(2000);
-      TopMenuNavigation.navigateToApp('Settings');
+      cy.visit(TopMenu.settingsPath);
       Locations.goToLocationsTab();
     });
   });
@@ -104,7 +104,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C359588 Verify view of services points on the view page (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C359588'] },
+    { tags: ['extendedPath', 'firebird', 'C359588', 'eurekaPhase1'] },
     () => {
       Locations.viewLocations(testData.locations[0]);
 

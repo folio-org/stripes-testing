@@ -12,19 +12,23 @@ import {
   PaneHeader,
   Section,
   Select,
+  Spinner,
   TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
-const defaultUserName = `AutotestUser_${getRandomPostfix()}`;
+const defaultUserName = `autotestuser_${getRandomPostfix()}`;
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });
 // As we checking number of search results value  but we dont have intaractor to get value so using xpath for this method
 const zeroResultsFoundText = '0 records found';
 const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pane-subtitle"]';
+
+const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
+const createUserPane = Pane('Create User');
 
 const defaultUser = {
   username: defaultUserName,
@@ -49,7 +53,7 @@ export default {
   createViaApi: (user) => cy
     .okapiRequest({
       method: 'POST',
-      path: 'users',
+      path: usersApiPath,
       body: user,
       isDefaultSearchParamsRequired: false,
     })
@@ -63,17 +67,21 @@ export default {
       preferredFirstName: response.body.personal.preferredFirstName,
     })),
 
-  deleteViaApi: (userId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `bl-users/by-id/${userId}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => cy
+    .okapiRequest({
+      method: 'DELETE',
+      path: `${fromKeycloak ? 'users-keycloak/users/' : 'bl-users/by-id/'}${userId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    })
+    .then(({ status }) => {
+      return status;
+    }),
 
   getUsers: (searchParams) => {
     return cy
       .okapiRequest({
-        path: 'users',
+        path: '/users',
         searchParams,
         isDefaultSearchParamsRequired: false,
       })
@@ -271,7 +279,7 @@ export default {
   saveCreatedUser() {
     cy.intercept('POST', '/users').as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
-    cy.wait('@createUser', { timeout: 100000 });
+    cy.wait('@createUser', { timeout: 130000 });
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -289,4 +297,17 @@ export default {
       path: `addresstypes/${addressTypeId}`,
     })
     .then(({ body }) => body),
+
+  checkCreateUserPaneOpened: (isOpened = true) => {
+    cy.expect(Spinner().absent());
+    if (isOpened) cy.expect([createUserPane.exists(), contactInformationAccordion.exists()]);
+    else cy.expect(createUserPane.absent());
+  },
+
+  clickNewButton: () => {
+    cy.do([
+      Dropdown('Actions').find(Button()).click(),
+      Button({ id: 'clickable-newuser' }).click(),
+    ]);
+  },
 };
