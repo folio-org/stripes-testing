@@ -57,3 +57,12 @@ Cypress.Commands.add('getAuthorizationPolicyByIdApi', (policyId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getAuthorizationPoliciesApi', () => {
+  cy.okapiRequest({
+    path: 'policies?limit=1000',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.policies;
+  });
+});
