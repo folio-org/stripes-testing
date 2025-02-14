@@ -77,7 +77,7 @@ describe('Eureka', () => {
 
     it(
       'C627437 [UIU-3301] Assigning roles to a user without Keycloak record when editing user while having ui-users.roles - Manage (eureka)',
-      { tags: ['smoke', 'eureka', 'C627437'] },
+      { tags: ['smoke', 'eureka', 'shiftLeft', 'C627437'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.userBody.username);
         UsersSearchPane.selectUserFromList(testData.userBody.username);

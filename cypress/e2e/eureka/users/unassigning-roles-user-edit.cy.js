@@ -110,7 +110,7 @@ describe('Eureka', () => {
 
     it(
       'C627439 [UIU-3301] Unassigning roles when editing user while having ui-users.roles - Manage (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627439'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C627439'] },
       () => {
         UsersCard.verifyUserRolesCounter('4');
         UserEdit.openEdit();
