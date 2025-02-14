@@ -41,6 +41,7 @@ describe('Eureka', () => {
       },
     ];
     let userData;
+
     before('Create users data', () => {
       cy.getAdminToken();
       cy.createTempUser([])
