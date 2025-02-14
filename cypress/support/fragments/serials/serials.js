@@ -1,11 +1,12 @@
 import { Button } from '../../../../interactors';
 
-const newSerialsButton = Button({ id: 'clickable-new-serial' });
+const serialsFiltersButton = Button({ id: 'clickable-nav-serials' });
+const pieceSetsFiltersButton = Button({ id: 'clickable-nav-piece-sets' });
 
 export default {
-  waitLoading: () => {
+  waitLoading() {
     // checking button xpath since UI for serials doesn't have unique IDs for sections
-    cy.expect(newSerialsButton.exists());
+    cy.expect([serialsFiltersButton.exists(), pieceSetsFiltersButton.exists()]);
     cy.xpath("//div[@id='serials-management-module-display']").should('exist');
   },
 };

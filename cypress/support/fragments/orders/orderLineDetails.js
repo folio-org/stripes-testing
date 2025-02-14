@@ -18,7 +18,7 @@ import TransactionDetails from '../finance/transactions/transactionDetails';
 import ExportDetails from '../exportManager/exportDetails';
 import InteractorsTools from '../../utils/interactorsTools';
 import VersionHistory from './orderVersionHistory';
-import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(

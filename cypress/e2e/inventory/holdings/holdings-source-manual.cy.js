@@ -56,7 +56,7 @@ describe('Inventory', () => {
 
     it(
       'C367932 Verify holdings source added holdings manually (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C367932'] },
+      { tags: ['extendedPath', 'firebird', 'C367932', 'eurekaPhase1'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);

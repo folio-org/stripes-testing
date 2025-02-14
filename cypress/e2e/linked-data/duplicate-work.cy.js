@@ -13,11 +13,11 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 
-describe('Citation: duplicate existing work', () => {
+describe('Citation: duplicate resource', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C451572 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C624234 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C624234 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
@@ -99,8 +99,8 @@ describe('Citation: duplicate existing work', () => {
     'C624234 [User journey] LDE - Duplicate existing work (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
-      // search by any title
-      SearchAndFilter.searchResourceByTitle('*');
+      // search by title for work created in precondition
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work for editing
       LinkedDataEditor.selectFromSearchTable(1);
       LinkedDataEditor.editWork();
@@ -109,7 +109,7 @@ describe('Citation: duplicate existing work', () => {
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
       // add instance
-      EditResource.openNewInstanceForm();
+      EditResource.openNewInstanceFormViaActions();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();

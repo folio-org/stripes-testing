@@ -83,8 +83,8 @@ describe('MARC', () => {
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
         MarcAuthority.checkAddNew001Tag(5, '$a test');
-        cy.wait(1000); // wait until redirect marc holding page
-        QuickMarcEditor.closeEditorPane();
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.close();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
         MarcAuthority.checkAddNew001Tag(5, '$a test');

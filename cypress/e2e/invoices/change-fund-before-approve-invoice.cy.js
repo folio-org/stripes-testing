@@ -124,7 +124,7 @@ describe('Invoices', () => {
 
   it(
     'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

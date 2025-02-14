@@ -23,7 +23,7 @@ import {
   HTML,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
-import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
 import SearchHelper from '../finance/financeHelper';
 import OrderLineDetails from './orderLineDetails';
 import {
@@ -162,6 +162,11 @@ export default {
   },
   searchByParameter: (parameter, value) => {
     cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value), searchButton.click()]);
+  },
+
+  receiveOrderLinesViaActions: () => {
+    expandActionsDropdownInPOL();
+    cy.do([Button('Receive').click()]);
   },
 
   clickOnOrderLines: () => {
@@ -977,7 +982,6 @@ export default {
 
   addReveivingNoteToItemDetailsAndSave() {
     cy.do([TextArea('Receiving note').fillIn(note), saveAndCloseButton.click()]);
-    cy.wait(4000);
     submitOrderLine();
   },
 
@@ -2571,6 +2575,51 @@ export default {
     SelectInstanceModal.waitLoading();
   },
 
+  POLWithDifferntCurrency(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+    currency,
+    currencyLogo,
+    exchangeRate,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      currencyButton.click(),
+      SelectionOption(currency).click(),
+      Checkbox({ id: 'use-set-exhange-rate' }).click(),
+      TextField({ name: 'cost.exchangeRate' }).fillIn(exchangeRate),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button(currencyLogo)).click(),
+      fundDistributionField.fillIn(value),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(institutionId),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(institutionId)).click(),
+    ]);
+    cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
   selectLocationInFilters: (locationName) => {
     cy.wait(4000);
     cy.do([
@@ -2585,6 +2634,7 @@ export default {
       selectLocationsModal.find(Button('Save')).click(),
     ]);
   },
+
   selectOrders: () => {
     cy.do(Section({ id: 'order-lines-filters-pane' }).find(Button('Orders')).click());
   },

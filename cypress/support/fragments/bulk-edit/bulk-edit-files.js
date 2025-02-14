@@ -1,6 +1,73 @@
 import FileManager from '../../utils/fileManager';
+import DateTools from '../../utils/dateTools';
+
+const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 export default {
+  getMatchedRecordsFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Matched-Records-${fileName}`;
+    } else {
+      return `*-Matched-Records-${fileName}`;
+    }
+  },
+
+  getPreviewFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
+    } else {
+      return `*-Updates-Preview-CSV-${fileName}`;
+    }
+  },
+
+  getPreviewMarcFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Updates-Preview-MARC-${fileName}`.replace('.csv', '.mrc');
+    } else {
+      return `*-Updates-Preview-MARC-${fileName}`.replace('.csv', '.mrc');
+    }
+  },
+
+  getChangedRecordsFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Changed-Records-CSV-${fileName}`;
+    } else {
+      return `*-Changed-Records-CSV-${fileName}`;
+    }
+  },
+
+  getChangedRecordsMarcFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Changed-Records-MARC-${fileName}`.replace('.csv', '.mrc');
+    } else {
+      return `*-Changed-Records-MARC-${fileName}`.replace('.csv', '.mrc');
+    }
+  },
+
+  getPreviewOfProposedChangesFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Updates-Preview-CSV-${fileName}`;
+    } else {
+      return `*-Updates-Preview-CSV-${fileName}`;
+    }
+  },
+
+  getErrorsFromCommittingFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Committing-changes-Errors-${fileName}`;
+    } else {
+      return `*-Committing-changes-Errors-${fileName}`;
+    }
+  },
+
+  getErrorsFromMatchingFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Matching-Records-Errors-${fileName}`;
+    } else {
+      return `*-Matching-Records-Errors-${fileName}`;
+    }
+  },
+
   verifyMatchedResultFileContent(
     fileName,
     expectedResult,
@@ -218,6 +285,13 @@ export default {
         const uuidHeaderIndex = headers.indexOf(uuidHeader);
         const targetHeaderIndex = headers.indexOf(targetHeader);
 
+        if (uuidHeaderIndex === -1) {
+          throw new Error(`UUID header "${uuidHeader}" not found in the file.`);
+        }
+        if (targetHeaderIndex === -1) {
+          throw new Error(`Target header "${targetHeader}" not found in the file.`);
+        }
+
         // Find the target row by UUID
         const targetRow = rows.find((row) => {
           const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
@@ -249,6 +323,10 @@ export default {
         // added trim() because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
         const identifierHeaderIndex = headers.indexOf(identifierHeader);
 
+        if (identifierHeaderIndex === -1) {
+          throw new Error(`Header "${identifierHeader}" not found in the file.`);
+        }
+
         // Find the target row by UUID
         const targetRow = rows.find((row) => {
           const cells = row.split(regex).map((cell) => cell.replace(/^"|"$/g, ''));
@@ -263,6 +341,11 @@ export default {
 
         targetValues.forEach((pair) => {
           const targetHeaderIndex = headers.indexOf(pair.header);
+
+          if (targetHeaderIndex === -1) {
+            throw new Error(`Target header "${pair.header}" not found in the file.`);
+          }
+
           const actualValue = cells[targetHeaderIndex];
 
           expect(actualValue).to.equal(pair.value);

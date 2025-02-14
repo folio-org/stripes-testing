@@ -154,6 +154,7 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+          cy.wait(1000);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
 
           MarcAuthorities.clickActionsAndReportsButtons();

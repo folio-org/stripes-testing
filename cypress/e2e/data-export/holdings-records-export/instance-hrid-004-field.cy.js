@@ -70,7 +70,7 @@ describe('Data Export', () => {
             recordsCount,
             jobId,
             user.username,
-            'holdings',
+            'Default holdings',
           );
           DataExportLogs.clickButtonWithText(resultFileName);
           ExportFile.verifyFileIncludes(resultFileName, [holdingsUUID, instanceHRID]);

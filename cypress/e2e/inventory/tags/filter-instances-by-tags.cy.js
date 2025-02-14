@@ -49,7 +49,7 @@ describe('Inventory', () => {
 
       it(
         'C343215 Filter instances by tags (volaris)',
-        { tags: ['smoke', 'volaris', 'shiftLeft', 'C343215'] },
+        { tags: ['smoke', 'volaris', 'shiftLeft', 'C343215', 'eurekaPhase1'] },
         () => {
           InventorySearchAndFilter.verifyPanesExist();
           InventorySearchAndFilter.searchInstanceByTitle(instanceRecord.instanceTitle);

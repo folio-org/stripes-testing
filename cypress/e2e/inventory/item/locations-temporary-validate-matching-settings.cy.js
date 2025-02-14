@@ -109,7 +109,7 @@ describe('Inventory', () => {
 
     it(
       'C622 Locations --> Temporary Location --> (Validate matching settings) (Folijet)(TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C622'] },
+      { tags: ['extendedPath', 'folijet', 'C622', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventorySearchAndFilter.selectViewHoldings();

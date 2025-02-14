@@ -105,7 +105,7 @@ describe('Invoices', () => {
 
   it(
     'C350728 Cancelling approved invoices voids payments/credits and Unreleases encumbrances (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

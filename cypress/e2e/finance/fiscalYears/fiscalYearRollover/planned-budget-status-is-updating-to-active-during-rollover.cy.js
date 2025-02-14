@@ -215,7 +215,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C359186: "Planned" budget status is updating to "Active" during FY rollover (based on "Expended") (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

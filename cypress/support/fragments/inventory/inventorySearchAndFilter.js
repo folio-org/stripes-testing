@@ -33,7 +33,7 @@ import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
-const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const effectiveLocationInput = Accordion({ id: 'callNumbersEffectiveLocation' });
 const sourceAccordion = Accordion('Source');
 const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
@@ -77,9 +77,6 @@ const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
-const nextClassificationAllButton = Button({
-  id: 'browse-results-list-classificationAll-next-paging-button',
-});
 const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
@@ -243,7 +240,9 @@ export default {
   },
 
   bySource(source) {
-    cy.do([sourceAccordion.clickHeader(), sourceAccordion.find(Checkbox(source)).click()]);
+    cy.do(sourceAccordion.clickHeader());
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+    cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
 
@@ -821,7 +820,10 @@ export default {
 
   verifyActionButtonOptions() {
     cy.do(paneResultsSection.find(actionsButton).click());
-    cy.expect([Button('New').exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
+    cy.expect([
+      Button(including('New')).exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyNoExportJsonOption() {
@@ -1140,8 +1142,8 @@ export default {
     ]);
   },
 
-  checkNextButtonForClassificationResultsIsDisplayed: () => {
-    cy.expect(nextClassificationAllButton.exists());
+  checkClassificationAllResultsDisplayed: () => {
+    cy.expect(MultiColumnList({ id: 'browse-results-list-classificationAll' }).exists());
   },
 
   verifyBrowseResultPaneEmpty() {

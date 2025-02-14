@@ -85,17 +85,17 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 74,
+        rowIndex: 75,
         value: 'C385667 Chin, Staceyann, 1972-',
         tag: '700',
       },
       {
-        rowIndex: 75,
+        rowIndex: 76,
         value: 'C385667 Lee, Stan, 1922-2018',
         tag: '700',
       },
       {
-        rowIndex: 76,
+        rowIndex: 77,
         value: 'C385667 Kirby, Jack',
         tag: '700',
       },
@@ -263,21 +263,21 @@ describe('Data Import', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          74,
+          75,
           '700',
           '1',
           '\\',
           '$a C385667 Chin, S-nn, $d 1972- $e letterer. $0 http://id.loc.gov/authorities/names/n2008052404123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          75,
+          76,
           '700',
           '1',
           '\\',
           '$a C385667 Kirby, Steve, $e creator. $0 http://id.loc.gov/authorities/names/n77020008123',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          76,
+          77,
           '700',
           '1',
           '\\',

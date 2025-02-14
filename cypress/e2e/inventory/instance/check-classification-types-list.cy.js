@@ -33,7 +33,7 @@ describe('Inventory', () => {
 
     it(
       'C618 Classification --> Classification types (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C618'] },
+      { tags: ['extendedPath', 'folijet', 'C618', 'eurekaPhase1'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);

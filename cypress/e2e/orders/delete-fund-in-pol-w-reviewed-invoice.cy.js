@@ -93,7 +93,7 @@ describe('Orders', () => {
 
   it(
     'C374191 Deleting fund distribution in PO line when related Reviewed invoice exists (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

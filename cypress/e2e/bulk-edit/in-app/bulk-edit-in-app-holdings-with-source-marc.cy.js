@@ -38,9 +38,11 @@ const actionsToSelect = {
   setTrue: 'Set true',
 };
 const validInstanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${validInstanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${validInstanceUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${validInstanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  validInstanceUUIDsFileName,
+);
+const previewFileName = BulkEditFiles.getPreviewFileName(validInstanceUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validInstanceUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -206,14 +208,14 @@ describe('bulk-edit', () => {
         });
 
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption('Suppress from discovery');
         BulkEditActions.selectSecondAction(actionsToSelect.setTrue);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(3);
 

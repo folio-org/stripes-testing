@@ -82,7 +82,7 @@ describe('Invoices', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
+        cy.getAdminToken();
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -178,7 +178,7 @@ describe('Invoices', () => {
 
   it(
     'C388538 Approve invoice in previous FY and pay invoice in current FY (for previous FY) (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

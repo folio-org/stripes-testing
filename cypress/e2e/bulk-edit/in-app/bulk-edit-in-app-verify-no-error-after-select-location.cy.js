@@ -63,7 +63,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectLocation(newLocation, 0);
 
         BulkEditActions.clickSelectedLocation(newLocation, 'Select location');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
 
         BulkEditActions.clickSelectedLocation('Select location', newLocation);
         BulkEditActions.confirmChanges();

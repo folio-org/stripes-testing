@@ -22,7 +22,7 @@ describe('Users', () => {
   const userOne = {
     patronGroup: patronGroup.name,
     barcode: barcodeNumber,
-    username: `AutotestUser_${barcodeNumber}`,
+    username: `autotestuser_${barcodeNumber}`,
     personal: {
       lastName: 'User',
       firstName: 'Delete',
@@ -72,7 +72,7 @@ describe('Users', () => {
 
   it(
     'C410760 "User type" field is displayed on create user page (Poppy +) (Thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       usersSearchResultsPane.openNewUser();
       UserEdit.verifySaveAndCloseIsDisabled(true);

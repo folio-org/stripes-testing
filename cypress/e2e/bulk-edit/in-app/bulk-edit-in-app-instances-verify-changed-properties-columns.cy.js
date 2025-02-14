@@ -99,25 +99,25 @@ describe('bulk-edit', () => {
           BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SUPPRESS_FROM_DISCOVERY,
         );
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(optionsToSelect.staffSuppress);
         BulkEditActions.selectSecondAction(actionsToSelect.setTrue);
         BulkEditActions.verifyOptionSelected(optionsToSelect.staffSuppress);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(optionsToSelect.suppressFromDiscovery, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.setTrue, 1);
         BulkEditActions.verifyOptionSelected(optionsToSelect.suppressFromDiscovery, 1);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.deleteRow(1);
         BulkEditActions.verifyRowWithOptionAbsent(optionsToSelect.suppressFromDiscovery);
         BulkEditActions.verifyRowWithOptionExists(optionsToSelect.staffSuppress);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(

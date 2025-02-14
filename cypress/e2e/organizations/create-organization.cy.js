@@ -27,7 +27,7 @@ describe(
 
     it(
       'C675 Create new organization record (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         Organizations.createOrganizationViaUi(organization);
         Organizations.checkOrganizationInfo(organization);

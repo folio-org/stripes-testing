@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -22,9 +23,9 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -107,19 +108,19 @@ describe('bulk-edit', () => {
         possibleActions = ['Replace with', 'Remove'];
         BulkEditActions.verifyPossibleActions(possibleActions);
         BulkEditActions.selectSecondAction('Remove');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectType(electronicAccessRelationshipName.RESOURCE, 0, 0);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.checkTypeNotExist(electronicAccessRelationshipName.RESOURCE, 0, 1);
         BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 0);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectAction('Replace with');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectType(electronicAccessRelationshipName.VERSION_OF_RESOURCE, 0, 0);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',

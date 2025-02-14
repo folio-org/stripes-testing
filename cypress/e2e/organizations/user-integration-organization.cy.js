@@ -47,12 +47,12 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor2Integration = getRandomPostfix();
 
   before(() => {
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-    });
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
     });
     cy.visit(TopMenu.organizationsPath);
   });
@@ -65,7 +65,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
 
   it(
     'C350762 User can Create and Edit Integrations for an Organization-Vendor (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       // Found and edit created organization
       Organizations.searchByParameters('Name', organization.name);

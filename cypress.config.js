@@ -32,9 +32,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
-    EDGE_HOST: 'https://folio-testing-cypress-edge.ci.folio.org',
-    EDGE_API_KEY: '',
+    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
@@ -46,8 +44,11 @@ module.exports = defineConfig({
     allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    rtrAuth: true,
+    rtrAuth: false,
     ecsEnabled: false,
+    eureka: true,
+    runAsAdmin: false,
+    systemRoleName: 'adminRole',
   },
   reporterOptions: reportportalOptions,
   e2e: {
@@ -148,7 +149,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
 });

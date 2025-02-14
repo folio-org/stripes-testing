@@ -12,6 +12,7 @@ let user;
 let holdingsHRID;
 let instanceHRID;
 const invalidItemBarcodes = getRandomPostfix();
+const invalidInstanceHrid = getRandomPostfix();
 const validHoldingsHRIDFileName = `validHoldingsHRID_${getRandomPostfix()}.csv`;
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
@@ -33,7 +34,7 @@ describe('bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.wait(2000);
+        cy.wait(5000);
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` }).then((holdings) => {
           holdingsHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${validHoldingsHRIDFileName}`, holdingsHRID);
@@ -43,7 +44,7 @@ describe('bulk-edit', () => {
             instanceHRID = instance.hrid;
             FileManager.createFile(
               `cypress/fixtures/${instanceHRIDFileName}`,
-              `${instanceHRID}\r\n${getRandomPostfix()}`,
+              `${instanceHRID}\r\n${invalidInstanceHrid}`,
             );
           },
         );
@@ -51,7 +52,6 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           invalidItemBarcodes,
         );
-        cy.wait(3000);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -85,6 +85,12 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          invalidInstanceHrid,
+          `Instance not found by hrid=${invalidInstanceHrid}`,
+          'Warning',
+        );
         BulkEditActions.openActions();
         TopMenuNavigation.navigateToApp('Bulk edit');
 
@@ -92,9 +98,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyNonMatchedResults(
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
           invalidItemBarcodes,
-          `Item not found by barcode=${invalidItemBarcodes} `,
+          `Item not found by barcode=${invalidItemBarcodes}`,
+          'Warning',
         );
         BulkEditActions.openActions();
       },

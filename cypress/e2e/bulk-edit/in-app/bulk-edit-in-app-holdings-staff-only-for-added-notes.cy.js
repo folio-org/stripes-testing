@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -25,9 +26,9 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 const electronicAccess = [
   {
     linkText: 'test-linkText',
@@ -128,7 +129,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.addItemNote('Administrative note', notes.admin);
         BulkEditActions.verifyCheckboxAbsent();
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteRemove('Link text', electronicAccess[0].linkText, 1);
         BulkEditActions.addNewBulkEditFilterString();
@@ -146,25 +147,25 @@ describe('bulk-edit', () => {
         BulkEditActions.selectAction('Add note', 4);
         BulkEditActions.fillInSecondTextArea(notes.binding, 4);
         BulkEditActions.checkStaffOnlyCheckbox(4);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Copy note', notes.copy, 5);
         BulkEditActions.checkStaffOnlyCheckbox(5);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteRemoveAll('Electronic bookplate', 6);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Note', notes.note, 7);
         BulkEditActions.checkStaffOnlyCheckbox(7);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Provenance', notes.provenance, 8);
         BulkEditActions.checkStaffOnlyCheckbox(8);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Reproduction', notes.reproduction, 9);
         BulkEditActions.checkStaffOnlyCheckbox(9);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         const suppressFromDiscovery = 'true';
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10);

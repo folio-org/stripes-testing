@@ -160,7 +160,7 @@ describe('Bulk-edit', () => {
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
             previewQueryFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 instance');
@@ -208,17 +208,17 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openStartBulkEditInstanceForm();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
-            BulkEditSearchPane.isConfirmButtonDisabled(true);
+            BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.selectOption(staffSuppressOption);
             BulkEditSearchPane.verifyInputLabel(staffSuppressOption);
             BulkEditActions.selectSecondAction(actions.setTrue);
             BulkEditActions.verifySecondActionSelected(actions.setTrue);
             BulkEditActions.verifyCheckboxAbsent();
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
@@ -315,7 +315,7 @@ describe('Bulk-edit', () => {
                 BulkEditActions.selectSecondAction(actions.setFalse);
                 BulkEditActions.verifySecondActionSelected(actions.setFalse);
                 BulkEditActions.verifyCheckboxAbsent();
-                BulkEditSearchPane.isConfirmButtonDisabled(false);
+                BulkEditActions.verifyConfirmButtonDisabled(false);
                 BulkEditActions.confirmChanges();
                 BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 

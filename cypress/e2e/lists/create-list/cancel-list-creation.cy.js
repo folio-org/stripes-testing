@@ -34,7 +34,7 @@ describe('lists', () => {
 
     it(
       'C411709 Verify that the button "Cancel", cancels new list creation process. (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411709'] },
+      { tags: ['criticalPath', 'corsair', 'C411709', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

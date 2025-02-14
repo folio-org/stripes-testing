@@ -19,7 +19,7 @@ describe('MARC', () => {
         tag655: '655',
         updated155FieldValue: 'Drama C374159 cinema',
         updated010FieldValue: 'gf20140262973741590',
-        autoUpdateUserName: 'Automated linking update',
+        autoUpdateUserName: 'FolioLast, FolioFirst',
         subjectAccordion: 'Subject',
         authorityIconText: 'Linked to MARC authority',
       };
@@ -153,7 +153,7 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkPaneheaderContains(`Source: ${testData.autoUpdateUserName}`);
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            51,
+            52,
             '655',
             '\\',
             '7',

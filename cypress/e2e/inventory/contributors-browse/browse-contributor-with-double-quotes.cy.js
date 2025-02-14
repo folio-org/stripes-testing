@@ -24,30 +24,24 @@ describe('Inventory', () => {
     const exactSearchName = 'Dalla Torre, "Giuseppe"';
 
     before('Creating user and test data', () => {
-      cy.createTempUser([Permissions.inventoryAll.gui])
-        .then((createdUserProperties) => {
-          user.userProperties = createdUserProperties;
-        })
-        .then(() => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-        })
-        .then(() => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityID = record[marcFile.propertyName].id;
-            });
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
+        user.userProperties = createdUserProperties;
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            createdAuthorityID = record[marcFile.propertyName].id;
           });
-
-          cy.login(user.userProperties.username, user.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          InventorySearchAndFilter.selectBrowseContributors();
         });
+
+        cy.login(user.userProperties.username, user.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.selectBrowseContributors();
+      });
     });
 
     after('Deleting created user and test data', () => {
@@ -58,7 +52,7 @@ describe('Inventory', () => {
 
     it(
       'C397324 Browse contributor which has double quotes (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C397324'] },
+      { tags: ['extendedPath', 'spitfire', 'C397324', 'eurekaPhase1'] },
       () => {
         BrowseContributors.searchRecordByName(notExactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);

@@ -64,7 +64,7 @@ describe('Orders', () => {
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
-
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
@@ -81,6 +81,7 @@ describe('Orders', () => {
 
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.getAdminToken();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -100,7 +101,7 @@ describe('Orders', () => {
 
   it(
     'C9220 Duplicate purchase order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

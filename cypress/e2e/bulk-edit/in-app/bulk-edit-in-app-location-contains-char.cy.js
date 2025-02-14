@@ -7,11 +7,11 @@ import BulkEditSearchPane, {
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import DateTools from '../../../support/utils/dateTools';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -27,11 +27,16 @@ describe('bulk-edit', () => {
       barcode: getRandomPostfix(),
       instanceName: `instance-${getRandomPostfix()}`,
     };
-    const todayFormattedDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
     const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-    const matchedRecordsFileName = `${todayFormattedDate}-Matched-Records-${itemBarcodesFileName}`;
-    const changedRecordsFileName = `${todayFormattedDate}-Changed-Records-${itemBarcodesFileName}`;
-    const previewFileName = `${todayFormattedDate}-Updates-Preview-CSV-${itemBarcodesFileName}`;
+    const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(
+      itemBarcodesFileName,
+      true,
+    );
+    const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
+      itemBarcodesFileName,
+      true,
+    );
+    const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName, true);
     const locationName = `Location / ${getRandomPostfix()}`;
 
     before('Create test data', () => {

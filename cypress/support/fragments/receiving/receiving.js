@@ -209,6 +209,11 @@ export default {
     InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
   },
 
+  quickReceivePieceFromDropdown: () => {
+    cy.do(Button('Quick receive').click());
+    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+  },
+
   deleteItemPiece: () => {
     cy.do([
       Button('Delete').click(),

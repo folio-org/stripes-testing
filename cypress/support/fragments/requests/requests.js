@@ -75,6 +75,7 @@ function createRequestApi(
   const userData = {
     active: true,
     barcode: uuid(),
+    username: `testUser-${uuid()}`,
     personal: {
       preferredContactTypeId: '002',
       lastName: `testUser-${uuid()}`,
@@ -622,6 +623,13 @@ export default {
   createNewRequestViaApi: (requestBody) => cy.okapiRequest({
     method: 'POST',
     path: 'circulation/requests',
+    body: requestBody,
+    isDefaultSearchParamsRequired: false,
+  }),
+
+  createNewEcsRequestViaApi: (requestBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation-bff/requests',
     body: requestBody,
     isDefaultSearchParamsRequired: false,
   }),

@@ -61,7 +61,7 @@ describe('Finance', () => {
 
     it(
       'C422161 Add donor information to a new Fund (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // On "Fund" page of "Finance" app click on "New" button
         Funds.clickCreateNewFundButton();
@@ -131,7 +131,7 @@ describe('Finance', () => {
 
     it(
       'C422162 Add donor information to an existing fund (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);
@@ -181,7 +181,7 @@ describe('Finance', () => {
 
     it(
       'C422194 Adding donor information to existing fund with permission restrictions (thunderjet) (TaaS)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Open Fund from Preconditions
         Funds.searchByName(testData.fund.name);

@@ -112,7 +112,6 @@ describe('Data Import', () => {
         LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
         const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
-
         LogsViewAll.checkByDateAndJobProfile(
           { from: formattedStart, end: formattedEnd },
           jobProfileId,

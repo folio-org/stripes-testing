@@ -174,7 +174,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C357565 Transactions are displaying correctly after rollover when fund name was changed in POL after opening order (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

@@ -23,7 +23,7 @@ describe('fse-data-import - UI', () => {
 
   it(
     `TC195767 - check data-import log for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'data-import'] },
+    { tags: ['fse', 'ui', 'data-import'] },
     () => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoadingNoInteractors();

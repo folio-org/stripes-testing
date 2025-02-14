@@ -17,7 +17,6 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
-import Organizations from '../../../support/fragments/organizations/organizations';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -32,6 +31,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { Organizations } from '../../../support/fragments/organizations';
 
 describe('Data Import', () => {
   describe('Importing EDIFACT files', () => {
@@ -74,10 +74,12 @@ describe('Data Import', () => {
         Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
+        Organizations.createOrganizationViaApi(organization).then((response) => {
+          organization.id = response;
+          cy.login(testData.user.username, testData.user.password, {
+            path: SettingsMenu.mappingProfilePath,
+            waiter: FieldMappingProfiles.waitLoading,
+          });
         });
       });
     });
@@ -93,12 +95,8 @@ describe('Data Import', () => {
 
     it(
       'C350716 Ensure an EDIFACT file with file extension .txt imports without errors (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C350716'] },
+      { tags: ['extendedPath', 'folijet', 'C350716', 'eurekaPhase1'] },
       () => {
-        Organizations.createOrganizationViaApi(organization).then((response) => {
-          testData.organization = response;
-        });
-
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(

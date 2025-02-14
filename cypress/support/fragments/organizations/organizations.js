@@ -910,6 +910,10 @@ export default {
     cy.wait(4000);
   },
 
+  closeIntegrationPane: () => {
+    cy.do(PaneHeader({ id: 'paneHeaderintegration-view' }).find(timesButton).click());
+  },
+
   editBankingInformationName: (bankingInformationName) => {
     cy.do([
       bankingInformationButton.click(),

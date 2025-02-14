@@ -45,7 +45,7 @@ describe('ui-organizations: Organizations', () => {
 
   it(
     'C350693 Test acquisition unit restrictions for Organization records (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

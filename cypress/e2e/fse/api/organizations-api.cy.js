@@ -1,4 +1,4 @@
-describe('fse-organizations', () => {
+describe('fse-organizations', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-organizations', () => {
 
   it(
     `TC195377 - Get organization by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'organizations'] },
+    { tags: ['sanity', 'fse', 'api', 'organizations', 'loc'] },
     () => {
       cy.getOrganizationsByStatus('Active').then((response) => {
         cy.expect(response.status).to.eq(200);

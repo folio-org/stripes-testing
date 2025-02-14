@@ -16,6 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -64,9 +65,8 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
-
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;
@@ -85,6 +85,7 @@ describe('Invoices', () => {
             firstFund.id = firstFundResponse.fund.id;
 
             cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            cy.getAdminToken();
             FinanceHelp.searchByName(firstFund.name);
             Funds.selectFund(firstFund.name);
             Funds.addBudget(allocatedQuantity);
@@ -112,7 +113,8 @@ describe('Invoices', () => {
             });
 
             defaultOrder.vendor = organization.name;
-            cy.visit(TopMenu.ordersPath);
+            TopMenuNavigation.openAppFromDropdown('Orders');
+            Orders.selectOrdersPane();
             Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
               (firstOrderResponse) => {
                 defaultOrder.id = firstOrderResponse.id;
@@ -162,7 +164,7 @@ describe('Invoices', () => {
 
   it(
     'C396390 Fiscal year appears after fund distribution change when FY was undefined (for previous FY) (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

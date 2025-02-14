@@ -1762,13 +1762,12 @@ export default {
     cy.expect(Callout(callout).exists());
   },
 
-  checkErrorMessage(rowIndex, errorMessage) {
-    cy.wait(1000);
-    cy.expect(
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(HTML(including(errorMessage)))
-        .exists(),
+  checkErrorMessage(rowIndex, errorMessage, isShown = true) {
+    const errorElement = QuickMarcEditorRow({ index: rowIndex }).find(
+      HTML(including(errorMessage)),
     );
+    cy.wait(1000);
+    cy.expect(errorElement[isShown ? 'exists' : 'absent']());
   },
 
   checkErrorMessageForField(index, errorMessage) {
@@ -2139,9 +2138,11 @@ export default {
     cy.expect(Callout(callOutText).exists());
   },
 
-  closeCallout() {
-    cy.do(Callout().find(closeButton).click());
-    cy.expect(Callout().absent());
+  closeCallout(text) {
+    if (text) cy.do(Callout(text).find(closeButton).click());
+    else cy.do(Callout().find(closeButton).click());
+    if (text) cy.expect(Callout(text).absent());
+    else cy.expect(Callout().absent());
   },
 
   verifyInvalidLDRCalloutLink() {
@@ -2813,5 +2814,13 @@ export default {
           .has({ checkedOptionText: option }),
       );
     });
+  },
+
+  checkDropdownMarkedAsInvalid(tag, dropdownLabel, isMarked = true) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(Select({ label: including(dropdownLabel), valid: !isMarked }))
+        .exists(),
+    );
   },
 };

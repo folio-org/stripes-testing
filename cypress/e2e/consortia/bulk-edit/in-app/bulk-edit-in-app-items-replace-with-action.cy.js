@@ -228,11 +228,11 @@ describe('Bulk-edit', () => {
             identifiersQueryFilename = `Query-${interceptedUuid}.csv`;
             matchedRecordsQueryFileName = `${today}-Matched-Records-Query-${interceptedUuid}.csv`;
             previewQueryFileName = `${today}-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `${today}-Changed-Records-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `${today}-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
             errorsFromCommittingFileName = `${today}-Committing-changes-Errors-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane(4);
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('4 item');
             BulkEditSearchPane.verifyQueryHeadLine(
               `(items.status_name in ("Available","Checked out")) AND (instances.title starts with "C496144_${postfix}")`,
             );
@@ -276,15 +276,15 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openInAppStartBulkEditFrom();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
-            BulkEditSearchPane.isConfirmButtonDisabled(true);
+            BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.MISSING);
             BulkEditSearchPane.verifyInputLabel(ITEM_STATUS_NAMES.MISSING);
             BulkEditActions.replaceWithIsDisabled();
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 

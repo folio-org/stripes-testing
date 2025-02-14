@@ -30,7 +30,7 @@ describe('Inventory', () => {
       cy.createTempUser([
         permissions.uiInventoryMoveItems.gui,
         permissions.uiInventoryHoldingsMove.gui,
-        permissions.inventoryViewCreateEditInstances.gui,
+        permissions.uiInventoryViewCreateEditInstances.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {

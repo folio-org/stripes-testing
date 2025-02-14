@@ -67,6 +67,7 @@ describe('orders: Settings', () => {
         });
 
         cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.getAdminToken();
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           Orders.searchByParameter('PO number', orderNumber);
@@ -126,7 +127,7 @@ describe('orders: Settings', () => {
 
   it(
     'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       SettingsOrders.selectInstanceStatus(instanceStatus);
       SettingOrdersNavigationMenu.selectInstanceType();
