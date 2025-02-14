@@ -19,7 +19,7 @@ describe('Eureka', () => {
 
     it(
       'C651518 [MGRENTITLE-101] GET /entitlements have ability to retrieve tenant entitlements by tenant name via additional "tenant" query parameter (eureka)',
-      { tags: ['criticalPath', 'eureka', '651518'] },
+      { tags: ['criticalPath', 'eureka', 'C651518'] },
       () => {
         cy.getEntitlementsApi({
           includeModules: true,
