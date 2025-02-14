@@ -17,7 +17,7 @@ describe('Eureka', () => {
 
     it(
       'C546774 Interfaces for a tenant can be retrieved from /_/proxy/tenants/<tenant>/interfaces (eureka)',
-      { tags: ['criticalPath', 'eureka', 'C546774'] },
+      { tags: ['criticalPath', 'eureka', 'shiftLeft', 'C546774'] },
       () => {
         cy.getAdminToken();
         cy.getApplicationsForTenantApi(testData.tenant, false).then((appsResponse) => {

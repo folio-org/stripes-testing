@@ -63,7 +63,7 @@ describe('Eureka', () => {
 
       it(
         'C627247 [UIROLES-125] Viewing authorization role by user with users.settings View (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627247'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C627247'] },
         () => {
           const usersCallRegExp = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleId}`,
