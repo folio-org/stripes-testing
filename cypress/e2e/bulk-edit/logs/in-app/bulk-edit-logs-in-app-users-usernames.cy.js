@@ -7,6 +7,7 @@ import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const invalidUsername = `invalidUsername_${getRandomPostfix()}`;
@@ -52,6 +53,10 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidUsername},No match found`,
+          ]);
+          FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName);
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.verifyLogsPane();
@@ -63,13 +68,9 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(invalidUsernamesFilename, [invalidUsername]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
-          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-          BulkEditFiles.verifyMatchedResultFileContent(
-            errorsFromMatchingFileName,
-            [`\uFEFF${invalidUsername}`],
-            'firstElement',
-            false,
-          );
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidUsername},No match found`,
+          ]);
         },
       );
     });
