@@ -52,3 +52,18 @@ Cypress.Commands.add('getModulesForTenantProxyApi', (tenantName, params = null) 
     searchParams: params,
   });
 });
+
+Cypress.Commands.add('getEntitlementsApi', (params = { limit: 100 }) => {
+  return cy.okapiRequest({
+    path: 'entitlements',
+    isDefaultSearchParamsRequired: false,
+    searchParams: params,
+  });
+});
+
+Cypress.Commands.add('getTenantsApi', () => {
+  return cy.okapiRequest({
+    path: 'tenants',
+    isDefaultSearchParamsRequired: false,
+  });
+});
