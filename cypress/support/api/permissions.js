@@ -120,9 +120,9 @@ Cypress.Commands.add('getUserRoleIdByNameApi', (roleName) => {
     path: `roles?limit=1000&query=name=="${roleName}"`,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
-    cy.wrap(body.roles[0].id).as('roleId');
+    if (body.roles.length) return body.roles[0].id;
+    else return null;
   });
-  return cy.get('@roleId');
 });
 
 Cypress.Commands.add('addCapabilitiesToNewRoleApi', (roleId, capabilityIds) => {
