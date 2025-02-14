@@ -16,7 +16,7 @@ import {
   TextField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
-import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
+import InventoryInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 import InstanceStates from './instanceStates';
 import { INSTANCE_DATE_TYPES } from '../../constants';
 
