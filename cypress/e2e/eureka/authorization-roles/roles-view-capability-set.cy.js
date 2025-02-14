@@ -128,7 +128,7 @@ describe('Eureka', () => {
           testData.originalCapabilitiesInSets.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
-          AuthorizationRoles.checkActionsButtonShown(false);
+          AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
         },
       );
     });
