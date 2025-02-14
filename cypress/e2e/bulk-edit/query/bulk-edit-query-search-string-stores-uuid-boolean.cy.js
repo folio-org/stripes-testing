@@ -68,26 +68,31 @@ describe('bulk-edit', () => {
           `(users.preferred_contact_type == "${preferredContactTypeEmail}")`,
         );
         QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.NOT_EQUAL);
-        QueryModal.testQueryDisabled();
+        QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
-        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type != )');
+        QueryModal.verifyQueryAreaContent(
+          `(users.preferred_contact_type != "${preferredContactTypeEmail}")`,
+        );
         QueryModal.verifyValueColumn();
         QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.IN);
-        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type in (""))');
-        QueryModal.verifyValueColumn();
-        QueryModal.chooseFromValueMultiselect(preferredContactTypeEmail);
         QueryModal.verifyQueryAreaContent(
           `(users.preferred_contact_type in ("${preferredContactTypeEmail}"))`,
+        );
+        QueryModal.verifyValueColumn();
+        QueryModal.chooseFromValueMultiselect('Email');
+        QueryModal.verifyQueryAreaContent(
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}","Email"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.fillInValueMultiselect(preferredContactTypeTextMessage);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in ("${preferredContactTypeEmail}","${preferredContactTypeTextMessage}"))`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}","Email","${preferredContactTypeTextMessage}"))`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.removeValueFromMultiselect(preferredContactTypeEmail);
+        QueryModal.removeValueFromMultiselect('Email');
         QueryModal.removeValueFromMultiselect(preferredContactTypeTextMessage);
         QueryModal.verifyQueryAreaContent('(users.preferred_contact_type in ())');
         QueryModal.testQueryDisabled();
@@ -104,7 +109,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyEmptyOperator(1);
         QueryModal.verifyEmptyValue(1);
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
-        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
+        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.verifyQueryAreaContent(
           `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (  )`,
         );
@@ -124,14 +129,14 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true")`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "True")`,
         );
         QueryModal.addNewRow(1);
         QueryModal.verifyBooleanColumn(2);
         QueryModal.verifyEmptyField(2);
         QueryModal.verifyEmptyOperator(2);
         QueryModal.verifyEmptyValue(2);
-        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
+        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.selectField(usersFieldValues.userActive, 2);
@@ -139,7 +144,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyOperatorsList(booleanOperators, 2);
         QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.NOT_EQUAL, 2);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true") AND (users.active != )`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "True") AND (users.active != )`,
         );
         QueryModal.verifyValueColumn();
         QueryModal.testQueryDisabled();
@@ -148,11 +153,11 @@ describe('bulk-edit', () => {
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true") AND (users.active != "false")`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "True") AND (users.active != "False")`,
         );
         QueryModal.clickGarbage(2);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "true")`,
+          `(users.preferred_contact_type in ("${preferredContactTypeEmail}")) AND (users.active == "True")`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();
