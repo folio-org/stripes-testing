@@ -1,9 +1,10 @@
 import {
-  Modal,
   Button,
-  MultiColumnList,
   HTML,
   including,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
   SearchField,
 } from '../../../../../interactors';
 
@@ -44,10 +45,18 @@ export default {
     cy.expect(rootModal.absent());
   },
 
-  verifyModalExists: () => {
+  verifyModalExists() {
     cy.expect(rootModal.exists());
   },
   verifySharedFacetExistsInFilter() {
     cy.do(rootModal.find(Button({ id: 'accordion-toggle-button-shared' })).exists());
+  },
+  verifyInstanceExistsInList(instanceTitle) {
+    cy.expect(
+      rootModal
+        .find(MultiColumnList({ id: 'list-plugin-find-records' }))
+        .find(MultiColumnListCell(instanceTitle))
+        .exists(),
+    );
   },
 };
