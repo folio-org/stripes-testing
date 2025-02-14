@@ -29,6 +29,7 @@ export default HTML.extend('text area')
     name: (el) => el.querySelector('textarea').getAttribute('name'),
     disabled: (el) => el.querySelector('textarea').disabled,
     dataTestID: (el) => el.querySelector('textarea').getAttribute('data-testid'),
+    dataActionIndex: (el) => el.querySelector('textarea').getAttribute('data-action-index'),
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),

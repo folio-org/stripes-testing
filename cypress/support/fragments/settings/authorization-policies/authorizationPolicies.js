@@ -11,6 +11,7 @@ import {
   PaneHeader,
   MultiColumnList,
   MultiColumnListCell,
+  KeyValue,
 } from '../../../../../interactors';
 import { AUTHORIZATION_POLICIES_COLUMNS } from '../../../constants';
 
@@ -23,6 +24,10 @@ const recordLastUpdatedHeader = generalInformationAccordion.find(
 );
 const policySearchInputField = policiesPane.find(TextField({ testid: 'search-field' }));
 const policySearchButton = policiesPane.find(Button({ dataTestID: 'search-button' }));
+const newButton = policiesPane.find(Button('+ New'));
+const metadataAccordion = Button({ text: including('Record last updated: ') });
+const actionsButton = Button('Actions');
+const clearFieldButton = Button({ icon: 'times-circle-solid' });
 
 export const SETTINGS_SUBSECTION_AUTH_POLICIES = 'Authorization policies';
 
@@ -46,8 +51,20 @@ export default {
     cy.wait(1000);
   },
 
-  verifyPolicyViewPane: (policyName) => {
-    cy.expect([Pane(policyName).exists(), Spinner().absent()]);
+  verifyPolicyViewPane: (policyName, policyDescription) => {
+    cy.expect([
+      Pane(policyName).exists(),
+      Spinner().absent(),
+      generalInformationAccordion.find(metadataAccordion).has({ ariaExpanded: 'false' }),
+      generalInformationAccordion.find(KeyValue('Name', { value: policyName })).exists(),
+    ]);
+    if (policyDescription) {
+      cy.expect(
+        generalInformationAccordion
+          .find(KeyValue('Description', { value: policyDescription }))
+          .exists(),
+      );
+    }
   },
 
   closePolicyDetailView: (policyName) => {
@@ -103,5 +120,23 @@ export default {
         ]);
       }),
     );
+  },
+
+  checkNewButtonShown: (isShown = true) => {
+    if (isShown) cy.expect(newButton.exists());
+    else cy.expect(newButton.absent());
+  },
+
+  checkActionsButtonShownForPolicy(policyName, isShown = true) {
+    if (isShown) cy.expect(Pane(policyName).find(actionsButton).exists());
+    else cy.expect(Pane(policyName).find(actionsButton).absent());
+  },
+
+  clearSearchField: () => {
+    cy.do([
+      policiesSearchInputField.focus(),
+      policiesSearchInputField.find(clearFieldButton).click(),
+    ]);
+    cy.wait(1000);
   },
 };
