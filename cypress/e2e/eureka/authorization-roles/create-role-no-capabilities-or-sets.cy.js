@@ -45,7 +45,7 @@ describe('Eureka', () => {
 
       it(
         'C430264 Selecting applications when creating new authorization role (no capabilities selected) (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C430264'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C430264'] },
         () => {
           AuthorizationRoles.clickNewButton();
           AuthorizationRoles.fillRoleNameDescription(testData.roleName, testData.roleDescription);

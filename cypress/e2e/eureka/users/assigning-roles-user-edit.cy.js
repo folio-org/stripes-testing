@@ -87,7 +87,7 @@ describe('Eureka', () => {
 
     it(
       'C633471 [UIU-3301] Assigning roles to a user when editing user while having ui-users.roles - Manage (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C633471'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C633471'] },
       () => {
         UsersSearchPane.selectUserFromList(testData.userA.username);
         UsersCard.verifyUserRolesCounter('0');

@@ -23,7 +23,7 @@ describe('Eureka', () => {
 
     it(
       'C633353 [UID-151] "Permissions" tabs are not shown in Settings > Users, Settings > Developer (eureka)',
-      { tags: ['smoke', 'eureka', 'C633353'] },
+      { tags: ['smoke', 'eureka', 'shiftLeft', 'C633353'] },
       () => {
         usersSubTabsPresent.forEach((presentSubTab) => {
           SettingsPane.checkTabPresentInSecondPane(usersTabName, presentSubTab);
