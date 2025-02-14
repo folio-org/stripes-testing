@@ -7,6 +7,7 @@ import FileManager from '../../../../support/utils/fileManager';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const invalidUsername = `username${getRandomPostfix()}`;
@@ -49,8 +50,17 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
           BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
           BulkEditSearchPane.waitFileUploading();
+          BulkEditSearchPane.verifyErrorLabel(1);
+          BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidUsername},No match found`,
+          ]);
+          FileManager.deleteFileFromDownloadsByMask(
+            invalidUsernamesFileName,
+            errorsFromMatchingFileName,
+          );
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.verifyLogsPane();
@@ -62,13 +72,9 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(invalidUsernamesFileName, [invalidUsername]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
-          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-          BulkEditFiles.verifyMatchedResultFileContent(
-            errorsFromMatchingFileName,
-            [`\uFEFF${invalidUsername}`],
-            'firstElement',
-            false,
-          );
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidUsername},No match found`,
+          ]);
         },
       );
     });

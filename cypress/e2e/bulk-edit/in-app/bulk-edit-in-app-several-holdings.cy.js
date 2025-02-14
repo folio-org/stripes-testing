@@ -1,6 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -10,16 +12,18 @@ import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(validHoldingUUIDsFileName);
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
   locationName: 'Popular Reading Collection',
 };
-
 const item2 = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
+const errorMessage = 'No change in value required';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -101,7 +105,13 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyChangedResults(item2.hrid);
         BulkEditActions.verifySuccessBanner(1);
-        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(item.holdingId, errorMessage, 'Warning');
+        BulkEditActions.openActions();
+        BulkEditActions.downloadErrors();
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+          `WARNING,${item.holdingId},${errorMessage}`,
+        ]);
       },
     );
   });

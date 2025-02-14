@@ -51,7 +51,7 @@ const jobTypeFilters = {
   eHoldings: jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-e-holdings' })),
   'Bulk edit': jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })),
   'EDIFACT orders export': jobTypeAccordion.find(
-    Checkbox({ id: 'clickable-filter-type-edifact-orders-export' }),
+    Checkbox({ id: 'clickable-filter-type-orders-edi' }),
   ),
 };
 const exportFilters = {
