@@ -706,4 +706,16 @@ export default {
       dateTypeKeyValue.has({ value: dateType }),
     ]);
   },
+
+  verifyLastUpdatedDate(updatedDate) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .exists(),
+    );
+  },
+
+  verifyNoteTextAbsentInInstanceAccordion(noteText) {
+    cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
+  },
 };
