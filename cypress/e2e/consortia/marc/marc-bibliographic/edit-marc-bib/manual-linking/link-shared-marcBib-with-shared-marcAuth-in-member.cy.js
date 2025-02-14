@@ -81,6 +81,10 @@ describe('MARC', () => {
           ])
             .then((userProperties) => {
               users.userProperties = userProperties;
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(
+                linkingTagAndValues.authorityHeading,
+              );
+
               cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
               cy.setTenant(Affiliations.University);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
