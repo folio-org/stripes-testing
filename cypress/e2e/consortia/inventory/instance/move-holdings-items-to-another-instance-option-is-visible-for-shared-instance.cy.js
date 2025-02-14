@@ -1,6 +1,7 @@
-import { APPLICATION_NAMES } from '../../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -8,37 +9,78 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Instance', () => {
-    const testData = {};
+    const testData = {
+      itemBarcode: getRandomPostfix(),
+    };
 
     before('Create test data and login', () => {
-      cy.getAdminToken();
-      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
-        testData.instance = instanceData;
-      });
-
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
-        cy.resetTenant();
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+      cy.withinTenant(Affiliations.Consortia, () => {
+        cy.getAdminToken();
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+          testData.instance = instanceData;
         });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
+      cy.withinTenant(Affiliations.College, () => {
+        cy.getLocations({ limit: 1 }).then((res) => {
+          testData.locationId = res.id;
+        });
+        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+          testData.sourceId = folioSource.id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          testData.materialTypeId = res.id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          testData.loanTypeId = res[0].id;
+        });
+      });
+
+      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui]).then(
+        (userProperties) => {
+          testData.user = userProperties;
+
+          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(testData.user.userId, [
+            Permissions.inventoryAll.gui,
+            Permissions.uiInventoryMoveItems.gui,
+          ]);
+          InventoryHoldings.createHoldingRecordViaApi({
+            instanceId: testData.instance.instanceId,
+            permanentLocationId: testData.locationId,
+            sourceId: testData.sourceId,
+          }).then((holdingData) => {
+            cy.createItem({
+              holdingsRecordId: holdingData.id,
+              materialType: { id: testData.materialTypeId },
+              permanentLoanType: { id: testData.loanTypeId },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              barcode: testData.itemBarcode,
+            });
+          });
+          cy.resetTenant();
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        },
+      );
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-      Users.deleteViaApi(testData.user.userId);
+      cy.withinTenant(Affiliations.Consortia, () => {
+        cy.getAdminToken();
+        Users.deleteViaApi(testData.user.userId);
+      });
+      cy.withinTenant(Affiliations.College, () => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instance.instanceId);
+      });
     });
 
     it(
