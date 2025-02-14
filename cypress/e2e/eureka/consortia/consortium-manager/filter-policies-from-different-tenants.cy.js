@@ -47,14 +47,10 @@ describe('Eureka', () => {
       },
       source: AUTHORIZATION_POLICY_SOURCES.USER,
     };
-    const policyBodyCentral = { ...policyBody };
-    const policyBodyCentral2 = { ...policyBody };
-    const policyBodyCollege = { ...policyBody };
-    const policyBodyCollege2 = { ...policyBody };
-    policyBodyCentral.name = testData.centralPolicyName;
-    policyBodyCentral2.name = testData.centralPolicyName2;
-    policyBodyCollege.name = testData.collegePolicyName;
-    policyBodyCollege2.name = testData.collegePolicyName2;
+    const policyBodyCentral = { ...policyBody, name: testData.centralPolicyName };
+    const policyBodyCentral2 = { ...policyBody, name: testData.centralPolicyName2 };
+    const policyBodyCollege = { ...policyBody, name: testData.collegePolicyName };
+    const policyBodyCollege2 = { ...policyBody, name: testData.collegePolicyName2 };
     const searchQueriesCentral = {
       exact: testData.centralPolicyName,
       incomplete: testData.centralPolicyName.slice(0, -3),
