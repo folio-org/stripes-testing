@@ -11,7 +11,7 @@ describe('fse-serials - UI for productions tenants', () => {
 
   it(
     `TC195636 - verify that serials page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'serials'] },
+    { tags: ['sanity', 'fse', 'ui', 'serials', 'serials-management'] },
     () => {
       cy.visit(TopMenu.serials);
       Serials.waitLoading();
