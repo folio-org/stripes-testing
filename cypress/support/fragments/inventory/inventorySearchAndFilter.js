@@ -381,6 +381,13 @@ export default {
   switchToBrowseTab() {
     cy.wait(1000);
     cy.do(browseButton.click());
+    cy.expect([
+      Pane({ id: 'browse-inventory-filters-pane' }).exists(),
+      Pane({ id: 'browse-results-pane' }).exists(),
+      browseButton.has({ disabled: false }),
+      searchButton.has({ disabled: true }),
+      resetAllBtn.has({ disabled: true }),
+    ]);
   },
 
   verifySpecificTabHighlighted(tab) {

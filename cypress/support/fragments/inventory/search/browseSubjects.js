@@ -1,21 +1,22 @@
 /* eslint-disable no-dupe-keys */
 import { including } from '@interactors/html';
 import {
-  matching,
+  Accordion,
   Button,
-  MultiColumnListCell,
-  Pane,
-  TextArea,
   Link,
+  matching,
+  MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  Pane,
   Section,
-  TextInput,
   Select,
-  Accordion,
+  TextArea,
+  TextField,
+  TextInput,
 } from '../../../../../interactors';
-import InventorySearchAndFilter from '../inventorySearchAndFilter';
 import { escapeRegex } from '../../../utils/stringTools';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
@@ -289,5 +290,14 @@ export default {
         timeout: 60000,
       },
     );
+  },
+
+  verifyAccordionStatusByName(accordionName, status = true) {
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: status }));
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(searchFilterPane.find(Accordion(accordionName)).clickHeader());
+    cy.expect(TextField({ id: 'subjectType-multiselect-input' }).exists());
   },
 };
