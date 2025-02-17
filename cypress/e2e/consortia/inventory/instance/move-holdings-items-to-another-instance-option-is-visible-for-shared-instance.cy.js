@@ -43,12 +43,11 @@ describe('Inventory', () => {
         (userProperties) => {
           testData.user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(testData.user.userId, [
-            Permissions.inventoryAll.gui,
-            Permissions.uiInventoryMoveItems.gui,
-          ]);
+          cy.affiliateUserToTenant({
+            tenantId: Affiliations.College,
+            userId: testData.user.userId,
+            permissions: [Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui],
+          });
           InventoryHoldings.createHoldingRecordViaApi({
             instanceId: testData.instance.instanceId,
             permanentLocationId: testData.locationId,
