@@ -104,7 +104,7 @@ describe('bulk-edit', () => {
       });
 
       it(
-        'C423990 Verify generated Logs files for Instances (Instance HRIDs) (firebird)',
+        'C423990 Verify generated Logs files for Instances staff suppress (Set false) (firebird)',
         { tags: ['criticalPath', 'firebird', 'C423990'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
@@ -136,18 +136,27 @@ describe('bulk-edit', () => {
           ]);
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(0);
-          BulkEditSearchPane.verifyErrorLabel(2);
+          BulkEditSearchPane.verifyErrorLabel(0, 2);
 
           [hridValues.folioHrid, hridValues.marcHrid].forEach((hrid) => {
-            BulkEditSearchPane.verifyErrorByIdentifier(hrid, 'No change in value required');
+            BulkEditSearchPane.verifyErrorByIdentifier(
+              hrid,
+              'No change in value required',
+              'Warning',
+            );
           });
 
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            hridValues.folioHrid,
-            hridValues.marcHrid,
+            `WARNING,${hridValues.folioHrid},No change in value required`,
+            `WARNING,${hridValues.marcHrid},No change in value required`,
           ]);
+          FileManager.deleteFileFromDownloadsByMask(
+            matchedRecordsFileName,
+            previewFileName,
+            errorsFromCommittingFileName,
+          );
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkInstancesCheckbox();
@@ -174,8 +183,8 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.downloadFileWithCommitErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            hridValues.folioHrid,
-            hridValues.marcHrid,
+            `WARNING,${hridValues.folioHrid},No change in value required`,
+            `WARNING,${hridValues.marcHrid},No change in value required`,
           ]);
 
           [folioItem.instanceName, marcInstances[0].instanceTitle].forEach((title) => {

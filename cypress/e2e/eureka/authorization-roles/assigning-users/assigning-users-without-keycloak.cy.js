@@ -83,7 +83,7 @@ describe('Eureka', () => {
 
         it(
           'C627395 [UIROLES-125] Assigning users not having Keycloak records for an existing authorization role while having users.settings Manage (eureka)',
-          { tags: ['smoke', 'eureka', 'C627395'] },
+          { tags: ['smoke', 'eureka', 'shiftLeft', 'C627395'] },
           () => {
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName, false);

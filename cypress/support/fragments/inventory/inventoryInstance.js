@@ -38,7 +38,7 @@ import { REQUEST_METHOD, ITEM_STATUS_NAMES } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
-import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
+import InventoryInstanceSelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import HoldingsRecordView from './holdingsRecordView';

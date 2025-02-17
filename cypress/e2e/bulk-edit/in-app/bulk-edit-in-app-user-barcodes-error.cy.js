@@ -64,7 +64,12 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          user.barcode,
+          'No change in value required',
+          'Warning',
+        );
       },
     );
 
