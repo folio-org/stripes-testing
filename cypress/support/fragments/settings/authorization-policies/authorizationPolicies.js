@@ -12,8 +12,10 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   KeyValue,
+  Callout,
 } from '../../../../../interactors';
 import { AUTHORIZATION_POLICIES_COLUMNS } from '../../../constants';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const policiesPane = Pane('Authorization policies');
 const policiesSearchInputField = policiesPane.find(TextField('Search'));
@@ -28,10 +30,16 @@ const newButton = policiesPane.find(Button('+ New'));
 const metadataAccordion = Button({ text: including('Record last updated: ') });
 const actionsButton = Button('Actions');
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
+const noAccessErrorText =
+  "Authorization policies couldn't be loaded. User does not have required permissions.";
 
 export const SETTINGS_SUBSECTION_AUTH_POLICIES = 'Authorization policies';
 
 export default {
+  waitLoading: () => {
+    cy.expect(policiesPane.exists());
+  },
+
   waitContentLoading: () => {
     Object.values(AUTHORIZATION_POLICIES_COLUMNS).forEach((columnName) => {
       cy.expect(policiesPane.find(MultiColumnListHeader(columnName)).exists());
@@ -138,5 +146,11 @@ export default {
       policiesSearchInputField.find(clearFieldButton).click(),
     ]);
     cy.wait(1000);
+  },
+
+  verifyAccessErrorShown: () => {
+    cy.expect(Callout(noAccessErrorText).exists());
+    InteractorsTools.dismissCallout(noAccessErrorText);
+    cy.expect(Callout(noAccessErrorText).absent());
   },
 };
