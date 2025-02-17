@@ -12,6 +12,7 @@ let user;
 let holdingsHRID;
 let instanceHRID;
 const invalidItemBarcodes = getRandomPostfix();
+const invalidInstanceHrid = getRandomPostfix();
 const validHoldingsHRIDFileName = `validHoldingsHRID_${getRandomPostfix()}.csv`;
 const instanceHRIDFileName = `instanceHRID_${getRandomPostfix()}.csv`;
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
@@ -43,7 +44,7 @@ describe('bulk-edit', () => {
             instanceHRID = instance.hrid;
             FileManager.createFile(
               `cypress/fixtures/${instanceHRIDFileName}`,
-              `${instanceHRID}\r\n${getRandomPostfix()}`,
+              `${instanceHRID}\r\n${invalidInstanceHrid}`,
             );
           },
         );
@@ -84,6 +85,12 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          invalidInstanceHrid,
+          `Instance not found by hrid=${invalidInstanceHrid}`,
+          'Warning',
+        );
         BulkEditActions.openActions();
         TopMenuNavigation.navigateToApp('Bulk edit');
 
@@ -91,9 +98,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
         BulkEditSearchPane.verifyErrorByIdentifier(
           invalidItemBarcodes,
-          `Item not found by barcode=${invalidItemBarcodes} `,
+          `Item not found by barcode=${invalidItemBarcodes}`,
           'Warning',
         );
         BulkEditActions.openActions();
