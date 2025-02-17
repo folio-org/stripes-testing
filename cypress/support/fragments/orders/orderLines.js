@@ -23,7 +23,7 @@ import {
   HTML,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
-import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
 import SearchHelper from '../finance/financeHelper';
 import OrderLineDetails from './orderLineDetails';
 import {
