@@ -77,7 +77,7 @@ describe('Finance', () => {
 
     it(
       "C415261 User can view actual Expense Class information on Fund's Budget details pane after the first using Expense Class (thunderjet) (TaaS)",
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         // Open the record with Fund from precondition by clicking on its name
         Funds.searchByName(testData.fund.name);

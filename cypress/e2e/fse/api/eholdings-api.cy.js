@@ -1,4 +1,4 @@
-describe('fse-eholdings', () => {
+describe('fse-eholdings', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-eholdings', () => {
 
   it(
     `TC195060 - Get eholdings titles for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'eholdings'] },
+    { tags: ['sanity', 'fse', 'api', 'eholdings', 'loc'] },
     () => {
       cy.getEHoldingsTitlesViaAPI('time').then((response) => {
         cy.expect(response.status).to.eq(200);

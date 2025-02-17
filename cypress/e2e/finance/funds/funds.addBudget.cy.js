@@ -14,7 +14,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C4057 Add budget to a fund (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1', 'shiftLeft'] },
     () => {
       Funds.createFundViaUI(fund).then((createdLedger) => {
         createdLedgerId = createdLedger.id;

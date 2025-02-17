@@ -33,7 +33,7 @@ import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
-const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const effectiveLocationInput = Accordion({ id: 'callNumbersEffectiveLocation' });
 const sourceAccordion = Accordion('Source');
 const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
@@ -240,7 +240,9 @@ export default {
   },
 
   bySource(source) {
-    cy.do([sourceAccordion.clickHeader(), sourceAccordion.find(Checkbox(source)).click()]);
+    cy.do(sourceAccordion.clickHeader());
+    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+    cy.do(sourceAccordion.find(Checkbox(source)).click());
     cy.expect(MultiColumnListRow().exists());
   },
 
@@ -818,7 +820,10 @@ export default {
 
   verifyActionButtonOptions() {
     cy.do(paneResultsSection.find(actionsButton).click());
-    cy.expect([Button('New').exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
+    cy.expect([
+      Button(including('New')).exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyNoExportJsonOption() {

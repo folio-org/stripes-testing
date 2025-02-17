@@ -166,7 +166,7 @@ describe('ui-orders: Orders', () => {
 
   it(
     'C374190 Editing fund distribution in PO line when related Open invoice exists (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -178,7 +178,8 @@ describe('ui-orders: Orders', () => {
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
-      Funds.viewTransactions(); Funds.selectTransactionInList('Encumbrance');
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
       Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($70.00)',

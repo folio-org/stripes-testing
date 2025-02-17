@@ -45,12 +45,12 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.selectOption('Patron group');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.fillExpirationDate(new Date(), 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
       },
     );
 
@@ -66,12 +66,12 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.selectOption('Patron group');
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.fillExpirationDate(new Date(), 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.deleteRow();
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
       },
     );
   });

@@ -14,6 +14,7 @@ import {
   including,
   or,
   NavListItem,
+  Link,
 } from '../../../../interactors';
 import deleteModal from './tenant/modals/deleteModal';
 
@@ -160,6 +161,7 @@ export default {
       searchParams,
       method: REQUEST_METHOD.DELETE,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
@@ -175,5 +177,10 @@ export default {
   selectSettingsTab(settingsTab) {
     cy.wait(1000);
     cy.do(NavListItem(settingsTab).click());
+  },
+
+  checkTabPresentInSecondPane: (secondPaneName, tabName, isPresent = true) => {
+    if (isPresent) cy.expect(Pane(secondPaneName).find(Link(tabName)).exists());
+    else cy.expect(Pane(secondPaneName).find(Link(tabName)).absent());
   },
 };

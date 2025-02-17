@@ -43,7 +43,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350616'] },
+      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350616', 'eurekaPhase1'] },
       () => {
         const name = `Automation owner $${getRandomPostfix()}`;
         ownerNames.push(name);
@@ -58,7 +58,7 @@ describe('Fees&Fines', () => {
 
     it(
       'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350615'] },
+      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350615', 'eurekaPhase1'] },
       () => {
         const name = 'Shared';
         UsersOwners.startNewLineAdding();

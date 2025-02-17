@@ -57,7 +57,10 @@ describe('Requests', () => {
         testData.servicePoint.id,
       );
       TitleLevelRequests.enableTLRViaApi();
-      cy.login(requestUserData.username, requestUserData.password);
+      cy.login(requestUserData.username, requestUserData.password, {
+        path: TopMenu.requestsPath,
+        waiter: () => cy.wait(2000),
+      });
     });
   });
 
@@ -84,7 +87,6 @@ describe('Requests', () => {
     'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C199704'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();
       NewRequest.verifyRequestInformation();
       NewRequest.enterItemInfo(folioInstances[0].barcodes[0]);

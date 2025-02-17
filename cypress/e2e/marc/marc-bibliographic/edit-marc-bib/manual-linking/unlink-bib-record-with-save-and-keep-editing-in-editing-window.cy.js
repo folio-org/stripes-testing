@@ -116,7 +116,7 @@ describe('MARC', () => {
               QuickMarcEditor.pressSaveAndClose();
               cy.wait(1500);
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1000);
+              QuickMarcEditor.checkAfterSaveAndClose();
 
               cy.login(userData.username, userData.password, {
                 path: TopMenu.inventoryPath,

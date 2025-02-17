@@ -1,25 +1,26 @@
 import { HTML, including, not } from '@interactors/html';
 import {
-  KeyValue,
-  MultiColumnList,
-  Section,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  Button,
   Accordion,
-  Link,
-  Pane,
-  matching,
-  Callout,
   Badge,
+  Button,
+  Callout,
+  KeyValue,
+  Link,
+  MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
+  Pane,
+  Section,
   Tooltip,
+  matching,
 } from '../../../../interactors';
-import InstanceRecordEdit from './instanceRecordEdit';
-import InventoryNewHoldings from './inventoryNewHoldings';
-import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InteractorsTools from '../../utils/interactorsTools';
+import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
+import InventoryEditMarcRecord from './inventoryEditMarcRecord';
+import InventoryNewHoldings from './inventoryNewHoldings';
+import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -530,6 +531,12 @@ export default {
     InstanceRecordEdit.waitLoading();
   },
 
+  moveHoldingsItemsToAnotherInstance: () => {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.do(Button('Move holdings/items to another instance').click());
+    SelectInstanceModal.verifyModalExists();
+  },
+
   addHoldings: () => {
     cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
     InventoryNewHoldings.waitLoading();
@@ -608,6 +615,11 @@ export default {
     cy.expect(Button({ id: 'move-instance' }).absent());
   },
 
+  verifyMoveHoldingsItemsToAnotherInstanceOptionExists() {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.expect(Button({ id: 'move-instance' }).exists());
+  },
+
   verifyInstanceHeader(header) {
     cy.get('#paneHeaderpane-instancedetails')
       .find('[class*="paneTitleLabel-"]')
@@ -624,14 +636,24 @@ export default {
     cy.expect(Button({ id: 'quick-export-trigger' }).absent());
   },
 
-  checkMultipleItemNotesWithStaffOnly: (rowIndex, staffOnly, noteType, noteText) => {
+  checkMultipleItemNotesWithStaffOnly: (
+    rowIndex,
+    staffOnly,
+    noteType,
+    noteText,
+    rowIndexInNote = 0,
+  ) => {
     cy.get('#instance-details-notes').within(() => {
       cy.get(`[id="list-instance-notes-${rowIndex}"]`).within(() => {
         cy.get('[role="columnheader"]').eq(1).should('have.text', noteType);
 
-        cy.get('[role="gridcell"]').eq(0).should('contain', staffOnly);
+        cy.get(`[data-row-index=row-${rowIndexInNote}] [role="gridcell"]`)
+          .eq(0)
+          .should('contain', staffOnly);
 
-        cy.get('[role="gridcell"]').eq(1).should('contain', noteText);
+        cy.get(`[data-row-index=row-${rowIndexInNote}] [role="gridcell"]`)
+          .eq(1)
+          .should('contain', noteText);
       });
     });
   },
@@ -695,5 +717,17 @@ export default {
       date2KeyValue.has({ value: date2 }),
       dateTypeKeyValue.has({ value: dateType }),
     ]);
+  },
+
+  verifyLastUpdatedDate(updatedDate) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .exists(),
+    );
+  },
+
+  verifyNoteTextAbsentInInstanceAccordion(noteText) {
+    cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
   },
 };

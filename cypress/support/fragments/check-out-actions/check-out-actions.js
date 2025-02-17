@@ -33,13 +33,28 @@ function addPatron(userName) {
 export default {
   modal,
   addPatron,
+
+  waitForPatronSpinnerToDisappear() {
+    cy.wait(1000);
+    cy.get('#patron-details-content [class^="spinner"]').should('not.exist');
+    cy.wait(500);
+  },
+
+  waitForItemSpinnerToDisappear() {
+    cy.wait(3000);
+    cy.get('#item-details-content [class^="spinner"]').should('not.exist');
+    cy.wait(500);
+  },
+
   checkOutUser(userBarcode, otherParameter) {
-    return cy.do([
+    cy.do([
       TextField('Patron identifier').fillIn(otherParameter || userBarcode),
       Pane('Scan patron card').find(Button('Enter')).click(),
       Button(userBarcode).exists(),
     ]);
+    this.waitForPatronSpinnerToDisappear();
   },
+
   checkUserInfo({ barcode, personal }, patronGroup = '0') {
     return cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
@@ -48,16 +63,25 @@ export default {
       userPane.find(Link(barcode)).exists(),
     ]);
   },
+
   checkOutUserByBarcode({ barcode, lastName: lastname, patronGroup }) {
     this.checkOutUser(barcode);
     this.checkUserInfo({ barcode, personal: { lastname } }, patronGroup.name);
   },
+
   checkOutItem(itemBarcode) {
     cy.do(TextField('Item ID').fillIn(itemBarcode));
-    cy.wait(500);
+    cy.wait(1000);
     cy.do(Pane('Scan items').find(Button('Enter')).click());
-    cy.wait(2000);
+    this.waitForItemSpinnerToDisappear();
   },
+
+  closeItemsAwaitingPickupModal() {
+    cy.wait(1000);
+    cy.do(Modal('Items awaiting pickup').find(Button('Close')).click());
+    cy.wait(1000);
+  },
+
   checkItemInfo(itemBarcode, instanceTitle) {
     cy.expect([
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('1')).exists(),
@@ -77,17 +101,17 @@ export default {
 
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
-    cy.intercept('/circulation/loans?*').as('getLoans');
+    // cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Button({ id: 'clickable-find-patron' }).click());
+    this.waitForPatronSpinnerToDisappear();
     cy.expect(KeyValue('Borrower').exists());
-    cy.wait('@getLoans');
+    // cy.wait('@getLoans');
     // need to wait until data to loaded
     cy.wait(1500);
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
     cy.wait(500);
     cy.do(Button({ id: 'clickable-add-item' }).click());
-    // waiters needs for check out item in loop
-    cy.wait(1500);
+    this.waitForItemSpinnerToDisappear();
   },
 
   endCheckOutSession: () => {
@@ -180,17 +204,19 @@ export default {
 
   checkOutItemWithUserName(userName, itemBarcode) {
     addPatron(userName);
-    cy.intercept('/circulation/loans?*').as('getLoans');
+    // cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Button({ id: 'clickable-find-patron' }).click());
+    this.waitForPatronSpinnerToDisappear();
     cy.expect(KeyValue('Borrower').exists());
-    cy.wait('@getLoans');
-    cy.intercept('/circulation/requests?*').as('getRequests');
+    // cy.wait('@getLoans');
+    // cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
-    cy.wait('@getRequests');
+    // cy.wait('@getRequests');
     cy.wait(2000);
     cy.do(Button({ id: 'clickable-add-item' }).click());
+    this.waitForItemSpinnerToDisappear();
     // waiters needs for check out item in loop
-    cy.wait(1000);
+    // cy.wait(1000);
   },
 
   closeForDeliveryRequestModal: () => {

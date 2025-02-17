@@ -66,7 +66,7 @@ describe('orders: Test Po line filters', () => {
   let orderLineNumber;
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -83,6 +83,7 @@ describe('orders: Test Po line filters', () => {
     cy.getFundsApi({ query: 'code="USHIST"' }).then((funds) => {
       orderLine.fundDistribution[0].fundId = funds[0]?.id;
       cy.loginAsAdmin();
+      cy.getAdminToken();
       cy.createOrderApi(order).then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
           orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
@@ -121,7 +122,7 @@ describe('orders: Test Po line filters', () => {
   ].forEach((filter) => {
     it(
       'C6720 Test the POL filters [except tags] (thunderjet)',
-      { tags: ['smoke', 'thunderjet'] },
+      { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO line number', orderLineNumber);
         Orders.resetFilters();

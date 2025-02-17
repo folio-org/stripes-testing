@@ -16,7 +16,6 @@ export default {
     internal: 'ui-bulk-edit.users.csv.edit',
     gui: 'Bulk Edit: Local - Edit user records',
   },
-  bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: {
     internal: 'ui-bulk-edit.users.edit',
     gui: 'Bulk edit: In app - Edit user records',
@@ -71,7 +70,7 @@ export default {
     gui: 'Find Agreement Plugin: Search agreements',
   },
   uiAgreementsFileDownload: {
-    internal: 'ui-agreements.agreements.edit',
+    internal: 'ui-agreements.agreements.file.download',
     gui: 'Agreements: File download',
   },
   // QuickMarc
@@ -80,7 +79,7 @@ export default {
     gui: 'quickMARC: Create a new MARC holdings record',
   },
   uiQuickMarcQuickMarcBibliographicEditorCreate: {
-    internal: 'ui-quick-marc.quick-marc-bibliographic-editor.create',
+    internal: 'ui-quick-marc.quick-marc-editor.create',
     gui: 'quickMARC: Create a new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcEditorDuplicate: {
@@ -88,7 +87,7 @@ export default {
     gui: 'quickMARC: Derive new MARC bibliographic record',
   },
   uiQuickMarcQuickMarcBibliographicEditorAll: {
-    internal: 'ui-quick-marc.quick-marc-bibliographic-editor.all',
+    internal: 'ui-quick-marc.quick-marc-editor.all',
     gui: 'quickMARC: View, edit MARC bibliographic record',
   },
   uiQuickMarcQuickMarcHoldingsEditorAll: {
@@ -137,14 +136,13 @@ export default {
     gui: 'All marc-records-editor permissions',
   },
   // Inventory
-  // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
-    internal: ['ui-inventory.all', 'Inventory: All permissions'],
+    internal: 'ui-inventory.all',
     gui: 'Inventory: All permissions',
   },
   uiCallNumberBrowse: {
-    internal: 'browse.call-numbers.instances.collection.get',
-    gui: 'Call number browse: View permissions',
+    internal: 'ui-inventory.call-number-browse.view',
+    gui: 'Call number browse: View permissions ',
   },
   uiSubjectBrowse: {
     internal: 'ui-inventory.subjects.view',
@@ -190,10 +188,6 @@ export default {
   uiInventoryViewCreateEditInstances: {
     internal: 'ui-inventory.instance.edit',
     gui: 'Inventory: View, create, edit instances',
-  },
-  inventoryViewCreateEditInstances: {
-    internal: 'records-editor.records.item.get',
-    gui: 'All records-editor permissions',
   },
   uiInventoryViewCreateEditItems: {
     internal: 'ui-inventory.item.edit',
@@ -280,7 +274,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete formats',
   },
   crudDefinedResourceTypes: {
-    internal: 'ui-inventory.settings.nature-of-content-terms',
+    internal: 'ui-inventory.settings.instance-types',
     gui: 'Settings (Inventory): Create, edit, delete locally defined resource types',
   },
   crudResourceIdentifierTypes: {
@@ -304,7 +298,7 @@ export default {
     gui: 'Settings (Inventory): Can view and edit general settings',
   },
   // Tags
-  uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
+  uiTagsPermissionAll: { internal: 'ui-tags.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
     internal: 'ui-tags.settings.view',
     gui: 'Settings (Tags): Can view tags settings',
@@ -319,7 +313,7 @@ export default {
     gui: 'Settings (Users): Can create, edit and remove all feefines-related entries',
   },
   uiUsersSettingsOwners: {
-    internal: 'ui-users.settings.owners',
+    internal: 'ui-users.settings.owners.all',
     gui: 'Settings (Users): Can create, edit and remove owners',
   },
   uiUsersEdituserservicepoints: {
@@ -358,7 +352,7 @@ export default {
     gui: 'inventory storage module - all authorities permissions',
   },
   // Circulation log
-  circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  circulationLogAll: { internal: 'ui-circulation-log.log-event.all', gui: 'Circulation log: All' },
   circulationLogView: {
     internal: 'ui-circulation-log.log-event.view',
     gui: 'Circulation log: View',
@@ -451,7 +445,7 @@ export default {
     gui: 'Users: User loans declare lost',
   },
   usersLoansRenewThroughOverride: {
-    internal: 'ui-users.loans.renew-override',
+    internal: 'ui-users.loans-renew-override.create',
     gui: 'Users: User loans renew through override',
   },
   uiUserCanAssignUnassignPermissions: {
@@ -488,7 +482,7 @@ export default {
     gui: 'Users: Can create, edit and remove patron blocks',
   },
   uiUsersCreatePatronTamplate: {
-    internal: 'ui-users.settings.patron-block-templates',
+    internal: 'ui-users.settings.patron-block-templates.all',
     gui: 'Settings (Users): Can create, edit and remove patron blocks templates',
   },
   uiUsersViewPatronGroups: {
@@ -496,15 +490,15 @@ export default {
     gui: 'Settings (Users): Can view patron groups',
   },
   uiUsersCreateEditRemovePatronGroups: {
-    internal: 'ui-users.settings.usergroups',
+    internal: 'ui-users.settings.usergroups.all',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
   uiUsersCreatePatronLimits: {
-    internal: 'ui-users.settings.limits',
+    internal: 'ui-users.settings.limits.all',
     gui: 'Settings (Users): Can create, edit and remove patron blocks limits',
   },
   uiUsersCreatePatronConditions: {
-    internal: 'ui-users.settings.conditions',
+    internal: 'ui-users.settings.conditions.edit',
     gui: 'Settings (Users): Can view and edit patron blocks conditions',
   },
   uiUsersCanViewCustomFields: {
@@ -551,6 +545,7 @@ export default {
   },
   // Requests
   uiRequestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
+  uiRequestsMediatedAll: { internal: 'ui-requests-mediated.all', gui: 'UI-Requests-Mediated' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
@@ -559,22 +554,14 @@ export default {
     gui: 'Settings (Circulation): Title level request edit',
   },
   uiMoveRequest: {
-    internal: 'ui-requests.moveRequest',
+    internal: 'ui-requests.moveRequest.execute',
     gui: 'Requests: Move to new item, reorder queue',
   },
   uiRequestsReorderQueue: {
-    internal: 'ui-requests.reorderQueue',
-    gui: 'Requests: Requests: Reorder queue',
+    internal: 'ui-requests.reorderQueue.execute',
+    gui: 'Requests: Reorder queue',
   },
   // Calendar
-  calendarEdit: {
-    internal: 'ui-calendar.edit',
-    gui: 'Settings (Calendar): Can create, view, and edit calendar events',
-  },
-  calendarAll: {
-    internal: 'ui-calendar.all',
-    gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events',
-  },
   calendarView: {
     internal: 'ui-calendar.view',
     gui: 'Settings (Calendar): Can view existing calendars',
@@ -588,7 +575,7 @@ export default {
     gui: 'Settings (Calendar): Can delete existing calendars',
   },
   calendarEditCalendars: {
-    internal: 'ui-calendar.edit',
+    internal: 'ui-calendar.update',
     gui: 'Settings (Calendar): Can edit and reassign existing calendars',
   },
   // Data Export
@@ -626,10 +613,13 @@ export default {
   // Checkout
   checkoutAll: { internal: 'ui-checkout.all', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: {
-    internal: 'ui-checkout.circulation',
+    internal: 'ui-checkout.circulation.execute',
     gui: 'Check out: Check out circulating items',
   },
-  checkoutViewFeeFines: { internal: 'ui-checkout.viewFeeFines', gui: 'Check out: View fees/fines' },
+  checkoutViewFeeFines: {
+    internal: 'ui-checkout.viewFeeFines.view',
+    gui: 'Check out: View fees/fines',
+  },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
@@ -660,12 +650,18 @@ export default {
   },
   assignAcqUnitsToNewInvoice: {
     internal: 'ui-invoice.acq.unit.assignment.assign',
-    gui: 'Invoice: Assign acquisition units to new invoice',
+    gui: 'Invoice: Assign acquisitions units to new record',
   },
-  uiInvoicesApproveInvoices: { internal: 'ui-invoice.approve', gui: 'Invoice: Approve invoices' },
-  uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
+  uiInvoicesApproveInvoices: {
+    internal: 'ui-invoice.invoice.approve.execute',
+    gui: 'Invoice: Approve invoices',
+  },
+  uiInvoicesPayInvoices: {
+    internal: 'ui-invoice.invoice.pay.execute',
+    gui: 'Invoice: Pay invoices',
+  },
   uiInvoicesPayInvoicesInDifferentFiscalYear: {
-    internal: 'ui-invoice.payDifferentFY',
+    internal: 'ui-invoice.invoice.pay-different-fy.execute',
     gui: 'Invoice: Pay invoices in a different fiscal year',
   },
   invoiceSettingsAll: {
@@ -676,7 +672,10 @@ export default {
     internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
     gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
-  uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
+  uiInvoicesCancelInvoices: {
+    internal: 'ui-invoice.invoice.cancel.execute',
+    gui: 'Invoice: Cancel invoices',
+  },
   uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: {
     internal: 'ui-invoice.invoice.edit',
     gui: 'Invoice: Can view and edit Invoices and Invoice lines',
@@ -698,7 +697,10 @@ export default {
     internal: 'ui-invoice.acq.unit.assignment.manage',
     gui: 'Invoice: Manage acquisition units',
   },
-  uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
+  uiInvoicesVoucherExport: {
+    internal: 'ui-invoice.voucher.export.execute',
+    gui: 'Invoice: Voucher export',
+  },
   // Orders
   uiOrdersView: {
     internal: 'ui-orders.orders.view',
@@ -779,7 +781,7 @@ export default {
   },
   // Finance
   uiFinanceFinanceViewGroup: {
-    internal: 'ui-finance.acq.unit.assignment.assign',
+    internal: 'ui-finance.group.view',
     gui: 'Finance: View group',
   },
   uiFinanceCreateAllocations: {
@@ -791,7 +793,7 @@ export default {
     gui: 'Finance: Create transfers',
   },
   uiFinanceExecuteFiscalYearRollover: {
-    internal: 'ui-finance.ledger.rollover',
+    internal: 'ui-finance.ledger.rollover.execute',
     gui: 'Finance: Execute fiscal year rollover',
   },
   uiFinanceExportFinanceRecords: {
@@ -803,7 +805,7 @@ export default {
     gui: 'Finance: Manage acquisition units',
   },
   uiFinanceManuallyReleaseEncumbrance: {
-    internal: 'ui-finance.manually-release-encumbrances',
+    internal: 'ui-finance.encumbrance.release-manually.execute',
     gui: 'Finance: Manually release encumbrance',
   },
   uiFinanceViewFiscalYear: {
@@ -815,7 +817,7 @@ export default {
     gui: 'Finance: View fund and budget',
   },
   uiFinanceUnreleaseEncumbrance: {
-    internal: 'ui-finance.encumbrance.unrelease',
+    internal: 'ui-finance.encumbrance.unrelease.execute',
     gui: 'Finance: Unrelease encumbrance',
   },
   uiFinanceViewGroups: { internal: 'ui-finance.group.view', gui: 'Finance: View group' },
@@ -879,7 +881,7 @@ export default {
   },
   // Organizations
   uiOrganizationsAssignAcquisitionUnitsToNewOrganization: {
-    internal: 'ui-organizations.acqUnits.assig',
+    internal: 'ui-organizations.acqUnits.assign',
     gui: 'Organizations: Assign acquisition units to new organization',
   },
   uiOrganizationsViewBankingInformation: {
@@ -924,14 +926,6 @@ export default {
     internal: 'ui-organizations.create',
     gui: 'Organizations: View, edit, create',
   },
-  uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
-    internal: 'ui-organizations.privileged-contacts.edit',
-    gui: 'Organizations: can view, create, edit, delete privileged donor information',
-  },
-  uiOrganizationsViewPrivilegedDonorInformation: {
-    internal: 'ui-organizations.privileged-contacts.view',
-    gui: 'Organizations: can view privileged donor information',
-  },
   uiOrganizationsViewEditDelete: {
     internal: 'ui-organizations.delete',
     gui: 'Organizations: View, edit, delete',
@@ -972,13 +966,14 @@ export default {
   uiInventorySettingsConfigureClassificationBrowse: {
     internal: 'ui-inventory.settings.classification-browse',
     gui: 'Settings (Inventory): Configure classification browse',
+    details: ['absentInEvrk'],
   },
   settingsDataImportView: {
-    internal: 'ui-data-import.settings.readOnly',
+    internal: 'ui-data-import.view',
     gui: 'Data import: Can view only',
   },
   settingsDataImportEnabled: {
-    internal: 'settings.data-import.enabled',
+    internal: 'ui-data-import.settings.manage',
     gui: 'Settings (Data import): Can view, create, edit, and remove',
   },
   settingsDataImportCanViewOnly: {
@@ -986,20 +981,20 @@ export default {
     gui: 'Settings (Data import): Can view only',
   },
   settingsTenantViewLocation: {
-    internal: 'ui - tenant - settings.settings.location.view',
+    internal: 'ui-tenant-settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
   },
   settingsTenantView: {
     internal: 'ui-tenant-settings.settings.view',
-    gui: 'Settings (Tenant): View',
+    gui: 'Settings (tenant): View',
   },
   settingsCircView: {
     internal: 'ui-circulation.settings.cancellation-reasons',
-    gui: 'Settings (Circ): Can create, edit and remove cancellation reasons',
+    gui: 'Settings (Circulation): Can create, edit and remove cancellation reasons',
   },
   settingsCircCRUDRequestPolicies: {
     internal: 'ui-circulation.settings.request-policies',
-    gui: 'Settings (Circ): Can create, edit and remove request policies',
+    gui: 'Settings (Circulation): Can create, edit and remove request policies',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',
@@ -1034,7 +1029,7 @@ export default {
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
   uiSettingsHRIDHandlingCreateEditDelete: {
-    internal: 'ui-inventory.settings.hridHandling',
+    internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
   },
   uiSettingsManageAuthorityFiles: {
@@ -1045,8 +1040,12 @@ export default {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
   },
+  uiSettingsSubjectSourceCreateEditDelete: {
+    internal: 'ui-inventory.settings.subject-sources',
+    gui: 'Settings (Inventory): Create, edit, delete subject sources',
+  },
   uiSettingsCreateEditDeleteSubjectTypes: {
-    internal: '',
+    internal: 'ui-inventory.settings.subject-types',
     gui: 'Settings (Inventory): Create, edit, delete subject types',
   },
   uiSettingsViewAuthorityFiles: {
@@ -1064,7 +1063,7 @@ export default {
     gui: 'Settings (eholdings): Can view custom labels',
   },
   uiSettingseholdingsViewEditCreateDelete: {
-    internal: 'ui-eholdings.settings.all',
+    internal: 'ui-eholdings.settings.custom-labels.edit',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
   },
   uiSettingsEHoldingsViewSettings: {
@@ -1075,20 +1074,22 @@ export default {
     internal: 'ui-developer.settings.locale',
     gui: 'Settings (Developer): set session locale',
   },
-  uiSettingsTenantReadingRoom: {
-    internal: 'ui-tenant-settings.settings.reading-room-access.view',
-    gui: 'Settings (tenant): Can view reading room access',
-  },
   uiSettingsTenantReadingRoomAll: {
     internal: 'ui-tenant-settings.settings.reading-room-access.all',
     gui: 'Settings (tenant): Can create, edit and remove reading room access',
   },
+
+  uiSettingsTenantReadingRoom: {
+    internal: 'ui-tenant-settings.settings.reading-room-access.view',
+    gui: 'Settings (tenant): Can view reading room access',
+    details: ['absentInEvrk'],
+  },
   uiCanViewReadingRoomAccess: {
-    internal: 'ui-users.view-reading-room-access',
+    internal: 'ui-users.reading-room-access.view',
     gui: 'Users: Can view reading room access',
   },
   uiCanViewEditReadingRoomAccess: {
-    internal: 'ui-users.edit-reading-room-access',
+    internal: 'ui-users.reading-room-access.edit',
     gui: 'Users: Can view, and edit reading room access',
   },
   uiReadingRoomAll: {
@@ -1099,6 +1100,7 @@ export default {
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',
     gui: 'Okapi - patch timer for current tenant',
+    details: ['noDisplayName'],
   },
   // Export manager
   exportManagerAll: {
@@ -1106,7 +1108,7 @@ export default {
     gui: 'Export manager: All',
   },
   exportManagerDownloadAndResendFiles: {
-    internal: 'ui-export-manager.jobs.downloadAndResend',
+    internal: 'ui-export-manager.jobs.downloadAndResend.execute',
     gui: 'Export manager: Download and resend files',
   },
   exportManagerView: {
@@ -1115,32 +1117,32 @@ export default {
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
-    gui: 'Bursar exports: Bursar admin',
+    gui: 'Transfer exports: Modify configuration and start jobs',
   },
   // OAI-PMH
   oaipmhView: {
-    internal: 'ui-oai-pmh.view',
+    internal: 'ui-oai-pmh.settings.view',
     gui: 'Settings (OAI-PMH): Can view',
   },
   oaipmhViewLogs: {
-    internal: 'ui-oai-pmh.logs',
+    internal: 'ui-oai-pmh.settings.logs.view',
     gui: 'Settings (OAI-PMH): Can view logs',
   },
   oaipmhSettingsEdit: {
-    internal: 'ui-oai-pmh.edit',
+    internal: 'ui-oai-pmh.settings.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
   },
   uiCirculationSettingsOverdueFinesPolicies: {
     internal: 'ui-circulation.settings.overdue-fines-policies',
-    gui: 'Settings (Circ): Can create, edit and remove overdue fine policies',
+    gui: 'Settings (Circulation): Can create, edit and remove overdue fine policies',
   },
   uiCirculationSettingsLostItemFeesPolicies: {
     internal: 'ui-circulation.settings.lost-item-fees-policies',
-    gui: 'Settings (Circ): Can create, edit and remove lost item fee policies',
+    gui: 'Settings (Circulation): Can create, edit and remove lost item fee policies',
   },
   settingsLoanPoliciesAll: {
     internal: 'settings.loan-policies.all',
-    gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
+    gui: 'Settings (Circulation): Can create, edit and remove loan policies [LEGACY]',
   },
   // Consortia
   settingsConsortiaCanViewNetworkOrdering: {
@@ -1150,39 +1152,48 @@ export default {
   consortiaSettingsConsortiaAffiliationsEdit: {
     internal: 'ui-consortia-settings.consortia.affiliations.edit',
     gui: 'Consortia: Assign and unassign affiliations',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiaAffiliationsView: {
     internal: 'ui-consortia-settings.consortia.affiliations.view',
     gui: 'Consortia: View affiliations',
+    details: ['obsolete'],
   },
   consortiaInventoryShareLocalInstance: {
-    internal: 'consortia.inventory.share.local.instance',
+    internal: 'consortia.inventory.local.sharing-instances.execute',
     gui: 'Inventory: Share local instance with consortium',
+    details: ['obsolete'],
   },
   consortiaSettingsSettingsMembershipEdit: {
     internal: 'ui-consortia-settings.settings.membership.edit',
     gui: 'Settings (Consortia): Can view and edit consortia membership',
+    details: ['obsolete'],
   },
   consortiaSettingsSettingsMembershipView: {
     internal: 'ui-consortia-settings.settings.membership.view',
     gui: 'Settings (Consortia): Can view consortia membership',
+    details: ['obsolete'],
   },
   // Consortium manager
   consortiaSettingsConsortiumManagerEdit: {
     internal: 'ui-consortia-settings.consortium-manager.edit',
     gui: 'Consortium manager: Can create, edit and remove settings',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerShare: {
     internal: 'ui-consortia-settings.consortium-manager.share',
     gui: 'Consortium manager: Can share settings to all members',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerView: {
     internal: 'ui-consortia-settings.consortium-manager.view',
     gui: 'Consortium manager: Can view existing settings',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerDepartmentsCreateEditView: {
     internal: 'ui-users.settings.departments.create.edit.view',
-    gui: 'Settings (Users): Can create, edit, and view department',
+    gui: 'Settings (Users): Can create, edit, and view departments',
+    details: ['obsolete'],
   },
   consortiaSettingsConsortiumManagerPatronGroupsAll: {
     internal: 'ui-users.settings.usergroups.all',

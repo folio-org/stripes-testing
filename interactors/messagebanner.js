@@ -13,6 +13,7 @@ export default HTML.extend('MessageBanner')
   .filters({
     type: (el) => MessageBannerTypes.keys().filter((t) => el.className.includes(t))[0],
     textContent: (el) => el.querySelector('[class*="content--"]').textContent,
+    headline: (el) => el.querySelector('[class^="headline--"]').textContent,
   })
   .actions({
     dismiss: ({ find }) => find(IconButtonInteractor({ icon: 'times' })).click(),

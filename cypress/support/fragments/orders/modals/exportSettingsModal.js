@@ -74,10 +74,9 @@ export default {
   },
   clickExportButton({ exportStarted = true } = {}) {
     cy.do(exportButton.click());
-    cy.expect(exportSettingsModal.absent());
-
     if (exportStarted) {
       InteractorsTools.checkCalloutMessage(OrderStates.exportJobStartedSuccessfully);
     }
+    cy.expect(exportSettingsModal.absent());
   },
 };

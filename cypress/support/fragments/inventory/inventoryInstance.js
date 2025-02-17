@@ -38,7 +38,7 @@ import { REQUEST_METHOD, ITEM_STATUS_NAMES } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
-import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
+import InventoryInstanceSelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import HoldingsRecordView from './holdingsRecordView';
@@ -1379,6 +1379,7 @@ export default {
     cy.do(actionsButton.click());
     cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
+    cy.wait(2000);
   },
 
   checkShareLocalInstanceButtonIsAbsent() {
@@ -1805,6 +1806,13 @@ export default {
     cy.wait(2000);
     cy.do(actionsButton.click());
     cy.do(editInLdeButton.click());
+    cy.wait(1000);
+  },
+
+  checkEditInstanceInLdeButtonNotDisplayed: () => {
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.expect(editInLdeButton.absent());
     cy.wait(1000);
   },
 

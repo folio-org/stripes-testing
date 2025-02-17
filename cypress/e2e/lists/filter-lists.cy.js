@@ -67,7 +67,31 @@ describe('lists', () => {
       {
         name: `C411806-${getTestEntityValue('list')}-4`,
         description: `C411806-${getTestEntityValue('desc')}-4`,
+        recordType: 'Holdings',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
+      },
+      {
+        name: `C411806-${getTestEntityValue('list')}-5`,
+        description: `C411806-${getTestEntityValue('desc')}-5`,
+        recordType: 'Instances',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
+      },
+      {
+        name: `C411806-${getTestEntityValue('list')}-6`,
+        description: `C411806-${getTestEntityValue('desc')}-6`,
         recordType: 'Purchase order lines',
+        fqlQuery: '',
+        isActive: true,
+        isPrivate: true,
+      },
+      {
+        name: `C411806-${getTestEntityValue('list')}-7`,
+        description: `C411806-${getTestEntityValue('desc')}-7`,
+        recordType: 'Organizations',
         fqlQuery: '',
         isActive: true,
         isPrivate: true,
@@ -84,7 +108,15 @@ describe('lists', () => {
     };
     const recordTypesFilters = {
       accordionName: 'Record types',
-      filters: ['Loans', 'Items', 'Users', 'Purchase order lines'],
+      filters: [
+        'Loans',
+        'Items',
+        'Users',
+        'Purchase order lines',
+        'Holdings',
+        'Instances',
+        'Organizations',
+      ],
     };
 
     before('Create test data', () => {
@@ -130,7 +162,7 @@ describe('lists', () => {
 
     it(
       'C411804 Filter section: Statuses (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'C411804'] },
+      { tags: ['criticalPath', 'corsair', 'C411804', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Status" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(statusFilters.accordionName);
@@ -152,7 +184,7 @@ describe('lists', () => {
 
     it(
       'C411805 Filter section: Visibility (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'C411805'] },
+      { tags: ['criticalPath', 'corsair', 'C411805', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Visibility" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
@@ -191,7 +223,7 @@ describe('lists', () => {
 
     it(
       'C411806 Filter section: Record types (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'C411806'] },
+      { tags: ['criticalPath', 'corsair', 'C411806', 'eurekaPhase1'] },
       () => {
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);

@@ -6,7 +6,10 @@ import ClassificationIdentifierTypes from '../../../support/fragments/settings/i
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { CLASSIFICATION_IDENTIFIER_TYPES } from '../../../support/constants';
+import {
+  CLASSIFICATION_IDENTIFIER_TYPES,
+  BROWSE_CLASSIFICATION_OPTIONS,
+} from '../../../support/constants';
 import ClassificationBrowse, {
   defaultClassificationBrowseIdsAlgorithms,
 } from '../../../support/fragments/settings/inventory/instances/classificationBrowse';
@@ -67,7 +70,7 @@ describe('Inventory', () => {
           classificationType: CLASSIFICATION_IDENTIFIER_TYPES.UDC,
         },
       ],
-      classificationOption: 'Dewey Decimal classification',
+      classificationOption: BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
       classificationValue: 'test004. HD',
       querySearchOption: 'Query search',
       instanceTitleWithLocalClassification:
@@ -153,6 +156,8 @@ describe('Inventory', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
           InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          // wait for values to be available in browse
+          cy.wait(5000);
         },
       );
     });

@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -18,9 +19,9 @@ const testUsersBarcodes = [];
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const customFieldName = `customFieldName-${getRandomPostfix()}`;
 const customFieldText = `customFieldText\n${getRandomPostfix()}`;
-const matchedRecordsFileName = `*-Matched-Records-${userBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(userBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

@@ -31,7 +31,7 @@ describe('lists', () => {
     // the test depends on test data - Inactive patrons with open loans
     it(
       'C411810 Export list: Canned lists (corsair)',
-      { tags: ['smokeFlaky', 'corsair', 'C411810'] },
+      { tags: ['smokeFlaky', 'corsair', 'C411810', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

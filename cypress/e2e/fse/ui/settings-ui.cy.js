@@ -23,7 +23,7 @@ describe('fse-settings - UI', () => {
 
   it(
     `TC195469 - verify software versions page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'settings'] },
+    { tags: ['sanity', 'fse', 'ui', 'settings', 'software-version'] },
     () => {
       cy.visit(SettingsMenu.softwareVersionsPath);
       SoftwareVersions.waitLoading();

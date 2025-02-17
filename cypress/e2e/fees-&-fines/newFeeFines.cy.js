@@ -189,7 +189,7 @@ describe('Fees&Fines', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemBarcode);
-        CheckInActions.confirmMultipleItemsCheckin(itemBarcode);
+        CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(itemBarcode);
         CheckInActions.openNewFeeFinesPane();
 
         initialCheckNewFeeFineFragment(testData.owner.name);

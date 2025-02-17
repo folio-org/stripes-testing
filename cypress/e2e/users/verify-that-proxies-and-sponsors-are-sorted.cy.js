@@ -19,7 +19,7 @@ describe('Users', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.wrap(['E', 'C', 'A', 'D', 'B', 'Z'])
+      cy.wrap(['e', 'c', 'a', 'd', 'b', 'z'])
         .each((user) => {
           Users.createViaApi({
             active: true,
@@ -60,7 +60,7 @@ describe('Users', () => {
 
   it(
     'C410869 Verify that proxies and sponsors are sorted (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C410869'] },
+    { tags: ['extendedPath', 'volaris', 'C410869', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.mainUsername);
       UserEdit.openEdit();

@@ -53,7 +53,7 @@ describe('lists', () => {
 
     it(
       "C411710 Verify that private list isn't visible for the other users (corsair)",
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411710'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411710', 'eurekaPhase1'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: TopMenu.listsPath,

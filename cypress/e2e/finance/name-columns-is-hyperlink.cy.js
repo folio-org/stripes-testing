@@ -63,7 +63,7 @@ describe('Finance', () => {
 
   it(
     'C369083 - Finance | Results List | Verify that values in "Name" columns are hyperlink (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.clickFiscalYearButton();
       FiscalYears.waitLoading();

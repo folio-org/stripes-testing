@@ -72,6 +72,7 @@ describe('Invoices', () => {
         });
       });
     });
+    cy.getAdminToken();
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -161,7 +162,7 @@ describe('Invoices', () => {
   ].forEach((filter) => {
     it(
       'C6724 Test the invoice filters (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         filter.filterActions();
         Invoices.selectInvoice(invoice.invoiceNumber);

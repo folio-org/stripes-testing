@@ -48,7 +48,7 @@ describe('Users', () => {
 
   it(
     'C398021 Verify that user is able to edit user records without error messages (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C398021'] },
+    { tags: ['extendedPath', 'volaris', 'C398021', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.openEdit();
@@ -60,7 +60,7 @@ describe('Users', () => {
 
   it(
     'C407662 "User search results" pane results remain after canceling user\'s profile editing (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C407662'] },
+    { tags: ['extendedPath', 'volaris', 'C407662', 'eurekaPhase1'] },
     () => {
       userData.middleName = newMiddleName;
       UsersSearchPane.searchByUsername(userData.username);

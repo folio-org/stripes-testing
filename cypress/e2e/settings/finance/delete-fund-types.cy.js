@@ -56,8 +56,12 @@ describe('Finance › Settings (Finance)', () => {
     FundTypes.deleteFundTypesViaApi(firstFundType.id);
   });
 
-  it('C367941 Delete Fund types (thunderjet)', { tags: ['extendedPath', 'thunderjet'] }, () => {
-    SettingsFinance.canNotDeleteFundType(firstFundType);
-    SettingsFinance.deleteFundType(secondFundType);
-  });
+  it(
+    'C367941 Delete Fund types (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
+    () => {
+      SettingsFinance.canNotDeleteFundType(firstFundType);
+      SettingsFinance.deleteFundType(secondFundType);
+    },
+  );
 });

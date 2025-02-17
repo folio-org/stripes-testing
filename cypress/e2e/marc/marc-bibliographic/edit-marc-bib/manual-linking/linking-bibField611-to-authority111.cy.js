@@ -22,7 +22,7 @@ describe('MARC', () => {
           authorityValue:
             'C380764 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
           authorityHeading:
-            'C380764 Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 : (2nd :',
+            'C380764 Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
           linkedIconText: 'Linked to MARC authority',
           accordion: 'Subject',
           searchOptionCorporateName: 'Corporate/Conference name',
@@ -59,7 +59,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$a C380764 Vatican Council $c Basilica di San Pietro in Vaticano) $d 1962-1965 : $n (2nd :',
+          '$a C380764 Vatican Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Vaticano)',
           '',
           '$0 http://id.loc.gov/authorities/names/n79084169',
           '$2 fast $1 http://viaf.org/viaf/133636573/',
@@ -70,7 +70,7 @@ describe('MARC', () => {
           testData.tag611,
           '2',
           '7',
-          '$a C380764 Vatican Council $c Basilica di San Pietro in Vaticano) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
+          '$a C380764 Vatican Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Vaticano) $0 http://id.loc.gov/authorities/names/n79084169 $2 fast $1 http://viaf.org/viaf/133636573/',
         ];
 
         before('Creating user and data', () => {

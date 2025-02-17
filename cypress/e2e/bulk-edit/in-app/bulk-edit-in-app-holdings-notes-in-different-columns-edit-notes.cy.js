@@ -68,9 +68,9 @@ const holdingNoteTypeNamesSet = [
   HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE,
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 function verifyFileContent(fileName, headerValuePairs) {
   headerValuePairs.forEach((pair) => {
@@ -197,26 +197,26 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         verifyFileContent(matchedRecordsFileName, initialValueSets);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING);
         BulkEditActions.selectSecondAction(actionsToSelect.removeMarkAsStaffOnly);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.removeMarkAsStaffOnly);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.NOTE, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.changeNoteType, 1);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.changeNoteType, 1);
         BulkEditActions.selectNoteTypeWhenChangingIt(HOLDING_NOTE_TYPES.PROVENANCE, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.COPY_NOTE, 2);
         BulkEditActions.selectSecondAction(actionsToSelect.markAsStaffOnly, 2);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.markAsStaffOnly, 2);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(3);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 3);
@@ -228,7 +228,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.replaceWith, 3);
         BulkEditActions.fillInSecondTextArea(notesText.newNote, 3);
         BulkEditActions.verifyValueInSecondTextArea(notesText.newNote, 3);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureFormByRowExactMatch(

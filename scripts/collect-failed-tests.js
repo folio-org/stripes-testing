@@ -7,7 +7,7 @@ const { createTestRailClient } = require('./helpers/api.client');
 const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
-const selectedStatus = [status.Failed, status.Retest];
+const selectedStatus = [status.Failed, status.Retest, status.Untested];
 const selectedTeams = [
   team.Firebird,
   team.Folijet,
@@ -16,6 +16,7 @@ const selectedTeams = [
   team.Vega,
   team.Volaris,
   team.Corsair,
+  team.Eureka,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;

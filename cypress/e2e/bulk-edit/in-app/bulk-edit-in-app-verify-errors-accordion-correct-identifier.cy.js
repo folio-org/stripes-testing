@@ -21,8 +21,8 @@ let user;
 let tempLocation;
 let instanceHRID;
 const instanceHRIDFileName = `instanceHRIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${instanceHRIDFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${instanceHRIDFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDFileName);
 
 const item = {
   annexId: LOCATION_IDS.ANNEX,

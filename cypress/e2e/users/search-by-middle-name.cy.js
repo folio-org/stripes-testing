@@ -16,7 +16,7 @@ describe('Users', () => {
   };
   let userData = {
     password: getTestEntityValue('Password'),
-    username: getTestEntityValue('cypressTestUser'),
+    username: getTestEntityValue('cypresstestuser'),
   };
   const testData = {};
 
@@ -81,7 +81,7 @@ describe('Users', () => {
 
   it(
     'C389464 Search by middle name (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C389464'] },
+    { tags: ['criticalPath', 'volaris', 'C389464', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByKeywords(userData.middleName);
       Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);

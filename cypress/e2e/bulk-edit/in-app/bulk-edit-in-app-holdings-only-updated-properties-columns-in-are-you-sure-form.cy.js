@@ -1,6 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -58,9 +59,9 @@ const columnHeadersNotEdited = [
   BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY,
 ];
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${holdingUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${holdingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${holdingUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(holdingUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -157,7 +158,7 @@ describe('bulk-edit', () => {
           columnHeadersSet,
         ]);
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyActionsColumnIsNotPopulated();
@@ -165,7 +166,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction(actionsToSelect.changeNoteType);
         BulkEditActions.selectNoteTypeWhenChangingIt(HOLDING_NOTE_TYPES.ACTION_NOTE, 0);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.changeNoteType);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(optionsToSelect.uri, 1);
@@ -173,19 +174,19 @@ describe('bulk-edit', () => {
         BulkEditActions.fillInSecondTextArea(newURI, 1);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.replaceWith, 1);
         BulkEditActions.verifyValueInSecondTextArea(newURI, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.ONLINE_UI, 'holdings', 2);
         BulkEditActions.verifyActionsSelectDropdownDisabled(2);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.replaceWith, 2);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(3);
         BulkEditActions.selectOption(optionsToSelect.temporaryHoldingLocation, 3);
         BulkEditActions.selectSecondAction(actionsToSelect.clearField, 3);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.clearField, 3);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(4);
         BulkEditActions.selectOption(optionsToSelect.electronicBookplate, 4);
@@ -193,13 +194,13 @@ describe('bulk-edit', () => {
         BulkEditActions.fillInSecondTextArea(electronicBookplateNoteText, 4);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote, 4);
         BulkEditActions.verifyValueInSecondTextArea(electronicBookplateNoteText, 4);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(5);
         BulkEditActions.selectOption(optionsToSelect.suppressFromDiscovery, 5);
         BulkEditActions.selectSecondAction(actionsToSelect.setTrue, 5);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.setTrue, 5);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         const arrayOfOptions = Object.values(optionsToSelect);
 

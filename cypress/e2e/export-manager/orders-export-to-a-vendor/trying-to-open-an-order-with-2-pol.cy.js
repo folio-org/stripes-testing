@@ -68,6 +68,7 @@ describe('Export Manager', () => {
       });
       SettingsOrders.setPurchaseOrderLinesLimit(2);
 
+      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -151,6 +152,7 @@ describe('Export Manager', () => {
       });
       SettingsOrders.setPurchaseOrderLinesLimit(1);
 
+      cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
 
       Organizations.deleteOrganizationViaApi(organization.id);
@@ -165,7 +167,7 @@ describe('Export Manager', () => {
 
     it(
       'C350410 Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

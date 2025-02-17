@@ -4,7 +4,6 @@ import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files'
 import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import DateTools from '../../../support/utils/dateTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -64,11 +63,10 @@ const setOfColumnValues = [
     noteText: noteTexts.withNote,
   },
 ];
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${todayDate}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${todayDate}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `${todayDate}-Changed-Records-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -202,7 +200,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
         BulkEditActions.fillInSecondTextArea(noteTexts.bibliographyNote2);
         BulkEditActions.verifyValueInSecondTextArea(noteTexts.bibliographyNote2);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         setOfColumnValues.forEach((columnValueSet, ind) => {
           const rowNumber = ind + 1;
@@ -213,7 +211,7 @@ describe('bulk-edit', () => {
           BulkEditActions.selectSecondAction(actionsToSelect.addNote, rowNumber);
           BulkEditActions.fillInSecondTextArea(columnValueSet.noteText, rowNumber);
           BulkEditActions.verifyValueInSecondTextArea(columnValueSet.noteText, rowNumber);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
         });
 
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions, 1);

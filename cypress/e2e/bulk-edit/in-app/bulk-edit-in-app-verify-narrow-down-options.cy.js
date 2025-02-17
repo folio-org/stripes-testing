@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.verifyItemAdminstrativeNoteActions(0);
         BulkEditActions.selectSecondAction('Remove all', 0);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         cy.wait(1000);
         function performBulkEditOptionActions(option) {
           for (let i = 1; i <= 9 && option.length > 0; i++) {
@@ -101,7 +101,7 @@ describe('bulk-edit', () => {
             // Click "Select option" dropdown on the added row
             BulkEditActions.verifyTheOptionsAfterSelectedOption(option[i], i);
             BulkEditActions.selectSecondAction('Mark as staff only', i);
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
           }
           removeItem(options);
         }
@@ -130,9 +130,9 @@ describe('bulk-edit', () => {
         removeItem(options);
         BulkEditActions.verifyTheOptionsAfterSelectedAllOptions('Suppress from discovery', 15);
         // Click "Select option" dropdown on the added row
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.editSuppressFromDiscovery(true, 15);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
       },
     );
   });

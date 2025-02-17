@@ -39,7 +39,7 @@ describe('Inventory', () => {
 
     it(
       'C366119 Verify select all option for quick instances export is reset (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C366119'] },
+      { tags: ['extendedPath', 'firebird', 'C366119', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.byKeywords();
         InventoryInstances.clickSelectAllInstancesCheckbox();

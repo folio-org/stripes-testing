@@ -58,6 +58,7 @@ describe('Finance: Ledgers', () => {
           Funds.addTwoExpensesClass('Electronic', 'Print');
         });
       });
+      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -130,7 +131,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353205 Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings-None statuses (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

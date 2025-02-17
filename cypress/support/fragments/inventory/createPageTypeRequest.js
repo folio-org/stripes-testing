@@ -116,7 +116,7 @@ export default {
     cy.wait(500);
     Requests.verifyFulfillmentPreference();
     newRequest.choosePickupServicePoint(servicePointName);
-    cy.wait(500);
+    cy.wait(1000);
     newRequest.saveRequestAndClose();
     cy.wait(500);
     Requests.verifyRequestsPage();

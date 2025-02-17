@@ -5,7 +5,6 @@ import BulkEditSearchPane, {
   instanceIdentifiers,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
-import DateTools from '../../../support/utils/dateTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -50,15 +49,17 @@ const actionOptions = {
   setFalse: 'Set false',
   setTrue: 'Set true',
 };
-const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const invalidInstanceIds = [];
 const createdInstanceIds = [];
 const createdInstanceHrids = [];
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `${today}-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `${today}-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const changedRecordsFileName = `${today}-Changed-Records-${instanceUUIDsFileName}`;
-const errorsFromMatchingFileName = `${today}-Matching-Records-Errors-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(
+  instanceUUIDsFileName,
+  true,
+);
 
 // generate invalid instance ids
 for (let i = 1; i <= 5; i++) {
@@ -297,7 +298,7 @@ describe('bulk-edit', () => {
         });
 
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.selectOption(optionToSelect.suppressFromDiscovery);
@@ -306,7 +307,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction(actionOptions.setFalse);
         BulkEditActions.verifySecondActionSelected(actionOptions.setFalse);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(false);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(6);
         BulkEditActions.verifyAreYouSureForm(6);
@@ -336,7 +337,7 @@ describe('bulk-edit', () => {
         BulkEditActions.selectSecondAction(actionOptions.setTrue);
         BulkEditActions.verifySecondActionSelected(actionOptions.setTrue);
         BulkEditActions.applyToHoldingsItemsRecordsCheckboxExists(true);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(6);
         BulkEditActions.verifyAreYouSureForm(6);

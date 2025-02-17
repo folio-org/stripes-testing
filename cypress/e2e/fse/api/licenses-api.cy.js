@@ -1,4 +1,4 @@
-describe('fse-licenses', () => {
+describe('fse-licenses', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-licenses', () => {
 
   it(
     `TC195325 - Get licenses by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'licenses'] },
+    { tags: ['sanity', 'fse', 'api', 'licenses', 'loc'] },
     () => {
       cy.getLicensesByStatus('active').then((response) => {
         cy.expect(response.status).to.eq(200);

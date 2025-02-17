@@ -49,7 +49,7 @@ describe('Finance: Ledgers', () => {
           Funds.addBudget(allocatedQuantity);
         });
       });
-
+      cy.getAdminToken();
       // Create second Fiscal Year for Rollover
       FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
@@ -99,7 +99,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353212 Ledger export settings: last year Fund with NO budget, NO Classes, Export settings-All statuses (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

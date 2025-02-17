@@ -128,6 +128,7 @@ describe('orders: Edifact export', () => {
   after(() => {
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
       location.institutionId,
@@ -140,7 +141,7 @@ describe('orders: Edifact export', () => {
 
   it(
     'C350404 Verify that User can delete created Order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

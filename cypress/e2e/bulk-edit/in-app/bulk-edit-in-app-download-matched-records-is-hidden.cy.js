@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -10,7 +11,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-const errorsFromMatchingFileName = `*-Matching-Records-Errors-${userUUIDsFileName}`;
+const errorsFromMatchingFileName = BulkEditFiles.getErrorsFromMatchingFileName(userUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

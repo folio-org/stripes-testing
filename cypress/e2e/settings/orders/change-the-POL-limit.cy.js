@@ -76,6 +76,7 @@ describe('orders: Settings', () => {
       path: SettingsMenu.ordersPurchaseOrderLinesLimit,
       waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
     });
+    cy.getAdminToken();
     SettingsOrders.setPurchaseOrderLinesLimit(1);
     Orders.deleteOrderViaApi(order.id);
 
@@ -92,7 +93,7 @@ describe('orders: Settings', () => {
 
   it(
     'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       SettingsOrders.setPurchaseOrderLinesLimit(2);
       cy.visit(TopMenu.ordersPath);

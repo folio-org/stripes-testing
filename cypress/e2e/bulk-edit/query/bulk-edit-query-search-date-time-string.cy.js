@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyEmptyOperator(1);
         QueryModal.verifyEmptyValue(1);
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
-        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
+        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.verifyQueryAreaContent(`(users.expiration_date >= "${todayDate}") AND (  )`);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
@@ -87,7 +87,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyEmptyField(2);
         QueryModal.verifyEmptyOperator(2);
         QueryModal.verifyEmptyValue(2);
-        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
+        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.selectField(usersFieldValues.lastName, 2);
@@ -113,7 +113,7 @@ describe('bulk-edit', () => {
         QueryModal.verifyEmptyField(3);
         QueryModal.verifyEmptyOperator(3);
         QueryModal.verifyEmptyValue(3);
-        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
+        QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.selectField(usersFieldValues.firstName, 3);
