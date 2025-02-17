@@ -46,11 +46,11 @@ describe('bulk-edit', () => {
         BulkEditActions.selectOption('Patron group');
         BulkEditActions.replaceWithIsDisabled();
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectOption('Expiration date', 1);
         BulkEditActions.replaceWithIsDisabled(1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectOption('Email', 2);
         BulkEditActions.replaceWithIsDisabled(2);
       },

@@ -41,7 +41,7 @@ describe('Users', () => {
 
   it(
     'C343214 Filter users by tags (volaris) (TaaS)',
-    { tags: ['criticalPath', 'volaris', 'C343214'] },
+    { tags: ['criticalPath', 'volaris', 'C343214', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByKeywords(existingUser.userId);
       UsersCard.waitLoading();

@@ -13,7 +13,7 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
-import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -275,6 +275,7 @@ export default {
     }
   },
   clickCancelButton(shouldModalExsist = false) {
+    cy.wait(20000);
     cy.expect(cancelButton.has({ disabled: false }));
     cy.do(cancelButton.click());
 

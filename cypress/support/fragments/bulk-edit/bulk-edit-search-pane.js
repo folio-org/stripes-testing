@@ -24,7 +24,6 @@ const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const matchedAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors & warnings');
-const bulkEditsAccordion = Accordion('Bulk edits');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
@@ -40,7 +39,6 @@ const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
 const setCriteriaPane = Pane('Set criteria');
 const saveAndClose = Button('Save & close');
-const confirmChanges = Button('Confirm changes');
 const buildQueryButton = Button('Build query');
 const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' });
 const areYouSureForm = Modal('Are you sure?');
@@ -78,6 +76,16 @@ export const getReasonForTenantNotAssociatedError = (entityIdentifier, tenantId,
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
+    cy.wait(1000);
+  },
+
+  scrollInAreYouSureForm(direction) {
+    cy.get('[class^=modal-] div[class^="mclScrollable"]').scrollTo(direction);
+    cy.wait(1000);
+  },
+
+  scrollInChangedAccordion(direction) {
+    cy.get('[class^=previewAccordion-] div[class^="mclScrollable"]').scrollTo(direction);
     cy.wait(1000);
   },
 
@@ -1093,7 +1101,8 @@ export default {
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyAreYouSureColumnTitlesDoNotInclude(title) {
+  verifyAreYouSureColumnTitlesDoNotInclude(title, isNeedToScroll = false) {
+    if (isNeedToScroll) this.scrollInAreYouSureForm('right');
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -1101,7 +1110,8 @@ export default {
     cy.expect(changesAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyChangedColumnTitlesDoNotInclude(title) {
+  verifyChangedColumnTitlesDoNotInclude(title, isNeedToScroll = false) {
+    if (isNeedToScroll) this.scrollInChangedAccordion('right');
     cy.expect(changesAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -1150,10 +1160,6 @@ export default {
   isBuildQueryButtonDisabled(isDisabled = true) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
-  },
-  isConfirmButtonDisabled(isDisabled) {
-    cy.wait(500);
-    cy.expect(confirmChanges.has({ disabled: isDisabled }));
   },
 
   clickBuildQueryButton() {
@@ -1246,10 +1252,6 @@ export default {
 
         return numberOfRecords;
       });
-  },
-
-  verifyBulkEditsAccordionExists() {
-    cy.expect(bulkEditsAccordion.exists());
   },
 
   verifyPreviousPaginationButtonDisabled(isDisabled = true) {
@@ -1358,5 +1360,11 @@ export default {
       });
     }
     checkResponse();
+  },
+
+  verifyCellWithContentAbsentsInChangesAccordion(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(changesAccordion.find(MultiColumnListCell(content)).absent());
+    });
   },
 };

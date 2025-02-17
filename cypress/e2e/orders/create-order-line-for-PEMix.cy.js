@@ -32,7 +32,7 @@ describe('orders: Test PO search', () => {
 
   it(
     'C343242 Create an order line for format = P/E mix (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

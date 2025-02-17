@@ -41,7 +41,7 @@ describe('ui-organizations: Filtering organization', () => {
   ].forEach((filter) => {
     it(
       'C6713 Test the Organizations app filters (except Tags) (thunderjet)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeftBroken'] },
+      { tags: ['smoke', 'thunderjet', 'shiftLeftBroken', 'eurekaPhase1'] },
       () => {
         filter.filterActions();
         Organizations.checkOrganizationFilter();

@@ -24,8 +24,12 @@ describe('Orders', () => {
     Orders.deleteOrderViaActions();
   });
 
-  it('C660 Create an order (thunderjet)', { tags: ['smoke', 'thunderjet', 'shiftLeft'] }, () => {
-    Orders.createOrder(order);
-    Orders.checkCreatedOrder(order);
-  });
+  it(
+    'C660 Create an order (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    () => {
+      Orders.createOrder(order);
+      Orders.checkCreatedOrder(order);
+    },
+  );
 });

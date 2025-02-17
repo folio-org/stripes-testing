@@ -22,7 +22,7 @@ describe('bulk-edit', () => {
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
+        cy.getUsers({ limit: 1, query: `"username"=="${user.username}"` }).then((users) => {
           UserEdit.updateExternalIdViaApi(users[0], externalId);
         });
         cy.login(user.username, user.password, {

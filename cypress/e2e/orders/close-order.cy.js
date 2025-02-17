@@ -26,6 +26,7 @@ describe('orders: Close Order', () => {
       orderLine.physical.materialType = materialType.id;
     });
     cy.loginAsAdmin();
+    cy.getAdminToken();
   });
 
   after(() => {
@@ -36,7 +37,7 @@ describe('orders: Close Order', () => {
 
   it(
     'C667 Close an existing order (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft'] },
+    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);

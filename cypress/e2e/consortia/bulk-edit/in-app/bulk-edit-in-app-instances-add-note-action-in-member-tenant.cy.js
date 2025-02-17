@@ -185,16 +185,16 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openStartBulkEditInstanceForm();
-            BulkEditSearchPane.verifyBulkEditsAccordionExists();
+            BulkEditActions.verifyBulkEditsAccordionExists();
             BulkEditActions.verifyOptionsDropdown();
             BulkEditActions.verifyRowIcons();
             BulkEditActions.verifyCancelButtonDisabled(false);
-            BulkEditSearchPane.isConfirmButtonDisabled(true);
+            BulkEditActions.verifyConfirmButtonDisabled(true);
             BulkEditActions.addItemNoteAndVerify(
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
               notes.administrative,
             );
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.addNewBulkEditFilterString();
             BulkEditActions.verifyNewBulkEditRow(1);
             BulkEditActions.addItemNoteAndVerify(
@@ -205,7 +205,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.verifyStaffOnlyCheckbox(false, 1);
             BulkEditActions.checkStaffOnlyCheckbox(1);
             BulkEditActions.verifyStaffOnlyCheckbox(true, 1);
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
+            BulkEditActions.verifyConfirmButtonDisabled(false);
             BulkEditActions.confirmChanges();
             BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 

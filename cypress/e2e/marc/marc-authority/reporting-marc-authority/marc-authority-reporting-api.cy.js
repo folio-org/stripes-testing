@@ -169,11 +169,13 @@ describe('MARC', () => {
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
+          cy.wait(2000);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+          cy.wait(2000);
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
 
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[2].authorityHeading);

@@ -605,7 +605,7 @@ describe('MARC', () => {
                 break;
             }
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkInstanceTitle(title);

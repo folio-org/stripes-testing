@@ -87,6 +87,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.closeBudgetDetails();
         });
       });
+      cy.getAdminToken();
       Ledgers.createViaApi(secondLedger).then((secondLedgerResponse) => {
         secondLedger.id = secondLedgerResponse.id;
         secondFund.ledgerId = secondLedger.id;
@@ -192,7 +193,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C398023 Test rollover when PO line contains two fund distributions related to different ledgers and same fiscal year (Thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(firstLedger.name);
       Ledgers.selectLedger(firstLedger.name);

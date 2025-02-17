@@ -20,6 +20,10 @@ import {
   SelectionOption,
   TextArea,
   TextField,
+  Spinner,
+  ListItem,
+  List,
+  or,
   not,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
@@ -65,6 +69,28 @@ const addPermissionsButton = Button({ id: 'clickable-add-permission' });
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const cancelButton = Button('Cancel');
+const userEditPane = Pane('Edit');
+const closeIcon = Button({ id: 'clickable-closenewuserdialog' });
+const resetPasswordLink = Button({ className: including('resetPasswordButton') });
+const resetPasswordModal = Modal('Reset password email sent');
+const resetPasswordInput = resetPasswordModal.find(TextField());
+const resetPasswordCopyButton = resetPasswordModal.find(Button('Copy link'));
+const userRolesAccordion = userEditPane.find(Accordion('User roles'));
+const addRolesButton = Button({ dataTestID: 'add-roles-button' });
+const unassignAllRolesButton = Button({ dataTestID: 'unassign-all-roles-button' });
+const selectRolesModal = Modal('Select user roles');
+const roleAssignmentFilter = selectRolesModal.find(
+  Accordion({ id: including('Role assigment status') }),
+);
+const rolesPane = selectRolesModal.find(Pane('User roles'));
+const unassignAllRolesModal = Modal('Unassign all user roles');
+const yesButton = Button('Yes');
+const noButton = Button('No');
+const lastNameField = TextField({ id: 'adduser_lastname' });
+const firstNameField = TextField({ id: 'adduser_firstname' });
+const emailField = TextField({ id: 'adduser_email' });
+const userRoleDeleteIcon = Button({ id: including('clickable-remove-user-role') });
+const profilePictureCard = Image({ alt: 'Profile picture' });
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
 const deletePictureButton = Button({ dataTestID: 'delete' });
 const keepEditingBtn = Button('Keep editing');
@@ -74,7 +100,9 @@ const saveExternalLinkBtn = updateProfilePictureModal.find(
 );
 const selectRequestType = Select({ id: 'type' });
 const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
-const profilePictureCard = Image({ alt: 'Profile picture' });
+const promoteUserModal = Modal('Keycloak user record');
+const confirmButton = Button('Confirm');
+const promoteUserModalText = 'This operation will create new record in Keycloak for';
 
 let totalRows;
 
@@ -95,6 +123,7 @@ export default {
   addServicePointsViaApi,
 
   openEdit() {
+    cy.wait(1000);
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
     cy.expect(rootPane.exists());
   },
@@ -265,9 +294,10 @@ export default {
       extendedInformationAccordion.exists(),
       contactInformationAccordion.exists(),
       customFieldsAccordion.exists(),
-      userPermissionsAccordion.exists(),
       servicePointsAccordion.exists(),
     ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
     cy.expect([
       patronBlocksAccordion.absent(),
       proxySponsorAccordion.absent(),
@@ -283,9 +313,10 @@ export default {
       userInformationAccordion.exists(),
       extendedInformationAccordion.exists(),
       contactInformationAccordion.exists(),
-      userPermissionsAccordion.exists(),
       servicePointsAccordion.exists(),
     ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
     cy.expect([
       patronBlocksAccordion.absent(),
       proxySponsorAccordion.absent(),
@@ -324,6 +355,7 @@ export default {
   },
 
   saveAndClose() {
+    cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
     cy.expect(rootPane.absent());
@@ -331,8 +363,11 @@ export default {
 
   saveEditedUser() {
     cy.intercept('PUT', '/users/*').as('updateUser');
-    this.saveAndClose();
+    cy.wait(1000);
+    cy.expect(saveAndCloseBtn.has({ disabled: false }));
+    cy.do(saveAndCloseBtn.click());
     cy.wait('@updateUser', { timeout: 100000 });
+    cy.expect(rootPane.absent());
   },
 
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
@@ -438,23 +473,6 @@ export default {
 
   chooseRequestType(requestType) {
     cy.do(selectRequestType.choose(requestType));
-  },
-
-  enterValidValueToCreateViaUi: (userData, patronGroup) => {
-    return cy
-      .do([
-        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-        Select({ id: 'adduser_group' }).choose(patronGroup),
-        Modal({ id: 'recalculate_expirationdate_modal' }).find(Button('Set')).click(),
-        TextField({ name: 'barcode' }).fillIn(userData.barcode),
-        TextField({ name: 'username' }).fillIn(userData.username),
-        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-        saveAndCloseBtn.click(),
-      ])
-      .then(() => {
-        cy.intercept('/users').as('user');
-        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
-      });
   },
 
   resetAll() {
@@ -639,9 +657,27 @@ export default {
     ]);
   },
 
-  verifyUserPermissionsAccordion() {
-    cy.expect(permissionsAccordion.exists());
-    cy.expect(permissionsAccordion.has({ open: false }));
+  enterValidValueToCreateViaUi: (userData) => {
+    return cy
+      .do([
+        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+        TextField({ name: 'barcode' }).fillIn(userData.barcode),
+        TextField({ name: 'username' }).fillIn(userData.username),
+        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+        saveAndCloseBtn.click(),
+      ])
+      .then(() => {
+        cy.intercept('/users').as('user');
+        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
+      });
+  },
+
+  verifyUserPermissionsAccordion(isShown = false) {
+    if (isShown) {
+      cy.expect(permissionsAccordion.exists());
+      cy.expect(permissionsAccordion.has({ open: false }));
+    } else cy.expect(permissionsAccordion.absent());
   },
 
   verifyPermissionsNotExistInPermissionsAccordion(permissions) {
@@ -707,5 +743,168 @@ export default {
       updateProfilePictureModal.exists(),
       saveExternalLinkBtn.has({ disabled: true }),
     ]);
+  },
+
+  fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
+    if (userType) cy.do(Select({ id: 'type' }).choose(userType));
+    if (userName) cy.do(TextField({ id: 'adduser_username' }).fillIn(userName));
+    cy.do([
+      TextField({ id: 'adduser_lastname' }).fillIn(userLastName),
+      Select({ id: 'adduser_group' }).choose(patronGroup),
+      TextField({ id: 'adduser_email' }).fillIn(email),
+    ]);
+    cy.wait(2000);
+  },
+
+  checkUserEditPaneOpened: (isOpened = true) => {
+    cy.expect(Spinner().absent());
+    if (isOpened) {
+      cy.expect(userEditPane.exists(), userInformationAccordion.exists());
+    } else {
+      cy.expect(userEditPane.absent(), userInformationAccordion.absent());
+    }
+  },
+
+  closeUsingIcon() {
+    cy.do(closeIcon.click());
+    cy.expect(userEditPane.absent);
+  },
+
+  clickResetPasswordLink() {
+    cy.do(resetPasswordLink.click());
+    cy.expect([
+      resetPasswordModal.exists(),
+      resetPasswordInput.exists(),
+      resetPasswordCopyButton.exists(),
+    ]);
+  },
+
+  verifyResetLink(expectedLink) {
+    cy.expect(resetPasswordInput.has({ value: expectedLink }));
+  },
+
+  verifyUserRolesCounter(expectedCount) {
+    cy.expect(userRolesAccordion.has({ counter: expectedCount }));
+  },
+
+  clickUserRolesAccordion(isExpanded = true, isEditable = true) {
+    cy.do(userRolesAccordion.clickHeader());
+    cy.expect(userRolesAccordion.has({ open: isExpanded }));
+    if (isEditable) {
+      cy.expect([
+        addRolesButton.exists(),
+        unassignAllRolesButton.has({ disabled: or(true, false) }),
+      ]);
+    } else {
+      cy.expect([
+        addRolesButton.absent(),
+        unassignAllRolesButton.absent(),
+        userRoleDeleteIcon.absent(),
+      ]);
+    }
+  },
+
+  verifyUserRolesAccordionEmpty() {
+    cy.expect(userRolesAccordion.find(ListItem()).absent());
+  },
+
+  clickAddUserRolesButton() {
+    cy.do(userRolesAccordion.find(addRolesButton).click());
+    cy.expect(selectRolesModal.exists());
+  },
+
+  verifySelectRolesModal() {
+    cy.expect([
+      selectRolesModal.find(userSearch).exists(),
+      selectRolesModal.find(searchButton).has({ disabled: true }),
+      selectRolesModal.find(saveAndCloseBtn).exists(),
+      selectRolesModal.find(cancelButton).exists(),
+      rolesPane.exists(),
+      roleAssignmentFilter.exists(),
+    ]);
+  },
+
+  selectRoleInModal(roleName, isSelected = true) {
+    const targetCheckbox = MultiColumnListRow(including(roleName), { isContainer: false }).find(
+      Checkbox(),
+    );
+    cy.do([
+      selectRolesModal.find(userSearch).fillIn(roleName),
+      selectRolesModal.find(searchButton).click(),
+      targetCheckbox.click(),
+    ]);
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  saveAndCloseRolesModal() {
+    cy.do(selectRolesModal.find(saveAndCloseBtn).click());
+    cy.expect(selectRolesModal.absent());
+    cy.wait(1000);
+  },
+
+  verifyUserRoleNames(roleNames, isEditable = true) {
+    roleNames.forEach((roleName) => {
+      const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+      if (isEditable) cy.expect(roleItem.find(userRoleDeleteIcon).exists());
+      else cy.expect(roleItem.exists());
+    });
+  },
+
+  verifyUserRoleNamesOrdered(roleNames, isEditable = true) {
+    roleNames.forEach((roleName, index) => {
+      const roleItem = userRolesAccordion.find(ListItem(including(roleName), { index }));
+      if (isEditable) cy.expect(roleItem.find(userRoleDeleteIcon).exists());
+      else cy.expect(roleItem.exists());
+    });
+  },
+
+  verifyUserRolesRowsCount(expectedCount) {
+    cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
+  },
+
+  removeOneRole(roleName) {
+    cy.do(userRolesAccordion.find(ListItem(including(roleName)).find(userRoleDeleteIcon)).click());
+  },
+
+  unassignAllRoles(isConfirmed = true) {
+    cy.do(userRolesAccordion.find(unassignAllRolesButton).click());
+    cy.expect([
+      unassignAllRolesModal.find(yesButton).exists(),
+      unassignAllRolesModal.find(noButton).exists(),
+    ]);
+    if (isConfirmed) cy.do(unassignAllRolesModal.find(yesButton).click());
+    else cy.do(unassignAllRolesModal.find(noButton).click());
+    cy.expect(unassignAllRolesModal.absent());
+  },
+
+  fillLastFirstNames(lastName, firstName) {
+    cy.do(lastNameField.fillIn(lastName));
+    if (firstName) cy.do(firstNameField.fillIn(firstName));
+  },
+
+  fillEmailAddress(email) {
+    cy.do(emailField.fillIn(email));
+  },
+
+  checkPromoteUserModal(lastName, firstName = '') {
+    cy.expect([
+      promoteUserModal.find(cancelButton).exists(),
+      promoteUserModal.find(confirmButton).exists(),
+      promoteUserModal.has({ message: including(promoteUserModalText) }),
+      promoteUserModal.has({
+        message: including(`${lastName}${firstName ? ', ' + firstName : ''}`),
+      }),
+    ]);
+  },
+
+  clickConfirmInPromoteUserModal: (closedAfterClick = true) => {
+    cy.do(promoteUserModal.find(confirmButton).click());
+    if (closedAfterClick) cy.expect(promoteUserModal.absent());
+    else cy.expect(promoteUserModal.exists());
+  },
+
+  clickCancelInPromoteUserModal: () => {
+    cy.do(promoteUserModal.find(cancelButton).click());
+    cy.expect(promoteUserModal.absent());
   },
 };

@@ -79,7 +79,7 @@ describe('lists', () => {
 
     it(
       'C411824 Refresh list: Edit is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411824'] },
+      { tags: ['criticalPath', 'corsair', 'C411824', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -97,7 +97,7 @@ describe('lists', () => {
 
     it(
       'C411833 Refresh list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411833'] },
+      { tags: ['criticalPath', 'corsair', 'C411833', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -117,7 +117,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - less than 500 records (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411834'] },
+      { tags: ['criticalPath', 'corsair', 'C411834', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -135,7 +135,7 @@ describe('lists', () => {
 
     it(
       'C411834 Refresh list: Cancel Refresh - more than 500 records (corsair)',
-      { tags: ['criticalPathFlaky', 'corsair', 'C411834'] },
+      { tags: ['criticalPathFlaky', 'corsair', 'C411834', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);

@@ -1,4 +1,4 @@
-describe('fse-orders', () => {
+describe('fse-orders', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-orders', () => {
 
   it(
     `TC195335 - Get order by workflow status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'orders'] },
+    { tags: ['sanity', 'fse', 'api', 'orders', 'loc'] },
     () => {
       cy.getOrderByWorkflowStatus('Closed').then((response) => {
         cy.expect(response.status).to.eq(200);

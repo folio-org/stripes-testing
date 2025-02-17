@@ -161,7 +161,7 @@ describe('bulk-edit', () => {
           notes.binding,
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifyHoldingsOptions();
@@ -173,19 +173,19 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyTheActionOptions(actionNoteActionOptions);
         BulkEditActions.selectSecondAction(actionsToSelect.removeMarkAsStaffOnly);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.removeMarkAsStaffOnly);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(1);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.ELECTRONIC_BOOKPLATE, 1);
         BulkEditActions.selectSecondAction(actionsToSelect.addNote, 1);
         BulkEditActions.fillInSecondTextArea(notes.additionalElectronicBookplate, 1);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.verifyNewBulkEditRow(2);
         BulkEditActions.selectOption(HOLDING_NOTE_TYPES.BINDING, 2);
         BulkEditActions.selectSecondAction(actionsToSelect.markAsStaffOnly, 2);
         BulkEditActions.verifySecondActionSelected(actionsToSelect.markAsStaffOnly, 2);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditActions.verifyChangesInAreYouSureForm(

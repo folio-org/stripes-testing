@@ -48,6 +48,8 @@ describe('ui-finance: Transactions', () => {
         });
       });
     });
+
+    cy.getAdminToken();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
     });
@@ -74,7 +76,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6705 Create encumbrance from Order  (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoWithFund(defaultFund);

@@ -1,4 +1,5 @@
 import Tenant from './tenant';
+import Affiliations from './dictionary/affiliations';
 
 const DEFAULT_SEARCH_PARAMS = {
   limit: 1000,
@@ -16,6 +17,7 @@ Cypress.Commands.add(
     contentTypeHeader = 'application/json',
     failOnStatusCode = true,
     additionalHeaders = null,
+    isCentral = false,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -24,11 +26,14 @@ Cypress.Commands.add(
     }
     const queryString = initialParams.toString();
     const headersToSet = {
-      'x-okapi-tenant': Tenant.get(),
+      'x-okapi-tenant':
+        Cypress.env('ecsEnabled') && Cypress.env('eureka') && isCentral
+          ? Affiliations.Consortia
+          : Tenant.get(),
       'Content-type': contentTypeHeader,
     };
     if (additionalHeaders) Object.assign(headersToSet, additionalHeaders);
-    if (!Cypress.env('rtrAuth')) {
+    if (!Cypress.env('rtrAuth') && !Cypress.env('eureka')) {
       headersToSet['x-okapi-token'] = Cypress.env('token');
     }
     cy.request({

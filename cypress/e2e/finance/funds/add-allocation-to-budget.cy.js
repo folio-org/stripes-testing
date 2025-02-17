@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
@@ -6,7 +7,6 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import Budgets from '../../../support/fragments/finance/budgets/budgets';
 
 describe('ui-finance: Transactions', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -53,6 +53,7 @@ describe('ui-finance: Transactions', () => {
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
     Funds.checkIsBudgetDeleted();
 
+    cy.getAdminToken();
     Funds.deleteFundViaApi(defaultFund.id);
 
     Ledgers.deleteledgerViaApi(defaultLedger.id);
@@ -64,7 +65,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

@@ -38,7 +38,7 @@ describe('lists', () => {
 
     it(
       'C411809 Export list: Not canned lists (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411809'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411809', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -66,7 +66,7 @@ describe('lists', () => {
 
     it(
       'C411811 Export list: Inactive lists (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411811'] },
+      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411811', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -108,7 +108,7 @@ describe('lists', () => {
 
     it(
       'C411813 Export list: Edit is in progress, when the list contains records (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411813'] },
+      { tags: ['criticalPath', 'corsair', 'C411813', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -131,7 +131,7 @@ describe('lists', () => {
 
     it(
       "C411830 Export list: Edit is in progress, when the list doesn't have query (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C411830'] },
+      { tags: ['criticalPath', 'corsair', 'C411830', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -152,7 +152,7 @@ describe('lists', () => {
 
     it(
       "C411819 Export list: The list doesn't contain query (corsair)",
-      { tags: ['smoke', 'corsair', 'C411819'] },
+      { tags: ['smoke', 'corsair', 'C411819', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -171,7 +171,7 @@ describe('lists', () => {
 
     it(
       'C411837 Export list: Edit is in progress, when the list has active query with 0 records (corsair)',
-      { tags: ['criticalPathFlaky', 'corsair', 'C411837'] },
+      { tags: ['criticalPathFlaky', 'corsair', 'C411837', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

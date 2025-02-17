@@ -20,29 +20,36 @@ import {
   MessageBanner,
   Option,
   or,
+  Pane,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
 
+const bulkEditPane = HTML({ className: including('LayerRoot-') });
 const actionsBtn = Button('Actions');
 const bulkEditsAccordion = Accordion('Bulk edits');
+const bulkEditsMarcInstancesAccordion = Accordion('Bulk edits for instances with source MARC');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
 const cancelButton = Button('Cancel');
+const confirmChanges = Button('Confirm changes');
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewInCSVFormatBtn = Button('Download preview in CSV format');
+const downloadPreviewInMarcFormatButton = Button('Download preview in MARC format');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
 const startBulkEditInstanceButton = Button('FOLIO Instances');
+const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
 const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
+const downloadChagedMarcRecordsButton = Button('Download changed records (MARC)');
 const commitChanges = Button('Commit changes');
 const locationSelection = Selection({ name: 'locationId' });
 const oldEmail = TextField({ testid: 'input-email-0' });
@@ -50,6 +57,12 @@ const newEmail = TextField({ testid: 'input-email-1' });
 const closeAreYouSureModalButton = areYouSureForm.find(Button({ icon: 'times' }));
 const selectNoteHoldingTypeDropdown = Select({ id: 'noteHoldingsType' });
 const saveAndCloseButton = Button('Save & close');
+const tagField = TextField({ name: 'tag' });
+const ind1Field = TextField({ name: 'ind1' });
+const ind2Field = TextField({ name: 'ind2' });
+const subField = TextField({ name: 'subfield' });
+const dataField = TextArea({ name: 'value' });
+const selectActionForMarcInstanceDropdown = Select({ name: 'action', required: true });
 const bulkPageSelections = {
   valueType: Selection({ value: including('Select control') }),
   action: Select({ content: including('Select action') }),
@@ -61,30 +74,48 @@ export default {
   openStartBulkEditForm() {
     cy.do(startBulkEditLocalButton.click());
   },
+
   openStartBulkEditInstanceForm() {
     cy.do(startBulkEditInstanceButton.click());
     cy.wait(2000);
   },
+
+  openStartBulkEditMarcInstanceForm() {
+    cy.do(startBulkEditMarcInstanceButton.click());
+    cy.wait(2000);
+  },
+
   openInAppStartBulkEditFrom() {
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
   },
+
   verifyOptionsLength(optionsLength, count) {
     cy.expect(optionsLength).to.eq(count);
   },
+
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
+
   startBulkEditLocalAbsent() {
     cy.expect(startBulkEditLocalButton.absent());
   },
+
   startBulkEditInstanceAbsent() {
     cy.expect(startBulkEditInstanceButton.absent());
   },
+
   closeBulkEditInAppForm() {
     cy.do(cancelBtn.click());
     cy.wait(1000);
   },
+
+  verifyConfirmButtonDisabled(isDisabled) {
+    cy.wait(500);
+    cy.expect(confirmChanges.has({ disabled: isDisabled }));
+  },
+
   selectOption(optionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -169,7 +200,7 @@ export default {
 
   isDisabledRowIcons(isDisabled) {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
-    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    this.verifyConfirmButtonDisabled(true);
   },
 
   deleteRow(rowIndex = 0) {
@@ -190,6 +221,16 @@ export default {
     if (cellContent) {
       cy.expect(areYouSureForm.find(MultiColumnListCell(cellContent)).exists());
     }
+  },
+
+  verifyCellWithContentAbsentsInAreYouSureForm(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(areYouSureForm.find(MultiColumnListCell(content)).absent());
+    });
+  },
+
+  verifyDownloadPreviewInMarcFormatButtonEnabled() {
+    cy.expect(areYouSureForm.find(downloadPreviewInMarcFormatButton).has({ disabled: false }));
   },
 
   verifyChangesInAreYouSureForm(column, changes) {
@@ -241,6 +282,12 @@ export default {
 
   downloadPreview() {
     cy.do(downloadPreviewInCSVFormatBtn.click());
+    // Wait for file to download
+    cy.wait(3000);
+  },
+
+  downloadPreviewInMarcFormat() {
+    cy.do(downloadPreviewInMarcFormatButton.click());
     // Wait for file to download
     cy.wait(3000);
   },
@@ -347,9 +394,9 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    this.verifyConfirmButtonDisabled(true);
     cy.do(oldEmail.fillIn(oldEmailDomain));
-    BulkEditSearchPane.isConfirmButtonDisabled(true);
+    this.verifyConfirmButtonDisabled(true);
     cy.do(newEmail.fillIn(newEmailDomain));
   },
 
@@ -411,7 +458,7 @@ export default {
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
-    BulkEditSearchPane.isConfirmButtonDisabled(false);
+    this.isConfirmButtonDisabled(false);
   },
 
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
@@ -1175,6 +1222,11 @@ export default {
     BulkEditSearchPane.waitingFileDownload();
   },
 
+  downloadChangedMarc() {
+    cy.do(downloadChagedMarcRecordsButton.click());
+    BulkEditSearchPane.waitingFileDownload();
+  },
+
   verifyPossibleActions(actions) {
     actions.forEach((action) => {
       cy.expect(HTML(action).exists());
@@ -1295,6 +1347,10 @@ export default {
         .find(Checkbox({ label: 'Staff only', checked: true }))
         .click(),
     );
+  },
+
+  verifyBulkEditsAccordionExists() {
+    cy.expect(bulkEditsAccordion.exists());
   },
 
   verifyCancelButtonDisabled(isDisabled = true) {
@@ -1521,5 +1577,388 @@ export default {
         .find(Button({ id: 'locations-esc' }))
         .has({ disabled: isDisabled }),
     );
+  },
+
+  verifyInitialStateBulkEditForm() {
+    this.verifyBulkEditsAccordionExists();
+    this.verifyOptionsDropdown();
+    this.verifyRowIcons();
+    this.verifyCancelButtonDisabled(false);
+    this.verifyConfirmButtonDisabled(true);
+  },
+
+  verifyInitialStateBulkEditMarcFieldsForm(fileName, recordCountAndType) {
+    cy.expect([
+      bulkEditPane
+        .find(
+          Pane({
+            titleLabel: `Bulk edit MARC fields - ${fileName}`,
+            subtitle: `${recordCountAndType} records matched`,
+          }),
+        )
+        .exists(),
+      bulkEditPane
+        .find(Pane(`Bulk edit MARC fields - ${fileName}`))
+        .find(HTML(`Filename: ${fileName}`))
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(HTML({ className: including('headerCell'), text: including('Field\n*') }))
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(HTML({ className: including('headerCell'), text: 'In.1\n*' }))
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(HTML({ className: including('headerCell'), text: 'In.2\n*' }))
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(HTML({ className: including('headerCell'), text: 'Subfield\n*' }))
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(HTML({ className: including('headerCell'), text: 'Actions\n*' }))
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(tagField)
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(ind1Field)
+        .has({ value: '\\' }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(ind2Field)
+        .has({ value: '\\' }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(subField)
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(selectActionForMarcInstanceDropdown)
+        .exists(),
+      Button({ icon: 'times' }).exists(),
+    ]);
+    this.verifyRowIcons();
+    this.verifyCancelButtonDisabled(false);
+    this.verifyConfirmButtonDisabled(true);
+  },
+
+  fillInTagField(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(tagField)
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(tagField)
+        .has({ value }),
+    );
+  },
+
+  fillInInd1Field(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind1Field)
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind1Field)
+        .has({ value }),
+    );
+  },
+
+  fillInInd2Field(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind2Field)
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(ind2Field)
+        .has({ value }),
+    );
+  },
+
+  fillInSubfield(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(subField)
+        .has({ value }),
+    );
+  },
+
+  fillInTagAndIndexesAndSubfield(tag, ind1, ind2, subfield, rowIndex = 0) {
+    this.fillInTagField(tag, rowIndex);
+    this.fillInInd1Field(ind1, rowIndex);
+    this.fillInInd2Field(ind2, rowIndex);
+    this.fillInSubfield(subfield, rowIndex);
+  },
+
+  fillInSecondSubfield(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextField({ name: 'value' }))
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextField({ name: 'value' }))
+        .has({ value }),
+    );
+  },
+
+  selectActionForMarcInstance(action, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(selectActionForMarcInstanceDropdown)
+        .choose(action),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select({ name: 'action', dataActionIndex: '0' }))
+        .has({ checkedOptionText: action }),
+    );
+  },
+
+  selectSecondActionForMarcInstance(action, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select({ name: 'action', dataActionIndex: '1' }))
+        .choose(action),
+    );
+  },
+
+  fillInDataTextAreaForMarcInstance(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ ariaLabel: 'Data' }))
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ ariaLabel: 'Data' }))
+        .has({ value }),
+    );
+  },
+
+  fillInSecondDataTextAreaForMarcInstance(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ name: 'value', dataActionIndex: '1' }))
+        .fillIn(value),
+    );
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ name: 'value', dataActionIndex: '1' }))
+        .has({ value }),
+    );
+  },
+
+  verifyTheActionOptionsForMarcInstance(expectedOptions, rowIndex = 0) {
+    cy.then(() => {
+      cy.do(
+        bulkEditsMarcInstancesAccordion
+          .find(RepeatableFieldItem({ index: rowIndex }))
+          .find(Select('Actions'))
+          .allOptionsText()
+          .then((actualOptions) => {
+            const actualEnabledOptions = actualOptions.filter(
+              (actualOption) => !actualOption.includes('disabled'),
+            );
+            expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+          }),
+      );
+    });
+  },
+
+  verifyAdditionalSubfieldRowInitialState(rowIndex = 0) {
+    cy.expect([
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('marcFieldRow-') }))
+        .find(plusBtn)
+        .absent(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(subField)
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(selectActionForMarcInstanceDropdown)
+        .has({ disabled: true, checkedOptionText: 'Add' }),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(dataField)
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(selectActionForMarcInstanceDropdown)
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(plusBtn)
+        .exists(),
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(Button({ icon: 'trash', disabled: false }))
+        .exists(),
+    ]);
+  },
+
+  fillInSubfieldInSubRow(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(subField)
+        .fillIn(value),
+    );
+  },
+
+  fillInDataInSubRow(value, rowIndex = 0) {
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(HTML({ className: including('subRow-') }))
+        .find(dataField)
+        .fillIn(value),
+    );
+  },
+
+  addNewBulkEditFilterStringForMarcInstance(rowIndex = 0) {
+    cy.wait(1000);
+    cy.do(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(plusBtn)
+        .click(),
+    );
+    cy.wait(1000);
+  },
+
+  verifyDataFieldRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(dataField)
+        .has({ required: true }),
+    );
+  },
+
+  verifySecondDataFieldRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextArea({ name: 'value', dataActionIndex: '1' }))
+        .has({ required: true }),
+    );
+  },
+
+  verifySecondSubfieldRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(TextField({ name: 'value' }))
+        .has({ required: true }),
+    );
+  },
+
+  verifySelectActionRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(selectActionForMarcInstanceDropdown)
+        .has({ required: true }),
+    );
+  },
+
+  verifySelectSecondActionRequired(rowIndex = 0) {
+    cy.expect(
+      bulkEditsMarcInstancesAccordion
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Select({ name: 'action', dataActionIndex: '1' }))
+        .has({ required: true }),
+    );
+  },
+
+  findAndRemoveSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
+    this.selectActionForMarcInstance('Find', rowIndex);
+    this.verifyDataFieldRequired(2);
+    this.verifySelectSecondActionRequired(rowIndex);
+    this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.selectSecondActionForMarcInstance('Remove subfield', rowIndex);
+  },
+
+  findAndRemoveFieldActionForMarc(fieldValue, rowIndex = 0) {
+    this.selectActionForMarcInstance('Find', rowIndex);
+    this.verifyDataFieldRequired(rowIndex);
+    this.verifySelectSecondActionRequired(rowIndex);
+    this.fillInDataTextAreaForMarcInstance(fieldValue, rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.selectSecondActionForMarcInstance('Remove field', rowIndex);
+  },
+
+  findAndReplaceWithActionForMarc(fieldValue, replaceValue, rowIndex = 0) {
+    this.selectActionForMarcInstance('Find', rowIndex);
+    this.verifyDataFieldRequired(rowIndex);
+    this.verifySelectSecondActionRequired(rowIndex);
+    this.fillInDataTextAreaForMarcInstance(fieldValue, rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.selectSecondActionForMarcInstance('Replace with', rowIndex);
+    this.verifySecondDataFieldRequired(rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.fillInSecondDataTextAreaForMarcInstance(replaceValue, rowIndex);
+  },
+
+  findAndAppendActionForMarc(
+    subfieldValueToFind,
+    subfieldToAppend,
+    subfieldValueToAppend,
+    rowIndex = 0,
+  ) {
+    this.selectActionForMarcInstance('Find', rowIndex);
+    this.verifyDataFieldRequired(rowIndex);
+    this.verifySelectSecondActionRequired(rowIndex);
+    this.fillInDataTextAreaForMarcInstance(subfieldValueToFind, rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.selectSecondActionForMarcInstance('Append', rowIndex);
+    this.verifySecondDataFieldRequired(rowIndex);
+    this.verifySecondSubfieldRequired(rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.fillInSecondSubfield(subfieldToAppend, rowIndex);
+    this.verifyConfirmButtonDisabled(true);
+    this.fillInSecondDataTextAreaForMarcInstance(subfieldValueToAppend, rowIndex);
   },
 };

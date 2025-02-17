@@ -130,4 +130,8 @@ export default {
       cy.do(textField.clear());
     }
   },
+  checkCalloutExists(message, type = null) {
+    if (type) cy.expect(Callout({ textContent: message, type }).exists());
+    else cy.expect(Callout({ textContent: message }).exists());
+  },
 };

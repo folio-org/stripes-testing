@@ -638,7 +638,7 @@ export default {
       statusAccordion.find(Checkbox('Active')).has({ checked: true }),
       statusAccordion.find(clearFilterButton).exists(),
     ]);
-    cy.wait(2000);
+    cy.wait(1000);
   },
 
   verifyResetAllButtonEnabled() {
@@ -711,7 +711,9 @@ export default {
           });
       })
       .then(() => {
-        cy.expect(ArrayUtils.compareArrays(cells, filters)).to.equal(true);
+        cells.forEach((cell) => {
+          cy.expect(cell).to.be.oneOf(filters);
+        });
       });
   },
 

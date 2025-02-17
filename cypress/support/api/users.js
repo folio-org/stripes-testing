@@ -1,7 +1,8 @@
 import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
-import { FULFILMENT_PREFERENCES } from '../constants';
+import permissionsList from '../dictionary/permissions';
+import { FULFILMENT_PREFERENCES, DEFAULT_LOCALE_STRING } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy.okapiRequest({
@@ -55,7 +56,7 @@ Cypress.Commands.add('overrideLocalSettings', (userId) => {
     module: '@folio/stripes-core',
     configName: 'localeSettings',
     enabled: true,
-    value: '{"locale":"en-US","timezone":"UTC","currency":"USD"}',
+    value: DEFAULT_LOCALE_STRING,
     userId,
   };
 
@@ -78,10 +79,11 @@ Cypress.Commands.add(
   'createTempUser',
   (permissions = [], patronGroupName, userType = 'staff', barcode = true) => {
     const userProperties = {
-      username: `cypressTestUser${getRandomPostfix()}`,
+      username: `cypresstestuser${getRandomPostfix()}`,
       password: 'password',
     };
-    if (!Cypress.env('ecsEnabled')) {
+
+    if (!Cypress.env('ecsEnabled') || Cypress.env('eureka')) {
       cy.getAdminToken();
     }
 
@@ -122,36 +124,212 @@ Cypress.Commands.add(
               userId: newUserProperties.id,
             });
             cy.setUserPassword(userProperties);
-            cy.addPermissionsToNewUserApi({
-              userId: userProperties.userId,
-              permissions: [
-                ...permissionsResponse.body.permissions.map(
-                  (permission) => permission.permissionName,
-                ),
-              ],
-            });
+            if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+              cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
+                if (Cypress.env('ecsEnabled')) {
+                  cy.recurse(
+                    () => {
+                      return cy.okapiRequest({
+                        path: `users-keycloak/users/${userProperties.userId}`,
+                        isDefaultSearchParamsRequired: false,
+                      });
+                    },
+                    (response) => expect(response.body.id).to.eq(userProperties.userId),
+                    {
+                      limit: 10,
+                      timeout: 40000,
+                      delay: 1000,
+                    },
+                  ).then(() => {
+                    cy.wait(10000);
+                    cy.updateRolesForUserApi(userProperties.userId, [roleId]);
+                  });
+                } else cy.updateRolesForUserApi(userProperties.userId, [roleId]);
+              });
+            } else if (Cypress.env('eureka')) {
+              let capabilitiesIds;
+              let capabilitySetsIds;
+              const permissionNames = [];
+              permissions.forEach((permission) => {
+                for (const permissionObject in permissionsList) {
+                  // eslint-disable-next-line no-prototype-builtins
+                  if (permissionsList.hasOwnProperty(permissionObject)) {
+                    const { gui, internal } = permissionsList[permissionObject];
+                    if (gui.toLowerCase().trim() === permission.toLowerCase().trim()) {
+                      permissionNames.push(internal);
+                      break;
+                    }
+                  }
+                }
+              });
+
+              if (permissions.length && !permissionNames.length) cy.log('Warning: permissions not found in list!');
+
+              if (permissionNames.length) {
+                cy.okapiRequest({
+                  path: 'capabilities',
+                  searchParams: {
+                    query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+                    limit: 100,
+                  },
+                  isDefaultSearchParamsRequired: false,
+                }).then((responseCapabs) => {
+                  capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
+                  cy.okapiRequest({
+                    path: 'capability-sets',
+                    searchParams: {
+                      query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+                      limit: 100,
+                    },
+                    isDefaultSearchParamsRequired: false,
+                  }).then((responseSets) => {
+                    capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+
+                    permissionNames.forEach((permissionName) => {
+                      // eslint-disable-next-line no-unused-expressions
+                      cy.expect(
+                        responseCapabs.body.capabilities.filter(
+                          (capab) => capab.permission === permissionName,
+                        ).length > 0 ||
+                          responseSets.body.capabilitySets.filter(
+                            (set) => set.permission === permissionName,
+                          ).length > 0,
+                        `Capabilities/sets found for "${permissionName}"`,
+                      ).to.be.true;
+                    });
+
+                    if (capabilitiesIds.length === 0) {
+                      cy.log('Warning: Capabilities not found!');
+                    } else {
+                      cy.addCapabilitiesToNewUserApi(userProperties.userId, capabilitiesIds);
+                    }
+
+                    if (capabilitySetsIds.length === 0) {
+                      cy.log('Warning: Capability sets not found!');
+                    } else {
+                      cy.addCapabilitySetsToNewUserApi(userProperties.userId, capabilitySetsIds);
+                    }
+                  });
+                });
+              }
+            } else {
+              cy.wait(3000);
+              cy.addPermissionsToNewUserApi({
+                userId: userProperties.userId,
+                permissions: [
+                  ...permissionsResponse.body.permissions.map(
+                    (permission) => permission.permissionName,
+                  ),
+                ],
+              });
+            }
             userProperties.userGroup = userGroup;
             cy.overrideLocalSettings(userProperties.userId);
             cy.wrap(userProperties).as('userProperties');
           });
         });
+        return cy.get('@userProperties');
       },
     );
-    return cy.get('@userProperties');
   },
 );
 
 Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
-  const queryField = 'displayName';
-  cy.getPermissionsApi({
-    query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-  }).then((permissionsResponse) => {
-    cy.getUserPermissions(userId).then((permissionId) => {
-      cy.addPermissionsToExistingUserApi(permissionId, userId, [
-        ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
-      ]);
+  if (Cypress.env('runAsAdmin') && Cypress.env('eureka')) {
+    cy.getUserRoleIdByNameApi(Cypress.env('systemRoleName')).then((roleId) => {
+      if (Cypress.env('ecsEnabled')) {
+        cy.recurse(
+          () => {
+            return cy.okapiRequest({
+              path: `users-keycloak/users/${userId}`,
+              isDefaultSearchParamsRequired: false,
+            });
+          },
+          (response) => expect(response.body.id).to.eq(userId),
+          {
+            limit: 10,
+            timeout: 40000,
+            delay: 1000,
+          },
+        ).then(() => {
+          cy.wait(10000);
+          cy.updateRolesForUserApi(userId, [roleId]);
+        });
+      } else cy.updateRolesForUserApi(userId, [roleId]);
     });
-  });
+  } else if (Cypress.env('eureka')) {
+    let capabilitiesIds;
+    let capabilitySetsIds;
+    const permissionNames = [];
+    permissions.forEach((permission) => {
+      for (const permissionObject in permissionsList) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (permissionsList.hasOwnProperty(permissionObject)) {
+          const { gui, internal } = permissionsList[permissionObject];
+          if (gui.includes(permission)) {
+            permissionNames.push(internal);
+            break;
+          }
+        }
+      }
+    });
+
+    if (permissionNames.length) {
+      cy.okapiRequest({
+        path: 'capabilities',
+        searchParams: {
+          query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then((responseCapabs) => {
+        capabilitiesIds = responseCapabs.body.capabilities.map((el) => el.id);
+        cy.okapiRequest({
+          path: 'capability-sets',
+          searchParams: {
+            query: `(permission=="${permissionNames.join('")or(permission=="')}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        }).then((responseSets) => {
+          capabilitySetsIds = responseSets.body.capabilitySets.map((el) => el.id);
+
+          permissionNames.forEach((permissionName) => {
+            // eslint-disable-next-line no-unused-expressions
+            cy.expect(
+              responseCapabs.body.capabilities.filter(
+                (capab) => capab.permission === permissionName,
+              ).length > 0 ||
+                responseSets.body.capabilitySets.filter((set) => set.permission === permissionName)
+                  .length > 0,
+              `Capabilities/sets found for "${permissionName}"`,
+            ).to.be.true;
+          });
+
+          if (capabilitiesIds.length === 0) {
+            cy.log('Capabilities not found ');
+          } else {
+            cy.addCapabilitiesToNewUserApi(userId, capabilitiesIds);
+          }
+
+          if (capabilitySetsIds.length === 0) {
+            cy.log('Capability sets not found ');
+          } else {
+            cy.addCapabilitySetsToNewUserApi(userId, capabilitySetsIds);
+          }
+        });
+      });
+    }
+  } else {
+    const queryField = 'displayName';
+    cy.getPermissionsApi({
+      query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+    }).then((permissionsResponse) => {
+      cy.getUserPermissions(userId).then((permissionId) => {
+        cy.addPermissionsToExistingUserApi(permissionId, userId, [
+          ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
+        ]);
+      });
+    });
+  }
 });
 
 Cypress.Commands.add('getAddressTypesApi', (searchParams) => {
@@ -174,7 +352,7 @@ Cypress.Commands.add('createUserRequestPreferencesApi', (data) => {
 });
 
 Cypress.Commands.add('getAdminSourceRecord', () => {
-  cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
+  cy.getUsers({ limit: 1, query: `"username"=="${Cypress.env('diku_login')}"` })
     .then((user) => {
       const { lastName, firstName } = user[0].personal;
       return `${lastName}${(firstName && `, ${firstName}`) || ''}`;
@@ -183,4 +361,120 @@ Cypress.Commands.add('getAdminSourceRecord', () => {
       Cypress.env('adminSourceRecord', record);
       return record;
     });
+});
+
+Cypress.Commands.add(
+  'createUserGroupApi',
+  ({
+    groupName = `Auto Group ${getRandomPostfix()}`,
+    description = `Description ${getRandomPostfix()}`,
+    expirationOffsetInDays = 0,
+  } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'groups',
+      body: {
+        group: groupName,
+        desc: description,
+        expirationOffsetInDays,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body;
+    });
+  },
+);
+
+Cypress.Commands.add('deleteUserGroupApi', (groupId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `groups/${groupId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add(
+  'assignCapabilitiesToExistingUser',
+  (userId, capabilities = [], capabilitySets = []) => {
+    const capabilityIds = [];
+    const capabilitySetIds = [];
+    cy.then(() => {
+      for (const capab of capabilities) {
+        cy.getCapabilityIdViaApi({
+          type: capab.type,
+          resource: capab.resource,
+          action: capab.action,
+        }).then((capabId) => capabilityIds.push(capabId));
+      }
+      for (const capabSet of capabilitySets) {
+        cy.getCapabilitySetIdViaApi({
+          type: capabSet.type,
+          resource: capabSet.resource,
+          action: capabSet.action,
+        }).then((capabSetId) => capabilitySetIds.push(capabSetId));
+      }
+    }).then(() => {
+      if (capabilityIds.length) cy.updateCapabilitiesForUserApi(userId, capabilityIds);
+      if (capabilitySetIds.length) cy.updateCapabilitySetsForUserApi(userId, capabilitySetIds);
+    });
+  },
+);
+
+Cypress.Commands.add('checkIfUserHasKeycloakApi', (userId, ignoreErrors = true) => {
+  cy.okapiRequest({
+    path: `users-keycloak/auth-users/${userId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
+  }).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add('promoteUserToKeycloakApi', (userId, ignoreErrors = false) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: `users-keycloak/auth-users/${userId}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
+  }).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add('createUserWithoutKeycloakInEurekaApi', (userBody) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'users',
+    body: userBody,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.id;
+  });
+});
+
+Cypress.Commands.add('getUserWithBlUsersByUsername', (username) => {
+  cy.okapiRequest({
+    path: `bl-users/by-username/${username}`,
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add('getKeycloakUsersInfo', () => {
+  cy.okapiRequest({
+    path: 'users-keycloak/_self?expandPermissions=true&fullPermissions=true',
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response;
+  });
+});
+
+Cypress.Commands.add('getUserMigrations', () => {
+  cy.okapiRequest({
+    path: 'users-keycloak/migrations',
+    isDefaultSearchParamsRequired: false,
+  }).then((response) => {
+    return response;
+  });
 });

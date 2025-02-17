@@ -132,7 +132,7 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyInputLabel('Staff suppress');
           BulkEditActions.selectSecondAction('Set true');
           BulkEditActions.verifyCheckboxAbsent();
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyAreYouSureForm(4, folioItem.instanceId);
           BulkEditActions.verifyAreYouSureForm(4, marcInstances[0].instanceId);
@@ -153,23 +153,34 @@ describe('bulk-edit', () => {
             marcInstances[1].instanceId,
           );
 
-          BulkEditSearchPane.verifyErrorLabel(2);
+          BulkEditSearchPane.verifyErrorLabel(0, 2);
 
           [folioItem.instanceId, marcInstances[0].instanceId].forEach((instanceId) => {
-            BulkEditSearchPane.verifyErrorByIdentifier(instanceId, 'No change in value required');
+            BulkEditSearchPane.verifyErrorByIdentifier(
+              instanceId,
+              'No change in value required',
+              'Warning',
+            );
           });
 
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
-          BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(updatedRecordsFileName, [
             `${unsuppressedFolioItem.instanceId},false,true,`,
             `${marcInstances[1].instanceId},false,true,`,
           ]);
+          BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            folioItem.instanceId,
-            marcInstances[0].instanceId,
+            `WARNING,${folioItem.instanceId},No change in value required`,
+            `WARNING,${marcInstances[0].instanceId},No change in value required`,
           ]);
+
+          FileManager.deleteFileFromDownloadsByMask(
+            matchedRecordsFileName,
+            previewFileName,
+            updatedRecordsFileName,
+            errorsFromCommittingFileName,
+          );
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkInstancesCheckbox();
@@ -208,8 +219,8 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.downloadFileWithCommitErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            folioItem.instanceId,
-            marcInstances[0].instanceId,
+            `WARNING,${folioItem.instanceId},No change in value required`,
+            `WARNING,${marcInstances[0].instanceId},No change in value required`,
           ]);
 
           [

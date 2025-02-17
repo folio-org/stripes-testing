@@ -26,6 +26,7 @@ export default HTML.extend('select')
     hasValue: (el) => el.querySelector('select').value !== '',
     content: (el) => el.querySelector('select').textContent,
     dataTestID: (el) => el.querySelector('select').getAttribute('data-testid'),
+    dataActionIndex: (el) => el.querySelector('select').getAttribute('data-action-index'),
     error: (el) => {
       const feedbackError = el.querySelector('[class^=feedbackError]');
       return feedbackError ? feedbackError.textContent : undefined;

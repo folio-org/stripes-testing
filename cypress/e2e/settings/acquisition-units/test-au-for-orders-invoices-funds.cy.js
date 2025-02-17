@@ -162,7 +162,7 @@ describe('Acquisition Units', () => {
 
   it(
     'C163931 Test acquisition unit restrictions for apply Funds to orders or Invoices (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

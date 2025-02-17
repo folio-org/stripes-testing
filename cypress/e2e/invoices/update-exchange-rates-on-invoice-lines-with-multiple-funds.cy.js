@@ -79,7 +79,7 @@ describe('Invoices', () => {
           cy.wait(2000);
           Budgets.createViaApi(firstBudget);
         });
-
+        cy.getAdminToken();
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
           secondBudget.fundId = secondFundResponse.fund.id;
@@ -155,7 +155,7 @@ describe('Invoices', () => {
 
   it(
     'C378881 Update exchange rates on invoice lines with multiple funds (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

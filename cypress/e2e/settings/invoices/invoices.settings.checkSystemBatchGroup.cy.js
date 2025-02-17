@@ -5,8 +5,8 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
-  const systemBatchGroupName = 'Amherst (AC)';
-  const systemBatchGroupDescription = 'Amherst College';
+  const systemBatchGroupName = 'FOLIO';
+  const systemBatchGroupDescription = 'System default';
   before(() => {
     cy.getAdminToken()
       .then(() => {
@@ -23,7 +23,7 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
 
   it(
     'C10938 FOLIO Batch group is created by system and can only be edited (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
     () => {
       systemBatchGroup.name = systemBatchGroupName;
       systemBatchGroup.description = systemBatchGroupDescription;

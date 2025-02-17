@@ -27,6 +27,8 @@ export const Checkbox = HTML.extend('checkbox')
       default: false,
     },
     focused: (el) => el.contains(el.ownerDocument.activeElement),
+    isWrapper: (el) => /checkbox-wrapper/.test(el.className),
+    testId: (el) => el.querySelector('input').getAttribute('data-testid'),
   })
   .actions({
     focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),

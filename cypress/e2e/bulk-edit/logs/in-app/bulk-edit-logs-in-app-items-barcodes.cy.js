@@ -9,6 +9,7 @@ import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 const invalidItemBrcode = getRandomPostfix();
@@ -50,8 +51,14 @@ describe('bulk-edit', () => {
 
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);
           BulkEditSearchPane.waitFileUploading();
+          BulkEditSearchPane.verifyErrorLabel(1);
+          BulkEditSearchPane.verifyNonMatchedResults(invalidItemBrcode);
           BulkEditActions.openActions();
           BulkEditActions.downloadErrors();
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidItemBrcode},No match found`,
+          ]);
+          FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName);
 
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.checkItemsCheckbox();
@@ -62,13 +69,9 @@ describe('bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRows(`${itemBarcodesFileName}*`, [invalidItemBrcode]);
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
-          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-          BulkEditFiles.verifyMatchedResultFileContent(
-            errorsFromMatchingFileName,
-            [`\uFEFF${invalidItemBrcode}`],
-            'firstElement',
-            false,
-          );
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidItemBrcode},No match found`,
+          ]);
         },
       );
     });

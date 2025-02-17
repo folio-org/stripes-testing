@@ -1,3 +1,4 @@
+import { tenantNames } from '../../support/dictionary/affiliations';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -9,8 +10,8 @@ describe('Consortia', () => {
   let secondUser;
 
   before(() => {
-    cy.setTenant('consortium');
-    cy.loginAsConsortiumAdmin();
+    cy.resetTenant();
+    cy.getAdminToken();
 
     cy.createTempUser([]).then((userProperties) => {
       firstUser = userProperties;
@@ -31,7 +32,7 @@ describe('Consortia', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin();
+    cy.getAdminToken();
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
   });
@@ -45,7 +46,7 @@ describe('Consortia', () => {
       UsersCard.varifyUserCardOpened();
       UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('Consortium', 1, 'Consortium');
+      UsersCard.verifyAffiliationsDetails(tenantNames.central, 1, tenantNames.central);
       UsersCard.expandAffiliationsAccordion();
       UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.affiliationsAccordionCovered();

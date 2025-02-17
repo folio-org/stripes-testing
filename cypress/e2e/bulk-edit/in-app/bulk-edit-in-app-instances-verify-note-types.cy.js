@@ -200,7 +200,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySecondActionSelected(actionsToSelect.addNote);
         BulkEditActions.fillInSecondTextArea(noteTexts.bibliographyNote2);
         BulkEditActions.verifyValueInSecondTextArea(noteTexts.bibliographyNote2);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
 
         setOfColumnValues.forEach((columnValueSet, ind) => {
           const rowNumber = ind + 1;
@@ -211,7 +211,7 @@ describe('bulk-edit', () => {
           BulkEditActions.selectSecondAction(actionsToSelect.addNote, rowNumber);
           BulkEditActions.fillInSecondTextArea(columnValueSet.noteText, rowNumber);
           BulkEditActions.verifyValueInSecondTextArea(columnValueSet.noteText, rowNumber);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
         });
 
         BulkEditActions.verifyTheActionOptions(administrativeNoteActionOptions, 1);

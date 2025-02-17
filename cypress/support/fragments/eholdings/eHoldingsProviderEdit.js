@@ -1,7 +1,7 @@
 import { Button, HTML, Section, Select, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const availableProxies = ['Chalmers', 'MJProxy', 'TestingFolio'];
+const availableProxies = ['Inherited - None', 'Chalmers', 'MJProxy', 'TestingFolio'];
 const proxySelect = Select('Proxy');
 const saveAndCloseButton = Button('Save & close');
 

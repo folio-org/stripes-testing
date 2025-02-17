@@ -115,7 +115,7 @@ describe('bulk-edit', () => {
           instance.title,
         );
         BulkEditActions.openStartBulkEditInstanceForm();
-        BulkEditSearchPane.verifyBulkEditsAccordionExists();
+        BulkEditActions.verifyBulkEditsAccordionExists();
         BulkEditActions.verifyOptionsDropdown();
         BulkEditActions.verifyRowIcons();
         BulkEditActions.verifySelectOptionsInstanceSortedAlphabetically();
@@ -165,7 +165,7 @@ describe('bulk-edit', () => {
         BulkEditActions.fillInSecondTextArea(noteText);
         BulkEditActions.verifyValueInSecondTextArea(noteText);
         BulkEditActions.verifySecondActionSelected(actionToSelect);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
