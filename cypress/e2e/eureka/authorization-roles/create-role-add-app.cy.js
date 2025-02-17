@@ -13,14 +13,9 @@ describe('Eureka', () => {
         newApplication: 'app-platform-complete',
         originalCapabilitySets: [
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Developer Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Authorization-Roles Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Notes Item Assign-Unassign',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         originalCapabilities: [
@@ -66,15 +61,16 @@ describe('Eureka', () => {
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 3,
+            Settings: 1,
+            Procedural: 1,
           },
           capabilities: {
-            Data: 2,
-            Settings: 4,
-            Procedural: 2,
+            Data: 8,
+            Settings: 3,
+            Procedural: 3,
           },
         },
-        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.PROCEDURAL],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA],
         capabSetIds: [],
         capabIds: [],
       };
