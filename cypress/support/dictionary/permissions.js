@@ -1040,6 +1040,10 @@ export default {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
   },
+  uiSettingsSubjectSourceCreateEditDelete: {
+    internal: '',
+    gui: 'Settings (Inventory): Create, edit, delete subject sources',
+  },
   uiSettingsViewAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.view',
     gui: 'Settings (MARC authority): View authority files',

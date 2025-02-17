@@ -17,16 +17,11 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      centralRoleName: `C422010 Autotest Role Central ${randomPostfix}`,
-      collegeRoleName: `C422010 Autotest Role College ${randomPostfix}`,
-      universityRoleName: `C422010 Autotest Role University ${randomPostfix}`,
+      centralRoleName: `C503093 Autotest Role Central ${randomPostfix}`,
+      collegeRoleName: `C503093 Autotest Role College ${randomPostfix}`,
+      universityRoleName: `C503093 Autotest Role University ${randomPostfix}`,
     };
     const capabSetsToAssignCentral = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
       {
         type: CAPABILITY_TYPES.DATA,
         resource: 'UI-Consortia-Settings Consortium-Manager',
@@ -36,13 +31,13 @@ describe('Eureka', () => {
     const capabSetsToAssignMembers = [
       {
         type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings Admin',
+        resource: 'Settings Authorization-Roles Enabled',
         action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
     let userData;
 
-    before('Create users data', () => {
+    before('Create user, data', () => {
       cy.getAdminToken();
       cy.createTempUser([])
         .then((userProperties) => {
@@ -69,7 +64,7 @@ describe('Eureka', () => {
         });
     });
 
-    after('Delete users data', () => {
+    after('Delete user, data', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
@@ -81,50 +76,31 @@ describe('Eureka', () => {
     });
 
     it(
-      'C422010 ECS | Eureka | A user with appropriate role can view authorization roles from different tenants (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C422010'] },
+      'C503093 ECS | Eureka | A user with not appropriate capabilities is not able to view authorization roles (consortia) (thunderjet)',
+      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C503093'] },
       () => {
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();
-        ConsortiumManager.clickSelectMembers();
-        SelectMembers.verifyAvailableTenants(
-          [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
-        );
-        SelectMembers.checkMember(tenantNames.central, true);
-        SelectMembers.checkMember(tenantNames.college, false);
-        SelectMembers.checkMember(tenantNames.university, false);
-        SelectMembers.saveAndClose();
-        ConsortiumManager.verifyMembersSelected(1);
+        SelectMembers.selectAllMembers();
+        ConsortiumManager.verifyMembersSelected(3);
         ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
+        AuthorizationRoles.verifyAccessErrorShown();
+        AuthorizationRoles.waitLoading();
         SelectMembers.selectMember(tenantNames.central);
-        cy.resetTenant();
-        cy.getAuthorizationRoles().then((rolesCentral) => {
-          AuthorizationRoles.verifyRolesCount(rolesCentral.length);
-          AuthorizationRoles.checkRoleFound(testData.centralRoleName);
-          AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
-          AuthorizationRoles.checkRoleFound(testData.universityRoleName, false);
+        AuthorizationRoles.verifyAccessErrorShown();
+        AuthorizationRoles.waitLoading();
 
-          SelectMembers.selectAllMembers();
-          ConsortiumManager.verifyMembersSelected(3);
-          SelectMembers.selectMember(tenantNames.college);
-          cy.setTenant(Affiliations.College);
-          cy.getAuthorizationRoles().then((rolesCollege) => {
-            AuthorizationRoles.verifyRolesCount(rolesCollege.length);
-            AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
-            AuthorizationRoles.checkRoleFound(testData.collegeRoleName);
-            AuthorizationRoles.checkRoleFound(testData.universityRoleName, false);
-
-            SelectMembers.selectMember(tenantNames.university);
-            cy.setTenant(Affiliations.University);
-            cy.getAuthorizationRoles().then((rolesUniversity) => {
-              AuthorizationRoles.verifyRolesCount(rolesUniversity.length);
-              AuthorizationRoles.checkRoleFound(testData.centralRoleName, false);
-              AuthorizationRoles.checkRoleFound(testData.collegeRoleName, false);
-              AuthorizationRoles.checkRoleFound(testData.universityRoleName);
-            });
-          });
-        });
+        ConsortiumManager.clickSelectMembers();
+        SelectMembers.checkMember(tenantNames.central, false);
+        SelectMembers.checkMember(tenantNames.college, true);
+        SelectMembers.checkMember(tenantNames.university, true);
+        SelectMembers.saveAndClose();
+        AuthorizationRoles.verifyAccessErrorShown();
+        AuthorizationRoles.waitLoading();
+        SelectMembers.selectMember(tenantNames.university);
+        AuthorizationRoles.verifyAccessErrorShown();
+        AuthorizationRoles.waitLoading();
       },
     );
   });

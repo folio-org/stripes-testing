@@ -19,13 +19,14 @@ import {
   PaneHeader,
   matching,
   DropdownMenu,
+  Callout,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 import { AUTHORIZATION_ROLES_COLUMNS } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
-const newButton = Button('+ New');
+const newButton = Button(or('+ New', 'New'));
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
@@ -94,10 +95,13 @@ const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
+const createAccessErrorText = 'Role could not be created: Access Denied';
+const clearFieldButton = Button({ icon: 'times-circle-solid' });
+const noAccessErrorText =
+  'Could not load authorization roles. User does not have required permissions.';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
-
   cy.wait(2000);
   return cy
     .get('div[data-testid^="capabilities-"] [data-row-index]')
@@ -741,9 +745,12 @@ export default {
     cy.expect(DropdownMenu().absent());
   },
 
-  checkActionsButtonShown: (isShown = true) => {
-    if (isShown) cy.expect(actionsButton.exists());
-    else cy.expect(actionsButton.absent());
+  checkActionsButtonShown: (isShown = true, roleToCheck) => {
+    const targetButton = roleToCheck
+      ? Pane(roleToCheck).find(actionsButton)
+      : rolesPane.actionsButton;
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
   },
 
   selectCapabilityColumn: (table, action, isSelected = true) => {
@@ -832,5 +839,27 @@ export default {
         ]);
       }),
     );
+  },
+
+  verifyCreateAccessError: () => {
+    cy.expect([Callout(createAccessErrorText).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createAccessErrorText);
+    cy.expect(Callout(createAccessErrorText).absent());
+  },
+
+  closeRoleCreateView: () => {
+    cy.do(createRolePane.find(Button({ icon: 'times' })).click());
+    cy.expect(createRolePane.absent());
+  },
+
+  clearSearchField: () => {
+    cy.do([roleSearchInputField.focus(), roleSearchInputField.find(clearFieldButton).click()]);
+    cy.wait(1000);
+  },
+
+  verifyAccessErrorShown: () => {
+    cy.expect(Callout(noAccessErrorText).exists());
+    InteractorsTools.dismissCallout(noAccessErrorText);
+    cy.expect(Callout(noAccessErrorText).absent());
   },
 };

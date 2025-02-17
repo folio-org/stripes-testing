@@ -21,7 +21,7 @@ describe('Eureka', () => {
 
     it(
       'C436889 Logout with default parameters (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C436889'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C436889'] },
       () => {
         cy.visit('/');
         cy.expect([

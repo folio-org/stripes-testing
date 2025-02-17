@@ -7,6 +7,7 @@ import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../support/fragments/bulk-edit/bulk-edit-logs';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 
 let user;
 let userWithoutPermissions;
@@ -124,14 +125,9 @@ describe('bulk-edit', () => {
           );
 
           BulkEditLogs.downloadFileWithErrorsEncountered();
-          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-          BulkEditFiles.verifyMatchedResultFileContent(
-            errorsFromMatchingFileName,
-            [`\uFEFF${invalidUserBarcode}`],
-            'firstElement',
-            false,
-          );
-
+          ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+            `ERROR,${invalidUserBarcode},No match found`,
+          ]);
           BulkEditLogs.downloadFileWithProposedChanges();
           BulkEditFiles.verifyValueInRowByUUID(
             previewOfProposedChangesFileName.first,
@@ -157,13 +153,9 @@ describe('bulk-edit', () => {
           );
 
           BulkEditLogs.downloadFileWithCommitErrors();
-          // added '\uFEFF' to the expected result because in the story MODBULKOPS-412 byte sequence EF BB BF (hexadecimal) was added at the start of the file
-          BulkEditFiles.verifyMatchedResultFileContent(
-            errorsFromCommittingFileName,
-            [`\uFEFF${userWithoutPermissions.barcode}`],
-            'firstElement',
-            false,
-          );
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+            `WARNING,${userWithoutPermissions.barcode},No change in value required`,
+          ]);
         },
       );
     });

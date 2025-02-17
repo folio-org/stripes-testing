@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyPaneRecordsCount('1 holding');
+        BulkEditSearchPane.verifyPaneRecordsCount('1 holdings');
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Holdings UUID');
         BulkEditSearchPane.verifyMatchedResults(item.holdingsUUID);
