@@ -5,7 +5,10 @@ describe('fse-finance - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.financePath,
+      waiter: FiscalYears.verifyFiltersSectionIsDisplayed,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,8 +16,7 @@ describe('fse-finance - UI', () => {
     `TC195278 - verify that finance-fiscal year is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'finance'] },
     () => {
-      cy.visit(TopMenu.fiscalYearPath);
-      FiscalYears.verifyFiltersSectionIsDisplayed();
+      FiscalYears.waitLoading();
     },
   );
 });

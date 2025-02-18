@@ -5,7 +5,10 @@ describe('fse-receiving - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.receivingPath,
+      waiter: Receiving.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-receiving - UI', () => {
     `TC195378 - verify that receiving page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'receiving'] },
     () => {
-      cy.visit(TopMenu.receivingPath);
       Receiving.waitLoading();
     },
   );

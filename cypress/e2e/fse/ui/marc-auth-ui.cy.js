@@ -10,7 +10,10 @@ describe('fse-marc-authority - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.marcAuthorities,
+      waiter: MarcAuthorities.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -18,7 +21,6 @@ describe('fse-marc-authority - UI', () => {
     `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'marc-authorities'] },
     () => {
-      cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.waitLoading();
     },
   );

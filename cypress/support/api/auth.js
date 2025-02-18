@@ -3,7 +3,7 @@ import { adminUsernames } from '../dictionary/affiliations';
 
 Cypress.Commands.add(
   'getToken',
-  (username, password, isCentral = false, getServicePoint = true) => {
+  (username, password, isCentral = false, getServicePoint = false) => {
     let pathToSet = 'bl-users/login-with-expiry';
     if (!Cypress.env('rtrAuth')) {
       pathToSet = 'bl-users/login';

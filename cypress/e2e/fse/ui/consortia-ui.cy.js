@@ -1,4 +1,3 @@
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import ConsortiumManagerApp from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -7,7 +6,10 @@ describe('fse-consortia - UI for production tenants', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: SettingsMenu.consortiumManagerPath,
+      waiter: ConsortiumMgr.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -17,7 +19,6 @@ describe('fse-consortia - UI for production tenants', () => {
     )}`,
     { tags: ['consortia-sanity', 'fse', 'ui'] },
     () => {
-      TopMenuNavigation.navigateToApp('Consortium manager');
       cy.getUserTenants().then((userTenants) => {
         // get primary tenant
         const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
@@ -38,7 +39,6 @@ describe('fse-consortia - UI for production tenants', () => {
     `TC195512 - switch active affiliation ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['consortia-sanity', 'fse', 'ui'] },
     () => {
-      TopMenuNavigation.navigateToApp('Consortium manager');
       cy.getUserAffiliationsCount().then((count) => {
         cy.getUserTenants().then((userTenants) => {
           if (count > 1) {
