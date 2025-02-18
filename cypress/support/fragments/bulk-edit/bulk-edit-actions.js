@@ -28,6 +28,7 @@ import BulkEditSearchPane from './bulk-edit-search-pane';
 const bulkEditPane = HTML({ className: including('LayerRoot-') });
 const actionsBtn = Button('Actions');
 const bulkEditsAccordion = Accordion('Bulk edits');
+const bulkEditsAdministrativeDataAccordion = Accordion('Bulk edits for administrative data');
 const bulkEditsMarcInstancesAccordion = Accordion('Bulk edits for instances with source MARC');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
@@ -1601,6 +1602,7 @@ export default {
         .find(Pane(`Bulk edit MARC fields - ${fileName}`))
         .find(HTML(`Filename: ${fileName}`))
         .exists(),
+      bulkEditsAdministrativeDataAccordion.has({ open: true }),
       bulkEditsMarcInstancesAccordion
         .find(HTML({ className: including('headerCell'), text: including('Field\n*') }))
         .exists(),
