@@ -20,6 +20,7 @@ import {
   matching,
   DropdownMenu,
   Callout,
+  Link,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -97,6 +98,8 @@ const promoteUsersModalText =
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
+const noAccessErrorText =
+  'Could not load authorization roles. User does not have required permissions.';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -853,5 +856,19 @@ export default {
   clearSearchField: () => {
     cy.do([roleSearchInputField.focus(), roleSearchInputField.find(clearFieldButton).click()]);
     cy.wait(1000);
+  },
+
+  verifyAccessErrorShown: () => {
+    cy.expect(Callout(noAccessErrorText).exists());
+    InteractorsTools.dismissCallout(noAccessErrorText);
+    cy.expect(Callout(noAccessErrorText).absent());
+  },
+
+  clickOnAssignedUserName: (lastName, firstName = null) => {
+    const name = firstName ? `${lastName}, ${firstName}` : lastName;
+    const userRow = usersAccordion.find(
+      MultiColumnListRow(including(name), { isContainer: false }),
+    );
+    cy.do(userRow.find(Link()).click());
   },
 };

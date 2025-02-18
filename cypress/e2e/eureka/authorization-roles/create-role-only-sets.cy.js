@@ -16,9 +16,9 @@ describe('Eureka', () => {
           action: 'Manage',
         },
         secondSelectedCapabilitySet: {
-          table: 'Settings',
-          resource: 'UI-Notes Settings',
-          action: 'Edit',
+          table: 'Procedural',
+          resource: 'UI-Notes Item Assign-Unassign',
+          action: 'Execute',
         },
         capabilitiesInSelectedSets: [
           {
@@ -58,6 +58,16 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
+            resource: 'Note Links Collection',
+            action: 'View',
+          },
+          {
+            table: 'Data',
+            resource: 'Note Links Collection',
+            action: 'Edit',
+          },
+          {
+            table: 'Data',
             resource: 'Note Types Collection',
             action: 'View',
           },
@@ -68,38 +78,39 @@ describe('Eureka', () => {
           },
           {
             table: 'Data',
-            resource: 'Note Types Item',
-            action: 'Edit',
+            resource: 'Notes Collection',
+            action: 'View',
           },
           {
             table: 'Data',
-            resource: 'Note Types Item',
-            action: 'Create',
+            resource: 'Notes Item',
+            action: 'View',
           },
           {
             table: 'Data',
-            resource: 'Note Types Item',
-            action: 'Delete',
-          },
-          {
-            table: 'Settings',
-            resource: 'Settings Notes Enabled',
+            resource: 'UI-Notes Item',
             action: 'View',
           },
           {
             table: 'Settings',
-            resource: 'UI-Notes Settings',
-            action: 'Edit',
+            resource: 'Module Notes Enabled',
+            action: 'View',
+          },
+          {
+            table: 'Procedural',
+            resource: 'UI-Notes Item Assign-Unassign',
+            action: 'Execute',
           },
         ],
         expectedCounts: {
           capabilitySets: {
             Data: 1,
-            Settings: 1,
+            Procedural: 1,
           },
           capabilities: {
-            Data: 6,
-            Settings: 2,
+            Data: 10,
+            Settings: 1,
+            Procedural: 1,
           },
         },
       };

@@ -23,7 +23,7 @@ describe('fse-invoices - UI for non-production tenants', () => {
 
   it(
     `TC195468 - create invoice for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'finance'] },
+    { tags: ['nonProd', 'fse', 'ui', 'invoice'] },
     () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.waitLoading();
@@ -45,7 +45,7 @@ describe('fse-invoices - UI for live tenants', () => {
 
   it(
     `TC195320 - verify that invoices page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'invoices'] },
+    { tags: ['sanity', 'fse', 'ui', 'invoice'] },
     () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.waitLoading();
