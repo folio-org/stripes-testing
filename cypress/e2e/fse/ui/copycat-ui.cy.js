@@ -1,6 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsInventory from '../../../support/fragments/settings/inventory/settingsInventory';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import Settings from '../../../support/fragments/settings/settingsPane';
 
 describe('fse-copycat - UI for productions tenants', () => {
   beforeEach(() => {
@@ -8,7 +9,7 @@ describe('fse-copycat - UI for productions tenants', () => {
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
       path: TopMenu.settingsPath,
-      waiter: SettingsInventory.goToSettingsInventoryNoInteractors,
+      waiter: Settings.waitSettingsPaneLoading,
     });
     cy.allure().logCommandSteps();
   });
