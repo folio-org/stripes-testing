@@ -6,7 +6,10 @@ describe('fse-copycat - UI for productions tenants', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.settingsPath,
+      waiter: SettingsInventory.goToSettingsInventoryNoInteractors,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -14,7 +17,6 @@ describe('fse-copycat - UI for productions tenants', () => {
     `TC195639 - verify that profiles are displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'copycat'] },
     () => {
-      cy.visit(TopMenu.settingsPath);
       SettingsInventory.goToSettingsInventoryNoInteractors();
       SettingsInventory.selectz3950ProfilesNoInteractors();
       Z3950TargetProfiles.verifyTargetProfilesListDisplayedNoIntearctors();

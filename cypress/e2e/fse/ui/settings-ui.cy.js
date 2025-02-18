@@ -8,7 +8,10 @@ describe('fse-settings - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.settingsPath,
+      waiter: Settings.waitSettingsPaneLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -16,7 +19,6 @@ describe('fse-settings - UI', () => {
     `TC195382 - verify that settings page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'settings'] },
     () => {
-      cy.visit(TopMenu.settingsPath);
       Settings.waitSettingsPaneLoading();
     },
   );

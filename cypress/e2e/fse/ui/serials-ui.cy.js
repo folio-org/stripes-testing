@@ -5,7 +5,10 @@ describe('fse-serials - UI for productions tenants', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.serials,
+      waiter: Serials.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-serials - UI for productions tenants', () => {
     `TC195636 - verify that serials page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'serials', 'serials-management'] },
     () => {
-      cy.visit(TopMenu.serials);
       Serials.waitLoading();
     },
   );

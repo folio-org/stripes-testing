@@ -5,7 +5,10 @@ describe('fse-circulation-log - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.circulationLogPath,
+      waiter: CirculationLog.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-circulation-log - UI', () => {
     `TC195286 - verify that circulation log module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'circulation-log'] },
     () => {
-      cy.visit(TopMenu.circulationLogPath);
       CirculationLog.waitLoading();
     },
   );
