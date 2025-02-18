@@ -302,7 +302,6 @@ describe('Bulk-edit', () => {
             (record) => {
               expect(record.get('545')[0].subf[0][1]).to.eq(notes.biographicalOrHistoricalReplaced);
             },
-
             (record) => expect(record.get('545')[0].subf[1][0]).to.eq('u'),
             (record) => expect(record.get('545')[0].subf[1][1]).to.eq('http://www.braudubon.org/'),
             (record) => expect(record.get('545')[0].subf[2][0]).to.eq('u'),
@@ -385,7 +384,6 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA,
             `${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/`,
           );
-
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource('901', `$a ${notes.addedLocal} $3 v.5`);
           InventoryViewSource.verifyFieldInMARCBibSource(
