@@ -13,17 +13,22 @@ describe('Eureka', () => {
         newApplication: 'app-erm-usage',
         originalCapabilitySets: [
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Authorization-Policies Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Notes Settings',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Notes Item Assign-Unassign',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         originalCapabilitiesInSets: [
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Links Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Links Collection',
+            action: CAPABILITY_ACTIONS.EDIT,
+          },
           {
             table: CAPABILITY_TYPES.DATA,
             resource: 'Note Types Collection',
@@ -35,19 +40,29 @@ describe('Eureka', () => {
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Notes Enabled',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Notes Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Notes Item',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'UI-Notes Settings',
+            resource: 'Module Notes Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Authorization-Policies Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Notes Item Assign-Unassign',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         originalCapabilities: [
@@ -108,15 +123,16 @@ describe('Eureka', () => {
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 3,
+            Settings: 1,
+            Procedural: 1,
           },
           capabilities: {
-            Data: 6,
-            Settings: 5,
-            Procedural: 3,
+            Data: 10,
+            Settings: 3,
+            Procedural: 4,
           },
         },
-        absentCapabilitySetTables: ['Data', 'Procedural'],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA],
         capabSetIds: [],
         capabIds: [],
       };

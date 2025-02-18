@@ -178,7 +178,8 @@ describe('ui-orders: Orders', () => {
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
-      Funds.viewTransactions(); Funds.selectTransactionInList('Encumbrance');
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Encumbrance');
       Funds.varifyDetailsInTransactionFundTo(
         defaultFiscalYear.code,
         '($70.00)',

@@ -115,7 +115,7 @@ describe('lists', () => {
         'Purchase order lines',
         'Holdings',
         'Instances',
-        'Organizations'
+        'Organizations',
       ],
     };
 
