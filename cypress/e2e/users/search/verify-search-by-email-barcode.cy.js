@@ -50,58 +50,58 @@ describe('Users', () => {
       { tags: ['criticalPath', 'volaris', 'C416'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.searchUser1.email);
-        UsersSearchResultsPane.verifyUserIsPresentInTheList([
+        UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
           testData.searchUser1.email,
-        ]);
-        UsersSearchResultsPane.verifyUserIsNotPresentInTheList([
+        );
+        UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
           testData.searchUser2.email,
-        ]);
+        );
         UsersSearchPane.resetAllFilters();
 
         UsersSearchPane.searchByKeywords(testData.searchUser2.email);
-        UsersSearchResultsPane.verifyUserIsPresentInTheList([
+        UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
           testData.searchUser2.email,
-        ]);
-        UsersSearchResultsPane.verifyUserIsNotPresentInTheList([
+        );
+        UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
           testData.searchUser1.email,
-        ]);
+        );
       });
 
     it('C417 Search: Verify search by barcode (volaris)',
       { tags: ['criticalPath', 'volaris', 'C417'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.searchUser1.barcode);
-        UsersSearchResultsPane.verifyUserIsPresentInTheList([
+        UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
           testData.searchUser1.email,
-        ]);
-        UsersSearchResultsPane.verifyUserIsNotPresentInTheList([
+        );
+        UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
           testData.searchUser2.email,
-        ]);
+        );
         UsersSearchPane.resetAllFilters();
 
         UsersSearchPane.searchByKeywords(testData.searchUser2.barcode);
-        UsersSearchResultsPane.verifyUserIsPresentInTheList([
+        UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
           testData.searchUser2.email,
-        ]);
-        UsersSearchResultsPane.verifyUserIsNotPresentInTheList([
+        );
+        UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
           testData.searchUser1.email,
-        ]);
+        );
       });
   });
 });
