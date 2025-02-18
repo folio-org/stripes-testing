@@ -174,8 +174,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C478257 Verify "Find" action for Instances notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C478257'] },
+        'C566126 Verify "Change note type" action for Instances in Member tenant (consortia) (firebird)',
+        { tags: ['criticalPathECS', 'firebird', 'C566126'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDsFileName);
