@@ -812,6 +812,13 @@ export default {
     });
   },
 
+  getTypeByIdViaApi(id) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/${id}`,
+    });
+  },
+
   deleteRecursivelyViaApi(id) {
     recurse(
       () => this.deleteViaApi(id),
