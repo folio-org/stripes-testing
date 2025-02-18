@@ -29,12 +29,6 @@ describe('Eureka', () => {
           },
           {
             application: 'app-platform-complete',
-            table: 'Data',
-            resource: 'UI-Users Perms',
-            action: 'Edit',
-          },
-          {
-            application: 'app-platform-complete',
             table: 'Settings',
             resource: 'Erm Settings',
             action: 'View',
