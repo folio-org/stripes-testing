@@ -111,8 +111,10 @@ describe('Requests', () => {
 
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
 
-            cy.login(userData.username, userData.password,
-              { path: TopMenu.requestsPath, waiter: Requests.waitLoading });
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
