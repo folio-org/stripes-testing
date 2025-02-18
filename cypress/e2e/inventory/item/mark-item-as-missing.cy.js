@@ -118,7 +118,7 @@ describe('Inventory', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
         MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
           Requests.findCreatedRequest(item.barcode);
-          Requests.selectFirstRequest(item.barcode);
+          Requests.selectFirstRequest(instanceData.instanceTitle);
           MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
         });
 

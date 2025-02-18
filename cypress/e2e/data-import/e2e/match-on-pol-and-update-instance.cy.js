@@ -300,7 +300,6 @@ describe('Data Import', () => {
               inventory: pol.createInventory,
               materialType: pol.materialType,
             });
-            OrderLines.backToEditingOrder();
             Orders.openOrder();
 
             // change file using order number

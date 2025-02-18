@@ -20,6 +20,7 @@ import {
   matching,
   DropdownMenu,
   Callout,
+  Link,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -861,5 +862,13 @@ export default {
     cy.expect(Callout(noAccessErrorText).exists());
     InteractorsTools.dismissCallout(noAccessErrorText);
     cy.expect(Callout(noAccessErrorText).absent());
+  },
+
+  clickOnAssignedUserName: (lastName, firstName = null) => {
+    const name = firstName ? `${lastName}, ${firstName}` : lastName;
+    const userRow = usersAccordion.find(
+      MultiColumnListRow(including(name), { isContainer: false }),
+    );
+    cy.do(userRow.find(Link()).click());
   },
 };
