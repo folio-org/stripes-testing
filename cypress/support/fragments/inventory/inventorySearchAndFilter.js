@@ -33,7 +33,7 @@ import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
-const effectiveLocationInput = Accordion({ id: 'callNumbersEffectiveLocation' });
+const effectiveLocationInput = Accordion('Effective location (item)');
 const sourceAccordion = Accordion('Source');
 const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
