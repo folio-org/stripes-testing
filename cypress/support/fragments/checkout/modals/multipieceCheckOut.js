@@ -63,5 +63,6 @@ export default {
 
   cancelModal: () => {
     cy.do(cancelButton.click());
+    cy.wait(500);
   },
 };

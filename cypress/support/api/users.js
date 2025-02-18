@@ -77,7 +77,7 @@ Cypress.Commands.add('updateUser', (userData) => {
 
 Cypress.Commands.add(
   'createTempUser',
-  (permissions = [], patronGroupName, userType = 'staff', barcode = true) => {
+  (permissions = [], patronGroupName, userType = 'staff', barcode = true, email) => {
     const userProperties = {
       username: `cypresstestuser${getRandomPostfix()}`,
       password: 'password',
@@ -103,6 +103,10 @@ Cypress.Commands.add(
             username: userProperties.username,
             personal: { ...Users.defaultUser.personal, lastName: userProperties.username },
           };
+
+          if (email) {
+            userBody.personal.email = email;
+          }
 
           if (barcode) {
             userBody.barcode = uuid();

@@ -133,8 +133,9 @@ export default {
     cy.expect(MultiColumnList().has({ rowCount: 1 }));
   },
 
-  clickRequesterBarcode(username) {
-    cy.do(MultiColumnListCell({ row: 0, content: including(username) }).click());
+  clickRequesterBarcode(instance, username) {
+    cy.wait(1000);
+    cy.do(MultiColumnListCell({ row: 0, content: including(instance) }).find(Link(including(instance))).click());
     cy.do(
       Section({ id: 'requester-info' })
         .find(Link(including(username)))
