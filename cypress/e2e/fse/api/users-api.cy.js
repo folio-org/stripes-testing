@@ -1,4 +1,11 @@
-describe('fse-users', { retries: { runMode: 1 } }, () => {
+const isEureka = Cypress.config('eureka');
+
+describe('fse-users - okapi', { retries: { runMode: 1 } }, () => {
+  if (isEureka) {
+    it.skip('Skipping tests for eureka tenants', () => {});
+    return;
+  }
+
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -17,6 +24,13 @@ describe('fse-users', { retries: { runMode: 1 } }, () => {
       );
     },
   );
+});
+
+describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
+  if (!isEureka) {
+    it.skip('Skipping tests for okapi tenants', () => {});
+    return;
+  }
 
   it(
     `TC195518 - check users-keycloak API for ${Cypress.env('OKAPI_HOST')}`,
