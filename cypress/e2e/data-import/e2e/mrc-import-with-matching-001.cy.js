@@ -193,7 +193,7 @@ describe('Data Import', () => {
             FileDetails.columnNameInResultList.instance,
           );
 
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           cy.wait(2000);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           // ensure the fields created in Field mapping profile exists in inventory

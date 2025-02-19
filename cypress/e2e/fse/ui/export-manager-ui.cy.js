@@ -5,7 +5,10 @@ describe('fse-export-manager - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.exportManagerPath,
+      waiter: ExportManager.waitFiltersLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-export-manager - UI', () => {
     `TC195312 - verify that export-manager module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'export-manager'] },
     () => {
-      cy.visit(TopMenu.exportManagerPath);
       ExportManager.waitFiltersLoading();
     },
   );

@@ -10,15 +10,17 @@ describe('fse-marc-authority - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.marcAuthorities,
+      waiter: MarcAuthorities.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
   it(
     `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'marc-auth'] },
+    { tags: ['sanity', 'fse', 'ui', 'marc-authorities'] },
     () => {
-      cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.waitLoading();
     },
   );
@@ -53,7 +55,7 @@ describe('fse-marc-authority - UI for non-production tenants', () => {
 
   it(
     `TC195688 - check import of "MARC Authority" record ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'marc-auth', 'data-import'] },
+    { tags: ['nonProd', 'fse', 'ui', 'marc-authorities', 'data-import'] },
     () => {
       DataImport.uploadFileViaApi(
         'corporate_name(prefix_in_010Sa)sc_02.mrc',

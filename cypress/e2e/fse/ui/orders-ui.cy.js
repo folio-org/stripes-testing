@@ -5,7 +5,10 @@ describe('fse-orders - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-orders - UI', () => {
     `TC195334 - verify that orders page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'orders'] },
     () => {
-      cy.visit(TopMenu.ordersPath);
       Orders.waitLoading();
     },
   );
