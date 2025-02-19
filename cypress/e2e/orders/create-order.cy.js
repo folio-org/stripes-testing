@@ -15,12 +15,13 @@ describe('Orders', () => {
     });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+    });
   });
 
   afterEach(() => {
-    cy.getAdminToken();
     Orders.deleteOrderViaActions();
   });
 

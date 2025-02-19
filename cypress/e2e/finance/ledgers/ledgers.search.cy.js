@@ -3,9 +3,9 @@ import { MultiColumnList } from '../../../../interactors';
 import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe(
   'ui-finance: Ledgers',
@@ -42,21 +42,15 @@ describe(
 
       cy.getFiscalYearsApi({ limit: 1 }).then(({ body }) => {
         ledger.fiscalYearOneId = body.fiscalYears[0].id;
+        cy.createLedgerApi({
+          ...ledger,
+        });
       });
 
-      cy.createTempUser([permissions.uiFinanceViewLedger.gui])
-        .then((userProperties) => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.ledgerPath,
-            waiter: Ledgers.waitForLedgerDetailsLoading,
-          });
-        })
-        .then(() => {
-          cy.createLedgerApi({
-            ...ledger,
-          });
-        });
+      cy.createTempUser([permissions.uiFinanceViewLedger.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+      });
     });
 
     afterEach(() => {
@@ -69,6 +63,8 @@ describe(
       'C4061 Test the search and filter options for ledgers (thunderjet)',
       { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
+        TopMenuNavigation.navigateToApp('Finance');
+
         FinanceHelp.checkZeroSearchResultsMessage();
 
         // search by acquisition units, name and status

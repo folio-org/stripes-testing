@@ -2,9 +2,9 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('ui-finance: Funds', () => {
   let aUnit;
@@ -44,10 +44,7 @@ describe('ui-finance: Funds', () => {
 
     cy.createTempUser([permissions.uiFinanceViewFundAndBudget.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
     });
   });
 
@@ -73,6 +70,7 @@ describe('ui-finance: Funds', () => {
     'C4059 Test the search and filter options for funds (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.checkZeroSearchResultsMessage();
 
       Funds.checkFundFilters(
