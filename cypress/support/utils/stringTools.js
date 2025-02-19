@@ -14,6 +14,8 @@ export const escapeRegex = (string) => {
   return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 
+export const getCurrentTimestamp = () => Date.now().toString();
+
 export const getRandomLetters = (count) => {
   let result = '';
   const characters = 'abcdefghijklmnopqrstuvwxyz';

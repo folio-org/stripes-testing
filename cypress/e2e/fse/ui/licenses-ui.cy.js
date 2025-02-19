@@ -5,7 +5,10 @@ describe('fse-licenses - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.licensesPath,
+      waiter: Licenses.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-licenses - UI', () => {
     `TC195331 - verify that licenses page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'licenses'] },
     () => {
-      cy.visit(TopMenu.licensesPath);
       Licenses.waitLoading();
     },
   );

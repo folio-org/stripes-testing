@@ -133,4 +133,30 @@ export default {
   checkPreviousPaginationButtonActive(isActive = true) {
     cy.expect(previousButton.has({ disabled: !isActive }));
   },
+
+  waitForCallNumberToAppear(callNumber, isPresent = true, typeCode = 'all') {
+    return cy.recurse(
+      () => {
+        return cy.okapiRequest({
+          method: 'GET',
+          path: `browse/call-numbers/${typeCode}/instances`,
+          searchParams: {
+            query: `(fullCallNumber>="${callNumber}")`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      },
+      (response) => {
+        const foundCallNumbers = response.body.items.filter((item) => {
+          return item.fullCallNumber === callNumber;
+        });
+        return isPresent ? foundCallNumbers.length > 0 : foundCallNumbers.length === 0;
+      },
+      {
+        limit: 15,
+        delay: 5000,
+        timeout: 70000,
+      },
+    );
+  },
 };

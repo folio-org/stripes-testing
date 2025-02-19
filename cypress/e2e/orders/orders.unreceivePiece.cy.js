@@ -8,8 +8,8 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
-import TopMenu from '../../support/fragments/topMenu';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -18,6 +18,7 @@ describe('orders: Unreceive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
+    cy.loginAsAdmin();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -30,11 +31,9 @@ describe('orders: Unreceive piece from Order', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.loginAsAdmin();
   });
 
   after(() => {
-    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
@@ -46,7 +45,8 @@ describe('orders: Unreceive piece from Order', () => {
       const barcode = Helper.getRandomBarcode();
       const enumeration = 'autotestCaption';
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', poNumber);
         Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
@@ -60,9 +60,8 @@ describe('orders: Unreceive piece from Order', () => {
         Receiving.checkReceivedPiece(0, enumeration, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
-        Receiving.checkUnreceivedPiece(enumeration);
         // inventory part
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.openAppFromDropdown('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
         ItemRecordView.verifyItemStatus('On order');

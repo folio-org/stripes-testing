@@ -20,6 +20,7 @@ import {
   matching,
   DropdownMenu,
   Callout,
+  Link,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -99,6 +100,8 @@ const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText =
   'Could not load authorization roles. User does not have required permissions.';
+const successCreateText = 'Role has been created successfully';
+const successUpdateText = 'Role has been updated successfully';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -305,7 +308,7 @@ export default {
   },
 
   checkAfterSaveCreate: (roleName, roleDescription = '') => {
-    cy.expect(createRolePane.absent());
+    cy.expect([createRolePane.absent(), Callout(successCreateText).exists()]);
     cy.do(
       rolesPane.find(MultiColumnListCell(roleName)).perform((element) => {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
@@ -369,6 +372,7 @@ export default {
   checkAfterSaveEdit: (roleName, roleDescription = '') => {
     cy.expect([
       editRolePane.absent(),
+      Callout(successUpdateText).exists(),
       Pane(roleName).exists(),
       roleNameInView.has({ value: roleName }),
     ]);
@@ -748,7 +752,7 @@ export default {
   checkActionsButtonShown: (isShown = true, roleToCheck) => {
     const targetButton = roleToCheck
       ? Pane(roleToCheck).find(actionsButton)
-      : rolesPane.actionsButton;
+      : rolesPane.find(actionsButton);
     if (isShown) cy.expect(targetButton.exists());
     else cy.expect(targetButton.absent());
   },
@@ -834,9 +838,13 @@ export default {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
         cy.expect([
           rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
-          rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists(),
-          rolesPane.find(MultiColumnListCell(including(updatedBy), { row: rowNumber })).exists(),
         ]);
+        if (updated) cy.expect(rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists());
+        if (updatedBy) {
+          cy.expect(
+            rolesPane.find(MultiColumnListCell(including(updatedBy), { row: rowNumber })).exists(),
+          );
+        }
       }),
     );
   },
@@ -861,5 +869,36 @@ export default {
     cy.expect(Callout(noAccessErrorText).exists());
     InteractorsTools.dismissCallout(noAccessErrorText);
     cy.expect(Callout(noAccessErrorText).absent());
+  },
+
+  clickOnAssignedUserName: (lastName, firstName = null) => {
+    const name = firstName ? `${lastName}, ${firstName}` : lastName;
+    const userRow = usersAccordion.find(
+      MultiColumnListRow(including(name), { isContainer: false }),
+    );
+    cy.do(userRow.find(Link()).click());
+  },
+
+  closeAllCalloutsIfShown: () => {
+    cy.wait(2000);
+    cy.document().then((doc) => {
+      const callouts = Cypress.$('[class^="calloutBase-"]', doc);
+      if (callouts.length > 0) {
+        callouts.each(function closeCallout() {
+          Cypress.$(this).find('button[icon="times"]').trigger('click');
+        });
+      }
+      cy.expect(Callout().absent());
+    });
+  },
+
+  verifyUserFoundInModal: (username, isFound = true) => {
+    const targetRow = resultsPaneInAssignModal.find(
+      MultiColumnListRow(including(username), { isContainer: false }),
+    );
+    cy.do([searchInputInAssignModal.fillIn(username), searchButtonInAssignModal.click()]);
+    cy.wait(2000);
+    if (isFound) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
   },
 };
