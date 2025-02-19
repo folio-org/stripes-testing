@@ -7,6 +7,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -53,15 +54,16 @@ describe('Orders', () => {
       organization.id = organizationsResponse;
       order.vendor = organizationsResponse;
     });
+    cy.loginAsAdmin();
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      TopMenuNavigation.openAppFromDropdown('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
-      OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
     cy.getAdminToken();
