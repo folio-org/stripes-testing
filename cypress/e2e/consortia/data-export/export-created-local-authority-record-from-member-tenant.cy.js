@@ -66,13 +66,10 @@ describe('Data Export', () => {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
         }).then(() => {
-          cy.waitForAuthRefresh(
-            () => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            },
-            { timeout: 10_000 },
-          );
+          cy.waitForAuthRefresh(() => {
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          });
         });
       });
     });

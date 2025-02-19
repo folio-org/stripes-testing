@@ -145,6 +145,7 @@ describe('Inventory', () => {
       'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C358140'] },
       () => {
+        BrowseCallNumber.waitForCallNumberToAppear(testData.exactSearch);
         search(testData.exactSearch);
         BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
         BrowseContributors.resetAllInSearchPane();
@@ -165,6 +166,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventoryActions.actionsIsAbsent();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        BrowseCallNumber.waitForCallNumberToAppear(itemA1.itemCallNumber);
         InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
         BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
       },
@@ -186,6 +188,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
         InventoryActions.actionsIsAbsent();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        BrowseCallNumber.waitForCallNumberToAppear(`${item.callNumber} ${item.callNumberSuffix}`);
         InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
         BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
         InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
@@ -217,6 +220,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventoryActions.actionsIsAbsent();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        BrowseCallNumber.waitForCallNumberToAppear(itemA1.itemCallNumber);
         InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
         BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
         BrowseCallNumber.clickOnResult(itemA1.itemCallNumber);
@@ -231,6 +235,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         BrowseCallNumber.checkExactSearchResult(item.itemCallNumber);
         BrowseCallNumber.checkSearchResultsTable();
@@ -263,6 +268,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
         InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumber);
