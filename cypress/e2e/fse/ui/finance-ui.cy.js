@@ -6,7 +6,7 @@ describe('fse-finance - UI', () => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.financePath,
+      path: TopMenu.fiscalYearPath,
       waiter: FiscalYears.verifyFiltersSectionIsDisplayed,
     });
     cy.allure().logCommandSteps();
