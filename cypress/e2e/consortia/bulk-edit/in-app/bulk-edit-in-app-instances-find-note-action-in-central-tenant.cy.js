@@ -23,7 +23,6 @@ let instanceTypeId;
 let noteTypeId;
 const folioInstance = {
   title: `C478257 folio instance testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
   title: `C478257 marc instance testBulkEdit_${getRandomPostfix()}`,
@@ -106,7 +105,6 @@ describe('Bulk-edit', () => {
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
-          permissions.bulkEditQueryView.gui,
         ]).then((userProperties) => {
           user = userProperties;
 

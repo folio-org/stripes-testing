@@ -11,6 +11,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
@@ -41,12 +42,15 @@ describe(
         organization.id = response;
         order.vendor = response;
       });
+      cy.loginAsAdmin();
       cy.createOrderApi(order).then((orderResponse) => {
         orderNumber = orderResponse.body.poNumber;
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();
+        cy.wait(4000);
         OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
       });
       cy.createTempUser([
@@ -89,7 +93,7 @@ describe(
         Receiving.receivePiece(0, enumeration, barcode);
         Receiving.checkReceivedPiece(0, enumeration, barcode);
         // inventory part
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
         ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
