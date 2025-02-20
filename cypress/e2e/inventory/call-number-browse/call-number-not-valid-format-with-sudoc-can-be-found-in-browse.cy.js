@@ -7,6 +7,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe(
@@ -18,6 +20,16 @@ describe('Inventory', () => {
     },
     () => {
       let testData;
+      const callNumberBrowseSettings = [
+        {
+          name: 'Superintendent of Documents classification',
+          callNumberTypes: ['Superintendent of Documents classification'],
+        },
+        {
+          name: 'Call numbers (all)',
+          callNumberTypes: [],
+        },
+      ];
 
       beforeEach('Create test data', () => {
         testData = {
@@ -100,6 +112,9 @@ describe('Inventory', () => {
               });
             });
         });
+        callNumberBrowseSettings.forEach((setting) => {
+          CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
+        });
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
@@ -126,6 +141,7 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451470'] },
         () => {
           InventorySearchAndFilter.selectBrowseCallNumbers();
+          BrowseCallNumber.waitForCallNumberToAppear(testData.firstCallNumber);
           InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
           InventorySearchAndFilter.verifyBrowseInventorySearchResults({
             records: [{ callNumber: testData.firstCallNumber }],
@@ -136,6 +152,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
           InventorySearchAndFilter.selectBrowseCallNumbers();
+          BrowseCallNumber.waitForCallNumberToAppear(testData.secondCallNumber);
           InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
           InventorySearchAndFilter.verifyBrowseInventorySearchResults({
             records: [{ callNumber: testData.secondCallNumber }],
@@ -144,26 +161,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
-
-          // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-          // );
-          // InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
-          // InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          //   records: [{ callNumber: testData.firstCallNumber }],
-          // });
-          // InventorySearchAndFilter.clickResetAllButton();
-          // InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
-          // InventorySearchAndFilter.verifyKeywordsAsDefault();
-          // InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
-
-          // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-          // );
-          // InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
-          // InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          //   records: [{ callNumber: testData.secondCallNumber }],
-          // });
         },
       );
     },
