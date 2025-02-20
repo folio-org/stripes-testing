@@ -1,20 +1,22 @@
 import Work from '../../support/fragments/linked-data/work';
 import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
-import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import NewInstance from '../../support/fragments/linked-data/newInstance';
-import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import AdvancedSearch from '../../support/fragments/linked-data/advancedSearch';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  LDE_ADVANCED_SEARCH_OPTIONS,
+  LDE_SEARCH_OPTIONS,
+  LDE_ADVANCED_SEARCH_CONDITIONS,
+} from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
+import EditResource from '../../support/fragments/linked-data/editResource';
 
-describe('Citation: duplicate resource', () => {
+describe('Citation: cancel without saving', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C624234 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -41,6 +43,8 @@ describe('Citation: duplicate resource', () => {
     publicationDate: '2024',
     edition: '3rd ed. test',
   };
+
+  const instanceMainTitleField = 'Main Title';
 
   before('Create test data via API', () => {
     // Set unique title, ISBN and Creator for searching
@@ -69,22 +73,13 @@ describe('Citation: duplicate resource', () => {
     }).then((id) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
     });
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
+    Work.getInstancesByTitle(testData.uniqueDuplicateTitle).then((instances) => {
       const filteredInstances = instances.filter(
         (element) => element.titles[0].value === testData.uniqueTitle,
       );
       Work.deleteById(filteredInstances[0].id);
     });
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete duplicate work data
-    Work.getInstancesByTitle(testData.uniqueInstanceTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueInstanceTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
-    });
-    Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
-    InventoryInstances.deleteInstanceByTitleViaApi(testData.uniqueInstanceTitle);
   });
 
   beforeEach('Apply test data manually', () => {
@@ -97,38 +92,49 @@ describe('Citation: duplicate resource', () => {
   });
 
   it(
-    'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    'C656342 [User journey] LDE - Cancel without saving (Yes/No) (citation)',
+    { tags: ['draft', 'citation', 'linked-data-editor'] },
     () => {
-      // search by title for work created in precondition
-      SearchAndFilter.searchResourceByTitle(resourceData.title);
-      // open work for editing
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
-      // duplicate work
-      EditResource.duplicateResource();
-      EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditing();
-      // close uncontrolled authority modal
-      UncontrolledAuthModal.closeIfDisplayed();
-      // add instance
-      EditResource.openNewInstanceFormViaActions();
-      NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
-      NewInstance.addInstanceIdentifiers(testData);
-      EditResource.saveAndClose();
-      // wait for LDE page to be displayed
+      // select advanced search option
+      SearchAndFilter.selectAdvancedSearch();
+      AdvancedSearch.waitLoading();
+      // advanced search by title AND publisher
+      // TBD: add search by OR/'Starts with' once bug MODLD-664 will be fixed and story UILD-170 implemented
+      AdvancedSearch.setCondition(
+        1,
+        '',
+        'Cypress test',
+        LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+        LDE_SEARCH_OPTIONS.TITLE,
+      );
+      AdvancedSearch.setCondition(
+        2,
+        LDE_ADVANCED_SEARCH_CONDITIONS.AND,
+        'Nicholas',
+        LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+        LDE_SEARCH_OPTIONS.CONTRIBUTOR,
+      );
+      AdvancedSearch.clickSearch();
+      // open instance for editing
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      // edit instance
+      EditResource.setValueForTheField(testData.uniqueDuplicateTitle, instanceMainTitleField);
+      // click on Cancel - YES
+      EditResource.clickCancelWithOption('yes');
+      // TODO: as for now this part failed due to UILD-493
       LinkedDataEditor.waitLoading();
-      // search created work by title
-      SearchAndFilter.searchResourceByTitle(testData.uniqueDuplicateTitle);
-      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueDuplicateTitle);
-      // check that newly created instance is displayed in the inventory
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-      InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
-      // check source
-      InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
-      InventorySearchAndFilter.closeInstanceDetailPane();
-      InventorySearchAndFilter.selectResultCheckboxes(1);
-      InventorySearchAndFilter.verifySelectedRecords(1);
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      // verify value was not changed
+      EditResource.checkTextValueOnField(testData.uniqueTitle, instanceMainTitleField);
+      // edit instance again
+      EditResource.setValueForTheField(testData.uniqueDuplicateTitle, instanceMainTitleField);
+      // click on Cancel - NO
+      EditResource.clickCancelWithOption('no');
+      // save changes
+      EditResource.saveAndClose();
+      LinkedDataEditor.waitLoading();
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      EditResource.checkTextValueOnField(testData.uniqueDuplicateTitle, instanceMainTitleField);
     },
   );
 });
