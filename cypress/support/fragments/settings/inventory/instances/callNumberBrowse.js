@@ -6,8 +6,17 @@ import {
   MultiColumnListRow,
   including,
 } from '../../../../../../interactors';
+import { CallNumberTypes } from './callNumberTypes';
 
 const sectionName = 'Call number browse';
+export const callNumbersIds = {
+  'Call numbers (all)': 'all',
+  'Library of Congress classification': 'lc',
+  'Dewey Decimal classification': 'dewey',
+  'National Library of Medicine classification': 'nlm',
+  'Other scheme': 'other',
+  'Superintendent of Documents classification': 'sudoc',
+};
 
 const elements = {
   sectionName: 'Call number browse',
@@ -51,7 +60,45 @@ const Assertions = {
   },
 };
 
+const API = {
+  updateCallNumberBrowse({ callNumberBrowseId, callNumberTypes, shelvingAlgorithm }) {
+    return cy.okapiRequest({
+      path: `browse/config/instance-call-number/${callNumberBrowseId}`,
+      method: 'PUT',
+      body: {
+        id: callNumberBrowseId,
+        shelvingAlgorithm,
+        typeIds: callNumberTypes,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getCallNumberBrowseConfigViaAPI() {
+    return cy.okapiRequest({ path: 'browse/config/instance-call-number' });
+  },
+
+  assignCallNumberTypesViaApi({ name, callNumberTypes }) {
+    this.getCallNumberBrowseConfigViaAPI().then((resp) => {
+      const shelvingAlgorithm = resp.body.configs.filter(
+        (config) => config.id === callNumbersIds[name],
+      )[0].shelvingAlgorithm;
+      CallNumberTypes.getCallNumberTypesViaAPI().then((types) => {
+        const typeIds = types
+          .filter((type) => callNumberTypes.includes(type.name))
+          .map((type) => type.id);
+        return this.updateCallNumberBrowse({
+          callNumberBrowseId: callNumbersIds[name],
+          callNumberTypes: typeIds,
+          shelvingAlgorithm,
+        });
+      });
+    });
+  },
+};
+
 export const CallNumberBrowse = {
   ...Actions,
   ...Assertions,
+  ...API,
 };
