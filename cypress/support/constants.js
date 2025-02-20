@@ -1089,3 +1089,22 @@ export const AUTHORIZATION_POLICIES_COLUMNS = {
   UPDATED: 'Updated',
   UPDATED_BY: 'Updated by',
 };
+
+export const LDE_ADVANCED_SEARCH_OPTIONS = {
+  CONTAINS_ALL: 'Contains all',
+  STARTS_WITH: 'Starts with',
+  EXACT_PHRASE: 'Exact phrase',
+};
+
+export const LDE_SEARCH_OPTIONS = {
+  LCCN: 'LCCN',
+  TITLE: 'title',
+  CONTRIBUTOR: 'Contributor',
+  ISBN: 'ISBN',
+};
+
+export const LDE_ADVANCED_SEARCH_CONDITIONS = {
+  AND: 'AND',
+  NOT: 'NOT',
+  OR: 'OR',
+};

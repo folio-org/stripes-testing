@@ -3,12 +3,18 @@ import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
 import AdvancedSearch from '../../support/fragments/linked-data/advancedSearch';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import {
+  DEFAULT_JOB_PROFILE_NAMES,
+  LDE_ADVANCED_SEARCH_OPTIONS,
+  LDE_SEARCH_OPTIONS,
+  LDE_ADVANCED_SEARCH_CONDITIONS,
+} from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import EditResource from '../../support/fragments/linked-data/editResource';
 
 describe('Citation: cancel without saving', () => {
   const testData = {
@@ -38,6 +44,8 @@ describe('Citation: cancel without saving', () => {
     edition: '3rd ed. test',
   };
 
+  const instanceMainTitleField = 'Main Title';
+
   before('Create test data via API', () => {
     // Set unique title, ISBN and Creator for searching
     DataImport.editMarcFile(
@@ -65,7 +73,7 @@ describe('Citation: cancel without saving', () => {
     }).then((id) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
     });
-    Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
+    Work.getInstancesByTitle(testData.uniqueDuplicateTitle).then((instances) => {
       const filteredInstances = instances.filter(
         (element) => element.titles[0].value === testData.uniqueTitle,
       );
@@ -84,19 +92,49 @@ describe('Citation: cancel without saving', () => {
   });
 
   it(
-    'Cxxxxx [User journey] LDE - Cancel without saving (Yes/No) (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    'C656342 [User journey] LDE - Cancel without saving (Yes/No) (citation)',
+    { tags: ['draft', 'citation', 'linked-data-editor'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();
       AdvancedSearch.waitLoading();
-      // search by title and publisher
-      // AdvancedSearch.setFirstCondition("Cypress test", constants.StartsWith, constants.Title);
-      // AdvancedSearch.setAdditionalCondition(1, constans.AND, "Nicholas", constants.containsAll, constants.Publisher);
+      // advanced search by title AND publisher
+      // TBD: add search by OR/'Starts with' once bug MODLD-664 will be fixed and story UILD-170 implemented
+      AdvancedSearch.setCondition(
+        1,
+        '',
+        'Cypress test',
+        LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+        LDE_SEARCH_OPTIONS.TITLE,
+      );
+      AdvancedSearch.setCondition(
+        2,
+        LDE_ADVANCED_SEARCH_CONDITIONS.AND,
+        'Nicholas',
+        LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+        LDE_SEARCH_OPTIONS.CONTRIBUTOR,
+      );
       AdvancedSearch.clickSearch();
-      // verify results are displayed
+      // open instance for editing
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // edit instance
+      EditResource.setValueForTheField(testData.uniqueDuplicateTitle, instanceMainTitleField);
       // click on Cancel - YES
+      EditResource.clickCancelWithOption('yes');
+      // TODO: as for now this part failed due to UILD-493
+      LinkedDataEditor.waitLoading();
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      // verify value was not changed
+      EditResource.checkTextValueOnField(testData.uniqueTitle, instanceMainTitleField);
+      // edit instance again
+      EditResource.setValueForTheField(testData.uniqueDuplicateTitle, instanceMainTitleField);
+      // click on Cancel - NO
+      EditResource.clickCancelWithOption('no');
+      // save changes
+      EditResource.saveAndClose();
+      LinkedDataEditor.waitLoading();
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      EditResource.checkTextValueOnField(testData.uniqueDuplicateTitle, instanceMainTitleField);
     },
   );
 });
