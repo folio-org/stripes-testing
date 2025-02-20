@@ -103,7 +103,7 @@ describe('Inventory', () => {
 
       it(
         'C466082 Search by "Call number" field of "Item" record is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C466082'] },
+        { tags: ['extendedPath', 'spitfire', 'C466082'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();

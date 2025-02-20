@@ -127,7 +127,7 @@ describe('orders: Settings', () => {
 
   it(
     'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
       SettingsOrders.selectInstanceStatus(instanceStatus);
       SettingOrdersNavigationMenu.selectInstanceType();

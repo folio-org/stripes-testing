@@ -121,7 +121,7 @@ describe('Inventory', () => {
 
       it(
         'C466078 Search by "Call number" field of "Holdings" record is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C466078'] },
+        { tags: ['extendedPath', 'spitfire', 'C466078'] },
         () => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
