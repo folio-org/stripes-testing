@@ -43,21 +43,22 @@ describe('Eureka', () => {
       'C451589 User details can be retrieved by API call to /bl-users/by-username (eureka)',
       { tags: ['smoke', 'eureka', 'shiftLeft', 'C451589'] },
       () => {
-        cy.getAdminToken();
-        cy.getUserWithBlUsersByUsername(userWithoutKeycloak.username).then((response) => {
-          expect(response.status).to.eq(200);
-          expect(response.body.user.username).to.eq(userWithoutKeycloak.username);
-          expect(response.body.user.id).to.eq(testData.userWithoutKeycloakId);
-          expect(response.body.user.active).to.eq(userWithoutKeycloak.active);
-          expect(response.body.user.type).to.eq(userWithoutKeycloak.type);
-        });
+        cy.getAdminToken().then(() => {
+          cy.getUserWithBlUsersByUsername(userWithoutKeycloak.username).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body.user.username).to.eq(userWithoutKeycloak.username);
+            expect(response.body.user.id).to.eq(testData.userWithoutKeycloakId);
+            expect(response.body.user.active).to.eq(userWithoutKeycloak.active);
+            expect(response.body.user.type).to.eq(userWithoutKeycloak.type);
+          });
 
-        cy.getUserWithBlUsersByUsername(userWithKeycloak.username).then((response) => {
-          expect(response.status).to.eq(200);
-          expect(response.body.user.username).to.eq(userWithKeycloak.username);
-          expect(response.body.user.id).to.eq(testData.userWithKeycloakId);
-          expect(response.body.user.active).to.eq(userWithKeycloak.active);
-          expect(response.body.user.type).to.eq(userWithKeycloak.type);
+          cy.getUserWithBlUsersByUsername(userWithKeycloak.username).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body.user.username).to.eq(userWithKeycloak.username);
+            expect(response.body.user.id).to.eq(testData.userWithKeycloakId);
+            expect(response.body.user.active).to.eq(userWithKeycloak.active);
+            expect(response.body.user.type).to.eq(userWithKeycloak.type);
+          });
         });
       },
     );

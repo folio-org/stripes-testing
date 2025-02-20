@@ -77,7 +77,7 @@ describe('MARC', () => {
 
       it(
         'C376606 Manual date input in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C376606'] },
+        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C376606'] },
         () => {
           MarcAuthorities.clickActionsAndReportsButtons();
           MarcAuthorities.fillReportModal(today, '');

@@ -197,7 +197,8 @@ describe('Inventory', () => {
       },
     );
 
-    it(
+    it.skip(
+      // test case obsolete
       'C347906 Verify that look and list of available facets change according to search option (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C347906', 'eurekaPhase1'] },
       () => {
