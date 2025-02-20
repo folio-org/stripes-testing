@@ -82,7 +82,7 @@ describe('Note creation', () => {
 
   it(
     'C359004 A user can view Notes that were created by deleted user (spitfire)',
-    { tags: ['smoke', 'spitfire', 'C359004'] },
+    { tags: ['criticalPath', 'spitfire', 'C359004'] },
     () => {
       cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
         path: urlToEholdings,
