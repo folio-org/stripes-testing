@@ -159,7 +159,7 @@ describe('Inventory', () => {
 
     it(
       'C466166 Find Instance plugin | Search for Instance which has each classification type using "Classification, normalized" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466166'] },
+      { tags: ['extendedPath', 'spitfire', 'C466166'] },
       () => {
         SelectInstanceModal.clickSearchOptionSelect();
         testData.searchQueries.forEach((query) => {

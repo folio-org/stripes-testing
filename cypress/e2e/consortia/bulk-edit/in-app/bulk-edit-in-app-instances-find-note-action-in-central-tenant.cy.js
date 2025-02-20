@@ -191,7 +191,7 @@ describe('Bulk-edit', () => {
 
       it(
         'C478257 Verify "Find" action for Instances notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C478257'] },
+        { tags: ['criticalPathECS', 'firebird', 'C478257'] },
         () => {
           testParams.forEach((params) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
