@@ -102,6 +102,7 @@ const noAccessErrorText =
   'Could not load authorization roles. User does not have required permissions.';
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
+const shareToAllButton = Button('Share to all');
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -653,8 +654,9 @@ export default {
     cy.wait(3000);
   },
 
-  clickActionsButton: () => {
-    cy.do(actionsButton.click());
+  clickActionsButton: (roleName = false) => {
+    if (roleName) cy.do(Pane(roleName).find(actionsButton).click());
+    else cy.do(actionsButton.click());
   },
 
   checkDuplicateOptionShown: (isShown = true) => {
@@ -900,5 +902,10 @@ export default {
     cy.wait(2000);
     if (isFound) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
+  },
+
+  checkShareToAllButtonShown: (roleName, isShown = true) => {
+    if (isShown) cy.expect(Pane(roleName).find(shareToAllButton).exists());
+    else cy.expect(Pane(roleName).find(shareToAllButton).absent());
   },
 };
