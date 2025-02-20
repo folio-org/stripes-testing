@@ -228,7 +228,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('4 holding');
+          BulkEditSearchPane.verifyPaneRecordsCount('4 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           const holdingHrids = [...collegeHoldingHrids, ...universityHoldingHrids];
