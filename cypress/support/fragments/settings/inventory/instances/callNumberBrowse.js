@@ -97,7 +97,7 @@ const API = {
   },
 };
 
-export const CallNumberBrowse = {
+export const CallNumberBrowseSettings = {
   ...Actions,
   ...Assertions,
   ...API,

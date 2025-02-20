@@ -7,7 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import { CallNumberBrowse } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
@@ -113,7 +113,7 @@ describe('Inventory', () => {
             });
         });
         callNumberBrowseSettings.forEach((setting) => {
-          CallNumberBrowse.assignCallNumberTypesViaApi(setting);
+          CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
         });
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
