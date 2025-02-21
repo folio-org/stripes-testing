@@ -303,4 +303,15 @@ export default {
   verifyFiltersSectionIsDisplayed: () => {
     cy.expect(fiscalYearFiltersSection.exists());
   },
+
+  getViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'finance/fiscal-years',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
 };
