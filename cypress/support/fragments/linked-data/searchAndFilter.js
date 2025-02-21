@@ -1,3 +1,5 @@
+const searchButton = '[data-testid="id-search-button"]';
+
 export default {
   waitLoading: () => {
     cy.get('[class*="search-pane"]').should('exist');
@@ -9,19 +11,19 @@ export default {
   searchResourceByTitle: (title) => {
     cy.get('#id-search-select').select('Title');
     cy.get('#id-search-input').type(title);
-    cy.get('[data-testid="id-search-button"]').click();
+    cy.get(searchButton).click();
   },
 
   searchResourceByIsbn: (isbn) => {
     cy.get('#id-search-select').select('ISBN');
     cy.get('#id-search-input').type(isbn);
-    cy.get('[data-testid="id-search-button"]').click();
+    cy.get(searchButton).click();
   },
 
   searchResourceByContributor: (contributor) => {
     cy.get('#id-search-select').select('Contributor');
     cy.get('#id-search-input').type(contributor);
-    cy.get('[data-testid="id-search-button"]').click();
+    cy.get(searchButton).click();
   },
 
   verifySearchResult(data) {
@@ -57,5 +59,9 @@ export default {
 
   checkSearchResultsByTitle(title) {
     cy.xpath(`//button[text()="${title}"]`).should('be.visible');
+  },
+
+  selectAdvancedSearch() {
+    cy.xpath('//button[@class="button button-link search-button"]').click();
   },
 };

@@ -133,4 +133,22 @@ export default {
       `//div[text()='${sectionName}']/../../..//span[@data-testid='complex-lookup-selected-label' and text()='${textValue}']`,
     ).should('be.visible');
   },
+
+  clickCancelWithOption(option) {
+    cy.xpath('//button[@data-testid="close-record-button"]').click();
+    // modal is displayed
+    cy.xpath("//div[@class='modal-header']//h3[text()='Close resource']").should('be.visible');
+    if (option.toLowerCase() === 'yes') {
+      cy.xpath("//button[@data-testid='modal-button-cancel']").click();
+    } else {
+      cy.xpath("//button[@data-testid='modal-button-submit']").click();
+      this.waitLoading();
+    }
+  },
+
+  checkTextValueOnField(textValue, section) {
+    cy.xpath(
+      `//div[text()="${section}"]/../..//input[@class="input edit-section-field-input" and @value="${textValue}"]`,
+    ).should('be.visible');
+  },
 };
