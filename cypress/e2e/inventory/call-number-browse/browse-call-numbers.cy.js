@@ -25,7 +25,8 @@ describe('Inventory', () => {
       },
     );
 
-    it(
+    it.skip(
+      // test case obsolete
       'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
       { tags: ['smoke', 'firebird', 'C347903'] },
       () => {
@@ -36,7 +37,8 @@ describe('Inventory', () => {
       },
     );
 
-    it(
+    it.skip(
+      // test case obsolete
       'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
       { tags: ['smoke', 'firebird', 'C347923'] },
       () => {

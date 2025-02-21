@@ -5,7 +5,10 @@ describe('fse-lists - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.listsPath,
+      waiter: Lists.filtersWaitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,9 +16,8 @@ describe('fse-lists - UI', () => {
     `TC195764 - verify that lists page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'lists'] },
     () => {
-      cy.visit(TopMenu.listsPath);
       // check filters displayed (as we can't use standard waitLoading for tenants with non-English localization)
-      Lists.filtersWaitLoading();
+      Lists.waitLoading();
     },
   );
 });

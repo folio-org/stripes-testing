@@ -262,7 +262,7 @@ export default {
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.displaySummary` }).fillIn(displaySummary),
       MultiColumnListRow({ indexRow: `row-${rowNumber}` })
-        .find(Button('Assign a different location'))
+        .find(Button('Create new holdings for location'))
         .click(),
     ]);
     cy.do([
@@ -338,10 +338,9 @@ export default {
     cy.do(receivingResultsSection.find(Button({ href: including('/receiving') })).click());
   },
 
-  selectInstanceInReceive: (instanceName) => {
-    cy.get('#pane-title-details a:contains(' + instanceName + ')')
-      .first()
-      .click();
+  selectInstanceInReceive: () => {
+    cy.get('[data-testid="titleInstanceLink"]').click();
+    cy.wait(6000);
   },
 
   selectInstanceLinkInReceive: () => {

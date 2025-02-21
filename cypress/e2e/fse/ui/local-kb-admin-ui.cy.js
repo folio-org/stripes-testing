@@ -5,7 +5,10 @@ describe('fse-local-kbAdmin - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.localKbAdmin,
+      waiter: LocalKbAdmin.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -14,7 +17,6 @@ describe('fse-local-kbAdmin - UI', () => {
     // TOOD: return 'folio_local-kb-admin' tag later, investigation on the module installation needed
     { tags: ['fse', 'ui', 'local-kb-admin'] },
     () => {
-      cy.visit(TopMenu.localKbAdmin);
       LocalKbAdmin.waitLoading();
     },
   );

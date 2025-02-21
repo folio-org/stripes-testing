@@ -144,7 +144,7 @@ describe('Check out', () => {
 
       fullCheckOut(testItems[1]);
       MultipieceCheckOut.cancelModal();
-      CheckOutActions.checkItem(testItems[1].barcode);
+      CheckOutActions.checkOutItem(testItems[1].barcode);
 
       fullCheckOut(testItems[1]);
       MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);

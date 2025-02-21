@@ -4,13 +4,13 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -62,13 +62,6 @@ describe('Export Manager', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-      });
-      SettingsOrders.setPurchaseOrderLinesLimit(2);
-
-      cy.getAdminToken();
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -79,7 +72,11 @@ describe('Export Manager', () => {
         organization.id = organizationsResponse;
         order.vendor = organizationsResponse;
       });
-      cy.visit(TopMenu.organizationsPath);
+
+      cy.loginAsAdmin({
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
@@ -102,10 +99,12 @@ describe('Export Manager', () => {
         organization.accounts[1].accountNo,
         'Purchase',
       );
+      OrderLinesLimit.setPOLLimit(2);
 
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.createPOLineViaActions();
@@ -115,7 +114,6 @@ describe('Export Manager', () => {
           location.name,
           `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
         );
-        OrderLines.backToEditingOrder();
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
         OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
@@ -123,7 +121,6 @@ describe('Export Manager', () => {
           location.name,
           `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
         );
-        OrderLines.backToEditingOrder();
       });
 
       cy.createTempUser([
@@ -146,15 +143,9 @@ describe('Export Manager', () => {
     });
 
     after(() => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-      });
-      SettingsOrders.setPurchaseOrderLinesLimit(1);
-
       cy.getAdminToken();
       Orders.deleteOrderViaApi(order.id);
-
+      OrderLinesLimit.setPOLLimit(1);
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
         location.institutionId,
@@ -167,7 +158,7 @@ describe('Export Manager', () => {
 
     it(
       'C350410 Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
-      { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+      { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

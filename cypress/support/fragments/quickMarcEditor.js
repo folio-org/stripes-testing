@@ -530,6 +530,14 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
+  saveAndCloseWithValidationWarnings() {
+    cy.intercept('POST', '/records-editor/validate').as('validateRequest');
+    cy.do(saveAndCloseButton.click());
+    cy.wait('@validateRequest');
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
+  },
+
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect(Callout(including(calloutMsg)).exists());

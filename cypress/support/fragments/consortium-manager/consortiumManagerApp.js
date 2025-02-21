@@ -63,8 +63,8 @@ export default {
     );
   },
 
-  verifySelectMembersButton() {
-    cy.expect(selectMembersButton.exists());
+  verifySelectMembersButton(isEnabled = true) {
+    cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
   },
 
   verifyPaneIncludesSettings(settingsList) {

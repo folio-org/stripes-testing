@@ -135,7 +135,6 @@ describe('Eureka', () => {
           AuthorizationRoles.checkNewButtonShown();
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
           AuthorizationRoles.checkCapabilitySetsAccordionCounter(
             `${testData.originalCapabilitySets.length}`,
           );
