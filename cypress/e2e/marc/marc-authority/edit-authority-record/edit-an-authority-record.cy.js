@@ -76,7 +76,6 @@ describe('MARC', () => {
             MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
             MarcAuthorities.selectFirst(testData.authority.title);
             MarcAuthority.edit();
-            cy.reload();
             MarcAuthority.addNewField(
               5,
               testData.authority.newField.tag,
