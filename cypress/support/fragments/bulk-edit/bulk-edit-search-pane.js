@@ -610,6 +610,18 @@ export default {
     });
   },
 
+  verifyError(identifier, reasonMessage, status = 'Error') {
+    cy.expect([
+      errorsAccordion
+        .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
+        .exists(),
+      errorsAccordion.find(MultiColumnListCell({ content: status, column: 'Status' })).exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
+        .exists(),
+    ]);
+  },
+
   verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect([
