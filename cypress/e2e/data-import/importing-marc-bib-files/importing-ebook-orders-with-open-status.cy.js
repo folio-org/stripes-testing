@@ -15,6 +15,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import Budgets from '../../../support/fragments/finance/budgets/budgets';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -86,6 +89,31 @@ describe('Data Import', () => {
     };
 
     before('Create user and login', () => {
+      cy.getAdminToken().then(() => {
+        [
+          'HIST',
+          'LATAMHIST',
+          'AFRICAHIST',
+          'ASIAHIST',
+          'MISCHIST',
+          'GIFTS-ONE-TIME',
+          'LATAMHIST',
+        ].forEach((code) => {
+          const budget = {
+            ...Budgets.getDefaultBudget(),
+            allocated: 1000,
+          };
+          FiscalYears.getViaApi({ query: 'code="FY2025"' }).then((resp) => {
+            budget.fiscalYearId = resp.fiscalYears[0].id;
+
+            Funds.getFundsViaApi({ query: `code="${code}"` }).then((body) => {
+              budget.fundId = body.funds[0].id;
+              Budgets.createViaApi(budget);
+            });
+          });
+        });
+      });
+
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,

@@ -41,7 +41,7 @@ import {
   AUTHORITY_LDR_FIELD_DROPDOWNS_NAMES,
 } from '../constants';
 
-const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });

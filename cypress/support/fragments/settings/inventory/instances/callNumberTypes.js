@@ -44,7 +44,7 @@ const Assertions = {
   },
   validateSaveButtonIsDisabledForItem(optionName) {
     const targetRow = elements.getTargetRowByName(optionName);
-    cy.expect(targetRow.find(elements.saveButton).isDisabled());
+    cy.expect(targetRow.find(elements.saveButton).has({ disabled: true }));
   },
 };
 

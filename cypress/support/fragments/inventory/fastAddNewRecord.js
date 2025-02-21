@@ -90,7 +90,7 @@ const verifyRecordCreatedDate = ({ start, end }) => {
 const viewHoldings = () => {
   cy.do(Button('View holdings').click());
 
-  cy.expect(Section({ id: 'ui-inventory.holdingsRecordView' }).exists());
+  cy.expect(Section({ id: 'view-holdings-record-pane' }).exists());
 };
 
 const verifyPermanentLocation = (value) => {
@@ -99,7 +99,7 @@ const verifyPermanentLocation = (value) => {
 
 const closeHoldingsRecordView = () => {
   cy.do(
-    Section({ id: 'ui-inventory.holdingsRecordView' })
+    Section({ id: 'view-holdings-record-pane' })
       .find(Button({ icon: 'times' }))
       .click(),
   );
