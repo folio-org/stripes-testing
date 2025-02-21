@@ -8,7 +8,10 @@ describe('fse-inventory - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -18,8 +21,6 @@ describe('fse-inventory - UI', () => {
     () => {
       cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
       cy.intercept('GET', '/search/instances?*').as('getInstances');
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.waitLoading();
       // search by item status
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.byKeywords();
@@ -35,8 +36,6 @@ describe('fse-inventory - UI', () => {
     `TC195766 - check inventory classifications ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['ramsons', 'fse', 'ui', 'inventory'] },
     () => {
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.waitLoading();
       InventorySearchAndFilter.switchToBrowseTab();
       // select Classification (all)
       InventorySearchAndFilter.selectBrowseOption(BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL);

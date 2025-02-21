@@ -3,7 +3,7 @@ import { adminUsernames } from '../dictionary/affiliations';
 
 Cypress.Commands.add(
   'getToken',
-  (username, password, isCentral = false, getServicePoint = true) => {
+  (username, password, isCentral = false, getServicePoint = false) => {
     let pathToSet = 'bl-users/login-with-expiry';
     if (!Cypress.env('rtrAuth')) {
       pathToSet = 'bl-users/login';
@@ -120,7 +120,7 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
   });
 });
 
-Cypress.Commands.add('waitForAuthRefresh', (callback, { timeout = 10_000 }) => {
+Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 10_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
   cy.wait('@/authn/refresh', { timeout });

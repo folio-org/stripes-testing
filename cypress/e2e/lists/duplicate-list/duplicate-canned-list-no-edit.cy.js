@@ -40,7 +40,7 @@ describe('lists', () => {
 
     it(
       'C423614 Duplicate lists - Canned reports without modified data (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423614'] },
+      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C423614'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

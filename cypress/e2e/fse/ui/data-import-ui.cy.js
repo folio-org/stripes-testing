@@ -8,7 +8,10 @@ describe('fse-data-import - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.dataImportPath,
+      waiter: DataImport.waitLoadingNoInteractors,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -16,7 +19,6 @@ describe('fse-data-import - UI', () => {
     `TC195289 - verify that data-import module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'data-import'] },
     () => {
-      cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoadingNoInteractors();
     },
   );
@@ -25,8 +27,6 @@ describe('fse-data-import - UI', () => {
     `TC195767 - check data-import log for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'data-import'] },
     () => {
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.waitLoadingNoInteractors();
       Logs.openViewAllLogs();
       cy.wait(8000);
       Logs.openFileDetailsByRowNumber();
@@ -46,8 +46,6 @@ describe('fse-data-import - UI', () => {
         },
       };
 
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.waitLoadingNoInteractors();
       DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
       JobProfiles.waitLoadingList();
       // delete uploaded file without starting job

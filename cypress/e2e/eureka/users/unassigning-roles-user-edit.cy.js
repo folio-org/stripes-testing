@@ -181,8 +181,12 @@ describe('Eureka', () => {
         UserEdit.unassignAllRoles();
         UserEdit.verifyUserRolesAccordionEmpty();
         UserEdit.saveAndClose();
-        UsersCard.close();
+
+        // revert the workaround after UIU-3179 is done
+        UsersSearchPane.resetAllFilters();
         cy.intercept('GET', '/roles/users*').as('rolesCall');
+        UsersSearchPane.searchByKeywords(testData.userA.username);
+        cy.wait(2000);
         UsersSearchPane.selectUserFromList(testData.userA.username);
         cy.wait('@rolesCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);

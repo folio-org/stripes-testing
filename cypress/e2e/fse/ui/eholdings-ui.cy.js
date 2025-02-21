@@ -19,7 +19,10 @@ describe('fse-eholdings - UI for production tenants', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.eholdingsPath,
+      waiter: EHoldingsSearch.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -27,7 +30,6 @@ describe('fse-eholdings - UI for production tenants', () => {
     `TC195279 - verify that eholdings module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'eholdings'] },
     () => {
-      cy.visit(TopMenu.eholdingsPath);
       EHoldingsSearch.waitLoading();
     },
   );
