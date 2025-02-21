@@ -366,6 +366,7 @@ describe('Data Import', () => {
             ItemRecordView.verifyItemStatus(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
             );
+            ItemRecordView.closeDetailView();
 
             // change file for adding random barcode and holdings hrid
             DataImport.editMarcFile(
