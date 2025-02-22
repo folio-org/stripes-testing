@@ -1,26 +1,26 @@
 export default {
-  Consortia: 'consortium',
-  University: 'university',
-  // School: 'cs00000int_0003',
-  College: 'college',
+  Consortia: 'cs00000int',
+  University: 'cs00000int_0005',
+  School: 'cs00000int_0003',
+  College: 'cs00000int_0001',
 };
 
 export const tenantNames = {
-  central: 'Consortium',
-  college: 'College',
-  university: 'University',
-  professional: 'University', // evrk2 only has 2 member tenants, so re-using MT2 here
-  // school: 'School',
-  // special: 'Special,',
+  central: 'Central tenant',
+  college: 'Colleague tenant',
+  university: 'University tenant',
+  professional: 'Professional tenant',
+  school: 'School tenant',
+  special: 'Special tenant',
 };
 
 export const tenantCodes = {
-  central: 'MCO',
+  central: 'CEN',
   college: 'COL',
   university: 'UNI',
-  professional: 'UNI', // evrk2 only has 2 member tenants, so re-using MT2 here
-  // school: 'SCHO',
-  // special: 'SPE,',
+  professional: 'PROF',
+  school: 'SCHO',
+  special: 'SPE,',
 };
 
 export const tenantErrors = {

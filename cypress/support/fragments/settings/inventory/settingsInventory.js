@@ -13,6 +13,7 @@ export const INVENTORY_SETTINGS_TABS = {
   STATISTICAL_CODES: 'Statistical codes',
   DISPLAY_SETTINGS: 'Display settings',
   SUBJECT_SOURCES: 'Subject sources',
+  SUBJECT_TYPES: 'Subject types',
 };
 
 export default {

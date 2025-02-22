@@ -17,6 +17,7 @@ import {
   LOAN_TYPE_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
 } from '../../../support/constants';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -179,7 +180,16 @@ describe('bulk-edit', () => {
 
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [headersInCsvToCheck]);
-        BulkEditFiles.verifyCSVFileRowsValueIncludes(matchedRecordsFileName, instance.itemIds);
+
+        instance.itemIds.forEach((itemId) => {
+          BulkEditFiles.verifyValueInRowByUUID(
+            matchedRecordsFileName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+            itemId,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_UUID,
+            itemId,
+          );
+        });
 
         const newPermanentLoanType = 'Reading room';
 

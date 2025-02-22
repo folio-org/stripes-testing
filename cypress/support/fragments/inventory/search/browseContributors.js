@@ -275,12 +275,24 @@ export default {
     }
   },
 
-  checkSearchResultRow(contributorName, contributorNameType, contributorType, numberOfTitles) {
-    cy.expect(
-      MultiColumnListRow(
-        `${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`,
-      ).exists(),
+  checkSearchResultRow(
+    contributorName,
+    contributorNameType,
+    contributorType,
+    numberOfTitles,
+    isBold = false,
+  ) {
+    const targetRow = MultiColumnListRow(
+      `${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`,
+      { isContainer: false },
     );
+    if (isBold) {
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell(contributorName))
+          .has({ innerHTML: including(`<strong>${contributorName}</strong>`) }),
+      );
+    } else cy.expect(targetRow.exists());
   },
 
   checkContributorRowValues: (values) => {
@@ -290,7 +302,12 @@ export default {
     });
   },
 
-  waitForContributorToAppear(contributorName, isPresent = true) {
+  waitForContributorToAppear(contributorName, isPresent = true, isLinked = false) {
+    const hasLinkedItem = (items) => {
+      return items.some((item) => {
+        return item.authorityId && item.authorityId !== '';
+      });
+    };
     return cy.recurse(
       () => {
         return cy.okapiRequest({
@@ -306,7 +323,15 @@ export default {
         const foundContributors = response.body.items.filter((item) => {
           return item.name === contributorName;
         });
-        return isPresent ? foundContributors.length > 0 : foundContributors.length === 0;
+        if (isPresent) {
+          if (isLinked) {
+            return hasLinkedItem(foundContributors);
+          } else {
+            return foundContributors.length > 0 && !hasLinkedItem(foundContributors);
+          }
+        } else {
+          return foundContributors.length === 0;
+        }
       },
       {
         limit: 15,

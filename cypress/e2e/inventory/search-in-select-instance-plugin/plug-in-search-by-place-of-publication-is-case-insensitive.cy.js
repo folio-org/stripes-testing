@@ -99,7 +99,7 @@ describe('Inventory', () => {
 
     it(
       'C496188 Select Instance plugin | Search for Instance by "Place of publication" field is case insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C496188'] },
+      { tags: ['extendedPath', 'spitfire', 'C496188'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

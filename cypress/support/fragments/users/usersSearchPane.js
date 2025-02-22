@@ -30,6 +30,7 @@ export default {
   },
 
   searchByKeywords(keywords) {
+    cy.wait(500);
     return cy.do([
       TextField({ id: 'input-user-search' }).fillIn(keywords),
       Button({ id: 'submit-user-search' }).click(),

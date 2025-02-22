@@ -7,6 +7,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/constants';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -18,6 +20,20 @@ describe('Inventory', () => {
       barcodes: [`451469${randomFourDigitNumber()}`, `451469${randomFourDigitNumber()}`],
       userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     };
+
+    const callNumberBrowseSettings = [
+      {
+        name: 'National Library of Medicine classification',
+        callNumberTypes: [
+          'National Library of Medicine classification',
+          'Library of Congress classification',
+        ],
+      },
+      {
+        name: 'Call numbers (all)',
+        callNumberTypes: [],
+      },
+    ];
 
     before('Create test data', () => {
       cy.getAdminToken().then(() => {
@@ -93,6 +109,9 @@ describe('Inventory', () => {
       });
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
+        callNumberBrowseSettings.forEach((setting) => {
+          CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
@@ -117,6 +136,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451469'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(testData.firstCallNumber);
         InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
           records: [{ callNumber: testData.firstCallNumber }],
@@ -127,6 +147,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(testData.secondCallNumber);
         InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
           records: [{ callNumber: testData.secondCallNumber }],
