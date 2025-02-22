@@ -164,6 +164,7 @@ describe('Loans', () => {
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
 
       // Click linked value for item title
@@ -175,6 +176,7 @@ describe('Loans', () => {
 
       // Click linked value for barcode
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         title: itemBarcode,
@@ -183,6 +185,7 @@ describe('Loans', () => {
 
       // Click linked value for Loan policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         href: '/settings/circulation/loan-policies',
@@ -191,6 +194,7 @@ describe('Loans', () => {
 
       // Click on linked value for Fine incurred
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyButtonRedirectsToCorrectPage({
         title: '100.00',
@@ -199,6 +203,7 @@ describe('Loans', () => {
 
       // Add another fee/fine to loan and click linked value for Fine incurred
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyButtonRedirectsToCorrectPage({
@@ -220,6 +225,7 @@ describe('Loans', () => {
 
       // Click on linked value for overdue policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         href: '/settings/circulation/fine-policies',
@@ -228,6 +234,7 @@ describe('Loans', () => {
 
       // Click on linked value for lost item policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         href: '/settings/circulation/lost-item-fee-policy',
@@ -236,6 +243,7 @@ describe('Loans', () => {
 
       // Click on linked value for Request queue
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(3000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
     },

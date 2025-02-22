@@ -681,7 +681,7 @@ export default {
   },
 
   exportRequestToCsv: () => {
-    cy.wait(1000);
+    cy.wait(3000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
   },
 

@@ -52,9 +52,9 @@ export default {
   },
 
   deletePatronTemplate() {
-    cy.do([
-      Button({ id: 'clickable-delete-block-template' }).click(),
-      Button({ id: 'clickable-delete-block-template-confirmation-confirm' }).click(),
-    ]);
+    cy.do(Button({ id: 'clickable-delete-block-template' }).click());
+    cy.wait(1000);
+    cy.do(Button({ id: 'clickable-delete-block-template-confirmation-confirm' }).click());
+    cy.wait(2000);
   },
 };
