@@ -116,7 +116,7 @@ describe('Export Manager', () => {
 
       it(
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
-        { tags: ['smoke', 'thunderjet', 'eurekaPhase1'] },
+        { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
         () => {
           Orders.selectOrderLines();
           Orders.selectFilterAcquisitionMethod('Purchase');

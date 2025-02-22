@@ -172,7 +172,7 @@ describe('Bulk-edit', () => {
             changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
-            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 holding');
+            BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
               `(permanent_location.name == "${locationInCollegeData.name}") AND (holdings.call_number_prefix == "${callNumberPrefix}")`,
             );

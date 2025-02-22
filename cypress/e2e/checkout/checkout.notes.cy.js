@@ -98,8 +98,9 @@ describe('Check out', () => {
       CheckOutActions.deleteNote();
       // Open user Details
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-      UsersSearchPane.waitLoading();
+      UsersSearchPane.resetAllFilters();
       UsersSearchPane.searchByUsername(testData.username);
+      UsersSearchPane.selectUserFromList(testData.username);
       UsersSearchPane.waitLoading();
       // Scroll down to "Notes" accordion button and click on it.
       UsersCard.openNotesSection();

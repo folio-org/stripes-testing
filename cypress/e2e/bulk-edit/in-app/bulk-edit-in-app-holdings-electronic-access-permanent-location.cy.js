@@ -8,9 +8,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import {
   APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
   electronicAccessRelationshipId,
   electronicAccessRelationshipName,
   LOCATION_IDS,
@@ -29,6 +29,8 @@ const secondItem = {
   instanceName: `secondItem-instanceName${getRandomPostfix()}`,
   itemBarcode: `secondItem-itemBarcode${getRandomPostfix()}`,
 };
+const electronicAccessTableHeadersInFile =
+  'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingsHRIDFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingsHRIDFileName);
@@ -42,6 +44,44 @@ const secondElectronicAccess = {
   materialsSpecification: 'secondElectronicAccess-materialsSpecification',
   publicNote: 'secondElectronicAccess-publicNote',
   uri: 'secondElectronicAccess.com/uri',
+};
+const getRowsInCsvFileMatchingHrids = (csvFileData, hrid) => {
+  return csvFileData.filter(
+    (row) => row[BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID] === hrid,
+  );
+};
+const verifyValuesInCsvFile = (
+  fileNameToVerify,
+  holdingElectronicAccessValue,
+  permanentLocationValue,
+) => {
+  FileManager.convertCsvToJson(fileNameToVerify).then((csvFileData) => {
+    const holdingRowWithElectronicAccess = getRowsInCsvFileMatchingHrids(
+      csvFileData,
+      item.holdingsHRID,
+    );
+    const holdingRowWithoutElectronicAccess = getRowsInCsvFileMatchingHrids(
+      csvFileData,
+      secondItem.holdingsHRID,
+    );
+
+    holdingRowWithElectronicAccess.forEach((holdingRow) => {
+      cy.expect(
+        holdingRow[BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS],
+      ).to.equal(holdingElectronicAccessValue);
+      cy.expect(
+        holdingRow[BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION],
+      ).to.equal(permanentLocationValue);
+    });
+    holdingRowWithoutElectronicAccess.forEach((holdingRow) => {
+      cy.expect(
+        holdingRow[BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS],
+      ).to.equal('');
+      cy.expect(
+        holdingRow[BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION],
+      ).to.equal(permanentLocationValue);
+    });
+  });
 };
 
 describe('bulk-edit', () => {
@@ -146,10 +186,15 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyRowHasEmptyElectronicAccessInMatchAccordion(
           secondItem.holdingsHRID,
         );
-        const matched = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,\n${secondItem.holdingsUUID},${secondItem.instanceName}.`;
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [matched]);
-        const secondMatched = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.ONLINE_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [secondMatched]);
+
+        const holdingsElectronicAccessInFile = `${electronicAccessTableHeadersInFile}${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}`;
+
+        verifyValuesInCsvFile(
+          matchedRecordsFileName,
+          holdingsElectronicAccessInFile,
+          LOCATION_NAMES.ONLINE_UI,
+        );
+
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID, secondItem.holdingsHRID);
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replacePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI, 'holdings');
@@ -181,10 +226,12 @@ describe('bulk-edit', () => {
           secondItem.holdingsHRID,
         );
         BulkEditActions.downloadPreview();
-        const preview = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,`;
-        ExportFile.verifyFileIncludes(previewFileName, [preview]);
-        const secondPreview = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
-        ExportFile.verifyFileIncludes(previewFileName, [secondPreview]);
+
+        verifyValuesInCsvFile(
+          previewFileName,
+          holdingsElectronicAccessInFile,
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
+        );
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -215,13 +262,24 @@ describe('bulk-edit', () => {
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        const changed = `${item.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${firstElectronicAccess.uri};${firstElectronicAccess.linkText};;|;${secondElectronicAccess.uri};;${secondElectronicAccess.materialsSpecification};${secondElectronicAccess.publicNote}",,,,`;
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [changed]);
-        const secondChanged = `,${secondItem.holdingsHRID},FOLIO,,,,,${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.ONLINE_UI},,,,,1,,,,,,,,,,,,,,,,,,,,\n`;
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [secondChanged]);
+
+        verifyValuesInCsvFile(
+          changedRecordsFileName,
+          holdingsElectronicAccessInFile,
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
+        );
 
         BulkEditActions.verifySuccessBanner(2);
         BulkEditSearchPane.verifyLocationChanges(2, LOCATION_NAMES.MAIN_LIBRARY_UI);
+
+        // remove earlier dowloaded files
+        FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
+        FileManager.deleteFileFromDownloadsByMask(
+          holdingsHRIDFileName,
+          matchedRecordsFileName,
+          changedRecordsFileName,
+          previewFileName,
+        );
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.checkHoldingsCheckbox();
@@ -234,16 +292,28 @@ describe('bulk-edit', () => {
         ]);
 
         BulkEditLogs.downloadFileWithMatchingRecords();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [matched]);
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [secondMatched]);
+
+        verifyValuesInCsvFile(
+          matchedRecordsFileName,
+          holdingsElectronicAccessInFile,
+          LOCATION_NAMES.ONLINE_UI,
+        );
 
         BulkEditLogs.downloadFileWithProposedChanges();
-        ExportFile.verifyFileIncludes(previewFileName, [preview]);
-        ExportFile.verifyFileIncludes(previewFileName, [secondPreview]);
+
+        verifyValuesInCsvFile(
+          previewFileName,
+          holdingsElectronicAccessInFile,
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
+        );
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [changed]);
-        ExportFile.verifyFileIncludes(previewFileName, [secondChanged]);
+
+        verifyValuesInCsvFile(
+          changedRecordsFileName,
+          holdingsElectronicAccessInFile,
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
+        );
 
         [item.holdingsHRID, secondItem.holdingsHRID].forEach((hrid) => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

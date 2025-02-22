@@ -276,8 +276,8 @@ export default {
         .find(TextField('Integration name*'))
         .fillIn(integrationName),
       TextArea('Description').fillIn(integartionDescription),
-      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
-      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(TextField('Vendor EDI code')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code')).fillIn(libraryEDICode),
       ediSection.find(Button({ icon: 'info' })).click(),
       Checkbox({
         name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
@@ -294,8 +294,8 @@ export default {
     ).select(acquisitionMethod);
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
-      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
-      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Server address')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port')).fillIn(FTPport),
       ftpSection.find(TextField('Username')).fillIn('folio'),
       ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
@@ -340,8 +340,8 @@ export default {
         .find(TextField('Integration name*'))
         .fillIn(integrationName),
       TextArea('Description').fillIn(integartionDescription),
-      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
-      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(TextField('Vendor EDI code')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code')).fillIn(libraryEDICode),
       ediSection.find(Button({ icon: 'info' })).click(),
       Checkbox({
         name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice',
@@ -355,18 +355,19 @@ export default {
     ).select(acquisitionMethod);
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
-      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
-      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Server address')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port')).fillIn(FTPport),
     ]);
     cy.do(saveAndClose.click());
   },
 
   editIntegrationInformation: () => {
+    cy.wait(4000);
     cy.do([
       actionsButton.click(),
       editButton.click(),
-      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICodeEdited),
-      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
+      ediSection.find(TextField('Vendor EDI code')).fillIn(vendorEDICodeEdited),
+      ediSection.find(TextField('Library EDI code')).fillIn(libraryEDICodeEdited),
       saveAndClose.click(),
     ]);
   },

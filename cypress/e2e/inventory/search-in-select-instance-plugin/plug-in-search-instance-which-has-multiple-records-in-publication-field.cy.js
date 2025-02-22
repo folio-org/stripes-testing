@@ -94,7 +94,7 @@ describe('Inventory', () => {
 
     it(
       'C496184 Select Instance plugin | Search for Instance which has multiple records in "Place of publication" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C496184'] },
+      { tags: ['extendedPath', 'spitfire', 'C496184'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

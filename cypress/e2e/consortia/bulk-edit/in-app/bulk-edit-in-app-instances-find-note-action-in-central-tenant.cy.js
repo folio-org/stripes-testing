@@ -23,7 +23,6 @@ let instanceTypeId;
 let noteTypeId;
 const folioInstance = {
   title: `C478257 folio instance testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
   title: `C478257 marc instance testBulkEdit_${getRandomPostfix()}`,
@@ -106,7 +105,6 @@ describe('Bulk-edit', () => {
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
           permissions.uiInventoryViewCreateEditInstances.gui,
-          permissions.bulkEditQueryView.gui,
         ]).then((userProperties) => {
           user = userProperties;
 
@@ -193,7 +191,7 @@ describe('Bulk-edit', () => {
 
       it(
         'C478257 Verify "Find" action for Instances notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C478257'] },
+        { tags: ['criticalPathECS', 'firebird', 'C478257'] },
         () => {
           testParams.forEach((params) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

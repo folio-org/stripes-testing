@@ -8,6 +8,10 @@ export default {
     cy.xpath('//span[@id="platform-versions"]').should('exist');
   },
 
+  selectSoftwareVersions() {
+    cy.xpath('//a[@href="/settings/about"]').click();
+  },
+
   checkErrorNotDisplayed() {
     cy.get('[role="alert"]').should('not.be.visible');
   },

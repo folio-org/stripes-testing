@@ -1032,6 +1032,10 @@ export default {
     internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
   },
+  uiSettingsCallNumberBrowseView: {
+    internal: 'ui-inventory.settings.call-number-browse',
+    gui: 'Settings (Inventory): Configure call number browse',
+  },
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',

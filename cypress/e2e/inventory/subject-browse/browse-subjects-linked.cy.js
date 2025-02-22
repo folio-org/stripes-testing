@@ -110,6 +110,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         BrowseSubjects.select();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, true);
         BrowseSubjects.browse(testData.subjectName);
         BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.subjectName);
         BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.subjectName);
@@ -125,6 +126,7 @@ describe('Inventory', () => {
         cy.wait(1500);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectName, true, false);
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();
         BrowseSubjects.browse(testData.subjectName);
