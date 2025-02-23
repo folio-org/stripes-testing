@@ -2,11 +2,26 @@ import { including } from '@interactors/html';
 import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
 import DateTools from '../../../../utils/dateTools';
 
+function getSubjectTypeNames() {
+  const existingNames = [];
+  return cy
+    .get('#editList-subject-types')
+    .find('[class*="mclCell-"]:nth-child(1)')
+    .each(($cell) => {
+      cy.wrap($cell).each(($el) => {
+        existingNames.push($el.text());
+      });
+    })
+    .then(() => existingNames);
+}
+
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
 export default {
+  getSubjectTypeNames,
+
   verifySourceTypeAbsent(name) {
     cy.get('#editList-subjecttypes, #editList-subject-types') // Selects either if present
       .should('exist') // Ensures at least one exists before proceeding

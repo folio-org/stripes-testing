@@ -8,11 +8,13 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
   Pane,
   Section,
   Select,
+  SelectionOption,
   TextArea,
-  TextField,
   TextInput,
 } from '../../../../../interactors';
 import { escapeRegex } from '../../../utils/stringTools';
@@ -298,6 +300,17 @@ export default {
 
   clickAccordionByName(accordionName) {
     cy.do(searchFilterPane.find(Accordion(accordionName)).clickHeader());
-    cy.expect(TextField({ id: 'subjectType-multiselect-input' }).exists());
+    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectType-multiselect' })).exists());
+  },
+
+  verify(types) {
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
+    cy.pause();
+    cy.expect(MultiSelectMenu().exists());
+    cy.expect(
+      MultiSelectMenu()
+        .find(SelectionOption(including(types)))
+        .exists(),
+    );
   },
 };
