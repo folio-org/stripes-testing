@@ -11,7 +11,7 @@ import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import { tenantNames } from '../../../../support/dictionary/affiliations';
 import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
@@ -23,10 +23,10 @@ let instanceTypeId;
 let reproductioNoteTypeId;
 let actionNoteTypeId;
 const folioInstance = {
-  title: `C566126 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C477649 FolioInstance_${getRandomPostfix()}`,
 };
 const marcInstance = {
-  title: `C566126 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C477649 MarcBibInstance_${getRandomPostfix()}`,
 };
 const notes = {
   administrative: 'Administrative note',
@@ -55,12 +55,12 @@ const marcInstanceFields = [
   },
 ];
 const instances = [folioInstance, marcInstance];
-const instanceHRIDsFileName = `instanceHRIdsFileName_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDsFileName, true);
-const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDsFileName, true);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceHRIDsFileName, true);
+const instanceUUIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName, true);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName, true);
 const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
-  instanceHRIDsFileName,
+  instanceUUIDsFileName,
   true,
 );
 const errorReasonNotes = 'Bulk edit of instance notes is not supported for MARC Instances.';
@@ -78,93 +78,81 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.affiliateUserToTenant({
-            tenantId: Affiliations.College,
-            userId: user.userId,
-            permissions: [
-              permissions.bulkEditEdit.gui,
-              permissions.uiInventoryViewCreateEditInstances.gui,
-            ],
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            instanceTypeId = instanceTypes[0].id;
           });
-
-          cy.withinTenant(Affiliations.College, () => {
-            cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-              instanceTypeId = instanceTypes[0].id;
-            });
-            InstanceNoteTypes.getInstanceNoteTypesViaApi({
-              limit: 2,
-              query: 'name=="Reproduction note" or name=="Action note"',
+          InstanceNoteTypes.getInstanceNoteTypesViaApi({
+            limit: 2,
+            query: 'name=="Reproduction note" or name=="Action note"',
+          })
+            .then(({ instanceNoteTypes }) => {
+              actionNoteTypeId = instanceNoteTypes[0].id;
+              reproductioNoteTypeId = instanceNoteTypes[1].id;
             })
-              .then(({ instanceNoteTypes }) => {
-                actionNoteTypeId = instanceNoteTypes[0].id;
-                reproductioNoteTypeId = instanceNoteTypes[1].id;
-              })
-              .then(() => {
-                InventoryInstances.createFolioInstanceViaApi({
-                  instance: {
-                    instanceTypeId,
-                    title: folioInstance.title,
-                    administrativeNotes: [notes.administrative],
-                    notes: [
-                      {
-                        instanceNoteTypeId: reproductioNoteTypeId,
-                        note: notes.reproduction,
-                        staffOnly: true,
-                      },
-                      {
-                        instanceNoteTypeId: actionNoteTypeId,
-                        note: notes.action,
-                        staffOnly: false,
-                      },
-                    ],
-                  },
-                }).then((createdInstanceData) => {
-                  folioInstance.uuid = createdInstanceData.instanceId;
+            .then(() => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId,
+                  title: folioInstance.title,
+                  administrativeNotes: [notes.administrative],
+                  notes: [
+                    {
+                      instanceNoteTypeId: reproductioNoteTypeId,
+                      note: notes.reproduction,
+                      staffOnly: true,
+                    },
+                    {
+                      instanceNoteTypeId: actionNoteTypeId,
+                      note: notes.action,
+                      staffOnly: false,
+                    },
+                  ],
+                },
+              }).then((createdInstanceData) => {
+                folioInstance.uuid = createdInstanceData.instanceId;
 
-                  cy.getInstanceById(folioInstance.uuid).then((instanceData) => {
-                    folioInstance.hrid = instanceData.hrid;
-                  });
+                cy.getInstanceById(folioInstance.uuid).then((instanceData) => {
+                  folioInstance.hrid = instanceData.hrid;
+                });
 
-                  cy.createMarcBibliographicViaAPI(
-                    QuickMarcEditor.defaultValidLdr,
-                    marcInstanceFields,
-                  ).then((instanceId) => {
-                    marcInstance.uuid = instanceId;
+                cy.createMarcBibliographicViaAPI(
+                  QuickMarcEditor.defaultValidLdr,
+                  marcInstanceFields,
+                ).then((instanceId) => {
+                  marcInstance.uuid = instanceId;
 
-                    cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
-                      marcInstance.hrid = instanceData.hrid;
-                      instanceData.administrativeNotes = [notes.administrative];
-                      cy.updateInstance(instanceData);
+                  cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
+                    marcInstance.hrid = instanceData.hrid;
+                    instanceData.administrativeNotes = [notes.administrative];
+                    cy.updateInstance(instanceData);
 
-                      FileManager.createFile(
-                        `cypress/fixtures/${instanceHRIDsFileName}`,
-                        `${folioInstance.hrid}\n${marcInstance.hrid}`,
-                      );
-                    });
+                    FileManager.createFile(
+                      `cypress/fixtures/${instanceUUIDsFileName}`,
+                      `${folioInstance.uuid}\n${marcInstance.uuid}`,
+                    );
                   });
                 });
               });
-          });
+            });
 
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
 
       after('delete test data', () => {
-        cy.withinTenant(Affiliations.Consortia, () => {
-          cy.getAdminToken();
-          Users.deleteViaApi(user.userId);
+        cy.resetTenant();
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
+
+        instances.forEach((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.uuid);
         });
-        cy.withinTenant(Affiliations.College, () => {
-          instances.forEach((instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.uuid);
-          });
-        });
-        FileManager.deleteFile(`cypress/fixtures/${instanceHRIDsFileName}`);
+
+        FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
           matchedRecordsFileName,
           previewFileName,
@@ -174,16 +162,16 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566126 Verify "Change note type" action for Instances in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566126'] },
+        'C477649 Verify "Change note type" action for Instances in Central tenant (consortia) (firebird)',
+        { tags: ['criticalPathECS', 'firebird', 'C477649'] },
         () => {
-          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
-          BulkEditSearchPane.uploadFile(instanceHRIDsFileName);
-          BulkEditSearchPane.checkForUploading(instanceHRIDsFileName);
+          BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
+          BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
+          BulkEditSearchPane.checkForUploading(instanceUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
-          BulkEditSearchPane.verifyPaneTitleFileName(instanceHRIDsFileName);
+          BulkEditSearchPane.verifyPaneTitleFileName(instanceUUIDsFileName);
           BulkEditSearchPane.verifyPaneRecordsCount('2 instance');
-          BulkEditSearchPane.verifyFileNameHeadLine(instanceHRIDsFileName);
+          BulkEditSearchPane.verifyFileNameHeadLine(instanceUUIDsFileName);
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
@@ -193,8 +181,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
           BulkEditActions.downloadMatchedResults();
 
           instances.forEach((instance) => {
@@ -330,7 +317,7 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyErrorLabel(3);
           BulkEditSearchPane.verifyReasonForError(errorReasonNotes);
           BulkEditSearchPane.verifyReasonForError(errorReasonAdminNotes);
-          BulkEditSearchPane.verifyReasonForError(marcInstance.hrid);
+          BulkEditSearchPane.verifyReasonForError(marcInstance.uuid);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
           BulkEditFiles.verifyHeaderValueInRowByIdentifier(
@@ -350,8 +337,8 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-            `ERROR,${marcInstance.hrid},${errorReasonNotes}`,
-            `ERROR,${marcInstance.hrid},${errorReasonAdminNotes}`,
+            `ERROR,${marcInstance.uuid},${errorReasonNotes}`,
+            `ERROR,${marcInstance.uuid},${errorReasonAdminNotes}`,
           ]);
           BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 3);
 
