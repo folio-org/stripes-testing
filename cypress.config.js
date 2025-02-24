@@ -32,12 +32,14 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
+    OKAPI_HOST: 'https://folio-etesting-snapshot-kong.ci.folio.org',
+    OKAPI_TENANT: 'consortium',
+    diku_login: 'consortium_admin',
     diku_password: 'admin',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
+    // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
+    ecs_env_name: 'snapshot',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
@@ -149,7 +151,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: 'https://folio-etesting-snapshot-consortium.ci.folio.org',
     testIsolation: false,
   },
 });
