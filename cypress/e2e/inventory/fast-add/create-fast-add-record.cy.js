@@ -14,8 +14,8 @@ import SettingsInventory, {
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Fast Add', () => {
@@ -24,38 +24,37 @@ describe('Inventory', () => {
       end: null,
     };
     const instanceStatusCodeValue = INSTANCE_STATUS_TERM_NAMES.UNCATALOGED;
-    let userId;
+    let user;
 
     beforeEach('Create test data and login', () => {
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiInventorySettingsFastAdd.gui,
-      ]).then((userProperties) => {
-        userId = userProperties.userId;
+      cy.loginAsAdmin();
+      TopMenuNavigation.openAppFromDropdown(
+        APPLICATION_NAMES.SETTINGS,
+        APPLICATION_NAMES.INVENTORY,
+      );
+      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
+      FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
 
-        cy.login(userProperties.username, userProperties.password);
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        user = userProperties.userId;
 
-        cy.intercept('POST', '/inventory/instances').as('createInstance');
-        cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
-        cy.intercept('POST', '/inventory/items').as('createItem');
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
-        FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
+        cy.login(user.username, user.password);
       });
     });
 
     afterEach('Delete test data', () => {
+      cy.loginAsAdmin();
+      TopMenuNavigation.openAppFromDropdown(
+        APPLICATION_NAMES.SETTINGS,
+        APPLICATION_NAMES.INVENTORY,
+      );
+      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
+      FastAdd.changeDefaultInstanceStatus('Select instance status');
       cy.getAdminToken().then(() => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
         );
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
-        SettingsInventory.goToSettingsInventory();
-        SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
-        FastAdd.changeDefaultInstanceStatus('Select instance status');
-        Users.deleteViaApi(userId);
+        Users.deleteViaApi(user.userId);
       });
     });
 
@@ -63,7 +62,11 @@ describe('Inventory', () => {
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
       { tags: ['smoke', 'folijet', 'shiftLeft', 'C15850', 'eurekaPhase1'] },
       () => {
+        cy.intercept('POST', '/inventory/instances').as('createInstance');
+        cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
+        cy.intercept('POST', '/inventory/items').as('createItem');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
@@ -133,6 +136,7 @@ describe('Inventory', () => {
         fastAddRecord.note = 'Note For Journal Issue';
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();
         FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);
