@@ -47,6 +47,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor2Integration = getRandomPostfix();
 
   before(() => {
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
