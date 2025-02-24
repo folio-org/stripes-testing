@@ -17,7 +17,7 @@ describe('fse-lists - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'lists'] },
     () => {
       // check filters displayed (as we can't use standard waitLoading for tenants with non-English localization)
-      Lists.filtersWaitLoading();
+      Lists.waitLoading();
     },
   );
 });

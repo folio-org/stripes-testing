@@ -12,6 +12,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
 
 describe('Citation: duplicate resource', () => {
   const testData = {
@@ -108,6 +109,8 @@ describe('Citation: duplicate resource', () => {
       EditResource.duplicateResource();
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
       EditResource.saveAndKeepEditing();
+      // close uncontrolled authority modal
+      UncontrolledAuthModal.closeIfDisplayed();
       // add instance
       EditResource.openNewInstanceFormViaActions();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);

@@ -38,9 +38,7 @@ const actionsToSelect = {
   setTrue: 'Set true',
 };
 const validInstanceUUIDsFileName = `validInstanceUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = BulkEditFiles.getErrorsFromMatchingFileName(
-  validInstanceUUIDsFileName,
-);
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(validInstanceUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(validInstanceUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(validInstanceUUIDsFileName);
 

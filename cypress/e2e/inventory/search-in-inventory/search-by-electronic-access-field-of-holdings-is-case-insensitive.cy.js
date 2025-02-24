@@ -132,7 +132,7 @@ describe('Inventory', () => {
 
       it(
         'C466080 Search by "Electronic access" field of "Holdings" record is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C466080'] },
+        { tags: ['extendedPath', 'spitfire', 'C466080'] },
         () => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();

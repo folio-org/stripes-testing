@@ -134,6 +134,8 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
 
+        BrowseSubjects.waitForSubjectToAppear(testData.subjectHeading[0], true, true);
+
         testData.browseQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseSubjects();
           InventorySearchAndFilter.browseSearch(query);

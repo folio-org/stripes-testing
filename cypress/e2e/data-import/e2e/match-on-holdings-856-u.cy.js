@@ -238,6 +238,7 @@ describe('Data Import', () => {
           Logs.checkJobStatus(nameForUpdateCreateMarcFile, JOB_STATUS_NAMES.COMPLETED);
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          HoldingsRecordView.close();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.openHoldingView();

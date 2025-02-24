@@ -301,7 +301,7 @@ export default {
 
   showsOnlyNameTypeAccordion() {
     cy.expect(Accordion({ id: 'nameType' }).exists());
-    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion('Effective location (item)').absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -317,7 +317,7 @@ export default {
   },
 
   showsOnlyEffectiveLocation() {
-    cy.expect(Accordion({ id: 'effectiveLocation' }).exists());
+    cy.expect(Accordion('Effective location (item)').exists());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -333,7 +333,7 @@ export default {
   },
 
   filtersIsAbsent() {
-    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion('Effective location (item)').absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
