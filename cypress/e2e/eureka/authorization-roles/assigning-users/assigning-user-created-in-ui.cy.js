@@ -32,22 +32,25 @@ describe('Eureka', () => {
 
         before('Create user, role, login', () => {
           cy.getAdminToken();
-          cy.createUserGroupApi().then((group) => {
-            testData.userGroup = group;
-          });
-          cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
-            testData.roleId = role.id;
-          });
-          cy.createTempUser([]).then((createdUserProperties) => {
-            testData.tempUser = createdUserProperties;
-            cy.assignCapabilitiesToExistingUser(
-              testData.tempUser.userId,
-              capabsToAssign,
-              capabSetsToAssign,
-            );
-            cy.login(testData.tempUser.username, testData.tempUser.password, {
-              path: TopMenu.usersPath,
-              waiter: Users.waitLoading,
+          cy.then(() => {
+            cy.createUserGroupApi().then((group) => {
+              testData.userGroup = group;
+            });
+            cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+              testData.roleId = role.id;
+            });
+          }).then(() => {
+            cy.createTempUser([]).then((createdUserProperties) => {
+              testData.tempUser = createdUserProperties;
+              cy.assignCapabilitiesToExistingUser(
+                testData.tempUser.userId,
+                capabsToAssign,
+                capabSetsToAssign,
+              );
+              cy.login(testData.tempUser.username, testData.tempUser.password, {
+                path: TopMenu.usersPath,
+                waiter: Users.waitLoading,
+              });
             });
           });
         });

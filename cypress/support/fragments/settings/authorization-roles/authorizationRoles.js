@@ -103,6 +103,7 @@ const noAccessErrorText =
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
+const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -907,5 +908,11 @@ export default {
   checkShareToAllButtonShown: (roleName, isShown = true) => {
     if (isShown) cy.expect(Pane(roleName).find(shareToAllButton).exists());
     else cy.expect(Pane(roleName).find(shareToAllButton).absent());
+  },
+
+  verifyCreateNameError: () => {
+    cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createNameErrorText);
+    cy.expect(Callout(createNameErrorText).absent());
   },
 };
