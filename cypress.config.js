@@ -32,6 +32,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
+    ECS_ENV_NAME: 'cypress',
     OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
