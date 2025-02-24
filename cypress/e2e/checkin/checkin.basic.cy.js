@@ -136,6 +136,7 @@ describe('Check in', () => {
             path: TopMenu.checkInPath,
             waiter: CheckInActions.waitLoading,
           });
+          cy.pause();
           CheckInActions.checkInItemGui(itemData.barcode);
           CheckInPane.verifyResultCells();
           CheckInPane.checkResultsInTheRow(checkInResultsData);
