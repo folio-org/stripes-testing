@@ -370,6 +370,7 @@ export default {
   },
 
   POLineInfodorPhysicalMaterial: (orderLineTitleName) => {
+    cy.wait(4000);
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -2129,6 +2130,7 @@ export default {
   },
 
   changeFundInPOL: (fund) => {
+    cy.wait(4000);
     cy.do([fundDistributionSelect.click(), SelectionOption(`${fund.name} (${fund.code})`).click()]);
     cy.wait(2000);
     cy.do([saveAndCloseButton.click()]);
