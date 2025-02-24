@@ -10,8 +10,9 @@ import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
@@ -56,11 +57,14 @@ describe('Orders', () => {
       });
       cy.createOrderApi(order).then((orderResponse) => {
         orderNumber = orderResponse.body.poNumber;
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         OrderLines.addPOLine();
         OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
       });
       cy.createTempUser([
         permissions.uiOrdersView.gui,
@@ -70,10 +74,9 @@ describe('Orders', () => {
         permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
+        TopMenuNavigation.navigateToApp('Orders');
+        Orders.selectOrdersPane();
       });
     });
 

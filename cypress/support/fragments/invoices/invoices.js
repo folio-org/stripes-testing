@@ -12,6 +12,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelectOption,
   Pane,
   PaneHeader,
   SearchField,
@@ -1243,9 +1244,13 @@ export default {
         .find(fundCodeFilterSection)
         .find(Button({ ariaLabel: 'Fund code filter list' }))
         .click(),
-      fundCodeFilterSection.find(Button({ id: 'fundCode-selection' })).click(),
-      fundCodeFilterSection.find(SelectionOption(fundCode)).click(),
+      fundCodeFilterSection
+        .find(Button({ ariaControls: 'multiselect-option-list-fund-filter' }))
+        .click(),
     ]);
+    cy.wait(4000);
+    cy.do(fundCodeFilterSection.find(MultiSelectOption(fundCode)).click());
+    cy.pause();
   },
 
   selectFiscalYearFilter: (fiscalYear) => {
