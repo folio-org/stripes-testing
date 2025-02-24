@@ -1250,7 +1250,6 @@ export default {
     ]);
     cy.wait(4000);
     cy.do(fundCodeFilterSection.find(MultiSelectOption(fundCode)).click());
-    cy.pause();
   },
 
   selectFiscalYearFilter: (fiscalYear) => {
