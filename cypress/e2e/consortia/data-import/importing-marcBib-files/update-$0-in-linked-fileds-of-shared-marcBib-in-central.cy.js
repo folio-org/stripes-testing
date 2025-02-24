@@ -200,6 +200,10 @@ describe('Data Import', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          cy.intercept('/authn/refresh').as('/authn/refresh');
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+          cy.wait('@/authn/refresh', { timeout: 20000 });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

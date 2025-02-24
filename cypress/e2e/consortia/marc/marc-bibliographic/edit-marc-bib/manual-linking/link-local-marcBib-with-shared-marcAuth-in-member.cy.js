@@ -204,7 +204,6 @@ describe('MARC', () => {
               linkingTagAndValues.seventhBox,
             );
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            QuickMarcEditor.clickSaveAndKeepEditing();
             cy.wait(1500);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
