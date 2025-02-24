@@ -124,7 +124,6 @@ export default {
       cy.wait(1000);
       cy.do([itemBarcodeField.exists(), itemBarcodeField.fillIn(barcode)]);
       cy.wait(1000);
-      cy.pause();
       cy.do(addItemButton.click());
       cy.wait(500);
     });
