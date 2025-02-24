@@ -63,7 +63,7 @@ Cypress.Commands.add('getEntitlementsApi', (params = { limit: 100 }) => {
 
 Cypress.Commands.add('getTenantsApi', () => {
   return cy.okapiRequest({
-    path: 'tenants',
+    path: 'tenants?limit=200',
     isDefaultSearchParamsRequired: false,
   });
 });
