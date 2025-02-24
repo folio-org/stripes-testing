@@ -19,9 +19,10 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Unopen order', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
@@ -155,15 +156,17 @@ describe('orders: Unopen order', () => {
                                 status: INVOICE_STATUSES.PAID,
                               });
                             });
-                            cy.loginAsAdmin({
-                              path: TopMenu.ordersPath,
-                              waiter: Orders.waitLoading,
-                            });
+                            cy.loginAsAdmin();
+                            TopMenuNavigation.openAppFromDropdown('Orders');
+                            Orders.selectOrdersPane();
                             Orders.searchByParameter('PO number', orderNumber);
                             Orders.selectFromResultsList(orderNumber);
                             OrderLines.selectPOLInOrder(0);
                             OrderLines.editPOLInOrder();
                             OrderLines.changeFundInPOL(secondFund);
+                            InteractorsTools.checkCalloutMessage(
+                              `The purchase order line ${orderNumber}-1 was successfully updated`,
+                            );
                           });
                         },
                       );
@@ -187,10 +190,9 @@ describe('orders: Unopen order', () => {
     ]).then((userProperties) => {
       user = userProperties;
 
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
     });
   });
 
@@ -213,7 +215,7 @@ describe('orders: Unopen order', () => {
       Orders.openOrder();
       OrderLines.selectPOLInOrder(0);
       OrderLines.checkFundInPOL(secondFund);
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(secondFund.name);
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
@@ -226,11 +228,15 @@ describe('orders: Unopen order', () => {
         'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
       );
-      cy.visit(TopMenu.invoicesPath);
+      Funds.closeTransactionDetails();
+      Funds.closeMenu();
+      Funds.closeBudgetDetails();
+      Funds.closeFundDetails();
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoiceLine();
-      cy.visit(TopMenu.fundPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();

@@ -274,7 +274,12 @@ export default {
   selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
-  selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).find(Link(including(title))).click()),
+  selectFirstRequest: (title) => cy.do(
+    requestsPane
+      .find(MultiColumnListCell({ row: 0, content: title }))
+      .find(Link(including(title)))
+      .click(),
+  ),
   selectRequest: (title, rowIndex) => cy.do(
     requestsPane
       .find(
@@ -295,7 +300,11 @@ export default {
   selectPagesRequestType: () => cy.do(pageCheckbox.click()),
   selectRecallsRequestType: () => cy.do(recallCheckbox.click()),
   verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
-  navigateToApp: (appName) => cy.do([appsButton.click(), Button(appName).click()]),
+  navigateToApp(appName) {
+    cy.wait(1000);
+    cy.do([appsButton.click(), Button(appName).click()]);
+    cy.wait(2000);
+  },
   verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
   verifyColumnsPresence() {
     cy.expect([
@@ -654,7 +663,12 @@ export default {
   },
 
   selectTheFirstRequest() {
-    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
+    cy.do(
+      requestsResultsSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Link())
+        .click(),
+    );
   },
 
   verifyRequestIsPresent(itemData) {
