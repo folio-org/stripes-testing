@@ -88,6 +88,7 @@ describe('Data Import', () => {
             instanceHrids.push(instanceHrid);
           });
           InstanceRecordView.verifyEdition(instance.edition);
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

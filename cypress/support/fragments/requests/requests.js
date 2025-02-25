@@ -45,6 +45,7 @@ const tagsPane = Pane({ title: 'Tags' });
 const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
+const pickupServicePointCheckbox = Checkbox('Pickup service point');
 const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 const resetAllButton = Button('Reset all');
@@ -274,7 +275,12 @@ export default {
   selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
-  selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).find(Link(including(title))).click()),
+  selectFirstRequest: (title) => cy.do(
+    requestsPane
+      .find(MultiColumnListCell({ row: 0, content: title }))
+      .find(Link(including(title)))
+      .click(),
+  ),
   selectRequest: (title, rowIndex) => cy.do(
     requestsPane
       .find(
@@ -295,7 +301,11 @@ export default {
   selectPagesRequestType: () => cy.do(pageCheckbox.click()),
   selectRecallsRequestType: () => cy.do(recallCheckbox.click()),
   verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
-  navigateToApp: (appName) => cy.do([appsButton.click(), Button(appName).click()]),
+  navigateToApp(appName) {
+    cy.wait(1000);
+    cy.do([appsButton.click(), Button(appName).click()]);
+    cy.wait(2000);
+  },
   verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
   verifyColumnsPresence() {
     cy.expect([
@@ -654,7 +664,12 @@ export default {
   },
 
   selectTheFirstRequest() {
-    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
+    cy.do(
+      requestsResultsSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(Link())
+        .click(),
+    );
   },
 
   verifyRequestIsPresent(itemData) {
@@ -683,6 +698,36 @@ export default {
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
+  },
+
+  selectPickupServicePointColumn(select = true) {
+    cy.wait(500);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+    if (select) {
+      cy.do(pickupServicePointCheckbox.checkIfNotSelected());
+    } else {
+      cy.do(pickupServicePointCheckbox.uncheckIfSelected());
+    }
+    cy.wait(500);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+  },
+
+  verifyPickupServicePointColumnIsPresent(present = true) {
+    if (present) {
+      cy.expect(MultiColumnListHeader('Pickup service point').exists());
+    } else {
+      cy.expect(MultiColumnListHeader('Pickup service point').absent());
+    }
+  },
+
+  verifyPickupServicePoint(servicePoint, present = true) {
+    if (present) {
+      cy.expect(MultiColumnListCell({ content: servicePoint }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: servicePoint }).absent());
+    }
   },
 
   checkCellInCsvFileContainsValue(fileName, rowNumber = 1, columnNumber, value) {
