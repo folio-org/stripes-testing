@@ -5,6 +5,7 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
@@ -210,6 +211,7 @@ describe('MARC', () => {
                 MarcAuthorities.switchToSearch();
                 InventoryInstance.verifySelectMarcAuthorityModal();
                 InventoryInstance.verifySearchOptions();
+                MarcAuthoritiesSearch.selectExcludeReferencesFilter();
                 InventoryInstance.searchResults(linking.value);
                 InventoryInstance.clickLinkButton();
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);

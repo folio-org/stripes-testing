@@ -68,7 +68,7 @@ describe('Inventory', () => {
         },
       ],
       classificationOption: 'Library of Congress classification',
-      classificationValue: 'test004. HD',
+      classificationValue: 'test160. HD',
       querySearchOption: 'Query search',
       instanceTitleWithLocalClassification:
         'C468160 Browse by Class-on (different inst-s with same class-on value) Instance 11 - Local',

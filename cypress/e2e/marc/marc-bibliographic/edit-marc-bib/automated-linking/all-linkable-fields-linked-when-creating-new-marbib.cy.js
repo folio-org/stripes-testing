@@ -243,6 +243,8 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
+            // wait for rules to be applied
+            cy.wait(10_000);
 
             // wait for fields to be filled in
             cy.wait(2000);

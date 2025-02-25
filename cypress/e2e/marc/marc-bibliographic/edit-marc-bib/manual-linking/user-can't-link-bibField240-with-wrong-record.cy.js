@@ -159,8 +159,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);
               InventoryInstance.verifySelectMarcAuthorityModal();
-              MarcAuthorities.closeAuthoritySourceOption();
-              MarcAuthorities.verifyNoSourceOptionsSelected();
+              MarcAuthorities.clickResetAndCheck();
             });
           },
         );

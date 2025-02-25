@@ -19,7 +19,7 @@ describe('MARC', () => {
         tag100: '100',
         tag100RowIndex: 16,
         field100Value: '$a Erbil,',
-        new010FieldValue: '$z n 2005070769',
+        new010FieldValue: '$z n 03766001',
         searchOption: 'Keyword',
         authorityTitle: 'Erbil, H. Yıldırım',
         instanceTitle: 'Surface chemistry of solid and liquid interfaces / H. Yıldırım Erbil.',
