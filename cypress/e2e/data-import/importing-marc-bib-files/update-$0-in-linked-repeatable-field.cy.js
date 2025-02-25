@@ -85,7 +85,7 @@ describe('Data Import', () => {
       },
     ];
     const linkingTagAndValues = {
-      rowIndex: 79,
+      rowIndex: 78,
       value: 'C385663 Lee, Stan, 1922-2018',
       tag: '700',
     };
@@ -240,7 +240,7 @@ describe('Data Import', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          79,
+          78,
           '700',
           '1',
           '\\',

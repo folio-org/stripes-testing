@@ -93,6 +93,7 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        BrowseSubjects.waitForSubjectToAppear(testData.inventorySubject);
         InventorySearchAndFilter.selectBrowseSubjects();
         InventorySearchAndFilter.browseSubjectsSearch(testData.inventorySubject);
         BrowseSubjects.checkValueIsBold(testData.inventorySubject);
