@@ -9,6 +9,14 @@ import {
 
 const sectionName = 'Call number types';
 
+export const CALL_NUMBER_TYPES_DEFAULT = {
+  deweyDecimalclassification: 'Dewey Decimal classification',
+  libraryOfCongressClassification: 'Library of Congress Classification',
+  nationalLibraryOfMedicineClassification: 'National Library of Medicine Classification',
+  otherScheme: 'Other scheme',
+  superintendentOfDocumentsClassification: 'Superintendent of Documents classification',
+};
+
 const elements = {
   navigationPane: PaneContent({ id: 'app-settings-nav-pane-content' }),
   callNumberTypesPane: Pane(sectionName),
