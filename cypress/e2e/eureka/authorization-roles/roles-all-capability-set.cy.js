@@ -163,7 +163,10 @@ describe('Eureka', () => {
             testData.updatedRoleDescription,
           );
           AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
+          AuthorizationRoles.checkAfterSaveEdit(
+            testData.updatedRoleName,
+            testData.updatedRoleDescription,
+          );
 
           AuthorizationRoles.clickDeleteRole();
           AuthorizationRoles.confirmDeleteRole(testData.updatedRoleName);

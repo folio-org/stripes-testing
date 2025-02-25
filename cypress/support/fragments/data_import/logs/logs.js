@@ -39,6 +39,7 @@ export default {
   deleteLogsButtonClick,
 
   openViewAllLogs: () => {
+    cy.wait(1500);
     actionsButtonClick();
     viewAllLogsButtonClick();
   },
