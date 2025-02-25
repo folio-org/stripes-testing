@@ -45,6 +45,7 @@ const tagsPane = Pane({ title: 'Tags' });
 const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
+const pickupServicePointCheckbox = Checkbox('Pickup service point');
 const tagsAccordion = Accordion('Tags');
 const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 const resetAllButton = Button('Reset all');
@@ -697,6 +698,36 @@ export default {
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
+  },
+
+  selectPickupServicePointColumn(select = true) {
+    cy.wait(500);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+    if (select) {
+      cy.do(pickupServicePointCheckbox.checkIfNotSelected());
+    } else {
+      cy.do(pickupServicePointCheckbox.uncheckIfSelected());
+    }
+    cy.wait(500);
+    cy.do(actionsButtonInResultsPane.click());
+    cy.wait(500);
+  },
+
+  verifyPickupServicePointColumnIsPresent(present = true) {
+    if (present) {
+      cy.expect(MultiColumnListHeader('Pickup service point').exists());
+    } else {
+      cy.expect(MultiColumnListHeader('Pickup service point').absent());
+    }
+  },
+
+  verifyPickupServicePoint(servicePoint, present = true) {
+    if (present) {
+      cy.expect(MultiColumnListCell({ content: servicePoint }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: servicePoint }).absent());
+    }
   },
 
   checkCellInCsvFileContainsValue(fileName, rowNumber = 1, columnNumber, value) {
