@@ -669,6 +669,7 @@ export default {
     holdings,
     items,
     itemsProperties = {},
+    instanceTitlePrefix,
   } = {}) {
     return [...Array(count).keys()].map((index) => {
       const gHoldings =
@@ -698,7 +699,7 @@ export default {
 
       return {
         instanceId: uuid(),
-        instanceTitle: `autotest_instance_${getRandomPostfix()}`,
+        instanceTitle: instanceTitlePrefix || `autotest_instance_${getRandomPostfix()}`,
         holdings: gHoldings,
         items: gItems,
         // should not be used, left for support of old tests
