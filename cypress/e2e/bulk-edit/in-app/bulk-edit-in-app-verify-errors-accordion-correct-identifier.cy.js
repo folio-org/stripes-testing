@@ -128,7 +128,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.checkForUploading(instanceHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
+        BulkEditSearchPane.verifyPaneRecordsCount('2 holdings');
 
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyMatchedResultFileContent(
@@ -152,7 +152,13 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(previewFileName, [newLocation]);
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(0);
-        BulkEditSearchPane.verifyNonMatchedResults(instanceHRID);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          instanceHRID,
+          'No change in value required',
+          'Warning',
+        );
       },
     );
   });

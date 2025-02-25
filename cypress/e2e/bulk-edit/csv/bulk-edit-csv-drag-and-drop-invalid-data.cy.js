@@ -47,14 +47,30 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidIdentifiersFileName, 0, 11);
+        BulkEditSearchPane.verifyPaneRecordsCount('0 user');
+        BulkEditSearchPane.verifyErrorLabel(11);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
+
+        const top10Values = values.slice(0, 9);
+
+        top10Values.forEach((value) => {
+          BulkEditSearchPane.verifyNonMatchedResults(value);
+        });
+
         BulkEditSearchPane.actionsIsShown();
         BulkEditActions.verifyNoNewBulkEditButton();
 
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(invalidIdentifiersFileName, 0, 11);
+        BulkEditSearchPane.verifyPaneRecordsCount('0 item');
+        BulkEditSearchPane.verifyErrorLabel(11);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
+
+        top10Values.forEach((value) => {
+          BulkEditSearchPane.verifyNonMatchedResults(value);
+        });
+
         BulkEditSearchPane.actionsIsShown();
         BulkEditActions.verifyNoNewBulkEditButton();
 

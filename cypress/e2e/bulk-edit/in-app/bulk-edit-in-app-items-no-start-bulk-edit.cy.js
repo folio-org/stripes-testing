@@ -43,8 +43,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(itemBarcodesFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyNonMatchedResults(invalidItemBarcode);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
         BulkEditActions.openActions();
         BulkEditActions.startBulkEditAbsent();
       },
