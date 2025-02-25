@@ -68,7 +68,7 @@ describe('Inventory', () => {
         },
       ],
       classificationOption: 'Dewey Decimal classification',
-      classificationValue: 'test004. HD',
+      classificationValue: 'test159. HD',
       querySearchOption: 'Query search',
       instanceTitleWithLocalClassification:
         'C468159 Browse by Class-on (different inst-s with same class-on value) Instance 11 - Local',

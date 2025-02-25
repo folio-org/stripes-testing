@@ -118,7 +118,8 @@ describe('MARC', () => {
           MarcAuthorities.checkResultsExistance('Authorized');
           // #4 Click on the multiselect element titled "Authority source" and check dropdown options
           MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
-
+          MarcAuthorities.searchByParameter('Keyword', 'C422166');
+          MarcAuthorities.checkResultsExistance('Authorized');
           // #5 Click on any facet option. (Not "Not specified") and check results
           MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
           MarcAuthorities.checkResultsListRecordsCount();
