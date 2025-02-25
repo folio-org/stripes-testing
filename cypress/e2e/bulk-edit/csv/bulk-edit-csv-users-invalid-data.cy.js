@@ -2,16 +2,17 @@ import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import FileManager from '../../../support/utils/fileManager';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFile = `Matched-Records-${userUUIDsFileName}`;
+const matchedRecordsFile = BulkEditFiles.getMatchedRecordsFileName(userUUIDsFileName);
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${userUUIDsFileName}`;
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(userUUIDsFileName);
 const patronGroup = {
   name: getTestEntityValue('staff'),
 };
@@ -70,12 +71,18 @@ describe('bulk-edit', () => {
         BulkEditActions.clickNext();
         BulkEditActions.commitChanges();
 
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          user.userId,
+          'No change in value required',
+          'Warning',
+        );
         BulkEditActions.openActions();
         BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-          'No change in value required',
+        BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
+          `WARNING,${user.userId},No change in value required`,
         ]);
+        BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 1);
       },
     );
   });

@@ -74,7 +74,13 @@ describe('bulk-edit', () => {
         // Click the "Commit changes" button
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyNonMatchedResults(item.holdingUUID);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          item.holdingUUID,
+          'No change in value required',
+          'Warning',
+        );
       },
     );
   });

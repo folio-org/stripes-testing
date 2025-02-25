@@ -662,13 +662,11 @@ export default {
     );
   },
 
-  verifyShowWarningsCheckbox(isChecked = false) {
-    cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
-  },
-
-  verifyShowWarningsCheckboxDisabled() {
+  verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
-      errorsAccordion.find(Checkbox({ labelText: 'Show warnings', disabled: true })).exists(),
+      errorsAccordion
+        .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
+        .exists(),
     );
   },
 

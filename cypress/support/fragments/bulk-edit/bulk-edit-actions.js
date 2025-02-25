@@ -459,7 +459,7 @@ export default {
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
-    this.isConfirmButtonDisabled(false);
+    this.verifyConfirmButtonDisabled(false);
   },
 
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {

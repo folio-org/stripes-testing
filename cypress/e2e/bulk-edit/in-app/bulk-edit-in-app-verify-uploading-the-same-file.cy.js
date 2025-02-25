@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.checkForUploading(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(holdingUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
       },
     );
   });
