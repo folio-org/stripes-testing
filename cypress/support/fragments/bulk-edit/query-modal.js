@@ -230,6 +230,20 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(date));
   },
 
+  populateFiled(filedType, value) {
+    switch (filedType) {
+      case 'input':
+        this.fillInValueTextfield(value);
+        break;
+      case 'select':
+        this.chooseValueSelect(value);
+        break;
+      default:
+        cy.log('No such type');
+        break;
+    }
+  },
+
   fillInValueTextfield(text, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
   },

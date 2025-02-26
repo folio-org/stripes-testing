@@ -66,16 +66,7 @@ describe('Lists', () => {
           () => {
             QueryModal.selectField(data.field);
             QueryModal.selectOperator(data.operator);
-            switch (data.filedType) {
-              case 'input':
-                QueryModal.fillInValueTextfield(data.value);
-                break;
-              case 'select':
-                QueryModal.chooseValueSelect(data.value);
-                break;
-              default:
-                break;
-            }
+            QueryModal.populateFiled(data.filedType, data.value);
             QueryModal.testQuery();
             Lists.verifyQueryHeader(data.field);
             Lists.verifyQueryValue(data.value, data.operator);
