@@ -3,6 +3,9 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -19,15 +22,22 @@ describe('MARC', () => {
       'C466085 Authority 7, 035 identifier lower case test',
       'C466085 Authority 8, 035 identifier UPPER case test',
     ];
-    // create an array of file names
-    const mrkFiles = Array.from({ length: 8 }, (_, i) => `marcAuthFileForC466085_${i + 1}.mrk`);
     const createdAuthorityIDs = [];
     let user;
+
+    const marcFiles = [
+      {
+        marc: 'marcAuthFileForC466085.mrc',
+        fileName: `testMarcFileC466085.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
+        propertyName: 'authority',
+      },
+    ];
 
     before('Create user, test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466085*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C466085*', 'Authority 2, 001 identifier*');
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -35,21 +45,17 @@ describe('MARC', () => {
       ]).then((createdUserProperties) => {
         user = createdUserProperties;
 
-        mrkFiles.forEach((mrkFile) => {
-          MarcAuthorities.createMarcAuthorityRecordViaApiByReadingFromMrkFile(mrkFile).then(
-            (createdMarcBibliographicId) => {
-              createdAuthorityIDs.push(createdMarcBibliographicId);
-            },
-          );
-          cy.wait(2000);
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdAuthorityIDs.push(record[marcFile.propertyName].id);
+            });
+          });
         });
-        cy.wait(2000);
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-        MarcAuthorities.switchToSearch();
       });
     });
 
@@ -65,6 +71,12 @@ describe('MARC', () => {
       'C466085 Search by "Identifier" field is case-insensitive (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C466085'] },
       () => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
+        MarcAuthorities.switchToSearch();
+
         searchQueries.forEach((query) => {
           MarcAuthorities.searchByParameter(keywordSearchOption, query);
           cy.wait(1000);
