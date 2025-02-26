@@ -22,8 +22,9 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Consortia Vega', () => {
+  Cypress.env('TestCase', 'C624274');
   const testData = {
-    instanceTitle: `C624274 Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C624274_Instance_${getRandomPostfix()}`,
     itemBarcode: uuid(),
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
