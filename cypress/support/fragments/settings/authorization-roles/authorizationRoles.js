@@ -21,6 +21,7 @@ import {
   DropdownMenu,
   Callout,
   Link,
+  SelectionOption,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -58,13 +59,11 @@ const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 const duplicateButton = Button('Duplicate');
-
 const capabilityTables = {
   Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
   Settings: MultiColumnList({ dataTestId: 'capabilities-settings-type' }),
   Procedural: MultiColumnList({ dataTestId: 'capabilities-procedural-type' }),
 };
-
 const roleSearchInputField = rolesPane.find(TextField({ testid: 'search-field' }));
 const roleSearchButton = rolesPane.find(Button({ dataTestID: 'search-button' }));
 const usersAccordion = Accordion('Assigned users');
@@ -105,6 +104,17 @@ const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
+// for comparing roles in CM - start
+const compareRolesButton = Button('Compare roles');
+const compareRolesMainPane = Pane('Compare roles');
+const compareRolesLeftPane = compareRolesMainPane.find(Pane({ index: 0 }));
+const compareRolesRightPane = compareRolesMainPane.find(Pane({ index: 1 }));
+const selectMemberDropdown = Button({ id: 'memberSelect' });
+const selectRoleDropdown = Button({ name: 'authorization-role' });
+const noCapabilitiesFoundText = 'No capabilities found';
+const noCapabilitySetsFoundText = 'No capability sets found';
+
+// for comparing roles in CM - end
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -917,4 +927,87 @@ export default {
     InteractorsTools.dismissCallout(createNameErrorText);
     cy.expect(Callout(createNameErrorText).absent());
   },
+
+  // for comparing roles in CM - start
+  compareRoles: () => {
+    cy.do([actionsButton.click(), compareRolesButton.click()]);
+    [compareRolesLeftPane, compareRolesRightPane].forEach((pane) => {
+      cy.expect([
+        pane.find(selectMemberDropdown).exists(),
+        pane.find(selectRoleDropdown).exists(),
+        pane.find(capabilitiesAccordion).has({ open: false }),
+        pane.find(capabilitySetsAccordion).has({ open: false }),
+      ]);
+    });
+  },
+
+  checkAvailableTenants: (memberNamesArray, paneIndex = 0) => {
+    const currentPane = paneIndex ? compareRolesLeftPane : compareRolesRightPane;
+    cy.do(currentPane.find(selectMemberDropdown).click());
+    memberNamesArray.forEach((memberName) => {
+      cy.expect(currentPane.find(SelectionOption(memberName)).exists());
+    });
+    cy.do(currentPane.find(selectMemberDropdown).click());
+    cy.expect(currentPane.find(SelectionOption()).absent());
+  },
+
+  selectMemberForCompare: (memberName, paneIndex = 0) => {
+    const currentPane = paneIndex ? compareRolesLeftPane : compareRolesRightPane;
+    cy.do([
+      currentPane.find(selectMemberDropdown).click(),
+      currentPane.find(SelectionOption(memberName)).click(),
+    ]);
+    cy.wait(3000);
+    cy.expect(currentPane.find(selectMemberDropdown).has({ text: memberName }));
+  },
+
+  selectRoleForCompare: (roleName, paneIndex = 0) => {
+    const currentPane = paneIndex ? compareRolesLeftPane : compareRolesRightPane;
+    cy.do([
+      currentPane.find(selectRoleDropdown).click(),
+      currentPane.find(SelectionOption(roleName)).click(),
+    ]);
+    cy.wait(3000);
+    cy.expect([
+      currentPane.find(selectRoleDropdown).has({ text: roleName }),
+      currentPane.find(capabilitiesAccordion).has({ open: true }),
+      currentPane.find(capabilitySetsAccordion).has({ open: true }),
+    ]);
+  },
+
+  checkCapabilityForCompare: (
+    { table, resource, action },
+    isSelected = true,
+    isHighlighted = false,
+    paneIndex = 0,
+  ) => {
+    const currentPane = paneIndex ? compareRolesLeftPane : compareRolesRightPane;
+    const targetCheckbox = currentPane
+      .find(capabilitiesAccordion)
+      .find(capabilityTables[table])
+      .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
+    cy.expect(targetCheckbox.has({ checked: isSelected }));
+    if (isHighlighted) {
+      cy.expect(
+        currentPane
+          .find(capabilitiesAccordion)
+          .find(capabilityTables[table])
+          .find(MultiColumnListCell({ innerHTML: `<mark>${resource}</mark>` }))
+          .exists(),
+      );
+    }
+  },
+
+  verifyNoCapabilitiesFoundForCompare: (paneIndex = 0) => {
+    const currentPane = paneIndex ? compareRolesLeftPane : compareRolesRightPane;
+    cy.expect(currentPane.find(capabilitiesAccordion).find(HTML(noCapabilitiesFoundText)).exists());
+  },
+
+  verifyNoCapabilitySetsFoundForCompare: (paneIndex = 0) => {
+    const currentPane = paneIndex ? compareRolesLeftPane : compareRolesRightPane;
+    cy.expect(
+      currentPane.find(capabilitySetsAccordion).find(HTML(noCapabilitySetsFoundText)).exists(),
+    );
+  },
+  // for comparing roles in CM - end
 };
