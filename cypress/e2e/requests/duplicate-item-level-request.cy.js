@@ -45,8 +45,6 @@ describe('Duplicate item level request', () => {
         ServicePoints.createViaApi(servicePoint1);
         ServicePoints.createViaApi(servicePoint2);
         cy.getLocations({ limit: 2 });
-        // defaultLocation = Location.getDefaultLocation(servicePoint1.id);
-        // Location.createViaApi(defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           itemData.instanceTypeId = instanceTypes[0].id;
         });
@@ -153,12 +151,6 @@ describe('Duplicate item level request', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData1.userId, [servicePoint1.id]);
     Users.deleteViaApi(userData1.userId);
     Users.deleteViaApi(userData2.userId);
-    // Location.deleteInstitutionCampusLibraryLocationViaApi(
-    //   defaultLocation.institutionId,
-    //   defaultLocation.campusId,
-    //   defaultLocation.libraryId,
-    //   defaultLocation.id,
-    // );
     ServicePoints.deleteViaApi(servicePoint1.id);
     ServicePoints.deleteViaApi(servicePoint2.id);
   });
