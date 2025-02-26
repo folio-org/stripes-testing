@@ -25,6 +25,7 @@ import {
   INVENTORY_008_FIELD_REGL_DROPDOWN,
   INVENTORY_008_FIELD_S_L_DROPDOWN,
 } from '../../../../support/constants';
+import { Callout } from '../../../../../interactors';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -605,6 +606,7 @@ describe('MARC', () => {
                 break;
             }
             QuickMarcEditor.pressSaveAndClose();
+            cy.expect(Callout({ type: 'warning' }).exists());
             cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
