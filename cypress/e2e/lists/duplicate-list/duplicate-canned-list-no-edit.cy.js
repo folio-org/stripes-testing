@@ -1,10 +1,10 @@
 import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('lists', () => {
-  describe('duplicate list', () => {
+describe('Lists', () => {
+  describe('Duplicate list', () => {
     const userData = {};
 
     const duplicateListData = {

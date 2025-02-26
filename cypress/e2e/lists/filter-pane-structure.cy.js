@@ -1,7 +1,7 @@
-import Lists from '../../support/fragments/lists/lists';
+import { Lists } from '../../support/fragments/lists/lists';
 import TopMenu from '../../support/fragments/topMenu';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Filter lists', () => {
     beforeEach(() => {
       cy.loginAsAdmin({ path: TopMenu.listsPath, waiter: Lists.waitLoading });

@@ -1,9 +1,9 @@
 import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Delete list', () => {
     const userData = {};
     const listData = {
