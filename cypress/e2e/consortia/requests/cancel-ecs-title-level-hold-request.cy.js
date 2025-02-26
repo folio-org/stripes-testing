@@ -185,7 +185,7 @@ describe('Consortia Vega', () => {
 
   it(
     'C624275 Check that user can cancel ECS Title level Hold request (consortia) (vega)',
-    { tags: ['smokeECS', 'vega', 'C624275'] },
+    { tags: ['criticalPathECS', 'vega', 'C624275'] },
     () => {
       Requests.findCreatedRequest(testData.instanceTitle);
       Requests.selectFirstRequest(testData.instanceTitle);
