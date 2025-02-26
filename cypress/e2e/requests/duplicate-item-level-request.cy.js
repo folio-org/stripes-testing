@@ -11,7 +11,6 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -29,7 +28,6 @@ describe('Duplicate item level request', () => {
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
-  let defaultLocation;
   let cancellationReason;
   let requestId;
 
@@ -46,8 +44,9 @@ describe('Duplicate item level request', () => {
       .then(() => {
         ServicePoints.createViaApi(servicePoint1);
         ServicePoints.createViaApi(servicePoint2);
-        defaultLocation = Location.getDefaultLocation(servicePoint1.id);
-        Location.createViaApi(defaultLocation);
+        cy.getLocations({ limit: 2 });
+        // defaultLocation = Location.getDefaultLocation(servicePoint1.id);
+        // Location.createViaApi(defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           itemData.instanceTypeId = instanceTypes[0].id;
         });
@@ -74,7 +73,7 @@ describe('Duplicate item level request', () => {
           holdings: [
             {
               holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: defaultLocation.id,
+              permanentLocationId: Cypress.env('locations')[0].id,
             },
           ],
           items: [
@@ -154,12 +153,12 @@ describe('Duplicate item level request', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData1.userId, [servicePoint1.id]);
     Users.deleteViaApi(userData1.userId);
     Users.deleteViaApi(userData2.userId);
-    Location.deleteInstitutionCampusLibraryLocationViaApi(
-      defaultLocation.institutionId,
-      defaultLocation.campusId,
-      defaultLocation.libraryId,
-      defaultLocation.id,
-    );
+    // Location.deleteInstitutionCampusLibraryLocationViaApi(
+    //   defaultLocation.institutionId,
+    //   defaultLocation.campusId,
+    //   defaultLocation.libraryId,
+    //   defaultLocation.id,
+    // );
     ServicePoints.deleteViaApi(servicePoint1.id);
     ServicePoints.deleteViaApi(servicePoint2.id);
   });
@@ -196,7 +195,7 @@ describe('Duplicate item level request', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: itemData.barcode,
         title: itemData.instanceTitle,
-        effectiveLocation: defaultLocation.name,
+        effectiveLocation: Cypress.env('locations')[0].name,
         itemStatus: ITEM_STATUS_NAMES.PAGED,
         requestsOnItem: '2',
       });
