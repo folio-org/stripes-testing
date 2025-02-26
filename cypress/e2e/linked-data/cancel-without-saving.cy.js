@@ -99,12 +99,11 @@ describe('Citation: cancel without saving', () => {
       SearchAndFilter.selectAdvancedSearch();
       AdvancedSearch.waitLoading();
       // advanced search by title AND publisher
-      // TBD: add search by OR/'Starts with' once bug MODLD-664 will be fixed and story UILD-170 implemented
       AdvancedSearch.setCondition(
         1,
         '',
         'Cypress test',
-        LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+        LDE_ADVANCED_SEARCH_OPTIONS.STARTS_WITH,
         LDE_SEARCH_OPTIONS.TITLE,
       );
       AdvancedSearch.setCondition(
@@ -123,6 +122,27 @@ describe('Citation: cancel without saving', () => {
       EditResource.clickCancelWithOption('yes');
       // TODO: as for now this part failed due to UILD-493
       LinkedDataEditor.waitLoading();
+
+      // TODO: uncomment once UILD-170 implemented
+      // SearchAndFilter.selectAdvancedSearch();
+      // AdvancedSearch.waitLoading();
+      // // advanced search by title OR publisher
+      // AdvancedSearch.setCondition(
+      //   1,
+      //   '',
+      //   'Cypress test',
+      //   LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+      //   LDE_SEARCH_OPTIONS.TITLE,
+      // );
+      // AdvancedSearch.setCondition(
+      //   2,
+      //   LDE_ADVANCED_SEARCH_CONDITIONS.OR,
+      //   'Nicholas',
+      //   LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
+      //   LDE_SEARCH_OPTIONS.CONTRIBUTOR,
+      // );
+      // AdvancedSearch.clickSearch();
+
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // verify value was not changed
       EditResource.checkTextValueOnField(testData.uniqueTitle, instanceMainTitleField);
