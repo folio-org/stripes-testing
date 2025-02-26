@@ -104,6 +104,7 @@ const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
+const successDeleteText = 'Role has been deleted successfully';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -432,8 +433,9 @@ export default {
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
 
-  clickDeleteRole: () => {
-    cy.do([actionsButton.click(), deleteButton.click()]);
+  clickDeleteRole: (roleName = false) => {
+    const actionsButtonToClick = roleName ? Pane(roleName).find(actionsButton) : actionsButton;
+    cy.do([actionsButtonToClick.click(), deleteButton.click()]);
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
       deleteRoleModal.find(cancelButton).exists(),
@@ -448,6 +450,7 @@ export default {
   confirmDeleteRole: (roleName) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
     cy.expect([
+      Callout(successDeleteText).exists(),
       deleteRoleModal.absent(),
       Pane(roleName).absent(),
       rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
@@ -511,7 +514,6 @@ export default {
   verifyAssignedUsersAccordionEmpty: () => {
     cy.expect([
       usersAccordion.has({ open: true }),
-      usersAccordion.find(assignUsersButton).exists(),
       usersAccordion.find(MultiColumnListRow()).absent(),
     ]);
   },

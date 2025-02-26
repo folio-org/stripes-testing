@@ -1,10 +1,15 @@
 # Change history for stripes-testing
 
-## 5.0.0 IN PROGRESS
+## 5.1.0 IN PROGRESS
 
-* *BREAKING* upgrade `@folio/eslint-config-stripes`
+## [5.0.0](https://github.com/folio-org/stripes-testing/tree/v5.0.0) (2025-02-24)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.8.0...v5.0.0)
 
-## 4.8.0 IN PROGRESS
+- Change `advanced-search` -> `fillQuery` interactor from `ariaLabel` to `dataTestID`. Refs UITEST-127.
+- *BREAKING* upgrade `@folio/eslint-config-stripes`
+
+## [4.8.0](https://github.com/folio-org/stripes-testing/tree/v4.8.0) (2024-11-01)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.7.0...v4.8.0)
 
 - Updated Call Number search option labels. Refs FAT-13489.
 - Update `<MultiSelection>` interactor. Refs STCOM-1304.
@@ -15,7 +20,6 @@
 - Rename the `ui-eholdings.titles-packages.create-delete` and `ui-eholdings.package-title.select-unselect` permissions. Refs UITEST-123.
 - Rename the `ui-notes.item.assign-unassign` permission. Refs UITEST-124.
 - Update `ui-quick-marc.quick-marc-editor.duplicate` and `ui-quick-marc.quick-marc-authority-records.linkUnlink` permissions. Refs UITEST-121.
-- Change `advanced-search` -> `fillQuery` interactor from `ariaLabel` to `dataTestID`. Refs UITEST-127.
 
 ## [4.7.0](https://github.com/folio-org/stripes-testing/tree/v4.7.0) (2024-03-12)
 

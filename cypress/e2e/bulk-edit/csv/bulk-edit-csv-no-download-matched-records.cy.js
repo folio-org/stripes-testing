@@ -42,7 +42,8 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadMatchedRecordsAbsent();
       },

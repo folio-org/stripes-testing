@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -10,9 +11,9 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 let user;
 const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName, true);
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName, true);
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
