@@ -174,10 +174,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(invalidUserUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
-        BulkEditSearchPane.verifyErrorLabel(invalidUserUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+          'ERROR',
           invalidUserUUID,
           'No match found',
         ]);

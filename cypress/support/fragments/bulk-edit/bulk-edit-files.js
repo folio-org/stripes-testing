@@ -254,7 +254,7 @@ export default {
   verifyCSVFileRecordsNumber(fileName, recordsNumber) {
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
-        const values = this.getValuesFromCSVFile(actualContent);
+        const values = this.getValuesFromCSVFile(actualContent.trim());
 
         expect(values).to.have.length(recordsNumber);
       });

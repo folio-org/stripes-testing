@@ -1,5 +1,6 @@
 import Permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane, {
   ITEM_IDENTIFIERS,
 } from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -13,7 +14,7 @@ import { LOCATION_IDS } from '../../../support/constants';
 
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const previewFileName = `*-Updates-Preview-CSV-${itemBarcodesFileName}`;
+const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 const barcode = `barcode-${getRandomPostfix()}`;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
@@ -25,6 +26,7 @@ const item = {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         Permissions.bulkEditView.gui,
         Permissions.bulkEditEdit.gui,
@@ -83,8 +85,12 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangesUnderColumns('Item temporary location', tempLocation);
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(itemBarcodesFileName, 1, 1);
-        BulkEditSearchPane.verifyReasonForError('No change in value required');
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          item.firstBarcode,
+          'No change in value required',
+          'Warning',
+        );
 
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyLocationChanges(1, 'Annex');

@@ -18,6 +18,7 @@ const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         Permissions.bulkEditCsvView.gui,
         Permissions.bulkEditCsvEdit.gui,
@@ -52,7 +53,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.checkForUploading(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyPaneRecordsCount('1 user');
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
@@ -69,12 +70,12 @@ describe('bulk-edit', () => {
         BulkEditActions.openStartBulkEditForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditActions.cancel();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
         cy.reload();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
@@ -88,14 +89,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();
         BulkEditActions.cancel();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
         BulkEditActions.openActions();

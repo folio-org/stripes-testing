@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "license": "Apache-2.0",

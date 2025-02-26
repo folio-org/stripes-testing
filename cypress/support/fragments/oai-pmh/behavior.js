@@ -28,7 +28,9 @@ export default {
   },
 
   pickFromRecordSourceDropdown(option) {
+    cy.wait(2000);
     cy.do(recordSourceDropdown.choose(option));
+    cy.wait(2000);
   },
 
   verifyRecordSourceDropdownDefaultValue(value) {

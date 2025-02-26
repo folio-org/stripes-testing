@@ -81,7 +81,7 @@ describe('Inventory', () => {
         });
         InventorySearchAndFilter.switchToBrowseTab();
         testData.subjectValues.forEach((subject) => {
-          BrowseSubjects.waitForSubjectsToAppear(subject);
+          BrowseSubjects.waitForSubjectToAppear(subject);
           BrowseSubjects.searchBrowseSubjects(subject);
           BrowseSubjects.checkSearchResultsTable();
           BrowseSubjects.checkRowValueIsBold(5, subject);
