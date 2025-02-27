@@ -18,7 +18,6 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Consortia Vega', () => {
-  Cypress.env('TestCase', 'C624260');
   const testData = {
     instanceTitle: `AT_C624260_Instance_${getRandomPostfix()}`,
     itemBarcode: uuid(),
