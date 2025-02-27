@@ -17,7 +17,7 @@ describe('MARC', () => {
       const todayDate = moment(new Date()).format('YYYYMMDD');
       const headerText = 'Create a new MARC authority record';
       const localAuthFile = {
-        name: `C423500 auth source file active ${randomPostfix}`,
+        name: `C663304 auth source file active ${randomPostfix}`,
         prefix: `${getRandomLetters(4)}`,
         startWithNumber: '1',
         isActive: true,
@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423500 Verify that 005 and 999 fields are system generated after saving (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C423500'] },
+        'C663304 Verify that 005 and 999 fields are system generated after saving (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C663304'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
