@@ -41,6 +41,7 @@ const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewInCSVFormatBtn = Button('Download preview in CSV format');
 const downloadPreviewInMarcFormatButton = Button('Download preview in MARC format');
+const downloadErrorsButton = Button('Download errors (CSV)');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
@@ -348,7 +349,7 @@ export default {
   },
 
   downloadErrorsExists() {
-    cy.expect(Button('Download errors (CSV)').exists());
+    cy.expect(downloadErrorsButton.exists());
   },
 
   startBulkEditLocalButtonExists() {
@@ -356,7 +357,7 @@ export default {
   },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
-    cy.expect([downloadChnagedRecordsButton.exists(), Button('Download errors (CSV)').exists()]);
+    cy.expect([downloadChnagedRecordsButton.exists(), downloadErrorsButton.exists()]);
   },
 
   verifySuccessBanner(validRecordsCount = 1) {
@@ -1059,7 +1060,7 @@ export default {
   },
 
   downloadErrors() {
-    cy.do(Button('Download errors (CSV)').click());
+    cy.do(downloadErrorsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 

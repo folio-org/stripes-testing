@@ -13,6 +13,7 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import { Callout } from '../../../../../../interactors';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -40,7 +41,7 @@ describe('MARC', () => {
             boxSeventh: '',
             searchOption: 'Personal name',
             marcValue: 'C380728 Jackson, Peter, 1950-2022',
-            valueAfterSave: 'C380728 Jackson, Peter, Inspector Banks series ; 1950-2022 test123',
+            valueAfterSave: 'C380728 Jackson, Peter, 1950-2022 Inspector Banks series ; test123',
           },
           {
             rowIndex: 6,
@@ -147,7 +148,8 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.expect(Callout({ type: 'warning' }).exists());
+            cy.wait(2500);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -191,6 +193,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            BrowseSubjects.waitForSubjectToAppear(newFields[0].valueAfterSave, true, true);
             BrowseSubjects.browse(newFields[0].valueAfterSave);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(newFields[0].valueAfterSave);
           },

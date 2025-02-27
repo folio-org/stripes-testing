@@ -1302,6 +1302,17 @@ export default {
       .should('eq', `1 - ${recordsNumber}`);
   },
 
+  verifyPaginatorInErrorsAccordion(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      errorsAccordion.find(previousPaginationButton).has({ disabled: true }),
+      errorsAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
   verifyPaginatorInChangedRecords(recordsNumber, isNextButtonDisabled = true) {
     cy.expect([
       changesAccordion.find(previousPaginationButton).has({ disabled: true }),
