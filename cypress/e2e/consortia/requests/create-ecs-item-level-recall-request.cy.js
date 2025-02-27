@@ -19,7 +19,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Consortia Vega', () => {
   const testData = {
-    instanceTitle: `C624258 Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C624258_Instance_${getRandomPostfix()}`,
     itemBarcode: uuid(),
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();

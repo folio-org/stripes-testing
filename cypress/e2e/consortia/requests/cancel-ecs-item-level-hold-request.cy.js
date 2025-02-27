@@ -23,16 +23,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Consortia Vega', () => {
   const testData = {
-    instanceTitle: `AT_C624278_Instance_${getRandomPostfix()}`,
+    instanceTitle: `AT_C624279_Instance_${getRandomPostfix()}`,
     itemBarcode: uuid(),
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-  const itemStatus = ITEM_STATUS_NAMES.AVAILABLE;
+  const itemStatus = ITEM_STATUS_NAMES.CHECKED_OUT;
 
   let requestId;
   const requestData = {
     id: uuid(),
-    requestType: REQUEST_TYPES.PAGE,
+    requestType: REQUEST_TYPES.HOLD,
     requestLevel: REQUEST_LEVELS.ITEM,
     requestDate: new Date().toISOString(),
     fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
@@ -188,8 +188,8 @@ describe('Consortia Vega', () => {
   });
 
   it(
-    'C624278 Check that user can cancel ECS Item level Page request (consortia) (vega)',
-    { tags: ['smokeECS', 'vega', 'C624278'] },
+    'C624279 Check that user can cancel ECS Item level Hold request (consortia) (vega)',
+    { tags: ['criticalPathECS', 'vega', 'C624279'] },
     () => {
       Requests.findCreatedRequest(testData.instanceTitle);
       Requests.selectFirstRequest(testData.instanceTitle);
@@ -199,7 +199,7 @@ describe('Consortia Vega', () => {
       RequestDetail.checkRequestStatus('Closed - Cancelled');
 
       RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.PAGE,
+        type: REQUEST_TYPES.HOLD,
         status: 'Closed - Cancelled',
         level: REQUEST_LEVELS.ITEM,
       });
