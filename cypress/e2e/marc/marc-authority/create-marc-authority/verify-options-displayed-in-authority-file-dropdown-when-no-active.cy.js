@@ -6,6 +6,7 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../support/constants';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -62,30 +63,13 @@ describe('MARC', () => {
          window when no one have the "Active" checkbox selected in the settings (spitfire)`,
         { tags: ['criticalPath', 'spitfire', 'C422245'] },
         () => {
-          // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewSharedMarcAuthorityRecord);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
-
-          // 2 Click on "Authority file look-up" hyperlink
-          QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.verifySelectAuthorityFileModalDefaultView();
-
-          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown
-          QuickMarcEditor.clickAuthorityFileNameDropdown();
-          cy.wait(1000);
-          QuickMarcEditor.verifyOptionInAuthorityFileNameDropdown(
-            'Select authority file (disabled)',
-          );
-          QuickMarcEditor.verifyOptionInAuthorityFileNameDropdown(
-            localAuthFile.name,
-            localAuthFile.isActive,
-          );
+          MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.verifySourceFileOptionPresent('Select authority file (disabled)');
+          MarcAuthority.verifySourceFileOptionPresent(localAuthFile.name, localAuthFile.isActive);
           Object.values(DEFAULT_FOLIO_AUTHORITY_FILES).forEach((defaultFOLIOAuthorityFile) => {
-            QuickMarcEditor.verifyOptionInAuthorityFileNameDropdown(
-              defaultFOLIOAuthorityFile,
-              false,
-            );
+            MarcAuthority.verifySourceFileOptionPresent(defaultFOLIOAuthorityFile, false);
           });
         },
       );

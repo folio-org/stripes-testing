@@ -6,6 +6,7 @@ import getRandomPostfix, { getRandomLetters } from '../../../../../support/utils
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import ManageAuthorityFiles from '../../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
 import { DEFAULT_FOLIO_AUTHORITY_FILES } from '../../../../../support/constants';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -85,36 +86,24 @@ describe('MARC', () => {
         'C422248 Verify options displayed in "Authority file look-up" modal from Central tenant when some authority files (FOLIO and LOCAL) have the "Active" checkbox selected in the settings (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C422248'] },
         () => {
-          // 1 Click on "Actions" button in second pane >> Select "+ New" option
+          // Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewSharedMarcAuthorityRecord);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
+          MarcAuthority.checkSourceFileSelectShown();
 
-          // 2 Click on "Authority file look-up" hyperlink
-          QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.verifySelectAuthorityFileModalDefaultView();
-
-          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown
-          QuickMarcEditor.clickAuthorityFileNameDropdown();
           Object.values(DEFAULT_FOLIO_AUTHORITY_FILES)
             .slice(0, 2)
             .forEach((defaulFOLIOAuthorityFile) => {
-              QuickMarcEditor.verifyOptionInAuthorityFileNameDropdown(defaulFOLIOAuthorityFile);
+              MarcAuthority.verifySourceFileOptionPresent(defaulFOLIOAuthorityFile);
             });
 
           localAuthFiles.forEach((localAuthFile) => {
-            QuickMarcEditor.verifyOptionInAuthorityFileNameDropdown(
-              localAuthFile.name,
-              localAuthFile.isActive,
-            );
+            MarcAuthority.verifySourceFileOptionPresent(localAuthFile.name, localAuthFile.isActive);
           });
 
-          // 4 Select any option from the expanded dropdown
-          QuickMarcEditor.selectAuthorityFile(localAuthFiles[0].name);
-          QuickMarcEditor.verifyAuthorityFileSelected(localAuthFiles[0].name);
+          // Select any option from the expanded dropdown
+          MarcAuthority.selectSourceFile(localAuthFiles[0].name);
 
-          // 5 Click on the "Save & close" button
-          QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewSharedMarcAuthorityRecord);
         },
       );

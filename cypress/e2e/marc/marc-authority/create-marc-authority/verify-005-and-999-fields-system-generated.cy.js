@@ -78,15 +78,9 @@ describe('MARC', () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
 
-          // 2 Click on "Authority file look-up" hyperlink
-          // Click on the "Select authority file" placeholder in "Authority file name" dropdown
-          // Select any option
-          // Click on the "Save & close" button in "Select authority file" modal
-          QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.selectAuthorityFile(localAuthFile.name);
-          QuickMarcEditor.clickSaveAndCloseInModal();
+          // 2 Click on "Select authority file" dropdown and select any option
+          MarcAuthority.selectSourceFile(localAuthFile.name);
           QuickMarcEditor.checkPaneheaderContains(headerText);
           cy.wait(1000);
 

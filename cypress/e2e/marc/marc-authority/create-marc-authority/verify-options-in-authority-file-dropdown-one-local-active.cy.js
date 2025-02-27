@@ -4,6 +4,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -71,23 +72,11 @@ describe('MARC', () => {
          window when only one LOCAL has the "Active" checkbox selected in the settings (spitfire)`,
         { tags: ['criticalPath', 'spitfire', 'C422243'] },
         () => {
-          // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewSharedMarcAuthorityRecord);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
-
-          // 2 Click on "Authority file look-up" hyperlink
-          QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.verifySelectAuthorityFileModalDefaultView();
-
-          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown
-          QuickMarcEditor.clickAuthorityFileNameDropdown();
-          cy.wait(1000);
+          MarcAuthority.checkSourceFileSelectShown();
           localAuthFiles.forEach((localAuthFile) => {
-            QuickMarcEditor.verifyOptionInAuthorityFileNameDropdown(
-              localAuthFile.name,
-              localAuthFile.isActive,
-            );
+            MarcAuthority.verifySourceFileOptionPresent(localAuthFile.name, localAuthFile.isActive);
           });
         },
       );
