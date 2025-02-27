@@ -56,30 +56,15 @@ describe('MARC', () => {
             and added "010" field with prefix of different "FOLIO" authority file (spitfire)`,
         { tags: ['criticalPath', 'spitfire', 'C423540'] },
         () => {
-          // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
+          MarcAuthority.checkSourceFileSelectShown();
 
-          // 2 Click on "Authority file look-up" hyperlink
-          QuickMarcEditor.clickAuthorityLookUpButton();
+          MarcAuthority.selectSourceFile(DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE);
 
-          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown and select any default "FOLIO" option, ex.:
-          // "LC Name Authority file (LCNAF)"
-          QuickMarcEditor.selectAuthorityFile(DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE);
-          QuickMarcEditor.verifyAuthorityFileSelected(
-            DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-          );
-
-          // 4 Click on the "Save & close" button
-          QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkContentByTag('001', '');
           QuickMarcEditor.checkFourthBoxEditable(1, false);
 
-          // 5 Add 2 new fields by clicking on "+" icon and fill it as specified:
-          // 010 \\ "$a <prefix value of default authority file which does NOT match the selected option><identifier value>"
-          // ex.: "$a sj43321"
-          // 100 \\ "$a Create a new MARC authority record with not matched prefix on 010"
           MarcAuthority.addNewFieldAfterExistingByTag(
             newField010.previousFieldTag,
             newField010.tag,
@@ -93,7 +78,6 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag(newField010.tag, newField010.content);
           QuickMarcEditor.checkContentByTag(newField100.tag, newField100.content);
 
-          // 6 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(4, errorToastNotification);
           QuickMarcEditor.checkPaneheaderContains(headerText);
