@@ -58,13 +58,11 @@ const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 const duplicateButton = Button('Duplicate');
-
 const capabilityTables = {
   Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
   Settings: MultiColumnList({ dataTestId: 'capabilities-settings-type' }),
   Procedural: MultiColumnList({ dataTestId: 'capabilities-procedural-type' }),
 };
-
 const roleSearchInputField = rolesPane.find(TextField({ testid: 'search-field' }));
 const roleSearchButton = rolesPane.find(Button({ dataTestID: 'search-button' }));
 const usersAccordion = Accordion('Assigned users');
@@ -103,6 +101,8 @@ const noAccessErrorText =
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
+const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
+const successDeleteText = 'Role has been deleted successfully';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
@@ -124,6 +124,9 @@ const getResultsListByColumn = (columnIndex) => {
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
 export default {
+  capabilitiesAccordion,
+  capabilitySetsAccordion,
+  capabilityTables,
   waitLoading: () => {
     cy.expect(rolesPane.exists());
   },
@@ -431,8 +434,9 @@ export default {
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
 
-  clickDeleteRole: () => {
-    cy.do([actionsButton.click(), deleteButton.click()]);
+  clickDeleteRole: (roleName = false) => {
+    const actionsButtonToClick = roleName ? Pane(roleName).find(actionsButton) : actionsButton;
+    cy.do([actionsButtonToClick.click(), deleteButton.click()]);
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
       deleteRoleModal.find(cancelButton).exists(),
@@ -447,6 +451,7 @@ export default {
   confirmDeleteRole: (roleName) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
     cy.expect([
+      Callout(successDeleteText).exists(),
       deleteRoleModal.absent(),
       Pane(roleName).absent(),
       rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
@@ -510,7 +515,6 @@ export default {
   verifyAssignedUsersAccordionEmpty: () => {
     cy.expect([
       usersAccordion.has({ open: true }),
-      usersAccordion.find(assignUsersButton).exists(),
       usersAccordion.find(MultiColumnListRow()).absent(),
     ]);
   },
@@ -907,5 +911,11 @@ export default {
   checkShareToAllButtonShown: (roleName, isShown = true) => {
     if (isShown) cy.expect(Pane(roleName).find(shareToAllButton).exists());
     else cy.expect(Pane(roleName).find(shareToAllButton).absent());
+  },
+
+  verifyCreateNameError: () => {
+    cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createNameErrorText);
+    cy.expect(Callout(createNameErrorText).absent());
   },
 };

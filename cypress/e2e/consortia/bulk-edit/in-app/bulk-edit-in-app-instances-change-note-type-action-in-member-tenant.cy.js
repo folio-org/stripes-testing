@@ -55,7 +55,7 @@ const marcInstanceFields = [
   },
 ];
 const instances = [folioInstance, marcInstance];
-const instanceHRIDsFileName = `instanceUUIdsFileName_${getRandomPostfix()}.csv`;
+const instanceHRIDsFileName = `instanceHRIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceHRIDsFileName, true);
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceHRIDsFileName, true);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceHRIDsFileName, true);

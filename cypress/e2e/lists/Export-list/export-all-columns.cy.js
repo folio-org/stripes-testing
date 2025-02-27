@@ -1,12 +1,12 @@
 import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe(
-    'export query',
+    'Export query',
     {
       retries: {
         runMode: 1,
@@ -79,13 +79,13 @@ describe('lists', () => {
             `Export of ${listData.name} is being generated. This may take some time for larger lists.`,
           );
           Lists.verifyCalloutMessage(`List ${listData.name} was successfully exported to CSV.`);
-          Lists.checkDownloadedFile(listData.name, 'users.active,');
-          Lists.checkDownloadedFile(listData.name, 'users.id');
-          Lists.checkDownloadedFile(listData.name, 'users.username');
-          Lists.checkDownloadedFile(listData.name, 'users.type');
-          Lists.checkDownloadedFile(listData.name, 'users.updated_by_user_id');
-          Lists.checkDownloadedFile(listData.name, 'users.updated_date');
-          Lists.checkDownloadedFile(listData.name, 'users.user_created_date');
+          Lists.checkDownloadedFile(listData.name, '"User - Active"');
+          Lists.checkDownloadedFile(listData.name, '"User - User UUID"');
+          Lists.checkDownloadedFile(listData.name, '"User - Username"');
+          Lists.checkDownloadedFile(listData.name, '"User - Type"');
+          Lists.checkDownloadedFile(listData.name, '"User - Updated by user UUID"');
+          Lists.checkDownloadedFile(listData.name, '"User - Updated date"');
+          Lists.checkDownloadedFile(listData.name, '"User - Created date"');
         },
       );
     },

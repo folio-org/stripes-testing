@@ -85,10 +85,8 @@ describe('Data Export', () => {
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains('Create a new shared MARC authority record');
-        QuickMarcEditor.clickAuthorityLookUpButton();
-        QuickMarcEditor.selectAuthorityFile(LC_NAME_AUTHORITY_FILE);
-        QuickMarcEditor.verifyAuthorityFileSelected(LC_NAME_AUTHORITY_FILE);
-        QuickMarcEditor.clickSaveAndCloseInModal();
+        MarcAuthority.checkSourceFileSelectShown();
+        MarcAuthority.selectSourceFile(LC_NAME_AUTHORITY_FILE);
 
         newFields.forEach((newField) => {
           MarcAuthority.addNewFieldAfterExistingByTag(

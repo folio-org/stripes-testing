@@ -11,6 +11,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   OptionGroup,
   Pane,
@@ -22,7 +23,6 @@ import {
   TextField,
   ValueChipRoot,
   not,
-  MultiSelectMenu,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -83,7 +83,6 @@ const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-pagi
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
-const itemStatusSearchField = TextField('itemStatus-field');
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
@@ -901,8 +900,10 @@ export default {
   searchByStatus(status) {
     cy.do([
       Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
-      itemStatusSearchField.fillIn(status),
-      Checkbox(status).click(),
+      MultiSelect({ id: 'itemStatus-multiselect' }).open(),
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(status)))
+        .click(),
     ]);
   },
 

@@ -81,16 +81,18 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(userBarcodesFileName, 1, 1);
-        BulkEditSearchPane.verifyReasonForError('Duplicate entry');
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(user.barcode, 'Duplicate entry', 'Warning');
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
 
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(itemBarcodesFileName, 1, 1);
-        BulkEditSearchPane.verifyReasonForError('Duplicate entry');
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyReasonForError(item.itemBarcode, 'Duplicate entry', 'Warning');
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
       },
     );
 

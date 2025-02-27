@@ -662,13 +662,11 @@ export default {
     );
   },
 
-  verifyShowWarningsCheckbox(isChecked = false) {
-    cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
-  },
-
-  verifyShowWarningsCheckboxDisabled() {
+  verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
-      errorsAccordion.find(Checkbox({ labelText: 'Show warnings', disabled: true })).exists(),
+      errorsAccordion
+        .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
+        .exists(),
     );
   },
 
@@ -1299,6 +1297,17 @@ export default {
       areYouSureForm.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
     cy.get('div[aria-label^="PreviewModal"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInErrorsAccordion(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      errorsAccordion.find(previousPaginationButton).has({ disabled: true }),
+      errorsAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);

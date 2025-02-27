@@ -104,7 +104,7 @@ describe('Data Import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet', 'C359189'] },
+      { tags: ['criticalPath', 'folijet', 'C359189'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);

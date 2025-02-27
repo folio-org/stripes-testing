@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "license": "Apache-2.0",
@@ -33,8 +33,7 @@
     "chromedriver": "107.0.0",
     "cypress": "12.0.0",
     "sharp": "0.32.6",
-    "tsx": "3.14.0",
-    "@folio/stripes-webpack": "^5.0.0"
+    "tsx": "3.14.0"
   },
   "dependencies": {
     "@babel/core": "^7.19.3",
@@ -92,8 +91,7 @@
       "tsx": "3.14.0"
     },
     "@folio/eslint-config-stripes": {
-      "sharp": "0.32.6",
-      "@folio/stripes-webpack": "^5.0.0"
+      "sharp": "0.32.6"
     }
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
