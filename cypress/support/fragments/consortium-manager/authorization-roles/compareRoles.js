@@ -64,6 +64,25 @@ export default {
     ]);
   },
 
+  checkRolePresent: (roleName, isPresent = true, paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(selectRoleDropdown).click());
+    cy.wait(3000);
+    if (isPresent) cy.expect(currentPane.find(SelectionOption(roleName)).exists());
+    else cy.expect(currentPane.find(SelectionOption(roleName)).absent());
+    cy.do(currentPane.find(selectRoleDropdown).click());
+    cy.expect(currentPane.find(SelectionOption()).absent());
+  },
+
+  checkNoRolesPresent: (paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(selectRoleDropdown).click());
+    cy.wait(3000);
+    cy.expect(currentPane.find(SelectionOption()).absent());
+    cy.do(currentPane.find(selectRoleDropdown).click());
+    cy.wait(3000);
+  },
+
   checkCapability: (
     { table, resource, action },
     isSelected = true,
