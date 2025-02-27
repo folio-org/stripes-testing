@@ -58,13 +58,11 @@ const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 const duplicateButton = Button('Duplicate');
-
 const capabilityTables = {
   Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
   Settings: MultiColumnList({ dataTestId: 'capabilities-settings-type' }),
   Procedural: MultiColumnList({ dataTestId: 'capabilities-procedural-type' }),
 };
-
 const roleSearchInputField = rolesPane.find(TextField({ testid: 'search-field' }));
 const roleSearchButton = rolesPane.find(Button({ dataTestID: 'search-button' }));
 const usersAccordion = Accordion('Assigned users');
@@ -126,6 +124,9 @@ const getResultsListByColumn = (columnIndex) => {
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
 export default {
+  capabilitiesAccordion,
+  capabilitySetsAccordion,
+  capabilityTables,
   waitLoading: () => {
     cy.expect(rolesPane.exists());
   },
