@@ -1769,6 +1769,11 @@ export default {
     ]);
   },
 
+  verifyMemberSubHoldingsAccordionAbsent(memberId) {
+    cy.wait(2000);
+    cy.expect(Accordion({ id: memberId }).exists());
+  },
+
   verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
     cy.wait(2000);
     cy.expect([

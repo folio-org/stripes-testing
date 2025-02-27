@@ -582,11 +582,6 @@ export default {
     cy.wait(2000);
   },
 
-  verifyEditInstanceButtonAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'edit-instance' }).absent());
-  },
-
   verifyEditInstanceButtonIsEnabled() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
@@ -605,6 +600,10 @@ export default {
     } else {
       cy.expect(Button(optionName).absent());
     }
+  },
+
+  validateHoldingsAbsent(holdingsLocation) {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 
   checkMultipleItemNotesWithStaffOnly: (

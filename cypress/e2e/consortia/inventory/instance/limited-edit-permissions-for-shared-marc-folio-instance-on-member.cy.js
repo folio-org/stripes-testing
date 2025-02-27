@@ -80,7 +80,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402335testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('Edit', false);
       },
     );
 
@@ -98,7 +98,7 @@ describe('Inventory', () => {
         cy.wait('@/authn/refresh', { timeout: 5000 });
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402376testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('Edit', false);
       },
     );
   });

@@ -79,7 +79,7 @@ export default {
     cy.wait(10000);
     cy.expect(myProfileButton.find(HTML({ text: including(currentTenantName) })).exists());
     cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
-    cy.wait(2000);
+    cy.pause();
     cy.do([
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))

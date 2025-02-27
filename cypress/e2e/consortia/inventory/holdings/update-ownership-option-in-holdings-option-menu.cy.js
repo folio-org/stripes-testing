@@ -1,4 +1,4 @@
-// import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -7,9 +7,10 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../support/fragments/topMenu';
-// import Users from '../../../../support/fragments/users/users';
-// import getRandomPostfix from '../../../../support/utils/stringTools';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Holdings', () => {
@@ -57,6 +58,18 @@ describe('Inventory', () => {
             });
           });
       });
+      cy.withinTenant(Affiliations.University, () => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
+          (servicePoints) => {
+            testData.servicePointId = servicePoints[0].id;
+
+            testData.defaultLocation = Locations.getDefaultLocation({
+              servicePointId: testData.servicePointId,
+            }).location;
+            Locations.createViaApi(testData.defaultLocation);
+          },
+        );
+      });
 
       cy.createTempUser(userPermissions).then((userProperties) => {
         testData.user = userProperties;
@@ -69,23 +82,25 @@ describe('Inventory', () => {
           });
         });
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.login(testData.user.username, testData.user.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       });
     });
 
-    // after('Delete test data', () => {
-    //   cy.resetTenant();
-    //   cy.getAdminToken();
-    //   Users.deleteViaApi(testData.user.userId);
-    //   cy.setTenant(Affiliations.College);
-    //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-    //   Locations.deleteViaApi(testData.collegeLocation);
-    // });
+    after('Delete test data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
+      cy.withinTenant(Affiliations.College, () => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
+      });
+      cy.withinTenant(Affiliations.University, () => {
+        Locations.deleteViaApi(testData.collegeLocation);
+      });
+    });
 
     it(
       'C490891 Check "Update ownership" option in Holdings option menu (consortia) (folijet)',
@@ -99,21 +114,21 @@ describe('Inventory', () => {
         HoldingsRecordView.validateOptionInActionsMenu([
           { optionName: 'Update ownership', shouldExist: true },
         ]);
-        // HoldingsRecordView.updateOwnership(
-        //   // tenant, action, testData.holdings.hrid, firstMember, secondMember
-
-        // );
-        // InstanceRecordView.waitLoading();
-
-        //         Holdings disappeared from Member-1 tenant
-
-        // Moved holdings are now placed under "Consortial holdings" accordion in the appropriate Member-2 tenant with the selected in "Update ownership" location
-        // InventoryInstance.verifyConsortiaHoldingsAccordion(false);
-        //         InventoryInstance.expandConsortiaHoldings();
-        //         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
-        //         InventoryInstance.expandMemberSubHoldings(Affiliations.College);
-        //         InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
-        //         InventoryInstance.checkIsItemCreated(testData.itemBarcode);
+        ['cancel', 'confirm'].forEach((action) => {
+          HoldingsRecordView.updateOwnership(
+            tenantNames.university,
+            action,
+            testData.holdings.hrid,
+            tenantNames.college,
+          );
+        });
+        InstanceRecordView.waitLoading();
+        InventoryInstance.verifyConsortiaHoldingsAccordion(false);
+        InventoryInstance.expandConsortiaHoldings();
+        InventoryInstance.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
+        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
+        InventoryInstance.expandMemberSubHoldings(Affiliations.University);
+        InventoryInstance.openHoldingsAccordion(testData.defaultLocation.name);
       },
     );
   });

@@ -99,9 +99,11 @@ export default {
 
     return HoldingsRecordEdit;
   },
-  updateOwnership: (tenant, action, holdingsHrid, firstMember, secondMember) => {
+  updateOwnership: (secondMember, action, holdingsHrid, firstMember) => {
     cy.do(actionsButton.click());
-    SelectLocationModal.validateSelectLocationModalView(tenant); // 'University'
+    cy.wait(1000);
+    cy.do(Button('Update ownership').click());
+    SelectLocationModal.validateSelectLocationModalView(secondMember);
     SelectLocationModal.selectLocation(action, holdingsHrid, firstMember, secondMember);
   },
 
@@ -354,5 +356,6 @@ export default {
         cy.expect(Button(optionName).absent());
       }
     });
+    cy.do(actionsButton.click());
   },
 };
