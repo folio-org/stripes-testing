@@ -12,7 +12,7 @@ import {
 import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-// import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import CompareRoles from '../../../../support/fragments/consortium-manager/authorization-roles/compareRoles';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -207,55 +207,63 @@ describe('Eureka', () => {
         );
         AuthorizationRoles.closeRoleDetailView(testData.roleNameCentral);
 
-        AuthorizationRoles.compareRoles();
-        AuthorizationRoles.checkAvailableTenants(
+        CompareRoles.clickCompareRoles();
+        CompareRoles.checkAvailableTenants(
           [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
           0,
         );
-        AuthorizationRoles.selectMemberForCompare(tenantNames.college, 0);
-        AuthorizationRoles.selectRoleForCompare(testData.roleNameCentral, 0);
+        CompareRoles.selectMember(tenantNames.central, 0);
+        CompareRoles.selectRole(testData.roleNameCentral, 0);
         testData.capabilitiesForRoleCentral.forEach((capability) => {
-          AuthorizationRoles.checkCapabilityForCompare(capability, true, true, 0);
+          CompareRoles.checkCapability(capability, true, true, 0);
         });
-        AuthorizationRoles.verifyNoCapabilitySetsFoundForCompare(0);
+        CompareRoles.verifyNoCapabilitySetsFound(0);
 
-        // AuthorizationRoles.waitContentLoading();
-        // ConsortiumManagerApp.clickSelectMembers();
-        // SelectMembers.verifyAvailableTenants([tenantNames.central, tenantNames.college].sort());
-        // SelectMembers.checkMember(tenantNames.central, true);
-        // SelectMembers.checkMember(tenantNames.college, true);
-        // SelectMembers.saveAndClose();
-        // SelectMembers.selectMember(tenantNames.central);
-        // AuthorizationRoles.waitContentLoading();
-        // AuthorizationRoles.clickActionsButton();
-        // AuthorizationRoles.clickNewButton();
-        // AuthorizationRoles.fillRoleNameDescription(testData.existingRoleName);
-        // AuthorizationRoles.clickSaveButton();
-        // AuthorizationRoles.verifyCreateNameError();
-        // AuthorizationRoles.fillRoleNameDescription(testData.roleName);
-        // AuthorizationRoles.clickSelectApplication();
-        // AuthorizationRoles.selectApplicationInModal(testData.applicationName);
-        // AuthorizationRoles.clickSaveInModal();
-        // testData.capabilitySets.forEach((set) => {
-        //   AuthorizationRoles.selectCapabilitySetCheckbox(set);
-        // });
-        // AuthorizationRoles.clickSaveButton();
-        // AuthorizationRoles.checkAfterSaveCreate(testData.roleName);
+        CompareRoles.checkAvailableTenants(
+          [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
+          1,
+        );
+        CompareRoles.selectMember(tenantNames.college, 1);
+        CompareRoles.selectRole(testData.roleNameCollege, 1);
 
-        // SelectMembers.selectMember(tenantNames.college);
-        // AuthorizationRoles.waitContentLoading();
-        // AuthorizationRoles.searchRole(testData.roleName);
-        // AuthorizationRoles.verifyRolesCount(0);
-        // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
-        // AuthorizationRoles.waitContentLoading();
-        // AuthorizationRoles.searchRole(testData.roleName);
-        // AuthorizationRoles.checkRoleFound(testData.roleName);
+        testData.capabilitiesForRoleCentral.forEach((capability, index) => {
+          if (!index) CompareRoles.checkCapability(capability, true, true, 0);
+          else CompareRoles.checkCapability(capability, true, false, 0);
+        });
+        CompareRoles.verifyNoCapabilitySetsFound(0);
 
-        // ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
-        // AuthorizationRoles.waitContentLoading();
-        // AuthorizationRoles.searchRole(testData.roleName);
-        // AuthorizationRoles.verifyRolesCount(0);
+        testData.capabilitiesForRoleCollege.forEach((capability) => {
+          CompareRoles.checkCapability(capability, true, false, 1);
+        });
+        CompareRoles.verifyNoCapabilitySetsFound(1);
+
+        CompareRoles.selectMember(tenantNames.university, 0);
+        CompareRoles.verifyNoCapabilitiesFound(0);
+        CompareRoles.verifyNoCapabilitySetsFound(0);
+        CompareRoles.selectRole(testData.roleNameUniversity, 0);
+
+        testData.capabilitySetsForRoleUniversity.forEach((set) => {
+          CompareRoles.checkCapabilitySet(set, true, true, 0);
+        });
+
+        testData.capabilitiesForRoleCollege.forEach((capability, index) => {
+          if (index === 3) CompareRoles.checkCapability(capability, true, true, 1);
+          else CompareRoles.checkCapability(capability, true, false, 1);
+        });
+        CompareRoles.verifyNoCapabilitySetsFound(1);
+
+        CompareRoles.selectMember(tenantNames.central, 1);
+        CompareRoles.selectRole(testData.roleNameCentral, 1);
+
+        testData.capabilitySetsForRoleUniversity.forEach((set) => {
+          CompareRoles.checkCapabilitySet(set, true, true, 0);
+        });
+
+        testData.capabilitiesForRoleCentral.forEach((capability, index) => {
+          if ([0, 4].includes(index)) CompareRoles.checkCapability(capability, true, true, 1);
+          else CompareRoles.checkCapability(capability, true, false, 1);
+        });
+        CompareRoles.verifyNoCapabilitySetsFound(1);
       },
     );
   });
