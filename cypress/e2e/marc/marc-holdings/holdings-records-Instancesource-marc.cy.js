@@ -38,7 +38,10 @@ describe('MARC', () => {
           // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
           HoldingsRecordView.close();
           InventoryInstance.openHoldingView();
-          HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
+          HoldingsRecordView.validateOptionInActionsMenu([
+            { optionName: 'View source', shouldExist: true },
+            { optionName: 'Edit MARC bibliographic record', shouldExist: true },
+          ]);
           HoldingsRecordView.tryToDelete();
           HoldingsRecordView.viewSource();
           InventoryViewSource.close();

@@ -1,19 +1,20 @@
-import { including, HTML } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
   KeyValue,
-  Modal,
-  MultiColumnListCell,
-  Section,
-  MultiColumnList,
-  PaneHeader,
   Link,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListRow,
+  PaneHeader,
+  Section,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
-import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import InventoryViewSource from './inventoryViewSource';
+import SelectLocationModal from './modals/selectLocationModal';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -98,34 +99,17 @@ export default {
 
     return HoldingsRecordEdit;
   },
+  updateOwnership: (tenant, action, holdingsHrid, firstMember, secondMember) => {
+    cy.do(actionsButton.click());
+    SelectLocationModal.validateSelectLocationModalView(tenant); // 'University'
+    SelectLocationModal.selectLocation(action, holdingsHrid, firstMember, secondMember);
+  },
 
   openAccordion: (name) => {
     cy.do(Accordion(name).click());
   },
 
   // checks
-  checkActionsMenuOptionsInFolioSource: () => {
-    cy.do(actionsButton.click());
-    cy.expect(viewSourceButton.absent());
-    cy.expect(editInQuickMarcButton.absent());
-    // close openned Actions
-    cy.do(actionsButton.click());
-  },
-  checkActionsMenuOptionsInMarcSource: () => {
-    cy.do(actionsButton.click());
-    cy.expect(viewSourceButton.exists());
-    cy.expect(editInQuickMarcButton.exists());
-    // close openned Actions
-    cy.do(actionsButton.click());
-  },
-  checkActionsMenuOptions() {
-    cy.do(actionsButton.click());
-    cy.expect(editButton.exists());
-    cy.expect(duplicateButton.exists());
-    cy.expect(deleteButton.exists());
-    // close openned Actions
-    cy.do(actionsButton.click());
-  },
   checkSource: (sourceValue) => cy.expect(KeyValue('Source', { value: sourceValue }).exists()),
   checkHrId: (expectedHrId) => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
   checkPermanentLocation: (expectedLocation) => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
@@ -359,5 +343,16 @@ export default {
         )
         .absent(),
     );
+  },
+
+  validateOptionInActionsMenu(options) {
+    cy.do(actionsButton.click());
+    options.forEach(({ optionName, shouldExist }) => {
+      if (shouldExist) {
+        cy.expect(Button(optionName).exists());
+      } else {
+        cy.expect(Button(optionName).absent());
+      }
+    });
   },
 };

@@ -30,7 +30,10 @@ describe('MARC', () => {
           InventoryInstance.createHoldingsRecord();
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkSource('FOLIO');
-          HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
+          HoldingsRecordView.validateOptionInActionsMenu([
+            { optionName: 'View source', shouldExist: false },
+            { optionName: 'Edit MARC bibliographic record', shouldExist: false },
+          ]);
           HoldingsRecordView.edit();
           HoldingsRecordEdit.waitLoading();
           HoldingsRecordEdit.checkReadOnlyFields();

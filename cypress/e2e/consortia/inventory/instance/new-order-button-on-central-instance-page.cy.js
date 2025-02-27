@@ -42,7 +42,7 @@ describe.skip('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyNewOrderOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('New order', false);
       },
     );
   });

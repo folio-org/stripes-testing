@@ -45,7 +45,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyViewRequestOptionEnabled();
+        InstanceRecordView.validateOptionInActionsMenu('New request', true);
       },
     );
   });

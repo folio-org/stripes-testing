@@ -570,6 +570,18 @@ export default {
     });
   },
 
+  expandHoldings(...holdingToBeOpened) {
+    const openActions = [];
+    for (let i = 0; i < holdingToBeOpened.length; i++) {
+      openActions.push(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader(),
+      );
+    }
+    cy.do(openActions);
+    // don't have elem on page for waiter
+    cy.wait(2000);
+  },
+
   verifyEditInstanceButtonAbsent() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).absent());
@@ -580,60 +592,19 @@ export default {
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
   },
 
-  verifyAddMARCHoldingsRecordOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
-  },
-
-  verifyViewRequestOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button('New request').absent());
-  },
-
-  verifyViewRequestOptionEnabled() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button(including('New request')).exists());
-  },
-
-  verifyNewOrderOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'clickable-create-order' }).absent());
-  },
-
-  verifyShareLocalInstanceOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'share-local-instance' }).absent());
-  },
-
-  verifyMoveItemsWithinAnInstanceOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'inventory-menu-section' }).absent());
-  },
-
-  verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'move-instance' }).absent());
-  },
-
-  verifyMoveHoldingsItemsToAnotherInstanceOptionExists() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'move-instance' }).exists());
-  },
-
   verifyInstanceHeader(header) {
     cy.get('#paneHeaderpane-instancedetails')
       .find('[class*="paneTitleLabel-"]')
       .should('have.text', header);
   },
 
-  verifySetRecordForDeletionOptionEnabled() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
-  },
-
-  verifySetRecordForDeletionOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'quick-export-trigger' }).absent());
+  validateOptionInActionsMenu(optionName, shouldExist = true) {
+    cy.do(actionsButton.click());
+    if (shouldExist) {
+      cy.expect(Button(optionName).exists());
+    } else {
+      cy.expect(Button(optionName).absent());
+    }
   },
 
   checkMultipleItemNotesWithStaffOnly: (

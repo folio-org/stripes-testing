@@ -493,11 +493,6 @@ export default {
     cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
   },
 
-  checkAbsenceOfNewMarcBibRecordOption() {
-    cy.do(paneResultsSection.find(actionsBtn).click());
-    cy.expect(newMarcBibButton.absent());
-  },
-
   checkInstanceTitle(title) {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },

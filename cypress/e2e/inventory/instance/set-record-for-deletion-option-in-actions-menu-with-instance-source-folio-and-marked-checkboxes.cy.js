@@ -51,7 +51,7 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet', 'C436846'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifySetRecordForDeletionOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('Set record for deletion', false);
       },
     );
   });

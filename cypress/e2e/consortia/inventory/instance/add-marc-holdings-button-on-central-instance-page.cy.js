@@ -42,7 +42,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyAddMARCHoldingsRecordOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('Add MARC holdings record');
       },
     );
   });

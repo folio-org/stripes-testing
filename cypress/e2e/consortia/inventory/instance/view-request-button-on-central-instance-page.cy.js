@@ -41,7 +41,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyViewRequestOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('New request', false);
       },
     );
   });

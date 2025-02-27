@@ -89,7 +89,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          'Move holdings/items to another instance',
+          false,
+        );
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -97,7 +100,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyMoveHoldingsItemsToAnotherInstanceOptionExists();
+        InstanceRecordView.validateOptionInActionsMenu(
+          'Move holdings/items to another instance',
+          true,
+        );
       },
     );
   });

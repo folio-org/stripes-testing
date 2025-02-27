@@ -79,7 +79,11 @@ describe.skip('Inventory', () => {
         InventoryInstance.expandMemberSubHoldings(Affiliations.College);
         InventoryInstance.openHoldingView();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        HoldingsRecordView.checkActionsMenuOptions();
+        HoldingsRecordView.validateOptionInActionsMenu(
+          { optionName: 'Edit', shouldExist: true },
+          { optionName: 'Duplicate', shouldExist: true },
+          { optionName: 'Delete', shouldExist: true },
+        );
       },
     );
   });

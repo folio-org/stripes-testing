@@ -38,7 +38,7 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyShareLocalInstanceOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu('Share local instance', false);
       },
     );
   });
