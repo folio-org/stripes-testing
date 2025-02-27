@@ -79,7 +79,7 @@ Cypress.Commands.add(
   'createTempUser',
   (permissions = [], patronGroupName, userType = 'staff', barcode = true, email) => {
     const userProperties = {
-      username: `cypresstestuser${getRandomPostfix()}`,
+      username: `AT_Username_${getRandomPostfix()}`,
       password: 'password',
     };
 
