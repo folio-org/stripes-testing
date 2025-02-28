@@ -1,0 +1,19 @@
+name: Centralized workflow
+on:
+  - push
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  ui:
+    uses: folio-org/.github/.github/workflows/ui.yml@v1
+    if: github.ref_name == github.event.repository.default_branch || github.event_name != 'push' || github.ref_type == 'tag'
+    secrets: inherit
+    with:
+      jest-enabled: false
+      sonar-enabled: false
+      compile-translations: false
+      generate-module-descriptor: false
+      publish-module-descriptor: false
+      install-before-publish: true
+
