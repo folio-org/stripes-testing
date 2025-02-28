@@ -823,31 +823,39 @@ export default {
     this.selectStatusInSearch(fundStatus);
     // TODO: check how it can be achieved with interactors
     cy.xpath('//*[@id="accordion-toggle-button-ledgerId"]').should('be.visible');
+    cy.wait(2000);
     cy.do([
       Accordion({ id: 'ledgerId' }).clickHeader(),
-      Selection({ id: 'ledgerId-selection' }).open(),
+      Button({ id: 'ledgerId-selection' }).click(),
       SelectionList({ id: 'sl-container-ledgerId-selection' }).select(ledgerName),
-
+    ]);
+    cy.wait(2000);
+    cy.do([
       Accordion({ id: 'fundTypeId' }).clickHeader(),
-      Selection({ id: 'fundTypeId-selection' }).open(),
+      Button({ id: 'fundTypeId-selection' }).click(),
       SelectionList({ id: 'sl-container-fundTypeId-selection' }).select(fundType),
-
+    ]);
+    cy.wait(2000);
+    cy.do([
       Accordion({ id: 'groupFundFY.groupId' }).clickHeader(),
-      Selection({ id: 'groupFundFY.groupId-selection' }).open(),
+      Button({ id: 'groupFundFY.groupId-selection' }).click(),
       SelectionList({
         id: 'sl-container-groupFundFY.groupId-selection',
       }).select(groupName),
-
+    ]);
+    cy.wait(2000);
+    cy.do([
       Accordion({ id: 'acqUnitIds' }).clickHeader(),
-      Selection({ id: 'acqUnitIds-selection' }).open(),
+      Button({ id: 'acqUnitIds-selection' }).click(),
       SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(aUnits),
-
+    ]);
+    cy.wait(2000);
+    cy.do([
       Accordion({ id: 'tags' }).clickHeader(),
       MultiSelect({ id: 'acq-tags-filter' }).select(tags),
-
-      searchField.fillIn(fundName),
-      Button('Search').click(),
     ]);
+    cy.wait(2000);
+    cy.do([searchField.fillIn(fundName), Button('Search').click()]);
   },
 
   createFundViaUI(fund) {

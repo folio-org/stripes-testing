@@ -617,9 +617,11 @@ export default {
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
+    cy.wait(2000);
+    cy.do([buttonLocationFilter.click(), Button('Location look-up').click()]);
+
+    cy.wait(2000);
     cy.do([
-      buttonLocationFilter.click(),
-      Button('Location look-up').click(),
       selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn('Main Library'),
       Button('Search').click(),
     ]);
@@ -631,14 +633,16 @@ export default {
     ]);
   },
   selectFilterFundCodeUSHISTPOL: () => {
+    cy.wait(2000);
     cy.do([
       buttonFundCodeFilter.click(),
-      Button({ id: 'fundCode-selection' }).click(),
-      SelectionOption('USHIST').click(),
+      Button({ ariaControls: 'multiselect-option-list-fund-filter' }).click(),
+      MultiSelectOption(including('USHIST')).click(),
       buttonFundCodeFilter.click(),
     ]);
   },
   selectFilterOrderFormatPhysicalResourcePOL: () => {
+    cy.wait(2000);
     cy.do([
       buttonOrderFormatFilter.click(),
       Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click(),
@@ -654,6 +658,7 @@ export default {
     ]);
   },
   selectFilterVendorPOL: (invoice) => {
+    cy.wait(2000);
     cy.do([
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
@@ -664,6 +669,8 @@ export default {
     cy.do(buttonFVendorFilter.click());
   },
   selectFilterNoInRushPOL: () => {
+    cy.wait(2000);
+
     cy.do([
       buttonRushFilter.click(),
       Checkbox({ id: 'clickable-filter-rush-false' }).click(),
@@ -671,6 +678,8 @@ export default {
     ]);
   },
   selectFilterSubscriptionFromPOL: (newDate) => {
+    cy.wait(2000);
+
     cy.do([
       buttonSubscriptionFromFilter.click(),
       TextField('From').fillIn(newDate),

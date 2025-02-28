@@ -16,6 +16,7 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -66,7 +67,6 @@ describe('Invoices', () => {
   let location;
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
@@ -81,12 +81,16 @@ describe('Invoices', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.visit(TopMenu.fundPath);
+          cy.loginAsAdmin();
+          TopMenuNavigation.openAppFromDropdown('Finance');
+          FinanceHelp.selectFundsNavigation();
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
           Funds.editBudget();
           Funds.addExpensesClass(firstExpenseClass.name);
+          Funds.closeBudgetDetails();
+          Funds.closeFundDetails();
         });
 
         ServicePoints.getViaApi().then((servicePoint) => {
@@ -104,7 +108,8 @@ describe('Invoices', () => {
           });
         });
         defaultOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.openAppFromDropdown('Orders');
+        Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
           defaultOrder.id = firstOrderResponse.id;
           orderNumber = firstOrderResponse.poNumber;
@@ -132,7 +137,9 @@ describe('Invoices', () => {
           thirdFiscalYear.id = thirdFiscalYearResponse.id;
         });
 
-        cy.visit(TopMenu.ledgerPath);
+        TopMenuNavigation.openAppFromDropdown('Finance');
+        FinanceHelp.selectLedgersNavigation();
+
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -144,7 +151,7 @@ describe('Invoices', () => {
       });
     });
 
-    cy.visit(TopMenu.fiscalYearPath);
+    FinanceHelp.selectFiscalYearsNavigation();
     FinanceHelp.searchByName(firstFiscalYear.name);
     FiscalYears.selectFY(firstFiscalYear.name);
     FiscalYears.editFiscalYearDetails();
@@ -226,7 +233,8 @@ describe('Invoices', () => {
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
 
-      cy.visit(TopMenu.ledgerPath);
+      TopMenuNavigation.navigateToApp('Finance');
+      FinanceHelp.selectLedgersNavigation();
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
@@ -236,7 +244,7 @@ describe('Invoices', () => {
         'Allocation',
       );
 
-      cy.visit(TopMenu.fiscalYearPath);
+      FinanceHelp.selectFiscalYearsNavigation();
       FinanceHelp.searchByName(secondFiscalYear.name);
       FiscalYears.selectFY(secondFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
@@ -252,7 +260,7 @@ describe('Invoices', () => {
         periodEndForThirdFY,
       );
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();

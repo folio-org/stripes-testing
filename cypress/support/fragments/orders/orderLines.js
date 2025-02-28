@@ -386,6 +386,9 @@ export default {
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
