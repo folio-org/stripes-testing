@@ -1307,7 +1307,7 @@ export default {
       errorsAccordion.find(previousPaginationButton).has({ disabled: true }),
       errorsAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
-    cy.get('div[class^="previewAccordion-"] div[class^="prevNextPaginationContainer-"]')
+    cy.get('div[class^="errorAccordion"] div[class^="prevNextPaginationContainer-"]')
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);

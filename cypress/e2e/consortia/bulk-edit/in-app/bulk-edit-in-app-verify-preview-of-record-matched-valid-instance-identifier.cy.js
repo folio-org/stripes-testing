@@ -174,11 +174,10 @@ describe('Bulk-edit', () => {
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.RESOURCE_TITLE,
             secondInstance.title,
           );
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
-          BulkEditSearchPane.verifyErrorLabel(secondInstanceHRIDsFileName, 1, 1);
-          BulkEditSearchPane.verifyReasonForError(errorText);
-          BulkEditSearchPane.verifyNonMatchedResults(secondInstance.hrid, `${errorText} `);
+          BulkEditSearchPane.verifyPaginatorInErrorsAccordion(1);
+          BulkEditSearchPane.verifyErrorLabel(0, 1);
+          BulkEditSearchPane.verifyErrorByIdentifier(secondInstance.hrid, errorText, 'Warning');
+          BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
           BulkEditActions.downloadMatchedResults();
           BulkEditFiles.verifyValueInRowByUUID(
             secondMatchedRecordsFileName,
@@ -196,8 +195,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
-            secondInstance.hrid,
-            errorText,
+            `WARNING,${secondInstance.hrid},${errorText}`,
           ]);
         },
       );

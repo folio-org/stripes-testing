@@ -36,6 +36,7 @@ export const instanceFieldValues = {
   instanceResourceTitle: 'Instance — Resource title',
   staffSuppress: 'Instance — Staff suppress',
   createdDate: 'Instance — Created date',
+  catalogedDate: 'Instance — Cataloged date',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
