@@ -190,6 +190,20 @@ const getMultiColumnListCellsValues = (cell) => {
     .then(() => cells);
 };
 
+export const actionsMenuOptions = {
+  addMarcHoldingsRecord: 'Add MARC holdings record',
+  edit: 'Edit',
+  duplicate: 'Duplicate',
+  delete: 'Delete',
+  moveHoldingsItemsToAnotherInstance: 'Move holdings/items to another instance',
+  moveItemsWithinAnInstance: 'Move items within an instance',
+  newOrder: 'New order',
+  shareLocalInstance: 'Share local instance',
+  newRequest: 'New request',
+  setRecordForDeletion: 'Set record for deletion',
+  newMarcBibRecord: 'New MARC bib record',
+};
+
 export default {
   waitLoading,
   getMultiColumnListCellsValues,
@@ -598,6 +612,29 @@ export default {
     cy.expect(Accordion(memberTenantName).has({ open: true }));
   },
 
+  openHoldingsAccordion: (location) => {
+    cy.wait(2000);
+    cy.do(Button(including(location)).click());
+    cy.wait(6000);
+  },
+
+  verifyIsItemCreated: (itemBarcode) => {
+    cy.expect(
+      rootSection
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
+  },
+
+  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: memberId }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).exists(),
+    ]);
+  },
+
   verifyEditInstanceButtonIsEnabled() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
@@ -610,7 +647,7 @@ export default {
   },
 
   validateOptionInActionsMenu(optionName, shouldExist = true) {
-    cy.do(actionsButton.click());
+    cy.do(rootSection.find(actionsButton).click());
     if (shouldExist) {
       cy.expect(Button(optionName).exists());
     } else {

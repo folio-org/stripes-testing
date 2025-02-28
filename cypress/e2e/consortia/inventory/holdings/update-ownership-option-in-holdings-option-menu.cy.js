@@ -2,7 +2,9 @@ import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -111,7 +113,7 @@ describe('Inventory', () => {
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.validateOptionInActionsMenu([
-          { optionName: 'Update ownership', shouldExist: true },
+          { optionName: actionsMenuOptions.updateOwnership, shouldExist: true },
         ]);
         ['cancel', 'confirm'].forEach((action) => {
           HoldingsRecordView.updateOwnership(

@@ -48,6 +48,12 @@ function checkCallNumberSuffix(prefix) {
   cy.expect(KeyValue('Call number suffix').has({ value: prefix }));
 }
 
+export const actionsMenuOptions = {
+  viewSource: 'View source',
+  editMarcBibliographicRecord: 'Edit MARC bibliographic record',
+  updateOwnership: 'Update ownership',
+};
+
 export default {
   checkCopyNumber,
   checkCallNumberType,

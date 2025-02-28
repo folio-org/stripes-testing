@@ -1,5 +1,7 @@
 import Permissions from '../../../support/dictionary/permissions';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -38,7 +40,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.validateOptionInActionsMenu('Share local instance', false);
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.setRecordForDeletion,
+          false,
+        );
       },
     );
   });

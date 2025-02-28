@@ -1,5 +1,7 @@
-import { INSTANCE_SOURCE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import HoldingsRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
@@ -39,8 +41,8 @@ describe('MARC', () => {
           HoldingsRecordView.close();
           InventoryInstance.openHoldingView();
           HoldingsRecordView.validateOptionInActionsMenu([
-            { optionName: 'View source', shouldExist: true },
-            { optionName: 'Edit MARC bibliographic record', shouldExist: true },
+            { optionName: actionsMenuOptions.viewSource, shouldExist: true },
+            { optionName: actionsMenuOptions.editMarcBibliographicRecord, shouldExist: true },
           ]);
           HoldingsRecordView.tryToDelete();
           HoldingsRecordView.viewSource();

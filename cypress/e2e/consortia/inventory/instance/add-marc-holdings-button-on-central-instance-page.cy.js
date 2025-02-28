@@ -1,6 +1,8 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -41,8 +43,11 @@ describe('Inventory', () => {
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InstanceRecordView.validateOptionInActionsMenu('Add MARC holdings record');
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.addMarcHoldingsRecord,
+          false,
+        );
       },
     );
   });
