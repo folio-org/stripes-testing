@@ -18,9 +18,9 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleNameCentral: `AT_C552363_Role_Central_${randomPostfix}`,
-      roleNameCollege: `AT_C552363_Role_College_${randomPostfix}`,
-      roleNameUniversity: `AT_C552363_Role_University_${randomPostfix}`,
+      roleNameCentral: `AT_C552443_Role_Central_${randomPostfix}`,
+      roleNameCollege: `AT_C552443_Role_College_${randomPostfix}`,
+      roleNameUniversity: `AT_C552443_Role_University_${randomPostfix}`,
       capabilitiesForRoleCentral: [
         {
           table: CAPABILITY_TYPES.PROCEDURAL,
@@ -105,7 +105,7 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
-    const capabSetsToAssignMembers = [
+    const capabSetsToAssignCollege = [
       {
         type: CAPABILITY_TYPES.SETTINGS,
         resource: 'UI-Authorization-Roles Settings',
@@ -140,7 +140,7 @@ describe('Eureka', () => {
             });
           });
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssignMembers);
+          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssignCollege);
           cy.createAuthorizationRoleApi(testData.roleNameCollege).then((role) => {
             roleCollegeId = role.id;
           });
@@ -151,8 +151,6 @@ describe('Eureka', () => {
             });
           });
           cy.setTenant(Affiliations.University);
-          cy.wait(10_000);
-          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssignMembers);
           cy.createAuthorizationRoleApi(testData.roleNameUniversity).then((role) => {
             roleUniversityId = role.id;
           });
@@ -188,8 +186,8 @@ describe('Eureka', () => {
     });
 
     it(
-      'C552363 ECS | Eureka | Compare authorization role capabilities for three tenants (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C552363'] },
+      'C552443 ECS | Eureka | Compare capabilities for three tenants (user has restricted capabilities in one tenant) (consortia) (thunderjet)',
+      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C552443'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.waitLoading();
@@ -223,47 +221,40 @@ describe('Eureka', () => {
           [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
           1,
         );
-        CompareRoles.selectMember(tenantNames.college, 1);
-        CompareRoles.selectRole(testData.roleNameCollege, 1);
+        CompareRoles.selectMember(tenantNames.university, 1);
+        AuthorizationRoles.verifyAccessErrorShown();
+        CompareRoles.checkNoRolesPresent(1);
+        ConsortiumManagerApp.clickSelectMembers();
+        SelectMembers.checkMember(tenantNames.university, false);
+        SelectMembers.saveAndClose();
+        ConsortiumManagerApp.verifyMembersSelected(2);
+        CompareRoles.checkAvailableTenants([tenantNames.central, tenantNames.college].sort(), 1);
 
+        CompareRoles.selectMember(tenantNames.college, 1);
+        CompareRoles.verifySelectedRole(CompareRoles.selectRolePlaceholderText, 1);
+        CompareRoles.clickOnCapabilitySetsAccordion(true, 1);
+        CompareRoles.verifyNoCapabilitySetsFound(1);
+        CompareRoles.clickOnCapabilitiesAccordion(true, 1);
+        CompareRoles.verifyNoCapabilitiesFound(1);
+
+        CompareRoles.selectRole(testData.roleNameCollege, 1);
         testData.capabilitiesForRoleCentral.forEach((capability, index) => {
           if (!index) CompareRoles.checkCapability(capability, true, true, 0);
           else CompareRoles.checkCapability(capability, true, false, 0);
         });
         CompareRoles.verifyNoCapabilitySetsFound(0);
-
         testData.capabilitiesForRoleCollege.forEach((capability) => {
           CompareRoles.checkCapability(capability, true, false, 1);
         });
         CompareRoles.verifyNoCapabilitySetsFound(1);
 
-        CompareRoles.selectMember(tenantNames.university, 0);
+        CompareRoles.selectMember(tenantNames.college, 0);
+        CompareRoles.verifySelectedRole('', 0);
         CompareRoles.verifyNoCapabilitiesFound(0);
         CompareRoles.verifyNoCapabilitySetsFound(0);
-        CompareRoles.selectRole(testData.roleNameUniversity, 0);
-
-        testData.capabilitySetsForRoleUniversity.forEach((set) => {
-          CompareRoles.checkCapabilitySet(set, true, true, 0);
+        testData.capabilitiesForRoleCollege.forEach((capability) => {
+          CompareRoles.checkCapability(capability, true, true, 1);
         });
-
-        testData.capabilitiesForRoleCollege.forEach((capability, index) => {
-          if (index === 3) CompareRoles.checkCapability(capability, true, true, 1);
-          else CompareRoles.checkCapability(capability, true, false, 1);
-        });
-        CompareRoles.verifyNoCapabilitySetsFound(1);
-
-        CompareRoles.selectMember(tenantNames.central, 1);
-        CompareRoles.selectRole(testData.roleNameCentral, 1);
-
-        testData.capabilitySetsForRoleUniversity.forEach((set) => {
-          CompareRoles.checkCapabilitySet(set, true, true, 0);
-        });
-
-        testData.capabilitiesForRoleCentral.forEach((capability, index) => {
-          if ([0, 4].includes(index)) CompareRoles.checkCapability(capability, true, true, 1);
-          else CompareRoles.checkCapability(capability, true, false, 1);
-        });
-        CompareRoles.verifyNoCapabilitySetsFound(1);
       },
     );
   });

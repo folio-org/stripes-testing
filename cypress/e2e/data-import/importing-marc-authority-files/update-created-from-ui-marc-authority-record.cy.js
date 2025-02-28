@@ -185,21 +185,11 @@ describe('Data Import', () => {
         // Click on "Actions" button in second pane >> Select "+ New" option
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains(headerText);
-        QuickMarcEditor.verifyAuthorityLookUpButton();
+        MarcAuthority.checkSourceFileSelectShown();
 
-        // Click on "Authority file look-up" hyperlink
-        QuickMarcEditor.clickAuthorityLookUpButton();
-
-        // Click on the "Select authority file" placeholder in "Authority file name" dropdown and select any default "FOLIO" authority file
-        QuickMarcEditor.selectAuthorityFile(
+        MarcAuthority.selectSourceFile(
           DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
         );
-        QuickMarcEditor.verifyAuthorityFileSelected(
-          DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-        );
-
-        // Click on the "Save & close" button
-        QuickMarcEditor.clickSaveAndCloseInModal();
 
         // Add 5 new fields by clicking on "+" icon and fill it
         newFields.forEach((newField) => {
@@ -216,7 +206,7 @@ describe('Data Import', () => {
 
         // Click on the "Save & close" button
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(2000);
         QuickMarcEditor.pressSaveAndClose();
         MarcAuthority.verifyAfterSaveAndClose();
         QuickMarcEditor.verifyPaneheaderWithContentAbsent(headerText);
