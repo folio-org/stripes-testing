@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -209,12 +209,12 @@ describe('Inventory', () => {
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
-        InventoryInstance.expandMemberSubHoldings(Affiliations.College);
+        InventoryInstance.expandMemberSubHoldings(tenantNames.College);
         InventoryInstance.verifyMemberSubSubHoldingsAccordion(
           Affiliations.College,
           testData.collegeHoldingsId,
         );
-        InventoryInstance.expandMemberSubHoldings(Affiliations.University);
+        InventoryInstance.expandMemberSubHoldings(tenantNames.University);
         InventoryInstance.verifyMemberSubSubHoldingsAccordion(
           Affiliations.University,
           testData.universityHoldingsId,

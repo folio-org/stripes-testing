@@ -152,7 +152,7 @@ const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
-const consortiaHoldingsAccordion = Accordion({ id: 'consortialHoldings' });
+const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 const editInLdeButton = Button({ id: 'edit-resource-in-ld' });
 const classificationAccordion = Accordion('Classification');
 
@@ -874,12 +874,12 @@ export default {
     cy.expect(consortiaHoldingsAccordion.has({ open: true }));
   },
 
-  expandMemberSubHoldings(memberId) {
+  expandMemberSubHoldings(memberTenantName) {
     cy.wait(4000);
-    cy.do(Accordion({ id: memberId }).focus());
-    cy.do(Accordion({ id: memberId }).clickHeader());
+    cy.do(Accordion(memberTenantName).focus());
+    cy.do(Accordion(memberTenantName).clickHeader());
     cy.wait(2000);
-    cy.expect(Accordion({ id: memberId }).has({ open: true }));
+    cy.expect(Accordion(memberTenantName).has({ open: true }));
   },
 
   expandMemberSubSubHoldings(memberId, holdingsId) {
@@ -1752,8 +1752,8 @@ export default {
 
   verifyConsortiaHoldingsAccordion(isOpen = false) {
     cy.expect([
-      Section({ id: 'consortialHoldings' }).exists(),
-      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
+      Section({ id: including('consortialHoldings') }).exists(),
+      consortiaHoldingsAccordion.has({ open: isOpen }),
     ]);
   },
 
@@ -1764,14 +1764,14 @@ export default {
   verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
     cy.wait(2000);
     cy.expect([
-      Accordion({ id: 'consortialHoldings' }).has({ open: isOpen }),
-      Accordion({ id: memberId }).exists(),
+      consortiaHoldingsAccordion.has({ open: isOpen }),
+      Accordion({ id: including(memberId) }).exists(),
     ]);
   },
 
   verifyMemberSubHoldingsAccordionAbsent(memberId) {
     cy.wait(2000);
-    cy.expect(Accordion({ id: memberId }).exists());
+    cy.expect(Accordion({ id: including(memberId) }).absent());
   },
 
   verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {

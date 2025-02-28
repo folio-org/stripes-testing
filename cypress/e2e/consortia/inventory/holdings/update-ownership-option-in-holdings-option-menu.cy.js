@@ -61,12 +61,12 @@ describe('Inventory', () => {
       cy.withinTenant(Affiliations.University, () => {
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
           (servicePoints) => {
-            testData.servicePointId = servicePoints[0].id;
-
-            testData.defaultLocation = Locations.getDefaultLocation({
-              servicePointId: testData.servicePointId,
+            testData.location = Locations.getDefaultLocation({
+              servicePointId: servicePoints[0].id,
             }).location;
-            Locations.createViaApi(testData.defaultLocation);
+            Locations.createViaApi(testData.location).then((location) => {
+              testData.location.id = location.id;
+            });
           },
         );
       });
@@ -94,11 +94,10 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      cy.withinTenant(Affiliations.College, () => {
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-      });
       cy.withinTenant(Affiliations.University, () => {
-        Locations.deleteViaApi(testData.collegeLocation);
+        cy.deleteHoldingRecordViaApi(testData.holdings.id);
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        Locations.deleteViaApi(testData.location);
       });
     });
 
@@ -120,15 +119,16 @@ describe('Inventory', () => {
             action,
             testData.holdings.hrid,
             tenantNames.college,
+            testData.location.name,
           );
         });
         InstanceRecordView.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion(false);
-        InventoryInstance.expandConsortiaHoldings();
-        InventoryInstance.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
-        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
-        InventoryInstance.expandMemberSubHoldings(Affiliations.University);
-        InventoryInstance.openHoldingsAccordion(testData.defaultLocation.name);
+        InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+        InstanceRecordView.expandConsortiaHoldings();
+        InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
+        InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
+        InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
+        InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
       },
     );
   });

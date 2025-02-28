@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -111,7 +111,7 @@ describe('Inventory', () => {
         InventoryInstance.verifyConsortiaHoldingsAccordion(false);
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
-        InventoryInstance.expandMemberSubHoldings(Affiliations.College);
+        InventoryInstance.expandMemberSubHoldings(tenantNames.College);
         InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
         InventoryInstance.checkIsItemCreated(testData.itemBarcode);
       },

@@ -48,6 +48,7 @@ const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const addItemButton = Button('Add item');
+const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -582,6 +583,21 @@ export default {
     cy.wait(2000);
   },
 
+  expandConsortiaHoldings() {
+    cy.wait(2000);
+    cy.do(consortiaHoldingsAccordion.clickHeader());
+    cy.wait(2000);
+    cy.expect(consortiaHoldingsAccordion.has({ open: true }));
+  },
+
+  expandMemberSubHoldings(memberTenantName) {
+    cy.wait(4000);
+    cy.do(Accordion(memberTenantName).focus());
+    cy.do(Accordion(memberTenantName).clickHeader());
+    cy.wait(2000);
+    cy.expect(Accordion(memberTenantName).has({ open: true }));
+  },
+
   verifyEditInstanceButtonIsEnabled() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
@@ -699,5 +715,25 @@ export default {
 
   verifyNoteTextAbsentInInstanceAccordion(noteText) {
     cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
+  },
+
+  verifyConsortiaHoldingsAccordion(isOpen = false) {
+    cy.expect([
+      Section({ id: including('consortialHoldings') }).exists(),
+      consortiaHoldingsAccordion.has({ open: isOpen }),
+    ]);
+  },
+
+  verifyMemberSubHoldingsAccordionAbsent(memberId) {
+    cy.wait(2000);
+    cy.expect(Accordion({ id: including(memberId) }).absent());
+  },
+
+  verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      consortiaHoldingsAccordion.has({ open: isOpen }),
+      Accordion({ id: including(memberId) }).exists(),
+    ]);
   },
 };

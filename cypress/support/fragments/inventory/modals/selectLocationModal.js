@@ -9,6 +9,7 @@ import {
   Pane,
   Section,
   Selection,
+  TextField,
 } from '../../../../../interactors';
 
 const selectLocationModal = Modal({ header: 'Select locations' });
@@ -43,7 +44,16 @@ export default {
     ]);
   },
 
-  selectLocation(action, holdingsHrid, firstMember, secondMember) {
+  search(name) {
+    cy.do([
+      searchFilterPane.find(TextField({ id: 'input-record-search' })).fillIn(name),
+      searchFilterPane.find(Button('Search')).click(),
+    ]);
+    cy.wait(1500);
+  },
+
+  selectLocation(action, holdingsHrid, firstMember, secondMember, locationName) {
+    this.search(locationName);
     cy.do(
       selectLocationModal
         .find(MultiColumnList({ id: 'list-plugin-find-records' }))
@@ -63,7 +73,7 @@ export default {
       cy.do(confirmButton.click());
       cy.expect(
         Callout({
-          textContent: `Ownership of Holdings ${holdingsHrid} and all linked Items has been successfully updated to ${secondMember} tenant`,
+          textContent: `Ownership of Holdings ${holdingsHrid} and all linked Items has been successfully updated to ${secondMember}`,
         }).exists(),
       );
       cy.expect(updateOwnershipOfHoldingsModal.absent());

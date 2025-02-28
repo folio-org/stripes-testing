@@ -99,12 +99,18 @@ export default {
 
     return HoldingsRecordEdit;
   },
-  updateOwnership: (secondMember, action, holdingsHrid, firstMember) => {
+  updateOwnership: (secondMember, action, holdingsHrid, firstMember, locationName) => {
     cy.do(actionsButton.click());
     cy.wait(1000);
     cy.do(Button('Update ownership').click());
     SelectLocationModal.validateSelectLocationModalView(secondMember);
-    SelectLocationModal.selectLocation(action, holdingsHrid, firstMember, secondMember);
+    SelectLocationModal.selectLocation(
+      action,
+      holdingsHrid,
+      firstMember,
+      secondMember,
+      locationName,
+    );
   },
 
   openAccordion: (name) => {

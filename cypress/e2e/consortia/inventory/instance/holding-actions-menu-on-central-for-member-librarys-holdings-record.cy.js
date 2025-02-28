@@ -76,7 +76,7 @@ describe.skip('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.expandConsortiaHoldings();
-        InventoryInstance.expandMemberSubHoldings(Affiliations.College);
+        InventoryInstance.expandMemberSubHoldings(tenantNames.College);
         InventoryInstance.openHoldingView();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         HoldingsRecordView.validateOptionInActionsMenu(
