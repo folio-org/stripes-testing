@@ -1,8 +1,9 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
@@ -204,18 +205,18 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion(false);
-        InventoryInstance.expandConsortiaHoldings();
-        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
-        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
-        InventoryInstance.expandMemberSubHoldings(Affiliations.College);
-        InventoryInstance.verifyMemberSubSubHoldingsAccordion(
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+        InstanceRecordView.expandConsortiaHoldings();
+        InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
+        InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
+        InstanceRecordView.expandMemberSubHoldings(tenantNames.College);
+        InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
           Affiliations.College,
           testData.collegeHoldingsId,
         );
-        InventoryInstance.expandMemberSubHoldings(Affiliations.University);
-        InventoryInstance.verifyMemberSubSubHoldingsAccordion(
+        InstanceRecordView.expandMemberSubHoldings(tenantNames.University);
+        InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
           Affiliations.University,
           testData.universityHoldingsId,
         );

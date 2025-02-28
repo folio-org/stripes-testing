@@ -1,5 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import SetRecordForDeletionModal from '../../../support/fragments/inventory/modals/setRecordForDeletionModal';
@@ -43,7 +45,10 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet', 'C436834'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifySetRecordForDeletionOptionEnabled();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.setRecordForDeletion,
+          true,
+        );
         InstanceRecordView.setRecordForDeletion();
         SetRecordForDeletionModal.waitLoading();
         SetRecordForDeletionModal.verifyModalView(testData.instance.instanceTitle);

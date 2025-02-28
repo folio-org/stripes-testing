@@ -2,7 +2,9 @@ import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../su
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -80,7 +82,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchInstanceByTitle(C402335testData.instanceId);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402335testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(actionsMenuOptions.edit, false);
       },
     );
 
@@ -98,7 +100,7 @@ describe('Inventory', () => {
         cy.wait('@/authn/refresh', { timeout: 5000 });
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402376testData.instanceSource);
-        InstanceRecordView.verifyEditInstanceButtonAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(actionsMenuOptions.edit, false);
       },
     );
   });

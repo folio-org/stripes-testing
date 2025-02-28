@@ -1,5 +1,7 @@
-import { INSTANCE_SOURCE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import { APPLICATION_NAMES, INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import HoldingsRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
@@ -38,7 +40,10 @@ describe('MARC', () => {
           // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
           HoldingsRecordView.close();
           InventoryInstance.openHoldingView();
-          HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
+          HoldingsRecordView.validateOptionInActionsMenu([
+            { optionName: actionsMenuOptions.viewSource, shouldExist: true },
+            { optionName: actionsMenuOptions.editMarcBibliographicRecord, shouldExist: true },
+          ]);
           HoldingsRecordView.tryToDelete();
           HoldingsRecordView.viewSource();
           InventoryViewSource.close();

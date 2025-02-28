@@ -148,6 +148,10 @@ export default {
     internal: 'ui-inventory.subjects.view',
     gui: 'Subject browse: View permissions',
   },
+  uiInventoryUpdateOwnership: {
+    internal: 'consortia.inventory.update-ownership.item.post',
+    gui: 'Inventory: Update ownership',
+  },
   uiInventorySingleRecordImport: {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',

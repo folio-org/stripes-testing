@@ -1,7 +1,8 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import Affiliations from '../../../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
@@ -107,13 +108,14 @@ describe('Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
-        InventoryInstance.waitLoading();
-        InventoryInstance.verifyConsortiaHoldingsAccordion(false);
-        InventoryInstance.expandConsortiaHoldings();
-        InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.College);
-        InventoryInstance.expandMemberSubHoldings(Affiliations.College);
-        InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
-        InventoryInstance.checkIsItemCreated(testData.itemBarcode);
+        InstanceRecordView.waitLoading();
+
+        InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
+        InstanceRecordView.expandConsortiaHoldings();
+        InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
+        InstanceRecordView.expandMemberSubHoldings(tenantNames.College);
+        InstanceRecordView.openHoldingsAccordion(testData.collegeLocation.name);
+        InstanceRecordView.verifyIsItemCreated(testData.itemBarcode);
       },
     );
   });
