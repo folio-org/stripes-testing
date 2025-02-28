@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 
 describe('fse-lists - UI', () => {
   beforeEach(() => {
@@ -7,7 +7,7 @@ describe('fse-lists - UI', () => {
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
       path: TopMenu.listsPath,
-      waiter: Lists.filtersWaitLoading,
+      waiter: Lists.waitLoading,
     });
     cy.allure().logCommandSteps();
   });
@@ -16,8 +16,8 @@ describe('fse-lists - UI', () => {
     `TC195764 - verify that lists page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'lists'] },
     () => {
-      // check filters displayed (as we can't use standard waitLoading for tenants with non-English localization)
-      Lists.waitLoading();
+      // check filters displayed
+      Lists.filtersWaitLoading();
     },
   );
 });
