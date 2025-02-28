@@ -57,10 +57,8 @@ describe('Bulk-edit', () => {
           });
         }
 
-        cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
-        cy.createTempUser([], 'faculty', 'patron', true)
-          .then((collegeUserProperties) => {
+        cy.withinTenant(Affiliations.College, () => {
+          cy.createTempUser([], 'faculty', 'patron', true).then((collegeUserProperties) => {
             collegeUser = collegeUserProperties;
 
             cy.getUsers({ limit: 1, query: `username=${collegeUserProperties.username}` }).then(
@@ -71,42 +69,41 @@ describe('Bulk-edit', () => {
                 });
               },
             );
-          })
-          .then(() => {
-            cy.setTenant(Affiliations.University);
-            cy.getUniversityAdminToken();
-            cy.createTempUser([], 'faculty', 'staff', true).then((universityUserProperties) => {
-              universityUser = universityUserProperties;
+          });
+        });
 
-              cy.getUsers({
-                limit: 1,
-                query: `username=${universityUserProperties.username}`,
-              }).then((user) => {
-                cy.updateUser({
-                  ...user[0],
-                  externalSystemId: userExternalIdInUniversity,
-                });
+        cy.withinTenant(Affiliations.University, () => {
+          cy.createTempUser([], 'faculty', 'staff', true).then((universityUserProperties) => {
+            universityUser = universityUserProperties;
+
+            cy.getUsers({
+              limit: 1,
+              query: `username=${universityUserProperties.username}`,
+            }).then((user) => {
+              cy.updateUser({
+                ...user[0],
+                externalSystemId: userExternalIdInUniversity,
               });
             });
-          })
-          .then(() => {
-            FileManager.createFile(
-              `cypress/fixtures/${userUUIDsFileName}`,
-              `${collegeUser.userId}\n${invalidIdentifier}\n${universityUser.userId}`,
-            );
-            FileManager.createFile(
-              `cypress/fixtures/${userBarcodesFileName}`,
-              `${collegeUser.barcode}\n${invalidIdentifier}\n${universityUser.barcode}`,
-            );
-            FileManager.createFile(
-              `cypress/fixtures/${userExternalIDsFileName}`,
-              `${userExternalIdInCollege}\n${invalidIdentifier}\n${userExternalIdInUniversity}`,
-            );
-            FileManager.createFile(
-              `cypress/fixtures/${usernamesFileName}`,
-              `${collegeUser.username}\n${invalidUsername}\n${universityUser.username}`,
-            );
           });
+        }).then(() => {
+          FileManager.createFile(
+            `cypress/fixtures/${userUUIDsFileName}`,
+            `${collegeUser.userId}\n${invalidIdentifier}\n${universityUser.userId}`,
+          );
+          FileManager.createFile(
+            `cypress/fixtures/${userBarcodesFileName}`,
+            `${collegeUser.barcode}\n${invalidIdentifier}\n${universityUser.barcode}`,
+          );
+          FileManager.createFile(
+            `cypress/fixtures/${userExternalIDsFileName}`,
+            `${userExternalIdInCollege}\n${invalidIdentifier}\n${userExternalIdInUniversity}`,
+          );
+          FileManager.createFile(
+            `cypress/fixtures/${usernamesFileName}`,
+            `${collegeUser.username}\n${invalidUsername}\n${universityUser.username}`,
+          );
+        });
       });
 
       after('delete test data', () => {
