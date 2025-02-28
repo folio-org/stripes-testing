@@ -231,8 +231,10 @@ describe('Eureka', () => {
         CompareRoles.checkAvailableTenants([tenantNames.central, tenantNames.college].sort(), 1);
 
         CompareRoles.selectMember(tenantNames.college, 1);
-        CompareRoles.checkRolePresent(testData.roleNameCollege, true, 1);
+        CompareRoles.verifySelectedRole(CompareRoles.selectRolePlaceholderText, 1);
+        CompareRoles.clickOnCapabilitySetsAccordion(true, 1);
         CompareRoles.verifyNoCapabilitySetsFound(1);
+        CompareRoles.clickOnCapabilitiesAccordion(true, 1);
         CompareRoles.verifyNoCapabilitiesFound(1);
 
         CompareRoles.selectRole(testData.roleNameCollege, 1);
@@ -247,7 +249,7 @@ describe('Eureka', () => {
         CompareRoles.verifyNoCapabilitySetsFound(1);
 
         CompareRoles.selectMember(tenantNames.college, 0);
-        CompareRoles.checkNoRolesPresent(0);
+        CompareRoles.verifySelectedRole('', 0);
         CompareRoles.verifyNoCapabilitiesFound(0);
         CompareRoles.verifyNoCapabilitySetsFound(0);
         testData.capabilitiesForRoleCollege.forEach((capability) => {

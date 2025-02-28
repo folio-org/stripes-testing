@@ -97,7 +97,7 @@ describe('Eureka', () => {
       {
         type: CAPABILITY_TYPES.SETTINGS,
         resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
+        action: CAPABILITY_ACTIONS.VIEW,
       },
       {
         type: CAPABILITY_TYPES.DATA,
@@ -109,7 +109,7 @@ describe('Eureka', () => {
       {
         type: CAPABILITY_TYPES.SETTINGS,
         resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
+        action: CAPABILITY_ACTIONS.VIEW,
       },
     ];
     let tempUser;
