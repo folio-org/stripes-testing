@@ -1,21 +1,24 @@
 /* eslint-disable no-dupe-keys */
 import { including } from '@interactors/html';
 import {
-  matching,
+  Accordion,
   Button,
-  MultiColumnListCell,
-  Pane,
-  TextArea,
   Link,
+  matching,
+  MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
+  Pane,
   Section,
-  TextInput,
   Select,
-  Accordion,
+  SelectionOption,
+  TextArea,
+  TextInput,
 } from '../../../../../interactors';
-import InventorySearchAndFilter from '../inventorySearchAndFilter';
 import { escapeRegex } from '../../../utils/stringTools';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
@@ -288,6 +291,26 @@ export default {
         delay: 5000,
         timeout: 60000,
       },
+    );
+  },
+
+  verifyAccordionStatusByName(accordionName, status = true) {
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: status }));
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(searchFilterPane.find(Accordion(accordionName)).clickHeader());
+    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectType-multiselect' })).exists());
+  },
+
+  verify(types) {
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
+    cy.pause();
+    cy.expect(MultiSelectMenu().exists());
+    cy.expect(
+      MultiSelectMenu()
+        .find(SelectionOption(including(types)))
+        .exists(),
     );
   },
 };
