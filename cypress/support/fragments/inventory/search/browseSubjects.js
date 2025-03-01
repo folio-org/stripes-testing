@@ -13,6 +13,9 @@ import {
   TextInput,
   Select,
   Accordion,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 import { escapeRegex } from '../../../utils/stringTools';
@@ -289,5 +292,15 @@ export default {
         timeout: 60000,
       },
     );
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(searchFilterPane.find(Accordion(accordionName)).clickHeader());
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  selectSubjectSource(subjectSource) {
+    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).open());
+    cy.do(MultiSelectMenu().find(MultiSelectOption(subjectSource)).click());
   },
 };
