@@ -47,14 +47,24 @@ describe('Inventory', () => {
       InstanceRecordEdit.saveAndClose();
       InstanceRecordView.verifyInstanceRecordViewOpened();
       InstanceRecordView.openSubjectAccordion();
-      InstanceRecordView.verifyInstanceSubject(0, 0, testData.instanceSubject);
+      InstanceRecordView.verifyInstanceSubject({
+        indexRow: 0,
+        subjectHeadings: testData.instanceSubject,
+        subjectSource: 'Library of Congress Subject Headings',
+        subjectType: 'Personal name',
+      });
 
       InstanceRecordView.edit();
       InstanceRecordEdit.waitLoading();
       InstanceRecordEdit.changeSubject(testData.newInstanceSubject);
       InstanceRecordEdit.saveAndClose();
       InstanceRecordView.verifyInstanceRecordViewOpened();
-      InstanceRecordView.verifyInstanceSubject(0, 0, testData.newInstanceSubject);
+      InstanceRecordView.verifyInstanceSubject({
+        indexRow: 0,
+        subjectHeadings: testData.newInstanceSubject,
+        subjectSource: 'Library of Congress Subject Headings',
+        subjectType: 'Personal name',
+      });
 
       InstanceRecordView.edit();
       InstanceRecordEdit.waitLoading();

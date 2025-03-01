@@ -48,6 +48,7 @@ const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const addItemButton = Button('Add item');
+const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -658,14 +659,21 @@ export default {
     });
   },
 
-  verifyInstanceSubject: (indexRow, indexColumn, value) => {
-    cy.expect(
-      subjectAccordion
-        .find(MultiColumnList({ id: 'list-subject' }))
+  verifyInstanceSubject: (indexRow, { subjectHeadings, subjectSource, subjectType }) => {
+    cy.expect([
+      subjectList
         .find(MultiColumnListRow({ index: indexRow }))
-        .find(MultiColumnListCell({ columnIndex: indexColumn }))
-        .has({ content: value }),
-    );
+        .find(MultiColumnListCell({ column: 'Subject headings' }))
+        .has({ content: subjectHeadings }),
+      subjectList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ column: 'Subject source' }))
+        .has({ content: subjectSource }),
+      subjectList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ column: 'Subject type' }))
+        .has({ content: subjectType }),
+    ]);
   },
 
   verifyInstanceSubjectAbsent: () => {
