@@ -1,8 +1,14 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { MultiColumnList } from '../../../../interactors';
-import { BROWSE_CLASSIFICATION_OPTIONS } from '../../../support/constants';
+import {
+  BROWSE_CLASSIFICATION_OPTIONS,
+  BROWSE_CALL_NUMBER_OPTIONS,
+} from '../../../support/constants';
 import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
+import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 
 describe('fse-inventory - UI', () => {
   beforeEach(() => {
@@ -37,11 +43,23 @@ describe('fse-inventory - UI', () => {
     { tags: ['ramsons', 'fse', 'ui', 'inventory'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
-      // select Classification (all)
+      // check classification
       InventorySearchAndFilter.selectBrowseOption(BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL);
-      InventorySearchAndFilter.browseSearch('a');
+      InventorySearchAndFilter.browseSearch('test');
       BrowseClassifications.verifySearchResultsTable();
       InventorySearchAndFilter.checkClassificationAllResultsDisplayed();
+      // check call number
+      InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
+      InventorySearchAndFilter.browseSearch('a');
+      BrowseCallNumber.checkSearchResultsTable();
+      // check contributors
+      InventorySearchAndFilter.selectBrowseOption('Contributors');
+      InventorySearchAndFilter.browseSearch('check');
+      BrowseContributors.checkSearchResultsTable();
+      // check subjects
+      InventorySearchAndFilter.selectBrowseOption('Subjects');
+      InventorySearchAndFilter.browseSearch('test subject');
+      BrowseSubjects.checkSearchResultsTable();
     },
   );
 });
