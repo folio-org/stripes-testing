@@ -18,7 +18,11 @@ describe('MARC', () => {
       describe('Automated linking', () => {
         const testData = {
           editSharedRecordText: 'Edit shared MARC record',
-          searchQueries: ['Bate, Walter Jackson,', 'Johnson, Samuel,', 'Criticism and interpretation'],
+          searchQueries: [
+            'Bate, Walter Jackson,',
+            'Johnson, Samuel,',
+            'Criticism and interpretation',
+          ],
           linked100Field: [
             9,
             '100',
@@ -155,7 +159,7 @@ describe('MARC', () => {
         });
 
         it(
-          'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
+          'C663328 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
