@@ -1,5 +1,7 @@
 import { Permissions } from '../../../../support/dictionary';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -36,7 +38,10 @@ describe('MARC', () => {
           // Click on "Actions" button in second pane
           // Expanded menu does NOT include following option:
           // "+New MARC Bib Record"
-          InventoryInstance.checkAbsenceOfNewMarcBibRecordOption();
+          InstanceRecordView.validateOptionInActionsMenu(
+            actionsMenuOptions.newMarcBibRecord,
+            false,
+          );
         },
       );
     });

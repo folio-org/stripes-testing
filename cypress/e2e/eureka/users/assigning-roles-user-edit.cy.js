@@ -109,6 +109,7 @@ describe('Eureka', () => {
         UserEdit.verifyUserRoleNamesOrdered([testData.roleBName, testData.roleCName]);
         UserEdit.verifyUserRolesRowsCount(2);
         UserEdit.saveAndClose();
+        UsersCard.waitLoading();
 
         // revert the workaround after UIU-3179 is done
         UsersSearchPane.resetAllFilters();

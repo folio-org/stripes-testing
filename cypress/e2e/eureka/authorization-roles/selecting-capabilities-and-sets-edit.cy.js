@@ -6,12 +6,12 @@ import AuthorizationRoles from '../../../support/fragments/settings/authorizatio
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
+      const randomPostfix = getRandomPostfix();
       const testData = {
         capabIds: [],
-        roleName: `Auto Role C503019 ${getRandomPostfix()}`,
-        roleDescription: `Description C503019 ${getRandomPostfix()}`,
-        updatedRoleName: `Auto Role C503019 ${getRandomPostfix()} UPD`,
-        applicationName: 'app-platform-full',
+        roleName: `Auto Role C503019 ${randomPostfix}`,
+        roleDescription: `Description C503019 ${randomPostfix}`,
+        updatedRoleName: `Auto Role C503019 ${randomPostfix} UPD`,
         capabilitySet: {
           table: 'Data',
           resource: 'Acquisitions-Units Memberships',
@@ -75,17 +75,6 @@ describe('Eureka', () => {
         ],
         numberOfCapabilitiesInAdditionalSets: 8,
       };
-
-      testData.capabilitySet.application = testData.applicationName;
-      testData.capabilitiesInSet.forEach((capability) => {
-        capability.application = testData.applicationName;
-      });
-      testData.additionalCapabilities.forEach((capability) => {
-        capability.application = testData.applicationName;
-      });
-      testData.additionalCapabilitySets.forEach((set) => {
-        set.application = testData.applicationName;
-      });
 
       const capabilitiesInSetSelected = testData.capabilitiesInSet.filter(
         (capab, index) => index <= 2,
