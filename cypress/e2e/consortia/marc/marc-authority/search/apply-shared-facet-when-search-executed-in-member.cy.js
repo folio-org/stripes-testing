@@ -91,11 +91,12 @@ describe('MARC', () => {
 
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.setTenant(Affiliations.University);
+            cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
-            cy.setTenant(Affiliations.College);
+            cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);

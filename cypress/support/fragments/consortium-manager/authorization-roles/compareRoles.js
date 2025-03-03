@@ -5,6 +5,7 @@ import {
   MultiColumnListCell,
   HTML,
   SelectionOption,
+  not,
 } from '../../../../../interactors';
 import AuthorizationRoles from '../../settings/authorization-roles/authorizationRoles';
 
@@ -16,9 +17,11 @@ const selectRoleDropdown = Button({ name: 'authorization-role' });
 const noCapabilitiesFoundText = 'No capabilities found';
 const noCapabilitySetsFoundText = 'No capability sets found';
 const actionsButton = Button('Actions');
+const selectRolePlaceholderText = 'Select authorization role';
 
 export default {
-  clickCompareRoles: () => {
+  selectRolePlaceholderText,
+  clickCompareRoles() {
     cy.do([actionsButton.click(), compareRolesButton.click()]);
     [compareRolesSubPane(0), compareRolesSubPane(1)].forEach((pane) => {
       cy.expect([
@@ -50,18 +53,42 @@ export default {
     cy.expect(currentPane.find(selectMemberDropdown).has({ text: `Select control${memberName}` }));
   },
 
-  selectRole: (roleName, paneIndex = 0) => {
+  selectRole(roleName, paneIndex = 0) {
     const currentPane = compareRolesSubPane(paneIndex);
     cy.do([
       currentPane.find(selectRoleDropdown).click(),
       currentPane.find(SelectionOption(roleName)).click(),
     ]);
     cy.wait(3000);
+    this.verifySelectedRole(roleName, paneIndex);
     cy.expect([
-      currentPane.find(selectRoleDropdown).has({ text: `Select control${roleName}` }),
       currentPane.find(AuthorizationRoles.capabilitiesAccordion).has({ open: true }),
       currentPane.find(AuthorizationRoles.capabilitySetsAccordion).has({ open: true }),
     ]);
+  },
+
+  verifySelectedRole: (roleName, paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.expect(currentPane.find(selectRoleDropdown).has({ text: `Select control${roleName}` }));
+  },
+
+  checkRolePresent: (roleName, isPresent = true, paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(selectRoleDropdown).click());
+    cy.wait(3000);
+    if (isPresent) cy.expect(currentPane.find(SelectionOption(roleName)).exists());
+    else cy.expect(currentPane.find(SelectionOption(roleName)).absent());
+    cy.do(compareRolesMainPane.click());
+    cy.expect(currentPane.find(SelectionOption()).absent());
+  },
+
+  checkNoRolesPresent: (paneIndex = 0) => {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(selectRoleDropdown).click());
+    cy.wait(3000);
+    cy.expect(currentPane.find(SelectionOption(not('--'))).absent());
+    cy.do(compareRolesMainPane.click());
+    cy.expect(currentPane.find(SelectionOption()).absent());
   },
 
   checkCapability: (
@@ -123,5 +150,17 @@ export default {
         .find(HTML(noCapabilitySetsFoundText))
         .exists(),
     );
+  },
+
+  clickOnCapabilitiesAccordion(isOpen = true, paneIndex = 0) {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(AuthorizationRoles.capabilitiesAccordion).clickHeader());
+    cy.expect(currentPane.find(AuthorizationRoles.capabilitiesAccordion).has({ open: isOpen }));
+  },
+
+  clickOnCapabilitySetsAccordion(isOpen = true, paneIndex = 0) {
+    const currentPane = compareRolesSubPane(paneIndex);
+    cy.do(currentPane.find(AuthorizationRoles.capabilitySetsAccordion).clickHeader());
+    cy.expect(currentPane.find(AuthorizationRoles.capabilitySetsAccordion).has({ open: isOpen }));
   },
 };
