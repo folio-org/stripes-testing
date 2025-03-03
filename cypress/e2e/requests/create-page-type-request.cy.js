@@ -67,7 +67,7 @@ describe('Requests', () => {
             instanceData = instanceRecordData;
             cy.intercept('GET', '/circulation/requests?*').as('getRequests');
             cy.intercept('GET', '/users?*').as('getUsers');
-            cy.intercept('POST', '/circulation-bff/requests').as('postRequest');
+            cy.intercept('POST', '/circulation/requests').as('postRequest');
             cy.intercept('GET', '/inventory/items?').as('getItems');
             cy.intercept('GET', '/holdings-types?*').as('getHoldinsgTypes');
             cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');

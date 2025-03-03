@@ -68,28 +68,18 @@ describe('MARC', () => {
         'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C423559'] },
         () => {
-          // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
+          MarcAuthority.checkSourceFileSelectShown();
 
-          // 2 Click on "Authority file look-up" hyperlink
-          QuickMarcEditor.clickAuthorityLookUpButton();
+          MarcAuthority.selectSourceFile(localAuthFile.name);
 
-          // 3 Click on the "Select authority file" placeholder in "Authority file name" dropdown and select the "Local" option created by user in preconditions
-          QuickMarcEditor.selectAuthorityFile(localAuthFile.name);
-          QuickMarcEditor.verifyAuthorityFileSelected(localAuthFile.name);
-
-          // 4 Click on the "Save & close" button
-          QuickMarcEditor.clickSaveAndCloseInModal();
           QuickMarcEditor.checkFourthBoxEditable(1, false);
           QuickMarcEditor.checkContentByTag(
             tag001,
             `${localAuthFile.prefix}${localAuthFile.startWithNumber}`,
           );
 
-          // 5 Add 1 new field by clicking on "+" icon and fill it as specified:
-          // 111 \\ "$a Create a new MARC authority record with Local authority file which includes default prefix in it"
           MarcAuthority.addNewFieldAfterExistingByTag(
             newField.previousFieldTag,
             newField.tag,
@@ -97,7 +87,6 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkContentByTag(newField.tag, newField.content);
 
-          // 6 Click on the "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
@@ -112,17 +101,15 @@ describe('MARC', () => {
           MarcAuthority.contains(newField.tag);
           MarcAuthority.contains(newField.content);
 
-          // 7 Close the detail view pane by clicking on "X" icon placed in the left upper corner of the pane
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.verifyMarcViewPaneIsOpened(false);
 
           cy.reload();
           MarcAuthorities.waitLoading();
-          // 8 Click on the "Authority source" multi select element in "Authority source" accordion placed on "Search & filter" pane
+
           MarcAuthorities.clickMultiSelectToggleButtonInAccordion('Authority source');
           MarcAuthorities.checkAuthoritySourceDropdownHasOption(localAuthFile.name);
 
-          // 9 Click on the "Local" authority file created at preconditions in expanded dropdonw
           MarcAuthorities.chooseAuthoritySourceOption(localAuthFile.name);
           MarcAuthorities.checkSelectedAuthoritySource(localAuthFile.name);
           MarcAuthorities.checkAfterSearch('Authorized', recordTitle);

@@ -89,8 +89,12 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyChangedResults(item.firstBarcode);
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(itemBarcodesFileName, 1, 1);
-        BulkEditSearchPane.verifyReasonForError('No change in value required');
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          item.secondBarcode,
+          'No change in value required',
+          'Warning',
+        );
       },
     );
   });

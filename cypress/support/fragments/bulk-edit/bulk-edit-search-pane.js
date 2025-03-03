@@ -610,6 +610,18 @@ export default {
     });
   },
 
+  verifyError(identifier, reasonMessage, status = 'Error') {
+    cy.expect([
+      errorsAccordion
+        .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
+        .exists(),
+      errorsAccordion.find(MultiColumnListCell({ content: status, column: 'Status' })).exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
+        .exists(),
+    ]);
+  },
+
   verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect([
@@ -650,13 +662,11 @@ export default {
     );
   },
 
-  verifyShowWarningsCheckbox(isChecked = false) {
-    cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
-  },
-
-  verifyShowWarningsCheckboxDisabled() {
+  verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
-      errorsAccordion.find(Checkbox({ labelText: 'Show warnings', disabled: true })).exists(),
+      errorsAccordion
+        .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
+        .exists(),
     );
   },
 
@@ -1287,6 +1297,17 @@ export default {
       areYouSureForm.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
     ]);
     cy.get('div[aria-label^="PreviewModal"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
+  verifyPaginatorInErrorsAccordion(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      errorsAccordion.find(previousPaginationButton).has({ disabled: true }),
+      errorsAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="errorAccordion"] div[class^="prevNextPaginationContainer-"]')
       .find('div')
       .invoke('text')
       .should('eq', `1 - ${recordsNumber}`);

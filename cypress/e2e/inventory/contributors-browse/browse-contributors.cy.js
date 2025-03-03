@@ -12,12 +12,12 @@ describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
       item: {
-        instanceName: `testContributorsBrowse_${getRandomPostfix()}`,
-        itemBarcode: getRandomPostfix(),
+        instanceName: `AT_contributorsBrowse_${getRandomPostfix()}`,
       },
 
       contributor: {
         name: `Test_Contributor_${getRandomPostfix()}`,
+        nameC353660: `Test_Contributor_${getRandomPostfix()}`,
         nameTypes: {
           personal: 'Personal name',
           corporate: 'Corporate name',
@@ -47,18 +47,21 @@ describe('Inventory', () => {
         Permissions.uiSubjectBrowse.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+
+        InventoryInstances.deleteInstanceByTitleViaApi('AT_contributorsBrowse');
       });
     });
 
     beforeEach(() => {
-      InventoryInstances.createInstanceViaApi(
-        testData.item.instanceName,
-        testData.item.itemBarcode,
+      InventoryInstance.createInstanceViaApi({ instanceTitle: testData.item.instanceName }).then(
+        ({ instanceData }) => {
+          testData.instanceId = instanceData.instanceId;
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventorySearchAndFilter.waitLoading,
+          });
+        },
       );
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
     });
 
     after(() => {
@@ -68,7 +71,7 @@ describe('Inventory', () => {
 
     afterEach(() => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
     it(
@@ -139,21 +142,21 @@ describe('Inventory', () => {
         InstanceRecordEdit.clickAddContributor();
         InstanceRecordEdit.fillContributorData(
           0,
-          testData.contributor.name,
+          testData.contributor.nameC353660,
           testData.contributor.nameTypes.personal,
           testData.contributor.types.dancer,
         );
         InstanceRecordEdit.clickAddContributor();
         InstanceRecordEdit.fillContributorData(
           1,
-          testData.contributor.name,
+          testData.contributor.nameC353660,
           testData.contributor.nameTypes.personal,
           testData.contributor.types.colorist,
         );
         InstanceRecordEdit.clickAddContributor();
         InstanceRecordEdit.fillContributorData(
           2,
-          testData.contributor.name,
+          testData.contributor.nameC353660,
           testData.contributor.nameTypes.personal,
           testData.contributor.types.architect,
         );
@@ -162,14 +165,14 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
-        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
-        BrowseContributors.browse(testData.contributor.name);
-        BrowseContributors.checkSearchResultRecord(testData.contributor.name);
+        BrowseContributors.waitForContributorToAppear(testData.contributor.nameC353660);
+        BrowseContributors.browse(testData.contributor.nameC353660);
         BrowseContributors.checkSearchResultRow(
-          testData.contributor.name,
+          testData.contributor.nameC353660,
           testData.contributor.nameTypes.personal,
           `${testData.contributor.types.dancer}, ${testData.contributor.types.architect}, ${testData.contributor.types.colorist}`,
           '1',
+          true,
         );
       },
     );
@@ -195,12 +198,12 @@ describe('Inventory', () => {
         BrowseContributors.select();
         BrowseContributors.waitForContributorToAppear(testData.contributor.name);
         BrowseContributors.browse(testData.contributor.name);
-        BrowseContributors.checkSearchResultRecord(testData.contributor.name);
         BrowseContributors.checkSearchResultRow(
           testData.contributor.name,
           testData.contributor.nameTypes.personal,
           testData.contributor.types.architect,
           '1',
+          true,
         );
 
         BrowseContributors.openRecord(testData.contributor.name);
@@ -213,9 +216,9 @@ describe('Inventory', () => {
         InstanceRecordEdit.deleteContributor(1);
         InstanceRecordEdit.saveAndClose();
 
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name, false);
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();
-        BrowseContributors.waitForContributorToAppear(testData.contributor.name, false);
         BrowseContributors.browse(testData.contributor.name);
         InventorySearchAndFilter.verifySearchResult(`${testData.contributor.name}would be here`);
       },

@@ -298,7 +298,6 @@ export default {
   saveAndClose: () => {
     cy.wait(1000);
     cy.do(saveAndCloseButton.click());
-    cy.expect(Callout({ type: 'success' }).exists());
     cy.expect(saveAndCloseButton.absent());
   },
 

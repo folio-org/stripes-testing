@@ -97,7 +97,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkErrorMessage(14, testData.errorMultiple1XX);
           QuickMarcEditor.checkErrorMessage(15, testData.errorMultiple1XX);
-          QuickMarcEditor.pressCancel();
+          QuickMarcEditor.closeWithoutSavingAfterChange();
           MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.contains(testData.authority.title);
         },

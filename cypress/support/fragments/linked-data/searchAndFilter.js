@@ -10,7 +10,7 @@ export default {
 
   searchResourceByTitle: (title) => {
     cy.get('#id-search-select').select('Title');
-    cy.get('#id-search-input').type(title);
+    cy.get('#id-search-input').clear().type(title);
     cy.get(searchButton).click();
   },
 

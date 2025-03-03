@@ -12,7 +12,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-const matchedRecordsFileName = `*Matching-Records-Errors-${userUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getErrorsFromMatchingFileName(userUUIDsFileName);
 
 describe('bulk-edit', () => {
   describe('permissions', () => {
@@ -51,9 +51,9 @@ describe('bulk-edit', () => {
         // Upload .csv file  with **invalid** Users UUIDs by dragging it on the "Drag & drop" area
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(1);
         BulkEditSearchPane.verifyPaneRecordsCount('0 user');
-        BulkEditSearchPane.verifyNonMatchedResults();
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
         // Navigate to the "Export manager" app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);

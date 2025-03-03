@@ -52,6 +52,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
         InventorySearchAndFilter.selectBrowseContributors();
+        BrowseContributors.waitForContributorToAppear(instance.contributors[0].name);
         BrowseContributors.browse(instance.contributors[0].name);
         InventorySearchAndFilter.showsOnlyNameTypeAccordion();
         BrowseSearch.checkValueIsBold(instance.contributors[0].name);

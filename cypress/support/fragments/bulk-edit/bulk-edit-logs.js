@@ -566,6 +566,7 @@ export default {
 
   clickLogHeader(header) {
     cy.do(MultiColumnListHeader(header).click());
+    cy.wait(2000);
   },
 
   noLogResultsFound() {

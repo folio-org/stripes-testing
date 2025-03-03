@@ -1,11 +1,11 @@
 import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('lists', () => {
-  describe('permissions', () => {
+describe('Lists', () => {
+  describe('Permissions', () => {
     const userData = {};
     const listData = {
       name: `C418651-${getTestEntityValue('list')}`,

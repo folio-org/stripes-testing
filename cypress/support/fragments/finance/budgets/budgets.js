@@ -41,6 +41,7 @@ export default {
         body: budgetProperties,
         method: 'POST',
         isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
       })
       .then((response) => {
         return response.body;

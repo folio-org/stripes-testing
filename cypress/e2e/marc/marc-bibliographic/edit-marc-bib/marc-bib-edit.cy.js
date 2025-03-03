@@ -134,7 +134,7 @@ describe('MARC', () => {
           cy.wait(1500);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkCallout('Field 245 is required.');
-          QuickMarcEditor.closeWithoutSaving();
+          QuickMarcEditor.closeWithoutSavingAfterChange();
           InventoryInstance.waitLoading();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
           InventoryInstance.checkDetailViewOfInstance(

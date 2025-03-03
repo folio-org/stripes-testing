@@ -3,13 +3,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import DateTools from '../../../support/utils/dateTools';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(userBarcodesFileName);
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
@@ -63,7 +64,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clickNext();
         BulkEditActions.commitChanges();
 
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
         BulkEditActions.openActions();
       },
     );

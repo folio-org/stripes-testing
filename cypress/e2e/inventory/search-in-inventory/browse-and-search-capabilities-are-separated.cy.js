@@ -3,7 +3,6 @@ import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
-import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -14,6 +13,8 @@ const contributorsNameTypes = ['Personal name', 'Corporate name', 'Meeting name'
 const Dropdowns = {
   EFFECTIVE_LOCATION: 'Effective location (item)',
   NAME_TYPE: 'Name type',
+  SUBJECT_SOURCE: 'Subject source',
+  SUBJECT_TYPE: 'Subject type',
 };
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -65,7 +66,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.NAME_TYPE, false);
         InventorySearchAndFilter.selectBrowseOption('Subjects');
-        BrowseSubjects.verifyNoAccordionsOnPane();
+        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SUBJECT_SOURCE, false);
+        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SUBJECT_TYPE, false);
       },
     );
   });

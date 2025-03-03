@@ -89,13 +89,12 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
-          QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.selectAuthorityFile(testData.sourceName);
-          QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
-          QuickMarcEditor.clickSaveAndCloseInModal();
+          MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.selectSourceFile(testData.sourceName);
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
-          MarcAuthority.addNewField(4, newField.tag, newField.content);
+          MarcAuthority.addNewField(3, newField.tag, newField.content);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
