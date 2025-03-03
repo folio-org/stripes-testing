@@ -20,7 +20,7 @@ describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleName: `AT_C523606_Role ${randomPostfix}`,
+      roleName: `AT_C523606_Role_${randomPostfix}`,
       capabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
@@ -129,6 +129,9 @@ describe('Eureka', () => {
         );
         cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
         cy.assignAffiliationToUser(Affiliations.University, userBData.userId);
+        cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+          testData.roleId = role.id;
+        });
         testData.capabilitySets.forEach((capabilitySet) => {
           cy.getCapabilitySetIdViaApi(capabilitySet).then((capabSetId) => {
             capabSetIds.push(capabSetId);
@@ -157,28 +160,10 @@ describe('Eureka', () => {
     });
 
     before('Assign capabilities to role, login', () => {
-      // workaround for UICONSET-217 - rewrite to API when fixed
-      cy.loginAsAdmin();
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-      ConsortiumManagerApp.verifyStatusOfConsortiumManager();
-      SelectMembers.selectAllMembers();
-      ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
-      SelectMembers.selectMember(tenantNames.central);
-      AuthorizationRoles.waitLoading();
-      AuthorizationRoles.clickActionsButton();
-      AuthorizationRoles.clickNewButton();
-      AuthorizationRoles.fillRoleNameDescription(testData.roleName);
-      AuthorizationRoles.clickSaveButton();
-      AuthorizationRoles.checkAfterSaveCreate(testData.roleName);
-      cy.wait(10_000);
-
       cy.resetTenant();
       cy.getAdminToken();
-      cy.getUserRoleIdByNameApi(testData.roleName).then((id) => {
-        testData.roleId = id;
-        cy.addCapabilitySetsToNewRoleApi(testData.roleId, capabSetIds);
-        cy.login(userAData.username, userAData.password);
-      });
+      cy.addCapabilitySetsToNewRoleApi(testData.roleId, capabSetIds);
+      cy.login(userAData.username, userAData.password);
     });
 
     after('Delete users, data', () => {
@@ -221,7 +206,6 @@ describe('Eureka', () => {
         testData.capabilitySets.forEach((capabilitySet) => {
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabilitySet);
         });
-        AuthorizationRoles.clickOnUsersAccordion();
         AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(assignUser1Data.username);
@@ -251,10 +235,9 @@ describe('Eureka', () => {
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
-        AuthorizationRoles.clickOnUsersAccordion();
         AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
         AuthorizationRoles.clickAssignUsersButton();
-        AuthorizationRoles.clickCancelInAssignModal();
+        AuthorizationRoles.closeAssignModal();
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
 
         cy.login(userBData.username, userBData.password);
@@ -263,10 +246,9 @@ describe('Eureka', () => {
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
-        AuthorizationRoles.clickOnUsersAccordion();
         AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
         AuthorizationRoles.clickAssignUsersButton();
-        AuthorizationRoles.clickCancelInAssignModal();
+        AuthorizationRoles.closeAssignModal();
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
       },
     );

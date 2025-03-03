@@ -497,8 +497,8 @@ export default {
     cy.expect(assignUsersModal.absent());
   },
 
-  clickCancelInAssignModal: () => {
-    cy.do(saveButtonInAssignModal.click());
+  closeAssignModal: () => {
+    cy.do(assignUsersModal.find(Button({ icon: 'times' })).click());
     cy.expect(assignUsersModal.absent());
   },
 
