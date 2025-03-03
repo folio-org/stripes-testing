@@ -179,7 +179,6 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
-          cy.pause();
           BulkEditActions.downloadMatchedResults();
           BulkEditFiles.verifyValueInRowByUUID(
             matchedRecordsFileName,
