@@ -68,11 +68,8 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
-          QuickMarcEditor.verifyAuthorityLookUpButton();
-          QuickMarcEditor.clickAuthorityLookUpButton();
-          QuickMarcEditor.selectAuthorityFile(testData.sourceName);
-          QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
-          QuickMarcEditor.clickSaveAndCloseInModal();
+          MarcAuthority.checkSourceFileSelectShown();
+          MarcAuthority.selectSourceFile(testData.sourceName);
           QuickMarcEditor.checkContentByTag(testData.tag001, '');
           newFields.forEach((newField) => {
             MarcAuthority.addNewFieldAfterExistingByTag(

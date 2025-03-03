@@ -1,5 +1,7 @@
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
@@ -30,7 +32,10 @@ describe('MARC', () => {
           InventoryInstance.createHoldingsRecord();
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkSource('FOLIO');
-          HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
+          HoldingsRecordView.validateOptionInActionsMenu([
+            { optionName: actionsMenuOptions.viewSource, shouldExist: false },
+            { optionName: actionsMenuOptions.editMarcBibliographicRecord, shouldExist: false },
+          ]);
           HoldingsRecordView.edit();
           HoldingsRecordEdit.waitLoading();
           HoldingsRecordEdit.checkReadOnlyFields();

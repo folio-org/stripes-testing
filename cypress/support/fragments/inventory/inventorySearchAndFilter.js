@@ -23,6 +23,7 @@ import {
   TextField,
   ValueChipRoot,
   not,
+  or,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -1104,7 +1105,14 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
   },
 
   checkSharedInstancesInResultList() {
@@ -1151,5 +1159,37 @@ export default {
     cy.expect(
       inventorySearchResultsPane.find(HTML({ className: including('noResultsMessage-') })).exists(),
     );
+  },
+
+  selectHeldByOption(tenantName, isSelected = true) {
+    cy.wait(ONE_SECOND);
+    cy.do(Accordion('Held by').find(MultiSelect()).fillIn(tenantName));
+    // need to wait until data will be loaded
+    cy.wait(ONE_SECOND);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(tenantName)))
+        .click(),
+    );
+    cy.wait(ONE_SECOND);
+    this.checkHeldByOptionSelected(tenantName, isSelected);
+  },
+
+  checkHeldByOptionSelected: (tenantName, isSelected = true) => {
+    if (isSelected) {
+      cy.expect(
+        Accordion('Held by')
+          .find(MultiSelect())
+          .find(ValueChipRoot(including(tenantName)))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        Accordion('Held by')
+          .find(MultiSelect())
+          .find(ValueChipRoot(including(tenantName)))
+          .absent(),
+      );
+    }
   },
 };

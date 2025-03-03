@@ -1,6 +1,8 @@
 import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -45,7 +47,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyViewRequestOptionEnabled();
+        InstanceRecordView.validateOptionInActionsMenu(actionsMenuOptions.newRequest, true);
       },
     );
   });
