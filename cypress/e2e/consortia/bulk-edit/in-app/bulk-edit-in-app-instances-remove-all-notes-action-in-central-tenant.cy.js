@@ -270,6 +270,7 @@ describe('Bulk-edit', () => {
             '',
           );
           BulkEditSearchPane.verifyErrorLabel(1);
+          BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
           BulkEditSearchPane.verifyErrorByIdentifier(marcInstance.uuid, errorReason);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
