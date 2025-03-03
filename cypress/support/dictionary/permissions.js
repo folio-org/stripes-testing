@@ -148,6 +148,10 @@ export default {
     internal: 'ui-inventory.subjects.view',
     gui: 'Subject browse: View permissions',
   },
+  uiInventoryUpdateOwnership: {
+    internal: 'consortia.inventory.update-ownership.item.post',
+    gui: 'Inventory: Update ownership',
+  },
   uiInventorySingleRecordImport: {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',
@@ -1036,6 +1040,10 @@ export default {
     internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
   },
+  uiSettingsCallNumberBrowseView: {
+    internal: 'ui-inventory.settings.call-number-browse',
+    gui: 'Settings (Inventory): Configure call number browse',
+  },
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',
     gui: 'Settings (MARC authority): View, create, edit, delete authority files',
@@ -1043,6 +1051,14 @@ export default {
   uiSettingsModesOfIssuanceCreateEditDelete: {
     internal: 'ui-inventory.settings.modes-of-issuance',
     gui: 'Settings (Inventory): Create, edit, delete locally defined modes of issuance',
+  },
+  uiSettingsSubjectSourceCreateEditDelete: {
+    internal: 'ui-inventory.settings.subject-sources',
+    gui: 'Settings (Inventory): Create, edit, delete subject sources',
+  },
+  uiSettingsCreateEditDeleteSubjectTypes: {
+    internal: 'ui-inventory.settings.subject-types',
+    gui: 'Settings (Inventory): Create, edit, delete subject types',
   },
   uiSettingsViewAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.view',

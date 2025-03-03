@@ -1,10 +1,10 @@
 import permissions from '../../support/dictionary/permissions';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-organizations: EDI convention in Organization Integration', () => {
   let userId;
@@ -31,6 +31,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor1Integration = getRandomPostfix();
 
   before(() => {
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
@@ -38,7 +39,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
     });
-    cy.visit(TopMenu.organizationsPath);
+    TopMenuNavigation.navigateToApp('Organizations');
   });
 
   after(() => {
@@ -48,7 +49,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   it(
-    'C350758 Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)',
+    'C350758 Verify if a User can not set and edit EDI convention in Organization Integration (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
@@ -69,6 +70,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
       Organizations.selectIntegration(integrationName);
       Organizations.editIntegrationInformation();
       InteractorsTools.checkCalloutMessage('Integration was saved');
+      Organizations.closeIntegrationDetailsPane();
     },
   );
 });

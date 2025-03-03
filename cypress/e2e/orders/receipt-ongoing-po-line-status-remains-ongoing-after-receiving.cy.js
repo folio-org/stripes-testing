@@ -13,10 +13,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
-import {
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_STATUSES,
-} from '../../support/constants';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import Receiving from '../../support/fragments/receiving/receiving';

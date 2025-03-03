@@ -1,6 +1,8 @@
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -35,13 +37,16 @@ describe('Inventory', () => {
     });
 
     it(
-      'C409471 (CONSORTIA) Verify the "New order" button on Central tenant Instance page (consortia) (folijet)',
-      { tags: ['extendedPathECS', 'folijet', 'C409471'] },
+      'C409466 (CONSORTIA) Verify the "Move holdings/items to another instance" button on Central tenant Instance page (consortia) (folijet)',
+      { tags: ['extendedPathECS', 'folijet', 'C409466'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyNewOrderOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.moveHoldingsItemsToAnotherInstance,
+          false,
+        );
       },
     );
   });

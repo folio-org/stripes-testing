@@ -85,7 +85,13 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          user.userId,
+          'No change in value required',
+          'Warning',
+        );
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.verifyLogsPane();
         statuses.forEach((status) => BulkEditLogs.checkLogsCheckbox(status));
@@ -98,11 +104,23 @@ describe('bulk-edit', () => {
         BulkEditLogs.applyEndDateFilters();
         BulkEditLogs.verifyLogResultsFound();
         BulkEditSearchPane.openIdentifierSearch();
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          user.userId,
+          'No change in value required',
+          'Warning',
+        );
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.resetAll();
         BulkEditSearchPane.openIdentifierSearch();
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 0, 1);
+        BulkEditSearchPane.verifyErrorLabel(0, 1);
+        BulkEditSearchPane.verifyShowWarningsCheckbox(true, true);
+        BulkEditSearchPane.verifyErrorByIdentifier(
+          user.userId,
+          'No change in value required',
+          'Warning',
+        );
       },
     );
   });

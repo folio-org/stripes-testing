@@ -84,7 +84,7 @@ describe('Reading Room Access', () => {
 
   it(
     'C494350 Validate Functionality of scanning another patron and cancel button on Reading room access app (volaris)',
-    { tags: ['smoke', 'volaris', 'C494350'] },
+    { tags: ['criticalPath', 'volaris', 'C494350'] },
     () => {
       const firstUserInfo = {
         preferredFirstName: testData.firstUser.preferredFirstName,

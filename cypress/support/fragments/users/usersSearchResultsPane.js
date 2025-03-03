@@ -6,6 +6,7 @@ import {
   MultiColumnListCell,
   including,
   MultiColumnList,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
@@ -71,5 +72,25 @@ export default {
 
   checkSearchResultsCount(rowCount) {
     cy.expect(searchResultsPaneContent.find(MultiColumnList({ rowCount })).exists());
+  },
+
+  verifyUserIsNotPresentInTheList(...userFields) {
+    userFields.forEach((field) => {
+      cy.expect(
+        searchResultsPaneContent
+          .find(MultiColumnListRow({ content: including(field), isContainer: true }))
+          .absent(),
+      );
+    });
+  },
+
+  verifyUserIsPresentInTheList(...userFields) {
+    userFields.forEach((field) => {
+      cy.expect(
+        searchResultsPaneContent
+          .find(MultiColumnListRow({ content: including(field), isContainer: true }))
+          .exists(),
+      );
+    });
   },
 };

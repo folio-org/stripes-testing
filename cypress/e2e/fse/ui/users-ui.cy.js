@@ -5,7 +5,10 @@ describe('fse-users - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.usersPath,
+      waiter: Users.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -13,7 +16,6 @@ describe('fse-users - UI', () => {
     `TC195391 - verify that users page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
-      cy.visit(TopMenu.usersPath);
       Users.waitLoading();
     },
   );

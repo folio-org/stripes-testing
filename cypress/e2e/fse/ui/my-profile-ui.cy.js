@@ -6,7 +6,10 @@ describe('fse-my-profile - UI', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: SettingsMenu.myProfilePath,
+      waiter: MyProfile.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -14,8 +17,6 @@ describe('fse-my-profile - UI', () => {
     `TC195470 - verify that change password page is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['fse', 'ui', 'myProfile'] },
     () => {
-      cy.visit(SettingsMenu.myProfilePath);
-      MyProfile.waitLoading();
       MyProfile.openChangePassword();
       ChangePassword.waitLoading();
       ChangePassword.checkInitialState();

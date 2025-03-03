@@ -66,13 +66,10 @@ describe('Data Export', () => {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,
         }).then(() => {
-          cy.waitForAuthRefresh(
-            () => {
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            },
-            { timeout: 10_000 },
-          );
+          cy.waitForAuthRefresh(() => {
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          });
         });
       });
     });
@@ -96,10 +93,8 @@ describe('Data Export', () => {
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains('Create a new local MARC authority record');
-        QuickMarcEditor.clickAuthorityLookUpButton();
-        QuickMarcEditor.selectAuthorityFile(LC_NAME_AUTHORITY_FILE);
-        QuickMarcEditor.verifyAuthorityFileSelected(LC_NAME_AUTHORITY_FILE);
-        QuickMarcEditor.clickSaveAndCloseInModal();
+        MarcAuthority.checkSourceFileSelectShown();
+        MarcAuthority.selectSourceFile(LC_NAME_AUTHORITY_FILE);
 
         newFields.forEach((newField) => {
           MarcAuthority.addNewFieldAfterExistingByTag(

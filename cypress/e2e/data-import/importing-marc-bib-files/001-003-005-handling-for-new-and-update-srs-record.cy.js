@@ -186,7 +186,6 @@ describe('Data Import', () => {
           InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
           InventoryViewSource.notContains('003\t');
           InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
-
           InventoryViewSource.extructDataFrom999Field().then((uuid) => {
             // change file using uuid for 999 field
             DataImport.editMarcFile(
@@ -254,6 +253,7 @@ describe('Data Import', () => {
 
           // check instance is updated
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryViewSource.close();
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();

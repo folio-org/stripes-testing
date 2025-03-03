@@ -393,28 +393,6 @@ describe('Data Import', () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.searchByParameter(
-          'Subject',
-          collectionOfProfilesForCreate[0].mappingProfile.modifications.data,
-        );
-        cy.wait(1500);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-
-        // download exported marc file
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        ExportFile.downloadExportedMarcFile(exportedFileName);
-
-        // edit marc file to add one record
-        DataImport.editMarcFileAddNewRecords(
-          exportedFileName,
-          fileNameWithUpdatedContent,
-          filePathWithUpdatedContent,
-        );
-
         // create mapping profiles for updating
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
@@ -526,6 +504,29 @@ describe('Data Import', () => {
           5,
         );
         NewJobProfile.saveAndClose();
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        InventorySearchAndFilter.searchByParameter(
+          'Subject',
+          collectionOfProfilesForCreate[0].mappingProfile.modifications.data,
+        );
+        cy.wait(1500);
+        InventorySearchAndFilter.saveUUIDs();
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+
+        // download exported marc file
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+        ExportFile.uploadFile(nameForCSVFile);
+        ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+        ExportFile.downloadExportedMarcFile(exportedFileName);
+
+        // edit marc file to add one record
+        DataImport.editMarcFileAddNewRecords(
+          exportedFileName,
+          fileNameWithUpdatedContent,
+          filePathWithUpdatedContent,
+        );
 
         // upload the edited marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);

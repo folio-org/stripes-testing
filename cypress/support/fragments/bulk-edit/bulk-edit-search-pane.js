@@ -79,6 +79,16 @@ export default {
     cy.wait(1000);
   },
 
+  scrollInAreYouSureForm(direction) {
+    cy.get('[class^=modal-] div[class^="mclScrollable"]').scrollTo(direction);
+    cy.wait(1000);
+  },
+
+  scrollInChangedAccordion(direction) {
+    cy.get('[class^=previewAccordion-] div[class^="mclScrollable"]').scrollTo(direction);
+    cy.wait(1000);
+  },
+
   checkForUploading(fileName) {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
@@ -600,6 +610,18 @@ export default {
     });
   },
 
+  verifyError(identifier, reasonMessage, status = 'Error') {
+    cy.expect([
+      errorsAccordion
+        .find(MultiColumnListCell({ content: identifier, column: 'Record identifier' }))
+        .exists(),
+      errorsAccordion.find(MultiColumnListCell({ content: status, column: 'Status' })).exists(),
+      errorsAccordion
+        .find(MultiColumnListCell({ column: 'Reason', content: `${reasonMessage} ` }))
+        .exists(),
+    ]);
+  },
+
   verifyErrorByIdentifier(identifier, reasonMessage, status = 'Error') {
     cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
       cy.expect([
@@ -640,13 +662,11 @@ export default {
     );
   },
 
-  verifyShowWarningsCheckbox(isChecked = false) {
-    cy.expect(errorsAccordion.find(Checkbox('Show warnings')).has({ checked: isChecked }));
-  },
-
-  verifyShowWarningsCheckboxDisabled() {
+  verifyShowWarningsCheckbox(isDisabled, isChecked) {
     cy.expect(
-      errorsAccordion.find(Checkbox({ labelText: 'Show warnings', disabled: true })).exists(),
+      errorsAccordion
+        .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
+        .exists(),
     );
   },
 
@@ -1091,7 +1111,8 @@ export default {
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyAreYouSureColumnTitlesDoNotInclude(title) {
+  verifyAreYouSureColumnTitlesDoNotInclude(title, isNeedToScroll = false) {
+    if (isNeedToScroll) this.scrollInAreYouSureForm('right');
     cy.expect(areYouSureForm.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -1099,7 +1120,8 @@ export default {
     cy.expect(changesAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
-  verifyChangedColumnTitlesDoNotInclude(title) {
+  verifyChangedColumnTitlesDoNotInclude(title, isNeedToScroll = false) {
+    if (isNeedToScroll) this.scrollInChangedAccordion('right');
     cy.expect(changesAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
@@ -1280,6 +1302,17 @@ export default {
       .should('eq', `1 - ${recordsNumber}`);
   },
 
+  verifyPaginatorInErrorsAccordion(recordsNumber, isNextButtonDisabled = true) {
+    cy.expect([
+      errorsAccordion.find(previousPaginationButton).has({ disabled: true }),
+      errorsAccordion.find(nextPaginationButton).has({ disabled: isNextButtonDisabled }),
+    ]);
+    cy.get('div[class^="errorAccordion"] div[class^="prevNextPaginationContainer-"]')
+      .find('div')
+      .invoke('text')
+      .should('eq', `1 - ${recordsNumber}`);
+  },
+
   verifyPaginatorInChangedRecords(recordsNumber, isNextButtonDisabled = true) {
     cy.expect([
       changesAccordion.find(previousPaginationButton).has({ disabled: true }),
@@ -1348,5 +1381,11 @@ export default {
       });
     }
     checkResponse();
+  },
+
+  verifyCellWithContentAbsentsInChangesAccordion(...cellContent) {
+    cellContent.forEach((content) => {
+      cy.expect(changesAccordion.find(MultiColumnListCell(content)).absent());
+    });
   },
 };

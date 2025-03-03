@@ -1,22 +1,22 @@
-import { including, HTML } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
   KeyValue,
-  Modal,
-  MultiColumnListCell,
-  Section,
-  MultiColumnList,
-  Pane,
-  PaneHeader,
   Link,
+  Modal,
+  MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListRow,
+  PaneHeader,
+  Section,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
-import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import InventoryViewSource from './inventoryViewSource';
+import SelectLocationModal from './modals/selectLocationModal';
 
-const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const editButton = Button({ id: 'edit-holdings' });
@@ -28,7 +28,6 @@ const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
-const holdingsViewPane = Pane({ id: 'ui-inventory.holdingsRecordView' });
 
 function waitLoading() {
   cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
@@ -49,6 +48,12 @@ function checkCallNumberSuffix(prefix) {
   cy.expect(KeyValue('Call number suffix').has({ value: prefix }));
 }
 
+export const actionsMenuOptions = {
+  viewSource: 'View source',
+  editMarcBibliographicRecord: 'Edit MARC bibliographic record',
+  updateOwnership: 'Update ownership',
+};
+
 export default {
   checkCopyNumber,
   checkCallNumberType,
@@ -62,7 +67,7 @@ export default {
 
   // actions
   close: () => {
-    cy.do(Pane({ id: 'ui-inventory.holdingsRecordView' }).find(closeButton).click());
+    cy.do(holdingsRecordViewSection.find(closeButton).click());
     cy.expect(holdingsRecordViewSection.absent());
   },
   editInQuickMarc: () => {
@@ -100,40 +105,26 @@ export default {
 
     return HoldingsRecordEdit;
   },
+  updateOwnership: (secondMember, action, holdingsHrid, firstMember, locationName) => {
+    cy.do(actionsButton.click());
+    cy.wait(1000);
+    cy.do(Button('Update ownership').click());
+    SelectLocationModal.validateSelectLocationModalView(secondMember);
+    SelectLocationModal.selectLocation(
+      action,
+      holdingsHrid,
+      firstMember,
+      secondMember,
+      locationName,
+    );
+  },
 
   openAccordion: (name) => {
     cy.do(Accordion(name).click());
   },
 
   // checks
-  checkActionsMenuOptionsInFolioSource: () => {
-    cy.do(actionsButton.click());
-    cy.expect(viewSourceButton.absent());
-    cy.expect(editInQuickMarcButton.absent());
-    // close openned Actions
-    cy.do(actionsButton.click());
-  },
-  checkActionsMenuOptionsInMarcSource: () => {
-    cy.do(actionsButton.click());
-    cy.expect(viewSourceButton.exists());
-    cy.expect(editInQuickMarcButton.exists());
-    // close openned Actions
-    cy.do(actionsButton.click());
-  },
-  checkActionsMenuOptions() {
-    cy.do(actionsButton.click());
-    cy.expect(editButton.exists());
-    cy.expect(duplicateButton.exists());
-    cy.expect(deleteButton.exists());
-    // close openned Actions
-    cy.do(actionsButton.click());
-  },
   checkSource: (sourceValue) => cy.expect(KeyValue('Source', { value: sourceValue }).exists()),
-  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
-    holdingsRecordViewSection
-      .find(KeyValue('Instance HRID'))
-      .has({ value: expectedInstanceHrId }),
-  ),
   checkHrId: (expectedHrId) => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
   checkPermanentLocation: (expectedLocation) => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
   checkTemporaryLocation: (expectedLocation) => cy.expect(KeyValue('Temporary', { value: expectedLocation }).exists()),
@@ -228,7 +219,7 @@ export default {
     );
   },
   checkHoldingRecordViewOpened: () => {
-    cy.expect(holdingsViewPane.exists());
+    cy.expect(holdingsRecordViewSection.exists());
   },
   checkHotlinkToPOL: (number) => {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
@@ -300,11 +291,7 @@ export default {
     checkCallNumberSuffix(callNumberSuffix);
   },
   checkTitle: (title) => {
-    cy.expect(
-      Pane({ id: 'ui-inventory.holdingsRecordView' })
-        .find(HTML(including(title)))
-        .exists(),
-    );
+    cy.expect(holdingsRecordViewSection.find(HTML(including(title))).exists());
   },
   checkPublicDisplayCheckboxState(expectedState) {
     const accordionSection = document.querySelector('#receiving-history-accordion');
@@ -370,5 +357,17 @@ export default {
         )
         .absent(),
     );
+  },
+
+  validateOptionInActionsMenu(options) {
+    cy.do(actionsButton.click());
+    options.forEach(({ optionName, shouldExist }) => {
+      if (shouldExist) {
+        cy.expect(Button(optionName).exists());
+      } else {
+        cy.expect(Button(optionName).absent());
+      }
+    });
+    cy.do(actionsButton.click());
   },
 };

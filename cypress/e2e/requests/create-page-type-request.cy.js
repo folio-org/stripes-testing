@@ -119,7 +119,7 @@ describe('Requests', () => {
       createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
       createPageTypeRequest.verifyRequestsCountOnItemRecord();
       createPageTypeRequest.clickRequestsCountLink();
-      createPageTypeRequest.clickRequesterBarcode(user.username);
+      createPageTypeRequest.clickRequesterBarcode(instanceData.instanceTitle, user.username);
       createPageTypeRequest.verifyOpenRequestCounts();
       createPageTypeRequest.clickOpenRequestsCountLink();
     },

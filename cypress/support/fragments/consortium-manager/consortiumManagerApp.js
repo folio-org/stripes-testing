@@ -14,6 +14,9 @@ import InteractorsTools from '../../utils/interactorsTools';
 const selectMembersButton = Button('Select members');
 const collapseAllButton = Button('Collapse all');
 const expandAllButton = Button('Expand all');
+const managementPane = Pane('Management');
+const expandPaneIcon = Button({ icon: 'caret-right' });
+const collapsePaneIcon = Button({ icon: 'caret-left' });
 
 export const messages = {
   created: (name, members) => `${name} was successfully created for ${members} libraries.`,
@@ -26,6 +29,7 @@ export const messages = {
 };
 
 export const settingsItems = {
+  authorizationPolicies: 'Authorization policies',
   authorizationRoles: 'Authorization roles',
   circulation: 'Circulation',
   dataExport: 'Data export',
@@ -63,8 +67,8 @@ export default {
     );
   },
 
-  verifySelectMembersButton() {
-    cy.expect(selectMembersButton.exists());
+  verifySelectMembersButton(isEnabled = true) {
+    cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
   },
 
   verifyPaneIncludesSettings(settingsList) {
@@ -164,5 +168,54 @@ export default {
   checkMessage(message, calloutType = calloutTypes.success) {
     InteractorsTools.checkCalloutMessage(including(message), calloutType);
     InteractorsTools.closeCalloutMessage();
+  },
+
+  verifyManagementPane() {
+    this.verifySettingPaneIsDisplayed();
+    this.verifyPaneIncludesSettings();
+
+    cy.expect(managementPane.find(collapsePaneIcon).exists());
+    const availableSettingsOptions = [];
+    const availableLogsReportsOptions = [];
+    cy.get('#settings-nav-pane [data-test-nav-list-section=true]').then((sections) => {
+      cy.wrap(sections[0])
+        .find('a')
+        .then((options) => {
+          cy.wrap(options).each(($el) => {
+            availableSettingsOptions.push($el.text());
+          });
+        });
+      cy.wrap(sections[1])
+        .find('a')
+        .then((options) => {
+          cy.wrap(options).each(($el) => {
+            availableLogsReportsOptions.push($el.text());
+          });
+        });
+      cy.wrap(availableSettingsOptions).should(
+        'deep.equal',
+        Object.values(settingsItems)
+          .filter((el) => !el.includes('Data'))
+          .sort(),
+      );
+      cy.wrap(availableLogsReportsOptions).should(
+        'deep.equal',
+        Object.values(settingsItems)
+          .filter((el) => el.includes('Data'))
+          .sort(),
+      );
+    });
+  },
+
+  toggleManagementPane(expand = false) {
+    if (expand) {
+      cy.do(expandPaneIcon.click());
+      this.verifyManagementPane();
+    } else {
+      cy.do(managementPane.find(collapsePaneIcon).click());
+      cy.expect([managementPane.absent(), expandPaneIcon.exists()]);
+    }
+    this.waitLoading();
+    this.verifySelectMembersButton();
   },
 };

@@ -21,6 +21,7 @@ const invalidHoldingUUIDsFileName = `InvalidHoldingUUIDs_${getRandomPostfix()}.c
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
+      cy.clearLocalStorage();
       cy.createTempUser([
         Permissions.bulkEditView.gui,
         Permissions.bulkEditEdit.gui,
@@ -85,7 +86,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.checkForUploading(invalidHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(1);
-        BulkEditSearchPane.verifyPaneRecordsCount('0 holding');
+        BulkEditSearchPane.verifyPaneRecordsCount('0 holdings');
         BulkEditSearchPane.verifyNonMatchedResults(invalidHoldingUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrorsExists();

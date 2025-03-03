@@ -19,6 +19,7 @@ describe('eHoldings', () => {
     };
 
     before('Creating users and getting info about title', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
@@ -48,7 +49,7 @@ describe('eHoldings', () => {
 
     it(
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C684'] },
+      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C684'] },
       () => {
         cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
           path: TopMenu.eholdingsPath,

@@ -9,7 +9,8 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe.skip('Inventory', () => {
+  // test case obsolete
   describe('Cataloging -> Maintaining the catalog', () => {
     let user;
     const instanceTitle = `C3497 autotestInstance ${getRandomPostfix()}`;

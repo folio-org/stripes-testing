@@ -1,10 +1,10 @@
 import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('lists', () => {
-  describe('duplicate list', () => {
+describe('Lists', () => {
+  describe('Duplicate list', () => {
     const userData = {};
 
     const duplicateListData = {
@@ -40,7 +40,7 @@ describe('lists', () => {
 
     it(
       'C423614 Duplicate lists - Canned reports without modified data (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C423614'] },
+      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C423614'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

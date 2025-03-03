@@ -1,25 +1,26 @@
 import { HTML, including, not } from '@interactors/html';
 import {
-  KeyValue,
-  MultiColumnList,
-  Section,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  Button,
   Accordion,
-  Link,
-  Pane,
-  matching,
-  Callout,
   Badge,
+  Button,
+  Callout,
+  KeyValue,
+  Link,
+  MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
+  Pane,
+  Section,
   Tooltip,
+  matching,
 } from '../../../../interactors';
-import InstanceRecordEdit from './instanceRecordEdit';
-import InventoryNewHoldings from './inventoryNewHoldings';
-import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InteractorsTools from '../../utils/interactorsTools';
+import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
+import InventoryEditMarcRecord from './inventoryEditMarcRecord';
+import InventoryNewHoldings from './inventoryNewHoldings';
+import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -47,6 +48,7 @@ const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const addItemButton = Button('Add item');
+const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -186,6 +188,20 @@ const getMultiColumnListCellsValues = (cell) => {
         });
     })
     .then(() => cells);
+};
+
+export const actionsMenuOptions = {
+  addMarcHoldingsRecord: 'Add MARC holdings record',
+  edit: 'Edit',
+  duplicate: 'Duplicate',
+  delete: 'Delete',
+  moveHoldingsItemsToAnotherInstance: 'Move holdings/items to another instance',
+  moveItemsWithinAnInstance: 'Move items within an instance',
+  newOrder: 'New order',
+  shareLocalInstance: 'Share local instance',
+  newRequest: 'New request',
+  setRecordForDeletion: 'Set record for deletion',
+  newMarcBibRecord: 'New MARC bib record',
 };
 
 export default {
@@ -530,6 +546,12 @@ export default {
     InstanceRecordEdit.waitLoading();
   },
 
+  moveHoldingsItemsToAnotherInstance: () => {
+    cy.do(rootSection.find(actionsButton).click());
+    cy.do(Button('Move holdings/items to another instance').click());
+    SelectInstanceModal.verifyModalExists();
+  },
+
   addHoldings: () => {
     cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
     InventoryNewHoldings.waitLoading();
@@ -563,49 +585,59 @@ export default {
     });
   },
 
-  verifyEditInstanceButtonAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'edit-instance' }).absent());
+  expandHoldings(...holdingToBeOpened) {
+    const openActions = [];
+    for (let i = 0; i < holdingToBeOpened.length; i++) {
+      openActions.push(
+        Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader(),
+      );
+    }
+    cy.do(openActions);
+    // don't have elem on page for waiter
+    cy.wait(2000);
+  },
+
+  expandConsortiaHoldings() {
+    cy.wait(2000);
+    cy.do(consortiaHoldingsAccordion.clickHeader());
+    cy.wait(2000);
+    cy.expect(consortiaHoldingsAccordion.has({ open: true }));
+  },
+
+  expandMemberSubHoldings(memberTenantName) {
+    cy.wait(4000);
+    cy.do(Accordion(memberTenantName).focus());
+    cy.do(Accordion(memberTenantName).clickHeader());
+    cy.wait(2000);
+    cy.expect(Accordion(memberTenantName).has({ open: true }));
+  },
+
+  openHoldingsAccordion: (location) => {
+    cy.wait(2000);
+    cy.do(Button(including(location)).click());
+    cy.wait(6000);
+  },
+
+  verifyIsItemCreated: (itemBarcode) => {
+    cy.expect(
+      rootSection
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
+  },
+
+  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: memberId }).has({ open: isOpen }),
+      Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).exists(),
+    ]);
   },
 
   verifyEditInstanceButtonIsEnabled() {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(Button({ id: 'edit-instance' }).has({ disabled: false }));
-  },
-
-  verifyAddMARCHoldingsRecordOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'Add MARC holdings record' }).absent());
-  },
-
-  verifyViewRequestOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button('New request').absent());
-  },
-
-  verifyViewRequestOptionEnabled() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button(including('New request')).exists());
-  },
-
-  verifyNewOrderOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'clickable-create-order' }).absent());
-  },
-
-  verifyShareLocalInstanceOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'share-local-instance' }).absent());
-  },
-
-  verifyMoveItemsWithinAnInstanceOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'inventory-menu-section' }).absent());
-  },
-
-  verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'move-instance' }).absent());
   },
 
   verifyInstanceHeader(header) {
@@ -614,14 +646,17 @@ export default {
       .should('have.text', header);
   },
 
-  verifySetRecordForDeletionOptionEnabled() {
+  validateOptionInActionsMenu(optionName, shouldExist = true) {
     cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'quick-export-trigger' }).has({ disabled: false }));
+    if (shouldExist) {
+      cy.expect(Button(optionName).exists());
+    } else {
+      cy.expect(Button(optionName).absent());
+    }
   },
 
-  verifySetRecordForDeletionOptionAbsent() {
-    cy.do(rootSection.find(actionsButton).click());
-    cy.expect(Button({ id: 'quick-export-trigger' }).absent());
+  validateHoldingsAbsent(holdingsLocation) {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingsLocation}`) }).absent());
   },
 
   checkMultipleItemNotesWithStaffOnly: (
@@ -704,6 +739,38 @@ export default {
       date1KeyValue.has({ value: date1 }),
       date2KeyValue.has({ value: date2 }),
       dateTypeKeyValue.has({ value: dateType }),
+    ]);
+  },
+
+  verifyLastUpdatedDate(updatedDate) {
+    cy.expect(
+      Accordion('Administrative data')
+        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .exists(),
+    );
+  },
+
+  verifyNoteTextAbsentInInstanceAccordion(noteText) {
+    cy.expect(instanceDetailsNotesSection.find(HTML(including(noteText))).absent());
+  },
+
+  verifyConsortiaHoldingsAccordion(isOpen = false) {
+    cy.expect([
+      Section({ id: including('consortialHoldings') }).exists(),
+      consortiaHoldingsAccordion.has({ open: isOpen }),
+    ]);
+  },
+
+  verifyMemberSubHoldingsAccordionAbsent(memberId) {
+    cy.wait(2000);
+    cy.expect(Accordion({ id: including(memberId) }).absent());
+  },
+
+  verifyMemberSubHoldingsAccordion(memberId, isOpen = true) {
+    cy.wait(2000);
+    cy.expect([
+      consortiaHoldingsAccordion.has({ open: isOpen }),
+      Accordion({ id: including(memberId) }).exists(),
     ]);
   },
 };

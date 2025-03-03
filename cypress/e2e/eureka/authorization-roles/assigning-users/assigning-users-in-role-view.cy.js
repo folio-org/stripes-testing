@@ -2,19 +2,21 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../../support/fragments/topMenu';
+import UsersCard from '../../../../support/fragments/users/usersCard';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleAName: `Auto Role A C627249 ${getRandomPostfix()}`,
-        roleBName: `Auto Role B C627249 ${getRandomPostfix()}`,
+        roleAName: `Autotest Role A C627249 ${getRandomPostfix()}`,
+        roleBName: `Autotest Role B C627249 ${getRandomPostfix()}`,
         filtername: 'Status',
         optionName: 'Active',
       };
 
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Users Settings', action: 'Manage' },
+        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
       ];
 
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
@@ -66,7 +68,7 @@ describe('Eureka', () => {
 
       it(
         'C627249 [UIROLES-125] Assigning user to an authorization role which does not have users assigned while having users.settings Manage (eureka)',
-        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627249'] },
+        { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C627249'] },
         () => {
           const usersCallRegExpGet = new RegExp(
             `\\/roles\\/users\\?.+query=roleId==${testData.roleAId}`,
@@ -93,6 +95,8 @@ describe('Eureka', () => {
           cy.intercept('POST', '/roles/users').as('usersPost');
           cy.intercept('PUT', '/roles/users/*').as('usersPut');
           AuthorizationRoles.clickSaveInAssignModal();
+          cy.wait('@usersPost').its('response.statusCode').should('eq', 201);
+          cy.wait('@usersPut').its('response.statusCode').should('eq', 204);
           AuthorizationRoles.verifyAssignedUsersAccordion();
           AuthorizationRoles.checkUsersAccordion(2);
           AuthorizationRoles.verifyAssignedUser(
@@ -107,8 +111,15 @@ describe('Eureka', () => {
             true,
             testData.groupBName,
           );
-          cy.wait('@usersPost').its('response.statusCode').should('eq', 201);
-          cy.wait('@usersPut').its('response.statusCode').should('eq', 204);
+
+          AuthorizationRoles.clickOnAssignedUserName(
+            testData.userB.lastName,
+            testData.userB.firstName,
+          );
+          UsersCard.varifyUserCardOpened();
+          UsersCard.verifyUserRolesCounter('2');
+          UsersCard.clickUserRolesAccordion();
+          UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);
         },
       );
     });

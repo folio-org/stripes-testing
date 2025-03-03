@@ -19,13 +19,15 @@ import {
   PaneHeader,
   matching,
   DropdownMenu,
+  Callout,
+  Link,
 } from '../../../../../interactors';
 import DateTools from '../../../utils/dateTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 import { AUTHORIZATION_ROLES_COLUMNS } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
-const newButton = Button('+ New');
+const newButton = Button(or('+ New', 'New'));
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
@@ -56,13 +58,11 @@ const saveButton = Button('Save & close');
 const roleNameInView = KeyValue('Name');
 const roleDescriptionInView = KeyValue('Description');
 const duplicateButton = Button('Duplicate');
-
 const capabilityTables = {
   Data: MultiColumnList({ dataTestId: 'capabilities-data-type' }),
   Settings: MultiColumnList({ dataTestId: 'capabilities-settings-type' }),
   Procedural: MultiColumnList({ dataTestId: 'capabilities-procedural-type' }),
 };
-
 const roleSearchInputField = rolesPane.find(TextField({ testid: 'search-field' }));
 const roleSearchButton = rolesPane.find(Button({ dataTestID: 'search-button' }));
 const usersAccordion = Accordion('Assigned users');
@@ -94,10 +94,18 @@ const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
 const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
+const createAccessErrorText = 'Role could not be created: Access Denied';
+const clearFieldButton = Button({ icon: 'times-circle-solid' });
+const noAccessErrorText =
+  'Could not load authorization roles. User does not have required permissions.';
+const successCreateText = 'Role has been created successfully';
+const successUpdateText = 'Role has been updated successfully';
+const shareToAllButton = Button('Share to all');
+const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
+const successDeleteText = 'Role has been deleted successfully';
 
 const getResultsListByColumn = (columnIndex) => {
   const cells = [];
-
   cy.wait(2000);
   return cy
     .get('div[data-testid^="capabilities-"] [data-row-index]')
@@ -116,6 +124,9 @@ const getResultsListByColumn = (columnIndex) => {
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
 export default {
+  capabilitiesAccordion,
+  capabilitySetsAccordion,
+  capabilityTables,
   waitLoading: () => {
     cy.expect(rolesPane.exists());
   },
@@ -301,7 +312,7 @@ export default {
   },
 
   checkAfterSaveCreate: (roleName, roleDescription = '') => {
-    cy.expect(createRolePane.absent());
+    cy.expect([createRolePane.absent(), Callout(successCreateText).exists()]);
     cy.do(
       rolesPane.find(MultiColumnListCell(roleName)).perform((element) => {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
@@ -365,6 +376,7 @@ export default {
   checkAfterSaveEdit: (roleName, roleDescription = '') => {
     cy.expect([
       editRolePane.absent(),
+      Callout(successUpdateText).exists(),
       Pane(roleName).exists(),
       roleNameInView.has({ value: roleName }),
     ]);
@@ -422,8 +434,9 @@ export default {
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
 
-  clickDeleteRole: () => {
-    cy.do([actionsButton.click(), deleteButton.click()]);
+  clickDeleteRole: (roleName = false) => {
+    const actionsButtonToClick = roleName ? Pane(roleName).find(actionsButton) : actionsButton;
+    cy.do([actionsButtonToClick.click(), deleteButton.click()]);
     cy.expect([
       deleteRoleModal.find(deleteButton).exists(),
       deleteRoleModal.find(cancelButton).exists(),
@@ -438,6 +451,7 @@ export default {
   confirmDeleteRole: (roleName) => {
     cy.do(deleteRoleModal.find(deleteButton).click());
     cy.expect([
+      Callout(successDeleteText).exists(),
       deleteRoleModal.absent(),
       Pane(roleName).absent(),
       rolesPane.find(HTML(roleName, { className: including('root') })).absent(),
@@ -501,7 +515,6 @@ export default {
   verifyAssignedUsersAccordionEmpty: () => {
     cy.expect([
       usersAccordion.has({ open: true }),
-      usersAccordion.find(assignUsersButton).exists(),
       usersAccordion.find(MultiColumnListRow()).absent(),
     ]);
   },
@@ -645,8 +658,9 @@ export default {
     cy.wait(3000);
   },
 
-  clickActionsButton: () => {
-    cy.do(actionsButton.click());
+  clickActionsButton: (roleName = false) => {
+    if (roleName) cy.do(Pane(roleName).find(actionsButton).click());
+    else cy.do(actionsButton.click());
   },
 
   checkDuplicateOptionShown: (isShown = true) => {
@@ -741,9 +755,12 @@ export default {
     cy.expect(DropdownMenu().absent());
   },
 
-  checkActionsButtonShown: (isShown = true) => {
-    if (isShown) cy.expect(actionsButton.exists());
-    else cy.expect(actionsButton.absent());
+  checkActionsButtonShown: (isShown = true, roleToCheck) => {
+    const targetButton = roleToCheck
+      ? Pane(roleToCheck).find(actionsButton)
+      : rolesPane.find(actionsButton);
+    if (isShown) cy.expect(targetButton.exists());
+    else cy.expect(targetButton.absent());
   },
 
   selectCapabilityColumn: (table, action, isSelected = true) => {
@@ -827,10 +844,78 @@ export default {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
         cy.expect([
           rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
-          rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists(),
-          rolesPane.find(MultiColumnListCell(including(updatedBy), { row: rowNumber })).exists(),
         ]);
+        if (updated) cy.expect(rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists());
+        if (updatedBy) {
+          cy.expect(
+            rolesPane.find(MultiColumnListCell(including(updatedBy), { row: rowNumber })).exists(),
+          );
+        }
       }),
     );
+  },
+
+  verifyCreateAccessError: () => {
+    cy.expect([Callout(createAccessErrorText).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createAccessErrorText);
+    cy.expect(Callout(createAccessErrorText).absent());
+  },
+
+  closeRoleCreateView: () => {
+    cy.do(createRolePane.find(Button({ icon: 'times' })).click());
+    cy.expect(createRolePane.absent());
+  },
+
+  clearSearchField: () => {
+    cy.do([roleSearchInputField.focus(), roleSearchInputField.find(clearFieldButton).click()]);
+    cy.wait(1000);
+  },
+
+  verifyAccessErrorShown: () => {
+    cy.expect(Callout(noAccessErrorText).exists());
+    InteractorsTools.dismissCallout(noAccessErrorText);
+    cy.expect(Callout(noAccessErrorText).absent());
+  },
+
+  clickOnAssignedUserName: (lastName, firstName = null) => {
+    const name = firstName ? `${lastName}, ${firstName}` : lastName;
+    const userRow = usersAccordion.find(
+      MultiColumnListRow(including(name), { isContainer: false }),
+    );
+    cy.do(userRow.find(Link()).click());
+  },
+
+  closeAllCalloutsIfShown: () => {
+    cy.wait(2000);
+    cy.document().then((doc) => {
+      const callouts = Cypress.$('[class^="calloutBase-"]', doc);
+      if (callouts.length > 0) {
+        callouts.each(function closeCallout() {
+          Cypress.$(this).find('button[icon="times"]').trigger('click');
+        });
+      }
+      cy.expect(Callout().absent());
+    });
+  },
+
+  verifyUserFoundInModal: (username, isFound = true) => {
+    const targetRow = resultsPaneInAssignModal.find(
+      MultiColumnListRow(including(username), { isContainer: false }),
+    );
+    cy.do([searchInputInAssignModal.fillIn(username), searchButtonInAssignModal.click()]);
+    cy.wait(2000);
+    if (isFound) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+  },
+
+  checkShareToAllButtonShown: (roleName, isShown = true) => {
+    if (isShown) cy.expect(Pane(roleName).find(shareToAllButton).exists());
+    else cy.expect(Pane(roleName).find(shareToAllButton).absent());
+  },
+
+  verifyCreateNameError: () => {
+    cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
+    InteractorsTools.dismissCallout(createNameErrorText);
+    cy.expect(Callout(createNameErrorText).absent());
   },
 };

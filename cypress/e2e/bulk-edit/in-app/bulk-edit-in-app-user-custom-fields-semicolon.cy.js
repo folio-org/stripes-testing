@@ -26,8 +26,9 @@ const customFieldData = {
   label2: `label2;${getRandomPostfix()}`,
 };
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-CSV-${userBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
+const previewOfProposedChangesFileName =
+  BulkEditFiles.getPreviewOfProposedChangesFileName(userBarcodesFileName);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(userBarcodesFileName);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {

@@ -11,6 +11,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   OptionGroup,
   Pane,
@@ -22,7 +23,7 @@ import {
   TextField,
   ValueChipRoot,
   not,
-  MultiSelectMenu,
+  or,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS, BROWSE_CLASSIFICATION_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -33,7 +34,7 @@ import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
-const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const effectiveLocationInput = Accordion('Effective location (item)');
 const sourceAccordion = Accordion('Source');
 const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
@@ -83,7 +84,6 @@ const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-pagi
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
-const itemStatusSearchField = TextField('itemStatus-field');
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
@@ -301,7 +301,7 @@ export default {
 
   showsOnlyNameTypeAccordion() {
     cy.expect(Accordion({ id: 'nameType' }).exists());
-    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion('Effective location (item)').absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -317,7 +317,7 @@ export default {
   },
 
   showsOnlyEffectiveLocation() {
-    cy.expect(Accordion({ id: 'effectiveLocation' }).exists());
+    cy.expect(Accordion('Effective location (item)').exists());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -333,7 +333,7 @@ export default {
   },
 
   filtersIsAbsent() {
-    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion('Effective location (item)').absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -894,8 +894,10 @@ export default {
   searchByStatus(status) {
     cy.do([
       Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
-      itemStatusSearchField.fillIn(status),
-      Checkbox(status).click(),
+      MultiSelect({ id: 'itemStatus-multiselect' }).open(),
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(status)))
+        .click(),
     ]);
   },
 
@@ -1103,7 +1105,14 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+    cy.do(
+      Button({
+        ariaLabel: or(
+          `Clear selected filters for "${accordionName}"`,
+          `Clear selected ${accordionName} filters`,
+        ),
+      }).click(),
+    );
   },
 
   checkSharedInstancesInResultList() {
@@ -1150,5 +1159,37 @@ export default {
     cy.expect(
       inventorySearchResultsPane.find(HTML({ className: including('noResultsMessage-') })).exists(),
     );
+  },
+
+  selectHeldByOption(tenantName, isSelected = true) {
+    cy.wait(ONE_SECOND);
+    cy.do(Accordion('Held by').find(MultiSelect()).fillIn(tenantName));
+    // need to wait until data will be loaded
+    cy.wait(ONE_SECOND);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(tenantName)))
+        .click(),
+    );
+    cy.wait(ONE_SECOND);
+    this.checkHeldByOptionSelected(tenantName, isSelected);
+  },
+
+  checkHeldByOptionSelected: (tenantName, isSelected = true) => {
+    if (isSelected) {
+      cy.expect(
+        Accordion('Held by')
+          .find(MultiSelect())
+          .find(ValueChipRoot(including(tenantName)))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        Accordion('Held by')
+          .find(MultiSelect())
+          .find(ValueChipRoot(including(tenantName)))
+          .absent(),
+      );
+    }
   },
 };

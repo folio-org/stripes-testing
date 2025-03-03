@@ -88,7 +88,7 @@ describe('Eureka', () => {
 
     it(
       'C553008 Modules for a tenant can be retrieved from /_/proxy/tenants/<tenant>/modules (eureka)',
-      { tags: ['smoke', 'eureka', 'C553008'] },
+      { tags: ['smoke', 'eureka', 'shiftLeft', 'C553008'] },
       () => {
         cy.getAdminToken();
         cy.getApplicationsForTenantApi(testData.tenant, false).then((appsResponse) => {

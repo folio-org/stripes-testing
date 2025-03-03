@@ -1,8 +1,11 @@
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import TopMenu from '../../../../support/fragments/topMenu';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
@@ -60,10 +63,12 @@ describe('Eureka', () => {
                       cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
                       cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
                     }
-                    cy.loginAsAdmin({
-                      path: TopMenu.settingsAuthorizationRoles,
-                      waiter: AuthorizationRoles.waitContentLoading,
-                    });
+                    cy.loginAsAdmin();
+                    TopMenuNavigation.openAppFromDropdown(
+                      APPLICATION_NAMES.SETTINGS,
+                      SETTINGS_SUBSECTION_AUTH_ROLES,
+                    );
+                    AuthorizationRoles.waitContentLoading();
                   });
                 });
               });
@@ -105,6 +110,7 @@ describe('Eureka', () => {
           InteractorsTools.checkCalloutExists(testData.putErrorMessage2, testData.errorCalloutType);
 
           cy.reload();
+          cy.wait('@/authn/refresh', { timeout: 20_000 });
           AuthorizationRoles.waitLoading();
           AuthorizationRoles.searchRole(testData.roleBName);
           AuthorizationRoles.clickOnRoleName(testData.roleBName);

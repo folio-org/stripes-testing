@@ -55,8 +55,11 @@ export default {
 
   findAvailableItem(instance, itemBarcode) {
     MarkItemAsMissing.findAndOpenInstance(instance.instanceTitle);
+    cy.wait(1000);
     MarkItemAsMissing.openHoldingsAccordion(instance.holdingId);
+    cy.wait(1000);
     MarkItemAsMissing.openItem(itemBarcode);
+    cy.wait(2000);
   },
 
   verifyRequestsCountOnItemRecord() {
@@ -96,8 +99,23 @@ export default {
     //cy.expect(Section({ id: 'new-request-info' }).find(HTML('Page')).exists());
   },
 
+  waitForInstanceOrItemSpinnerToDisappear() {
+    cy.wait(1000);
+    cy.get('#new-item-info [class^="spinner"]').should('not.exist');
+    cy.wait(500);
+  },
+
   clickNewRequest(itemBarcode) {
-    cy.do([actionsButton.click(), newRequestButton.click()]);
+    cy.wait(500);
+    cy.do(actionsButton.click());
+    cy.wait(500);
+    cy.do(newRequestButton.click());
+    cy.wait(500);
+    cy.do([
+      TextField({ name: 'item.barcode' }).fillIn(itemBarcode),
+      Button({ id: 'clickable-select-item' }).click(),
+    ]);
+    this.waitForInstanceOrItemSpinnerToDisappear();
     this.verifyItemDetailsPrePopulated(itemBarcode);
   },
 
@@ -133,8 +151,13 @@ export default {
     cy.expect(MultiColumnList().has({ rowCount: 1 }));
   },
 
-  clickRequesterBarcode(username) {
-    cy.do(MultiColumnListCell({ row: 0, content: including(username) }).click());
+  clickRequesterBarcode(instance, username) {
+    cy.wait(1000);
+    cy.do(
+      MultiColumnListCell({ row: 0, content: including(instance) })
+        .find(Link(including(instance)))
+        .click(),
+    );
     cy.do(
       Section({ id: 'requester-info' })
         .find(Link(including(username)))

@@ -1,5 +1,5 @@
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -10,48 +10,83 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder, approved: true };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const item = {
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
-    itemBarcode: getRandomPostfix(),
-  };
+  let orderLineUI;
   let user;
   let orderNumber;
-  let orderID;
-  let location;
+  let firstLocation;
   let servicePointId;
+  let secondLocation;
 
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-      order.vendor = response;
-    });
-    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
+        firstLocation = res;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then(
+          (secondRes) => {
+            secondLocation = secondRes;
+
+            MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+              (mtypes) => {
+                cy.getAcquisitionMethodsApi({
+                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+                }).then((params) => {
+                  // Prepare 2 Open Orders for Rollover
+                  Organizations.createOrganizationViaApi(organization).then(
+                    (responseOrganizations) => {
+                      organization.id = responseOrganizations;
+                      order.vendor = organization.id;
+                      const orderLine = {
+                        ...BasicOrderLine.defaultOrderLine,
+                        id: uuid(),
+                        cost: {
+                          listUnitPrice: 200.0,
+                          currency: 'USD',
+                          discountType: 'percentage',
+                          quantityPhysical: 1,
+                          poLineEstimatedPrice: 200.0,
+                        },
+                        fundDistribution: [],
+                        locations: [
+                          { locationId: firstLocation.id, quantity: 1, quantityPhysical: 1 },
+                        ],
+                        acquisitionMethod: params.body.acquisitionMethods[0].id,
+                        physical: {
+                          createInventory: 'Instance, Holding, Item',
+                          materialType: mtypes.body.id,
+                          materialSupplier: responseOrganizations,
+                          volumes: [],
+                        },
+                      };
+                      Orders.createOrderViaApi(order).then((orderResponse) => {
+                        order.id = orderResponse.id;
+                        orderNumber = orderResponse.poNumber;
+                        orderLine.purchaseOrderId = orderResponse.id;
+                        orderLineUI = orderLine;
+                        OrderLines.createOrderLineViaApi(orderLine);
+                        Orders.updateOrderViaApi({
+                          ...orderResponse,
+                          workflowStatus: ORDER_STATUSES.OPEN,
+                        });
+                      });
+                    },
+                  );
+                });
+              },
+            );
+          },
+        );
       });
-    });
-
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-      orderID = response.body.id;
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
-      OrderLines.fillPOLWithTitleLookUp();
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
     });
 
     cy.createTempUser([
@@ -71,32 +106,40 @@ describe('orders: Receive piece from Order', () => {
 
   after(() => {
     cy.getAdminToken();
-    Orders.deleteOrderViaApi(orderID);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      location.institutionId,
-      location.campusId,
-      location.libraryId,
-      location.id,
+      firstLocation.institutionId,
+      firstLocation.campusId,
+      firstLocation.libraryId,
+      firstLocation.id,
+    );
+    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+      secondLocation.institutionId,
+      secondLocation.campusId,
+      secondLocation.libraryId,
+      secondLocation.id,
     );
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C9177 Change location during receiving (thunderjet)',
-    { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
+    { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
       const displaySummary = 'autotestCaption';
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       // Receiving part
       Orders.receiveOrderViaActions();
-      Receiving.selectFromResultsList(item.instanceName);
-      Receiving.receiveAndChangeLocation(0, displaySummary, location.name);
+      Receiving.selectFromResultsList(orderLineUI.titleOrPackage);
+      Receiving.receiveAndChangeLocation(0, displaySummary, secondLocation.name);
 
       Receiving.checkReceived(0, displaySummary);
-      Receiving.selectInstanceInReceive(item.instanceName);
+      Receiving.selectInstanceInReceive();
+      InventoryInstance.checkInstanceTitle(orderLineUI.titleOrPackage);
+      InventoryInstance.openHoldingsAccordion(secondLocation.name);
+      InventoryInstance.openItemByBarcodeAndIndex('No barcode');
     },
   );
 });

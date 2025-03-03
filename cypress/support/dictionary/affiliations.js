@@ -1,27 +1,52 @@
+const currentEnv = Cypress.env('ecs_env_name');
+
 export default {
-  Consortia: 'consortium',
-  University: 'university',
-  // School: 'cs00000int_0003',
-  College: 'college',
-};
+  sprint: {
+    Consortia: 'cs00000int',
+    University: 'cs00000int_0005',
+    School: 'cs00000int_0003',
+    College: 'cs00000int_0001',
+  },
+  snapshot: {
+    Consortia: 'consortium',
+    University: 'university',
+    College: 'college',
+  },
+}[currentEnv];
 
 export const tenantNames = {
-  central: 'Consortium',
-  college: 'College',
-  university: 'University',
-  professional: 'University', // evrk2 only has 2 member tenants, so re-using MT2 here
-  // school: 'School',
-  // special: 'Special,',
-};
+  sprint: {
+    central: 'Central tenant',
+    college: 'Colleague tenant',
+    university: 'University tenant',
+    professional: 'Professional tenant',
+    school: 'School tenant',
+    special: 'Special tenant',
+  },
+  snapshot: {
+    central: 'Consortium',
+    college: 'College',
+    university: 'University',
+    professional: 'University',
+  },
+}[currentEnv];
 
 export const tenantCodes = {
-  central: 'MCO',
-  college: 'COL',
-  university: 'UNI',
-  professional: 'UNI', // evrk2 only has 2 member tenants, so re-using MT2 here
-  // school: 'SCHO',
-  // special: 'SPE,',
-};
+  sprint: {
+    central: 'CEN',
+    college: 'COL',
+    university: 'UNI',
+    professional: 'PROF',
+    school: 'SCHO',
+    special: 'SPE,',
+  },
+  snapshot: {
+    central: 'MCO',
+    college: 'COL',
+    university: 'UNI',
+    professional: 'UNI',
+  },
+}[currentEnv];
 
 export const tenantErrors = {
   code: 'The code must not be longer than 5 characters alphanumeric.',

@@ -23,7 +23,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Consortia Vega', () => {
   const testData = {
-    instanceTitle: `C624278 Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C624278_Instance_${getRandomPostfix()}`,
     itemBarcode: uuid(),
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -152,6 +152,11 @@ describe('Consortia Vega', () => {
             active: true,
             type: 'patron',
             patronGroup: testData.user.userGroup.id,
+          };
+          requestData.holdingsRecordId = testData.holding.id;
+          requestData.itemId = testData.item.id;
+          requestData.item = {
+            barcode: testData.item.barcode,
           };
         })
         .then(() => {

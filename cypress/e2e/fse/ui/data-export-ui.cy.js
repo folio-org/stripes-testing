@@ -11,7 +11,10 @@ describe('fse-data-export - UI for production tenants', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.dataExportPath,
+      waiter: ExportFileHelper.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -19,7 +22,6 @@ describe('fse-data-export - UI for production tenants', () => {
     `TC195288 - verify that data-export module is displayed for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['sanity', 'fse', 'ui', 'data-export'] },
     () => {
-      cy.visit(TopMenu.dataExportPath);
       ExportFileHelper.waitLoading();
     },
   );
@@ -38,7 +40,10 @@ describe('fse-data-export - check data export job for non-production tenants', (
     cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     const instanceID = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({
+      path: TopMenu.dataExportPath,
+      waiter: ExportFileHelper.waitLoading,
+    });
     cy.allure().logCommandSteps();
   });
 
@@ -46,9 +51,6 @@ describe('fse-data-export - check data export job for non-production tenants', (
     `TC195471 - verify data-export job for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['nonProd', 'fse', 'ui', 'data-export'] },
     () => {
-      cy.visit(TopMenu.dataExportPath);
-      ExportFileHelper.waitLoading();
-
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);
 

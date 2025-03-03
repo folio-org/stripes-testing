@@ -278,6 +278,7 @@ Cypress.Commands.add('createItem', (item) => {
       id: itemId,
       ...item,
     },
+    isDefaultSearchParamsRequired: false,
   }).then((res) => {
     return res;
   });

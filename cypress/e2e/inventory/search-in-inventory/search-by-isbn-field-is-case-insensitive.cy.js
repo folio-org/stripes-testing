@@ -53,7 +53,7 @@ describe('Inventory', () => {
 
       it(
         'C466070 Search by "ISBN" field is case-insensitive (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C466070'] },
+        { tags: ['extendedPath', 'spitfire', 'C466070'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);

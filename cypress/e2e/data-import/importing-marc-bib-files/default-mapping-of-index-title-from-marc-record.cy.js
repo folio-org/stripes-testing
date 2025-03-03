@@ -98,6 +98,7 @@ describe('Data Import', () => {
           });
 
           InstanceRecordView.verifyResourceTitle(instance.updatedTitle);
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

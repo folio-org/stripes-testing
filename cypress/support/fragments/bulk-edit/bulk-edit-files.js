@@ -20,11 +20,27 @@ export default {
     }
   },
 
+  getPreviewMarcFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Updates-Preview-MARC-${fileName}`.replace('.csv', '.mrc');
+    } else {
+      return `*-Updates-Preview-MARC-${fileName}`.replace('.csv', '.mrc');
+    }
+  },
+
   getChangedRecordsFileName(fileName, isDateIncluded = false) {
     if (isDateIncluded) {
       return `${todayDate}-Changed-Records-CSV-${fileName}`;
     } else {
       return `*-Changed-Records-CSV-${fileName}`;
+    }
+  },
+
+  getChangedRecordsMarcFileName(fileName, isDateIncluded = false) {
+    if (isDateIncluded) {
+      return `${todayDate}-Changed-Records-MARC-${fileName}`.replace('.csv', '.mrc');
+    } else {
+      return `*-Changed-Records-MARC-${fileName}`.replace('.csv', '.mrc');
     }
   },
 
@@ -238,7 +254,7 @@ export default {
   verifyCSVFileRecordsNumber(fileName, recordsNumber) {
     FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
       FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
-        const values = this.getValuesFromCSVFile(actualContent);
+        const values = this.getValuesFromCSVFile(actualContent.trim());
 
         expect(values).to.have.length(recordsNumber);
       });

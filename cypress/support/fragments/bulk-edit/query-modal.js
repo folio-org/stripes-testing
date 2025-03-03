@@ -17,6 +17,7 @@ const buildQueryButton = Button('Build query');
 const testQueryButton = Button('Test query');
 const cancelButton = Button('Cancel');
 const runQueryButton = Button('Run query');
+const runQueryAndSave = Button('Run query & save');
 const xButton = Button({ icon: 'times' });
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
@@ -35,6 +36,7 @@ export const instanceFieldValues = {
   instanceResourceTitle: 'Instance — Resource title',
   staffSuppress: 'Instance — Staff suppress',
   createdDate: 'Instance — Created date',
+  catalogedDate: 'Instance — Cataloged date',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',
@@ -91,6 +93,10 @@ export const QUERY_OPERATIONS = {
   IS_NULL: 'is null/empty',
   CONTAINS: 'contains',
   START_WITH: 'starts with',
+  GREATER_THAN: 'greater than',
+  LESS_THAN: 'less than',
+  GREATER_THAN_OR_EQUAL_TO: 'greater than or equal to',
+  LESS_THAN_OR_EQUAL_TO: 'less than or equal to',
 };
 
 export const STRING_OPERATORS = {
@@ -225,6 +231,20 @@ export default {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(date));
   },
 
+  populateFiled(filedType, value) {
+    switch (filedType) {
+      case 'input':
+        this.fillInValueTextfield(value);
+        break;
+      case 'select':
+        this.chooseValueSelect(value);
+        break;
+      default:
+        cy.log('No such type');
+        break;
+    }
+  },
+
   fillInValueTextfield(text, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(TextField()).fillIn(text));
   },
@@ -319,6 +339,11 @@ export default {
     this.cancelDisabled(false);
   },
 
+  testQuery() {
+    cy.do(testQueryButton.click());
+    cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
+  },
+
   verifyPreviewOfRecordsMatched() {
     cy.expect([MultiColumnList().exists(), Button('Show columns').exists()]);
     this.testQueryDisabled(false);
@@ -336,6 +361,10 @@ export default {
           );
         });
     });
+  },
+
+  clickRunQueryAndSave() {
+    cy.do(runQueryAndSave.click());
   },
 
   clickRunQuery() {

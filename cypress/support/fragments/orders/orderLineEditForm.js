@@ -13,7 +13,7 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
-import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 

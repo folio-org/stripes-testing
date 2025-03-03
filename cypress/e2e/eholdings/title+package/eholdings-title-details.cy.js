@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C360543 Check the content of "Title information" accordion in "Title" detail record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C360543'] },
+      { tags: ['extendedPath', 'spitfire', 'C360543'] },
       () => {
         cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
           path: TopMenu.eholdingsPath,

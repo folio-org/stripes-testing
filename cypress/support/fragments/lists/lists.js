@@ -12,6 +12,7 @@ import {
   ListRow,
   Modal,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
   Pane,
@@ -59,11 +60,11 @@ const buildQueryModal = Modal('Build query');
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 
-const cannedListInactivePatronsWithOpenLoans = 'Inactive patrons with open loans';
+const constants = {
+  cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
+};
 
-export default {
-  cannedListInactivePatronsWithOpenLoans,
-
+const UI = {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
     cy.wait(2000);
@@ -91,39 +92,6 @@ export default {
         cy.log('"View updated list" didn\'t appear');
       }
     });
-  },
-
-  queryBuilderActions() {
-    this.queryBuilderActionsWithParameters('User — Active', '==', 'True');
-  },
-
-  queryBuilderActionsWithParameters(parameter, operator, value) {
-    cy.get('#field-option-0').click();
-    cy.contains(parameter).click();
-    cy.get('[data-testid="operator-option-0"]').select(operator);
-    cy.get('[data-testid="data-input-select-boolType"]').select(value);
-    cy.do(testQuery.click());
-    cy.wait(2000);
-    cy.do(runQueryAndSave.click());
-    cy.wait(2000);
-  },
-
-  testQuery() {
-    cy.do(testQuery.click());
-    cy.wait(1000);
-  },
-
-  runQueryAndSave() {
-    cy.do(runQueryAndSave.click());
-    cy.wait(2000);
-  },
-
-  changeQueryBoolValue(value) {
-    let valueToSet = 'False';
-    if (value) {
-      valueToSet = 'True';
-    }
-    cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
   },
 
   openActions() {
@@ -340,7 +308,7 @@ export default {
   },
 
   openExpiredPatronLoanList() {
-    cy.do(Link(cannedListInactivePatronsWithOpenLoans).click());
+    cy.do(Link(constants.cannedListInactivePatronsWithOpenLoans).click());
   },
 
   openMissingItemsList() {
@@ -390,7 +358,7 @@ export default {
             optionsFromUI.push(element.text());
           })
           .then(() => {
-            cy.expect(ArrayUtils.compareArrays(optionsFromUI, options)).to.equal(true);
+            cy.expect(ArrayUtils.arrayContainsArray(optionsFromUI, options)).to.equal(true);
           });
       });
     cy.get('button[name=recordType]').click();
@@ -732,7 +700,90 @@ export default {
     const filePath = `cypress\\downloads\\${fileName}.csv`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
   },
+};
 
+const QueryBuilder = {
+  queryBuilderActions() {
+    this.queryBuilderActionsWithParameters('User — Active', '==', 'True');
+  },
+
+  queryBuilderActionsWithParameters(parameter, operator, value) {
+    cy.get('#field-option-0').click();
+    cy.contains(parameter).click();
+    cy.get('[data-testid="operator-option-0"]').select(operator);
+    cy.get('[data-testid="data-input-select-boolType"]').select(value);
+    cy.do(testQuery.click());
+    cy.wait(2000);
+    cy.do(runQueryAndSave.click());
+    cy.wait(2000);
+  },
+
+  testQuery() {
+    cy.do(testQuery.click());
+    cy.wait(1000);
+  },
+
+  runQueryAndSave() {
+    cy.do(runQueryAndSave.click());
+    cy.wait(2000);
+  },
+
+  changeQueryBoolValue(value) {
+    let valueToSet = 'False';
+    if (value) {
+      valueToSet = 'True';
+    }
+    cy.get('[data-testid="data-input-select-boolType"]').select(valueToSet);
+  },
+
+  verifyQueryHeader(header) {
+    cy.get('[class^="mclContainer"] [class^="mclScrollable"]').scrollTo('right');
+    // cy.xpath(`//div[contains(@id, 'list-column-pol') and contains(., '${header}')]`).scrollIntoView();
+    cy.expect(MultiColumnListHeader(header).exists());
+  },
+
+  verifyQueryValue(value, condition) {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(() => {
+        switch (condition) {
+          case 'equals':
+            cy.expect(MultiColumnListCell({ content: value }).exists());
+            break;
+          case 'contains':
+            cy.expect(MultiColumnListCell(including(value)).exists());
+            break;
+          default:
+            cy.log('not implemented yet');
+            break;
+        }
+      });
+  },
+
+  verifyPreviewOfRecordsMatched() {
+    cy.xpath('.//h3[starts-with(., "Query would return")]').then(($element) => {
+      const text = $element.text();
+      const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
+      const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
+      expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
+      expect(previewLabel).to.equal(`Preview of first ${Math.min(previewRecords, 100)} records.`);
+    });
+  },
+
+  getNumberOfRows() {
+    const searchTerm = 'Query would return ';
+    cy.contains(searchTerm).should('be.visible');
+    return cy.xpath(`.//h3[starts-with(., "${searchTerm}")]`).then(($element) => {
+      cy.wrap(true).then(() => {
+        const text = $element.text().replace(`${searchTerm}`, '').replace(' records', '');
+        const parsedText = text.replace(text.substr(text.indexOf('.')), '');
+        return parsedText;
+      });
+    });
+  },
+};
+
+const API = {
   buildQueryOnActiveUsers() {
     return this.getTypesViaApi().then((response) => {
       const filteredEntityTypeId = response.body.entityTypes.find(
@@ -812,6 +863,13 @@ export default {
     });
   },
 
+  getTypeByIdViaApi(id) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `entity-types/${id}`,
+    });
+  },
+
   deleteRecursivelyViaApi(id) {
     recurse(
       () => this.deleteViaApi(id),
@@ -856,4 +914,11 @@ export default {
       return response.body.content.find((item) => item.name === listName).id;
     });
   },
+};
+
+export const Lists = {
+  ...constants,
+  ...QueryBuilder,
+  ...UI,
+  ...API,
 };

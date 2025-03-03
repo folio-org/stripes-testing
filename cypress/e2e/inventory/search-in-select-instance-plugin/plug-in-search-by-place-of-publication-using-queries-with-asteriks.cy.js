@@ -96,7 +96,7 @@ describe('Inventory', () => {
 
     it(
       'C496186 Select Instance plugin | Search for Instance by "Place of publication" field using queries with asterisk (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C496186'] },
+      { tags: ['extendedPath', 'spitfire', 'C496186'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

@@ -6,11 +6,16 @@ import {
   Checkbox,
   DropdownMenu,
   Image,
+  KeyValue,
+  List,
+  ListItem,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   MultiSelect,
+  not,
+  or,
   Pane,
   RadioButton,
   RadioButtonGroup,
@@ -18,13 +23,9 @@ import {
   Section,
   Select,
   SelectionOption,
+  Spinner,
   TextArea,
   TextField,
-  Spinner,
-  ListItem,
-  List,
-  or,
-  not,
 } from '../../../../interactors';
 import SelectUser from '../check-out-actions/selectUser';
 import TopMenu from '../topMenu';
@@ -86,9 +87,21 @@ const rolesPane = selectRolesModal.find(Pane('User roles'));
 const unassignAllRolesModal = Modal('Unassign all user roles');
 const yesButton = Button('Yes');
 const noButton = Button('No');
+const usernameField = TextField({ id: 'adduser_username' });
 const lastNameField = TextField({ id: 'adduser_lastname' });
 const firstNameField = TextField({ id: 'adduser_firstname' });
+const middleNameField = TextField({ id: 'adduser_middlename' });
+const preferredFirstName = TextField({ id: 'adduser_preferredname' });
+const preferredContactSelect = Select({ id: 'adduser_preferredcontact' });
+const preferableServicePointSelect = Select({ id: 'servicePointPreference' });
+const barcodeField = TextField({ id: 'adduser_barcode' });
 const emailField = TextField({ id: 'adduser_email' });
+const expirationDateField = TextField({ id: 'adduser_expirationdate' });
+const birthDateField = TextField({ id: 'adduser_dateofbirth' });
+const phoneField = TextField({ id: 'adduser_phone' });
+const mobilePhoneField = TextField({ id: 'adduser_mobilePhone' });
+const addressSelect = Select({ id: 'adduser_group' });
+const statusSelect = Select({ id: 'useractive' });
 const userRoleDeleteIcon = Button({ id: including('clickable-remove-user-role') });
 const profilePictureCard = Image({ alt: 'Profile picture' });
 const externalUrlButton = Button({ dataTestID: 'externalURL' });
@@ -103,6 +116,8 @@ const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
 const promoteUserModal = Modal('Keycloak user record');
 const confirmButton = Button('Confirm');
 const promoteUserModalText = 'This operation will create new record in Keycloak for';
+
+const saveButton = Button({ id: 'clickable-save' });
 
 let totalRows;
 
@@ -125,23 +140,71 @@ export default {
   openEdit() {
     cy.wait(1000);
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.wait(2000);
     cy.expect(rootPane.exists());
+    cy.wait(3000);
   },
 
   changeMiddleName(midName) {
-    cy.do(TextField({ id: 'adduser_middlename' }).fillIn(midName));
+    cy.do(middleNameField.fillIn(midName));
+  },
+  changeLastName(lastName) {
+    cy.do(lastNameField.fillIn(lastName));
   },
 
-  changePreferredFirstName(prefName) {
-    cy.do(TextField({ id: 'adduser_preferredname' }).fillIn(prefName));
+  changeFirstName(firstName) {
+    cy.do(firstNameField.fillIn(firstName));
+  },
+
+  changeUsername(username) {
+    cy.do(usernameField.fillIn(username));
+  },
+
+  changeEmail(email) {
+    cy.do(emailField.fillIn(email));
+  },
+
+  changeExpirationDate(expirationDate) {
+    cy.do(expirationDateField.fillIn(expirationDate));
+  },
+
+  changeExternalSystemId(externalSystemId) {
+    cy.do(externalSystemIdTextfield.fillIn(externalSystemId));
+  },
+
+  changeBirthDate(birthDate) {
+    cy.do(birthDateField.fillIn(birthDate));
+  },
+
+  changePhone(phone) {
+    cy.do(phoneField.fillIn(phone));
+  },
+
+  changeMobilePhone(mobilePhone) {
+    cy.do(mobilePhoneField.fillIn(mobilePhone));
+  },
+  changePreferredFirstName(prefFirstName) {
+    cy.do(preferredFirstName.fillIn(prefFirstName));
   },
 
   changeUserType(type = 'Patron') {
-    cy.do(Select({ id: 'type' }).choose(type));
+    cy.do(selectRequestType.choose(type));
   },
 
   changePreferredContact(contact = 'Email') {
-    cy.do(Select({ id: 'adduser_preferredcontact' }).choose(contact));
+    cy.do(preferredContactSelect.choose(contact));
+  },
+
+  clearFirstName() {
+    cy.do(firstNameField.clear());
+  },
+
+  clearBarcode() {
+    cy.do(barcodeField.clear());
+  },
+
+  changeStatus(status) {
+    cy.do(statusSelect.choose(status));
   },
 
   searchForPermission(permission) {
@@ -159,7 +222,50 @@ export default {
   },
 
   saveUserEditForm() {
-    cy.do(Button({ id: 'clickable-save' }).click());
+    cy.do(saveButton.click());
+  },
+
+  editUserDetails(user) {
+    // Limitation with permissions
+    // this.changeUsername(testData.editUser.username);
+    // this.changeEmail(user.email);
+    this.addAddress();
+    this.clearFirstName();
+    this.clearBarcode();
+    this.changeMiddleName(user.middleName);
+    this.changeLastName(user.lastName);
+    this.changeUserType(user.userType);
+    this.changePreferredFirstName(user.preferredFirstName);
+    this.changeExpirationDate(user.expirationDate);
+    this.changeExternalSystemId(user.externalSystemId);
+    this.changeBirthDate(user.birthDate);
+    this.changePhone(user.phone);
+    this.changeMobilePhone(user.mobilePhone);
+    this.changePreferredContact(user.preferredContact);
+    this.changeStatus(user.status);
+  },
+
+  verifyUserDetails(user) {
+    // Limitation with permissions
+    // this.checkKeyValue('Username', user.username);
+    // this.checkKeyValue('Email', user.email);
+    this.checkKeyValue('First name', user.firstName);
+    this.checkKeyValue('Barcode', user.barcode);
+    this.checkKeyValue('Middle name', user.middleName);
+    this.checkKeyValue('Last name', user.lastName);
+    this.checkKeyValue('User type', user.userType.toLowerCase());
+    this.checkKeyValue('Preferred first name', user.preferredFirstName);
+    this.checkKeyValue('Expiration date', user.expirationDate);
+    this.checkKeyValue('External system ID', user.externalSystemId);
+    this.checkKeyValue('Birth date', user.birthDate);
+    this.checkKeyValue('Phone', user.phone);
+    this.checkKeyValue('Mobile phone', user.mobilePhone);
+    this.checkKeyValue('Preferred contact', user.preferredContact);
+    this.checkKeyValue('Status', user.status);
+  },
+
+  checkKeyValue(label, value) {
+    cy.expect(KeyValue(label, { value }).exists());
   },
 
   openSelectPermissionsModal() {
@@ -193,7 +299,7 @@ export default {
       cy.expect(userSearch.is({ value: permission }));
       // wait is needed to avoid so fast robot clicks
       cy.wait(1000);
-      cy.do(Button('Search').click());
+      cy.do(searchButton.click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
       cy.wait(2000);
     });
@@ -214,7 +320,7 @@ export default {
     cy.expect(userSearch.is({ value: permission }));
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
-    cy.do(Button('Search').click());
+    cy.do(searchButton.click());
     cy.do(
       Modal({ id: 'permissions-modal' })
         .find(Checkbox({ name: 'selected-selectAll' }))
@@ -242,11 +348,22 @@ export default {
   },
 
   selectPreferableServicePoint(point) {
-    cy.do(Select({ id: 'servicePointPreference' }).choose(point));
+    cy.do(preferableServicePointSelect.choose(point));
   },
 
   openServicePointsAccordion() {
     cy.do(Button({ id: 'accordion-toggle-button-servicePointsSection' }).click());
+    cy.wait(1000);
+  },
+
+  openContactInformationAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-contactInfoSection' }).click());
+    cy.wait(1000);
+  },
+
+  openExtendedInformationAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-extendedInfoSection' }).click());
+    cy.wait(1000);
   },
 
   openReadingRoomAccessAccordion() {
@@ -347,17 +464,18 @@ export default {
   },
 
   cancelChanges() {
-    cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+    cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
   },
 
   cancelEdit() {
-    cy.do(Button('Cancel').click());
+    cy.do(cancelButton.click());
   },
 
   saveAndClose() {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
+    cy.wait(2000);
     cy.expect(rootPane.absent());
   },
 
@@ -377,13 +495,13 @@ export default {
     cy.visit(TopMenu.usersPath);
     cy.do([
       TextField({ id: 'input-user-search' }).fillIn(userName),
-      Button('Search').click(),
+      searchButton.click(),
       MultiColumnList().click({ row: 0, column: 'Active' }),
       userDetailsPane.find(actionsButton).click(),
       Button({ id: 'clickable-edituser' }).click(),
       Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
-      Select({ id: 'servicePointPreference' }).choose('None'),
-      Button({ id: 'clickable-save' }).click(),
+      preferableServicePointSelect.choose('None'),
+      saveButton.click(),
     ]);
   },
 
@@ -489,7 +607,7 @@ export default {
   },
 
   editUsername(username) {
-    cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
+    cy.do(usernameField.fillIn(username));
   },
 
   fillInExternalImageUrlTextField(url) {
@@ -560,7 +678,7 @@ export default {
     cy.expect(userSearch.is({ value: permission }));
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
-    cy.do(Button('Search').click());
+    cy.do(searchButton.click());
   },
 
   verifyPermissionDoesNotExistInSelectPermissions(permission) {
@@ -660,11 +778,11 @@ export default {
   enterValidValueToCreateViaUi: (userData) => {
     return cy
       .do([
-        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
-        TextField({ name: 'barcode' }).fillIn(userData.barcode),
-        TextField({ name: 'username' }).fillIn(userData.username),
-        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+        lastNameField.fillIn(userData.personal.lastName),
+        addressSelect.choose(userData.patronGroup),
+        barcodeField.fillIn(userData.barcode),
+        usernameField.fillIn(userData.username),
+        emailField.fillIn(userData.personal.email),
         saveAndCloseBtn.click(),
       ])
       .then(() => {
@@ -747,11 +865,11 @@ export default {
 
   fillRequiredFields: (userLastName, patronGroup, email, userType = null, userName = null) => {
     if (userType) cy.do(Select({ id: 'type' }).choose(userType));
-    if (userName) cy.do(TextField({ id: 'adduser_username' }).fillIn(userName));
+    if (userName) cy.do(usernameField.fillIn(userName));
     cy.do([
-      TextField({ id: 'adduser_lastname' }).fillIn(userLastName),
-      Select({ id: 'adduser_group' }).choose(patronGroup),
-      TextField({ id: 'adduser_email' }).fillIn(email),
+      lastNameField.fillIn(userLastName),
+      addressSelect.choose(patronGroup),
+      emailField.fillIn(email),
     ]);
     cy.wait(2000);
   },

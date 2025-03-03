@@ -1,9 +1,9 @@
 import Permissions from '../../../support/dictionary/permissions';
-import Lists from '../../../support/fragments/lists/lists';
+import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('lists', () => {
+describe('Lists', () => {
   describe('Edit list', () => {
     const userData = {};
 

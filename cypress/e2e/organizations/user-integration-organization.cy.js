@@ -1,10 +1,10 @@
 import permissions from '../../support/dictionary/permissions';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-organizations: EDI convention in Organization Integration', () => {
   let userId;
@@ -47,6 +47,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor2Integration = getRandomPostfix();
 
   before(() => {
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
@@ -54,7 +55,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
     });
-    cy.visit(TopMenu.organizationsPath);
+    TopMenuNavigation.navigateToApp('Organizations');
   });
 
   after(() => {

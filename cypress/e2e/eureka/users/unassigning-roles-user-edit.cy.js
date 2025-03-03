@@ -110,7 +110,7 @@ describe('Eureka', () => {
 
     it(
       'C627439 [UIU-3301] Unassigning roles when editing user while having ui-users.roles - Manage (eureka)',
-      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'C627439'] },
+      { tags: ['smoke', 'eureka', 'eurekaPhase1', 'shiftLeft', 'C627439'] },
       () => {
         UsersCard.verifyUserRolesCounter('4');
         UserEdit.openEdit();
@@ -181,8 +181,12 @@ describe('Eureka', () => {
         UserEdit.unassignAllRoles();
         UserEdit.verifyUserRolesAccordionEmpty();
         UserEdit.saveAndClose();
-        UsersCard.close();
+
+        // revert the workaround after UIU-3179 is done
+        UsersSearchPane.resetAllFilters();
         cy.intercept('GET', '/roles/users*').as('rolesCall');
+        UsersSearchPane.searchByKeywords(testData.userA.username);
+        cy.wait(2000);
         UsersSearchPane.selectUserFromList(testData.userA.username);
         cy.wait('@rolesCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);

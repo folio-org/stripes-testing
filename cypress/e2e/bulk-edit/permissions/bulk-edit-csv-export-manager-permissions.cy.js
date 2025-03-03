@@ -64,7 +64,7 @@ describe('bulk-edit', () => {
         () => {
           ExportManagerSearchPane.waitLoading();
           ExportManagerSearchPane.searchByBulkEdit();
-          ExportManagerSearchPane.selectJob(user.username);
+          ExportManagerSearchPane.selectJob(user.username.toLowerCase());
           ExportManagerSearchPane.clickJobIdInThirdPane();
 
           BulkEditFiles.verifyMatchedResultFileContent(

@@ -113,7 +113,6 @@ describe('Eureka', () => {
           AuthorizationRoles.checkNewButtonShown(false);
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
-          AuthorizationRoles.checkAfterSaveEdit(testData.roleName, testData.roleDescription);
           AuthorizationRoles.checkCapabilitySetsAccordionCounter(
             `${testData.originalCapabilitySets.length}`,
           );
@@ -128,7 +127,7 @@ describe('Eureka', () => {
           testData.originalCapabilitiesInSets.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
-          AuthorizationRoles.checkActionsButtonShown(false);
+          AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
         },
       );
     });

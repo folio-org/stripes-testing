@@ -62,20 +62,23 @@ describe('MARC', () => {
             .then((userProperties) => {
               users.userProperties = userProperties;
 
-              cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-              cy.setTenant(Affiliations.College);
-              cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-                Permissions.inventoryAll.gui,
-                Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-              ]);
+              cy.affiliateUserToTenant({
+                tenantId: Affiliations.College,
+                userId: users.userProperties.userId,
+                permissions: [
+                  Permissions.inventoryAll.gui,
+                  Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                ],
+              });
 
-              cy.resetTenant();
-              cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-              cy.setTenant(Affiliations.University);
-              cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-                Permissions.inventoryAll.gui,
-                Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-              ]);
+              cy.affiliateUserToTenant({
+                tenantId: Affiliations.University,
+                userId: users.userProperties.userId,
+                permissions: [
+                  Permissions.inventoryAll.gui,
+                  Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                ],
+              });
             })
             .then(() => {
               cy.resetTenant();
@@ -96,6 +99,7 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                cy.reload();
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -133,6 +137,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag600, testData.tag600UpdatedContent);
             QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
@@ -204,8 +210,10 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            BrowseSubjects.waitForSubjectToAppear(testData.expectedSubjectName);
             BrowseSubjects.browse(testData.expectedSubjectName);
             BrowseSubjects.checkValueIsBold(testData.expectedSubjectName);
+            BrowseSubjects.waitForSubjectToAppear(testData.notExpectedSubjectName, false);
             BrowseSubjects.browse(testData.notExpectedSubjectName);
             BrowseSubjects.verifyNonExistentSearchResult(testData.notExpectedSubjectName);
 
@@ -241,8 +249,10 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(testData.expectedContributorNames[0]);
             BrowseContributors.browse(testData.expectedContributorNames[0]);
             BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[0]);
+            BrowseContributors.waitForContributorToAppear(testData.expectedContributorNames[2]);
             BrowseContributors.browse(testData.expectedContributorNames[2]);
             BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[2]);
           },
