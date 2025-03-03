@@ -148,8 +148,6 @@ describe('Eureka', () => {
             });
           });
           cy.setTenant(Affiliations.University);
-          cy.wait(10_000);
-          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssignMembers);
           cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
             roleUniversityId = role.id;
           });
@@ -234,11 +232,11 @@ describe('Eureka', () => {
         });
         CompareRoles.selectRole(testData.roleName, 0);
         testData.capabilitiesForRoleCollege.forEach((capability) => {
-          CompareRoles.checkCapability(capability, true, true, 0);
+          CompareRoles.checkCapability(capability, true, false, 0);
         });
         CompareRoles.verifyNoCapabilitySetsFound(0);
         testData.capabilitiesForRoleCollege.forEach((capability) => {
-          CompareRoles.checkCapability(capability, true, true, 1);
+          CompareRoles.checkCapability(capability, true, false, 1);
         });
         CompareRoles.verifyNoCapabilitySetsFound(1);
       },
