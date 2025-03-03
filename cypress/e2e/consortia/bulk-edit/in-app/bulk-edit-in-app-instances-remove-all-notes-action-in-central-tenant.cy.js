@@ -7,6 +7,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -19,17 +20,17 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 let user;
 let instanceTypeId;
-let dissertationNoteTypeId;
-let generalNoteTypeId;
+let noteTypeId;
 const folioInstance = {
-  title: `C494089 folio instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C478265_FolioInstance_${getRandomPostfix()}`,
 };
 const marcInstance = {
-  title: `C494089 marc instance testBulkEdit_${getRandomPostfix()}`,
+  title: `AT_C478265_MarcInstance_${getRandomPostfix()}`,
 };
 const notes = {
-  dissertation: 'Dissertation note',
-  general: 'General note',
+  administrative: 'Test administrative note',
+  dissertation: 'Test dissertation note',
+  dissertationStaffOnly: 'Test dissertation staff only note',
 };
 const marcInstanceFields = [
   {
@@ -40,11 +41,6 @@ const marcInstanceFields = [
     tag: '245',
     content: `$a ${marcInstance.title}`,
     indicators: ['1', '0'],
-  },
-  {
-    tag: '500',
-    content: `$a ${notes.general}`,
-    indicators: ['\\', '\\'],
   },
   {
     tag: '502',
@@ -79,32 +75,27 @@ describe('Bulk-edit', () => {
           });
           InstanceNoteTypes.getInstanceNoteTypesViaApi({
             limit: 1,
-            query: 'name=="General note"',
-          }).then(({ instanceNoteTypes }) => {
-            generalNoteTypeId = instanceNoteTypes[0].id;
-          });
-          InstanceNoteTypes.getInstanceNoteTypesViaApi({
-            limit: 1,
             query: 'name=="Dissertation note"',
           })
             .then(({ instanceNoteTypes }) => {
-              dissertationNoteTypeId = instanceNoteTypes[0].id;
+              noteTypeId = instanceNoteTypes[0].id;
             })
             .then(() => {
               InventoryInstances.createFolioInstanceViaApi({
                 instance: {
                   instanceTypeId,
                   title: folioInstance.title,
+                  administrativeNotes: [notes.administrative],
                   notes: [
                     {
-                      instanceNoteTypeId: generalNoteTypeId,
-                      note: notes.general,
-                      staffOnly: false,
+                      instanceNoteTypeId: noteTypeId,
+                      note: notes.dissertationStaffOnly,
+                      staffOnly: true,
                     },
                     {
-                      instanceNoteTypeId: dissertationNoteTypeId,
+                      instanceNoteTypeId: noteTypeId,
                       note: notes.dissertation,
-                      staffOnly: true,
+                      staffOnly: false,
                     },
                   ],
                 },
@@ -123,6 +114,8 @@ describe('Bulk-edit', () => {
 
                   cy.getInstanceById(marcInstance.uuid).then((instanceData) => {
                     marcInstance.hrid = instanceData.hrid;
+                    instanceData.administrativeNotes = [notes.administrative];
+                    cy.updateInstance(instanceData);
 
                     FileManager.createFile(
                       `cypress/fixtures/${instanceUUIDsFileName}`,
@@ -159,8 +152,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C494089 Verify "Staff only" action for Instances notes in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C494089'] },
+        'C478265 Verify "Remove all" action for Instances notes in Central tenant (consortia) (firebird)',
+        { tags: ['criticalPathECS', 'firebird', 'C478265'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
@@ -178,32 +171,43 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
-          cy.pause();
+          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
+          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
           BulkEditActions.downloadMatchedResults();
-          BulkEditFiles.verifyValueInRowByUUID(
-            matchedRecordsFileName,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
-            folioInstance.uuid,
-            'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};true`,
-          );
+
+          instances.forEach((instance) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              matchedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+              instance.uuid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+              notes.administrative,
+            );
+          });
+
           BulkEditFiles.verifyValueInRowByUUID(
             matchedRecordsFileName,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             marcInstance.uuid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};false | ${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
+            `Dissertation note;${notes.dissertation};false`,
+          );
+          BulkEditFiles.verifyValueInRowByUUID(
+            matchedRecordsFileName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+            folioInstance.uuid,
+            'Notes',
+            `Dissertation note;${notes.dissertationStaffOnly};true | Dissertation note;${notes.dissertation};false`,
           );
           BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyInitialStateBulkEditForm();
-          BulkEditActions.markAsStaffOnly(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
+          BulkEditActions.noteRemoveAll(
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow();
-          BulkEditActions.removeMarkAsStaffOnly(
+          BulkEditActions.noteRemoveAll(
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
             1,
           );
@@ -212,18 +216,15 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
           instances.forEach((instance) => {
-            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
               instance.hrid,
-              [
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
-                  value: `${notes.general} (staff only)`,
-                },
-                {
-                  header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
-                  value: notes.dissertation,
-                },
-              ],
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+              '',
+            );
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
+              instance.hrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
+              '',
             );
           });
 
@@ -235,43 +236,72 @@ describe('Bulk-edit', () => {
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
               instance.uuid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+              '',
+            );
+            BulkEditFiles.verifyValueInRowByUUID(
+              previewFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+              instance.uuid,
               'Notes',
-              `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};true|${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
+              '',
             );
           });
 
           BulkEditActions.commitChanges();
-          BulkEditActions.verifySuccessBanner(1);
-          BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
-            folioInstance.hrid,
-            [
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
-                value: `${notes.general} (staff only)`,
-              },
-              {
-                header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
-                value: notes.dissertation,
-              },
-            ],
+          BulkEditActions.verifySuccessBanner(2);
+
+          instances.forEach((instance) => {
+            BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+              instance.hrid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+              '',
+            );
+          });
+
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            marcInstance.hrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
+            notes.dissertation,
           );
-          BulkEditSearchPane.verifyErrorLabel(2);
-          BulkEditSearchPane.verifyError(marcInstance.uuid, errorReason);
+          BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
+            folioInstance.hrid,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
+            '',
+          );
+          BulkEditSearchPane.verifyErrorLabel(1);
+          BulkEditSearchPane.verifyErrorByIdentifier(marcInstance.uuid, errorReason);
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
+
+          instances.forEach((instance) => {
+            BulkEditFiles.verifyValueInRowByUUID(
+              changedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+              instance.uuid,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+              '',
+            );
+          });
+
+          BulkEditFiles.verifyValueInRowByUUID(
+            changedRecordsFileName,
+            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+            marcInstance.uuid,
+            'Notes',
+            `Dissertation note;${notes.dissertation};false`,
+          );
           BulkEditFiles.verifyValueInRowByUUID(
             changedRecordsFileName,
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
             folioInstance.uuid,
             'Notes',
-            `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE};${notes.general};true|${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE};${notes.dissertation};false`,
+            '',
           );
           BulkEditActions.downloadErrors();
-          BulkEditFiles.verifyCSVFileRowsValueIncludes(errorsFromCommittingFileName, [
-            `ERROR,${marcInstance.uuid},${errorReason}`,
+          ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `ERROR,${marcInstance.uuid},${errorReason}`,
           ]);
-          BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 2);
 
           instances.forEach((instance) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -279,18 +309,18 @@ describe('Bulk-edit', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
             cy.wait(3000);
-            InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-              0,
-              'No',
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
-              notes.dissertation,
-            );
-            InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
-              1,
-              instance === folioInstance ? 'Yes' : 'No',
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.GENERAL_NOTE,
-              notes.general,
-            );
+            InstanceRecordView.verifyAdministrativeNote('No value set-');
+
+            if (instance === folioInstance) {
+              InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.dissertation);
+            } else {
+              InstanceRecordView.checkMultipleItemNotesWithStaffOnly(
+                0,
+                'No',
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.DISSERTATION_NOTE,
+                notes.dissertation,
+              );
+            }
           });
         },
       );
