@@ -36,12 +36,12 @@ describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       tag377: '377',
-      addedField: '400 0 $a Данте Алигери $d 1265-1321',
-      updated1XXField: '$a Dante Alighieri, $d 1265-1321, $t Divine Comedy',
+      addedField: '400\t0  \t$a Данте Алигери $d 1265-1321',
+      updated1XXField: '$a C405144 Dante Alighieri, $d 1265-1321, $t Divine Comedy',
       deletedSubfield: '$zno 98058852',
       createdRecordIDs: [],
       marcValue: 'C405144 Dante Alighieri, 1265-1321',
-      updatedMarcValue: 'Dante Alighieri, 1265-1321, Divine Comedy',
+      updatedMarcValue: 'C405144 Dante Alighieri, 1265-1321, Divine Comedy',
       markedValue: 'C405144 Dante Alighieri,',
       searchOption: 'Keyword',
       calloutMessage:
@@ -234,8 +234,8 @@ describe('Data Import', () => {
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
         Logs.verifyInstanceStatus(0, 6, RECORD_STATUSES.UPDATED);
         Logs.clickOnHotLink(0, 6, RECORD_STATUSES.UPDATED);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
 
