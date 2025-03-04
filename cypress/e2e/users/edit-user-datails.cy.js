@@ -31,21 +31,21 @@ describe('Users', () => {
 
   beforeEach('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      cy.wrap(true).then(() => {
-        cy.createTempUser([
-          Permissions.uiUserEdit.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
+      cy.wrap(true)
+        .then(() => {
+          cy.createTempUser([Permissions.uiUserEdit.gui]).then((userProperties) => {
+            testData.user = userProperties;
+          });
+          cy.createTempUser([], 'staff').then((userProperties) => {
+            testData.testUser = userProperties;
+          });
+        })
+        .then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
-        cy.createTempUser([], 'staff').then((userProperties) => {
-          testData.testUser = userProperties;
-        });
-      }).then(() => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading
-        });
-      });
     });
   });
 
@@ -55,15 +55,13 @@ describe('Users', () => {
     Users.deleteViaApi(testData.testUser.userId);
   });
 
-  it('C427 Edit user details (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C427'] },
-    () => {
-      UsersSearchPane.searchByUsername(testData.testUser.username);
-      UserEdit.openEdit();
-      UserEdit.editUserDetails(testData.editUser);
-      UserEdit.saveAndClose();
-      UserEdit.openExtendedInformationAccordion();
-      UserEdit.openContactInformationAccordion();
-      UserEdit.verifyUserDetails(testData.editUser);
-    });
+  it('C427 Edit user details (volaris)', { tags: ['criticalPath', 'volaris', 'C427'] }, () => {
+    UsersSearchPane.searchByUsername(testData.testUser.username);
+    UserEdit.openEdit();
+    UserEdit.editUserDetails(testData.editUser);
+    UserEdit.saveAndClose();
+    UserEdit.openExtendedInformationAccordion();
+    UserEdit.openContactInformationAccordion();
+    UserEdit.verifyUserDetails(testData.editUser);
+  });
 });

@@ -84,7 +84,7 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName, false);
         AuthorizationRoles.clickActionsButton(testData.roleName);
-        AuthorizationRoles.checkShareToAllButtonShown(testData.roleName, false);
+        AuthorizationRoles.checkShareToAllButtonShown(false);
       },
     );
   });

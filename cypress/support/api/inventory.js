@@ -42,6 +42,19 @@ Cypress.Commands.add('createLoanType', (loanType) => {
     });
 });
 
+Cypress.Commands.add('createHoldingSources', (holdingSources) => {
+  return cy
+    .okapiRequest({
+      path: 'holdings-sources',
+      method: 'POST',
+      body: holdingSources,
+    })
+    .then(({ body }) => {
+      Cypress.env('holdingSourcess', body.holdingSources);
+      return body;
+    });
+});
+
 Cypress.Commands.add('getLoanTypes', (searchParams) => {
   return cy
     .okapiRequest({
