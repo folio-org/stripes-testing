@@ -50,7 +50,7 @@ Cypress.Commands.add('createHoldingSources', (holdingSources) => {
       body: holdingSources,
     })
     .then(({ body }) => {
-      Cypress.env('holdingSourcess', body);
+      Cypress.env('holdingSourcess', body.holdingSources);
       return body;
     });
 });
