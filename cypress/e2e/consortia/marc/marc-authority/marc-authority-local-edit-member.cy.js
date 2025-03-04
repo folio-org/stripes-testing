@@ -42,20 +42,14 @@ describe('MARC', () => {
 
         before('Create test data', () => {
           cy.getAdminToken();
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
-            DataImport.waitLoading();
-            cy.setTenant(Affiliations.College);
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdAuthorityID = record[marcFile.propertyName].id;
-              });
+          cy.setTenant(Affiliations.College);
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdAuthorityID = record[marcFile.propertyName].id;
             });
           });
 
@@ -72,6 +66,7 @@ describe('MARC', () => {
               ]);
 
               cy.setTenant(Affiliations.College);
+              cy.wait(10_000);
               cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
                 Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -126,6 +121,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.updatedTag100Value);
             QuickMarcEditor.clickArrowDownButton(5);
             QuickMarcEditor.verifyTagValue(6, testData.tag035);
+            MarcAuthority.clickSaveAndCloseButton();
+            cy.wait(4000);
             MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkDeleteModal(1);
             MarcAuthority.continueWithSaveAndCheck();
