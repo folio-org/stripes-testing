@@ -1005,6 +1005,17 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
   },
+  USERS: {
+    USERNAME: 'Username',
+    FIRST_NAME: 'First name',
+    LAST_NAME: 'Last name',
+    MIDDLE_NAME: 'Middle name',
+    EMAIL: 'Email',
+    PATRON_GROUP: 'Patron group',
+    BARCODE: 'Barcode',
+    USER_ID: 'User id',
+    EXPIRATION_DATE: 'Expiration date',
+  },
 };
 
 export const HOLDING_NOTE_TYPES = {
