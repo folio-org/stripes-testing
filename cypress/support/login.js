@@ -27,21 +27,22 @@ Cypress.Commands.add(
         visitPath.waiter();
       });
     } else {
-      cy.visit(visitPath.path);
+      cy.clearCookies({ domain: null }).then(() => {
+        cy.visit(visitPath.path);
 
-      // Todo: find the way to wrap interactor to cy chainable object
-      cy.do([
-        TextField('Username').fillIn(username),
-        TextField('Password').fillIn(password),
-        Button('Log in').click(),
-      ]);
+        // Todo: find the way to wrap interactor to cy chainable object
+        cy.do([
+          TextField('Username').fillIn(username),
+          TextField('Password').fillIn(password),
+          Button('Log in').click(),
+        ]);
 
-      // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
-      // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
-      // https://docs.cypress.io/api/commands/wrap#Requirements
+        // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
+        // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
+        // https://docs.cypress.io/api/commands/wrap#Requirements
 
-      visitPath.waiter();
-
+        visitPath.waiter();
+      });
       // There seems to be a race condition here: sometimes there is
       // re-render that happens so quickly that following actions like
       //       cy.get('#app-list-item-clickable-courses-module').click()
