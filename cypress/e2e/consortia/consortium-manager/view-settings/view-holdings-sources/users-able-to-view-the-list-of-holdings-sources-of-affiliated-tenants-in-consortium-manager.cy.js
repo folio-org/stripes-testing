@@ -54,6 +54,7 @@ describe('Consortium manager', () => {
         },
       ];
       let tempUserC648469;
+      let tempUserC648472;
 
       before('create test data', () => {
         cy.clearCookies({ domain: null });
@@ -79,44 +80,65 @@ describe('Consortium manager', () => {
             );
           })
           .then(() => {
-            cy.assignAffiliationToUser(Affiliations.College, tempUserC648469.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignCapabilitiesToExistingUser(
-              tempUserC648469.userId,
-              [],
-              capabSetsToAssignMembers,
-            );
-            HoldingsSources.createViaApi(testData.collegeLocalSource).then((sourceId) => {
-              testData.collegeLocalSource.id = sourceId.body.id;
-            });
-            cy.resetTenant();
-            cy.getAdminToken();
+            cy.createTempUser([])
+              .then((userPropertiesC648472) => {
+                tempUserC648472 = userPropertiesC648472;
+                if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
 
-            cy.assignAffiliationToUser(Affiliations.University, tempUserC648469.userId);
-            cy.setTenant(Affiliations.University);
-            cy.assignCapabilitiesToExistingUser(
-              tempUserC648469.userId,
-              [],
-              capabSetsToAssignMembers,
-            );
-            HoldingsSources.createViaApi(testData.universityLocalSource).then((sourceId) => {
-              testData.universityLocalSource.id = sourceId.body.id;
-            });
+                cy.assignCapabilitiesToExistingUser(
+                  tempUserC648472.userId,
+                  [],
+                  capabSetsToAssignCentral,
+                );
+              })
+              .then(() => {
+                cy.assignAffiliationToUser(Affiliations.College, tempUserC648469.userId);
+                cy.setTenant(Affiliations.College);
+                cy.assignCapabilitiesToExistingUser(
+                  tempUserC648469.userId,
+                  [],
+                  capabSetsToAssignMembers,
+                );
+                cy.assignCapabilitiesToExistingUser(
+                  tempUserC648472.userId,
+                  [],
+                  capabSetsToAssignMembers,
+                );
+                HoldingsSources.createViaApi(testData.collegeLocalSource).then((sourceId) => {
+                  testData.collegeLocalSource.id = sourceId.body.id;
+                });
+                cy.resetTenant();
+                cy.getAdminToken();
+
+                cy.assignAffiliationToUser(Affiliations.University, tempUserC648469.userId);
+                cy.setTenant(Affiliations.University);
+                cy.assignCapabilitiesToExistingUser(
+                  tempUserC648469.userId,
+                  [],
+                  capabSetsToAssignMembers,
+                );
+                cy.assignCapabilitiesToExistingUser(
+                  tempUserC648472.userId,
+                  [],
+                  capabSetsToAssignMembers,
+                );
+                HoldingsSources.createViaApi(testData.universityLocalSource).then((sourceId) => {
+                  testData.universityLocalSource.id = sourceId.body.id;
+                });
+              });
           });
       });
 
       after('delete test data', () => {
         cy.getAdminToken();
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        HoldingsSources.deleteViaApi(testData.universityLocalSource.id);
-
+        cy.withinTenant(Affiliations.University, () => {
+          HoldingsSources.deleteViaApi(testData.universityLocalSource.id);
+        });
         cy.resetTenant();
         cy.getAdminToken();
-
-        cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
-        HoldingsSources.deleteViaApi(testData.collegeLocalSource.id);
+        cy.withinTenant(Affiliations.College, () => {
+          HoldingsSources.deleteViaApi(testData.collegeLocalSource.id);
+        });
 
         cy.setTenant(Affiliations.Consortia);
         cy.getAdminToken();
@@ -225,6 +247,101 @@ describe('Consortium manager', () => {
               tenantNames.university,
             ],
             [actionIcons.edit, actionIcons.trash],
+          );
+        },
+      );
+
+      it(
+        'C648472 User with "Consortium manager: Can share settings to all members" permission is able to view the list of holdings sources of affiliated tenants in "Consortium manager" app (Consortia) (thunderjet)',
+        { tags: ['criticalPathECS', 'thunderjet'] },
+        () => {
+          cy.resetTenant();
+          cy.login(tempUserC648472.username, tempUserC648472.password);
+          // Without waiter, permissions aren't loading
+          cy.wait(10000);
+          TopMenuNavigation.navigateToApp('Consortium manager');
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
+          ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
+          HoldingsSourcesConsortiumManager.choose();
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralSharedSource.payload.name,
+            'consortium',
+            [
+              testData.centralSharedSource.payload.name,
+              'consortium',
+              `${moment().format('l')} by`,
+              'All',
+            ],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralLocalSource.name,
+            tenantNames.central,
+            [
+              testData.centralLocalSource.name,
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.central,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.collegeLocalSource.name,
+            tenantNames.college,
+            [
+              testData.collegeLocalSource.name,
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.college,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.universityLocalSource.name,
+            tenantNames.university,
+            [
+              testData.universityLocalSource.name,
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.university,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+
+          ConsortiumManagerApp.clickSelectMembers();
+          SelectMembers.verifyStatusOfSelectMembersModal(3, 3, true);
+          SelectMembers.selectMembers(tenantNames.college);
+          SelectMembers.selectMembers(tenantNames.university);
+          SelectMembers.saveAndClose();
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralSharedSource.payload.name,
+            'consortium',
+            [
+              testData.centralSharedSource.payload.name,
+              'consortium',
+              `${moment().format('l')} by`,
+              'All',
+            ],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralLocalSource.name,
+            tenantNames.central,
+            [
+              testData.centralLocalSource.name,
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.central,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.collegeLocalSource.name,
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+            testData.universityLocalSource.name,
           );
         },
       );
