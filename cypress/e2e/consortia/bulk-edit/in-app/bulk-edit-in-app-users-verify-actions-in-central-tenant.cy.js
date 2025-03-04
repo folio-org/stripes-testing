@@ -73,9 +73,11 @@ describe('Bulk-edit', () => {
       after('delete test data', () => {
         cy.getAdminToken();
         cy.resetTenant();
-        Users.deleteViaApi(patronUser.userId);
-        Users.deleteViaApi(staffUser.userId);
-        Users.deleteViaApi(user.userId);
+
+        [patronUser, staffUser, user].forEach((userToDelete) => {
+          Users.deleteViaApi(userToDelete.userId);
+        });
+
         FileManager.deleteFileFromDownloadsByMask(
           userUUIDsFileName,
           matchedRecordsFileName,
