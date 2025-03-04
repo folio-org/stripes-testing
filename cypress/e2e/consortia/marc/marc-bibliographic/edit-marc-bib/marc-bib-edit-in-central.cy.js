@@ -71,10 +71,17 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(users.userAProperties.username, users.userAProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(
+              () => {
+                cy.login(users.userAProperties.username, users.userAProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+              },
+              { timeout: 20_000 },
+            );
+            InventoryInstances.waitContentLoading();
           });
       });
 
@@ -96,7 +103,9 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
           QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
-          QuickMarcEditor.moveFieldUp(18);
+          QuickMarcEditor.moveFieldUp(17);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.updatedTitle);
@@ -132,8 +141,8 @@ describe('MARC', () => {
             users.userAProperties.firstName,
             users.userAProperties.lastName,
           );
-          QuickMarcEditor.verifyTagValue(17, testData.tag504);
-          QuickMarcEditor.verifyTagValue(18, testData.tag500);
+          QuickMarcEditor.verifyTagValue(16, testData.tag504);
+          QuickMarcEditor.verifyTagValue(17, testData.tag500);
         },
       );
     });
