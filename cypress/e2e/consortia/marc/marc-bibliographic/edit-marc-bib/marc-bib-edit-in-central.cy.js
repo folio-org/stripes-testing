@@ -71,16 +71,13 @@ describe('MARC', () => {
               });
             });
 
-            cy.waitForAuthRefresh(
-              () => {
-                cy.login(users.userAProperties.username, users.userAProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-              },
-              { timeout: 20_000 },
-            );
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userAProperties.username, users.userAProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+            }, 20_000);
             InventoryInstances.waitContentLoading();
           });
       });
