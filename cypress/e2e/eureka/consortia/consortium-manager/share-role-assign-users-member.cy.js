@@ -197,7 +197,10 @@ describe('Eureka', () => {
         AuthorizationRoles.clickActionsButton(testData.roleName);
         AuthorizationRoles.checkShareToAllButtonShown(false);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        cy.waitForAuthRefresh(() => {
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.reload();
+        });
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
@@ -241,7 +244,10 @@ describe('Eureka', () => {
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
 
         cy.login(userBData.username, userBData.password);
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+        cy.waitForAuthRefresh(() => {
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          cy.reload();
+        });
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
