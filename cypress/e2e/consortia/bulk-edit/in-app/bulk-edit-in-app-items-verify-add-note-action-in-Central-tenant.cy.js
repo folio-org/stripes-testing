@@ -18,7 +18,6 @@ import InventoryItems from '../../../../support/fragments/inventory/item/invento
 import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import ItemNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
@@ -65,16 +64,12 @@ const localItemNoteType = {
 const localItemNoteTypeNameWithAffiliation = `${localItemNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
-const previewFileName = BulkEditFiles.getPreviewFileName(todayDate, itemUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
-  todayDate,
-  itemUUIDsFileName,
-);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
 const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
-  todayDate,
   itemUUIDsFileName,
+  true,
 );
 
 describe('Bulk-edit', () => {
