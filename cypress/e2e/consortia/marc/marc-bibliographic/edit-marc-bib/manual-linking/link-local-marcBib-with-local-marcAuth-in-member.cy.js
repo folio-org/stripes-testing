@@ -79,6 +79,7 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              cy.wait(10_000);
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -97,18 +98,20 @@ describe('MARC', () => {
                   });
                 });
               });
-
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(
-                  tenantNames.central,
-                  tenantNames.university,
-                );
-                InventoryInstances.waitContentLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+              }, 20_000);
+              InventoryInstances.waitContentLoading();
+              ConsortiumManager.switchActiveAffiliation(
+                tenantNames.central,
+                tenantNames.university,
+              );
+              InventoryInstances.waitContentLoading();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             });
         });
 
@@ -152,6 +155,8 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
+            QuickMarcEditor.clickSaveAndKeepEditingButton();
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             QuickMarcEditor.openLinkingAuthorityByIndex(16);
             MarcAuthorities.checkFieldAndContentExistence(
@@ -169,6 +174,11 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(
+              linkingTagAndValues.authorityHeading,
+              true,
+              true,
+            );
             BrowseContributors.browse(linkingTagAndValues.authorityHeading);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,

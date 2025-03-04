@@ -70,6 +70,7 @@ describe('MARC', () => {
             ]);
 
             cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
