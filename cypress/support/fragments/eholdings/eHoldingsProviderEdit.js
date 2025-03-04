@@ -1,7 +1,7 @@
 import { Button, HTML, Section, Select, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const availableProxies = ['guestaccess', 'Inherited - None', 'Hosted EZproxy', 'Proxy 1', 'perma'];
+const availableProxies = ['Inherited - None', 'ezproxY-T', 'MJProxy', 'Chalmers'];
 const proxySelect = Select('Proxy');
 const saveAndCloseButton = Button('Save & close');
 
@@ -16,10 +16,10 @@ export default {
 
   changeProxy: () => {
     return cy
-      .then(() => proxySelect.value())
+      .then(() => proxySelect.checkedOptionText())
       .then((selectedProxy) => {
         const notSelectedProxy = availableProxies.filter(
-          (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
+          (availableProxy) => availableProxy !== selectedProxy,
         )[0];
         cy.do(proxySelect.choose(notSelectedProxy));
         cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());

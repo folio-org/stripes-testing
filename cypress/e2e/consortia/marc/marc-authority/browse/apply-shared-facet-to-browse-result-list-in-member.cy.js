@@ -214,6 +214,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+          cy.wait(5000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             sharedRecordsCount = count;
           });
@@ -263,7 +264,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -311,7 +312,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -352,7 +353,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.eq(sharedRecordsCount);
           });
@@ -394,7 +395,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
 
@@ -423,7 +424,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
 
@@ -449,7 +450,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
+          cy.wait(6000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             cy.expect(count).to.not.eq(sharedRecordsCount);
           });
