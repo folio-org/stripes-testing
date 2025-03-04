@@ -88,13 +88,14 @@ describe('Bulk-edit', () => {
         'C496156 Verify bulk edit actions for Users in Central tenant - Identifier (consortia) (firebird)',
         { tags: ['criticalPathECS', 'firebird', 'C496156'] },
         () => {
-          const testUsers = [staffUser, patronUser];
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(userUUIDsFileName);
           BulkEditSearchPane.verifyPaneRecordsCount('2 user');
           BulkEditSearchPane.verifyFileNameHeadLine(userUUIDsFileName);
           BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
+
+          const testUsers = [staffUser, patronUser];
 
           testUsers.forEach((testUser) => {
             BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
