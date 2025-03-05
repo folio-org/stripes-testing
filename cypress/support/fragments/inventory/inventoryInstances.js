@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including, matching } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
   AdvancedSearch,
@@ -218,12 +219,25 @@ const defaultField008Values = {
   Type: 'a',
 };
 
+/**
+ * Create instance via API attampting until success
+ * to avoid hrID conflict in sequential instance creating operations
+ * */
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => {
-  return cy.okapiRequest({
-    method: 'POST',
-    path: 'inventory/instances',
-    body: instanceWithSpecifiedNewId,
-  });
+  return recurse(
+    () => cy.okapiRequest({
+      method: 'POST',
+      path: 'inventory/instances',
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+      body: instanceWithSpecifiedNewId,
+    }),
+    (response) => response.status === 201,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  );
 };
 
 const waitContentLoading = () => {
@@ -590,6 +604,41 @@ export default {
     );
   },
 
+  deleteFullInstancesByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: `search/instances?query=title=="${instanceTitle}"`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body: { instances } }) => {
+        instances.forEach((instance) => {
+          cy.okapiRequest({
+            path: `holdings-storage/holdings?query=instanceId==${instance.id}`,
+            isDefaultSearchParamsRequired: false,
+          })
+            .then(({ body: { holdingsRecords } }) => {
+              holdingsRecords.forEach((holding) => {
+                cy.okapiRequest({
+                  path: `inventory/items-by-holdings-id?query=holdingsRecordId==${holding.id}`,
+                  isDefaultSearchParamsRequired: false,
+                })
+                  .then(({ body: { items } }) => {
+                    items.forEach((item) => {
+                      cy.deleteItemViaApi(item.id);
+                    });
+                  })
+                  .then(() => {
+                    cy.deleteHoldingRecordViaApi(holding.id);
+                  });
+              });
+            })
+            .then(() => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            });
+        });
+      });
+  },
+
   createLoanType: (loanType) => {
     return cy
       .okapiRequest({
@@ -765,8 +814,8 @@ export default {
               folioInstances[index].items = items;
 
               // should not be used, left for support of old tests
-              folioInstances[index].holdingId = holdingIds[0].id;
-              folioInstances[index].itemIds = holdingIds[0].itemIds;
+              folioInstances[index].holdingId = holdingIds[0]?.id;
+              folioInstances[index].itemIds = holdingIds[0]?.itemIds;
               folioInstances[index].barcodes = items.map(({ barcode }) => barcode);
             },
           );
