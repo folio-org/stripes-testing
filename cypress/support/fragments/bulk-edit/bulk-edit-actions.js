@@ -1707,7 +1707,7 @@ export default {
     );
   },
 
-  fillInTagAndIndexesAndSubfield(tag, ind1, ind2, subfield, rowIndex = 0) {
+  fillInTagAndIndicatorsAndSubfield(tag, ind1, ind2, subfield, rowIndex = 0) {
     this.fillInTagField(tag, rowIndex);
     this.fillInInd1Field(ind1, rowIndex);
     this.fillInInd2Field(ind2, rowIndex);
@@ -1907,12 +1907,12 @@ export default {
     );
   },
 
-  verifySelectSecondActionRequired(rowIndex = 0) {
+  verifySelectSecondActionRequired(isRequired = true, rowIndex = 0) {
     cy.expect(
       bulkEditsMarcInstancesAccordion
         .find(RepeatableFieldItem({ index: rowIndex }))
         .find(Select({ name: 'action', dataActionIndex: '1' }))
-        .has({ required: true }),
+        .has({ required: isRequired }),
     );
   },
 
