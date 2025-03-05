@@ -59,7 +59,7 @@ const Assertions = {
 const API = {
   getCallNumberTypesViaAPI() {
     cy.okapiRequest({
-      path: 'call-number-types',
+      path: 'call-number-types?limit=2000&query=cql.allRecords=1',
       isDefaultSearchParamsRequired: false,
     }).then((response) => {
       cy.wrap(response.body.callNumberTypes).as('callNumberTypes');
