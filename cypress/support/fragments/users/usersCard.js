@@ -29,6 +29,7 @@ import NewNote from '../notes/newNote';
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
+const closedLoansLink = loansSection.find(Link({ id: 'clickable-viewclosedloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
@@ -121,6 +122,11 @@ export default {
     cy.expect(affiliationsSection.absent());
   },
 
+  expandLoansAccordion() {
+    cy.do(loansSection.clickHeader());
+    cy.wait(1000);
+  },
+
   expandLoansSection(openLoans, returnedLoans) {
     cy.do(loansSection.clickHeader());
 
@@ -189,6 +195,14 @@ export default {
       cy.expect(returnedLoansSpan.has({ text: ` (${returnedLoans} claimed returned)` }));
     }
   },
+
+  verifyQuantityOfOpenAndClosedLoans(openLoans, closedLoans) {
+    cy.expect(currentLoansLink.has({ text: `${openLoans} open loan${openLoans > 1 ? 's' : ''}` }));
+    cy.expect(
+      closedLoansLink.has({ text: `${closedLoans} closed loan${closedLoans > 1 ? 's' : ''}` }),
+    );
+  },
+
   clickCurrentLoansLink() {
     cy.do(currentLoansLink.click());
   },

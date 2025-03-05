@@ -379,11 +379,13 @@ export default {
   },
 
   verifyQueueInstance(instanceTitle) {
+    cy.wait(500);
     cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
   },
 
   requestQueueOnInstance(instanceTitle) {
     cy.do([actionsButton.click(), reorderQueueButton.click()]);
+    cy.wait(500);
     this.verifyQueueInstance(instanceTitle);
   },
 
@@ -452,10 +454,12 @@ export default {
   },
 
   viewRequestsInQueue() {
+    cy.wait(1000);
     cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
   },
 
   verifyPositionInQueue(value) {
+    cy.wait(1000);
     cy.expect(
       requestInfoSection.find(KeyValue('Position in queue')).has({ value: including(value) }),
     );

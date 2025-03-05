@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import AppPaths from '../../support/fragments/app-paths';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
@@ -16,7 +17,7 @@ import TransferAccounts from '../../support/fragments/settings/users/transferAcc
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
@@ -49,12 +50,16 @@ describe('Patron notices', () => {
       }),
     };
     const openUserFeeFine = (userId, feeFineId) => {
+      cy.log(userData.barcode);
       cy.visit(AppPaths.getFeeFineDetailsPath(userId, feeFineId));
+      cy.wait(5000);
       FeeFineDetails.waitLoading();
       FeeFineDetails.openActions();
     };
     const checkNoticeIsSent = (noticesToCheck) => {
-      cy.visit(TopMenu.circulationLogPath);
+      // cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
+      SearchPane.waitLoading();
       SearchPane.searchByUserBarcode(userData.barcode);
       cy.wrap(noticesToCheck).each((notice) => {
         SearchPane.findResultRowIndexByContent(notice.desc).then((rowIndex) => {
@@ -164,7 +169,8 @@ describe('Patron notices', () => {
       { tags: ['criticalPath', 'volaris', 'C347877'] },
       () => {
         const feeFineCreate = (feeFineName) => {
-          cy.visit(TopMenu.usersPath);
+          // cy.visit(TopMenu.usersPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           UsersSearchPane.waitLoading();
           UsersSearchPane.searchByKeywords(userData.barcode);
           UsersCard.waitLoading();
@@ -190,6 +196,7 @@ describe('Patron notices', () => {
         ManualCharges.waitLoading();
         cy.intercept('POST', '/feefines').as('manualChargeCreate');
         ManualCharges.selectOwner(userOwnerBody);
+        ManualCharges.copyExisting(false);
         ManualCharges.createViaUi(manualCharge);
         cy.wait('@manualChargeCreate').then((intercept) => {
           cy.wrap(intercept.response.body.id).as('manualChargeId');
@@ -213,6 +220,7 @@ describe('Patron notices', () => {
         ]);
 
         cy.get('@feeFineId').then((feeFineId) => {
+          cy.log(userData.barcode);
           openUserFeeFine(userData.userId, feeFineId);
           FeeFineDetails.openTransferModal();
           TransferFeeFine.setAmount(2);
@@ -230,6 +238,7 @@ describe('Patron notices', () => {
         });
 
         cy.get('@feeFineId').then((feeFineId) => {
+          cy.log(userData.barcode);
           openUserFeeFine(userData.userId, feeFineId);
           FeeFineDetails.openWaiveModal();
           WaiveFeeFinesModal.setWaiveAmount('2.00');
@@ -246,6 +255,7 @@ describe('Patron notices', () => {
         });
 
         cy.get('@feeFineId').then((feeFineId) => {
+          cy.log(userData.barcode);
           openUserFeeFine(userData.userId, feeFineId);
           FeeFineDetails.openPayModal();
           PayFeeFaine.setAmount(2);
@@ -262,6 +272,7 @@ describe('Patron notices', () => {
         });
 
         cy.get('@feeFineId').then((feeFineId) => {
+          cy.log(userData.barcode);
           openUserFeeFine(userData.userId, feeFineId);
           FeeFineDetails.openRefundModal();
           RefundFeeFine.setAmount('2.00');
@@ -281,6 +292,7 @@ describe('Patron notices', () => {
         feeFineCreate('secondFeeFineId');
         cy.get('@secondFeeFineId').then((secondFeeFineId) => {
           cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, secondFeeFineId));
+          cy.wait(5000);
           FeeFineDetails.waitLoading();
           FeeFineDetails.openActions();
           FeeFineDetails.openErrorModal();

@@ -23,13 +23,13 @@ export default {
     cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
   },
 
-  varifyConsortiumManagerOnPage() {
+  verifyConsortiumManagerOnPage() {
     cy.expect(
       Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).exists(),
     );
   },
 
-  varifyConsortiumManagerIsAbsent() {
+  verifyConsortiumManagerIsAbsent() {
     cy.expect(
       Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).absent(),
     );

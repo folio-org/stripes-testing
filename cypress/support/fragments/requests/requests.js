@@ -285,6 +285,9 @@ export default {
       )
       .click(),
   ),
+  selectRequestByContent(contentToSearch) {
+    cy.do(requestsPane.find(MultiColumnListCell({ content: including(contentToSearch) })).click());
+  },
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })

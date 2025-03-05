@@ -32,12 +32,12 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
+    OKAPI_HOST: 'https://kong-eureka-bugfest-ramsons-consortium.int.aws.folio.org',
     EDGE_HOST: 'https://edge-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
     EDGE_API_KEY: '',
-    OKAPI_TENANT: 'fs09000003',
-    diku_login: 'folio-aqa',
-    diku_password: 'folio-aqa',
+    OKAPI_TENANT: 'cs00000int',
+    diku_login: 'ecs_admin',
+    diku_password: 'admin',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     is_kiwi_release: false,
@@ -46,8 +46,8 @@ module.exports = defineConfig({
     allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    rtrAuth: false,
-    ecsEnabled: false,
+    rtrAuth: true,
+    ecsEnabled: true,
     eureka: true,
     runAsAdmin: false,
     systemRoleName: 'EBSCOAdminRole',
@@ -151,7 +151,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://eureka-bugfest-ramsons-aqa.int.aws.folio.org',
+    baseUrl: 'https://eureka-bugfest-ramsons-consortium.int.aws.folio.org',
     testIsolation: false,
   },
 });

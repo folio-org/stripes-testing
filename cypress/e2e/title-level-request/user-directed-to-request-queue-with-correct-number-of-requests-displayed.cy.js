@@ -189,7 +189,7 @@ describe('Title Level Request', () => {
       RequestDetail.viewRequestsInQueue();
 
       // From this Request queue, select the Request placed most recently
-      Requests.selectRequest(testData.userForTLR.barcode, 3);
+      Requests.selectRequestByContent(testData.userForTLR.barcode);
       RequestDetail.waitLoading();
       RequestDetail.verifyPositionInQueue(`${lastRequestPosition} (${holdRequests} requests)`);
       // From the Action menu, select Reorder queue
