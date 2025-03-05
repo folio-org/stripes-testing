@@ -21,7 +21,6 @@ describe('Eureka', () => {
       roleName: `AT_C523609_Role_${randomPostfix}`,
       roleNameUpdated: `AT_C523609_Role_Updated_${randomPostfix}`,
       roleDescription: `AT_C523609_Role_Description_${randomPostfix}`,
-      applicationName: 'app-acquisitions',
       originalCapabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
@@ -155,6 +154,7 @@ describe('Eureka', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testUser.userId);
+      Users.deleteViaApi(userAData.userId);
       Users.deleteViaApi(assignUserCentralData.userId);
       cy.deleteAuthorizationRoleApi(testData.roleId);
       cy.setTenant(Affiliations.College);
@@ -187,9 +187,11 @@ describe('Eureka', () => {
         AuthorizationRoles.shareRole(testData.roleName);
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
+        AuthorizationRoles.clickUnassignAllCapabilitiesButton();
         testData.originalCapabilitySets.forEach((set) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(set, false);
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
         });
+        cy.wait(3000);
         testData.newCapabilitySets.forEach((set) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(set);
         });
