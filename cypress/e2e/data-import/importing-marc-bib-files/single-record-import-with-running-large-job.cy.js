@@ -13,6 +13,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -99,7 +100,12 @@ describe('Data Import', () => {
           updatedInstanceData.physicalDescription,
         );
         InventoryInstance.openSubjectAccordion();
-        InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
+        InstanceRecordView.verifyInstanceSubject({
+          indexRow: 0,
+          subjectHeadings: updatedInstanceData.subject,
+          subjectSource: 'No value set-',
+          subjectType: 'No value set-',
+        });
         InventoryInstance.checkInstanceNotes(
           updatedInstanceData.notes.noteType,
           updatedInstanceData.notes.noteContent,

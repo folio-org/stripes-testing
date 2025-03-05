@@ -659,20 +659,20 @@ export default {
     });
   },
 
-  verifyInstanceSubject: (indexRow, { subjectHeadings, subjectSource, subjectType }) => {
+  verifyInstanceSubject: (subjectSource) => {
     cy.expect([
       subjectList
-        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject headings' }))
-        .has({ content: subjectHeadings }),
+        .has({ content: subjectSource.subjectHeadings }),
       subjectList
-        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject source' }))
-        .has({ content: subjectSource }),
+        .has({ content: subjectSource.subjectSource }),
       subjectList
-        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
         .find(MultiColumnListCell({ column: 'Subject type' }))
-        .has({ content: subjectType }),
+        .has({ content: subjectSource.subjectType }),
     ]);
   },
 

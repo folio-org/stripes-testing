@@ -93,7 +93,12 @@ describe('Inventory', () => {
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 6);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 7);
-        InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
+        InstanceRecordView.verifyInstanceSubject({
+          indexRow: 0,
+          subjectHeadings: oclcRecordData.subject,
+          subjectSource: 'No value set-',
+          subjectType: 'No value set-',
+        });
         InventoryInstance.checkInstanceNotes(
           oclcRecordData.notes.noteType,
           oclcRecordData.notes.noteContent,

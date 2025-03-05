@@ -50,8 +50,8 @@ describe('Inventory', () => {
       InstanceRecordView.verifyInstanceSubject({
         indexRow: 0,
         subjectHeadings: testData.instanceSubject,
-        subjectSource: 'Library of Congress Subject Headings',
-        subjectType: 'Personal name',
+        subjectSource: 'No value set-',
+        subjectType: 'No value set-',
       });
 
       InstanceRecordView.edit();
@@ -62,8 +62,8 @@ describe('Inventory', () => {
       InstanceRecordView.verifyInstanceSubject({
         indexRow: 0,
         subjectHeadings: testData.newInstanceSubject,
-        subjectSource: 'Library of Congress Subject Headings',
-        subjectType: 'Personal name',
+        subjectSource: 'No value set-',
+        subjectType: 'No value set-',
       });
 
       InstanceRecordView.edit();
