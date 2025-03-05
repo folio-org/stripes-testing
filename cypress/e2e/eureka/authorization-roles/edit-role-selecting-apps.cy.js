@@ -12,14 +12,9 @@ describe('Eureka', () => {
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        originalApplications: ['app-platform-complete', 'app-dcb'],
+        originalApplications: ['app-acquisitions', 'app-dcb'],
         newApplication: 'app-erm-usage',
         originalCapabilities: [
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Owners Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'Orders Item Approve',
@@ -27,7 +22,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'UI-Users',
+            resource: 'Acquisitions-Units Memberships Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {

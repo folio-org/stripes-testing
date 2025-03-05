@@ -148,6 +148,10 @@ export default {
     internal: 'ui-inventory.subjects.view',
     gui: 'Subject browse: View permissions',
   },
+  uiInventoryUpdateOwnership: {
+    internal: 'consortia.inventory.update-ownership.item.post',
+    gui: 'Inventory: Update ownership',
+  },
   uiInventorySingleRecordImport: {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',
@@ -240,6 +244,10 @@ export default {
   inventoryCRUDHoldingsTypes: {
     internal: 'ui-inventory.settings.holdings-types',
     gui: 'Settings (Inventory): Create, edit, delete holdings types',
+  },
+  inventoryCRUDHoldingsSources: {
+    internal: 'ui-inventory.settings.holdings-sources',
+    gui: 'Settings (Inventory): Create, edit, delete holdings sources',
   },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
