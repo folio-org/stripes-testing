@@ -122,6 +122,7 @@ describe('MARC', () => {
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             ]);
             cy.resetTenant();
+            cy.wait(10_000);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
@@ -130,33 +131,35 @@ describe('MARC', () => {
             ]);
           })
           .then(() => {
-            cy.resetTenant();
-            cy.loginAsAdmin().then(() => {
-              marcFiles.forEach((marcFile) => {
-                cy.visit(TopMenu.dataImportPath);
-                if (marcFile.tenant === 'University') {
-                  cy.setTenant(Affiliations.University);
-                } else if (marcFile.tenant === 'College') {
-                  cy.setTenant(Affiliations.College);
-                } else {
-                  cy.resetTenant();
-                  cy.getAdminToken();
-                }
+            marcFiles.forEach((marcFile) => {
+              if (marcFile.tenant === 'University') {
+                cy.setTenant(Affiliations.University);
+              } else if (marcFile.tenant === 'College') {
+                cy.setTenant(Affiliations.College);
+              } else {
+                cy.resetTenant();
+                cy.getAdminToken();
+              }
 
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
                 });
               });
             });
           })
           .then(() => {
-            cy.visit(TopMenu.inventoryPath);
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({ path: '/', waiter: () => true });
+              cy.visit(TopMenu.inventoryPath);
+              cy.reload();
+            });
+            InventoryInstances.waitContentLoading();
+
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
@@ -175,6 +178,8 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.pressSaveAndClose();
+                cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
@@ -212,6 +217,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(3);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(3);

@@ -766,9 +766,7 @@ const QueryBuilder = {
       const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
       const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
       expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
-      expect(previewLabel).to.equal(
-        `Preview of first ${Math.min(previewRecords, 100)} records.`,
-      );
+      expect(previewLabel).to.equal(`Preview of first ${Math.min(previewRecords, 100)} records.`);
     });
   },
 

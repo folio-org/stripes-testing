@@ -101,6 +101,10 @@ const noAccessErrorText =
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
+const shareToAllModal = Modal('Confirm share to all');
+const submitButton = Button('Submit');
+const successShareText = 'Role has been shared successfully';
+const centrallyManagedKeyValue = KeyValue('Centrally managed');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
 
@@ -490,6 +494,11 @@ export default {
 
   clickSaveInAssignModal: () => {
     cy.do(saveButtonInAssignModal.click());
+    cy.expect(assignUsersModal.absent());
+  },
+
+  closeAssignModal: () => {
+    cy.do(assignUsersModal.find(Button({ icon: 'times' })).click());
     cy.expect(assignUsersModal.absent());
   },
 
@@ -908,9 +917,27 @@ export default {
     else cy.expect(targetRow.absent());
   },
 
-  checkShareToAllButtonShown: (roleName, isShown = true) => {
-    if (isShown) cy.expect(Pane(roleName).find(shareToAllButton).exists());
-    else cy.expect(Pane(roleName).find(shareToAllButton).absent());
+  checkShareToAllButtonShown: (isShown = true) => {
+    if (isShown) cy.expect(shareToAllButton.exists());
+    else cy.expect(shareToAllButton.absent());
+  },
+
+  checkRoleCentrallyManaged: (roleName, isCentrallyManaged = true) => {
+    cy.expect(
+      Pane(roleName)
+        .find(centrallyManagedKeyValue)
+        .has({ value: isCentrallyManaged ? 'Yes' : 'No' }),
+    );
+  },
+
+  shareRole(roleName) {
+    cy.do([
+      Pane(roleName).find(actionsButton).click(),
+      shareToAllButton.click(),
+      shareToAllModal.find(submitButton).click(),
+    ]);
+    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+    this.checkRoleCentrallyManaged(roleName, true);
   },
 
   verifyCreateNameError: () => {

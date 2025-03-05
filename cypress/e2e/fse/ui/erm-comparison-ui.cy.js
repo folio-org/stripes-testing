@@ -6,7 +6,7 @@ describe('fse-erm-comparison - UI', () => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.dataExportPath,
+      path: TopMenu.ermComparisonPath,
       waiter: ErmComparison.waitLoading,
     });
     cy.allure().logCommandSteps();

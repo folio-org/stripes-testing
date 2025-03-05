@@ -137,6 +137,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
+            cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -164,8 +165,13 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin();
+              cy.visit(TopMenu.inventoryPath);
+              cy.reload();
+            });
+            InventoryInstances.waitContentLoading();
+
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
               InventoryInstances.waitContentLoading();
@@ -184,6 +190,8 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.pressSaveAndClose();
+                cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
@@ -225,6 +233,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           // if clicked too fast, delete modal might not appear
           cy.wait(1000);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyUpdateLinkedBibsKeepEditingModal(4);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(4);
