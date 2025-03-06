@@ -616,6 +616,7 @@ export default {
 
   clickResetAllButton() {
     cy.do(searchAndFilterSection.find(resetAllBtn).click());
+    cy.wait(1000);
   },
 
   clickNextPaginationButton() {
