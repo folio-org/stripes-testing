@@ -13,8 +13,8 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
-      notProduceSubjectName: 'Test2',
-      subjectNameForCreatedInstance: 'Library of Congress Subject Headings',
+      notProduceSubjectName: 'Test45',
+      subjectNameForCreatedInstance: 'Canadian Subject Headings',
     };
     const marcFile = {
       filePath: 'marcBibFileForC584505.mrc',
@@ -61,7 +61,7 @@ describe('Inventory', () => {
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.subjectNameForCreatedInstance);
-        BrowseSubjects.verifySearchValue(testData.subjectNameForCreatedInstance);
+        BrowseSubjects.verifySearchResult(testData.subjectNameForCreatedInstance);
       },
     );
   });

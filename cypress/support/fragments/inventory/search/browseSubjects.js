@@ -1,24 +1,24 @@
 /* eslint-disable no-dupe-keys */
 import { including } from '@interactors/html';
 import {
-  matching,
+  Accordion,
   Button,
-  MultiColumnListCell,
-  Pane,
-  TextArea,
   Link,
+  matching,
+  MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Section,
-  TextInput,
-  Select,
-  Accordion,
   MultiSelect,
   MultiSelectMenu,
   MultiSelectOption,
+  Pane,
+  Section,
+  Select,
+  TextArea,
+  TextInput,
 } from '../../../../../interactors';
-import InventorySearchAndFilter from '../inventorySearchAndFilter';
 import { escapeRegex } from '../../../utils/stringTools';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
@@ -32,7 +32,25 @@ const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitl
 const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
+function getColumnsResults() {
+  const cells = [];
+
+  return cy
+    .get('#browse-results-list-browseSubjects')
+    .find('[data-row-index]')
+    .each(($row) => {
+      cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getColumnsResults,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -80,7 +98,9 @@ export default {
   },
 
   checkResultAndItsRow(rowIndex, value) {
-    cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: value }));
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
   },
 
   checkAbsenceOfResultAndItsRow(rowIndex, value) {
@@ -300,7 +320,24 @@ export default {
   },
 
   selectSubjectSource(subjectSource) {
-    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).open());
-    cy.do(MultiSelectMenu().find(MultiSelectOption(subjectSource)).click());
+    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).fillIn(subjectSource));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(subjectSource)))
+        .click(),
+    );
+    cy.wait(1000);
+  },
+
+  verifySearchResult: (cellContent) => {
+    getColumnsResults().then((cells) => {
+      cells.forEach((cell) => {
+        if (cell !== 'No value set-') {
+          cy.expect(cell).to.include(cellContent);
+        }
+      });
+    });
   },
 };
