@@ -83,7 +83,7 @@ Cypress.Commands.add(
       password: 'password',
     };
 
-    if (!Cypress.env('ecsEnabled') || Cypress.env('eureka')) {
+    if (!Cypress.env('ecsEnabled')) {
       cy.getAdminToken();
     }
 

@@ -1,58 +1,40 @@
 import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
 
-Cypress.Commands.add(
-  'getToken',
-  (username, password, isCentral = false, getServicePoint = false) => {
-    let pathToSet = 'bl-users/login-with-expiry';
-    if (!Cypress.env('rtrAuth')) {
-      pathToSet = 'bl-users/login';
-    }
-    if (Cypress.env('eureka')) {
-      cy.okapiRequest({
-        method: 'POST',
-        path: 'authn/login',
-        body: { username, password },
-        isDefaultSearchParamsRequired: false,
-        isCentral,
-      }).then(() => {
-        //   // cy.wait(5000);
-        //   // cy.okapiRequest({
-        //   //   path: 'users-keycloak/_self',
-        //   //   headers: {
-        //   //     'x-okapi-token': cy.getCookie('folioAccessToken'),
-        //   //   },
-        //   //   isDefaultSearchParamsRequired: false,
-        //   // }).then(({ body }) => {
-        //   //   const defaultServicePoint = body.servicePointsUser.servicePoints.find(
-        //   //     ({ id }) => id === body.servicePointsUser.defaultServicePointId,
-        //   //   );
-        //   //   Cypress.env('defaultServicePoint', defaultServicePoint);
-        //   // });
-      });
-    } else {
-      cy.okapiRequest({
-        method: 'POST',
-        path: pathToSet,
-        body: { username, password },
-        isDefaultSearchParamsRequired: false,
-        headers: {
-          'x-okapi-tenant': Tenant.get(),
-        },
-      }).then(({ body, headers }) => {
-        if (getServicePoint) {
-          const defaultServicePoint = body.servicePointsUser.servicePoints.find(
-            ({ id }) => id === body.servicePointsUser.defaultServicePointId,
-          );
-          Cypress.env('defaultServicePoint', defaultServicePoint);
-        }
-        if (!Cypress.env('rtrAuth')) {
-          Cypress.env('token', headers['x-okapi-token']);
-        }
-      });
-    }
-  },
-);
+Cypress.Commands.add('getToken', (username, password, getServicePoint = false) => {
+  let pathToSet = 'bl-users/login-with-expiry';
+  if (!Cypress.env('rtrAuth')) {
+    pathToSet = 'bl-users/login';
+  }
+  if (Cypress.env('eureka')) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'authn/login',
+      body: { username, password },
+      isDefaultSearchParamsRequired: false,
+    });
+  } else {
+    cy.okapiRequest({
+      method: 'POST',
+      path: pathToSet,
+      body: { username, password },
+      isDefaultSearchParamsRequired: false,
+      headers: {
+        'x-okapi-tenant': Tenant.get(),
+      },
+    }).then(({ body, headers }) => {
+      if (getServicePoint) {
+        const defaultServicePoint = body.servicePointsUser.servicePoints.find(
+          ({ id }) => id === body.servicePointsUser.defaultServicePointId,
+        );
+        Cypress.env('defaultServicePoint', defaultServicePoint);
+      }
+      if (!Cypress.env('rtrAuth')) {
+        Cypress.env('token', headers['x-okapi-token']);
+      }
+    });
+  }
+});
 
 Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) => {
   cy.okapiRequest({
@@ -66,8 +48,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 
 Cypress.Commands.add('getAdminToken', () => {
   cy.clearCookies({ domain: null });
-  if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), true);
-  else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
 
 Cypress.Commands.add('getCollegeAdminToken', () => {
