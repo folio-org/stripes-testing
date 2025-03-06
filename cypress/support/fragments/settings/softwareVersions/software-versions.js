@@ -27,15 +27,15 @@ export default {
   },
 
   checkErrorText(missingModuleIds) {
+    let errorHeadline = `${missingModuleIds.length} missing interface`;
+    const errorBlock = aboutPane.find(MessageBanner({ headline: errorHeadline }));
     if (missingModuleIds.length) {
-      let errorHeadline = `${missingModuleIds.length} missing interface`;
       if (missingModuleIds.length > 1) errorHeadline += 's';
-      const errorBlock = aboutPane.find(MessageBanner({ headline: errorHeadline }));
       cy.expect(errorBlock.exists());
       for (const moduleId of missingModuleIds) {
         cy.expect(errorBlock.has({ textContent: including(moduleId) }));
       }
-    }
+    } else this.checkErrorNotDisplayed();
   },
 
   verifyTextPresent(text) {

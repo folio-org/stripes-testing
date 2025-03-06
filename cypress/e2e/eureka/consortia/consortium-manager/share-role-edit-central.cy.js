@@ -13,24 +13,26 @@ import AuthorizationRoles, {
   SETTINGS_SUBSECTION_AUTH_ROLES,
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import UsersCard from '../../../../support/fragments/users/usersCard';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
     const randomPostfix = getRandomPostfix();
     const testData = {
-      roleName: `AT_C523606_Role_${randomPostfix}`,
-      capabilitySets: [
+      roleName: `AT_C523609_Role_${randomPostfix}`,
+      roleNameUpdated: `AT_C523609_Role_Updated_${randomPostfix}`,
+      roleDescription: `AT_C523609_Role_Description_${randomPostfix}`,
+      originalCapabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Login',
-          action: CAPABILITY_ACTIONS.MANAGE,
-        },
-        {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Notes Enabled',
+          resource: 'UI-Finance Fund-Budget',
           action: CAPABILITY_ACTIONS.VIEW,
+        },
+      ],
+      newCapabilitySets: [
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'UI-Invoice Invoice',
+          action: CAPABILITY_ACTIONS.CREATE,
         },
       ],
     };
@@ -61,24 +63,7 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.EXECUTE,
       },
     ];
-    const capabSetsToAssignCollege = [
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
-        action: CAPABILITY_ACTIONS.MANAGE,
-      },
-      {
-        type: CAPABILITY_TYPES.DATA,
-        resource: 'UI-Users Roles',
-        action: CAPABILITY_ACTIONS.VIEW,
-      },
-    ];
-    const capabSetsToAssignUniversity = [
+    const capabSetsToAssignMembers = [
       {
         type: CAPABILITY_TYPES.SETTINGS,
         resource: 'UI-Authorization-Roles Settings',
@@ -99,11 +84,14 @@ describe('Eureka', () => {
     ];
     const capabSetIds = [];
     let userAData;
-    let userBData;
-    let assignUser1Data;
-    let assignUser2Data;
+    let testUser;
+    let assignUserCentralData;
+    let assignUserCollegeData;
 
-    testData.capabilitySets.forEach((capabilitySet) => {
+    testData.originalCapabilitySets.forEach((capabilitySet) => {
+      capabilitySet.table = capabilitySet.type;
+    });
+    testData.newCapabilitySets.forEach((capabilitySet) => {
       capabilitySet.table = capabilitySet.type;
     });
 
@@ -114,83 +102,116 @@ describe('Eureka', () => {
           userAData = userProperties;
         });
         cy.createTempUser([]).then((userProperties) => {
-          userBData = userProperties;
+          testUser = userProperties;
+        });
+        cy.createTempUser([]).then((userProperties) => {
+          assignUserCentralData = userProperties;
         });
       }).then(() => {
         cy.assignCapabilitiesToExistingUser(
-          userAData.userId,
+          testUser.userId,
           capabsToAssign,
           capabSetsToAssignCentral,
         );
-        cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
-        cy.assignAffiliationToUser(Affiliations.University, userBData.userId);
+        cy.assignAffiliationToUser(Affiliations.College, testUser.userId);
+        cy.assignAffiliationToUser(Affiliations.University, testUser.userId);
         cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
           testData.roleId = role.id;
         });
-        testData.capabilitySets.forEach((capabilitySet) => {
+        testData.originalCapabilitySets.forEach((capabilitySet) => {
           cy.getCapabilitySetIdViaApi(capabilitySet).then((capabSetId) => {
             capabSetIds.push(capabSetId);
           });
         });
         cy.setTenant(Affiliations.College);
         cy.createTempUser([]).then((userProperties) => {
-          assignUser1Data = userProperties;
-        });
-        cy.createTempUser([]).then((userProperties) => {
-          assignUser2Data = userProperties;
+          assignUserCollegeData = userProperties;
         });
         cy.assignCapabilitiesToExistingUser(
-          userAData.userId,
+          testUser.userId,
           capabsToAssign,
-          capabSetsToAssignCollege,
+          capabSetsToAssignMembers,
         );
         cy.setTenant(Affiliations.University);
-        cy.wait(10000);
+        cy.wait(10_000);
         cy.assignCapabilitiesToExistingUser(
-          userBData.userId,
+          testUser.userId,
           capabsToAssign,
-          capabSetsToAssignUniversity,
+          capabSetsToAssignMembers,
         );
       });
     });
 
-    before('Assign capabilities to role, login', () => {
+    before('Assign capabilities, role, login', () => {
       cy.resetTenant();
       cy.getAdminToken();
       cy.addCapabilitySetsToNewRoleApi(testData.roleId, capabSetIds);
-      cy.login(userAData.username, userAData.password);
+      cy.addRolesToNewUserApi(userAData.userId, [testData.roleId]);
+      cy.login(testUser.username, testUser.password);
     });
 
     after('Delete users, data', () => {
       cy.resetTenant();
       cy.getAdminToken();
+      Users.deleteViaApi(testUser.userId);
       Users.deleteViaApi(userAData.userId);
-      Users.deleteViaApi(userBData.userId);
+      Users.deleteViaApi(assignUserCentralData.userId);
       cy.deleteAuthorizationRoleApi(testData.roleId);
       cy.setTenant(Affiliations.College);
-      Users.deleteViaApi(assignUser1Data.userId);
-      Users.deleteViaApi(assignUser2Data.userId);
+      Users.deleteViaApi(assignUserCollegeData.userId);
     });
 
     it(
-      'C523606 ECS | Eureka | Share authorization role and assign users to it from member tenant (consortia) (thunderjet)',
-      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523606'] },
+      'C523609 ECS | Eureka | Share authorization role and edit it from central tenant (consortia) (thunderjet)',
+      { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523609'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();
         ConsortiumManagerApp.clickSelectMembers();
-        SelectMembers.verifyAvailableTenants([tenantNames.central, tenantNames.college].sort());
+        SelectMembers.verifyAvailableTenants(
+          [tenantNames.central, tenantNames.college, tenantNames.university].sort(),
+        );
         SelectMembers.checkMember(tenantNames.central, true);
         SelectMembers.checkMember(tenantNames.college, true);
+        SelectMembers.checkMember(tenantNames.university, false);
         SelectMembers.saveAndClose();
+        ConsortiumManagerApp.verifyTenantsInDropdown(
+          [tenantNames.central, tenantNames.college].sort(),
+        );
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.checkRoleCentrallyManaged(testData.roleName, false);
         AuthorizationRoles.shareRole(testData.roleName);
-        AuthorizationRoles.clickActionsButton(testData.roleName);
-        AuthorizationRoles.checkShareToAllButtonShown(false);
+        AuthorizationRoles.openForEdit(testData.roleName);
+        AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
+        AuthorizationRoles.clickUnassignAllCapabilitiesButton();
+        testData.originalCapabilitySets.forEach((set) => {
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
+        });
+        cy.wait(3000);
+        testData.newCapabilitySets.forEach((set) => {
+          AuthorizationRoles.selectCapabilitySetCheckbox(set);
+        });
+        AuthorizationRoles.checkSaveButton(false);
+        AuthorizationRoles.fillRoleNameDescription(
+          testData.roleNameUpdated,
+          testData.roleDescription,
+        );
+        AuthorizationRoles.checkSaveButton();
+        AuthorizationRoles.clickSaveButton();
+        AuthorizationRoles.checkAfterSaveEdit(testData.roleNameUpdated, testData.roleDescription);
+        AuthorizationRoles.clickAssignUsersButton();
+        AuthorizationRoles.selectUserInModal(assignUserCentralData.username);
+        AuthorizationRoles.clickSaveInAssignModal();
+        AuthorizationRoles.checkUsersAccordion(2);
+        AuthorizationRoles.verifyAssignedUser(userAData.lastName, userAData.firstName);
+        AuthorizationRoles.verifyAssignedUser(
+          assignUserCentralData.lastName,
+          assignUserCentralData.firstName,
+        );
 
         cy.waitForAuthRefresh(() => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -198,59 +219,46 @@ describe('Eureka', () => {
         }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
-        AuthorizationRoles.searchRole(testData.roleName);
-        AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.searchRole(testData.roleNameUpdated);
+        AuthorizationRoles.clickOnRoleName(testData.roleNameUpdated);
+        AuthorizationRoles.checkCapabilitySetsAccordionCounter(
+          `${testData.newCapabilitySets.length}`,
+        );
         AuthorizationRoles.clickOnCapabilitySetsAccordion();
-        testData.capabilitySets.forEach((capabilitySet) => {
-          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabilitySet);
+        testData.newCapabilitySets.forEach((set) => {
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
         });
         AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+        AuthorizationRoles.checkActionsButtonShown(false, testData.roleNameUpdated);
         AuthorizationRoles.clickAssignUsersButton();
-        AuthorizationRoles.selectUserInModal(assignUser1Data.username);
-        AuthorizationRoles.selectUserInModal(assignUser2Data.username);
+        AuthorizationRoles.selectUserInModal(assignUserCollegeData.username);
         AuthorizationRoles.clickSaveInAssignModal();
-        AuthorizationRoles.checkUsersAccordion(2);
+        AuthorizationRoles.checkUsersAccordion(1);
         AuthorizationRoles.verifyAssignedUser(
-          assignUser1Data.lastName,
-          assignUser1Data.firstName,
-          true,
+          assignUserCollegeData.lastName,
+          assignUserCollegeData.firstName,
         );
-        AuthorizationRoles.verifyAssignedUser(
-          assignUser2Data.lastName,
-          assignUser2Data.firstName,
-          true,
-        );
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-        Users.waitLoading();
-        UsersSearchPane.searchByKeywords(assignUser1Data.userId);
-        UsersCard.waitLoading();
-        UsersCard.verifyUserRolesCounter('1');
-        UsersCard.clickUserRolesAccordion();
-        UsersCard.verifyUserRoleNames([testData.roleName]);
 
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
-        AuthorizationRoles.searchRole(testData.roleName);
-        AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.searchRole(testData.roleNameUpdated);
+        AuthorizationRoles.clickOnRoleName(testData.roleNameUpdated);
+        AuthorizationRoles.checkCapabilitySetsAccordionCounter(
+          `${testData.newCapabilitySets.length}`,
+        );
+        AuthorizationRoles.clickOnCapabilitySetsAccordion();
+        testData.newCapabilitySets.forEach((set) => {
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
+        });
         AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
+        AuthorizationRoles.checkActionsButtonShown(false, testData.roleNameUpdated);
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.closeAssignModal();
-        AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
 
-        cy.login(userBData.username, userBData.password);
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
-          cy.reload();
-        }, 20_000);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
-        AuthorizationRoles.waitContentLoading();
-        AuthorizationRoles.searchRole(testData.roleName);
-        AuthorizationRoles.clickOnRoleName(testData.roleName);
-        AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
-        AuthorizationRoles.clickAssignUsersButton();
-        AuthorizationRoles.closeAssignModal();
-        AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
+        cy.login(userAData.username, userAData.password);
+        TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.INVOICES);
+        TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.FINANCE, false);
       },
     );
   });

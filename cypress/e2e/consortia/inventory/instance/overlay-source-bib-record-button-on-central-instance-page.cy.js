@@ -1,4 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
@@ -75,7 +76,12 @@ describe('Inventory', () => {
           updatedInstanceData.physicalDescription,
         );
         InventoryInstance.openSubjectAccordion();
-        InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
+        InstanceRecordView.verifyInstanceSubject({
+          indexRow: 0,
+          subjectHeadings: updatedInstanceData.subject,
+          subjectSource: 'No value set-',
+          subjectType: 'No value set-',
+        });
         InventoryInstance.openInstanceNotesAccordion();
         InventoryInstance.checkInstanceNotes(
           updatedInstanceData.notes.noteType,

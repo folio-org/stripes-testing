@@ -33,4 +33,8 @@ export default {
   verifyNavigationItemAbsentOnTheBar(appName) {
     cy.expect(NavItemList({ label: appName }).absent());
   },
+  verifyAppButtonShown(appName, isShown = true) {
+    if (isShown) cy.expect(AppList().find(Link(appName)).exists());
+    else cy.expect(AppList().find(Link(appName)).absent());
+  },
 };
