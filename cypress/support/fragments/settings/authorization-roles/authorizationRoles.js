@@ -200,7 +200,7 @@ export default {
   },
 
   verifyAppNamesInCapabilityTables(appNamesArray) {
-    const expectedAppNamesRegexp = new RegExp(`^(?=${appNamesArray.join('$|')}$).*`);
+    const expectedAppNamesRegexp = new RegExp(`^(${appNamesArray.join('$|')}$)`);
     const notExpectedAppNamesRegexp = new RegExp(`^(?!${appNamesArray.join('$|')}$).*`);
     this.verifyResourceOrAppPresent(expectedAppNamesRegexp, 0);
     this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
