@@ -47,14 +47,24 @@ describe('Inventory', () => {
       InstanceRecordEdit.saveAndClose();
       InstanceRecordView.verifyInstanceRecordViewOpened();
       InstanceRecordView.openSubjectAccordion();
-      InstanceRecordView.verifyInstanceSubject(0, 0, testData.instanceSubject);
+      InstanceRecordView.verifyInstanceSubject({
+        indexRow: 0,
+        subjectHeadings: testData.instanceSubject,
+        subjectSource: 'No value set-',
+        subjectType: 'No value set-',
+      });
 
       InstanceRecordView.edit();
       InstanceRecordEdit.waitLoading();
       InstanceRecordEdit.changeSubject(testData.newInstanceSubject);
       InstanceRecordEdit.saveAndClose();
       InstanceRecordView.verifyInstanceRecordViewOpened();
-      InstanceRecordView.verifyInstanceSubject(0, 0, testData.newInstanceSubject);
+      InstanceRecordView.verifyInstanceSubject({
+        indexRow: 0,
+        subjectHeadings: testData.newInstanceSubject,
+        subjectSource: 'No value set-',
+        subjectType: 'No value set-',
+      });
 
       InstanceRecordView.edit();
       InstanceRecordEdit.waitLoading();
