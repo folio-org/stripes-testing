@@ -22,7 +22,7 @@ export default {
     cy.xpath("((//div[contains(@class,'paneContent')])[2]//div[@data-test-headline='true'])[1]")
       .invoke('text')
       .then((headerText) => {
-        cy.log('Software version header:', headerText);
+        cy.log('Software version header: ' + headerText);
       });
   },
 
