@@ -71,7 +71,7 @@ describe('Consortium manager', () => {
         cy.createTempUser([])
           .then((userProperties) => {
             tempUserC648469 = userProperties;
-            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
+            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(tempUserC648469.userId, []);
 
             cy.assignCapabilitiesToExistingUser(
               tempUserC648469.userId,
@@ -83,8 +83,7 @@ describe('Consortium manager', () => {
             cy.createTempUser([])
               .then((userPropertiesC648472) => {
                 tempUserC648472 = userPropertiesC648472;
-                if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
-
+                if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(tempUserC648472.userId, []);
                 cy.assignCapabilitiesToExistingUser(
                   tempUserC648472.userId,
                   [],
@@ -93,6 +92,8 @@ describe('Consortium manager', () => {
               })
               .then(() => {
                 cy.assignAffiliationToUser(Affiliations.College, tempUserC648469.userId);
+                cy.assignAffiliationToUser(Affiliations.College, tempUserC648472.userId);
+
                 cy.setTenant(Affiliations.College);
                 cy.assignCapabilitiesToExistingUser(
                   tempUserC648469.userId,
@@ -111,6 +112,8 @@ describe('Consortium manager', () => {
                 cy.getAdminToken();
 
                 cy.assignAffiliationToUser(Affiliations.University, tempUserC648469.userId);
+                cy.assignAffiliationToUser(Affiliations.University, tempUserC648472.userId);
+
                 cy.setTenant(Affiliations.University);
                 cy.assignCapabilitiesToExistingUser(
                   tempUserC648469.userId,
