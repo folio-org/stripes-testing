@@ -14,6 +14,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import { Locations } from '../../../../support/fragments/settings/tenant/location-setup';
+import { CALL_NUMBER_TYPE_NAMES } from '../../../../support/constants';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
@@ -41,35 +42,35 @@ describe('Inventory', () => {
           instanceTitlePrefix: `AT_C651515 Instance1 ${rndm}`,
           itemsProperties: {
             itemLevelCallNumber: '595.0994',
-            itemLevelCallNumberTypeId: getIdByName('Dewey Decimal classification'),
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance2 ${rndm}`,
           itemsProperties: {
             itemLevelCallNumber: 'QS 11 .GA1 E59 2005',
-            itemLevelCallNumberTypeId: getIdByName('Library of Congress classification'),
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance3 ${rndm}`,
           itemsProperties: {
             itemLevelCallNumber: 'SB999.A5',
-            itemLevelCallNumberTypeId: getIdByName('National Library of Medicine classification'),
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance4 ${rndm}`,
           itemsProperties: {
             itemLevelCallNumber: 'Valery P',
-            itemLevelCallNumberTypeId: getIdByName('Other scheme'),
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME),
           },
         }),
         InventoryInstances.generateFolioInstances({
           instanceTitlePrefix: `AT_C651515 Instance5 ${rndm}`,
           itemsProperties: {
             itemLevelCallNumber: 'L39.s:Oc1/2/991',
-            itemLevelCallNumberTypeId: getIdByName('Superintendent of Documents classification'),
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.SUDOC),
           },
         }),
         InventoryInstances.generateFolioInstances({
@@ -89,7 +90,7 @@ describe('Inventory', () => {
           instanceTitlePrefix: `AT_C651515 Instance8 ${rndm}`,
           itemsProperties: {
             itemLevelCallNumber: 'UDC test 01',
-            itemLevelCallNumberTypeId: getIdByName('UDC'),
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.UDC),
           },
         }),
       ].flat();
@@ -97,27 +98,34 @@ describe('Inventory', () => {
 
     const callNumberTypesSettings = [
       { name: 'Call numbers (all)', callNumberTypes: [] },
-      { name: 'Dewey Decimal classification', callNumberTypes: ['Dewey Decimal classification'] },
+      {
+        name: 'Dewey Decimal classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL],
+      },
       {
         name: 'Library of Congress classification',
         callNumberTypes: [
-          'Library of Congress classification',
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
           centralSharedItemCallNumberType.payload.name,
         ],
       },
       {
         name: 'National Library of Medicine classification',
         callNumberTypes: [
-          'National Library of Medicine classification',
-          'Library of Congress classification',
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         ],
       },
-      { name: 'Other scheme', callNumberTypes: ['Other scheme', 'UDC'] },
+      {
+        name: 'Other scheme',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME, CALL_NUMBER_TYPE_NAMES.UDC],
+      },
       {
         name: 'Superintendent of Documents classification',
-        callNumberTypes: ['Superintendent of Documents classification'],
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.SUDOC],
       },
     ];
+    // eslint-disable-next-line func-names
     callNumberTypesSettings.getAssignedCallNumberTypes = function (name) {
       return this.find((item) => item.name === name).callNumberTypes;
     };
@@ -127,7 +135,7 @@ describe('Inventory', () => {
       defaultLocation: {},
     };
     const tenants = [tenantNames.college];
-    const removeInstancesByTitle = function (title) {
+    const removeInstancesByTitle = (title) => {
       [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
           InventoryInstances.deleteFullInstancesByTitleViaApi(title);
