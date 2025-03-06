@@ -14,7 +14,8 @@ describe('Inventory', () => {
     const testData = {
       user: {},
       notProduceSubjectName: 'Test45',
-      subjectNameForCreatedInstance: 'Canadian Subject Headings',
+      firstConditionForFiltering: 'Canadian Subject Headings',
+      secondConditionForFiltering: 'Library of Congress Subject Headings',
     };
     const marcFile = {
       filePath: 'marcBibFileForC584505.mrc',
@@ -22,7 +23,7 @@ describe('Inventory', () => {
       jobProfile: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
 
-    before('Create user and login', () => {
+    before('Import file', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         const preconditionUserId = userProperties.userId;
 
@@ -34,7 +35,9 @@ describe('Inventory', () => {
         cy.getAdminToken();
         Users.deleteViaApi(preconditionUserId);
       });
+    });
 
+    beforeEach('Create user and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -47,9 +50,13 @@ describe('Inventory', () => {
       });
     });
 
-    after('Delete test data', () => {
+    after('Delete created instance', () => {
       cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+    });
+
+    afterEach('Delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
     });
 
@@ -60,8 +67,24 @@ describe('Inventory', () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
         BrowseSubjects.expandAccordion('Subject source');
-        BrowseSubjects.selectSubjectSource(testData.subjectNameForCreatedInstance);
-        BrowseSubjects.verifySearchResult(testData.subjectNameForCreatedInstance);
+        BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
+        BrowseSubjects.verifySearchResult(testData.firstConditionForFiltering);
+      },
+    );
+
+    it(
+      'C584506 Check filtering by folio Subject Source using multiple conditions (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C584506'] },
+      () => {
+        BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
+        BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
+        BrowseSubjects.expandAccordion('Subject source');
+        BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
+        BrowseSubjects.selectSubjectSource(testData.secondConditionForFiltering);
+        BrowseSubjects.verifySearchResult([
+          testData.firstConditionForFiltering,
+          testData.secondConditionForFiltering,
+        ]);
       },
     );
   });

@@ -335,7 +335,13 @@ export default {
     getColumnsResults().then((cells) => {
       cells.forEach((cell) => {
         if (cell !== 'No value set-') {
-          cy.expect(cell).to.include(cellContent);
+          if (Array.isArray(cellContent)) {
+            cellContent.forEach((content) => {
+              cy.expect(content).to.satisfy((cellValue) => cellContent.some((val) => cellValue.includes(val)));
+            });
+          } else {
+            cy.expect(cell).to.include(cellContent);
+          }
         }
       });
     });
