@@ -108,23 +108,6 @@ const centrallyManagedKeyValue = KeyValue('Centrally managed');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
 
-const getResultsListByColumn = (columnIndex) => {
-  const cells = [];
-  cy.wait(2000);
-  return cy
-    .get('div[data-testid^="capabilities-"] [data-row-index]')
-    .each(($row) => {
-      // from each row, choose specific cell
-      cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
-        // extract its text content
-        .invoke('text')
-        .then((cellValue) => {
-          cells.push(cellValue);
-        });
-    })
-    .then(() => cells);
-};
-
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
 export default {
@@ -216,12 +199,11 @@ export default {
     cy.do(saveButton.click());
   },
 
-  verifyAppNamesInCapabilityTables: (appNamesArray) => {
-    getResultsListByColumn(0).then((cellTexts) => {
-      cellTexts.forEach((cellText) => {
-        expect(cellText).to.be.oneOf([...appNamesArray]);
-      });
-    });
+  verifyAppNamesInCapabilityTables(appNamesArray) {
+    const expectedAppNamesRegexp = new RegExp(`^(?=${appNamesArray.join('$|')}$).*`);
+    const notExpectedAppNamesRegexp = new RegExp(`^(?!${appNamesArray.join('$|')}$).*`);
+    this.verifyResourceOrAppPresent(expectedAppNamesRegexp, 0);
+    this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
   selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
@@ -945,5 +927,13 @@ export default {
     cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
     InteractorsTools.dismissCallout(createNameErrorText);
     cy.expect(Callout(createNameErrorText).absent());
+  },
+
+  verifyResourceOrAppPresent: (expectedText, columnIndex = 0, isPresent = true) => {
+    const matchingCell = MultiColumnListCell(or(expectedText, matching(expectedText)), {
+      columnIndex,
+    });
+    if (isPresent) cy.expect(matchingCell.exists());
+    else cy.expect(matchingCell.absent());
   },
 };
