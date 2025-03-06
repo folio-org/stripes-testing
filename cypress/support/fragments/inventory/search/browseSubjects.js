@@ -1,10 +1,9 @@
 /* eslint-disable no-dupe-keys */
-import { including } from '@interactors/html';
+import { including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
   Link,
-  matching,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -50,6 +49,7 @@ function getColumnsResults() {
 }
 
 export default {
+  getColumnsResults,
   getColumnsResults,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
@@ -98,6 +98,9 @@ export default {
   },
 
   checkResultAndItsRow(rowIndex, value) {
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
     cy.expect(
       MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
     );
