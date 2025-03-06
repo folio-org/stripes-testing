@@ -19,7 +19,7 @@ describe('MARC', () => {
       const newField100 = {
         previousFieldTag: '010',
         tag: '100',
-        content: '$a C423540 Create a new MARC authority record with not matched prefix on 010',
+        content: '$a C688811 Create a new MARC authority record with not matched prefix on 010',
       };
       const errorToastNotification =
         'Record cannot be saved. Prefix in the 010 field does not match the selected authority file.';
@@ -52,9 +52,9 @@ describe('MARC', () => {
       });
 
       it(
-        `C423540 Create a new MARC authority record with "FOLIO" authority file selected 
+        `C688811 Create a new MARC authority record with "FOLIO" authority file selected 
             and added "010" field with prefix of different "FOLIO" authority file (spitfire)`,
-        { tags: ['criticalPath', 'spitfire', 'C423540'] },
+        { tags: ['criticalPath', 'spitfire', 'C688811'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
