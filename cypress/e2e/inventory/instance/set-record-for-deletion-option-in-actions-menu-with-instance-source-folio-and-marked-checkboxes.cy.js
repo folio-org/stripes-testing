@@ -1,5 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -51,7 +53,10 @@ describe('Inventory', () => {
       { tags: ['extendedPath', 'folijet', 'C436846'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifySetRecordForDeletionOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.setRecordForDeletion,
+          false,
+        );
       },
     );
   });

@@ -39,6 +39,7 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
+const downloadMatchedRecordsButton = Button('Download matched records (CSV)');
 const downloadPreviewInCSVFormatBtn = Button('Download preview in CSV format');
 const downloadPreviewInMarcFormatButton = Button('Download preview in MARC format');
 const downloadErrorsButton = Button('Download errors (CSV)');
@@ -341,11 +342,11 @@ export default {
   },
 
   downloadMatchedRecordsExists() {
-    cy.expect(Button('Download matched records (CSV)').exists());
+    cy.expect(downloadMatchedRecordsButton.exists());
   },
 
   downloadMatchedRecordsAbsent() {
-    cy.expect(Button('Download matched records (CSV)').absent());
+    cy.expect(downloadMatchedRecordsButton.absent());
   },
 
   downloadErrorsExists() {
@@ -593,7 +594,7 @@ export default {
         .find(bulkPageSelections.valueType)
         .choose('Expiration date'),
       calendarButton.click(),
-      TextField().fillIn(formattedDate),
+      TextField({ placeholder: 'MM/DD/YYYY' }).fillIn(formattedDate),
     ]);
 
     // we don't have interactor for this element
@@ -1055,7 +1056,7 @@ export default {
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
     cy.wait(500);
-    cy.do(Button('Download matched records (CSV)').click());
+    cy.do(downloadMatchedRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 

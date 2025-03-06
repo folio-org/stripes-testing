@@ -2,7 +2,9 @@ import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/consta
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -89,7 +91,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.moveHoldingsItemsToAnotherInstance,
+          false,
+        );
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -97,7 +102,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InstanceRecordView.waitLoading();
-        InstanceRecordView.verifyMoveHoldingsItemsToAnotherInstanceOptionExists();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.moveHoldingsItemsToAnotherInstance,
+          true,
+        );
       },
     );
   });

@@ -78,13 +78,17 @@ describe('Bulk-edit', () => {
             instanceTypeId = instanceTypes[0].id;
           });
           InstanceNoteTypes.getInstanceNoteTypesViaApi({
-            limit: 2,
-            query: 'name=="General note" or name=="Dissertation note"',
+            limit: 1,
+            query: 'name=="General note"',
+          }).then(({ instanceNoteTypes }) => {
+            generalNoteTypeId = instanceNoteTypes[0].id;
+          });
+          InstanceNoteTypes.getInstanceNoteTypesViaApi({
+            limit: 1,
+            query: 'name=="Dissertation note"',
           })
             .then(({ instanceNoteTypes }) => {
-              [dissertationNoteTypeId, generalNoteTypeId] = instanceNoteTypes.map(
-                (type) => type.id,
-              );
+              dissertationNoteTypeId = instanceNoteTypes[0].id;
             })
             .then(() => {
               InventoryInstances.createFolioInstanceViaApi({
