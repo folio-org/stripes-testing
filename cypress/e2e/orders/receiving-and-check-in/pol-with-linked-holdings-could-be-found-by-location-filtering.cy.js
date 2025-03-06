@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
@@ -19,6 +18,7 @@ import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants'
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import Receiving from '../../../support/fragments/receiving/receiving';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Receiving', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -178,7 +178,9 @@ describe('Receiving', () => {
                           secondOrderLine.purchaseOrderId = secondOrderResponse.id;
                           OrderLines.createOrderLineViaApi(secondOrderLine);
                         });
-                        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+                        cy.loginAsAdmin();
+                        TopMenuNavigation.openAppFromDropdown('Orders');
+                        Orders.selectOrdersPane();
                         Orders.createOrderViaApi(thirdOrder).then((thirdOrderResponse) => {
                           thirdOrder.id = thirdOrderResponse.id;
                           thirdOrderNumber = thirdOrderResponse.poNumber;
@@ -229,10 +231,8 @@ describe('Receiving', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.receivingPath,
-        waiter: Receiving.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Receiving');
     });
   });
 
