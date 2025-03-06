@@ -138,7 +138,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingField(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.checkContentByTag(testData.tag100, testData.tag100UpdatedContent);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             QuickMarcEditor.checkAfterSaveAndKeepEditing();
@@ -210,8 +210,10 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseSubjects.select();
+            BrowseSubjects.waitForSubjectToAppear(testData.expectedSubjectName);
             BrowseSubjects.browse(testData.expectedSubjectName);
             BrowseSubjects.checkValueIsBold(testData.expectedSubjectName);
+            BrowseSubjects.waitForSubjectToAppear(testData.notExpectedSubjectName, false);
             BrowseSubjects.browse(testData.notExpectedSubjectName);
             BrowseSubjects.verifyNonExistentSearchResult(testData.notExpectedSubjectName);
 
@@ -247,8 +249,10 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(testData.expectedContributorNames[0]);
             BrowseContributors.browse(testData.expectedContributorNames[0]);
             BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[0]);
+            BrowseContributors.waitForContributorToAppear(testData.expectedContributorNames[2]);
             BrowseContributors.browse(testData.expectedContributorNames[2]);
             BrowseSubjects.checkValueIsBold(testData.expectedContributorNames[2]);
           },

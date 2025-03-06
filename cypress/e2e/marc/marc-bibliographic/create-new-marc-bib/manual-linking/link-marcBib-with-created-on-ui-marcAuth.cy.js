@@ -88,11 +88,8 @@ describe('MARC', () => {
             // Creating marc authority part
             MarcAuthorities.clickActionsAndNewAuthorityButton();
             QuickMarcEditor.checkPaneheaderContains(testData.newAuthorityHeaderText);
-            QuickMarcEditor.verifyAuthorityLookUpButton();
-            QuickMarcEditor.clickAuthorityLookUpButton();
-            QuickMarcEditor.selectAuthorityFile(testData.sourceName);
-            QuickMarcEditor.verifyAuthorityFileSelected(testData.sourceName);
-            QuickMarcEditor.clickSaveAndCloseInModal();
+            MarcAuthority.checkSourceFileSelectShown();
+            MarcAuthority.selectSourceFile(testData.sourceName);
             newFields.forEach((newField) => {
               MarcAuthority.addNewFieldAfterExistingByTag(
                 newField.previousFieldTag,
@@ -103,7 +100,7 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(newFields[0].tag, newFields[0].content);
             QuickMarcEditor.checkContentByTag(newFields[1].tag, newFields[1].content);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             MarcAuthority.verifyAfterSaveAndClose();
             QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.newAuthorityHeaderText);
@@ -149,7 +146,7 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(2000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(

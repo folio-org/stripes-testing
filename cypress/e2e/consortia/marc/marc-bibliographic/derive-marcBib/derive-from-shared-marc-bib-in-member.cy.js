@@ -60,6 +60,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiInventoryViewInstances.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -78,17 +79,19 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.switchActiveAffiliation(
-                tenantNames.central,
-                tenantNames.university,
-              );
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              }).then(() => {
+                ConsortiumManager.switchActiveAffiliation(
+                  tenantNames.central,
+                  tenantNames.university,
+                );
+                InventoryInstances.waitContentLoading();
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+              });
+            }, 20_000);
           });
       });
 
@@ -114,6 +117,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkSharedTextInDetailView(false);
           InventoryInstance.checkExpectedMARCSource();
@@ -125,6 +130,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkSharedTextInDetailView(false);

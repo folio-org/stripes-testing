@@ -3,6 +3,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -58,6 +59,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.checkRecordStatusNew();
           QuickMarcEditor.checkDefaultFieldsInOrder();
+          MarcAuthority.checkSourceFileSelectShown();
 
           // 3 Check "LDR" field
           defaultLDRValuesInFields.forEach((defaultLDRValueInField) => {

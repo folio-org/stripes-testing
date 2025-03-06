@@ -141,10 +141,6 @@ const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confi
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
 });
-const authorityLookUpButton = Button('Authority file look-up');
-const selectAuthorityFileModal = Modal('Select authority file');
-const selectAuthorityFile = Select({ label: including('Authority file name') });
-const saveAndCloseBtn = Button('Save & close');
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -2526,57 +2522,6 @@ export default {
     return cy.get('@holdings');
   },
 
-  verifyAuthorityLookUpButton() {
-    cy.expect(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).exists());
-  },
-  clickAuthorityLookUpButton() {
-    cy.wait(250);
-    cy.do(QuickMarcEditorRow({ tagValue: '001' }).find(authorityLookUpButton).click());
-    cy.expect(selectAuthorityFileModal.exists());
-  },
-  selectAuthorityFile(authorityFile) {
-    cy.do([
-      selectAuthorityFileModal.find(selectAuthorityFile).click(),
-      selectAuthorityFileModal.find(selectAuthorityFile).choose(authorityFile),
-    ]);
-  },
-  verifyAuthorityFileSelected(authorityFile) {
-    cy.expect([
-      selectAuthorityFile.has({ content: including(authorityFile) }),
-      selectAuthorityFileModal.find(saveAndCloseBtn).has({ disabled: false }),
-    ]);
-  },
-  clickSaveAndCloseInModal() {
-    cy.do(selectAuthorityFileModal.find(saveAndCloseBtn).click());
-    cy.expect(selectAuthorityFileModal.absent());
-  },
-
-  verifySelectAuthorityFileModalDefaultView() {
-    cy.expect([
-      selectAuthorityFileModal
-        .find(selectAuthorityFile)
-        .has({ checkedOptionText: 'Select authority file' }),
-      selectAuthorityFileModal.find(cancelButton).has({ disabled: false }),
-      selectAuthorityFileModal.find(saveAndCloseBtn).has({ disabled: true }),
-    ]);
-  },
-
-  clickAuthorityFileNameDropdown() {
-    cy.do(selectAuthorityFileModal.find(selectAuthorityFile).click());
-  },
-
-  verifyOptionInAuthorityFileNameDropdown(option, isPresent = true) {
-    if (isPresent) {
-      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
-        expect(arrayOfOptions).to.include(option);
-      });
-    } else {
-      cy.wrap(selectAuthorityFile.allOptionsText()).should((arrayOfOptions) => {
-        expect(arrayOfOptions).to.not.include(option);
-      });
-    }
-  },
-
   verifyDropdownValueOfLDRIsValid(dropdownLabel, isValid = true) {
     cy.expect(
       QuickMarcEditorRow({ tagValue: 'LDR' })
@@ -2830,5 +2775,33 @@ export default {
         .find(Select({ label: including(dropdownLabel), valid: !isMarked }))
         .exists(),
     );
+  },
+
+  checkFieldContainsValueByIndex(rowIndex, value, tag) {
+    const targetRow = QuickMarcEditorRow({ index: rowIndex });
+    cy.expect(
+      targetRow
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(value) }),
+    );
+    if (tag) {
+      cy.expect(
+        targetRow.find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      );
+    }
+  },
+
+  checkLinkedFieldContainsControlledValueByIndex(rowIndex, value, tag) {
+    const targetRow = QuickMarcEditorRow({ index: rowIndex });
+    cy.expect(
+      targetRow
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+        .has({ value: including(value) }),
+    );
+    if (tag) {
+      cy.expect(
+        targetRow.find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      );
+    }
   },
 };

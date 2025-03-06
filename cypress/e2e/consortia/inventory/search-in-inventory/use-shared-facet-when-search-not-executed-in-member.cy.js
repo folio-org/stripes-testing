@@ -50,9 +50,11 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
+          InventoryInstances.deleteInstanceByTitleViaApi('C402330');
 
           cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
           cy.setTenant(Affiliations.College);
+          InventoryInstances.deleteInstanceByTitleViaApi('C402330');
           cy.assignPermissionsToExistingUser(users.userProperties.userId, [
             Permissions.uiInventoryViewInstances.gui,
           ]);
@@ -74,24 +76,21 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.resetTenant();
-          cy.loginAsAdmin().then(() => {
-            marcFiles.forEach((marcFile) => {
-              cy.visit(TopMenu.dataImportPath);
-              if (marcFile.tenant === 'College') {
-                cy.setTenant(Affiliations.College);
-              } else {
-                cy.resetTenant();
-                cy.getAdminToken();
-              }
+          marcFiles.forEach((marcFile) => {
+            if (marcFile.tenant === 'College') {
+              cy.setTenant(Affiliations.College);
+            } else {
+              cy.resetTenant();
+              cy.getAdminToken();
+            }
 
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  createdRecordIDs.push(record[marcFile.propertyName].id);
-                });
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
               });
             });
           });
@@ -208,7 +207,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
 
         // 13 Cancel facet selection by clicking on "x" icon placed in the "Shared" accordion button.
-        InventorySearchAndFilter.clearSharedFilter();
+        InventorySearchAndFilter.clearFilter(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
         InventorySearchAndFilter.verifyResultPaneEmpty(true);

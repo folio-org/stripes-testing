@@ -8,6 +8,8 @@ import {
   Spinner,
   Section,
   calloutTypes,
+  SelectionOption,
+  SelectionList,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -17,6 +19,8 @@ const expandAllButton = Button('Expand all');
 const managementPane = Pane('Management');
 const expandPaneIcon = Button({ icon: 'caret-right' });
 const collapsePaneIcon = Button({ icon: 'caret-left' });
+const memberDropdownButton = Button({ id: 'consortium-member-select' });
+const memberDropdownList = SelectionList({ id: 'sl-container-consortium-member-select' });
 
 export const messages = {
   created: (name, members) => `${name} was successfully created for ${members} libraries.`,
@@ -217,5 +221,12 @@ export default {
     }
     this.waitLoading();
     this.verifySelectMembersButton();
+  },
+
+  verifyTenantsInDropdown: (memberNamesArray) => {
+    cy.do(memberDropdownButton.click());
+    cy.expect(memberDropdownList.has({ optionList: memberNamesArray.sort() }));
+    cy.do(memberDropdownButton.click());
+    cy.expect(SelectionOption().absent());
   },
 };

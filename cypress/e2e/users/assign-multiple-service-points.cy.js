@@ -18,21 +18,23 @@ describe('Users', () => {
       ServicePoints.createViaApi(servicePoint1);
       ServicePoints.createViaApi(servicePoint2);
 
-      cy.wrap(true).then(() => {
-        cy.createTempUser([
-          Permissions.uiUsersEdituserservicepoints.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
+      cy.wrap(true)
+        .then(() => {
+          cy.createTempUser([Permissions.uiUsersEdituserservicepoints.gui]).then(
+            (userProperties) => {
+              testData.user = userProperties;
+            },
+          );
+          cy.createTempUser([]).then((userProperties) => {
+            testData.testUser = userProperties;
+          });
+        })
+        .then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
         });
-        cy.createTempUser([]).then((userProperties) => {
-          testData.testUser = userProperties;
-        });
-      }).then(() => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading
-        });
-      });
     });
   });
 
@@ -45,7 +47,8 @@ describe('Users', () => {
     ServicePoints.deleteViaApi(servicePoint2.id);
   });
 
-  it('C424 Service Points: Assign multiple service points to a user (volaris)',
+  it(
+    'C424 Service Points: Assign multiple service points to a user (volaris)',
     { tags: ['criticalPath', 'volaris', 'C424'] },
     () => {
       UsersSearchPane.searchByUsername(testData.testUser.username);
@@ -55,5 +58,6 @@ describe('Users', () => {
       UserEdit.saveAndClose();
       UserEdit.openServicePointsAccordion();
       UserEdit.checkServicePoints(servicePoint1.name, servicePoint2.name);
-    });
+    },
+  );
 });

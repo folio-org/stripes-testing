@@ -76,13 +76,21 @@ export default {
 
   verifyUserIsNotPresentInTheList(...userFields) {
     userFields.forEach((field) => {
-      cy.expect(searchResultsPaneContent.find(MultiColumnListRow({ content: including(field), isContainer: true })).absent());
+      cy.expect(
+        searchResultsPaneContent
+          .find(MultiColumnListRow({ content: including(field), isContainer: true }))
+          .absent(),
+      );
     });
   },
 
   verifyUserIsPresentInTheList(...userFields) {
     userFields.forEach((field) => {
-      cy.expect(searchResultsPaneContent.find(MultiColumnListRow({ content: including(field), isContainer: true })).exists());
+      cy.expect(
+        searchResultsPaneContent
+          .find(MultiColumnListRow({ content: including(field), isContainer: true }))
+          .exists(),
+      );
     });
   },
 };

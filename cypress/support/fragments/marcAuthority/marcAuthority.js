@@ -8,12 +8,14 @@ import {
   PaneHeader,
   QuickMarcEditorRow,
   Section,
+  Select,
   TableCell,
   TableRow,
   TextArea,
   TextField,
   including,
   matching,
+  not,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
@@ -36,6 +38,9 @@ const calloutUpdatedRecordSuccess = Callout(
 );
 const searchPane = Section({ id: 'pane-authorities-filters' });
 const closeButton = Button({ icon: 'times' });
+const sourceFileSelect = QuickMarcEditorRow({ tagValue: '001' }).find(
+  Select('Authority file name'),
+);
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -422,5 +427,23 @@ export default {
       cy.wrap(body).as('records');
     });
     return cy.get('@records');
+  },
+
+  checkSourceFileSelectShown: () => {
+    cy.expect(sourceFileSelect.exists());
+  },
+
+  selectSourceFile(sourceFileName) {
+    cy.do(sourceFileSelect.choose(sourceFileName));
+    this.verifySourceFileSelected(sourceFileName);
+  },
+
+  verifySourceFileOptionPresent: (option, isPresent = true) => {
+    if (isPresent) cy.expect(sourceFileSelect.has({ allOptionsText: including(option) }));
+    else cy.expect(sourceFileSelect.has({ allOptionsText: not(including(option)) }));
+  },
+
+  verifySourceFileSelected: (sourceFileName) => {
+    cy.expect(sourceFileSelect.has({ checkedOptionText: sourceFileName }));
   },
 };

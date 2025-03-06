@@ -366,7 +366,6 @@ export default {
     cy.wait(1000);
   },
 
-
   openReadingRoomAccessAccordion() {
     cy.do(readingRoomAccessAccordion.clickHeader());
     cy.expect(readingRoomAccessAccordion.find(MultiColumnList()).exists());
