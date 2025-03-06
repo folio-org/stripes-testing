@@ -13,6 +13,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -50,9 +51,9 @@ describe('Data Import', () => {
       contributorType: 'Translator',
       absentContributorName: 'Stelfreeze, Brian (to be deleted)',
       subjects: [
-        { row: 0, column: 0, name: 'Black Panther (Fictitious character) C405531' },
-        { row: 1, column: 0, name: 'New Subject C405531' },
-        { row: 2, column: 0, name: 'Superfighters (C405531)' },
+        { row: 0, name: 'Black Panther (Fictitious character) C405531' },
+        { row: 1, name: 'New Subject C405531' },
+        { row: 2, name: 'Superfighters (C405531)' },
       ],
       instanceTitle: 'C405531 Instance Shared Central',
       tag100: {
@@ -214,7 +215,12 @@ describe('Data Import', () => {
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
         testData.subjects.forEach((subject) => {
-          InventoryInstance.verifyInstanceSubject(subject.row, subject.column, subject.name);
+          InstanceRecordView.verifyInstanceSubject({
+            indexRow: subject.row,
+            subjectHeadings: subject.name,
+            subjectSource: 'No value set-',
+            subjectType: 'No value set-',
+          });
         });
         InventoryInstance.viewSource();
         InventoryViewSource.contains(`${testData.tag100.tag}\t1  \t${testData.tag100.content}`);
@@ -236,7 +242,12 @@ describe('Data Import', () => {
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);
         testData.subjects.forEach((subject) => {
-          InventoryInstance.verifyInstanceSubject(subject.row, subject.column, subject.name);
+          InstanceRecordView.verifyInstanceSubject({
+            indexRow: subject.row,
+            subjectHeadings: subject.name,
+            subjectSource: 'No value set-',
+            subjectType: 'No value set-',
+          });
         });
         InventoryInstance.viewSource();
         InventoryViewSource.contains(`${testData.tag100.tag}\t1  \t${testData.tag100.content}`);

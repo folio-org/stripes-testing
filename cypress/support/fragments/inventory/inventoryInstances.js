@@ -33,6 +33,7 @@ import InventoryHoldings from './holdings/inventoryHoldings';
 import InventoryInstance from './inventoryInstance';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
+import QuickMarcEditor from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -51,6 +52,7 @@ const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
+const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -350,6 +352,11 @@ export default {
     InventoryNewInstance.waitLoading();
 
     return InventoryNewInstance;
+  },
+
+  createNewMarcBibRecord() {
+    cy.do([actionsButton.click(), newMarcBibButton.click()]);
+    QuickMarcEditor.waitLoading();
   },
 
   exportInstanceMarc() {
