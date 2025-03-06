@@ -124,17 +124,11 @@ describe('Data Import', () => {
     ) {
       FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
         const records = actualContent.split('');
-        cy.log(`RECORDS COUNT: ${records.length}`);
-        records.forEach((record, recordIndex) => {
+        records.forEach((record) => {
           linkingTagAndValues.forEach((linkingTagAndValue, index) => {
             if (record.includes(linkingTagAndValue.value)) {
               const lines = record.split('');
               linkingTagAndValues[index].field999data = lines[lines.length - 2];
-              const logInfo = `\n\n\nlinkingTagAndValue.value:\n${linkingTagAndValue.value}
-                field999data:\n${JSON.stringify(lines[lines.length - 2], null, 2)}
-                linkingTagAndValue.uuidIndex:\n${linkingTagAndValue.uuidIndex}
-                recordIndex:\n${recordIndex}\n\n\n`;
-              cy.log(logInfo);
             }
           });
         });
@@ -262,7 +256,7 @@ describe('Data Import', () => {
 
     it(
       'C624349 Update 10 linked MARC authority records which are linked to the same MARC bibliographic record using 999 ff $s for match (5 links are retained, 6 links are deleted) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C624349'] },
+      { tags: ['criticalPath', 'spitfire', 'C624349'] },
       () => {
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();
