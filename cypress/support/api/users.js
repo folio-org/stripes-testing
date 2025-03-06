@@ -79,11 +79,11 @@ Cypress.Commands.add(
   'createTempUser',
   (permissions = [], patronGroupName, userType = 'staff', barcode = true, email) => {
     const userProperties = {
-      username: `AT_Username_${getRandomPostfix()}`,
+      username: `at_username_${getRandomPostfix()}`,
       password: 'password',
     };
 
-    if (!Cypress.env('ecsEnabled') || Cypress.env('eureka')) {
+    if (!Cypress.env('ecsEnabled')) {
       cy.getAdminToken();
     }
 

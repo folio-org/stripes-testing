@@ -363,9 +363,10 @@ export default {
     cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  openForEdit: () => {
+  openForEdit: (roleName = false) => {
+    const targetActionsButton = roleName ? Pane(roleName).find(actionsButton) : actionsButton;
     cy.wait(1000);
-    cy.do([actionsButton.click(), editButton.click()]);
+    cy.do([targetActionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
       editRolePane.find(Spinner()).absent(),

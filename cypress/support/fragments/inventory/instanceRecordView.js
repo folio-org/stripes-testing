@@ -48,6 +48,7 @@ const dateTypeKeyValue = descriptiveDataAccordion.find(KeyValue('Date type'));
 const date1KeyValue = descriptiveDataAccordion.find(KeyValue('Date 1'));
 const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const addItemButton = Button('Add item');
+const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
 
 const verifyResourceTitle = (value) => {
@@ -681,14 +682,21 @@ export default {
     });
   },
 
-  verifyInstanceSubject: (indexRow, indexColumn, value) => {
-    cy.expect(
-      subjectAccordion
-        .find(MultiColumnList({ id: 'list-subject' }))
-        .find(MultiColumnListRow({ index: indexRow }))
-        .find(MultiColumnListCell({ columnIndex: indexColumn }))
-        .has({ content: value }),
-    );
+  verifyInstanceSubject: (subjectSource) => {
+    cy.expect([
+      subjectList
+        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+        .find(MultiColumnListCell({ column: 'Subject headings' }))
+        .has({ content: subjectSource.subjectHeadings }),
+      subjectList
+        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+        .find(MultiColumnListCell({ column: 'Subject source' }))
+        .has({ content: subjectSource.subjectSource }),
+      subjectList
+        .find(MultiColumnListRow({ index: subjectSource.indexRow }))
+        .find(MultiColumnListCell({ column: 'Subject type' }))
+        .has({ content: subjectSource.subjectType }),
+    ]);
   },
 
   verifyInstanceSubjectAbsent: () => {

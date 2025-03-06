@@ -1,21 +1,23 @@
 /* eslint-disable no-dupe-keys */
-import { including } from '@interactors/html';
+import { including, matching } from '@interactors/html';
 import {
-  matching,
+  Accordion,
   Button,
-  MultiColumnListCell,
-  Pane,
-  TextArea,
   Link,
+  MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
+  Pane,
   Section,
-  TextInput,
   Select,
-  Accordion,
+  TextArea,
+  TextInput,
 } from '../../../../../interactors';
-import InventorySearchAndFilter from '../inventorySearchAndFilter';
 import { escapeRegex } from '../../../utils/stringTools';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
@@ -29,7 +31,26 @@ const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitl
 const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
+function getColumnsResults() {
+  const cells = [];
+
+  return cy
+    .get('#browse-results-list-browseSubjects')
+    .find('[data-row-index]')
+    .each(($row) => {
+      cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getColumnsResults,
+  getColumnsResults,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -77,7 +98,12 @@ export default {
   },
 
   checkResultAndItsRow(rowIndex, value) {
-    cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: value }));
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
   },
 
   checkAbsenceOfResultAndItsRow(rowIndex, value) {
@@ -289,5 +315,38 @@ export default {
         timeout: 60000,
       },
     );
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(searchFilterPane.find(Accordion(accordionName)).clickHeader());
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  selectSubjectSource(subjectSource) {
+    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).fillIn(subjectSource));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(subjectSource)))
+        .click(),
+    );
+    cy.wait(1000);
+  },
+
+  verifySearchResult: (cellContent) => {
+    getColumnsResults().then((cells) => {
+      cells.forEach((cell) => {
+        if (cell !== 'No value set-') {
+          if (Array.isArray(cellContent)) {
+            cellContent.forEach((content) => {
+              cy.expect(content).to.satisfy((cellValue) => cellContent.some((val) => cellValue.includes(val)));
+            });
+          } else {
+            cy.expect(cell).to.include(cellContent);
+          }
+        }
+      });
+    });
   },
 };

@@ -10,6 +10,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -64,6 +65,8 @@ describe('orders: Unreceive piece from Order', () => {
         TopMenuNavigation.openAppFromDropdown('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+        InventoryInstance.openHoldingsAccordion(OrdersHelper.mainLibraryLocation);
+        InventoryInstance.openItemByBarcodeAndIndex(barcode);
         ItemRecordView.verifyItemStatus('On order');
       });
     },

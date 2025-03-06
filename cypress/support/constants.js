@@ -18,6 +18,7 @@ export const APPLICATION_NAMES = {
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',
   CONSORTIUM_MANAGER: 'Consortium manager',
+  FINANCE: 'Finance',
 };
 
 export const REQUEST_METHOD = {
@@ -293,6 +294,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   DEWAY_DECIMAL: 'Dewey Decimal classification',
   SUDOC: 'Superintendent of Documents classification',
+  UDC: 'UDC',
   LOCAL: 'Local',
 };
 
