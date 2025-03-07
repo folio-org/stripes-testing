@@ -163,8 +163,8 @@ describe('bulk-edit', () => {
         // it is necessary to split column names into sets because scrolling is required to display all the columns
         const firstSetOfColumnNamesInAreYouSureForm = columnNames.slice(0, 4);
         const secondSetOfColumnNamesnAreYouSureForm = columnNames.slice(4, 10);
-        const thirdSetOfColumnNamesnAreYouSureForm = columnNames.slice(10, 19);
-        const fourthSetOfColumnNamesnAreYouSureForm = columnNames.slice(19);
+        const thirdSetOfColumnNamesnAreYouSureForm = columnNames.slice(10, 18);
+        const fourthSetOfColumnNamesnAreYouSureForm = columnNames.slice(18);
 
         firstSetOfColumnNamesInAreYouSureForm.forEach((columnName) => {
           BulkEditSearchPane.verifyAreYouSureColumnTitlesInclude(columnName);
