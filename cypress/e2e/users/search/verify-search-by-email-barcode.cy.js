@@ -3,18 +3,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
-import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Users', () => {
   describe('Search (Users)', () => {
     const testData = {
       user: {},
-      searchUser1: {
-        email: `test@${getRandomPostfix()}folio.org`,
-      },
-      searchUser2: {
-        email: `test@${getRandomPostfix()}folio.org`,
-      },
+      searchUser1: Users.generateUserModel(),
+      searchUser2: Users.generateUserModel(),
     };
 
     before('Preconditions', () => {
@@ -22,12 +17,12 @@ describe('Users', () => {
         cy.createTempUser([Permissions.uiUsersView.gui]).then((userProperties) => {
           testData.user = userProperties;
         });
-        cy.createTempUser([], 'staff', 'patron', true, testData.searchUser1.email).then(
+        cy.createTempUserParameterized(testData.searchUser1, [], { userType: 'patron' }).then(
           (userProperties) => {
             testData.searchUser1 = { ...testData.searchUser1, ...userProperties };
           },
         );
-        cy.createTempUser([], 'staff', 'patron', true, testData.searchUser2.email).then(
+        cy.createTempUserParameterized(testData.searchUser2, [], { userType: 'patron' }).then(
           (userProperties) => {
             testData.searchUser2 = { ...testData.searchUser2, ...userProperties };
           },
@@ -53,29 +48,29 @@ describe('Users', () => {
       'C416 Search: Verify search by Email (volaris)',
       { tags: ['criticalPath', 'volaris', 'C416'] },
       () => {
-        UsersSearchPane.searchByKeywords(testData.searchUser1.email);
+        UsersSearchPane.searchByKeywords(testData.searchUser1.personal.email);
         UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
-          testData.searchUser1.email,
+          testData.searchUser1.personal.email,
         );
         UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
-          testData.searchUser2.email,
+          testData.searchUser2.personal.email,
         );
         UsersSearchPane.resetAllFilters();
 
-        UsersSearchPane.searchByKeywords(testData.searchUser2.email);
+        UsersSearchPane.searchByKeywords(testData.searchUser2.personal.email);
         UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
-          testData.searchUser2.email,
+          testData.searchUser2.personal.email,
         );
         UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
-          testData.searchUser1.email,
+          testData.searchUser1.personal.email,
         );
       },
     );
@@ -88,12 +83,12 @@ describe('Users', () => {
         UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
-          testData.searchUser1.email,
+          testData.searchUser1.personal.email,
         );
         UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
-          testData.searchUser2.email,
+          testData.searchUser2.personal.email,
         );
         UsersSearchPane.resetAllFilters();
 
@@ -101,12 +96,12 @@ describe('Users', () => {
         UsersSearchResultsPane.verifyUserIsPresentInTheList(
           testData.searchUser2.barcode,
           testData.searchUser2.username,
-          testData.searchUser2.email,
+          testData.searchUser2.personal.email,
         );
         UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
           testData.searchUser1.barcode,
           testData.searchUser1.username,
-          testData.searchUser1.email,
+          testData.searchUser1.personal.email,
         );
       },
     );
