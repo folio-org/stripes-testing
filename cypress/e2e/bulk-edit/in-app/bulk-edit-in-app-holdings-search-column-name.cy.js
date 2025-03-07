@@ -90,7 +90,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyNonMatchedResults(invalidHoldingUUID);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrorsExists();
-        BulkEditSearchPane.searchColumnNameTextfieldDisabled();
+        BulkEditSearchPane.searchColumnNameTextfieldAbsent();
       },
     );
   });
