@@ -1080,29 +1080,6 @@ export default {
       });
   },
 
-  createLocalCallNumberTypeViaApi: (name) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'call-number-types',
-        body: {
-          id: uuid(),
-          name,
-          source: 'local',
-        },
-      })
-      .then((res) => {
-        return res.body.id;
-      });
-  },
-
-  deleteLocalCallNumberTypeViaApi(id) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `call-number-types/${id}`,
-    });
-  },
-
   createMarcBibliographicRecordViaApiByReadingFromMrkFile(
     mrkFileName,
     field008Values = defaultField008Values,
