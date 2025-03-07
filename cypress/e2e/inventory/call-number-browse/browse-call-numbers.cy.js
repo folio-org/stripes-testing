@@ -25,29 +25,6 @@ describe('Inventory', () => {
       },
     );
 
-    it.skip(
-      // test case obsolete
-      'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
-      { tags: ['smoke', 'firebird', 'C347903'] },
-      () => {
-        InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.browseCallNumberIsAbsent();
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-      },
-    );
-
-    it.skip(
-      // test case obsolete
-      'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
-      { tags: ['smoke', 'firebird', 'C347923'] },
-      () => {
-        InventorySearchAndFilter.instanceTabIsDefault();
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.browseCallNumberIsAbsent();
-      },
-    );
-
     it(
       'C350377 Verify the "Browse subjects" search option on the Instances tab (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350377'] },

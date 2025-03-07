@@ -30,6 +30,8 @@ describe('fse-settings - UI', () => {
       SoftwareVersions.selectSoftwareVersions();
       SoftwareVersions.waitLoading();
       SoftwareVersions.checkErrorNotDisplayed();
+      cy.wait(2000);
+      SoftwareVersions.logSoftwareVersion();
     },
   );
 

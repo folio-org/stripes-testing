@@ -16,16 +16,26 @@ export default {
     cy.get('[role="alert"]').should('not.be.visible');
   },
 
+  logSoftwareVersion() {
+    // since there's no unique selector - log first element which corresponds software version
+    // if no sofware version displayed it will log next first headline
+    cy.xpath("((//div[contains(@class,'paneContent')])[2]//div[@data-test-headline='true'])[1]")
+      .invoke('text')
+      .then((headerText) => {
+        cy.log('Software version header: ' + headerText);
+      });
+  },
+
   checkErrorText(missingModuleIds) {
+    let errorHeadline = `${missingModuleIds.length} missing interface`;
+    const errorBlock = aboutPane.find(MessageBanner({ headline: errorHeadline }));
     if (missingModuleIds.length) {
-      let errorHeadline = `${missingModuleIds.length} missing interface`;
       if (missingModuleIds.length > 1) errorHeadline += 's';
-      const errorBlock = aboutPane.find(MessageBanner({ headline: errorHeadline }));
       cy.expect(errorBlock.exists());
       for (const moduleId of missingModuleIds) {
         cy.expect(errorBlock.has({ textContent: including(moduleId) }));
       }
-    }
+    } else this.checkErrorNotDisplayed();
   },
 
   verifyTextPresent(text) {
