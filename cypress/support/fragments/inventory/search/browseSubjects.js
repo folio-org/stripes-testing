@@ -1,10 +1,9 @@
 /* eslint-disable no-dupe-keys */
-import { including } from '@interactors/html';
+import { including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
   Link,
-  matching,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -98,6 +97,9 @@ export default {
   },
 
   checkResultAndItsRow(rowIndex, value) {
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
     cy.expect(
       MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
     );
@@ -335,7 +337,13 @@ export default {
     getColumnsResults().then((cells) => {
       cells.forEach((cell) => {
         if (cell !== 'No value set-') {
-          cy.expect(cell).to.include(cellContent);
+          if (Array.isArray(cellContent)) {
+            cellContent.forEach((content) => {
+              cy.expect(content).to.satisfy((cellValue) => cellContent.some((val) => cellValue.includes(val)));
+            });
+          } else {
+            cy.expect(cell).to.include(cellContent);
+          }
         }
       });
     });

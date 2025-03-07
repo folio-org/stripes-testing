@@ -16,6 +16,16 @@ export default {
     cy.get('[role="alert"]').should('not.be.visible');
   },
 
+  logSoftwareVersion() {
+    // since there's no unique selector - log first element which corresponds software version
+    // if no sofware version displayed it will log next first headline
+    cy.xpath("((//div[contains(@class,'paneContent')])[2]//div[@data-test-headline='true'])[1]")
+      .invoke('text')
+      .then((headerText) => {
+        cy.log('Software version header: ' + headerText);
+      });
+  },
+
   checkErrorText(missingModuleIds) {
     let errorHeadline = `${missingModuleIds.length} missing interface`;
     const errorBlock = aboutPane.find(MessageBanner({ headline: errorHeadline }));

@@ -35,7 +35,6 @@ Cypress.Commands.add(
         TextField('Password').fillIn(password),
         Button('Log in').click(),
       ]);
-
       // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
       // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
       // https://docs.cypress.io/api/commands/wrap#Requirements
