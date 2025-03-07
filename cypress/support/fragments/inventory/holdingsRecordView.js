@@ -16,7 +16,7 @@ import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
 
-const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
+const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = Button('Actions');
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const editButton = Button({ id: 'edit-holdings' });
@@ -50,7 +50,7 @@ function checkCallNumberSuffix(prefix) {
 
 export const actionsMenuOptions = {
   viewSource: 'View source',
-  editMarcBibliographicRecord: 'Edit MARC bibliographic record',
+  editMarcBibliographicRecord: 'Edit in quickMARC',
   updateOwnership: 'Update ownership',
 };
 
