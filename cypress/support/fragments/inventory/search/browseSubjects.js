@@ -50,7 +50,6 @@ function getColumnsResults() {
 
 export default {
   getColumnsResults,
-  getColumnsResults,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({

@@ -200,7 +200,7 @@ describe('Bulk-edit', () => {
             instanceUUIDsFileName,
             '1 instance',
           );
-          BulkEditActions.fillInTagAndIndexesAndSubfield('901', '\\', '\\', 'a');
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('901', '\\', '\\', 'a');
           BulkEditActions.selectActionForMarcInstance('Add');
           BulkEditActions.fillInDataTextAreaForMarcInstance(notes.addedLocal);
           BulkEditActions.verifyConfirmButtonDisabled(false);
@@ -211,19 +211,19 @@ describe('Bulk-edit', () => {
           BulkEditActions.fillInDataInSubRow('v.5');
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
-          BulkEditActions.fillInTagAndIndexesAndSubfield('902', '\\', '\\', 'a', 1);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('902', '\\', '\\', 'a', 1);
           BulkEditActions.findAndAppendActionForMarc(notes.local, 'c', notes.appendedLocal, 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('570', '\\', '\\', '5', 2);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('570', '\\', '\\', '5', 2);
           BulkEditActions.findAndRemoveSubfieldActionForMarc('NjP', 2);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(2);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('536', '\\', '\\', 'b', 3);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('536', '\\', '\\', 'b', 3);
           BulkEditActions.findAndRemoveFieldActionForMarc('N00014-68-A-0245-0007', 3);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(3);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('545', '0', '\\', 'a', 4);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('545', '0', '\\', 'a', 4);
           BulkEditActions.findAndReplaceWithActionForMarc(
             notes.biographicalOrHistorical,
             notes.biographicalOrHistoricalReplaced,
@@ -231,7 +231,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(4);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('584', '\\', '\\', 'b', 5);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('584', '\\', '\\', 'b', 5);
           BulkEditActions.selectActionForMarcInstance('Remove all', 5);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();

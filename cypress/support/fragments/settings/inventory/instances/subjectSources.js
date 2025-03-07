@@ -1,4 +1,5 @@
 import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
 export const reasonsActions = {
@@ -6,6 +7,27 @@ export const reasonsActions = {
   trash: 'trash',
 };
 export default {
+  createViaApi(body) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'subject-sources',
+        body,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  deleteViaApi(id) {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `subject-sources/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   verifyCreatedSubjectSource({ name: subjectSourceName, actions = [] }) {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
