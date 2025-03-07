@@ -171,7 +171,7 @@ describe('Bulk-edit', () => {
             instanceUUIDsFileName,
             '1 instance',
           );
-          BulkEditActions.fillInTagAndIndexesAndSubfield('583', '0', '\\', 'a');
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('583', '0', '\\', 'a');
           BulkEditActions.selectActionForMarcInstance('Add');
           BulkEditActions.fillInDataTextAreaForMarcInstance('Action note');
           BulkEditActions.verifyConfirmButtonDisabled(false);
@@ -182,7 +182,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.fillInDataInSubRow('v.5');
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance();
-          BulkEditActions.fillInTagAndIndexesAndSubfield('502', '\\', '\\', 'a', 1);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('502', '\\', '\\', 'a', 1);
           BulkEditActions.findAndAppendActionForMarc(
             notes.dissertation,
             'c',
@@ -191,18 +191,18 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(1);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('514', '\\', '\\', 'a', 2);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('514', '\\', '\\', 'a', 2);
           BulkEditActions.findAndRemoveSubfieldActionForMarc(
             'The map layer that displays Special Feature Symbols shows the approximate location of small (less than 2 acres in size) areas of soils',
             2,
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(2);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('566', '1', '1', '3', 3);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('566', '1', '1', '3', 3);
           BulkEditActions.findAndRemoveFieldActionForMarc('v.5', 3);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(3);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('945', '0', '\\', 'a', 4);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('945', '0', '\\', 'a', 4);
           BulkEditActions.findAndReplaceWithActionForMarc(
             notes.firstLocal,
             notes.firstLocalReplaced,
@@ -210,7 +210,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(4);
-          BulkEditActions.fillInTagAndIndexesAndSubfield('984', '\\', '\\', 'b', 5);
+          BulkEditActions.fillInTagAndIndicatorsAndSubfield('984', '\\', '\\', 'b', 5);
           BulkEditActions.selectActionForMarcInstance('Remove all', 5);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
