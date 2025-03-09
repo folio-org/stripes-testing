@@ -36,14 +36,9 @@ describe('Consortium manager', () => {
 
       const capabSetsToAssignCentral = [
         {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Consortia-Settings Consortium-Manager',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Consortia-Settings Consortium-Manager',
-          action: CAPABILITY_ACTIONS.EDIT,
+          type: CAPABILITY_TYPES.PROCEDURAL,
+          resource: 'UI-Consortia-Settings Consortium-Manager Share',
+          action: CAPABILITY_ACTIONS.EXECUTE,
         },
         {
           type: CAPABILITY_TYPES.SETTINGS,
@@ -53,8 +48,8 @@ describe('Consortium manager', () => {
       ];
       const capabSetsToAssignMembers = [
         {
-          type: CAPABILITY_TYPES.DATA,
-          resource: 'UI-Finance Fiscal-Year',
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Inventory Settings Holdings-Sources',
           action: CAPABILITY_ACTIONS.VIEW,
         },
       ];
