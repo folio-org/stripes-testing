@@ -59,6 +59,8 @@ describe(
 
           BulkEditActions.openActions();
           BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
+          BulkEditSearchPane.verifySearchColumnNameTextFieldAbsent();
+          BulkEditActions.downloadErrorsExists();
         },
       );
     });
