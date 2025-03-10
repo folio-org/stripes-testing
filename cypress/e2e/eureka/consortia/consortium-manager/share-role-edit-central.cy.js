@@ -44,6 +44,11 @@ describe('Eureka', () => {
       },
       {
         type: CAPABILITY_TYPES.SETTINGS,
+        resource: 'UI-Authorization-Roles Settings',
+        action: CAPABILITY_ACTIONS.CREATE,
+      },
+      {
+        type: CAPABILITY_TYPES.SETTINGS,
         resource: 'UI-Authorization-Roles Users Settings',
         action: CAPABILITY_ACTIONS.MANAGE,
       },

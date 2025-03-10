@@ -28,6 +28,11 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.EDIT,
       },
       {
+        type: CAPABILITY_TYPES.SETTINGS,
+        resource: 'UI-Authorization-Roles Settings',
+        action: CAPABILITY_ACTIONS.CREATE,
+      },
+      {
         type: CAPABILITY_TYPES.DATA,
         resource: 'UI-Consortia-Settings Consortium-Manager',
         action: CAPABILITY_ACTIONS.VIEW,
@@ -102,13 +107,14 @@ describe('Eureka', () => {
           .its('response.body.type')
           .should('eq', AUTHORIZATION_ROLE_TYPES.CONSORTIUM.toUpperCase());
         AuthorizationRoles.verifyRoleType(testData.roleName, AUTHORIZATION_ROLE_TYPES.CONSORTIUM);
+        cy.logout();
 
         cy.loginAsAdmin();
-        cy.waitForAuthRefresh(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
-        }, 20_000);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        TopMenuNavigation.openAppFromDropdown(
+          APPLICATION_NAMES.SETTINGS,
+          SETTINGS_SUBSECTION_AUTH_ROLES,
+        );
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
