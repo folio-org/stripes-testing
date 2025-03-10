@@ -1121,3 +1121,9 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   NOT: 'NOT',
   OR: 'OR',
 };
+
+export const AUTHORIZATION_ROLE_TYPES = {
+  REGULAR: 'Regular',
+  CONSORTIUM: 'Consortium',
+  DEFAULT: 'Default',
+};

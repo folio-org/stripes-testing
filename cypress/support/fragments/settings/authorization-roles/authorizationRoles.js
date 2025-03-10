@@ -107,6 +107,7 @@ const successShareText = 'Role has been shared successfully';
 const centrallyManagedKeyValue = KeyValue('Centrally managed');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
+const typeKeyValue = KeyValue('Type');
 
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
@@ -935,5 +936,9 @@ export default {
     });
     if (isPresent) cy.expect(matchingCell.exists());
     else cy.expect(matchingCell.absent());
+  },
+
+  verifyRoleType: (roleName, roleType) => {
+    cy.expect(Pane(roleName).find(typeKeyValue).has({ value: roleType }));
   },
 };
