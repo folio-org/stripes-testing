@@ -8,6 +8,7 @@ export default {
     cy.xpath("//div[@class='preview-panel preview-panel-row']").should('be.visible');
     cy.xpath(continueButton).should('be.visible');
     cy.xpath(cancelButton).should('be.visible');
+    cy.wait(1000);
   },
 
   clickContinue() {
