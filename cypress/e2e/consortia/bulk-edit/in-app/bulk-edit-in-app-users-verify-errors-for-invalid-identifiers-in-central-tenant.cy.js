@@ -191,7 +191,7 @@ describe('Bulk-edit', () => {
             });
 
             BulkEditActions.openActions();
-            BulkEditSearchPane.searchColumnNameTextfieldDisabled();
+            BulkEditSearchPane.searchColumnNameTextfieldAbsent();
             BulkEditActions.downloadErrors();
 
             identifiers.forEach((identifier) => {

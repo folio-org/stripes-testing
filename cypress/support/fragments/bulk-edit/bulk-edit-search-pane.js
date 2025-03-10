@@ -740,6 +740,10 @@ export default {
     cy.expect(DropdownMenu().find(searchColumnNameTextfield).exists());
   },
 
+  verifySearchColumnNameTextFieldAbsent() {
+    cy.expect(DropdownMenu().find(searchColumnNameTextfield).absent());
+  },
+
   verifyUsersActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Username')).has({ checked: true }),
@@ -1206,13 +1210,8 @@ export default {
     cy.do(searchColumnNameTextfield.clear());
   },
 
-  searchColumnNameTextfieldDisabled(disabled = true) {
-    cy.expect([
-      searchColumnNameTextfield.has({ disabled }),
-      DropdownMenu()
-        .find(Checkbox({ disabled: false }))
-        .absent(),
-    ]);
+  searchColumnNameTextfieldAbsent() {
+    cy.expect([searchColumnNameTextfield.absent(), DropdownMenu().find(Checkbox()).absent()]);
   },
 
   checkboxWithTextAbsent(text) {

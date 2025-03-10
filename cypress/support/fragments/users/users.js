@@ -1,5 +1,6 @@
 import { including } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -19,7 +20,7 @@ import getRandomPostfix from '../../utils/stringTools';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
-const defaultUserName = `autotestuser_${getRandomPostfix()}`;
+const defaultUserName = `at_username_${getRandomPostfix()}`;
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });
@@ -50,6 +51,22 @@ const defaultUser = {
 
 export default {
   defaultUser,
+  generateUserModel() {
+    const user = {
+      ...this.defaultUser,
+      personal: { ...this.defaultUser.personal },
+    };
+    user.username = `at_username_${getRandomPostfix()}`;
+    user.type = 'staff';
+    user.personal.preferredFirstName = `AT_PreferredFirstName_${getRandomPostfix()}`;
+    user.personal.firstName = `AT_FirstName_${getRandomPostfix()}`;
+    user.personal.lastName = `AT_LastName_${getRandomPostfix()}`;
+    user.personal.middleName = `AT_MiddleName_${getRandomPostfix()}`;
+    user.personal.email = `AT_Email_${getRandomPostfix()}@folio.org`;
+    user.barcode = uuid();
+
+    return user;
+  },
   createViaApi: (user) => cy
     .okapiRequest({
       method: 'POST',

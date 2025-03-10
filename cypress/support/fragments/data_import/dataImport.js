@@ -47,6 +47,22 @@ const uploadFile = (filePathName, fileName) => {
   cy.wait(15000);
 };
 
+// used for production tenants
+const uploadFileIfDeleteButtonNotDisplayed = (filePathName, fileName) => {
+  cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(
+    (isDeleteFilesButtonExists) => {
+      if (isDeleteFilesButtonExists) {
+        cy.log('Delete Files button is displayed - File upload already in progress. Skipping test');
+      } else {
+        cy.log('Delete Files button is not displayed');
+        cy.expect(sectionPaneJobsTitle.exists());
+        cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
+        cy.wait(15000);
+      }
+    },
+  );
+};
+
 const uploadBunchOfDifferentFiles = (fileNames) => {
   const arrayOfFiles = [];
   for (let i = 0; i < fileNames.length; i++) {
@@ -121,6 +137,7 @@ export default {
   ...DataImportAPI,
   importFile,
   uploadFile,
+  uploadFileIfDeleteButtonNotDisplayed,
   uploadBunchOfFiles,
   waitLoading,
   uploadBunchOfDifferentFiles,

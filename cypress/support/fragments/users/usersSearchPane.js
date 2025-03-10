@@ -31,10 +31,11 @@ export default {
 
   searchByKeywords(keywords) {
     cy.wait(500);
-    return cy.do([
+    cy.do([
       TextField({ id: 'input-user-search' }).fillIn(keywords),
       Button({ id: 'submit-user-search' }).click(),
     ]);
+    cy.wait(1000);
   },
 
   searchByUsername(username) {
