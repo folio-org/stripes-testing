@@ -177,6 +177,7 @@ describe('Fees&Fines', () => {
       LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
       cy.deleteLoanType(testData.loanTypeId);
       Users.deleteViaApi(testData.userId);
+      ServicePoints.deleteViaApi(testData.userServicePoint.id);
       UsersOwners.deleteViaApi(testData.ownerId);
       cy.deleteHoldingRecordViaApi(itemsData.holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.instanceId);

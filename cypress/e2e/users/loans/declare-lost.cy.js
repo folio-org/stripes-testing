@@ -178,6 +178,7 @@ describe('Loans', () => {
         cy.deleteLoanType(testData.loanTypeId);
         Users.deleteViaApi(testData.userId);
         UsersOwners.deleteViaApi(testData.ownerId);
+        ServicePoints.deleteViaApi(testData.userServicePoint.id);
         cy.deleteHoldingRecordViaApi(itemsData.holdingId);
         InventoryInstance.deleteInstanceViaApi(itemsData.instanceId);
         Location.deleteInstitutionCampusLibraryLocationViaApi(
