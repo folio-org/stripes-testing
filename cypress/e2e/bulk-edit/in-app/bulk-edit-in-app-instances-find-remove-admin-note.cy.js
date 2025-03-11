@@ -22,12 +22,11 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceU
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
 const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_C466312_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: `folioItem${getRandomPostfix()}`,
+  instanceName: `AT_C466312_MarcInstance_${getRandomPostfix()}`,
 };
 const adminNote = `Te;st: [administrative] no*te ${getRandomPostfix()}.csv`;
 
@@ -44,27 +43,27 @@ describe('bulk-edit', () => {
           folioItem.instanceName,
           folioItem.itemBarcode,
         );
-        marcInstance.instanceId = InventoryInstances.createInstanceViaApi(
-          marcInstance.instanceName,
-          marcInstance.itemBarcode,
-        );
-        [marcInstance.instanceId, folioItem.instanceId].forEach((instanceId) => {
-          cy.getInstanceById(instanceId).then((body) => {
-            body.administrativeNotes = [adminNote];
-            cy.updateInstance(body);
+        cy.createSimpleMarcBibViaAPI(marcInstance.instanceName).then((marcInstanceId) => {
+          marcInstance.instanceId = marcInstanceId;
+
+          [marcInstance.instanceId, folioItem.instanceId].forEach((instanceId) => {
+            cy.getInstanceById(instanceId).then((body) => {
+              body.administrativeNotes = [adminNote];
+              cy.updateInstance(body);
+            });
           });
-        });
-        InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
-          cy.getInstanceById(marcInstance.instanceId).then((body) => {
-            body.source = marcSource.name;
-            body.sourceId = marcSource.id;
-            cy.updateInstance(body);
+          InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
+            cy.getInstanceById(marcInstance.instanceId).then((body) => {
+              body.source = marcSource.name;
+              body.sourceId = marcSource.id;
+              cy.updateInstance(body);
+            });
           });
+          FileManager.createFile(
+            `cypress/fixtures/${instanceUUIDsFileName}`,
+            `${marcInstance.instanceId}\n${folioItem.instanceId}`,
+          );
         });
-        FileManager.createFile(
-          `cypress/fixtures/${instanceUUIDsFileName}`,
-          `${marcInstance.instanceId}\n${folioItem.instanceId}`,
-        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -76,7 +75,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
+      InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         instanceUUIDsFileName,
