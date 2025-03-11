@@ -121,6 +121,7 @@ describe('Fees&Fines', () => {
         PaymentMethods.deleteViaApi(paymentMethod.id);
         NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
         UsersOwners.deleteViaApi(ownerData.id);
+        ServicePoints.deleteViaApi(servicePoint.id);
         Users.deleteViaApi(userData.userId);
         FinancialTransactionDetailReportModal.deleteDownloadedFile(reportName);
       },

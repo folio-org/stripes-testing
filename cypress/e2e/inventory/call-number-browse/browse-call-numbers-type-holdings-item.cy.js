@@ -10,6 +10,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import CallNumberTypes from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -33,7 +34,7 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.createLocalCallNumberTypeViaApi(testData.localCNtypeName).then(
+          CallNumberTypes.createCallNumberTypeViaApi({ name: testData.localCNtypeName }).then(
             (id) => {
               testData.callNumberTypeLocalId = id;
             },
@@ -165,7 +166,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
-      InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
+      CallNumberTypes.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
     });
 
     it(
