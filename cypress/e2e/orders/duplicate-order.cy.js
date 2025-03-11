@@ -64,6 +64,7 @@ describe('Orders', () => {
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
+      Orders.backToPO();
       Orders.openOrder();
     });
     cy.getAdminToken();

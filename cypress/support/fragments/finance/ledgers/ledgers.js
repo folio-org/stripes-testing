@@ -86,8 +86,11 @@ export default {
     cy.do([ledgersFiltersSection.find(Button('Fund')).click()]);
   },
 
-  rollover: () => {
-    cy.do([actionsButton.click(), rolloverButton.click()]);
+  rollover() {
+    cy.do([
+      Section({ id: 'pane-ledger-details' }).find(actionsButton).click(),
+      rolloverButton.click(),
+    ]);
   },
 
   exportBudgetInformation: () => {
@@ -629,8 +632,11 @@ export default {
     return LedgerDetails;
   },
 
-  rolloverLogs: () => {
-    cy.do([actionsButton.click(), Button('Rollover logs').click()]);
+  rolloverLogs() {
+    cy.do([
+      Section({ id: 'pane-ledger-details' }).find(actionsButton).click(),
+      Button('Rollover logs').click(),
+    ]);
   },
 
   checkFinancialSummeryQuality: (quantityValue1, quantityValue2) => {
