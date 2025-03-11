@@ -181,8 +181,8 @@ describe('Orders', () => {
     cy.createTempUser([permissions.uiOrdersView.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ledgerPath,
-        waiter: Ledgers.waitForLedgerDetailsLoading,
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
     });
   });
