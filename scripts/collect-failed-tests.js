@@ -39,7 +39,7 @@ function parseCommand() {
           selectedStatus.includes(test.status_id) &&
           selectedTeams.includes(test.custom_dev_team)
         ) {
-          ids.push('C' + test.case_id);
+          ids.push('C' + test.case_id + ' ');
         }
       });
     })
