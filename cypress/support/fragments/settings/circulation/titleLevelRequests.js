@@ -110,9 +110,9 @@ export default {
       if (body.configs.length === 0) {
         config = {
           value:
-            '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false,"confirmationPatronNoticeTemplateId":null,"cancellationPatronNoticeTemplateId":null,"expirationPatronNoticeTemplateId":null}',
-          module: 'SETTINGS',
-          configName: 'TLR',
+            '{"titleLevelRequestsFeatureEnabled":true,"createTitleLevelRequestsByDefault":false,"tlrHoldShouldFollowCirculationRules":false}',
+          scope: 'circulation',
+          key: 'generalTlr',
           id: uuid(),
         };
 

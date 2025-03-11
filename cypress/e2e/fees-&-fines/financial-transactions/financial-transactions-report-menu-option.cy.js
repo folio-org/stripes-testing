@@ -38,16 +38,14 @@ describe('Fees&Fines', () => {
     });
 
     beforeEach('visiting Users module', () => {
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.usersPath);
-      UsersSearchResultsPane.waitLoading();
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchResultsPane.waitLoading });
     });
 
     after('UserOwner is removed', () => {
-      ServicePoints.deleteViaApi(servicePoint1.id);
-      ServicePoints.deleteViaApi(servicePoint2.id);
       UsersOwners.deleteViaApi(ownerData1.id);
       UsersOwners.deleteViaApi(ownerData.id);
+      ServicePoints.deleteViaApi(servicePoint1.id);
+      ServicePoints.deleteViaApi(servicePoint2.id);
     });
 
     it(
