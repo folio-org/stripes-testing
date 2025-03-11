@@ -20,6 +20,7 @@ import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
 import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
@@ -347,6 +348,23 @@ export default {
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
     cy.expect(actionsButton.exists());
+  },
+
+  openHoldingItem({ name, barcode, shouldOpen = true }) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
+
+    cy.do(
+      holdingsSection
+        .find(MultiColumnListCell({ columnIndex: 0, content: barcode }))
+        .find(Button(including(barcode)))
+        .click(),
+    );
+
+    ItemRecordView.waitLoading();
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
