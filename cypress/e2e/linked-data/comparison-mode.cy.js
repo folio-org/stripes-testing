@@ -3,14 +3,11 @@ import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import {
-  // APPLICATION_NAMES,
-  // LOCATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-} from '../../support/constants';
-// import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import ComparisonForm from '../../support/fragments/linked-data/comparisonForm';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-// import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
@@ -25,6 +22,7 @@ describe('Citation: edit existing instance', () => {
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
+    uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
     callNumber: '331.2',
   };
 
@@ -78,7 +76,7 @@ describe('Citation: edit existing instance', () => {
     // delete duplicate instance data
     InventoryInstances.getInstanceIdApi({
       limit: 1,
-      query: `title="${testData.uniqueInstanceTitle}"`,
+      query: `title="${testData.uniqueInstanceTitleUpdated}"`,
     }).then((id) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
     });
@@ -94,7 +92,7 @@ describe('Citation: edit existing instance', () => {
   });
 
   it(
-    'Cxxxxx [User journey] LDE - Edit existing instance using comparison mode (citation)',
+    'C692195 [User journey] LDE - Edit existing instance using comparison mode (citation)',
     { tags: ['draft', 'citation', 'linked-data-editor'] },
     () => {
       // search by title for work created in precondition
@@ -112,9 +110,21 @@ describe('Citation: edit existing instance', () => {
       // search by work title again
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // select both inventory instances
+      LinkedDataEditor.selectInventoryInstance(1);
+      LinkedDataEditor.selectInventoryInstance(2);
       // comparison mode
+      LinkedDataEditor.openComparisonForm();
+      ComparisonForm.verifyComparisonSectionDisplayed();
       // edit first instance
-      // check that
+      ComparisonForm.editInstance(testData.uniqueInstanceTitle);
+      EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
+      EditResource.saveAndClose();
+      // wait for LDE page to be displayed
+      LinkedDataEditor.waitLoading();
+      // check that changes are reflected on inventory
+      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.searchByTitle(testData.uniqueInstanceTitleUpdated);
+      InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
     },
   );
 });
