@@ -11,6 +11,7 @@ const selectMarcAuthModal =
   "//h3[text()='Select MARC authority']/ancestor::*[@data-testid='modal']";
 const editResourceSection = "//div[@id='edit-section']";
 const searchMarcAuthInputField = "//textarea[@id='id-search-textarea']";
+const newInstanceButton = "//button[@data-testid='new-instance']";
 
 export default {
   waitLoading() {
@@ -61,6 +62,12 @@ export default {
   openNewInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(newInstanceActionsButton).click();
+    newInstance.waitLoading();
+  },
+
+  openNewInstanceFormViaNewInstanceButton() {
+    cy.xpath(newInstanceButton).should('be.visible');
+    cy.xpath(newInstanceButton).click();
     newInstance.waitLoading();
   },
 

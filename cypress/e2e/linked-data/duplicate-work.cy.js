@@ -112,7 +112,8 @@ describe('Citation: duplicate resource', () => {
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
       // add instance
-      EditResource.openNewInstanceFormViaActions();
+      // click on new instance button since resource was duplicated without instances
+      EditResource.openNewInstanceFormViaNewInstanceButton();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();
