@@ -232,7 +232,7 @@ export default {
 
   byLanguage(lang) {
     cy.do(languageInput.clickHeader());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do([
       languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(including(lang ?? 'English(')).click(),
