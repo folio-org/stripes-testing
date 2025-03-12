@@ -1277,6 +1277,10 @@ export default {
     cy.wait(6000);
   },
 
+  openAccordion: (name) => {
+    cy.do(Accordion(name).clickHeader());
+  },
+
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
