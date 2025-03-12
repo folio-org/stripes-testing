@@ -78,7 +78,7 @@ const API = {
         method: 'POST',
         path: 'call-number-types',
         body: payload,
-        defaultSearchParams: false,
+        isDefaultSearchParams: false,
       })
       .then((res) => {
         return res.body.id;

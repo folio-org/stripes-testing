@@ -5,95 +5,162 @@ import { Locations, ServicePoints } from '../../../support/fragments/settings/te
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/constants';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
-    const testData = {
-      firstCallNumber: `331.3.${randomFourDigitNumber()}`,
-      secondCallNumber: `331.4.${randomFourDigitNumber()}`,
-      callNumberTypeId: '95467209-6d7b-468b-94df-0f5d7ad2747d',
-      folioInstances: [],
-      barcodes: [`451468${randomFourDigitNumber()}`, `451468${randomFourDigitNumber()}`],
-      userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    const rnd = randomFourDigitNumber();
+    let callNumberTypes = null;
+    let folioInstances = null;
+    const getIdByName = (name) => callNumberTypes.find((type) => type.name === name)?.id;
+
+    const testData = {};
+
+    const callNumberTypesSettings = [
+      {
+        name: CALL_NUMBER_TYPE_NAMES.ALL,
+        callNumberTypes: [],
+      },
+      {
+        name: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS],
+      },
+      {
+        name: CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL],
+      },
+      {
+        name: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE],
+      },
+      {
+        name: CALL_NUMBER_TYPE_NAMES.SUDOC,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.SUDOC],
+      },
+    ];
+
+    const instancesPayload = () => {
+      return [
+        {
+          instanceTitlePrefix: `AT_C451468 Instance 1 ${rnd}`,
+          holdings: [
+            {
+              callNumber: '331.3',
+              callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS),
+            },
+          ],
+          itemsProperties: {
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451468 Instance 2 ${rnd}`,
+          holdings: [{ callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS) }],
+          itemsProperties: {
+            itemLevelCallNumber: '331.4',
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451466 Instance 1 ${rnd}`,
+          holdings: [
+            {
+              callNumber: `A 123.4.${rnd}`,
+              callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL),
+            },
+          ],
+          itemsProperties: {
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451466 Instance 2 ${rnd}`,
+          holdings: [{ callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL) }],
+          itemsProperties: {
+            itemLevelCallNumber: `A 123.5.${rnd}`,
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451469 Instance 1 ${rnd}`,
+          holdings: [
+            {
+              callNumber: `T22.19/2:P96.${rnd}`,
+              callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE),
+            },
+          ],
+          itemsProperties: {
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451469 Instance 2 ${rnd}`,
+          holdings: [{ callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE) }],
+          itemsProperties: {
+            itemLevelCallNumber: `T22.19/2:P97.${rnd}`,
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451470 Instance 1 ${rnd}`,
+          holdings: [
+            {
+              callNumber: `QS 11 .GA1 E53 2024.${rnd}`,
+              callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.SUDOC),
+            },
+          ],
+          itemsProperties: {
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.SUDOC),
+          },
+        },
+        {
+          instanceTitlePrefix: `AT_C451470 Instance 2 ${rnd}`,
+          holdings: [{ callNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.SUDOC) }],
+          itemsProperties: {
+            itemLevelCallNumber: `QS 11 .GA1 E53 2025.${rnd}`,
+            itemLevelCallNumberTypeId: getIdByName(CALL_NUMBER_TYPE_NAMES.SUDOC),
+          },
+        },
+      ];
+    };
+    const generateInstances = () => {
+      return instancesPayload()
+        .map((_) => {
+          return InventoryInstances.generateFolioInstances(_);
+        })
+        .flat();
     };
 
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.createLoanType({
-          name: getTestEntityValue('type'),
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ limit: 1 })
-          .then((materialTypes) => {
-            testData.materialTypeId = materialTypes.id;
-            testData.materialType = materialTypes.name;
-          })
-          .then(() => {
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId: testData.instanceTypeId,
-                title: `instance_1_${randomFourDigitNumber()}`,
-              },
-              holdings: [
-                {
-                  holdingsTypeId: testData.holdingTypeId,
-                  permanentLocationId: testData.defaultLocation.id,
-                  callNumber: testData.firstCallNumber,
-                  callNumberTypeId: testData.callNumberTypeId,
-                },
-              ],
-              items: [
-                {
-                  barcode: testData.barcodes[0],
-                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  permanentLoanType: { id: testData.loanTypeId },
-                  materialType: { id: testData.materialTypeId },
-                  itemLevelCallNumberTypeId: testData.callNumberTypeId,
-                },
-              ],
-            });
-          })
-          .then(() => {
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId: testData.instanceTypeId,
-                title: `instance_2_${randomFourDigitNumber()}`,
-              },
-              holdings: [
-                {
-                  holdingsTypeId: testData.holdingTypeId,
-                  permanentLocationId: testData.defaultLocation.id,
-                  callNumberTypeId: testData.callNumberTypeId,
-                },
-              ],
-              items: [
-                {
-                  barcode: testData.barcodes[1],
-                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  permanentLoanType: { id: testData.loanTypeId },
-                  materialType: { id: testData.materialTypeId },
-                  itemLevelCallNumber: testData.secondCallNumber,
-                  itemLevelCallNumberTypeId: testData.callNumberTypeId,
-                },
-              ],
-            });
+      cy.getAdminToken()
+        .then(() => {
+          ['AT_C451466', 'AT_C451468', 'AT_C451469', 'C451470'].forEach((title) => {
+            InventoryInstances.deleteFullInstancesByTitleViaApi(title);
           });
-      });
+
+          testData.userServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+          Location.createViaApi(testData.defaultLocation);
+          CallNumberTypes.getCallNumberTypesViaAPI().then((res) => {
+            callNumberTypes = res;
+          });
+          callNumberTypesSettings.forEach((setting) => {
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
+          });
+        })
+        .then(() => {
+          folioInstances = generateInstances();
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances,
+            location: testData.defaultLocation,
+          });
+        });
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -103,57 +170,58 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      testData.barcodes.forEach((barcode) => {
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
+      ['AT_C451466', 'AT_C451468', 'AT_C451469', 'AT_C451470'].forEach((title) => {
+        InventoryInstances.deleteFullInstancesByTitleViaApi(title);
       });
       ServicePoints.deleteViaApi(testData.userServicePoint.id);
       Locations.deleteViaApi(testData.defaultLocation);
       Users.deleteViaApi(testData.user.userId);
-      cy.deleteLoanType(testData.loanTypeId);
     });
 
     it(
-      'C451468 Call number of not valid format and with selected "LC" call number type can be found via browse (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451468'] },
+      'C451466 C451468 C451469 C451470 Call number of not valid format and with selected call number type can be found via browse (spitfire)',
+      {
+        tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451468', 'C451466', 'C451469', 'C451470'],
+      },
       () => {
-        InventorySearchAndFilter.selectBrowseCallNumbers();
-        InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.firstCallNumber }],
+        folioInstances.forEach((instance) => {
+          const callNumberQuery =
+            instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
+          InventorySearchAndFilter.selectBrowseCallNumbers();
+          BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
+          InventorySearchAndFilter.browseSearch(callNumberQuery);
+          InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+            records: [{ callNumber: callNumberQuery }],
+          });
+          InventorySearchAndFilter.clickResetAllButton();
         });
-        InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
-        InventorySearchAndFilter.selectBrowseCallNumbers();
-        InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.secondCallNumber }],
-        });
-        InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
-
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
-        );
-        InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.firstCallNumber }],
-        });
-        InventorySearchAndFilter.clickResetAllButton();
-        InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
-
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
-        );
-        InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.secondCallNumber }],
+        [
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
+          CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL,
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+          CALL_NUMBER_TYPE_NAMES.SUDOC,
+        ].forEach((callNumberType) => {
+          folioInstances.forEach((instance) => {
+            const callNumberQuery =
+              instance.holdings[0].callNumber || instance.items[0].itemLevelCallNumber;
+            const currentCallNumberType = getIdByName(callNumberType);
+            const holdingsCallNumberType = instance.holdings[0]?.callNumberTypeId;
+            const itemsCallNumberType = instance.items[0]?.itemLevelCallNumberTypeId;
+            if (
+              holdingsCallNumberType !== currentCallNumberType ||
+              itemsCallNumberType !== currentCallNumberType
+            ) {
+              return;
+            }
+            InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumberType);
+            BrowseCallNumber.waitForCallNumberToAppear(callNumberQuery);
+            InventorySearchAndFilter.browseSearch(callNumberQuery);
+            InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+              records: [{ callNumber: callNumberQuery }],
+            });
+            InventorySearchAndFilter.clickResetAllButton();
+          });
         });
       },
     );
