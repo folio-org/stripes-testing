@@ -73,6 +73,7 @@ describe('Users', () => {
       checkInDate: new Date().toISOString(),
     });
     cy.deleteProxyApi(proxyBody.id);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(usersData.userSponsor.userId);
     Users.deleteViaApi(usersData.userProxy.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);

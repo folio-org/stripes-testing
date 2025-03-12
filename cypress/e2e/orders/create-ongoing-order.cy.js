@@ -54,6 +54,7 @@ describe('Orders', () => {
         OrderLines.addPOLine();
         OrderLines.fillInPOLineInfoViaUi();
         InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        Orders.backToPO();
         Orders.checkCreatedOngoingOrder(order);
       });
     },
