@@ -10,7 +10,7 @@ import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const instanceDetailsPane = Section({ id: 'pane-instancedetails' });
-const resultList = MultiColumnList({ id: 'browse-results-list-callNumbers' });
+const resultList = MultiColumnList({ id: including('browse-results-list-') });
 const nextButton = Button({ id: including('-next-paging-button') });
 const previousButton = Button({ id: including('-prev-paging-button') });
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
