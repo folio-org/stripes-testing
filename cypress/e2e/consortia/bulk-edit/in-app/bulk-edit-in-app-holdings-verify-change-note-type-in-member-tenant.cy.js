@@ -45,7 +45,6 @@ const centralSharedHoldingNoteType = {
 const collegeHoldingNoteType = {
   name: `AT_C566145 College NoteType ${getRandomPostfix()}`,
 };
-const collegeHoldingNoteTypeNameWithAffiliation = `${collegeHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
 const holdingUUIDsFileName = `holdingUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName, true);
@@ -75,12 +74,8 @@ describe('Bulk-edit', () => {
             permissions.uiInventoryViewCreateEditHoldings.gui,
           ]);
           cy.resetTenant();
-
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
-          });
-          cy.getLocations({ query: 'name="DCB"' }).then((res) => {
-            locationId = res.id;
           });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
@@ -110,6 +105,9 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              cy.getLocations({ limit: 1 }).then((res) => {
+                locationId = res.id;
+              });
               // create local item note type in College tenant
               InventoryInstances.createHoldingsNoteTypeViaApi(collegeHoldingNoteType.name)
                 .then((noteId) => {
@@ -207,16 +205,16 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
             centralSharedHoldingNoteType.payload.name,
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
           );
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
           );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             true,
             centralSharedHoldingNoteType.payload.name,
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
           );
 
           const initialHeaderValueInCollege = [
@@ -224,7 +222,7 @@ describe('Bulk-edit', () => {
               header: centralSharedHoldingNoteType.payload.name,
               value: `${sharedNoteText} (staff only)`,
             },
-            { header: collegeHoldingNoteTypeNameWithAffiliation, value: collegeLocalNoteText },
+            { header: collegeHoldingNoteType.name, value: collegeLocalNoteText },
           ];
 
           collegeHoldingHrids.forEach((hrid) => {
@@ -236,16 +234,16 @@ describe('Bulk-edit', () => {
 
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
           );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
             centralSharedHoldingNoteType.payload.name,
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
           );
           BulkEditSearchPane.verifyResultColumnTitlesDoNotIncludeTitles(
             centralSharedHoldingNoteType.payload.name,
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
           );
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
@@ -269,9 +267,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
             centralSharedHoldingNoteType.payload.name,
           );
-          BulkEditActions.verifyOptionExistsInSelectOptionDropdown(
-            collegeHoldingNoteTypeNameWithAffiliation,
-          );
+          BulkEditActions.verifyOptionExistsInSelectOptionDropdown(collegeHoldingNoteType.name);
           BulkEditActions.clickOptionsSelection();
           BulkEditActions.changeNoteType(
             HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE,
@@ -289,13 +285,13 @@ describe('Bulk-edit', () => {
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
           BulkEditActions.changeNoteType(
-            collegeHoldingNoteTypeNameWithAffiliation,
+            collegeHoldingNoteType.name,
             HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE,
             2,
           );
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
-          BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
+          BulkEditActions.verifyMessageBannerInAreYouSureForm(2);
 
           const headerValuesToEditInCollege = [
             {
@@ -303,11 +299,11 @@ describe('Bulk-edit', () => {
               value: administrativeNoteText,
             },
             {
-              header: collegeHoldingNoteTypeNameWithAffiliation,
+              header: collegeHoldingNoteType.name,
               value: '',
             },
             {
-              header: HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
               value: collegeLocalNoteText,
             },
             {
@@ -315,7 +311,7 @@ describe('Bulk-edit', () => {
               value: '',
             },
             {
-              header: HOLDING_NOTE_TYPES.PROVENANCE,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE,
               value: `${sharedNoteText} (staff only)`,
             },
           ];
