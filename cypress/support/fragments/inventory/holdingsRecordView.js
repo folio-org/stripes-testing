@@ -16,7 +16,7 @@ import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
 
-const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const editButton = Button({ id: 'edit-holdings' });
