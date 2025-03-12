@@ -333,6 +333,18 @@ export default {
     cy.wait(1000);
   },
 
+  selectSubjectType(subjectType) {
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).fillIn(subjectType));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(subjectType)))
+        .click(),
+    );
+    cy.wait(1000);
+  },
+
   verifySearchResult: (cellContent) => {
     getColumnsResults().then((cells) => {
       cells.forEach((cell) => {
