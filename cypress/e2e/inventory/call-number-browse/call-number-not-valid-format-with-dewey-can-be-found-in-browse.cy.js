@@ -13,8 +13,8 @@ import BrowseCallNumber from '../../../support/fragments/inventory/search/browse
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
-      firstCallNumber: `A 123.4.${randomFourDigitNumber()}`,
-      secondCallNumber: `A 123.5.${randomFourDigitNumber()}`,
+      holdingCallNumber: `A 123.4.${randomFourDigitNumber()}`,
+      itemCallNumber: `A 123.5.${randomFourDigitNumber()}`,
       callNumberTypeId: '03dd64d0-5626-4ecd-8ece-4531e0069f35',
       folioInstances: [],
       barcodes: [`451466${randomFourDigitNumber()}`, `451466${randomFourDigitNumber()}`],
@@ -57,13 +57,13 @@ describe('Inventory', () => {
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId: testData.instanceTypeId,
-                title: `instance_1_${randomFourDigitNumber()}`,
+                title: `AT_C451466_instance_1_${randomFourDigitNumber()}`,
               },
               holdings: [
                 {
                   holdingsTypeId: testData.holdingTypeId,
                   permanentLocationId: testData.defaultLocation.id,
-                  callNumber: testData.firstCallNumber,
+                  callNumber: testData.holdingCallNumber,
                   callNumberTypeId: testData.callNumberTypeId,
                 },
               ],
@@ -82,7 +82,7 @@ describe('Inventory', () => {
             InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId: testData.instanceTypeId,
-                title: `instance_2_${randomFourDigitNumber()}`,
+                title: `AT_C451466_Instance_2_${randomFourDigitNumber()}`,
               },
               holdings: [
                 {
@@ -97,7 +97,7 @@ describe('Inventory', () => {
                   status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: testData.loanTypeId },
                   materialType: { id: testData.materialTypeId },
-                  itemLevelCallNumber: testData.secondCallNumber,
+                  itemLevelCallNumber: testData.itemCallNumber,
                   itemLevelCallNumberTypeId: testData.callNumberTypeId,
                 },
               ],
@@ -121,6 +121,9 @@ describe('Inventory', () => {
       testData.barcodes.forEach((barcode) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
       });
+      callNumberBrowseSettings.forEach((setting) => {
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi({ ...setting, callNumberTypes: [] });
+      });
       ServicePoints.deleteViaApi(testData.userServicePoint.id);
       Locations.deleteViaApi(testData.defaultLocation);
       Users.deleteViaApi(testData.user.userId);
@@ -132,10 +135,10 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451466'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
-        BrowseCallNumber.waitForCallNumberToAppear(testData.firstCallNumber);
-        InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
+        BrowseCallNumber.waitForCallNumberToAppear(testData.holdingCallNumber);
+        InventorySearchAndFilter.browseSearch(testData.holdingCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.firstCallNumber }],
+          records: [{ callNumber: testData.holdingCallNumber }],
         });
         InventorySearchAndFilter.clickResetAllButton();
         InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
@@ -143,10 +146,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
-        BrowseCallNumber.waitForCallNumberToAppear(testData.secondCallNumber);
-        InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
+        BrowseCallNumber.waitForCallNumberToAppear(testData.itemCallNumber);
+        InventorySearchAndFilter.browseSearch(testData.itemCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.secondCallNumber }],
+          records: [{ callNumber: testData.itemCallNumber }],
         });
         InventorySearchAndFilter.clickResetAllButton();
         InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
@@ -156,9 +159,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
+        InventorySearchAndFilter.browseSearch(testData.holdingCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.firstCallNumber }],
+          records: [{ callNumber: testData.holdingCallNumber }],
         });
         InventorySearchAndFilter.clickResetAllButton();
         InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
@@ -168,9 +171,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        InventorySearchAndFilter.browseSearch(testData.secondCallNumber);
+        InventorySearchAndFilter.browseSearch(testData.itemCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: testData.secondCallNumber }],
+          records: [{ callNumber: testData.itemCallNumber }],
         });
       },
     );
