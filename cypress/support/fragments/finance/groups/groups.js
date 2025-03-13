@@ -58,7 +58,9 @@ export default {
   },
 
   createDefaultGroup(defaultGroup) {
+    cy.wait(2000);
     cy.do([
+      Button('Actions').click(),
       newButton.click(),
       nameField.fillIn(defaultGroup.name),
       codeField.fillIn(defaultGroup.code),
@@ -71,9 +73,9 @@ export default {
     cy.do(Section({ id: 'pane-group-details' }).visible);
   },
 
-  deleteGroupViaActions: () => {
+  deleteGroupViaActions() {
     cy.do([
-      Button('Actions').click(),
+      Section({ id: 'pane-group-details' }).find(Button('Actions')).click(),
       Button('Delete').click(),
       Button('Delete', { id: 'clickable-group-remove-confirmation-confirm' }).click(),
     ]);
@@ -131,7 +133,12 @@ export default {
   },
 
   tryToCreateGroupWithoutMandatoryFields(groupName) {
-    cy.do([newButton.click(), nameField.fillIn(groupName), Button('Save & close').click()]);
+    cy.do([
+      Button('Actions').click(),
+      newButton.click(),
+      nameField.fillIn(groupName),
+      Button('Save & close').click(),
+    ]);
     cy.expect(codeField.has({ error: 'Required!' }));
     cy.do([
       // try to navigate without saving

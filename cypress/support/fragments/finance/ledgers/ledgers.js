@@ -53,6 +53,7 @@ const ledgerResultsPaneSection = Section({ id: 'ledger-results-pane' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
 const saveAndClose = Button('Save & close');
+const ledgerDetailsSection = Section({ id: 'pane-ledger-details' });
 
 export default {
   defaultUiLedger: {
@@ -71,7 +72,7 @@ export default {
     };
   },
   waitForLedgerDetailsLoading: () => {
-    cy.do(Section({ id: 'pane-ledger-details' }).visible);
+    cy.do(ledgerDetailsSection.visible);
   },
 
   clickOnFiscalYearTab: () => {
@@ -87,10 +88,7 @@ export default {
   },
 
   rollover() {
-    cy.do([
-      Section({ id: 'pane-ledger-details' }).find(actionsButton).click(),
-      rolloverButton.click(),
-    ]);
+    cy.do([ledgerDetailsSection.find(actionsButton).click(), rolloverButton.click()]);
   },
 
   exportBudgetInformation: () => {
@@ -535,6 +533,7 @@ export default {
 
   createDefaultLedger(defaultLedger) {
     cy.do([
+      actionsButton.click(),
       Button('New').click(),
       TextField('Name*').fillIn(defaultLedger.name),
       TextField('Code*').fillIn(defaultLedger.code),
@@ -552,6 +551,7 @@ export default {
 
   tryToCreateLedgerWithoutMandatoryFields(ledgerName) {
     cy.do([
+      actionsButton.click(),
       Button('New').click(),
       TextField('Name*').fillIn(ledgerName),
       saveAndClose.click(),
@@ -565,9 +565,10 @@ export default {
     ]);
   },
 
-  deleteLedgerViaActions: () => {
+  deleteLedgerViaActions() {
+    cy.wait(4000);
     cy.do([
-      actionsButton.click(),
+      ledgerDetailsSection.find(actionsButton).click(),
       Button('Delete').click(),
       Button('Delete', {
         id: 'clickable-ledger-remove-confirmation-confirm',
@@ -633,10 +634,7 @@ export default {
   },
 
   rolloverLogs() {
-    cy.do([
-      Section({ id: 'pane-ledger-details' }).find(actionsButton).click(),
-      Button('Rollover logs').click(),
-    ]);
+    cy.do([ledgerDetailsSection.find(actionsButton).click(), Button('Rollover logs').click()]);
   },
 
   checkFinancialSummeryQuality: (quantityValue1, quantityValue2) => {
