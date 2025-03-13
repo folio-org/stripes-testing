@@ -47,14 +47,30 @@ Cypress.Commands.add('deleteCancellationReasonApi', (id) => {
   });
 });
 
-Cypress.Commands.add('getConfigByName', (config) => {
+Cypress.Commands.add('getConfigByName', (module = 'SETTINGS', config) => {
   cy.okapiRequest({
     method: 'GET',
     path: 'configurations/entries',
     searchParams: {
-      query: `(module==SETTINGS and configName==${config})`,
+      query: `(module==${module} and configName==${config})`,
     },
     failOnStatusCode: true,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
+// for TLR: scope=circulation, key=generalTlr
+Cypress.Commands.add('getSettingsByName', (scope, config) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'settings/entries',
+    searchParams: {
+      query: `(scope==${scope} and key==${config})`,
+    },
+    failOnStatusCode: true,
+    isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     return body;
   });

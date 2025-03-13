@@ -43,15 +43,15 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_ABOUT);
         SoftwareVersions.waitLoading();
         SoftwareVersions.checkErrorText(modulesExpectedToBeMissing);
-        for (const appId of appIds) {
+        appIds.forEach((appId) => {
           SoftwareVersions.verifyTextPresent(appId);
-        }
-        for (const moduleId of moduleIds) {
+        });
+        moduleIds.forEach((moduleId) => {
           SoftwareVersions.verifyTextPresent(moduleId);
-        }
-        for (const uiModuleId of uiModuleIds) {
+        });
+        uiModuleIds.forEach((uiModuleId) => {
           SoftwareVersions.verifyTextPresent(uiModuleId);
-        }
+        });
       },
     );
   });

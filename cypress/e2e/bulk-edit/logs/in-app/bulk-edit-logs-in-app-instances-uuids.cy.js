@@ -7,8 +7,6 @@ import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import SelectInstanceModal from '../../../../support/fragments/requests/selectInstanceModal';
@@ -18,12 +16,12 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../../support/constants';
 
 let user;
-const testData = {};
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*-Matched-Records-${instanceUUIDsFileName}`;
-const previewFileName = `*-Updates-Preview-CSV-${instanceUUIDsFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${instanceUUIDsFileName}`;
-const errorsFromCommittingFileName = `*-Committing-changes-Errors-${instanceUUIDsFileName}`;
+const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceUUIDsFileName);
+const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
+const updatedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
+const errorsFromCommittingFileName =
+  BulkEditFiles.getErrorsFromCommittingFileName(instanceUUIDsFileName);
 const folioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
@@ -32,8 +30,13 @@ const unsuppressedFolioItem = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: `unsuppressedFolioItem${getRandomPostfix()}`,
 };
-const userServicePoint = ServicePoints.getDefaultServicePoint();
-const marcInstances = InventoryInstances.generateFolioInstances({ count: 2 });
+const marcInstance = {
+  title: `AT_C423988_MarcInstance_${getRandomPostfix()}`,
+};
+const marcInstanceUnsuppressed = {
+  title: `AT_C423988_MarcInstance_${getRandomPostfix()}`,
+};
+const marcInstanceIds = [];
 
 describe('bulk-edit', () => {
   describe('logs', () => {
@@ -47,16 +50,7 @@ describe('bulk-edit', () => {
           permissions.bulkEditLogsView.gui,
         ]).then((userProperties) => {
           user = userProperties;
-          ServicePoints.createViaApi(userServicePoint);
-          testData.defaultLocation = Locations.getDefaultLocation({
-            servicePointId: userServicePoint.id,
-          }).location;
-          Locations.createViaApi(testData.defaultLocation).then((location) => {
-            InventoryInstances.createMarcInstancesViaApi({
-              marcInstances,
-              location,
-            });
-          });
+
           folioItem.instanceId = InventoryInstances.createInstanceViaApi(
             folioItem.instanceName,
             folioItem.itemBarcode,
@@ -65,16 +59,23 @@ describe('bulk-edit', () => {
             unsuppressedFolioItem.instanceName,
             unsuppressedFolioItem.itemBarcode,
           );
-          [folioItem.instanceId, marcInstances[0].instanceId].forEach((instanceId) => {
-            cy.getInstanceById(instanceId).then((body) => {
-              body.staffSuppress = true;
-              cy.updateInstance(body);
-            });
+          cy.createSimpleMarcBibViaAPI(marcInstance.title).then((instanceId) => {
+            marcInstanceIds.push(instanceId);
           });
-          FileManager.createFile(
-            `cypress/fixtures/${instanceUUIDsFileName}`,
-            `${marcInstances[0].instanceId}\n${folioItem.instanceId}\n${marcInstances[1].instanceId}\n${unsuppressedFolioItem.instanceId}`,
-          );
+          cy.createSimpleMarcBibViaAPI(marcInstanceUnsuppressed.title).then((instanceId) => {
+            marcInstanceIds.push(instanceId);
+
+            [folioItem.instanceId, marcInstanceIds[0]].forEach((id) => {
+              cy.getInstanceById(id).then((body) => {
+                body.staffSuppress = true;
+                cy.updateInstance(body);
+              });
+            });
+            FileManager.createFile(
+              `cypress/fixtures/${instanceUUIDsFileName}`,
+              `${marcInstanceIds[0]}\n${folioItem.instanceId}\n${marcInstanceIds[1]}\n${unsuppressedFolioItem.instanceId}`,
+            );
+          });
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -89,15 +90,11 @@ describe('bulk-edit', () => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           unsuppressedFolioItem.itemBarcode,
         );
-        InventoryInstances.deleteInstanceViaApi({
-          instance: marcInstances[0],
-          servicePoint: userServicePoint,
+
+        marcInstanceIds.forEach((instanceId) => {
+          InventoryInstance.deleteInstanceViaApi(instanceId);
         });
-        InventoryInstances.deleteInstanceViaApi({
-          instance: marcInstances[1],
-          servicePoint: userServicePoint,
-        });
-        Locations.deleteViaApi(testData.defaultLocation);
+
         FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
           matchedRecordsFileName,
@@ -109,7 +106,7 @@ describe('bulk-edit', () => {
 
       it(
         'C423988 Verify generated Logs files for Instances (Instance UUIDs) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C423988'] },
+        { tags: ['extendedPath', 'firebird', 'C423988'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);
@@ -122,9 +119,9 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.verifyResultColumnTitles('Staff suppress');
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [
             `${folioItem.instanceId},false,true,`,
-            `${marcInstances[0].instanceId},false,true,`,
+            `${marcInstanceIds[0]},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
-            `${marcInstances[1].instanceId},false,false,`,
+            `${marcInstanceIds[1]},false,false,`,
           ]);
           BulkEditActions.openStartBulkEditInstanceForm();
           BulkEditActions.verifyModifyLandingPageBeforeModifying();
@@ -135,27 +132,27 @@ describe('bulk-edit', () => {
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyAreYouSureForm(4, folioItem.instanceId);
-          BulkEditActions.verifyAreYouSureForm(4, marcInstances[0].instanceId);
+          BulkEditActions.verifyAreYouSureForm(4, marcInstanceIds[0]);
           BulkEditActions.verifyAreYouSureForm(4, unsuppressedFolioItem.instanceId);
-          BulkEditActions.verifyAreYouSureForm(4, marcInstances[1].instanceId);
+          BulkEditActions.verifyAreYouSureForm(4, marcInstanceIds[1]);
           BulkEditActions.downloadPreview();
           ExportFile.verifyFileIncludes(previewFileName, [
             `${folioItem.instanceId},false,true,`,
-            `${marcInstances[0].instanceId},false,true,`,
+            `${marcInstanceIds[0]},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,true,`,
-            `${marcInstances[1].instanceId},false,true,`,
+            `${marcInstanceIds[1]},false,true,`,
           ]);
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(2);
           BulkEditSearchPane.verifyLocationChanges(2, 'true');
           BulkEditSearchPane.verifyChangedResults(
             unsuppressedFolioItem.instanceId,
-            marcInstances[1].instanceId,
+            marcInstanceIds[1],
           );
 
           BulkEditSearchPane.verifyErrorLabel(0, 2);
 
-          [folioItem.instanceId, marcInstances[0].instanceId].forEach((instanceId) => {
+          [folioItem.instanceId, marcInstanceIds[0]].forEach((instanceId) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
               instanceId,
               'No change in value required',
@@ -167,12 +164,12 @@ describe('bulk-edit', () => {
           BulkEditActions.downloadChangedCSV();
           ExportFile.verifyFileIncludes(updatedRecordsFileName, [
             `${unsuppressedFolioItem.instanceId},false,true,`,
-            `${marcInstances[1].instanceId},false,true,`,
+            `${marcInstanceIds[1]},false,true,`,
           ]);
           BulkEditActions.downloadErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `WARNING,${folioItem.instanceId},No change in value required`,
-            `WARNING,${marcInstances[0].instanceId},No change in value required`,
+            `WARNING,${marcInstanceIds[0]},No change in value required`,
           ]);
 
           FileManager.deleteFileFromDownloadsByMask(
@@ -189,45 +186,45 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.downloadFileUsedToTrigger();
           BulkEditFiles.verifyCSVFileRows(instanceUUIDsFileName, [
-            marcInstances[0].instanceId,
+            marcInstanceIds[0],
             folioItem.instanceId,
-            marcInstances[1].instanceId,
+            marcInstanceIds[1],
             unsuppressedFolioItem.instanceId,
           ]);
 
           BulkEditLogs.downloadFileWithMatchingRecords();
           ExportFile.verifyFileIncludes(matchedRecordsFileName, [
             `${folioItem.instanceId},false,true,`,
-            `${marcInstances[0].instanceId},false,true,`,
+            `${marcInstanceIds[0]},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,false,`,
-            `${marcInstances[1].instanceId},false,false,`,
+            `${marcInstanceIds[1]},false,false,`,
           ]);
 
           BulkEditLogs.downloadFileWithProposedChanges();
           ExportFile.verifyFileIncludes(previewFileName, [
             `${folioItem.instanceId},false,true,`,
-            `${marcInstances[0].instanceId},false,true,`,
+            `${marcInstanceIds[0]},false,true,`,
             `${unsuppressedFolioItem.instanceId},false,true,`,
-            `${marcInstances[1].instanceId},false,true,`,
+            `${marcInstanceIds[1]},false,true,`,
           ]);
 
           BulkEditLogs.downloadFileWithUpdatedRecords();
           ExportFile.verifyFileIncludes(updatedRecordsFileName, [
             `${unsuppressedFolioItem.instanceId},false,true,`,
-            `${marcInstances[1].instanceId},false,true,`,
+            `${marcInstanceIds[1]},false,true,`,
           ]);
 
           BulkEditLogs.downloadFileWithCommitErrors();
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `WARNING,${folioItem.instanceId},No change in value required`,
-            `WARNING,${marcInstances[0].instanceId},No change in value required`,
+            `WARNING,${marcInstanceIds[0]},No change in value required`,
           ]);
 
           [
             unsuppressedFolioItem.instanceName,
-            marcInstances[1].instanceTitle,
+            marcInstance.title,
             folioItem.instanceName,
-            marcInstances[0].instanceTitle,
+            marcInstanceUnsuppressed.title,
           ].forEach((title) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             SelectInstanceModal.filterByStaffSuppress('Yes');

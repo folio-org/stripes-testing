@@ -4,55 +4,56 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
-    const firstCallNumber = 'QS 11 .GA1 E99 2005';
-    const secondCallNumber = 'D15.H63 A3 2002';
+    const rnd = getRandomPostfix();
+    const holdingCallNubmers = ['QS 11 .GA1 E99 2005', 'D15.H63 A3 2002'];
+
     const testData = {
-      folioInstances: [
-        InventoryInstances.generateFolioInstances({
-          holdings: [{ callNumber: firstCallNumber }],
-        })[0],
-        InventoryInstances.generateFolioInstances({
-          holdings: [{ callNumber: secondCallNumber }],
-        })[0],
-      ],
+      folioInstances: holdingCallNubmers
+        .map((callNumber, idx) => {
+          return InventoryInstances.generateFolioInstances({
+            instanceTitlePrefix: `AT_C407697 Folio Instance ${idx + 1} ${rnd}`,
+            holdings: [{ callNumber }],
+          });
+        })
+        .flat(),
       servicePoint: ServicePoints.getDefaultServicePoint(),
     };
 
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        ServicePoints.createViaApi(testData.servicePoint);
-
-        testData.location = Locations.getDefaultLocation({
-          servicePointId: testData.servicePoint.id,
-        }).location;
-
-        Locations.createViaApi(testData.location).then((location) => {
+      cy.getAdminToken()
+        .then(() => {
+          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C407697');
+          testData.servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+          Location.createViaApi(testData.defaultLocation);
+        })
+        .then(() => {
           InventoryInstances.createFolioInstancesViaApi({
             folioInstances: testData.folioInstances,
-            location,
+            location: testData.defaultLocation,
+          });
+        })
+        .then(() => {
+          cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+            testData.user = userProperties;
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
         });
-      });
-
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-      });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      testData.folioInstances.forEach(({ instanceId }) => {
-        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
-      });
-      Locations.deleteViaApi(testData.location);
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C407697');
+      Locations.deleteViaApi(testData.defaultLocation);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.user.userId);
     });
@@ -64,16 +65,13 @@ describe('Inventory', () => {
         // Click on the "Select a browse option" dropdown and select "Call numbers (all)" browse option.
         InventorySearchAndFilter.selectBrowseCallNumbers();
 
-        // Fill in the search box with call number #1, Click on the "Search" button
-        InventorySearchAndFilter.browseSearch(firstCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: firstCallNumber }],
-        });
-
-        // Fill in the search box with call number #2, Click on the "Search" button
-        InventorySearchAndFilter.browseSearch(secondCallNumber);
-        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
-          records: [{ callNumber: secondCallNumber }],
+        holdingCallNubmers.forEach((callNumber) => {
+          // Fill in the search box with call number, Click on the "Search" button
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          InventorySearchAndFilter.browseSearch(callNumber);
+          InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+            records: [{ callNumber }],
+          });
         });
       },
     );

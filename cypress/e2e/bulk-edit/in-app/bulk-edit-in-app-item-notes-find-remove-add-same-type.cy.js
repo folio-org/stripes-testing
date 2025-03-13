@@ -71,10 +71,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Check in note', 'Check out note');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyItemOptions();
-        BulkEditActions.verifyItemCheckInNoteActions();
         BulkEditActions.noteRemove('Check out note', checkOutNote);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Check in note', checkInNote, 1);
+        BulkEditActions.verifyItemCheckInNoteActions(1);
 
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Check in note', [checkInNote]);
