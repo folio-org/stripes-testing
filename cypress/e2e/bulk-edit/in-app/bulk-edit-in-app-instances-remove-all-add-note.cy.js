@@ -8,12 +8,12 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import { APPLICATION_NAMES, INSTANCE_NOTE_IDS } from '../../../support/constants';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 let user;
 const instanceUUIDsFileName = `instanceUUIDs-${getRandomPostfix()}.csv`;
@@ -23,11 +23,11 @@ const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceU
 const errorsFromCommittingFileName =
   BulkEditFiles.getErrorsFromCommittingFileName(instanceUUIDsFileName);
 const folioItem = {
-  instanceName: `C468192 folio instance testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_C468192_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  instanceName: `C468192 marc instance testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_C468192_MarcInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const notes = {
@@ -37,6 +37,22 @@ const notes = {
   exhibitionsNote: 'exhibitions note',
   administrativeNote: 'administrative note',
 };
+const marcInstanceFields = [
+  {
+    tag: '008',
+    content: QuickMarcEditor.defaultValid008Values,
+  },
+  {
+    tag: '245',
+    content: `$a ${marcInstance.instanceName}`,
+    indicators: ['1', '0'],
+  },
+  {
+    tag: '502',
+    content: `$a ${notes.dissertationNote}`,
+    indicators: ['\\', '\\'],
+  },
+];
 const reasonForError = 'Bulk edit of instance notes is not supported for MARC Instances.';
 
 describe('bulk-edit', () => {
@@ -51,38 +67,36 @@ describe('bulk-edit', () => {
           folioItem.instanceName,
           folioItem.itemBarcode,
         );
-        marcInstance.instanceId = InventoryInstances.createInstanceViaApi(
-          marcInstance.instanceName,
-          marcInstance.itemBarcode,
-        );
-        [marcInstance, folioItem].forEach((instance) => {
-          cy.getInstanceById(instance.instanceId).then((body) => {
-            instance.hrid = body.hrid;
-            body.notes = [
-              {
-                instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
-                note: notes.dissertationNote,
-                staffOnly: false,
-              },
-              {
-                instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
-                note: notes.dissertationNoteStaffOnly,
-                staffOnly: false,
-              },
-            ];
-            cy.updateInstance(body);
-          });
-        });
-        InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
-          cy.getInstanceById(marcInstance.instanceId).then((body) => {
-            body.source = marcSource.name;
-            body.sourceId = marcSource.id;
-            cy.updateInstance(body);
-          });
-        });
-        FileManager.createFile(
-          `cypress/fixtures/${instanceUUIDsFileName}`,
-          `${folioItem.instanceId}\n${marcInstance.instanceId}`,
+        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, marcInstanceFields).then(
+          (instanceId) => {
+            marcInstance.instanceId = instanceId;
+
+            cy.getInstanceById(marcInstance.instanceId).then((body) => {
+              marcInstance.hrid = body.hrid;
+            });
+
+            cy.getInstanceById(folioItem.instanceId).then((body) => {
+              folioItem.hrid = body.hrid;
+              body.notes = [
+                {
+                  instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
+                  note: notes.dissertationNote,
+                  staffOnly: false,
+                },
+                {
+                  instanceNoteTypeId: INSTANCE_NOTE_IDS.DISSERTATION_NOTE,
+                  note: notes.dissertationNoteStaffOnly,
+                  staffOnly: true,
+                },
+              ];
+              cy.updateInstance(body);
+            });
+
+            FileManager.createFile(
+              `cypress/fixtures/${instanceUUIDsFileName}`,
+              `${folioItem.instanceId}\n${marcInstance.instanceId}`,
+            );
+          },
         );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -95,7 +109,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
+      InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         matchedRecordsFileName,
@@ -155,7 +169,7 @@ describe('bulk-edit', () => {
         });
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          [`${marcInstance.hrid},MARC,,,,,${notes.administrativeNote}`],
+          [`${marcInstance.hrid},MARC,,,single unit,,${notes.administrativeNote}`],
         ]);
         ExportFile.verifyFileIncludes(previewFileName, [
           [`${folioItem.hrid},FOLIO,,,,,${notes.administrativeNote}`],
@@ -175,7 +189,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(
           marcInstance.hrid,
           'Dissertation note',
-          `${notes.dissertationNote} | ${notes.dissertationNoteStaffOnly}`,
+          notes.dissertationNote,
         );
         BulkEditSearchPane.verifyExactChangesUnderColumnsByRowInPreviewRecordsChanged(
           'Administrative note',
