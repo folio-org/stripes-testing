@@ -14,6 +14,7 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -100,7 +101,8 @@ describe('Invoices', () => {
           });
         });
         defaultOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.navigateToApp('Orders');
+        Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(defaultOrder, true, true).then(
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
