@@ -89,7 +89,7 @@ describe('Citation: check navigation', () => {
       TopMenuNavigation.openAppFromDropdown('Linked data editor');
       LinkedDataEditor.waitLoading();
       // search by any title
-      SearchAndFilter.searchResourceByTitle('*');
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work
       LinkedDataEditor.selectFromSearchTable(1);
       // navigate back to the main module

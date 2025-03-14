@@ -10,41 +10,37 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {};
     const instance = {
-      title: `C387477_autotest_instance ${getRandomPostfix()}`,
+      title: `AT_C387477 Instance ${getRandomPostfix()}`,
     };
+    const localCallNumberTypeName = 'AT_C387477 Local CN type';
+    const callNumberTypesSettings = { name: 'Call numbers (all)', callNumberTypes: [] };
     const callNumbers = [
       { type: 'Library of Congress classification', value: 'Z668.R360 1987' },
       { type: 'Dewey Decimal classification', value: '304 H981' },
       { type: 'Superintendent of Documents classification', value: 'T22.19:M54/test-2/2005' },
       { type: 'National Library of Medicine classification', value: 'WA 102.5 B5315 2018' },
       { type: 'Other scheme', value: '364.15 Slater' },
-      { type: 'My Local CN type', value: 'MyNr123465' },
+      { type: localCallNumberTypeName, value: 'MyNr123465' },
       { type: 'UDC', value: '338.48' },
     ];
 
     before('Create test data', () => {
-      /*
-       * System must have "Instance" record(s) with added "Holdings"
-       * "Holdings" must not have any call numbers specified
-       * "Holdings" must contain "Item" records with following call number types specified (types are selected in "Call number type" dropdown):
-       * Library of Congress classification (e.g., "Z668.R360 1987")
-       * Dewey Decimal classification (e.g., "304 H981")
-       * Superintendent of Documents classification (e.g., "T22.19:M54/test-2/2005")
-       * National Library of Medicine classification (e.g., "WA 102.5 B5315 2018")
-       * Other scheme (e.g., "364.15 Slater")
-       * Any Local call number type (e.g., "My Local CN type" type: "MyNr123465")
-       * Any other call number type (e.g., "UDC" type: "338.48")
-       */
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.createLocalCallNumberTypeViaApi('My Local CN type').then((id) => {
+          CallNumberTypes.deleteCallNumberTypesLike('C387477');
+          CallNumberTypes.createCallNumberTypeViaApi({
+            name: localCallNumberTypeName,
+          }).then((id) => {
             testData.callNumberTypeId = id;
           });
+          CallNumberBrowseSettings.assignCallNumberTypesViaApi(callNumberTypesSettings);
           cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
             instance.instanceTypeId = instanceTypes[0].id;
           });
@@ -110,33 +106,19 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
-      InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeId);
+      InventoryInstances.deleteFullInstancesByTitleViaApi('C387477');
+      CallNumberTypes.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeId);
     });
 
     it(
       'C387477 Browsing call number types when "Call numbers (all)" browse option selected (based on "Item") (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C387477', 'eurekaPhase1'] },
       () => {
-        // #1 Click on browse option dropdown (with default value "Select a browse option")
-        // * Dropdown is expanded and includes following browse options:
-        //  * Call numbers (all)
-        //  * Dewey Decimal classification
-        //  * Library of Congress classification
-        //  * Local
-        //  * National Library of Medicine classification
-        //  * Other scheme
-        //  * Superintendent of Documents classification
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.browseOptionsDropdownIncludesOptions(
           Object.values(BROWSE_CALL_NUMBER_OPTIONS),
         );
-        // #2 * Select "Call numbers (all)" browse option
         InventorySearchAndFilter.selectBrowseCallNumbers();
-        // #2 - 8 * Fill browse input field with call number from pre-conditions (e.g., "304 H981")
-        // * Click "Search" button
-        // * Browse results are shown in second pane:
-        //  * a row with "Call number" value corresponding to a browse query is highlighted (bold text)
         callNumbers.forEach((el) => {
           InventorySearchAndFilter.browseSearch(el.value);
           BrowseCallNumber.valueInResultTableIsHighlighted(el.value);

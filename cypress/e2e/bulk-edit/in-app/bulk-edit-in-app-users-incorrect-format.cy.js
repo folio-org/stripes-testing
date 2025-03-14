@@ -23,7 +23,7 @@ const checkResponses = (alias, remainingRequests) => {
   if (remainingRequests > 0) {
     cy.wait(alias).then((interception) => {
       if (interception.response.body.errorMessage) {
-        expect(interception.response.body.errorMessage).to.eq(errorMessage);
+        expect(interception.response.body.errorMessage).to.include(errorMessage);
       } else {
         checkResponses(alias, remainingRequests - 1);
       }

@@ -1,131 +1,116 @@
-import uuid from 'uuid';
+/* eslint-disable func-names */
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
+import { CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {};
-    const instances = [
-      {
-        title: `C414972_autotest_instance_1_${getRandomPostfix()}`,
-      },
-      {
-        title: `C414972_autotest_instance_2_${getRandomPostfix()}`,
-      },
-    ];
+    let callNumberTypes = null;
+    const getIdByName = (name) => callNumberTypes.find((type) => type.name === name)?.id;
+    const getNameById = (id) => callNumberTypes.find((type) => type.id === id)?.name;
+    const rnd = getRandomPostfix();
+    const localCallNumberTypeName = 'AT_C414972 Local CN type';
     const callNumbers = [
       { type: 'Dewey Decimal classification', value: '414.972' },
-      { type: 'National Library of Medicine classification', value: 'QS 41 .GC4 Q9 2077' },
+      { type: 'Library of Congress classification', value: 'Z668.R360 1987' },
+      { type: 'National Library of Medicine classification', value: 'WA 102.5 B5315 2010' },
+      { type: 'Other scheme', value: '364.15 Slater' },
+      { type: 'Superintendent of Documents classification', value: 'T22.19:M54/2005' },
+      { type: 'UDC', value: '338.48' },
+      { type: localCallNumberTypeName, value: 'localCallNumberTypeName' },
+      { value: 'Local.315' },
     ];
+    const callNumberTypesSettings = [
+      { name: 'Call numbers (all)', callNumberTypes: [] },
+      {
+        name: 'Dewey Decimal classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL],
+      },
+      {
+        name: 'Library of Congress classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS, localCallNumberTypeName],
+      },
+      {
+        name: 'National Library of Medicine classification',
+        callNumberTypes: [
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
+        ],
+      },
+      {
+        name: 'Other scheme',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME, CALL_NUMBER_TYPE_NAMES.UDC],
+      },
+      {
+        name: 'Superintendent of Documents classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.SUDOC],
+      },
+    ];
+    // eslint-disable-next-line func-names
+    callNumberTypesSettings.getAssignedCallNumberTypes = function (name) {
+      return this.find((item) => item.name === name).callNumberTypes;
+    };
+    const generateInstances = () => {
+      return Array(callNumbers.length)
+        .fill({})
+        .map((_, i) => {
+          return InventoryInstances.generateFolioInstances({
+            instanceTitlePrefix: `AT_C414972 Folio Instance ${i + 1} ${rnd}`,
+            itemsProperties: {
+              itemLevelCallNumber: callNumbers[i].value,
+              itemLevelCallNumberTypeId: callNumbers[i]?.type && getIdByName(callNumbers[i]?.type),
+            },
+          });
+        })
+        .flat();
+    };
 
+    let folioInstances = null;
+    let marcInstances = null;
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
-          cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
-            instances[0].instanceTypeId = instanceTypes[0].id;
-          });
-          cy.getHoldingTypes({ limit: 2 }).then((res) => {
-            instances[0].holdingTypeId = res[0].id;
-          });
-          cy.getLocations({ limit: 1 }).then((res) => {
-            instances[0].locationId = res.id;
-          });
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
-            instances[0].loanTypeId = res[0].id;
-            instances[0].loanTypeName = res[0].name;
-          });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            instances[0].materialTypeId = res.id;
-          });
-          InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
-            testData.callNumberTypes = res;
+          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C414972');
+          CallNumberTypes.deleteCallNumberTypesLike('AT_C414972').then(() => {
+            CallNumberTypes.createCallNumberTypeViaApi({
+              name: localCallNumberTypeName,
+            }).then(() => {
+              callNumberTypesSettings.forEach((setting) => {
+                CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
+              });
+              CallNumberTypes.getCallNumberTypesViaAPI().then((res) => {
+                callNumberTypes = res;
+              });
+            });
           });
           const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-          instances[0].defaultLocation = Location.getDefaultLocation(servicePoint.id);
-          Location.createViaApi(instances[0].defaultLocation);
+          testData.defaultLocation = Location.getDefaultLocation(servicePoint.id);
+          Location.createViaApi(testData.defaultLocation);
         })
         .then(() => {
-          const callNumberTypeId1 = testData.callNumberTypes.find(
-            (el) => el.name === callNumbers[0].type,
-          ).id;
-          const callNumberTypeId2 = testData.callNumberTypes.find(
-            (el) => el.name === callNumbers[1].type,
-          ).id;
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: instances[0].instanceTypeId,
-              title: instances[0].title,
-            },
-            holdings: [
-              {
-                holdingsTypeId: instances[0].holdingTypeId,
-                permanentLocationId: instances[0].defaultLocation.id,
-                callNumberTypeId: callNumberTypeId1,
-                callNumber: callNumbers[0].value,
-              },
-              {
-                holdingsTypeId: instances[0].holdingTypeId,
-                permanentLocationId: instances[0].defaultLocation.id,
-              },
-            ],
-          }).then((instanceIds) => {
-            instances[0].id = instanceIds.instanceId;
-            ItemRecordNew.createViaApi({
-              holdingsId: instanceIds.holdingIds[0].id,
-              itemBarcode: uuid(),
-              materialTypeId: instances[0].materialTypeId,
-              permanentLoanTypeId: instances[0].loanTypeId,
-            });
-            ItemRecordNew.createViaApi({
-              holdingsId: instanceIds.holdingIds[1].id,
-              itemBarcode: uuid(),
-              materialTypeId: instances[0].materialTypeId,
-              permanentLoanTypeId: instances[0].loanTypeId,
-              itemLevelCallNumberTypeId: callNumberTypeId2,
-              itemLevelCallNumber: callNumbers[1].value,
-            });
+          folioInstances = generateInstances();
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances,
+            location: testData.defaultLocation,
           });
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: instances[0].instanceTypeId,
-              title: instances[1].title,
-            },
-            holdings: [
-              {
-                holdingsTypeId: instances[0].holdingTypeId,
-                permanentLocationId: instances[0].defaultLocation.id,
-                callNumberTypeId: callNumberTypeId1,
-                callNumber: callNumbers[0].value,
-              },
-              {
-                holdingsTypeId: instances[0].holdingTypeId,
-                permanentLocationId: instances[0].defaultLocation.id,
-              },
-            ],
-          }).then((instanceIds) => {
-            instances[1].id = instanceIds.instanceId;
-            ItemRecordNew.createViaApi({
-              holdingsId: instanceIds.holdingIds[0].id,
-              itemBarcode: uuid(),
-              materialTypeId: instances[0].materialTypeId,
-              permanentLoanTypeId: instances[0].loanTypeId,
-            });
-            ItemRecordNew.createViaApi({
-              holdingsId: instanceIds.holdingIds[1].id,
-              itemBarcode: uuid(),
-              materialTypeId: instances[0].materialTypeId,
-              permanentLoanTypeId: instances[0].loanTypeId,
-              itemLevelCallNumberTypeId: callNumberTypeId2,
-              itemLevelCallNumber: callNumbers[1].value,
-            });
+        })
+        .then(() => {
+          marcInstances = generateInstances().map((_, i) => {
+            return { ..._, instanceTitle: `AT_C414972 Marc Instance ${i + 1} ${rnd}` };
+          });
+          InventoryInstances.createMarcInstancesViaApi({
+            marcInstances,
+            location: testData.defaultLocation,
           });
         });
 
@@ -141,31 +126,62 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[1].id);
+      InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C414972');
+      callNumberTypesSettings.forEach((setting) => {
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi({ ...setting, callNumberTypes: [] });
+      });
+      CallNumberTypes.deleteCallNumberTypesLike('AT_C414972');
     });
 
     it(
       'C414972 Browsing call number types when "Number of titles" > 1 (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C414972', 'eurekaPhase1'] },
       () => {
+        const callNumber = folioInstances[1].items[0].itemLevelCallNumber;
         InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumbers[0].type);
-        InventorySearchAndFilter.browseSearch(callNumbers[0].value);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
-        BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[0].value, '2');
-        BrowseCallNumber.clickOnResult(callNumbers[0].value);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[0].title);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[1].title);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup('Call numbers (all)');
+        BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        InventorySearchAndFilter.browseSearch(callNumber);
+        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+          records: [{ callNumber }],
+        });
+        BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '2');
+        BrowseCallNumber.clickOnResult(callNumber);
+        InventorySearchAndFilter.verifyInstanceDisplayed(folioInstances[1].instanceTitle);
+        InventorySearchAndFilter.verifyInstanceDisplayed(marcInstances[1].instanceTitle);
+        InventorySearchAndFilter.verifyNumberOfSearchResults(2);
 
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumbers[1].type);
-        InventorySearchAndFilter.browseSearch(callNumbers[1].value);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
-        BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[1].value, '2');
-        BrowseCallNumber.clickOnResult(callNumbers[1].value);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[0].title);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[1].title);
+        [
+          'Dewey Decimal classification',
+          'Library of Congress classification',
+          'National Library of Medicine classification',
+          'Other scheme',
+          'Superintendent of Documents classification',
+        ].forEach((browseOption) => {
+          folioInstances.forEach((instance, idx) => {
+            const itemCallNumberType = getNameById(instance.items[0].itemLevelCallNumberTypeId);
+            const itemCallNumberValue = instance.items[0].itemLevelCallNumber;
+
+            if (
+              itemCallNumberType &&
+              callNumberTypesSettings
+                .getAssignedCallNumberTypes(browseOption)
+                .includes(itemCallNumberType)
+            ) {
+              InventorySearchAndFilter.switchToBrowseTab();
+              InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(browseOption);
+              InventorySearchAndFilter.browseSearch(itemCallNumberValue);
+              InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+                records: [{ callNumber: itemCallNumberValue }],
+              });
+              BrowseCallNumber.checkNumberOfTitlesForRow(itemCallNumberValue, '2');
+              BrowseCallNumber.clickOnResult(itemCallNumberValue);
+              InventorySearchAndFilter.verifyInstanceDisplayed(folioInstances[idx].instanceTitle);
+              InventorySearchAndFilter.verifyInstanceDisplayed(marcInstances[idx].instanceTitle);
+              InventorySearchAndFilter.verifyNumberOfSearchResults(2);
+            }
+          });
+        });
       },
     );
   });

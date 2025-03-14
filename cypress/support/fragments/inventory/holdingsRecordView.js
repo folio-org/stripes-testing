@@ -50,7 +50,7 @@ function checkCallNumberSuffix(prefix) {
 
 export const actionsMenuOptions = {
   viewSource: 'View source',
-  editMarcBibliographicRecord: 'Edit MARC bibliographic record',
+  editMarcBibliographicRecord: 'Edit in quickMARC',
   updateOwnership: 'Update ownership',
 };
 

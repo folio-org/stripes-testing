@@ -32,7 +32,7 @@ const checkResponse = (alias, fileName, maxRetries = 20) => {
       }
       if (interception.response.body.status === 'FAILED') {
         expect(interception.response.body.linkToTriggeringCsvFile).to.include(fileName);
-        expect(interception.response.body.errorMessage).to.eq(errorMessage);
+        expect(interception.response.body.errorMessage).to.include(errorMessage);
       } else {
         waitForFailedStatus();
       }

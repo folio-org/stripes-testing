@@ -136,6 +136,7 @@ Cypress.Commands.add('createTempUserParameterized', (userModel, permissions = []
       userProperties.firstName = newUserProperties.firstName;
       userProperties.lastName = newUserProperties.lastName;
       userProperties.preferredFirstName = newUserProperties.preferredFirstName;
+      userProperties.personal = userBody.personal;
       cy.createRequestPreference({
         defaultDeliveryAddressTypeId: null,
         defaultServicePointId: null,

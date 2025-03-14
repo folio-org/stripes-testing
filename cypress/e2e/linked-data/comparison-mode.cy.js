@@ -3,31 +3,27 @@ import TopMenu from '../../support/fragments/topMenu';
 import LinkedDataEditor from '../../support/fragments/linked-data/linkedDataEditor';
 import EditResource from '../../support/fragments/linked-data/editResource';
 import SearchAndFilter from '../../support/fragments/linked-data/searchAndFilter';
-import NewInstance from '../../support/fragments/linked-data/newInstance';
+import ComparisonForm from '../../support/fragments/linked-data/comparisonForm';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../support/constants';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix, { getRandomLetters } from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import UncontrolledAuthModal from '../../support/fragments/linked-data/uncontrolledAuthModal';
 
-describe('Citation: duplicate resource', () => {
+describe('Citation: edit existing instance', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
-    modifiedMarcFile: `C624234 editedMarcFile${getRandomPostfix()}.mrc`,
-    marcFileName: `C624234 marcFile${getRandomPostfix()}.mrc`,
+    modifiedMarcFile: `C624280 editedMarcFile${getRandomPostfix()}.mrc`,
+    marcFileName: `C624280 marcFile${getRandomPostfix()}.mrc`,
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     uniqueIsbn: `ISBN${getRandomLetters(8)}`,
     uniqueCreator: `Creator-${getRandomLetters(10)}`,
-    uniqueDuplicateTitle: `Cypress test duplicate ${getRandomPostfix()}`,
     uniqueInstanceTitle: `Instance AQA title ${getRandomPostfix()}`,
-    resourceIdentifiers: [
-      { type: 'ISBN', value: '1587657090' },
-      { type: 'ISBN', value: '9781587657092' },
-    ],
+    uniqueInstanceTitleUpdated: `Updated Instance AQA title ${getRandomPostfix()}`,
+    callNumber: '331.2',
   };
 
   const resourceData = {
@@ -75,16 +71,15 @@ describe('Citation: duplicate resource', () => {
       );
       Work.deleteById(filteredInstances[0].id);
     });
+    // delete work created in pre-condition
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
-    // delete duplicate work data
-    Work.getInstancesByTitle(testData.uniqueInstanceTitle).then((instances) => {
-      const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueInstanceTitle,
-      );
-      Work.deleteById(filteredInstances[0].id);
+    // delete duplicate instance data
+    InventoryInstances.getInstanceIdApi({
+      limit: 1,
+      query: `title="${testData.uniqueInstanceTitleUpdated}"`,
+    }).then((id) => {
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
     });
-    Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
-    InventoryInstances.deleteInstanceByTitleViaApi(testData.uniqueInstanceTitle);
   });
 
   beforeEach('Apply test data manually', () => {
@@ -97,39 +92,39 @@ describe('Citation: duplicate resource', () => {
   });
 
   it(
-    'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    'C692195 [User journey] LDE - Edit existing instance using comparison mode (citation)',
+    { tags: ['draft', 'citation', 'linked-data-editor'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
-      // open work for editing
-      LinkedDataEditor.selectFromSearchTable(1);
-      LinkedDataEditor.editWork();
-      // duplicate work
+      // open instance for editing
+      LinkedDataEditor.editInstanceFromSearchTable(1, 1);
+      // duplicate instance
       EditResource.duplicateResource();
-      EditResource.setValueForTheField(testData.uniqueDuplicateTitle, 'Preferred Title for Work');
-      EditResource.saveAndKeepEditing();
-      // close uncontrolled authority modal
-      UncontrolledAuthModal.closeIfDisplayed();
-      // add instance
-      // click on new instance button since resource was duplicated without instances
-      EditResource.openNewInstanceFormViaNewInstanceButton();
-      NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
-      NewInstance.addInstanceIdentifiers(testData);
+      EditResource.setValueForTheField(testData.uniqueInstanceTitle, 'Main Title');
+      EditResource.clearField('Other Title Information');
+      EditResource.setValueForTheField(LinkedDataEditor.generateValidLccn(), 'LCCN');
       EditResource.saveAndClose();
       // wait for LDE page to be displayed
       LinkedDataEditor.waitLoading();
-      // search created work by title
-      SearchAndFilter.searchResourceByTitle(testData.uniqueDuplicateTitle);
-      SearchAndFilter.checkSearchResultsByTitle(testData.uniqueDuplicateTitle);
-      // check that newly created instance is displayed in the inventory
+      // search by work title again
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
+      // select both inventory instances
+      LinkedDataEditor.selectInventoryInstance(1);
+      LinkedDataEditor.selectInventoryInstance(2);
+      // comparison mode
+      LinkedDataEditor.openComparisonForm();
+      ComparisonForm.verifyComparisonSectionDisplayed();
+      // edit first instance
+      ComparisonForm.editInstance(testData.uniqueInstanceTitle);
+      EditResource.setValueForTheField(testData.uniqueInstanceTitleUpdated, 'Main Title');
+      EditResource.saveAndClose();
+      // wait for LDE page to be displayed
+      LinkedDataEditor.waitLoading();
+      // check that changes are reflected on inventory
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-      InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
-      // check source
+      InventoryInstances.searchByTitle(testData.uniqueInstanceTitleUpdated);
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
-      InventorySearchAndFilter.closeInstanceDetailPane();
-      InventorySearchAndFilter.selectResultCheckboxes(1);
-      InventorySearchAndFilter.verifySelectedRecords(1);
     },
   );
 });
