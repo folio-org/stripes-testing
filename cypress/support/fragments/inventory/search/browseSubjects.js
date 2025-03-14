@@ -9,11 +9,10 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
-  MultiSelectMenu,
+  MultiSelectOption,
   Pane,
   Section,
   Select,
-  SelectionOption,
   TextArea,
   TextInput,
 } from '../../../../../interactors';
@@ -305,12 +304,6 @@ export default {
 
   verify(types) {
     cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
-    cy.pause();
-    cy.expect(MultiSelectMenu().exists());
-    cy.expect(
-      MultiSelectMenu()
-        .find(SelectionOption(including(types)))
-        .exists(),
-    );
+    cy.expect(MultiSelectOption(including(types)).exists());
   },
 };
