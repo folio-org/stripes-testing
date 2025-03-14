@@ -19,10 +19,10 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Finance', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -152,10 +152,7 @@ describe('Finance', () => {
       permissions.uiFinanceUnreleaseEncumbrance.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fundPath,
-        waiter: Funds.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
     });
   });
 
@@ -168,6 +165,8 @@ describe('Finance', () => {
     'C436931 Unrelease encumbrance related to open One-time order with invoice in "Approved" status (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      TopMenuNavigation.navigateToApp('Finance');
+      Funds.clickOnFundsTab();
       FinanceHelp.searchByName(firstFund.name);
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();

@@ -397,6 +397,7 @@ export default {
   },
 
   POLineInfodorPhysicalMaterialForRecieve: (orderLineTitleName) => {
+    cy.wait(4000);
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
