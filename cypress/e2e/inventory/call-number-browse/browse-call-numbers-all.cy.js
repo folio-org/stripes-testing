@@ -120,6 +120,7 @@ describe('Inventory', () => {
         );
         InventorySearchAndFilter.selectBrowseCallNumbers();
         callNumbers.forEach((el) => {
+          BrowseCallNumber.waitForCallNumberToAppear(el.value);
           InventorySearchAndFilter.browseSearch(el.value);
           BrowseCallNumber.valueInResultTableIsHighlighted(el.value);
         });

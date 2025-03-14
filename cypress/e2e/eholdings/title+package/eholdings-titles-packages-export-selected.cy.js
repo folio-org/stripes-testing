@@ -21,6 +21,7 @@ describe('eHoldings', () => {
     };
 
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uiAgreementsSearchAndView.gui,

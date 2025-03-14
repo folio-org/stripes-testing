@@ -190,7 +190,7 @@ export default {
 
   editProxyActions: () => {
     cy.expect(Spinner().absent());
-    cy.do(actionsButton.click());
+    cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
   },
