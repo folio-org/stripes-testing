@@ -31,14 +31,27 @@ const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitl
 const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
-function getColumnsResults() {
+function getColumnsResults(columnName) {
   const cells = [];
+  let index;
+
+  switch (columnName) {
+    case 'Subject source':
+      index = 2;
+      break;
+    case 'Subject type':
+      index = 3;
+      break;
+    default:
+      index = 2;
+      break;
+  }
 
   return cy
     .get('#browse-results-list-browseSubjects')
     .find('[data-row-index]')
     .each(($row) => {
-      cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
+      cy.get(`[class*="mclCell-"]:nth-child(${index})`, { withinSubject: $row })
         // extract its text content
         .invoke('text')
         .then((cellValue) => {
@@ -335,7 +348,7 @@ export default {
         .find(MultiSelectOption(including(subjectSource)))
         .click(),
     );
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   selectSubjectType(subjectType) {
@@ -347,11 +360,11 @@ export default {
         .find(MultiSelectOption(including(subjectType)))
         .click(),
     );
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
-  verifySearchResult: (cellContent) => {
-    getColumnsResults().then((cells) => {
+  verifySearchResult: (cellContent, columnName) => {
+    getColumnsResults(columnName).then((cells) => {
       cells.forEach((cell) => {
         if (cell !== 'No value set-') {
           if (Array.isArray(cellContent)) {

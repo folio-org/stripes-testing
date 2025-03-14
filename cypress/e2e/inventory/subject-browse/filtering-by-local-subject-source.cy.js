@@ -17,6 +17,7 @@ describe('Inventory', () => {
         name: `C584507 subjectSource${getRandomPostfix()}`,
         code: `C584507 SS${getRandomPostfix()}`,
       },
+      columnName: 'Subject source',
     };
 
     before('Create test data and login', () => {
@@ -68,10 +69,11 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'folijet', 'C584507'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
+        cy.wait(1500);
         BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.subjectSource.name);
-        BrowseSubjects.verifySearchResult(testData.subjectSource.name);
+        BrowseSubjects.verifySearchResult(testData.subjectSource.name, testData.columnName);
       },
     );
   });
