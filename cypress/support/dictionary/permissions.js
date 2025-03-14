@@ -888,6 +888,10 @@ export default {
     gui: 'Finance: Assign acquisition units to new record',
   },
   // Organizations
+  uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation: {
+    internal: 'ui-organizations.privileged-contacts.edit',
+    gui: 'Organizations: can view, create, edit, delete privileged donor information',
+  },
   uiOrganizationsAssignAcquisitionUnitsToNewOrganization: {
     internal: 'ui-organizations.acqUnits.assign',
     gui: 'Organizations: Assign acquisition units to new organization',
