@@ -13,14 +13,14 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
-      notProduceSubjectName: 'Test49',
-      firstConditionForFiltering: 'Corporate name',
-      secondConditionForFiltering: 'Geographic name',
+      subjectHeading: 'Test54',
+      subjectType: 'Corporate name',
       columnName: 'Subject type',
+      instanceIds: [],
     };
     const marcFile = {
-      filePath: 'marcBibFileForC584509.mrc',
-      fileName: `C584509 autotestFile${getRandomPostfix()}.mrc`,
+      filePath: 'marcBibFileForC584530.mrc',
+      fileName: `C584530 autotestFile${getRandomPostfix()}.mrc`,
       jobProfile: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
 
@@ -30,7 +30,9 @@ describe('Inventory', () => {
 
         DataImport.uploadFileViaApi(marcFile.filePath, marcFile.fileName, marcFile.jobProfile).then(
           (response) => {
-            testData.instanceId = response[0].instance.id;
+            response.forEach((record) => {
+              testData.instanceIds.push(record.instance.id);
+            });
           },
         );
         cy.getAdminToken();
@@ -49,25 +51,23 @@ describe('Inventory', () => {
       });
     });
 
-    after('Delete created test data', () => {
+    after('Delete created instance', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+      testData.instanceIds.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
     });
 
     it(
-      'C584509 Check filtering by folio Subject Type using multiple conditions (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584509'] },
+      'C584507 Check filtering by local Subject Source (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C584507'] },
       () => {
-        BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
-        BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
+        BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
+        BrowseSubjects.verifyNonExistentSearchResult(testData.subjectHeading);
         BrowseSubjects.expandAccordion('Subject type');
-        BrowseSubjects.selectSubjectType(testData.firstConditionForFiltering);
-        BrowseSubjects.selectSubjectType(testData.secondConditionForFiltering);
-        BrowseSubjects.verifySearchResult(
-          [testData.firstConditionForFiltering, testData.secondConditionForFiltering],
-          testData.columnName,
-        );
+        BrowseSubjects.selectSubjectType(testData.subjectType);
+        BrowseSubjects.verifySearchResult(testData.subjectType, testData.columnName);
       },
     );
   });
