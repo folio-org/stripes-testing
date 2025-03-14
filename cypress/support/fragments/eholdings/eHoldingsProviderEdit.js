@@ -1,9 +1,19 @@
 import { Button, HTML, Section, Select, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const availableProxies = ['Inherited - None', 'Chalmers', 'MJProxy', 'TestingFolio'];
 const proxySelect = Select('Proxy');
 const saveAndCloseButton = Button('Save & close');
+
+const API = {
+  getProxyTypesByApi() {
+    return cy
+      .okapiRequest({
+        path: 'eholdings/proxy-types',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.data);
+  },
+};
 
 export default {
   waitLoading: (providerName) => {
@@ -18,12 +28,15 @@ export default {
     return cy
       .then(() => proxySelect.value())
       .then((selectedProxy) => {
-        const notSelectedProxy = availableProxies.filter(
-          (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
-        )[0];
-        cy.do(proxySelect.choose(notSelectedProxy));
-        cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
-        return cy.wrap(notSelectedProxy);
+        API.getProxyTypesByApi().then((proxyTypes) => {
+          const availableProxies = proxyTypes.map((proxyType) => proxyType.attributes.name);
+          const notSelectedProxy = availableProxies.filter(
+            (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
+          )[1];
+          cy.do(proxySelect.choose(notSelectedProxy));
+          cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
+          return cy.wrap(notSelectedProxy);
+        });
       });
   },
 
@@ -31,4 +44,5 @@ export default {
     cy.expect(saveAndCloseButton.exists());
     cy.do(saveAndCloseButton.click());
   },
+  ...API,
 };

@@ -48,6 +48,7 @@ describe('MARC', () => {
       let testUser;
 
       before(() => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

@@ -26,6 +26,7 @@ const createdInstaceIds = [];
 describe('Inventory', () => {
   describe('Single record import', () => {
     before('Create test user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.inventoryAll.gui,
