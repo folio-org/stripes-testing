@@ -14,7 +14,6 @@ describe('Inventory', () => {
     const testData = {
       user: {},
       subjectHeading: 'Test54',
-      subjectType: 'Corporate name',
       columnName: 'Subject type',
       instanceIds: [],
     };
@@ -60,14 +59,19 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584507 Check filtering by local Subject Source (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584507'] },
+      'C584530 Check pagination of subject filtering (folijet)',
+      { tags: ['criticalPath', 'folijet', 'C584530'] },
       () => {
+        const subjectTypes = ['Topical term', 'Geographic name', 'Personal name'];
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
         BrowseSubjects.verifyNonExistentSearchResult(testData.subjectHeading);
         BrowseSubjects.expandAccordion('Subject type');
-        BrowseSubjects.selectSubjectType(testData.subjectType);
-        BrowseSubjects.verifySearchResult(testData.subjectType, testData.columnName);
+        subjectTypes.forEach((subjectType) => {
+          BrowseSubjects.selectSubjectType(subjectType);
+        });
+        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+        BrowseSubjects.clickNextPaginationButton();
+        BrowseSubjects.clickPreviousPaginationButton();
       },
     );
   });

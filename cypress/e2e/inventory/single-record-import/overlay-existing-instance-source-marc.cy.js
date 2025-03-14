@@ -20,7 +20,7 @@ describe('Inventory', () => {
       OCLCAuthentication: '100481406/PAOLF',
     };
     const marcFile = {
-      filePath: 'marcBibFileForC584530.mrc',
+      filePath: 'oneMarcBib.mrc',
       fileName: `C193953 autotestFile${getRandomPostfix()}.mrc`,
       jobProfile: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
