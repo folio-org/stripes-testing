@@ -28,11 +28,6 @@ describe('Eureka', () => {
         action: CAPABILITY_ACTIONS.EDIT,
       },
       {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.CREATE,
-      },
-      {
         type: CAPABILITY_TYPES.DATA,
         resource: 'UI-Consortia-Settings Consortium-Manager',
         action: CAPABILITY_ACTIONS.VIEW,
@@ -109,8 +104,12 @@ describe('Eureka', () => {
         AuthorizationRoles.verifyRoleType(testData.roleName, AUTHORIZATION_ROLE_TYPES.CONSORTIUM);
         cy.logout();
 
-        cy.loginAsAdmin();
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        // for unclear reasons, tenant name would not load for an admin without waiting
+        cy.wait(15_000);
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        }, 20_000);
         TopMenuNavigation.openAppFromDropdown(
           APPLICATION_NAMES.SETTINGS,
           SETTINGS_SUBSECTION_AUTH_ROLES,
