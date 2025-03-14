@@ -17,6 +17,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -109,10 +110,7 @@ describe('Invoices', () => {
 
       AcquisitionUnits.assignUserViaApi(userProperties.userId, testData.acqUnit.id);
 
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
       setApprovePayValue(isApprovePayEnabled);
     });
   });
@@ -128,6 +126,8 @@ describe('Invoices', () => {
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

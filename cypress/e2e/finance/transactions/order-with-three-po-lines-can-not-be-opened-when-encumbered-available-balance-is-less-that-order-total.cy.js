@@ -9,15 +9,13 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -79,11 +77,7 @@ describe('Finance: Transactions', () => {
                       (responseOrganizations) => {
                         organization.id = responseOrganizations;
                         firstOrder.vendor = organization.id;
-                        cy.loginAsAdmin({
-                          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-                          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-                        });
-                        SettingsOrders.setPurchaseOrderLinesLimit(3);
+                        OrderLinesLimit.setPOLLimit(3);
                         const firstOrderLine = {
                           ...BasicOrderLine.defaultOrderLine,
                           cost: {
@@ -182,19 +176,14 @@ describe('Finance: Transactions', () => {
       permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-      waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-    });
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
+    cy.getAdminToken();
+
+    OrderLinesLimit.setPOLLimit(1);
     Users.deleteViaApi(user.userId);
   });
 
@@ -202,6 +191,8 @@ describe('Finance: Transactions', () => {
     'C449366 Order with three PO lines can NOT be opened when encumbered available balance is less that order total (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       Orders.openOrder();
