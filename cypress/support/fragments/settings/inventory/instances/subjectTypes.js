@@ -3,26 +3,31 @@ import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../
 import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
-function getSubjectTypeNames() {
-  const existingNames = [];
-  return cy
-    .get('#editList-subject-types')
-    .find('[class*="mclCell-"]:nth-child(1)')
-    .each(($cell) => {
-      cy.wrap($cell).each(($el) => {
-        existingNames.push($el.text());
-      });
-    })
-    .then(() => existingNames);
-}
-
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
-export default {
-  getSubjectTypeNames,
 
+export const folioSubjectTypes = [
+  'Personal name',
+  'Corporate name',
+  'Meeting name',
+  'Uniform title',
+  'Named event',
+  'Chronological term',
+  'Topical term',
+  'Geographic name',
+  'Uncontrolled',
+  'Faceted topical terms',
+  'Genre/form',
+  'Occupation',
+  'Function',
+  'Curriculum objective',
+  'Hierarchical place name',
+  'Type of entity unspecified',
+];
+
+export default {
   createViaApi(body) {
     return cy
       .okapiRequest({
