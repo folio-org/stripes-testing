@@ -736,15 +736,21 @@ export default {
     else cy.expect(newButton.absent());
   },
 
-  checkActionsOptionsAvailable: (editShown = true, duplicateShown = true, deleteShown = true) => {
-    cy.do(actionsButton.click());
+  checkActionsOptionsAvailable: (
+    editShown = true,
+    duplicateShown = true,
+    deleteShown = true,
+    roleToCheck = false,
+  ) => {
+    const targetButton = roleToCheck ? Pane(roleToCheck).find(actionsButton) : actionsButton;
+    cy.do(targetButton.click());
     if (editShown) cy.expect(editButton.exists());
     else cy.expect(editButton.absent());
     if (duplicateShown) cy.expect(duplicateButton.exists());
     else cy.expect(duplicateButton.absent());
     if (deleteShown) cy.expect(deleteButton.exists());
     else cy.expect(deleteButton.absent());
-    cy.do(actionsButton.click());
+    cy.do(targetButton.click());
     cy.expect(DropdownMenu().absent());
   },
 

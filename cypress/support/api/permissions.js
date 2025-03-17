@@ -1,4 +1,5 @@
 import getRandomPostfix from '../utils/stringTools';
+import { AUTHORIZATION_ROLE_TYPES } from '../constants';
 
 Cypress.Commands.add('getPermissionsApi', (searchParams) => {
   return cy.okapiRequest({
@@ -355,4 +356,128 @@ Cypress.Commands.add('getAuthorizationRoles', () => {
     cy.wrap(body.roles).as('roles');
   });
   return cy.get('@roles');
+});
+
+Cypress.Commands.add('getAuthorizationRoleApi', (roleId) => {
+  cy.okapiRequest({
+    path: `roles/${roleId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('shareRoleApi', (consotiaId, { id, name, description = '' }) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: `/consortia/${consotiaId}/sharing/roles`,
+    isDefaultSearchParamsRequired: false,
+    body: {
+      roleId: id,
+      roleName: name,
+      url: '/roles',
+      payload: {
+        id,
+        name,
+        description,
+        type: AUTHORIZATION_ROLE_TYPES.REGULAR.toUpperCase(),
+      },
+    },
+  });
+});
+
+Cypress.Commands.add(
+  'shareRoleCapabilitiesApi',
+  (consortiaId, { id, name, capabilitiesArray = [] }) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: `/consortia/${consortiaId}/sharing/roles/capabilities`,
+      isDefaultSearchParamsRequired: false,
+      body: {
+        roleId: id,
+        roleName: name,
+        url: '/roles/capabilities',
+        payload: {
+          roleId: id,
+          capabilityNames: capabilitiesArray,
+        },
+      },
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'shareRoleCapabilitySetsApi',
+  (consortiaId, { id, name, capabilitySetsArray = [] }) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: `/consortia/${consortiaId}/sharing/roles/capability-sets`,
+      isDefaultSearchParamsRequired: false,
+      body: {
+        roleId: id,
+        roleName: name,
+        url: '/roles/capability-sets',
+        payload: {
+          roleId: id,
+          capabilitySetNames: capabilitySetsArray,
+        },
+      },
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'deleteSharedRoleApi',
+  ({ id, name, description = '' }, ignoreErrors = false) => {
+    cy.getConsortiaId().then((consortiaId) => {
+      cy.okapiRequest({
+        method: 'DELETE',
+        path: `/consortia/${consortiaId}/sharing/roles/${id}`,
+        isDefaultSearchParamsRequired: false,
+        body: {
+          roleId: id,
+          roleName: name,
+          url: '/roles',
+          payload: {
+            id,
+            name,
+            description,
+            type: AUTHORIZATION_ROLE_TYPES.CONSORTIUM.toUpperCase(),
+          },
+        },
+        failOnStatusCode: !ignoreErrors,
+      });
+    });
+  },
+);
+
+Cypress.Commands.add('shareRoleWithCapabilitiesApi', ({ id, name, description = '' }) => {
+  let consortiaId;
+  let capabilities;
+  let capabilitySets;
+  cy.then(() => {
+    cy.getConsortiaId().then((consId) => {
+      consortiaId = consId;
+    });
+    cy.getCapabilitiesForRoleApi(id).then(({ body }) => {
+      capabilities = body.capabilities.map((capab) => capab.name);
+    });
+    cy.getCapabilitySetsForRoleApi(id).then(({ body }) => {
+      capabilitySets = body.capabilitySets.map((set) => set.name);
+    });
+  }).then(() => {
+    cy.shareRoleApi(consortiaId, { id, name, description }).then(() => {
+      cy.wait(3000);
+      cy.shareRoleCapabilitiesApi(consortiaId, { id, name, capabilitiesArray: capabilities }).then(
+        () => {
+          cy.wait(3000);
+          cy.shareRoleCapabilitySetsApi(consortiaId, {
+            id,
+            name,
+            capabilitySetsArray: capabilitySets,
+          }).then(() => {
+            cy.wait(3000);
+          });
+        },
+      );
+    });
+  });
 });
