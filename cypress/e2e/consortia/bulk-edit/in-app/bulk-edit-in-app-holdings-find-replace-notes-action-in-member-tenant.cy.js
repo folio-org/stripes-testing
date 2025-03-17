@@ -324,7 +324,6 @@ describe('Bulk-edit', () => {
               header: centralSharedHoldingNoteType.payload.name,
               value: `${notesEdited.sharedUpperCase} (staff only) | ${notesEdited.sharedLowerCase}`,
             },
-
             {
               header: collegeHoldingNoteType.name,
               value: `${notesEdited.collegeUpperCase} (staff only) | ${notesEdited.collegeLowerCase}`,
