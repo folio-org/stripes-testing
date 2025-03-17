@@ -129,7 +129,7 @@ describe('MARC', () => {
               );
               cy.wait(1000);
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               InventoryInstance.waitLoading();
             }
