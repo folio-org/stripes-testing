@@ -114,6 +114,7 @@ describe('Export Manager', () => {
           location.name,
           `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
         );
+        Orders.backToPO();
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
         OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
@@ -135,10 +136,7 @@ describe('Export Manager', () => {
         permissions.exportManagerDownloadAndResendFiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -160,6 +158,8 @@ describe('Export Manager', () => {
       'C350410 Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
       { tags: ['criticalPath', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
       () => {
+        TopMenuNavigation.navigateToApp('Orders');
+        Orders.selectOrdersPane();
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();

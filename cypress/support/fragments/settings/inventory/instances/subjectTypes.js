@@ -1,5 +1,6 @@
 import { including } from '@interactors/html';
 import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
 export const reasonsActions = {
@@ -7,6 +8,27 @@ export const reasonsActions = {
   trash: 'trash',
 };
 export default {
+  createViaApi(body) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'subject-types',
+        body,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  deleteViaApi(id) {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `subject-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   verifySourceTypeAbsent(name) {
     cy.get('#editList-subjecttypes, #editList-subject-types') // Selects either if present
       .should('exist') // Ensures at least one exists before proceeding

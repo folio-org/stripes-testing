@@ -86,14 +86,14 @@ describe('Citation: check navigation', () => {
       // open new resource form
       LinkedDataEditor.openNewResourceForm();
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked data editor');
+      TopMenuNavigation.openAppFromDropdown('Linked Data Editor - beta');
       LinkedDataEditor.waitLoading();
       // search by any title
       SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work
       LinkedDataEditor.selectFromSearchTable(1);
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked data editor');
+      TopMenuNavigation.openAppFromDropdown('Linked Data Editor - beta');
       LinkedDataEditor.waitLoading();
       LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
     },

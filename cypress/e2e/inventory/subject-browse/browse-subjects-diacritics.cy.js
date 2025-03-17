@@ -22,6 +22,7 @@ describe('Inventory', () => {
     const createdInstanceIDs = [];
 
     before('Creating user and instance', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
 

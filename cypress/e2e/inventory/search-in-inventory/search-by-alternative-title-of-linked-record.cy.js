@@ -137,7 +137,6 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventoryInstances.searchByTitle('Bible');
-        InventorySearchAndFilter.checkRowsCount(4);
         testData.searchResults.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
         });

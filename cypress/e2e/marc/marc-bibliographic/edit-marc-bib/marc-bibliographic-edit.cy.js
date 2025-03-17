@@ -82,6 +82,7 @@ describe('MARC', () => {
       let instanceIds;
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,

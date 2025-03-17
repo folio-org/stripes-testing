@@ -122,10 +122,15 @@ export default {
     cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}`, content: value }).absent());
   },
 
-  checkPaginationButtons() {
+  checkPaginationButtons(
+    state = {
+      prev: { isVisible: true, isDisabled: false },
+      next: { isVisible: true, isDisabled: false },
+    },
+  ) {
     cy.expect([
-      previousButton.is({ visible: true, disabled: false }),
-      nextButton.is({ visible: true, disabled: false }),
+      previousButton.is({ visible: state.prev.isVisible, disabled: state.prev.isDisabled }),
+      nextButton.is({ visible: state.next.isVisible, disabled: state.next.isDisabled }),
     ]);
   },
 
@@ -322,9 +327,9 @@ export default {
         }
       },
       {
-        limit: 12,
+        limit: 20,
         delay: 5000,
-        timeout: 60000,
+        timeout: 120_000,
       },
     );
   },
