@@ -71,7 +71,9 @@ describe('Inventory', () => {
         });
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickNextPaginationButton();
+        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
         BrowseSubjects.clickPreviousPaginationButton();
+        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
       },
     );
   });
