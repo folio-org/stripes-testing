@@ -11,6 +11,8 @@ export default {
   selectSoftwareVersions() {
     cy.wait(1000);
     cy.xpath('//a[@href="/settings/about"]').should('be.visible').click();
+    // added waiter to fix failures on jenkins with 'something went wrong'
+    cy.wait(2000);
   },
 
   checkErrorNotDisplayed() {
