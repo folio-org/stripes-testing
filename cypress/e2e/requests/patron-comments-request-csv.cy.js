@@ -27,7 +27,7 @@ describe('Requests Export CSV File', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C199705_Instance_${getRandomPostfix()}`,
   };
   let defaultLocation;
   let cancellationReason;

@@ -19,7 +19,6 @@ describe('orders: Unreceive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -43,6 +42,7 @@ describe('orders: Unreceive piece from Order', () => {
     'C10925 Unreceive piece using "Actions" button (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'shiftLeft', 'eurekaPhase1'] },
     () => {
+      cy.loginAsAdmin();
       const barcode = Helper.getRandomBarcode();
       const enumeration = 'autotestCaption';
       Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
@@ -65,6 +65,8 @@ describe('orders: Unreceive piece from Order', () => {
         TopMenuNavigation.openAppFromDropdown('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+        cy.wait(5000);
+        InventorySearchAndFilter.clickOnCloseIcon();
         InventoryInstance.openHoldingsAccordion(OrdersHelper.mainLibraryLocation);
         InventoryInstance.openItemByBarcodeAndIndex(barcode);
         ItemRecordView.verifyItemStatus('On order');

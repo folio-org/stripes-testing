@@ -19,16 +19,16 @@ describe('Inventory', () => {
   describe('Item', () => {
     const itemData = {
       barcode: generateItemBarcode(),
-      instanceTitle: `Instance ${getRandomPostfix()}`,
+      instanceTitle: `AT_C628_Instance_${getRandomPostfix()}`,
       materialTypes: [
         {
-          title: `materialType ${getRandomPostfix()}`,
+          title: `AT_C628_materialType ${getRandomPostfix()}`,
         },
         {
-          title: `materialType ${getRandomPostfix()}`,
+          title: `AT_C628_materialType ${getRandomPostfix()}`,
         },
         {
-          title: `materialType ${getRandomPostfix()}`,
+          title: `AT_C628_materialType ${getRandomPostfix()}`,
         },
       ],
     };

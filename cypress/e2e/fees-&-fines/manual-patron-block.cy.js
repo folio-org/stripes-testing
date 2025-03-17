@@ -1,7 +1,8 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import PatronBlockTemplates from '../../support/fragments/settings/users/patronBlockTemplates';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -30,16 +31,18 @@ describe('Fees&Fines', () => {
         userId = userProperties.userId;
         userName = userProperties.username;
         userProperties.expirationDate = expirationUserDate;
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(SettingsMenu.patronBlockTemplates);
+        cy.login(userProperties.username, userProperties.password,
+          { path: SettingsMenu.patronBlockTemplates, waiter: () => cy.wait(5000) });
         PatronBlockTemplates.newPatronTemplate();
         PatronBlockTemplates.fillInPatronTemplateInformation(templateName, testDescription);
       });
-      cy.visit(TopMenu.usersPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
     });
 
     afterEach(() => {
       cy.visit(SettingsMenu.patronBlockTemplates);
+      cy.wait(3000);
       PatronBlockTemplates.findPatronTemplate(templateName);
       PatronBlockTemplates.editPatronTemplate();
       PatronBlockTemplates.deletePatronTemplate();
@@ -51,9 +54,11 @@ describe('Fees&Fines', () => {
       'C476 Scenario#1&Scenario#2 (vega)',
       { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.patronBlocksAccordionCovered();
 
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.createAndSaveNewPatronBlock(testDescription);
         // Scenario#2
@@ -66,6 +71,7 @@ describe('Fees&Fines', () => {
       'C476 Scenario#3&Scenario#4 (vega)',
       { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.openPatronBlocks();
         // Scenario#3
@@ -81,9 +87,11 @@ describe('Fees&Fines', () => {
       { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
         // scenario#5
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.patronBlocksAccordionCovered();
 
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.createNewPatronBlock(testDescription);
         // scenario#6
@@ -103,9 +111,11 @@ describe('Fees&Fines', () => {
       'C476 Scenario#10,11,12,13,14,15,16 (vega)',
       { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.patronBlocksAccordionCovered();
 
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         // scenario#10
         UsersCard.createNewPatronBlock(testDescription);
@@ -125,6 +135,7 @@ describe('Fees&Fines', () => {
       'C476 Scenario#17,18 (vega)',
       { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C476'] },
       () => {
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userName);
         UsersCard.openPatronBlocks();
         UsersCard.createPatronBlock();
