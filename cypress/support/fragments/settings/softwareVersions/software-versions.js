@@ -9,7 +9,8 @@ export default {
   },
 
   selectSoftwareVersions() {
-    cy.xpath('//a[@href="/settings/about"]').click();
+    cy.wait(1000);
+    cy.xpath('//a[@href="/settings/about"]').should('be.visible').click();
   },
 
   checkErrorNotDisplayed() {
