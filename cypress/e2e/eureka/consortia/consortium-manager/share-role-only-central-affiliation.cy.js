@@ -104,7 +104,7 @@ describe('Eureka', () => {
         AuthorizationRoles.verifyRoleType(testData.roleName, AUTHORIZATION_ROLE_TYPES.CONSORTIUM);
         cy.logout();
 
-        // for unclear reasons, tenant name would not load for an admin without waiting
+        // for unclear reasons, tenant name may not load for an admin without waiting
         cy.wait(15_000);
         cy.waitForAuthRefresh(() => {
           cy.loginAsAdmin();
