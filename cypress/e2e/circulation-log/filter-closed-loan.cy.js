@@ -12,7 +12,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
-  instanceTitle: `Instance ${getRandomPostfix()}`,
+  instanceTitle: `AT_C16999_Instance_${getRandomPostfix()}`,
   barcode: `item-${getRandomPostfix()}`,
 };
 const testData = {

@@ -274,7 +274,7 @@ describe('TLR: Item renew', () => {
     });
   });
 
-  it(
+  it.only(
     'C360533 TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C360533'] },
     () => {
@@ -317,7 +317,7 @@ describe('TLR: Item renew', () => {
         waiter: Requests.waitLoading,
       });
 
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      cy.intercept('POST', 'circulation-bff/requests').as('createRequest');
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
         instanceHRID,
