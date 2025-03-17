@@ -119,9 +119,6 @@ describe('Inventory', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          testData.instanceHRID = initialInstanceHrId;
-        });
       },
     );
   });
