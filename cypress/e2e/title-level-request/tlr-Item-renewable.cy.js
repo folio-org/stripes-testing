@@ -203,7 +203,7 @@ describe('TLR: Item renew', () => {
         instanceHRID = instance.hrid;
 
         if (instance.hrid === undefined) {
-          cy.log('Instance HRID is generated successfully').then(() => {
+          cy.log('Instance HRID is not generated successfully').then(() => {
             throw new Error('Instance HRID is not generated');
           });
         }
@@ -274,7 +274,7 @@ describe('TLR: Item renew', () => {
     });
   });
 
-  it.only(
+  it(
     'C360533 TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C360533'] },
     () => {
