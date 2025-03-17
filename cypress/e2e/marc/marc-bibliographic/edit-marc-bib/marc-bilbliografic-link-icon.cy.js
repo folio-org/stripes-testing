@@ -41,6 +41,7 @@ describe('MARC', () => {
 
       beforeEach(() => {
         fileName = `C360541testMarcFile.${getRandomPostfix()}.mrc`;
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,

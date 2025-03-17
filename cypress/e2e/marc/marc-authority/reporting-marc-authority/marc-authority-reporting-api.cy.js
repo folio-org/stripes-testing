@@ -67,6 +67,9 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Creating user and uploading files', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380529');
+        InventoryInstances.deleteInstanceByTitleViaApi('C380529');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -172,7 +175,7 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           cy.wait(2000);

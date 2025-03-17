@@ -39,7 +39,7 @@ describe('MARC', () => {
       before('Creating user', () => {
         cy.getAdminToken();
         // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('380572Peplum*');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380572');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,

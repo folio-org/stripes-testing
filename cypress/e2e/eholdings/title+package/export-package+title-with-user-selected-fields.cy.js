@@ -41,6 +41,7 @@ describe('eHoldings', () => {
     ];
 
     before('Creating user, logging in', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -73,7 +74,7 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
         EHoldingsPackages.titlesSearchFilter('Title', testData.title, testData.selectedStatus);
-        EHoldingsPackageView.selectTitleRecord();
+        EHoldingsPackageView.selectTitleRecordByTitle(testData.title);
         eHoldingsResourceView.openExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.clickExportSelectedTitleFields();

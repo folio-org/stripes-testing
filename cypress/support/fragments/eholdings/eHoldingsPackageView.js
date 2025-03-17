@@ -15,7 +15,7 @@ import {
   Callout,
   TextField,
   FieldSet,
-  ListItem,
+  PaneHeader,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
 import EHoldingsResourceView from './eHoldingsResourceView';
@@ -73,7 +73,7 @@ export default {
   },
 
   openExportModal({ exportDisabled = false } = {}) {
-    cy.do([actionsButton.click(), exportButton.click()]);
+    cy.do([PaneHeader().find(actionsButton).click(), exportButton.click()]);
     ExportSettingsModal.verifyModalView({ exportDisabled });
 
     return ExportSettingsModal;
@@ -342,16 +342,27 @@ export default {
 
     return NoteEditForm;
   },
-  selectTitleRecord(rowNumber = 0) {
+  selectTitleRecordByTitle(title, rowNumber = 0) {
     cy.do(
       titlesSection
-        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}` }))
+        .find(MultiColumnListCell({ content: title }))
         .find(Button())
         .click(),
     );
-
     EHoldingsResourceView.waitLoading();
+    return EHoldingsResourceView;
+  },
 
+  selectTitleRecord(rowNumber = 0) {
+    cy.do(
+      titlesSection
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}` }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .find(Button())
+        .click(),
+    );
+    EHoldingsResourceView.waitLoading();
     return EHoldingsResourceView;
   },
 };

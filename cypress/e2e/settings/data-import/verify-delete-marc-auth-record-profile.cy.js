@@ -22,6 +22,7 @@ describe('Data Import', () => {
     const profileName = 'MARC Authority - Default Delete Authorities';
 
     before('create user', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.settingsDataImportCanViewOnly.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {

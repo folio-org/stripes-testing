@@ -68,6 +68,7 @@ describe('MARC', () => {
     const createdRecordIDs = [];
 
     before('Creating user, importing record', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
