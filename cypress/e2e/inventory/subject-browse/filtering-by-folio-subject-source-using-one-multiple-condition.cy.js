@@ -14,6 +14,7 @@ describe('Inventory', () => {
     const testData = {
       user: {},
       notProduceSubjectName: 'Test45',
+      columnName: 'Subject source',
       firstConditionForFiltering: 'Canadian Subject Headings',
       secondConditionForFiltering: 'Library of Congress Subject Headings',
     };
@@ -68,7 +69,7 @@ describe('Inventory', () => {
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
-        BrowseSubjects.verifySearchResult(testData.firstConditionForFiltering);
+        BrowseSubjects.verifySearchResult(testData.firstConditionForFiltering, testData.columnName);
       },
     );
 
@@ -81,10 +82,10 @@ describe('Inventory', () => {
         BrowseSubjects.expandAccordion('Subject source');
         BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
         BrowseSubjects.selectSubjectSource(testData.secondConditionForFiltering);
-        BrowseSubjects.verifySearchResult([
-          testData.firstConditionForFiltering,
-          testData.secondConditionForFiltering,
-        ]);
+        BrowseSubjects.verifySearchResult(
+          [testData.firstConditionForFiltering, testData.secondConditionForFiltering],
+          testData.columnName,
+        );
       },
     );
   });
