@@ -9,7 +9,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C434129 ${getRandomPostfix()}`,
         roleDescription: `Description C434129 ${getRandomPostfix()}`,
-        applicationName: 'app-platform-complete',
+        applicationName: 'app-acquisitions',
         capabilitySet: {
           table: 'Data',
           resource: 'Acquisitions-Units Memberships',
@@ -50,7 +50,7 @@ describe('Eureka', () => {
         additionalCapabilities: [
           {
             table: 'Data',
-            resource: 'Acquisition Piece Events',
+            resource: 'Batch-Groups Item',
             action: 'View',
           },
           {
@@ -90,7 +90,6 @@ describe('Eureka', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-          cy.deleteCapabilitiesFromRoleApi(roleId);
           cy.deleteAuthorizationRoleApi(roleId);
         });
       });

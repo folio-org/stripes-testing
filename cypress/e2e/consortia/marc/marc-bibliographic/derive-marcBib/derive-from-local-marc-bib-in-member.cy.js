@@ -62,6 +62,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiInventoryViewInstances.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -85,7 +86,11 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -117,6 +122,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkSharedTextInDetailView(false);
           InventoryInstance.checkExpectedMARCSource();
@@ -128,6 +135,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
             QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
             QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkSharedTextInDetailView(false);

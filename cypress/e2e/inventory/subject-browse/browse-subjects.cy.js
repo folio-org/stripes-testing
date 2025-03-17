@@ -16,6 +16,7 @@ const randomSearchString = `randomSearchString-${getRandomPostfix()}`;
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('create test data', () => {
+      cy.getAdminToken();
       cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
         user = userProperties;
       });
@@ -29,6 +30,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('login', () => {
+      cy.getAdminToken();
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,

@@ -1,7 +1,7 @@
 export default function getRandomPostfix() {
   // generates random value in range [100, 1000]
   // range [0, 1000] can lead to incorrect sorting results
-  // as this value is friquently used in string values generation (names, codes, ...)
+  // as this value is frequently used in string values generation (names, codes, ...)
   const start = (Math.random() * 900 + 100).toString(10);
   return `${start}${new Date().getMilliseconds()}`;
 }

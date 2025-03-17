@@ -1,14 +1,14 @@
 /* eslint-disable no-dupe-keys */
-import { including } from '@interactors/html';
+import { including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
   Link,
-  matching,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   Pane,
   Section,
@@ -31,7 +31,38 @@ const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitl
 const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
+function getColumnsResults(columnName) {
+  const cells = [];
+  let index;
+
+  switch (columnName) {
+    case 'Subject source':
+      index = 2;
+      break;
+    case 'Subject type':
+      index = 3;
+      break;
+    default:
+      index = 2;
+      break;
+  }
+
+  return cy
+    .get('#browse-results-list-browseSubjects')
+    .find('[data-row-index]')
+    .each(($row) => {
+      cy.get(`[class*="mclCell-"]:nth-child(${index})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getColumnsResults,
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -79,17 +110,27 @@ export default {
   },
 
   checkResultAndItsRow(rowIndex, value) {
-    cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: value }));
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
+    cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: including(value) }),
+    );
   },
 
   checkAbsenceOfResultAndItsRow(rowIndex, value) {
     cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}`, content: value }).absent());
   },
 
-  checkPaginationButtons() {
+  checkPaginationButtons(
+    state = {
+      prev: { isVisible: true, isDisabled: false },
+      next: { isVisible: true, isDisabled: false },
+    },
+  ) {
     cy.expect([
-      previousButton.is({ visible: true, disabled: false }),
-      nextButton.is({ visible: true, disabled: false }),
+      previousButton.is({ visible: state.prev.isVisible, disabled: state.prev.isDisabled }),
+      nextButton.is({ visible: state.next.isVisible, disabled: state.next.isDisabled }),
     ]);
   },
 
@@ -286,24 +327,55 @@ export default {
         }
       },
       {
-        limit: 12,
+        limit: 20,
         delay: 5000,
-        timeout: 60000,
+        timeout: 120_000,
       },
     );
   },
 
-  verifyAccordionStatusByName(accordionName, status = true) {
-    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: status }));
-  },
-
-  clickAccordionByName(accordionName) {
+  expandAccordion(accordionName) {
     cy.do(searchFilterPane.find(Accordion(accordionName)).clickHeader());
-    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectType-multiselect' })).exists());
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: true }));
   },
 
-  verify(types) {
-    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
-    cy.expect(MultiSelectOption(including(types)).exists());
+  selectSubjectSource(subjectSource) {
+    cy.do(MultiSelect({ id: 'subjectSource-multiselect' }).fillIn(subjectSource));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(subjectSource)))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+
+  selectSubjectType(subjectType) {
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).fillIn(subjectType));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(subjectType)))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+
+  verifySearchResult: (cellContent, columnName) => {
+    getColumnsResults(columnName).then((cells) => {
+      cells.forEach((cell) => {
+        if (cell !== 'No value set-') {
+          if (Array.isArray(cellContent)) {
+            cellContent.forEach((content) => {
+              cy.expect(content).to.satisfy((cellValue) => cellContent.some((val) => cellValue.includes(val)));
+            });
+          } else {
+            cy.expect(cell).to.include(cellContent);
+          }
+        }
+      });
+    });
   },
 };

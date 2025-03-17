@@ -44,6 +44,7 @@ describe('MARC', () => {
           marc: 'marcFileForC353533.mrc',
           fileName: `C353533 testMarcFile.${getRandomPostfix()}.mrc`,
         };
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

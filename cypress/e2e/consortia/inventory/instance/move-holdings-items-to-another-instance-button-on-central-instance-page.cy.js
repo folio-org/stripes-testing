@@ -1,6 +1,8 @@
 import { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordView, {
+  actionsMenuOptions,
+} from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -41,7 +43,10 @@ describe('Inventory', () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
-        InstanceRecordView.verifyMoveHoldingsItemsToAnotherInstanceOptionAbsent();
+        InstanceRecordView.validateOptionInActionsMenu(
+          actionsMenuOptions.moveHoldingsItemsToAnotherInstance,
+          false,
+        );
       },
     );
   });

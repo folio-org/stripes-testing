@@ -1,12 +1,15 @@
 import { including } from '@interactors/html';
 import { recurse } from 'cypress-recurse';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
   Callout,
   Dropdown,
+  Heading,
   HTML,
   KeyValue,
+  Modal,
   MultiColumnListCell,
   Pane,
   PaneHeader,
@@ -19,7 +22,7 @@ import getRandomPostfix from '../../utils/stringTools';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
-const defaultUserName = `autotestuser_${getRandomPostfix()}`;
+const defaultUserName = `at_username_${getRandomPostfix()}`;
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });
@@ -29,6 +32,11 @@ const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pan
 
 const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const createUserPane = Pane('Create User');
+
+const actionsButton = Button('Actions');
+const checkTransactionsButton = Button('Check for open transactions/delete user');
+const noOpenTransactionsModal = Modal({ id: 'delete-user-modal' });
+const openTransactionsModal = Modal({ id: 'open-transactions-modal' });
 
 const defaultUser = {
   username: defaultUserName,
@@ -50,6 +58,22 @@ const defaultUser = {
 
 export default {
   defaultUser,
+  generateUserModel() {
+    const user = {
+      ...this.defaultUser,
+      personal: { ...this.defaultUser.personal },
+    };
+    user.username = `at_username_${getRandomPostfix()}`;
+    user.type = 'staff';
+    user.personal.preferredFirstName = `AT_PreferredFirstName_${getRandomPostfix()}`;
+    user.personal.firstName = `AT_FirstName_${getRandomPostfix()}`;
+    user.personal.lastName = `AT_LastName_${getRandomPostfix()}`;
+    user.personal.middleName = `AT_MiddleName_${getRandomPostfix()}`;
+    user.personal.email = `AT_Email_${getRandomPostfix()}@folio.org`;
+    user.barcode = uuid();
+
+    return user;
+  },
   createViaApi: (user) => cy
     .okapiRequest({
       method: 'POST',
@@ -100,6 +124,86 @@ export default {
       .then(({ body }) => {
         return body;
       });
+  },
+
+  checkTransactions() {
+    cy.wait(1000);
+    cy.do([userDetailsPane.find(actionsButton).click(), checkTransactionsButton.click()]);
+    cy.wait(2000);
+  },
+
+  checkOpenTransactionsModal(user, { ...transactions }) {
+    cy.log(transactions);
+    cy.expect(openTransactionsModal.find(Heading(including('Open transactions'))).exists());
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`User ${user} has the following open transactions:`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal.find(HTML(including(`Open loans: ${transactions.loans}`))).exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`Open requests: ${transactions.requests}`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`Open fees/fines: ${transactions.feesFines}`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal.find(HTML(including(`Open blocks: ${transactions.blocks}`))).exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`Open unexpired proxy: ${transactions.unexpiredProxy}`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including('Please resolve the transactions to proceed to delete the user.')))
+        .exists(),
+    );
+    cy.expect(openTransactionsModal.find(Button('OK')).exists());
+  },
+
+  closeOpenTransactionsModal() {
+    cy.do(openTransactionsModal.find(Button('OK')).click());
+    cy.wait(1000);
+    cy.expect(openTransactionsModal.absent());
+  },
+
+  checkNoOpenTransactionsModal(user) {
+    cy.expect(
+      noOpenTransactionsModal
+        .find(Heading(including('Check for open transactions/delete user')))
+        .exists(),
+    );
+    cy.expect(
+      noOpenTransactionsModal
+        .find(HTML(including(`No open transactions for user ${user}.`)))
+        .exists(),
+    );
+    cy.expect(
+      noOpenTransactionsModal
+        .find(HTML(including('Are you sure you want to delete this user?')))
+        .exists(),
+    );
+    cy.expect(noOpenTransactionsModal.find(Button('No')).exists());
+    cy.expect(noOpenTransactionsModal.find(Button('Yes')).exists());
+  },
+
+  closeNoOpenTransactionsModal() {
+    cy.do(noOpenTransactionsModal.find(Button('No')).click());
+    cy.wait(1000);
+    cy.expect(noOpenTransactionsModal.absent());
+  },
+
+  deleteUserFromTransactionsModal() {
+    cy.do(noOpenTransactionsModal.find(Button('Yes')).click());
+    cy.wait(1000);
   },
 
   waitForAutomatedPatronBlocksForUser(userId, secondsToWait) {

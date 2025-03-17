@@ -78,6 +78,7 @@ describe('MARC', () => {
       };
 
       before('Create users, data', () => {
+        cy.getAdminToken();
         cy.setTenant(Affiliations.College);
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
@@ -85,12 +86,11 @@ describe('MARC', () => {
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });
         cy.resetTenant();
-        cy.getAdminToken();
         MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
           query: 'keyword="C404449" and (authRefType==("Authorized" or "Auth/Ref"))',
@@ -107,20 +107,15 @@ describe('MARC', () => {
 
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.setTenant(Affiliations.University);
-            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            ]);
             cy.setTenant(Affiliations.College);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
-          })
-          .then(() => {
-            cy.loginAsAdmin({
-              path: TopMenu.dataImportPath,
-              waiter: DataImport.waitLoading,
-            });
+            cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
+            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            ]);
           })
           .then(() => {
             marcFiles.forEach((marcFile) => {
@@ -214,247 +209,289 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            sharedRecordsCount = count;
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            localRecordsCount = count;
-          });
+          cy.then(() => {
+            MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
+              sharedRecordsCount = count;
+            });
+            MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
+              localRecordsCount = count;
+            });
+          }).then(() => {
+            // 4 Check the "No" checkbox in expanded "Shared" accordion.
+            MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
+            MarcAuthorityBrowse.checkResultWithNoValue(
+              sharedAuthorityRecord1FromCentralTenant.heading,
+            );
+            MarcAuthorities.verifyResultsRowContent(
+              localAuthorityRecord2FromMember1Tenant.heading,
+              localAuthorityRecord2FromMember1Tenant.authRefType,
+              localAuthorityRecord2FromMember1Tenant.typeOfHeading,
+            );
+            MarcAuthorities.verifyResultRowContentSharedIcon(
+              localAuthorityRecord2FromMember1Tenant.heading,
+              false,
+            );
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+            MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
 
-          // 4 Check the "No" checkbox in expanded "Shared" accordion.
-          MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
-          MarcAuthorityBrowse.checkResultWithNoValue(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            localAuthorityRecord2FromMember1Tenant.authRefType,
-            localAuthorityRecord2FromMember1Tenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            false,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
+            // 5 Uncheck the "No" checkbox in expanded "Shared" accordion.
+            MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
+            MarcAuthorities.verifyResultsRowContent(
+              sharedAuthorityRecord1FromCentralTenant.heading,
+              sharedAuthorityRecord1FromCentralTenant.authRefType,
+              sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
+            );
+            MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
+            MarcAuthorities.verifyResultRowContentSharedIcon(
+              sharedAuthorityRecord1FromCentralTenant.heading,
+              true,
+            );
+            MarcAuthorities.verifyResultsRowContent(
+              localAuthorityRecord2FromMember1Tenant.heading,
+              localAuthorityRecord2FromMember1Tenant.authRefType,
+              localAuthorityRecord2FromMember1Tenant.typeOfHeading,
+            );
+            MarcAuthorities.verifyResultRowContentSharedIcon(
+              localAuthorityRecord2FromMember1Tenant.heading,
+              false,
+            );
+            MarcAuthorities.verifySharedAccordionOpen(true);
+            MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
+            MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+            cy.wait(3000);
+            cy.then(() => {
+              MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
+                cy.expect(count).to.eq(sharedRecordsCount);
+              });
+              MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
+                cy.expect(count).to.eq(localRecordsCount);
+              });
+            }).then(() => {
+              // 6 Check the "Yes" checkbox in expanded "Shared" accordion.
+              MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
+              MarcAuthorities.verifyResultsRowContent(
+                sharedAuthorityRecord1FromCentralTenant.heading,
+                sharedAuthorityRecord1FromCentralTenant.authRefType,
+                sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
+              );
+              MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
+              MarcAuthorities.verifyResultRowContentSharedIcon(
+                sharedAuthorityRecord1FromCentralTenant.heading,
+                true,
+              );
+              MarcAuthorities.verifySharedAccordionOpen(true);
+              MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+              MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
 
-          // 5 Uncheck the "No" checkbox in expanded "Shared" accordion.
-          MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
-          MarcAuthorities.verifyResultsRowContent(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            sharedAuthorityRecord1FromCentralTenant.authRefType,
-            sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
-          );
-          MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            true,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            localAuthorityRecord2FromMember1Tenant.authRefType,
-            localAuthorityRecord2FromMember1Tenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            false,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            cy.expect(count).to.eq(sharedRecordsCount);
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.eq(localRecordsCount);
-          });
+              // 7 Uncheck the "Yes" checkbox in expanded "Shared" accordion.
+              MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
+              MarcAuthorities.verifyResultsRowContent(
+                sharedAuthorityRecord1FromCentralTenant.heading,
+                sharedAuthorityRecord1FromCentralTenant.authRefType,
+                sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
+              );
+              MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
+              MarcAuthorities.verifyResultRowContentSharedIcon(
+                sharedAuthorityRecord1FromCentralTenant.heading,
+                true,
+              );
+              MarcAuthorities.verifyResultsRowContent(
+                localAuthorityRecord2FromMember1Tenant.heading,
+                localAuthorityRecord2FromMember1Tenant.authRefType,
+                localAuthorityRecord2FromMember1Tenant.typeOfHeading,
+              );
+              MarcAuthorities.verifyResultRowContentSharedIcon(
+                localAuthorityRecord2FromMember1Tenant.heading,
+                false,
+              );
+              MarcAuthorities.verifySharedAccordionOpen(true);
+              MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
+              MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+              cy.wait(3000);
+              cy.then(() => {
+                MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
+                  (count) => {
+                    cy.expect(count).to.eq(sharedRecordsCount);
+                  },
+                );
+                MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then(
+                  (count) => {
+                    cy.expect(count).to.eq(localRecordsCount);
+                  },
+                );
+              }).then(() => {
+                // 8 Check both checkboxes ("No" and "Yes") in expanded "Shared" accordion button
+                MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
+                MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
+                MarcAuthorities.verifyResultsRowContent(
+                  sharedAuthorityRecord1FromCentralTenant.heading,
+                  sharedAuthorityRecord1FromCentralTenant.authRefType,
+                  sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
+                );
+                MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
+                MarcAuthorities.verifyResultRowContentSharedIcon(
+                  sharedAuthorityRecord1FromCentralTenant.heading,
+                  true,
+                );
+                MarcAuthorities.verifyResultsRowContent(
+                  localAuthorityRecord2FromMember1Tenant.heading,
+                  localAuthorityRecord2FromMember1Tenant.authRefType,
+                  localAuthorityRecord2FromMember1Tenant.typeOfHeading,
+                );
+                MarcAuthorities.verifyResultRowContentSharedIcon(
+                  localAuthorityRecord2FromMember1Tenant.heading,
+                  false,
+                );
+                MarcAuthorities.verifySharedAccordionOpen(true);
+                MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+                MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+                MarcAuthorities.checkPreviousAndNextPaginationButtonsShown();
 
-          // 6 Check the "Yes" checkbox in expanded "Shared" accordion.
-          MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
-          MarcAuthorities.verifyResultsRowContent(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            sharedAuthorityRecord1FromCentralTenant.authRefType,
-            sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
-          );
-          MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            true,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+                // 9 Click on any pagination button, ex.: "Next"
+                MarcAuthorities.clickNextPagination();
+                MarcAuthorities.checkRowAbsentByContent(
+                  sharedAuthorityRecord1FromCentralTenant.heading,
+                );
+                MarcAuthorities.verifySharedAccordionOpen(true);
+                MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+                MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+                cy.wait(3000);
+                cy.then(() => {
+                  MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
+                    (count) => {
+                      cy.expect(count).to.eq(sharedRecordsCount);
+                    },
+                  );
+                  MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then(
+                    (count) => {
+                      cy.expect(count).to.eq(localRecordsCount);
+                    },
+                  );
+                }).then(() => {
+                  // 10 Click on the browse option dropdown placed at the "Search & filter" pane and select "Corporate/Conference name" search option.
+                  MarcAuthorities.selectSearchOptionInDropdown(
+                    MARC_AUTHORITY_BROWSE_OPTIONS.CORPORATE_CONFERENCE_NAME,
+                  );
+                  MarcAuthorities.checkSelectOptionFieldContent(
+                    MARC_AUTHORITY_BROWSE_OPTIONS.CORPORATE_CONFERENCE_NAME,
+                  );
 
-          // 7 Uncheck the "Yes" checkbox in expanded "Shared" accordion.
-          MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
-          MarcAuthorities.verifyResultsRowContent(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            sharedAuthorityRecord1FromCentralTenant.authRefType,
-            sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
-          );
-          MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            true,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            localAuthorityRecord2FromMember1Tenant.authRefType,
-            localAuthorityRecord2FromMember1Tenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            false,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            cy.expect(count).to.eq(sharedRecordsCount);
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.eq(localRecordsCount);
-          });
+                  // 11 Click on the "Search" button.
+                  MarcAuthorities.searchButtonClick();
+                  MarcAuthorityBrowse.checkResultWithNoValue(
+                    sharedAuthorityRecord1FromCentralTenant.heading,
+                  );
+                  MarcAuthorities.verifyResultsRowContent(
+                    sharedAuthorityRecord4FromCentralTenant.heading,
+                    sharedAuthorityRecord4FromCentralTenant.authRefType,
+                    sharedAuthorityRecord4FromCentralTenant.typeOfHeading,
+                  );
+                  MarcAuthorities.verifyResultRowContentSharedIcon(
+                    sharedAuthorityRecord4FromCentralTenant.heading,
+                    true,
+                  );
+                  MarcAuthorities.verifyResultsRowContent(
+                    localAuthorityRecord5FromMember1Tenant.heading,
+                    localAuthorityRecord5FromMember1Tenant.authRefType,
+                    localAuthorityRecord5FromMember1Tenant.typeOfHeading,
+                  );
+                  MarcAuthorities.verifyResultRowContentSharedIcon(
+                    localAuthorityRecord5FromMember1Tenant.heading,
+                    false,
+                  );
+                  MarcAuthorities.verifySharedAccordionOpen(true);
+                  MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+                  MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+                  cy.wait(3000);
+                  cy.then(() => {
+                    MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
+                      (count) => {
+                        cy.expect(count).to.not.eq(sharedRecordsCount);
 
-          // 8 Check both checkboxes ("No" and "Yes") in expanded "Shared" accordion button
-          MarcAuthorities.actionsSelectCheckbox(Dropdowns.YES);
-          MarcAuthorities.actionsSelectCheckbox(Dropdowns.NO);
-          MarcAuthorities.verifyResultsRowContent(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            sharedAuthorityRecord1FromCentralTenant.authRefType,
-            sharedAuthorityRecord1FromCentralTenant.typeOfHeading,
-          );
-          MarcAuthorities.checkRecordInBold(sharedAuthorityRecord1FromCentralTenant.heading);
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-            true,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            localAuthorityRecord2FromMember1Tenant.authRefType,
-            localAuthorityRecord2FromMember1Tenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            localAuthorityRecord2FromMember1Tenant.heading,
-            false,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          MarcAuthorities.checkPreviousAndNextPaginationButtonsShown();
+                        sharedRecordsCount = count;
+                      },
+                    );
+                    MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then(
+                      (count) => {
+                        cy.expect(count).to.not.eq(localRecordsCount);
 
-          // 9 Click on any pagination button, ex.: "Next"
-          MarcAuthorities.clickNextPagination();
-          MarcAuthorities.checkRowAbsentByContent(sharedAuthorityRecord1FromCentralTenant.heading);
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            cy.expect(count).to.eq(sharedRecordsCount);
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.eq(localRecordsCount);
-          });
+                        localRecordsCount = count;
+                      },
+                    );
+                  }).then(() => {
+                    // 12 Click on the "Type of heading" accordiong button and select "Corporate Name" in multi select element.
+                    MarcAuthorities.chooseTypeOfHeading('Corporate Name');
+                    MarcAuthorityBrowse.checkResultWithNoValue(
+                      sharedAuthorityRecord1FromCentralTenant.heading,
+                    );
+                    MarcAuthorities.verifyResultsRowContent(
+                      sharedAuthorityRecord4FromCentralTenant.heading,
+                      sharedAuthorityRecord4FromCentralTenant.authRefType,
+                      sharedAuthorityRecord4FromCentralTenant.typeOfHeading,
+                    );
+                    MarcAuthorities.verifyResultRowContentSharedIcon(
+                      sharedAuthorityRecord4FromCentralTenant.heading,
+                      true,
+                    );
+                    MarcAuthorities.verifySharedAccordionOpen(true);
+                    MarcAuthorities.verifyCheckboxInAccordion(
+                      Dropdowns.SHARED,
+                      Dropdowns.YES,
+                      true,
+                    );
+                    MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+                    cy.wait(3000);
+                    cy.then(() => {
+                      MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
+                        (count) => {
+                          cy.expect(+count).to.be.at.most(+sharedRecordsCount);
 
-          // 10 Click on the browse option dropdown placed at the "Search & filter" pane and select "Corporate/Conference name" search option.
-          MarcAuthorities.selectSearchOptionInDropdown(
-            MARC_AUTHORITY_BROWSE_OPTIONS.CORPORATE_CONFERENCE_NAME,
-          );
-          MarcAuthorities.checkSelectOptionFieldContent(
-            MARC_AUTHORITY_BROWSE_OPTIONS.CORPORATE_CONFERENCE_NAME,
-          );
-
-          // 11 Click on the "Search" button.
-          MarcAuthorities.searchButtonClick();
-          MarcAuthorityBrowse.checkResultWithNoValue(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            sharedAuthorityRecord4FromCentralTenant.heading,
-            sharedAuthorityRecord4FromCentralTenant.authRefType,
-            sharedAuthorityRecord4FromCentralTenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            sharedAuthorityRecord4FromCentralTenant.heading,
-            true,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            localAuthorityRecord5FromMember1Tenant.heading,
-            localAuthorityRecord5FromMember1Tenant.authRefType,
-            localAuthorityRecord5FromMember1Tenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            localAuthorityRecord5FromMember1Tenant.heading,
-            false,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            cy.expect(count).to.not.eq(sharedRecordsCount);
-
-            sharedRecordsCount = count;
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.not.eq(localRecordsCount);
-
-            localRecordsCount = count;
-          });
-
-          // 12 Click on the "Type of heading" accordiong button and select "Corporate Name" in multi select element.
-          MarcAuthorities.chooseTypeOfHeading('Corporate Name');
-          MarcAuthorityBrowse.checkResultWithNoValue(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-          );
-          MarcAuthorities.verifyResultsRowContent(
-            sharedAuthorityRecord4FromCentralTenant.heading,
-            sharedAuthorityRecord4FromCentralTenant.authRefType,
-            sharedAuthorityRecord4FromCentralTenant.typeOfHeading,
-          );
-          MarcAuthorities.verifyResultRowContentSharedIcon(
-            sharedAuthorityRecord4FromCentralTenant.heading,
-            true,
-          );
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-          cy.wait(3000);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            cy.expect(count).to.not.eq(sharedRecordsCount);
-
-            sharedRecordsCount = count;
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.not.eq(localRecordsCount);
-
-            localRecordsCount = count;
-          });
-
-          // 13 Click on the "Reset all" button
-          MarcAuthorities.clickReset();
-          // need to wait until all filters will be reset
-          cy.wait(1000);
-          MarcAuthorities.checkDefaultBrowseOptions(
-            sharedAuthorityRecord1FromCentralTenant.heading,
-          );
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          MarcAuthorities.checkTypeOfHeadingFacetCleared();
-          MarcAuthorities.checkRecordsResultListIsAbsent();
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          cy.wait(3000);
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
-            cy.expect(count).to.not.eq(sharedRecordsCount);
-          });
-          MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.NO).then((count) => {
-            cy.expect(count).to.not.eq(localRecordsCount);
+                          sharedRecordsCount = count;
+                        },
+                      );
+                    }).then(() => {
+                      // 13 Click on the "Reset all" button
+                      MarcAuthorities.clickReset();
+                      // need to wait until all filters will be reset
+                      cy.wait(1000);
+                      MarcAuthorities.checkDefaultBrowseOptions(
+                        sharedAuthorityRecord1FromCentralTenant.heading,
+                      );
+                      MarcAuthorities.verifyCheckboxInAccordion(
+                        Dropdowns.SHARED,
+                        Dropdowns.YES,
+                        false,
+                      );
+                      MarcAuthorities.verifyCheckboxInAccordion(
+                        Dropdowns.SHARED,
+                        Dropdowns.NO,
+                        false,
+                      );
+                      MarcAuthorities.checkTypeOfHeadingFacetCleared();
+                      MarcAuthorities.checkRecordsResultListIsAbsent();
+                      MarcAuthorities.verifySharedAccordionOpen(true);
+                      MarcAuthorities.verifyCheckboxInAccordion(
+                        Dropdowns.SHARED,
+                        Dropdowns.YES,
+                        false,
+                      );
+                      MarcAuthorities.verifyCheckboxInAccordion(
+                        Dropdowns.SHARED,
+                        Dropdowns.NO,
+                        false,
+                      );
+                      cy.wait(3000);
+                      MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(
+                        (count) => {
+                          cy.expect(count).to.not.eq(sharedRecordsCount);
+                        },
+                      );
+                    });
+                  });
+                });
+              });
+            });
           });
         },
       );

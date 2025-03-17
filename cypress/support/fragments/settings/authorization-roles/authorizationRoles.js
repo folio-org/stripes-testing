@@ -101,25 +101,13 @@ const noAccessErrorText =
 const successCreateText = 'Role has been created successfully';
 const successUpdateText = 'Role has been updated successfully';
 const shareToAllButton = Button('Share to all');
+const shareToAllModal = Modal('Confirm share to all');
+const submitButton = Button('Submit');
+const successShareText = 'Role has been shared successfully';
+const centrallyManagedKeyValue = KeyValue('Centrally managed');
 const createNameErrorText = 'Role could not be created: Failed to create keycloak role';
 const successDeleteText = 'Role has been deleted successfully';
-
-const getResultsListByColumn = (columnIndex) => {
-  const cells = [];
-  cy.wait(2000);
-  return cy
-    .get('div[data-testid^="capabilities-"] [data-row-index]')
-    .each(($row) => {
-      // from each row, choose specific cell
-      cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
-        // extract its text content
-        .invoke('text')
-        .then((cellValue) => {
-          cells.push(cellValue);
-        });
-    })
-    .then(() => cells);
-};
+const typeKeyValue = KeyValue('Type');
 
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 
@@ -212,12 +200,11 @@ export default {
     cy.do(saveButton.click());
   },
 
-  verifyAppNamesInCapabilityTables: (appNamesArray) => {
-    getResultsListByColumn(0).then((cellTexts) => {
-      cellTexts.forEach((cellText) => {
-        expect(cellText).to.be.oneOf([...appNamesArray]);
-      });
-    });
+  verifyAppNamesInCapabilityTables(appNamesArray) {
+    const expectedAppNamesRegexp = new RegExp(`^(${appNamesArray.join('$|')}$)`);
+    const notExpectedAppNamesRegexp = new RegExp(`^(?!${appNamesArray.join('$|')}$).*`);
+    this.verifyResourceOrAppPresent(expectedAppNamesRegexp, 0);
+    this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
   selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
@@ -359,9 +346,10 @@ export default {
     cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  openForEdit: () => {
+  openForEdit: (roleName = false) => {
+    const targetActionsButton = roleName ? Pane(roleName).find(actionsButton) : actionsButton;
     cy.wait(1000);
-    cy.do([actionsButton.click(), editButton.click()]);
+    cy.do([targetActionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
       editRolePane.find(Spinner()).absent(),
@@ -490,6 +478,11 @@ export default {
 
   clickSaveInAssignModal: () => {
     cy.do(saveButtonInAssignModal.click());
+    cy.expect(assignUsersModal.absent());
+  },
+
+  closeAssignModal: () => {
+    cy.do(assignUsersModal.find(Button({ icon: 'times' })).click());
     cy.expect(assignUsersModal.absent());
   },
 
@@ -908,14 +901,44 @@ export default {
     else cy.expect(targetRow.absent());
   },
 
-  checkShareToAllButtonShown: (roleName, isShown = true) => {
-    if (isShown) cy.expect(Pane(roleName).find(shareToAllButton).exists());
-    else cy.expect(Pane(roleName).find(shareToAllButton).absent());
+  checkShareToAllButtonShown: (isShown = true) => {
+    if (isShown) cy.expect(shareToAllButton.exists());
+    else cy.expect(shareToAllButton.absent());
+  },
+
+  checkRoleCentrallyManaged: (roleName, isCentrallyManaged = true) => {
+    cy.expect(
+      Pane(roleName)
+        .find(centrallyManagedKeyValue)
+        .has({ value: isCentrallyManaged ? 'Yes' : 'No' }),
+    );
+  },
+
+  shareRole(roleName) {
+    cy.do([
+      Pane(roleName).find(actionsButton).click(),
+      shareToAllButton.click(),
+      shareToAllModal.find(submitButton).click(),
+    ]);
+    cy.expect([shareToAllModal.absent(), Callout(successShareText).exists()]);
+    this.checkRoleCentrallyManaged(roleName, true);
   },
 
   verifyCreateNameError: () => {
     cy.expect([Callout(createNameErrorText).exists(), createRolePane.exists()]);
     InteractorsTools.dismissCallout(createNameErrorText);
     cy.expect(Callout(createNameErrorText).absent());
+  },
+
+  verifyResourceOrAppPresent: (expectedText, columnIndex = 0, isPresent = true) => {
+    const matchingCell = MultiColumnListCell(or(expectedText, matching(expectedText)), {
+      columnIndex,
+    });
+    if (isPresent) cy.expect(matchingCell.exists());
+    else cy.expect(matchingCell.absent());
+  },
+
+  verifyRoleType: (roleName, roleType) => {
+    cy.expect(Pane(roleName).find(typeKeyValue).has({ value: roleType }));
   },
 };

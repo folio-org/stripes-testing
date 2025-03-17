@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   Pane,
@@ -8,6 +9,14 @@ import {
 } from '../../../../../../interactors';
 
 const sectionName = 'Call number types';
+
+export const CALL_NUMBER_TYPES_DEFAULT = {
+  deweyDecimalclassification: 'Dewey Decimal classification',
+  libraryOfCongressClassification: 'Library of Congress Classification',
+  nationalLibraryOfMedicineClassification: 'National Library of Medicine Classification',
+  otherScheme: 'Other scheme',
+  superintendentOfDocumentsClassification: 'Superintendent of Documents classification',
+};
 
 const elements = {
   navigationPane: PaneContent({ id: 'app-settings-nav-pane-content' }),
@@ -51,12 +60,47 @@ const Assertions = {
 const API = {
   getCallNumberTypesViaAPI() {
     cy.okapiRequest({
-      path: 'call-number-types',
+      path: 'call-number-types?limit=2000&query=cql.allRecords=1',
       isDefaultSearchParamsRequired: false,
     }).then((response) => {
       cy.wrap(response.body.callNumberTypes).as('callNumberTypes');
     });
     return cy.get('@callNumberTypes');
+  },
+  createCallNumberTypeViaApi({ id, name, source }) {
+    const payload = {
+      id: id || uuid(),
+      name: name || 'Test call number type',
+      source: source || 'local',
+    };
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'call-number-types',
+        body: payload,
+        isDefaultSearchParams: false,
+      })
+      .then((res) => {
+        return res.body.id;
+      });
+  },
+  deleteLocalCallNumberTypeViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `call-number-types/${id}`,
+    });
+  },
+
+  deleteCallNumberTypesLike(name) {
+    return this.getCallNumberTypesViaAPI().then((callNumberTypes) => {
+      callNumberTypes
+        .filter((callNumberType) => {
+          return callNumberType.name.includes(name);
+        })
+        .map((callNumberType) => {
+          return this.deleteLocalCallNumberTypeViaApi(callNumberType.id);
+        });
+    });
   },
 };
 

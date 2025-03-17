@@ -43,7 +43,11 @@ const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching re
 const previewPorposedChangesBtn = DropdownMenu().find(
   Button('File with the preview of proposed changes (CSV)'),
 );
+const previewPorposedChangesMarcBtn = DropdownMenu().find(
+  Button('File with the preview of proposed changes (MARC)'),
+);
 const updatedRecordBtn = DropdownMenu().find(Button('File with updated records (CSV)'));
+const updatedRecordMarcBtn = DropdownMenu().find(Button('File with updated records (MARC)'));
 const errorsCommittingBtn = DropdownMenu().find(
   Button('File with errors encountered when committing the changes'),
 );
@@ -387,13 +391,18 @@ export default {
     cy.expect([triggerBtn.exists(), errorsEncounteredBtn.exists()]);
   },
 
-  verifyLogsRowActionWhenCompleted() {
+  verifyLogsRowActionWhenCompleted(isMarcInstance = false) {
     cy.expect([
       triggerBtn.exists(),
       matchingRecordsBtn.exists(),
       previewPorposedChangesBtn.exists(),
       updatedRecordBtn.exists(),
     ]);
+
+    if (isMarcInstance) {
+      cy.expect(previewPorposedChangesMarcBtn.exists());
+      cy.expect(updatedRecordMarcBtn.exists());
+    }
   },
 
   verifyLogsRowActionWhenNoChangesApplied() {
@@ -473,8 +482,18 @@ export default {
     this.waitingFileDownload();
   },
 
+  downloadFileWithProposedChangesMarc() {
+    cy.do(previewPorposedChangesMarcBtn.click());
+    this.waitingFileDownload();
+  },
+
   downloadFileWithUpdatedRecords() {
     cy.do(updatedRecordBtn.click());
+    this.waitingFileDownload();
+  },
+
+  downloadFileWithUpdatedRecordsMarc() {
+    cy.do(updatedRecordMarcBtn.click());
     this.waitingFileDownload();
   },
 

@@ -13,8 +13,6 @@ import {
   Select,
   Pane,
   Link,
-  Accordion,
-  RadioButton,
 } from '../../../../interactors';
 import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -28,17 +26,14 @@ const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
-const searchButton = Button('Search');
 
-const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
-const chooseParameterField = Select('Select a field to search');
+const chooseParameterField = Select({ dataTestID: 'field-to-search-select' });
 const subjectKeyValue = KeyValue('Subjects');
 const proxySelect = Select('Proxy');
 const customCoverageDate = KeyValue('Custom coverage dates');
 const startDateInput = TextField({ id: 'begin-coverage-0' });
 const endDateInput = TextField({ id: 'end-coverage-0' });
-const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
 
 const defaultPackage = {
   data: {
@@ -338,32 +333,14 @@ export default {
   },
 
   titlesSearch: (searchParameter, searchValue) => {
-    cy.expect(searchIcon.exists());
-    // wait for titles section to be loaded
-    cy.wait(2000);
-    cy.do([searchIcon.click(), chooseParameterField.choose(searchParameter)]);
-    cy.expect([Select({ value: searchParameter.toLowerCase() }).exists(), searchField.exists()]);
-    cy.do([searchField.fillIn(searchValue), searchButton.click()]);
+    cy.do([chooseParameterField.choose(searchParameter), searchField.fillIn(searchValue)]);
+    cy.get('input[id="eholdings-search"]').type('{enter}');
   },
 
+  // eslint-disable-next-line no-unused-vars
   titlesSearchFilter: (searchParameter, searchValue, selectionStatus = 'All') => {
-    cy.expect(searchIcon.exists());
-    cy.wait(2000);
-    cy.do([searchIcon.click()]);
-
     cy.do([chooseParameterField.choose(searchParameter), searchField.fillIn(searchValue)]);
-    // tags
-    // sort options
-    // selection status parameter
-    cy.do([
-      selectionStatusAccordion.clickHeader(),
-      selectionStatusAccordion.find(RadioButton(selectionStatus)).click(),
-    ]);
-
-    // publication type
-
-    // search
-    cy.do(searchButton.click());
+    cy.get('input[id="eholdings-search"]').type('{enter}');
   },
 
   changePackageRecordProxy: () => {

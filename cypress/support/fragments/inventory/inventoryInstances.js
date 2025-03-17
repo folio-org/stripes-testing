@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including, matching } from '@interactors/html';
+import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
   AdvancedSearch,
@@ -33,6 +34,7 @@ import InventoryHoldings from './holdings/inventoryHoldings';
 import InventoryInstance from './inventoryInstance';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryItems from './item/inventoryItems';
+import QuickMarcEditor from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -51,6 +53,7 @@ const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
+const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -224,12 +227,25 @@ const defaultField008Values = {
   Type: 'a',
 };
 
+/**
+ * Create instance via API attampting until success
+ * to avoid hrID conflict in sequential instance creating operations
+ * */
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => {
-  return cy.okapiRequest({
-    method: 'POST',
-    path: 'inventory/instances',
-    body: instanceWithSpecifiedNewId,
-  });
+  return recurse(
+    () => cy.okapiRequest({
+      method: 'POST',
+      path: 'inventory/instances',
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+      body: instanceWithSpecifiedNewId,
+    }),
+    (response) => response.status === 201,
+    {
+      limit: 10,
+      delay: 1_000,
+    },
+  );
 };
 
 const waitContentLoading = () => {
@@ -350,6 +366,11 @@ export default {
     InventoryNewInstance.waitLoading();
 
     return InventoryNewInstance;
+  },
+
+  createNewMarcBibRecord() {
+    cy.do([actionsButton.click(), newMarcBibButton.click()]);
+    QuickMarcEditor.waitLoading();
   },
 
   exportInstanceMarc() {
@@ -594,6 +615,68 @@ export default {
     );
   },
 
+  deleteFullInstancesByTitleViaApi(instanceTitle) {
+    return cy
+      .okapiRequest({
+        path: `search/instances?query=title=="${instanceTitle}"`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body: { instances } }) => {
+        instances.forEach((instance) => {
+          cy.okapiRequest({
+            path: `holdings-storage/holdings?query=instanceId==${instance.id}`,
+            isDefaultSearchParamsRequired: false,
+          })
+            .then(({ body: { holdingsRecords } }) => {
+              holdingsRecords.forEach((holding) => {
+                cy.okapiRequest({
+                  path: `inventory/items-by-holdings-id?query=holdingsRecordId==${holding.id}`,
+                  isDefaultSearchParamsRequired: false,
+                })
+                  .then(({ body: { items } }) => {
+                    items.forEach((item) => {
+                      cy.deleteItemViaApi(item.id);
+                    });
+                  })
+                  .then(() => {
+                    cy.deleteHoldingRecordViaApi(holding.id);
+                  });
+              });
+            })
+            .then(() => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            });
+        });
+      });
+  },
+
+  deleteFullInstancesWithCallNumber({ type, value }) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `browse/call-numbers/${type}/instances`,
+        searchParams: {
+          query: `(fullCallNumber>="${value}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.items)
+      .then((items) => {
+        items.forEach((item) => {
+          return cy
+            .okapiRequest({
+              path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
+              isDefaultSearchParamsRequired: false,
+            })
+            .then(({ body: { instances } }) => {
+              instances.forEach((instance) => {
+                this.deleteFullInstancesByTitleViaApi(instance.title);
+              });
+            });
+        });
+      });
+  },
+
   createLoanType: (loanType) => {
     return cy
       .okapiRequest({
@@ -673,6 +756,7 @@ export default {
     holdings,
     items,
     itemsProperties = {},
+    instanceTitlePrefix,
   } = {}) {
     return [...Array(count).keys()].map((index) => {
       const gHoldings =
@@ -702,7 +786,7 @@ export default {
 
       return {
         instanceId: uuid(),
-        instanceTitle: `autotest_instance_${getRandomPostfix()}`,
+        instanceTitle: instanceTitlePrefix || `autotest_instance_${getRandomPostfix()}`,
         holdings: gHoldings,
         items: gItems,
         // should not be used, left for support of old tests
@@ -768,8 +852,8 @@ export default {
               folioInstances[index].items = items;
 
               // should not be used, left for support of old tests
-              folioInstances[index].holdingId = holdingIds[0].id;
-              folioInstances[index].itemIds = holdingIds[0].itemIds;
+              folioInstances[index].holdingId = holdingIds[0]?.id;
+              folioInstances[index].itemIds = holdingIds[0]?.itemIds;
               folioInstances[index].barcodes = items.map(({ barcode }) => barcode);
             },
           );
@@ -1021,29 +1105,6 @@ export default {
           if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
         });
       });
-  },
-
-  createLocalCallNumberTypeViaApi: (name) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'call-number-types',
-        body: {
-          id: uuid(),
-          name,
-          source: 'local',
-        },
-      })
-      .then((res) => {
-        return res.body.id;
-      });
-  },
-
-  deleteLocalCallNumberTypeViaApi(id) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `call-number-types/${id}`,
-    });
   },
 
   createMarcBibliographicRecordViaApiByReadingFromMrkFile(

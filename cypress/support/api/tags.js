@@ -13,6 +13,7 @@ Cypress.Commands.add('createTagApi', (tag) => {
     body: {
       ...tag,
     },
+    isDefaultSearchParamsRequired: false,
   }).then((response) => {
     return response.body.id;
   });

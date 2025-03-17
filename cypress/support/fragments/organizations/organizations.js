@@ -668,10 +668,7 @@ export default {
     ]);
     cy.wait(4000);
     SearchHelper.selectCheckboxFromResultsList();
-    cy.do([
-      addInterfacesModal.find(saveButton).click(),
-      Button({ id: 'organization-form-save' }).click(),
-    ]);
+    cy.do([addInterfacesModal.find(saveButton).click(), saveAndClose.click()]);
   },
 
   closeContact: () => {

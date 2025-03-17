@@ -274,14 +274,14 @@ describe('Data Import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkValueAbsenceInDetailView(testData.accordion, testData.deletedValue);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyNoFieldWithContent(testData.naturalId);
 
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBy(testData.searchOption, linkingTagAndValues.value);
         MarcAuthorities.verifyEmptyNumberOfTitles();
       },

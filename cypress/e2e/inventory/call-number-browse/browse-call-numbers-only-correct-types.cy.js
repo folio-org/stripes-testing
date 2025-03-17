@@ -10,33 +10,49 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
+    const rnd = getRandomPostfix();
     const testData = {
-      localCNtypeName: `C405530 Local type ${randomFourDigitNumber()}`,
+      localCNtypeName: `AT_C405530 Local type ${randomFourDigitNumber()}`,
     };
-    const instances = [
+    const instances = Array(7)
+      .fill({})
+      .map((_, idx) => {
+        return {
+          title: `AT_C405530 Instance_${idx + 1}_${rnd}`,
+        };
+      });
+    const callNumberSettings = [
       {
-        title: `C405530_autotest_instance_1_${getRandomPostfix()}`,
+        name: CALL_NUMBER_TYPE_NAMES.ALL,
+        callNumberTypes: [],
       },
       {
-        title: `C405530_autotest_instance_2_${getRandomPostfix()}`,
+        name: CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL],
       },
       {
-        title: `C405530_autotest_instance_3_${getRandomPostfix()}`,
+        name: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS, testData.localCNtypeName],
       },
       {
-        title: `C405530_autotest_instance_4_${getRandomPostfix()}`,
+        name: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+        callNumberTypes: [
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
+        ],
       },
       {
-        title: `C405530_autotest_instance_5_${getRandomPostfix()}`,
+        name: CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME, CALL_NUMBER_TYPE_NAMES.UDC],
       },
       {
-        title: `C405530_autotest_instance_6_${getRandomPostfix()}`,
-      },
-      {
-        title: `C405530_autotest_instance_7_${getRandomPostfix()}`,
+        name: CALL_NUMBER_TYPE_NAMES.SUDOC,
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.SUDOC],
       },
     ];
     const callNumbers = [
@@ -105,21 +121,28 @@ describe('Inventory', () => {
       },
     ];
 
-    function filterCNsExcluding(typeToExclude, titleIndex) {
-      return Object.keys(callNumbers[titleIndex])
-        .filter((key) => key !== typeToExclude)
-        .reduce((obj, key) => {
-          obj[key] = callNumbers[titleIndex][key];
-          return Object.values(obj);
-        }, {});
+    function filterCNOfType(typeToInclude) {
+      const types = Array.isArray(typeToInclude) ? typeToInclude : [typeToInclude];
+      return callNumbers
+        .map((callNumber) => {
+          return types.map((type) => callNumber[type]);
+        })
+        .flat();
     }
 
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.createLocalCallNumberTypeViaApi(testData.localCNtypeName).then(
+          InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C405530');
+          CallNumberTypes.createCallNumberTypeViaApi({ name: testData.localCNtypeName }).then(
             (id) => {
               testData.callNumberTypeLocalId = id;
+              InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
+                testData.callNumberTypes = res;
+              });
+              callNumberSettings.forEach((setting) => {
+                CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
+              });
             },
           );
           cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
@@ -137,9 +160,6 @@ describe('Inventory', () => {
           });
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
             instances[0].materialTypeId = res.id;
-          });
-          InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
-            testData.callNumberTypes = res;
           });
           const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
           instances[0].defaultLocation = Location.getDefaultLocation(servicePoint.id);
@@ -245,7 +265,10 @@ describe('Inventory', () => {
       instances.forEach((instance) => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
-      InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
+      callNumberSettings.forEach((setting) => {
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi({ ...setting, callNumberTypes: [] });
+      });
+      CallNumberTypes.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
     });
 
     it(
@@ -258,37 +281,54 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
-        InventorySearchAndFilter.browseSearch(callNumbers[5].dewey);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].dewey);
-        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('dewey', 5));
+        filterCNOfType(['dewey']).forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
+        InventorySearchAndFilter.browseSearch(callNumbers[1].dewey);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].dewey);
+        filterCNOfType(['dewey']).forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber);
+        });
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
-        InventorySearchAndFilter.browseSearch(callNumbers[6].lc);
-        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].lc);
-        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('lc', 6));
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[1].local);
+        InventorySearchAndFilter.browseSearch(callNumbers[1].local);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].local);
+        filterCNOfType(['lc', 'local']).forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber);
+        });
 
-        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-        //   BROWSE_CALL_NUMBER_OPTIONS.LOCAL,
-        // );
-        // InventorySearchAndFilter.browseSearch(callNumbers[6].local);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].local);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('local', 6));
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
+        );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].nlm);
+        InventorySearchAndFilter.browseSearch(callNumbers[0].nlm);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].nlm);
+        filterCNOfType(['nlm', 'lc']).forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber);
+        });
 
-        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-        //   BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
-        // );
-        // InventorySearchAndFilter.browseSearch(callNumbers[2].nlm);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].nlm);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('nlm', 2));
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
+        );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].other);
+        InventorySearchAndFilter.browseSearch(callNumbers[0].other);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].other);
+        filterCNOfType(['other', 'folio']).forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber);
+        });
 
-        // InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
-        //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        // );
-        // InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('sudoc', 4));
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
+        );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[4].sudoc);
+        InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
+        filterCNOfType(['sudoc']).forEach((callNumber) => {
+          BrowseCallNumber.checkValuePresentInResults(callNumber);
+        });
       },
     );
   });

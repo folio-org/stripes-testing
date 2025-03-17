@@ -94,17 +94,25 @@ export default {
   },
 
   enableTLRViaApi() {
-    this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: true });
+    if (Cypress.env('newSettings')) {
+      this.updateGeneralTlrSettingViaApi({ titleLevelRequestsFeatureEnabled: true });
+    } else {
+      this.updateTlrConfigViaApi({ titleLevelRequestsFeatureEnabled: true });
+    }
     cy.wait(3000);
   },
 
   disableTLRViaApi() {
-    this.updateTLRSettingViaApi({ titleLevelRequestsFeatureEnabled: false });
+    if (Cypress.env('newSettings')) {
+      this.updateGeneralTlrSettingViaApi({ titleLevelRequestsFeatureEnabled: false });
+    } else {
+      this.updateTlrConfigViaApi({ titleLevelRequestsFeatureEnabled: false });
+    }
     cy.wait(3000);
   },
 
-  updateTLRSettingViaApi(newSettings) {
-    cy.getConfigByName('TLR').then((body) => {
+  updateTlrConfigViaApi(newSettings) {
+    cy.getConfigByName('SETTINGS', 'TLR').then((body) => {
       let config = body.configs[0];
 
       if (body.configs.length === 0) {
@@ -133,6 +141,53 @@ export default {
         cy.okapiRequest({
           method: 'PUT',
           path: `configurations/entries/${config.id}`,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+          body: {
+            id: config.id,
+            module: config.module,
+            configName: config.configName,
+            enabled: true,
+            value: config.value,
+          },
+        });
+      }
+    });
+  },
+
+  updateGeneralTlrSettingViaApi(newSettings) {
+    cy.getSettingsByName('circulation', 'generalTlr').then((body) => {
+      let config = body.configs[0];
+
+      if (body.configs.length === 0) {
+        config = {
+          value: {
+            titleLevelRequestsFeatureEnabled: true,
+            createTitleLevelRequestsByDefault: false,
+            tlrHoldShouldFollowCirculationRules: false,
+          },
+          scope: 'circulation',
+          key: 'generalTlr',
+          id: uuid(),
+        };
+
+        const newValue = { ...JSON.parse(config.value), ...newSettings };
+        config.value = JSON.stringify(newValue);
+
+        cy.okapiRequest({
+          method: 'POST',
+          path: 'settings/entries',
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+          body: config,
+        });
+      } else {
+        const newValue = { ...JSON.parse(config.value), ...newSettings };
+        config.value = JSON.stringify(newValue);
+
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `settings/entries/${config.id}`,
           isDefaultSearchParamsRequired: false,
           failOnStatusCode: false,
           body: {

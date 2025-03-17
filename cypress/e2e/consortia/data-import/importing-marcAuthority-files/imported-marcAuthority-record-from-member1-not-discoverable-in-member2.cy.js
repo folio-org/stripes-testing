@@ -43,6 +43,7 @@ describe('Data Import', () => {
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
             cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
               Permissions.moduleDataImportEnabled.gui,
@@ -80,7 +81,7 @@ describe('Data Import', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImportedForConsortia(marcFile.fileName);
+          JobProfiles.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           Logs.getCreatedItemsID().then((link) => {

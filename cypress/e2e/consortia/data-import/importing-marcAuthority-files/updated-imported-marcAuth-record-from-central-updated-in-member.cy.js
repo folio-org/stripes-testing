@@ -36,13 +36,12 @@ describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       tag377: '377',
-      addedField: '400 0 $a Данте Алигери $d 1265-1321',
-      updated1XXField: '$a Dante Alighieri, $d 1265-1321, $t Divine Comedy',
+      addedField: '400\t0  \t$a Данте Алигери $d 1265-1321',
+      updated1XXField: '$a C405144 Dante Alighieri, $d 1265-1321, $t Divine Comedy',
       deletedSubfield: '$zno 98058852',
       createdRecordIDs: [],
       marcValue: 'C405144 Dante Alighieri, 1265-1321',
-      updatedMarcValue: 'Dante Alighieri, 1265-1321, Divine Comedy',
-      markedValue: 'C405144 Dante Alighieri,',
+      updatedMarcValue: 'C405144 Dante Alighieri, 1265-1321, Divine Comedy',
       searchOption: 'Keyword',
       calloutMessage:
         "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
@@ -96,6 +95,27 @@ describe('Data Import', () => {
 
     const users = {};
 
+    function replace999SubfieldsInPreupdatedFile(
+      exportedFileName,
+      preUpdatedFileName,
+      finalFileName,
+    ) {
+      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
+        const lines = actualContent.split('');
+        const field999data = lines[lines.length - 2];
+        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
+          const content = updatedContent.split('\n');
+          let firstString = content[0].slice();
+          firstString = firstString.replace(
+            'ffsa642331c-3c1b-433a-8987-989da645295eiba51b701-e5e2-478f-afb0-9b4102c562dd',
+            field999data,
+          );
+          content[0] = firstString;
+          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+        });
+      });
+    }
+
     before('Create test data and login', () => {
       cy.getAdminToken();
       // create user A
@@ -121,40 +141,46 @@ describe('Data Import', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]);
           cy.resetTenant();
-        });
 
-      cy.loginAsAdmin();
-      // create Match profile
-      NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
+          // create Match profile
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile);
 
-      // create Field mapping profile
-      NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
+          // create Field mapping profile
+          NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
-      // create Action profile and link it to Field mapping profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
+          // create Action profile and link it to Field mapping profile
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: SettingsMenu.actionProfilePath,
+              waiter: ActionProfiles.waitLoading,
+            });
+            cy.reload();
+            ActionProfiles.waitLoading();
+          }, 20_000);
+          ActionProfiles.create(actionProfile, mappingProfile.name);
 
-      // create Job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.openNewJobProfileForm();
-      NewJobProfile.fillJobProfile(jobProfile);
-      NewJobProfile.linkMatchProfile(matchProfile.profileName);
-      NewJobProfile.linkActionProfileForMatches(actionProfile.name);
-      // wait for the action profile to be linked
-      cy.wait(1000);
-      NewJobProfile.saveAndClose();
+          // create Job profile
+          cy.visit(SettingsMenu.jobProfilePath);
+          JobProfiles.openNewJobProfileForm();
+          NewJobProfile.fillJobProfile(jobProfile);
+          NewJobProfile.linkMatchProfile(matchProfile.profileName);
+          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
+          // wait for the action profile to be linked
+          cy.wait(1000);
+          NewJobProfile.saveAndClose();
 
-      marcFiles.forEach((marcFile) => {
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
+            });
           });
         });
-      });
     });
 
     after('Delete test data', () => {
@@ -197,7 +223,7 @@ describe('Data Import', () => {
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file
-        DataImport.replace999SubfieldsInPreupdatedFile(
+        replace999SubfieldsInPreupdatedFile(
           testData.exportedMarcFile,
           testData.marcFileForModify,
           testData.modifiedMarcFile,
@@ -209,13 +235,13 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImportedForConsortia(testData.uploadModifiedMarcFile);
+        Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkJobStatus(testData.uploadModifiedMarcFile, 'Completed');
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
-        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        Logs.verifyInstanceStatus(0, 6, RECORD_STATUSES.UPDATED);
+        Logs.clickOnHotLink(0, 6, RECORD_STATUSES.UPDATED);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
 
@@ -225,8 +251,8 @@ describe('Data Import', () => {
         });
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.updatedMarcValue);
-        MarcAuthority.notContains(testData.addedField);
-        MarcAuthority.contains(testData.tag377);
+        MarcAuthority.contains(testData.addedField);
+        MarcAuthority.notContains(testData.tag377);
         MarcAuthority.contains(testData.updated1XXField);
         MarcAuthority.notContains(testData.deletedSubfield);
       },
