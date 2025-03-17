@@ -118,6 +118,16 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
+
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+        TopMenuNavigation.openAppFromDropdown(
+          APPLICATION_NAMES.SETTINGS,
+          SETTINGS_SUBSECTION_AUTH_ROLES,
+        );
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleName);
+        AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
       },
     );
   });
