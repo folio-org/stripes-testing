@@ -28,16 +28,16 @@ let user;
 let instanceTypeId;
 let locationId;
 let sourceId;
-let centralSharedHoldingNoteTypeData;
 let loanTypeId;
 let materialTypeId;
+let centralSharedHoldingNoteTypeData;
+const administrativeNoteText = 'Admin note text';
+const sharedNoteText = 'Shared note text';
+const collegeLocalNoteText = 'College note text';
 const folioInstance = {
   title: `AT_C566152_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const administrativeNoteText = 'Admin note text';
-const sharedNoteText = 'Shared note text';
-const collegeLocalNoteText = 'College note text';
 const centralSharedHoldingNoteType = {
   payload: {
     name: `AT_C566152 shared note type ${getRandomPostfix()}`,
@@ -50,8 +50,6 @@ const itemBarcodesFileName = `itemBarcodesFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemBarcodesFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(itemBarcodesFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemBarcodesFileName);
-const errorsFromCommittingFileName =
-  BulkEditFiles.getErrorsFromCommittingFileName(itemBarcodesFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -179,7 +177,6 @@ describe('Bulk-edit', () => {
           matchedRecordsFileName,
           previewFileName,
           changedRecordsFileName,
-          errorsFromCommittingFileName,
         );
       });
 
