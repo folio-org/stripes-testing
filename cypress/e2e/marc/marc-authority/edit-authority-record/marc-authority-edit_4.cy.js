@@ -100,7 +100,7 @@ describe('MARC', () => {
           });
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3_000);
           QuickMarcEditor.pressSaveAndClose();
           cy.getAdminToken();
           protectedMARCFields.forEach((marcFieldProtectionRule) => {
