@@ -80,7 +80,7 @@ const checkLoansPage = () => {
 
   cy.wait(2000);
   cy.do(Button(buttonLabels.renew).click());
-  cy.wait(2000);
+  cy.wait(4000);
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
 };
 

@@ -98,7 +98,6 @@ describe('Staff slips', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
       NewRequest.choosePickupServicePoint(instanceData.servicePoint.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         instanceData.requestId = intercept.response.body.id;
       });

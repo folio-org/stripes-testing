@@ -173,7 +173,6 @@ describe('Title Level Request', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
       NewRequest.choosePickupServicePoint(servicePoint2.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         requestId2 = intercept.response.body.id;
         // Request is created
