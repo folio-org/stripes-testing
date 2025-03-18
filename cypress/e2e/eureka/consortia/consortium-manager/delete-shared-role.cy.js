@@ -150,11 +150,13 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
+        AuthorizationRoles.closeRoleDetailView(testData.roleName);
         SelectMembers.selectMember(tenantNames.university);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkActionsButtonShown(false, testData.roleName);
+        AuthorizationRoles.closeRoleDetailView(testData.roleName);
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
@@ -176,14 +178,14 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        UsersSearchPane.searchByUsername(testData.assignUserCentral.username);
-        UsersSearchPane.selectUserFromList(testData.assignUserCentral.username);
+        UsersSearchPane.searchByUsername(assignUserCentral.username);
+        UsersSearchPane.selectUserFromList(assignUserCentral.username);
         UsersCard.verifyUserRolesCounter('0');
 
-        // cy.waitForAuthRefresh(() => {
-        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        //   cy.reload();
-        // }, 20_000);
+        cy.waitForAuthRefresh(() => {
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.reload();
+        }, 20_000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_AUTH_ROLES);
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.searchRole(testData.roleName);
@@ -191,8 +193,8 @@ describe('Eureka', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
-        UsersSearchPane.searchByUsername(testData.assignUserCollege.username);
-        UsersSearchPane.selectUserFromList(testData.assignUserCollege.username);
+        UsersSearchPane.searchByUsername(assignUserCollege.username);
+        UsersSearchPane.selectUserFromList(assignUserCollege.username);
         UsersCard.verifyUserRolesCounter('0');
 
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
