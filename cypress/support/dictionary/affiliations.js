@@ -1,14 +1,14 @@
 export default {
   Consortia: 'cs00000int',
-  University: 'cs00000int_0005',
+  University: 'cs01000001m0005',
   School: 'cs00000int_0003',
-  College: 'cs00000int_0001',
+  College: 'cs01000001m0001',
 };
 
 export const tenantNames = {
   central: 'Central Office',
-  college: 'College',
-  university: 'University',
+  college: 'General Collections',
+  university: 'Congressional',
   professional: 'Professional',
   school: 'School',
   special: 'Special,',
@@ -16,8 +16,8 @@ export const tenantNames = {
 
 export const tenantCodes = {
   central: 'CEN',
-  college: 'COL',
-  university: 'UNI',
+  college: 'dt1',
+  university: 'dt5',
   professional: 'PROF',
   school: 'SCHO',
   special: 'SPE,',
