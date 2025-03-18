@@ -59,7 +59,6 @@ describe('Title Level Request', () => {
         requestId = createdRequest.body.id;
         testData.currentItem = createdRequest.body.item.barcode;
       });
-      cy.login(userData.username, userData.password);
     });
   });
 
@@ -91,8 +90,7 @@ describe('Title Level Request', () => {
       testData.folioInstances.forEach((item) => {
         item.barcodes.forEach((barcode) => {
           if (barcode !== testData.currentItem) {
-            cy.visit(TopMenu.requestsPath);
-            Requests.waitLoading();
+            cy.login(userData.username, userData.password, { path: TopMenu.requestsPath, waiter: Requests.waitLoading });
             Requests.selectTitleRequestLevel();
             Requests.findCreatedRequest(item.instanceTitle);
             Requests.selectFirstRequest(item.instanceTitle);

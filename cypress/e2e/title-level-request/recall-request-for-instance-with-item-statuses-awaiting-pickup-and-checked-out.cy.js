@@ -231,9 +231,9 @@ describe('Title level Request', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(users[1].barcode);
+      Modals.closeModalIfAny();
       CheckOutActions.checkOutItem(instanceData.item1Barcode);
       CheckOutActions.checkItemInfo(instanceData.item1Barcode, instanceData.title);
-      Modals.closeModalIfAny();
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
       CheckInActions.waitLoading();
