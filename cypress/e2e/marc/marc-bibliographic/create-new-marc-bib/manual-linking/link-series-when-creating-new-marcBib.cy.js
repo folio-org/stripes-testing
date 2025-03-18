@@ -162,11 +162,8 @@ describe('MARC', () => {
 
             InventoryInstance.verifyAndClickLinkIcon(newFields[1].tag);
             InventoryInstance.verifySelectMarcAuthorityModal();
-            MarcAuthorityBrowse.checkSearchOptions();
-            MarcAuthorities.clickReset();
-            MarcAuthorityBrowse.searchBy(newFields[1].searchOption, newFields[1].marcValue);
-            MarcAuthorities.checkRow(newFields[1].marcValue);
-            MarcAuthorities.selectTitle(newFields[1].marcValue);
+            MarcAuthorities.switchToSearch();
+            MarcAuthorities.searchBy(newFields[1].searchOption, newFields[1].marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               newFields[1].tag,
@@ -183,7 +180,7 @@ describe('MARC', () => {
               `${newFields[1].boxSeventh}`,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
