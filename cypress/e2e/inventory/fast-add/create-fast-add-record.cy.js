@@ -36,13 +36,19 @@ describe('Inventory', () => {
       FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        user = userProperties.userId;
+        user = userProperties;
 
         cy.login(user.username, user.password);
       });
     });
 
     afterEach('Delete test data', () => {
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
+        );
+        Users.deleteViaApi(user.userId);
+      });
       cy.loginAsAdmin();
       TopMenuNavigation.openAppFromDropdown(
         APPLICATION_NAMES.SETTINGS,
@@ -50,12 +56,6 @@ describe('Inventory', () => {
       );
       SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
       FastAdd.changeDefaultInstanceStatus('Select instance status');
-      cy.getAdminToken().then(() => {
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-        );
-        Users.deleteViaApi(user.userId);
-      });
     });
 
     it(
