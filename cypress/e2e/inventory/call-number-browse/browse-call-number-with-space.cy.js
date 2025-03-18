@@ -24,7 +24,7 @@ describe('Inventory', () => {
       volume: 'v.1',
       enumeration: 'e.2',
       chronology: 'ch.3',
-      shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
+      effectiveItemCallNumberWithSuffix: 'itemFullCallNumbers="PRT 718 suf"',
       effectiveItemCallNumber: 'itemFullCallNumbers="RR 718"',
     };
 
@@ -192,7 +192,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
         BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
         InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
+        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumberWithSuffix);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
       },
     );
