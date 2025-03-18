@@ -22,6 +22,7 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
+import Modals from '../../support/fragments/modals';
 
 describe('Requests', () => {
   let itemData;
@@ -133,8 +134,8 @@ describe('Requests', () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.checkOutUser(testData.user.barcode);
+      Modals.closeModalIfAny();
       CheckOutActions.checkOutItem(itemData.barcodes[0]);
-      CheckOutActions.closeItemsAwaitingPickupModal();
       CheckOutActions.checkItemInfo(itemData.barcodes[0], itemData.instanceTitle);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.findCreatedRequest(testData.user.barcode);

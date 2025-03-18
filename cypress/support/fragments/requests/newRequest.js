@@ -118,7 +118,11 @@ export default {
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 
-  saveRequestAndClose: () => cy.do(saveAndCloseButton.click()),
+  saveRequestAndClose() {
+    cy.intercept('POST', '**/requests').as('createRequest');
+    cy.do(saveAndCloseButton.click());
+  },
+
   waitLoading: () => cy.expect(Pane({ title: 'Request details' }).exists()),
 
   createNewRequest(newRequest) {
