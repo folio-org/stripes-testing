@@ -39,6 +39,7 @@ describe('Inventory', () => {
       cy.createTempUser([Permissions.inventoryAll.gui])
         .then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+          InventoryInstances.deleteInstanceByTitleViaApi('C415263');
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
