@@ -92,6 +92,7 @@ export default {
       })
       .then(() => {
         cy.do([messageToBeDisplayed.fillIn(message), Button('Save').click()]);
+        cy.wait(3000);
       });
   },
 };

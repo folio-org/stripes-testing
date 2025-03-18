@@ -40,7 +40,7 @@ describe('Check in', () => {
       beforeEach('Create New Item, New User and Check out item', () => {
         itemData = {
           barcode: generateItemBarcode(),
-          instanceTitle: `Instance ${getRandomPostfix()}`,
+          instanceTitle: `AT_C347631_Instance_${getRandomPostfix()}`,
         };
         servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
         checkInResultsData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];

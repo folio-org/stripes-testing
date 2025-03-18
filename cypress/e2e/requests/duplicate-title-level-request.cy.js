@@ -27,7 +27,7 @@ describe('Title Level Request', () => {
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C350561_Instance_${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
   let defaultLocation;

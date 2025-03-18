@@ -42,7 +42,9 @@ const numberOfMissingPieces = TextField({ name: 'numberOfMissingPieces' });
 const descriptionOfmissingPieces = TextField({ name: 'missingPieces' });
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
-const closeButton = Button({ icon: 'times' });
+const closeButton = Button('Close');
+const closeIconButton = Button({ icon: 'times' });
+const saveCloseButton = Button('Save & close');
 const actionsButtons = {
   loanDetails: loanDetailsButton,
   patronDetails: patronDetailsButton,
@@ -68,8 +70,8 @@ export default {
     cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
   },
-  clickonitem() {
-    cy.do(closeButton.click());
+  clickOnCloseIcon() {
+    cy.do(closeIconButton.click());
   },
   editItemDetails: (pcs, missingPieces, missingPiecesDescription) => {
     cy.do([
@@ -81,7 +83,7 @@ export default {
       numberOfMissingPieces.fillIn(missingPieces),
       descriptionOfmissingPieces.click(),
       descriptionOfmissingPieces.fillIn(missingPiecesDescription),
-      Button('Save & close').click(),
+      saveCloseButton.click(),
     ]);
   },
   editDateAndTimeReturned(date, time) {
@@ -199,7 +201,7 @@ export default {
       Button('Actions').click(),
       Button('Edit').click(),
       pieces.fillIn(itemAnumberOfPieces),
-      Button('Save & close').click(),
+      saveCloseButton.click(),
     ]);
   },
 
@@ -224,8 +226,8 @@ export default {
     if (notes) {
       CheckInModal.verifyNotesInfo(notes, true);
     }
-    cy.expect(Button('Close').exists());
-    cy.do(Button('Close').click());
+    cy.expect(closeButton.exists());
+    cy.do(closeButton.click());
   },
 
   verifyModalIsClosed() {
