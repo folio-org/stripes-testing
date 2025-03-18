@@ -120,7 +120,7 @@ describe('Title Level Request', () => {
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.findCreatedRequest(testData.folioInstances[0].barcodes[0]);
-      Requests.selectFirstRequest(testData.folioInstances[0].barcodes[0]);
+      Requests.selectFirstRequest(testData.folioInstances[0].instanceTitle);
       RequestDetail.checkItemInformation({
         itemBarcode: testData.folioInstances[0].barcodes[0],
         title: testData.folioInstances[0].instanceTitle,
