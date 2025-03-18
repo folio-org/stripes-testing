@@ -18,7 +18,7 @@ describe('Choose requester without a barcode', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C10956_Instance_${getRandomPostfix()}`,
   };
   let requestId;
   let defaultLocation;

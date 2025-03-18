@@ -203,7 +203,7 @@ describe('TLR: Item renew', () => {
         instanceHRID = instance.hrid;
 
         if (instance.hrid === undefined) {
-          cy.log('Instance HRID is generated successfully').then(() => {
+          cy.log('Instance HRID is not generated successfully').then(() => {
             throw new Error('Instance HRID is not generated');
           });
         }
@@ -317,7 +317,7 @@ describe('TLR: Item renew', () => {
         waiter: Requests.waitLoading,
       });
 
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      cy.intercept('POST', 'circulation-bff/requests').as('createRequest');
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
         instanceHRID,
