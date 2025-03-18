@@ -134,6 +134,7 @@ export default {
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
       selectApplicationButton.exists(),
+      Spinner().absent(),
     ]);
     cy.wait(1000);
   },
