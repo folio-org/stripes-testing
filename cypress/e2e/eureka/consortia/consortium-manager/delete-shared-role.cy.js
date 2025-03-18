@@ -115,7 +115,7 @@ describe('Eureka', () => {
       });
     });
 
-    before('Assign roles, login', () => {
+    before('Assign roles', () => {
       cy.resetTenant();
       cy.getAdminToken();
       cy.addRolesToNewUserApi(assignUserCentral.userId, [testData.roleId]);
