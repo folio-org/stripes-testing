@@ -4,7 +4,7 @@ const closeButton = Button('Close');
 
 export default {
   closeModalIfAny() {
-    cy.wait(10000);
+    cy.wait(5000);
     cy.get('body').then(($body) => {
       if ($body.find('[class^=modal---]').length > 0) {
         cy.do(Modal().find(closeButton).click());
