@@ -1,4 +1,5 @@
-import { Button, including, HTML, Selection, Select, TextArea } from '../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import { Button, Select, Selection, TextArea, TextField } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const sourceValues = {
@@ -23,10 +24,13 @@ export default {
     cy.expect(Select('Source').has({ value: expectedSource }));
   },
   fillPermanentLocation: (permanentLocation) => {
-    cy.do(Selection('Permanent*').choose(permanentLocation));
+    cy.do(Selection('Permanent*').choose(including(permanentLocation)));
   },
   fillCallNumber: (callNumber) => {
     cy.do(TextArea({ name: 'callNumber' }).fillIn(callNumber));
+  },
+  fillCopyNumber: (copyNumber) => {
+    cy.do(TextField({ name: 'copyNumber' }).fillIn(copyNumber));
   },
   fillCallNumberSuffix: (callNumberSuffix) => {
     cy.do(TextArea({ name: 'callNumberSuffix' }).fillIn(callNumberSuffix));

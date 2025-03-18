@@ -576,9 +576,9 @@ export default {
     InventoryNewHoldings.waitLoading();
   },
 
-  addItem() {
-    cy.expect(addItemButton.exists());
-    cy.do(addItemButton.click());
+  clickAddItemByHoldingName({ holdingName } = {}) {
+    const holdingSection = rootSection.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).click());
   },
 
   editMarcBibliographicRecord: () => {

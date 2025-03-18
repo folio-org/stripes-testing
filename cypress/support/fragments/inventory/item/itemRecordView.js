@@ -65,6 +65,9 @@ const findRowAndClickLink = (enumerationValue) => {
     });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
+const clickUpdateOwnership = () => {
+  cy.do([actionsButton.click(), Button('Update ownership').click()]);
+};
 
 const itemStatuses = {
   onOrder: ITEM_STATUS_NAMES.ON_ORDER,
@@ -96,6 +99,7 @@ export default {
   verifyItemStatusInPane,
   getAssignedHRID,
   findRowAndClickLink,
+  clickUpdateOwnership,
 
   suppressedAsDiscoveryIsAbsent() {
     cy.wait(1000);
@@ -156,23 +160,11 @@ export default {
     );
   },
 
-  updateOwnership: (secondMember) => {
-    // , action, holdingsHrid, firstMember, locationName
-
-    cy.do(actionsButton.click());
-    cy.wait(1000);
-    cy.do(Button('Update ownership').click());
-    UpdateOwnershipModal.validateUpdateOwnershipModalView(secondMember);
-    // UpdateOwnershipModal.createNewHoldingsForLocation();
-
-    // SelectLocationModal.validateSelectLocationModalView(secondMember);
-    // SelectLocationModal.selectLocation(
-    //   action,
-    //   holdingsHrid,
-    //   firstMember,
-    //   secondMember,
-    //   locationName,
-    // );
+  updateOwnership: (tenant, location) => {
+    clickUpdateOwnership();
+    UpdateOwnershipModal.validateUpdateOwnershipModalView(tenant);
+    UpdateOwnershipModal.validateAbilityToCreateNewHoldings(tenant);
+    UpdateOwnershipModal.updateHoldings(tenant, location);
   },
 
   verifyEffectiveLocationForItemInDetails: (location) => {
