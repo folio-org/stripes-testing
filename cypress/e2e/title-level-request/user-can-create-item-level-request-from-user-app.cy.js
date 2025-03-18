@@ -110,7 +110,6 @@ describe('Title Level Request', () => {
         NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
 
         // Click on the "Save&close" button
-        cy.intercept('POST', 'circulation/requests').as('createRequest');
         NewRequest.saveRequestAndClose();
         cy.wait('@createRequest').then((intercept) => {
           requestId = intercept.response.body.id;

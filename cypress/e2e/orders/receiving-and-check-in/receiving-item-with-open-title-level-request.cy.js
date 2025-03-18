@@ -151,7 +151,6 @@ describe('Orders: Receiving and Check-in', () => {
           REQUEST_TYPES.RECALL,
         );
         NewRequest.saveRequestAndClose();
-        cy.intercept('POST', 'circulation/requests').as('createRequest');
         cy.wait('@createRequest').then((intercept) => {
           testData.requestId = intercept.response.body.id;
           cy.location('pathname').should('eq', `/requests/view/${testData.requestId}`);

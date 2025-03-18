@@ -101,6 +101,7 @@ export default {
 
   save() {
     cy.do(Button({ id: 'footer-save-entity' }).click());
+    cy.wait(1000);
   },
 
   checkAlert(alertText) {
@@ -136,9 +137,13 @@ export default {
     // waiting the html form to be rendered
     cy.wait(1000);
     this.fillOverdueFine(overdueFine);
+    cy.wait(500);
     this.fillMaxFine(maxOverdueFine);
+    cy.wait(500);
     this.fillOverdueRecall(recallFine);
+    cy.wait(500);
     this.fillMaxRecall(maxRecallFine);
+    cy.wait(500);
 
     cy.do([
       nameInput.fillIn(name),

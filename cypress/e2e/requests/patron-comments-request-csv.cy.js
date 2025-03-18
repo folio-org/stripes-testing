@@ -153,7 +153,7 @@ describe('Requests Export CSV File', () => {
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.exportRequestToCsv();
-      Requests.checkCellInCsvFileContainsValue(fileName, 1, 31, patronComment);
+      Requests.checkCellInCsvFileContainsValue(fileName, 1, 32, patronComment);
     },
   );
 
@@ -164,6 +164,8 @@ describe('Requests Export CSV File', () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItemGui(itemData.barcode);
       AwaitingPickupForARequest.checkPatronComments(patronComment);
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.closeModal();
     },
   );
 });

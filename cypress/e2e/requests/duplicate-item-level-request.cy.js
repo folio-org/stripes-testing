@@ -171,7 +171,6 @@ describe('Duplicate item level request', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
       NewRequest.choosePickupServicePoint(servicePoint2.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         requestId = intercept.response.body.id;
         // Request is created
