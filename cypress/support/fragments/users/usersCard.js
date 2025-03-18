@@ -7,6 +7,7 @@ import {
   Checkbox,
   Image,
   KeyValue,
+  List,
   ListItem,
   Modal,
   MultiColumnList,
@@ -668,5 +669,9 @@ export default {
   close() {
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
     cy.expect(rootSection.absent());
+  },
+
+  verifyUserRolesRowsCount(expectedCount) {
+    cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
   },
 };
