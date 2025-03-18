@@ -23,7 +23,7 @@ describe('Cancel item level request', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C358999_Instance_${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
   const cancellationReason = {

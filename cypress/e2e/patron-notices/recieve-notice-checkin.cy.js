@@ -50,19 +50,19 @@ describe('Patron notices', () => {
     const itemsData = {
       itemsWithSeparateInstance: [
         {
-          instanceTitle: `Instance ${getRandomPostfix()}`,
+          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
         },
         {
-          instanceTitle: `Instance ${getRandomPostfix()}`,
+          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
         },
         {
-          instanceTitle: `Instance ${getRandomPostfix()}`,
+          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
         },
         {
-          instanceTitle: `Instance ${getRandomPostfix()}`,
+          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
         },
         {
-          instanceTitle: `Instance ${getRandomPostfix()}`,
+          instanceTitle: `AT_C347623_Instance ${getRandomPostfix()}`,
         },
       ],
     };

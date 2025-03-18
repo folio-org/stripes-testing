@@ -1,16 +1,17 @@
 import moment from 'moment';
 import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
-import AppPaths from '../../support/fragments/app-paths';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
@@ -19,17 +20,18 @@ import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaul
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Fees&Fines', () => {
   describe('Manual Fees/Fines', () => {
     const testData = {
-      instanceTitle: `Pre-checkin_instance_${Number(new Date())}`,
+      barcode: generateItemBarcode(),
+      instanceTitle: `AT_C455_Instance_${getRandomPostfix()}`,
     };
     const userData = { ...DefaultUser.defaultApiPatron };
-    const itemBarcode = generateItemBarcode();
     beforeEach(() => {
-      cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
       cy.getAdminToken();
       PatronGroups.createViaApi().then((patronGroupId) => {
         testData.patronGroupId = patronGroupId;
@@ -63,60 +65,60 @@ describe('Fees&Fines', () => {
                       name: createdPaymentMethod.name,
                     };
                     cy.loginAsAdmin({
-                      path: AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id),
-                      waiter: UsersCard.waitLoading,
+                      path: TopMenu.usersPath,
+                      waiter: UsersSearchPane.waitLoading,
                     });
+                    UsersSearchPane.searchByUsername(testData.userProperties.username);
                   });
                 });
               });
 
               cy.getMaterialTypes({ query: 'name="book"' }).then((res) => {
-                testData.materialType = res.id;
+                testData.materialTypeId = res.id;
               });
               cy.getLocations({ limit: 1 }).then((res) => {
                 testData.location = res.id;
               });
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
-                testData.holdingType = res[0].id;
+                testData.holdingTypeId = res[0].id;
               });
               InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => {
                 testData.holdingSource = res[0].id;
               });
               cy.getInstanceTypes({ limit: 1 }).then((res) => {
-                testData.instanceType = res[0].id;
+                testData.instanceTypeId = res[0].id;
               });
               cy.getLoanTypes({ limit: 1 }).then((res) => {
-                testData.loanType = res[0].id;
+                testData.loanTypeId = res[0].id;
               });
             })
             .then(() => {
-              // eslint-disable-next-line spaced-comment
-              // OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
-              cy.createInstance({
+              InventoryInstances.createFolioInstanceViaApi({
                 instance: {
-                  instanceTypeId: testData.instanceType,
+                  instanceTypeId: testData.instanceTypeId,
                   title: testData.instanceTitle,
                 },
                 holdings: [
                   {
-                    holdingsTypeId: testData.holdingType,
+                    holdingsTypeId: testData.holdingTypeId,
                     permanentLocationId: testData.location,
                     sourceId: testData.holdingSource,
                   },
                 ],
                 items: [
-                  [
-                    {
-                      barcode: itemBarcode,
-                      missingPieces: '3',
-                      numberOfMissingPieces: '3',
-                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                      permanentLoanType: { id: testData.loanType },
-                      materialType: { id: testData.materialType },
-                    },
-                  ],
+                  {
+                    barcode: testData.barcode,
+                    missingPieces: '3',
+                    numberOfMissingPieces: '3',
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    permanentLoanType: { id: testData.loanTypeId },
+                    materialType: { id: testData.materialTypeId },
+                  },
                 ],
               });
+            })
+            .then((specialInstanceIds) => {
+              testData.testInstanceIds = specialInstanceIds;
             });
         });
       });
@@ -127,7 +129,7 @@ describe('Fees&Fines', () => {
       { tags: ['smoke', 'feeFine', 'vega', 'C455'] },
       () => {
         const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
-        const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];
+        const itemInfo = [testData.instanceTitle + ' (book)', testData.barcode];
         const initialCheckNewFeeFineFragment = () => {
           NewFeeFine.checkInitialState(testData.userProperties, testData.owner.name);
           NewFeeFine.setFeeFineOwner(testData.owner.name);
@@ -165,31 +167,32 @@ describe('Fees&Fines', () => {
         initialCheckNewFeeFineFragment(testData.owner.name);
         createFee();
         // Scenario 3: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM OPEN/CLOSED LOANS
-        // waiting cypress runner to be able to get a command
-        // without wait, randomly doesn't redirecting browser to the checkin page
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(2000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
         Checkout.waitLoading();
-        cy.checkOutItem(testData.userProperties.barcode, itemBarcode);
+        cy.checkOutItem(testData.userProperties.barcode, testData.barcode);
         cy.verifyItemCheckOut();
 
-        cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
-        cy.wait('@/authn/refresh', { timeout: 30000 });
+
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
+        // Close fee/fine page
+        UsersCard.clickOnCloseIcon();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchPane.searchByUsername(testData.userProperties.username);
 
         UsersCard.viewCurrentLoans();
         NewFeeFine.openFromLoanDetails();
         initialCheckNewFeeFineFragment(testData.owner.name);
         createFee();
         // Scenario 4: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM CHECK-IN
-        // waiting cypress runner ti be able to get a command
-        // without wait, randomly doesn't redirecting browser to the checkin page
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(2000);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         CheckInActions.waitLoading();
-        CheckInActions.checkInItemGui(itemBarcode);
-        CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(itemBarcode);
+        CheckInActions.checkInItemGui(testData.barcode);
+        CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(testData.barcode);
+        InTransit.verifyModalTitle();
+        InTransit.unselectCheckboxPrintSlip();
+        InTransit.closeModal();
         CheckInActions.openNewFeeFinesPane();
 
         initialCheckNewFeeFineFragment(testData.owner.name);
@@ -197,8 +200,13 @@ describe('Fees&Fines', () => {
 
         // Checking created fees
         cy.wait(5000);
-        cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
-        cy.wait('@/authn/refresh', { timeout: 30000 });
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
+        // Close create a new fee/fine modal
+        UsersCard.clickOnCloseIcon();
+        // Close fee/fine page
+        UsersCard.clickOnCloseIcon();
+        UsersSearchPane.resetAllFilters();
+        UsersSearchPane.searchByUsername(testData.userProperties.username);
 
         UsersCard.openFeeFines();
         UsersCard.viewAllFeesFines();
@@ -212,24 +220,14 @@ describe('Fees&Fines', () => {
     after(() => {
       cy.getAdminToken();
       CheckInActions.checkinItemViaApi({
-        itemBarcode,
+        itemBarcode: testData.barcode,
         servicePointId: testData.userServicePoint,
         checkInDate: moment.utc().format(),
       }).then(() => {
         Users.deleteViaApi(testData.userProperties.id);
         PatronGroups.deleteViaApi(testData.patronGroupId);
       });
-
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"items.barcode"=="${itemBarcode}"`,
-      }).then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
       PaymentMethods.deleteViaApi(testData.paymentMethod.id);
       ManualCharges.deleteViaApi(testData.feeFineType.id);
       UsersOwners.deleteViaApi(testData.owner.id);

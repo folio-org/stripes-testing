@@ -22,7 +22,7 @@ describe('Inventory', () => {
     const testData = {
       user: {},
       instanceData: {
-        instanceTitle: `Instance ${getRandomPostfix()}`,
+        instanceTitle: `AT_C400654_Instance_${getRandomPostfix()}`,
       },
       materialType: MATERIAL_TYPE_NAMES.BOOK,
       permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,

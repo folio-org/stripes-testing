@@ -567,13 +567,12 @@ export default {
 
   deleteLedgerViaActions() {
     cy.wait(4000);
-    cy.do([
-      ledgerDetailsSection.find(actionsButton).click(),
-      Button('Delete').click(),
-      Button('Delete', {
-        id: 'clickable-ledger-remove-confirmation-confirm',
-      }).click(),
-    ]);
+    cy.do(ledgerDetailsSection.find(actionsButton).click());
+    cy.wait(500);
+    cy.do(Button('Delete').click());
+    cy.wait(500);
+    cy.do(Button('Delete', { id: 'clickable-ledger-remove-confirmation-confirm' }).click());
+    cy.wait(500);
   },
 
   searchByStatusUnitsAndName(status, acquisitionUnitsName, ledgerName) {

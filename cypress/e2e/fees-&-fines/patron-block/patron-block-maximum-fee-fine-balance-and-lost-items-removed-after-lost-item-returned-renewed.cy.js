@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../support/fragments/checkout/checkout';
@@ -18,7 +18,7 @@ import PatronGroups from '../../../support/fragments/settings/users/patronGroups
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
 import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
 import UserLoans from '../../../support/fragments/users/loans/userLoans';
@@ -39,11 +39,11 @@ describe('Fees&Fines', () => {
     const userData = {};
     const itemsData = {
       itemsWithSeparateInstance: [
-        { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-        { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-        { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-        { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
-        { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350655_InstanceForDeclareLost ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350655_InstanceForDeclareLost ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350655_InstanceForDeclareLost ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350655_InstanceForAgedToLost ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350655_InstanceForAgedToLost ${getRandomPostfix()}` },
       ],
     };
     const testData = {
@@ -111,8 +111,9 @@ describe('Fees&Fines', () => {
     };
 
     const findPatron = () => {
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
+      UsersSearchPane.resetAllFilters();
       UsersSearchPane.searchByKeywords(userData.barcode);
     };
     const setConditionAndLimit = (message, type, limit) => {
@@ -120,6 +121,7 @@ describe('Fees&Fines', () => {
       Conditions.select(type);
       Conditions.setConditionState(message);
       cy.visit(SettingsMenu.limitsPath);
+      cy.wait(3000);
       Limits.selectGroup(patronGroup.name);
       Limits.setLimit(type, limit);
     };
@@ -269,11 +271,8 @@ describe('Fees&Fines', () => {
           }
         });
       });
-      cy.login(userData.username, userData.password);
-      // needed for the "Lost Item Fee Policy" so patron can receive fee/fine
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(20000);
-      cy.visit(SettingsMenu.conditionsPath);
+      cy.login(userData.username, userData.password, { path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
     });
 
     afterEach('Returning items to original state', () => {
@@ -364,7 +363,8 @@ describe('Fees&Fines', () => {
         cy.wait(2000);
         Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+        CheckInActions.waitLoading();
         const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
         CheckInActions.checkInItemGui(itemForCheckIn.barcode);
         CheckInActions.confirmCheckInLostItem();
@@ -417,7 +417,8 @@ describe('Fees&Fines', () => {
         cy.wait(2000);
         Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
+        CheckInActions.waitLoading();
         const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
         CheckInActions.checkInItemGui(itemForCheckIn.barcode);
         CheckInActions.confirmCheckInLostItem();

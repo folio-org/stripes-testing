@@ -25,7 +25,7 @@ describe('Duplicate item level request', () => {
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C350560_Instance_${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
   let cancellationReason;

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../support/fragments/checkout/checkout';
@@ -12,7 +12,7 @@ import Conditions from '../../../support/fragments/settings/users/conditions';
 import Limits from '../../../support/fragments/settings/users/limits';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -28,11 +28,11 @@ describe('Fees&Fines', () => {
     const userData = {};
     const itemsData = {
       itemsWithSeparateInstance: [
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350647_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350647_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350647_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350647_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350647_Instance ${getRandomPostfix()}` },
       ],
     };
     const testData = {
@@ -129,8 +129,6 @@ describe('Fees&Fines', () => {
                 userBarcode: userData.barcode,
               });
             });
-
-            cy.login(userData.username, userData.password);
           });
       });
     });
@@ -168,35 +166,40 @@ describe('Fees&Fines', () => {
       'C350647 Verify automated patron block "Maximum number of items charged out" removed after charged item returned (vega)',
       { tags: ['criticalPath', 'vega', 'C350647'] },
       () => {
-        cy.visit(SettingsMenu.conditionsPath);
-        Conditions.waitLoading();
+        cy.login(userData.username, userData.password,
+          { path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
         Conditions.select('Maximum number of items charged out');
         Conditions.setConditionState(checkedOutBlockMessage);
         cy.visit(SettingsMenu.limitsPath);
+        cy.wait(3000);
         Limits.selectGroup(patronGroup.name);
         Limits.setLimit('Maximum number of items charged out', '4');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.waitLoading();
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userData.barcode);
         Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
         CheckInActions.checkInItemGui(itemForCheckIn.barcode);
         CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.waitLoading();
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userData.barcode);
         Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing');
 
         cy.visit(SettingsMenu.limitsPath);
+        cy.wait(3000);
         Limits.selectGroup(patronGroup.name);
         Limits.setLimit('Maximum number of items charged out', '5');
 
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.waitLoading();
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userData.barcode);
         Users.checkPatronIsNotBlocked(userData.userId);
       },
