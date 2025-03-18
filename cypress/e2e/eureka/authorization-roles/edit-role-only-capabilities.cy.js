@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -99,29 +100,49 @@ describe('Eureka', () => {
           },
         ],
         newCapabilitySet: {
-          table: 'Settings',
-          resource: 'UI-Tags Settings',
-          action: 'View',
+          table: 'Data',
+          resource: 'Note Types',
+          action: 'Manage',
         },
         newCapabilitiesInSet: [
           {
-            table: 'Settings',
-            resource: 'Settings Tags Enabled',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
-            table: 'Data',
-            resource: 'Configuration Entries Collection',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.EDIT,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.CREATE,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.DELETE,
           },
         ],
         expectedCounts: {
           capabilitySets: {
-            Settings: 1,
+            Data: 1,
             Procedural: 1,
           },
         },
-        absentCapabilitySetTable: 'Data',
+        absentCapabilitySetTable: 'Settings',
         capabSetIds: [],
         capabIds: [],
       };
