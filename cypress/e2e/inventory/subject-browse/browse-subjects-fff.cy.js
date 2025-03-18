@@ -29,6 +29,7 @@ describe('Inventory', () => {
     const createdInstanceIDs = [];
 
     before('Creating user and instances', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
         testData.user = userProperties;
 

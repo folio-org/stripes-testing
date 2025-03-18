@@ -185,6 +185,7 @@ describe('Fees&Fines', () => {
         PaymentMethods.deleteViaApi(paymentMethod.id);
         NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
         UsersOwners.deleteViaApi(ownerData.id);
+        ServicePoints.deleteViaApi(servicePoint.id);
         Users.deleteViaApi(userData.userId);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
         Location.deleteViaApi(testData.defaultLocation.id);

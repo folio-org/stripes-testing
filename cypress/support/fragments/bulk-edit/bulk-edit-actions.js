@@ -51,8 +51,8 @@ const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
-const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
-const downloadChagedMarcRecordsButton = Button('Download changed records (MARC)');
+const downloadChangedRecordsButton = Button('Download changed records (CSV)');
+const downloadChangedMarcRecordsButton = Button('Download changed records (MARC)');
 const commitChanges = Button('Commit changes');
 const locationSelection = Selection({ name: 'locationId' });
 const oldEmail = TextField({ testid: 'input-email-0' });
@@ -358,7 +358,7 @@ export default {
   },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
-    cy.expect([downloadChnagedRecordsButton.exists(), downloadErrorsButton.exists()]);
+    cy.expect([downloadChangedRecordsButton.exists(), downloadErrorsButton.exists()]);
   },
 
   verifySuccessBanner(validRecordsCount = 1) {
@@ -1104,29 +1104,29 @@ export default {
 
   verifyUsersActionDropdownItemsInCaseOfError() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Username')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('User id')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('External System ID')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Barcode')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Active')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Type')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Patron group')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Departments')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Proxy for')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Last name')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('First name')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Middle name')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Preferred first name')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Email')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Phone')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Mobile phone')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Birth date')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Addresses')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Preferred contact type id')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Date enrolled')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Expiration date')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Tags')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Custom fields')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Username')).absent(),
+      DropdownMenu().find(Checkbox('User id')).absent(),
+      DropdownMenu().find(Checkbox('External System ID')).absent(),
+      DropdownMenu().find(Checkbox('Barcode')).absent(),
+      DropdownMenu().find(Checkbox('Active')).absent(),
+      DropdownMenu().find(Checkbox('Type')).absent(),
+      DropdownMenu().find(Checkbox('Patron group')).absent(),
+      DropdownMenu().find(Checkbox('Departments')).absent(),
+      DropdownMenu().find(Checkbox('Proxy for')).absent(),
+      DropdownMenu().find(Checkbox('Last name')).absent(),
+      DropdownMenu().find(Checkbox('First name')).absent(),
+      DropdownMenu().find(Checkbox('Middle name')).absent(),
+      DropdownMenu().find(Checkbox('Preferred first name')).absent(),
+      DropdownMenu().find(Checkbox('Email')).absent(),
+      DropdownMenu().find(Checkbox('Phone')).absent(),
+      DropdownMenu().find(Checkbox('Mobile phone')).absent(),
+      DropdownMenu().find(Checkbox('Birth date')).absent(),
+      DropdownMenu().find(Checkbox('Addresses')).absent(),
+      DropdownMenu().find(Checkbox('Preferred contact type id')).absent(),
+      DropdownMenu().find(Checkbox('Date enrolled')).absent(),
+      DropdownMenu().find(Checkbox('Expiration date')).absent(),
+      DropdownMenu().find(Checkbox('Tags')).absent(),
+      DropdownMenu().find(Checkbox('Custom fields')).absent(),
     ]);
   },
 
@@ -1213,20 +1213,20 @@ export default {
   },
 
   verifyActionsDownloadChangedCSV() {
-    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).exists());
+    cy.expect(DropdownMenu().find(downloadChangedRecordsButton).exists());
   },
 
   verifyDownloadChangedRecordsAbsent() {
-    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).absent());
+    cy.expect(DropdownMenu().find(downloadChangedRecordsButton).absent());
   },
 
   downloadChangedCSV() {
-    cy.do(downloadChnagedRecordsButton.click());
+    cy.do(downloadChangedRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
   downloadChangedMarc() {
-    cy.do(downloadChagedMarcRecordsButton.click());
+    cy.do(downloadChangedMarcRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 

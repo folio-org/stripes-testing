@@ -16,6 +16,9 @@ describe('eHoldings', () => {
   describe('Package', () => {
     let userId;
 
+    before(() => {
+      cy.getAdminToken();
+    });
     afterEach(() => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
@@ -120,7 +123,7 @@ describe('eHoldings', () => {
           UHoldingsProvidersSearch.byProvider('Wiley Online Library');
           EHoldingsPackagesSearch.bySelectionStatus('Selected');
           EHoldingsPackages.openPackage();
-          EHoldingsPackages.titlesSearch('Subject', 'engineering');
+          EHoldingsPackages.titlesSearchFilter('Subject', 'engineering');
           EHoldingsPackageView.selectTitleRecord();
           EHoldingsPackages.subjectsAssertion();
         });

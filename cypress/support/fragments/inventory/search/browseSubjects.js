@@ -31,14 +31,27 @@ const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitl
 const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
-function getColumnsResults() {
+function getColumnsResults(columnName) {
   const cells = [];
+  let index;
+
+  switch (columnName) {
+    case 'Subject source':
+      index = 2;
+      break;
+    case 'Subject type':
+      index = 3;
+      break;
+    default:
+      index = 2;
+      break;
+  }
 
   return cy
     .get('#browse-results-list-browseSubjects')
     .find('[data-row-index]')
     .each(($row) => {
-      cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
+      cy.get(`[class*="mclCell-"]:nth-child(${index})`, { withinSubject: $row })
         // extract its text content
         .invoke('text')
         .then((cellValue) => {
@@ -109,10 +122,15 @@ export default {
     cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}`, content: value }).absent());
   },
 
-  checkPaginationButtons() {
+  checkPaginationButtons(
+    state = {
+      prev: { isVisible: true, isDisabled: false },
+      next: { isVisible: true, isDisabled: false },
+    },
+  ) {
     cy.expect([
-      previousButton.is({ visible: true, disabled: false }),
-      nextButton.is({ visible: true, disabled: false }),
+      previousButton.is({ visible: state.prev.isVisible, disabled: state.prev.isDisabled }),
+      nextButton.is({ visible: state.next.isVisible, disabled: state.next.isDisabled }),
     ]);
   },
 
@@ -309,9 +327,9 @@ export default {
         }
       },
       {
-        limit: 12,
+        limit: 20,
         delay: 5000,
-        timeout: 60000,
+        timeout: 120_000,
       },
     );
   },
@@ -330,11 +348,23 @@ export default {
         .find(MultiSelectOption(including(subjectSource)))
         .click(),
     );
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
-  verifySearchResult: (cellContent) => {
-    getColumnsResults().then((cells) => {
+  selectSubjectType(subjectType) {
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).fillIn(subjectType));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(subjectType)))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+
+  verifySearchResult: (cellContent, columnName) => {
+    getColumnsResults(columnName).then((cells) => {
       cells.forEach((cell) => {
         if (cell !== 'No value set-') {
           if (Array.isArray(cellContent)) {
@@ -345,6 +375,24 @@ export default {
             cy.expect(cell).to.include(cellContent);
           }
         }
+      });
+    });
+  },
+
+  verifyAccordionStatusByName(accordionName, status = true) {
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: status }));
+  },
+
+  verifySubjectTypeDropdownOptions(types) {
+    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectType-multiselect' })).exists());
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
+    cy.expect(MultiSelectMenu().exists());
+    cy.wait(1500);
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      types.forEach((option) => {
+        cy.wrap(options).then(
+          (opts) => expect(opts.some((opt) => opt.includes(option))).to.be.true,
+        );
       });
     });
   },

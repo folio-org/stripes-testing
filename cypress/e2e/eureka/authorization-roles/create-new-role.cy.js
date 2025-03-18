@@ -2,6 +2,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -11,59 +12,72 @@ describe('Eureka', () => {
         roleDescription: `Description C423998 ${getRandomPostfix()}`,
         applicationName: 'app-platform-minimal',
         capabilitySet: {
-          table: 'Settings',
-          resource: 'UI-Tags Settings',
-          action: 'View',
+          table: CAPABILITY_TYPES.DATA,
+          resource: 'Note Types',
+          action: CAPABILITY_ACTIONS.MANAGE,
         },
         capabilitiesInSet: [
           {
-            table: 'Data',
-            resource: 'Configuration Entries Collection',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
-            table: 'Settings',
-            resource: 'Settings Enabled',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Collection',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Settings',
-            resource: 'Settings Tags Enabled',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
-            table: 'Settings',
-            resource: 'UI-Tags Settings',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.EDIT,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.CREATE,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'Note Types Item',
+            action: CAPABILITY_ACTIONS.DELETE,
           },
         ],
         capabilitiesToSelect: [
           {
-            table: 'Data',
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Addresstypes Item',
-            action: 'Delete',
+            action: CAPABILITY_ACTIONS.DELETE,
           },
           {
-            table: 'Data',
+            table: CAPABILITY_TYPES.DATA,
             resource: 'Addresstypes Item',
-            action: 'Edit',
+            action: CAPABILITY_ACTIONS.EDIT,
           },
         ],
         expectedRowCounts: {
           capabilities: {
-            Data: 2,
-            Settings: 3,
+            Data: 4,
           },
           capabilitySets: {
-            Settings: 1,
+            Data: 1,
           },
         },
-        absentCapabilitySetTables: ['Data', 'Procedural'],
-        absentCapabilityTables: ['Procedural'],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.SETTINGS, CAPABILITY_TYPES.PROCEDURAL],
+        absentCapabilityTables: [CAPABILITY_TYPES.SETTINGS, CAPABILITY_TYPES.PROCEDURAL],
       };
 
       const capabSetsToAssign = [
-        { type: 'Settings', resource: 'UI-Authorization-Roles Settings', action: 'Create' },
+        {
+          type: CAPABILITY_TYPES.SETTINGS,
+          resource: 'UI-Authorization-Roles Settings',
+          action: CAPABILITY_ACTIONS.CREATE,
+        },
       ];
 
       before('Creating user, login', () => {
@@ -149,10 +163,8 @@ describe('Eureka', () => {
           testData.absentCapabilityTables.forEach((table) => {
             AuthorizationRoles.verifyCapabilityTableAbsent(table);
           });
-          testData.capabilitiesInSet.forEach((capability) => {
-            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
-          });
-          // 2 checkboxes for the same row because same resource but different actions
+          // Verify multiple checkboxes checked in certain rows for different actions
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.capabilitiesInSet[2], 4);
           AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
             testData.capabilitiesToSelect[0],
             2,

@@ -88,6 +88,7 @@ const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
+const closeIconButton = Button({ icon: 'times' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -232,7 +233,7 @@ export default {
 
   byLanguage(lang) {
     cy.do(languageInput.clickHeader());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do([
       languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(including(lang ?? 'English(')).click(),
@@ -381,6 +382,13 @@ export default {
   switchToBrowseTab() {
     cy.wait(1000);
     cy.do(browseButton.click());
+    cy.expect([
+      Pane({ id: 'browse-inventory-filters-pane' }).exists(),
+      Pane({ id: 'browse-inventory-results-pane' }).exists(),
+      browseButton.has({ disabled: false }),
+      searchButton.has({ disabled: true }),
+      resetAllBtn.has({ disabled: true }),
+    ]);
   },
 
   verifySpecificTabHighlighted(tab) {
@@ -475,8 +483,11 @@ export default {
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(keywordInput.fillIn(value));
+    cy.wait(500);
     cy.do(searchButton.focus());
+    cy.wait(500);
     cy.do(searchButton.click());
+    cy.wait(1000);
   },
   switchToItem: () => cy.do(itemToggleButton.click()),
   switchToHoldings() {
@@ -1192,5 +1203,11 @@ export default {
           .absent(),
       );
     }
+  },
+
+  clickOnCloseIcon() {
+    cy.wait(1000);
+    cy.do(closeIconButton.click());
+    cy.wait(1000);
   },
 };

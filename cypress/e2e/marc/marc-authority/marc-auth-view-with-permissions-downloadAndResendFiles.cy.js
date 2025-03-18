@@ -9,6 +9,7 @@ describe('MARC', () => {
     const testData = {};
 
     before('Creating user', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,

@@ -38,8 +38,8 @@ describe('Users', () => {
   });
 
   it(
-    'C350673 Verify that a user can assign Subject browse permissions. (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C350673'] },
+    'C350673 Verify that a user can assign Subject browse permissions. (spitfire)',
+    { tags: ['extendedPath', 'spitfire', 'C350673'] },
     () => {
       UsersSearchPane.searchByUsername(testUser_C350673.username);
       UsersSearchPane.waitLoading();
@@ -52,8 +52,8 @@ describe('Users', () => {
   );
 
   it(
-    'C350674 Verify that a user can assign Call number browse: View permissions (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C350674'] },
+    'C350674 Verify that a user can assign Call number browse: View permissions (spitfire)',
+    { tags: ['extendedPath', 'spitfire', 'C350674'] },
     () => {
       UsersSearchPane.searchByUsername(testUser_C350674.username);
       UsersSearchPane.waitLoading();

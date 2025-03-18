@@ -1,5 +1,4 @@
 import {
-  Accordion,
   Button,
   Checkbox,
   HTML,
@@ -23,15 +22,15 @@ import { FILTER_STATUSES } from './eholdingsConstants';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
 
-const titlesFilterModal = Modal({ id: 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
 const closeButton = Button({ icon: 'times' });
-const actionsButton = Button('Actions');
+const actionsButton = PaneHeader().find(Button('Actions'));
 const editButton = Button('Edit');
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
+const titlesActionsButton = titlesSection.find(Button('Actions'));
 const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
@@ -59,18 +58,7 @@ export default {
   },
 
   filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
-    cy.do(titlesSection.find(Button({ icon: 'search' })).click());
-    cy.expect(titlesFilterModal.exists());
-    const selectionStatusAccordion = titlesFilterModal.find(
-      Accordion({ id: 'filter-titles-selected' }),
-    );
-    const selectionStatusButton = selectionStatusAccordion.find(
-      Button({ id: 'accordion-toggle-button-filter-titles-selected' }),
-    );
-    cy.do(selectionStatusButton.click());
-    cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
-    cy.do(titlesFilterModal.find(Button('Search')).click());
-    cy.expect(titlesFilterModal.absent());
+    cy.do([titlesActionsButton.click(), RadioButton(selectionStatus).click()]);
     waitTitlesLoading().then(() => {
       cy.expect(Spinner().absent());
     });
@@ -190,7 +178,7 @@ export default {
 
   editProxyActions: () => {
     cy.expect(Spinner().absent());
-    cy.do(actionsButton.click());
+    cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
   },

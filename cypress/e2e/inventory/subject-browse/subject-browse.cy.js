@@ -21,6 +21,7 @@ describe('Inventory', () => {
     const createdInstanceIDs = [];
 
     before('Creating user and instance', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         testData.preconditionUserId = userProperties.userId;
 
@@ -63,7 +64,10 @@ describe('Inventory', () => {
           5,
           `${testData.testValue}would be hereNo value set-No value set-`,
         );
-        BrowseSubjects.checkPaginationButtons();
+        BrowseSubjects.checkPaginationButtons({
+          prev: { isVisible: true, isDisabled: false },
+          next: { isVisible: true, isDisabled: true },
+        });
 
         BrowseSubjects.clickPreviousPaginationButton();
         BrowseSubjects.checkAbsenceOfResultAndItsRow(

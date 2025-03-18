@@ -22,14 +22,15 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceU
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
 const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_466312_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_466312_MarcInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-const adminNote = `Te;st: [administrative] no*te ${getRandomPostfix()}.csv`;
+const adminNote = 'Te;st: [administrative] no*te.csv';
+const editedAdminNote = 'Te;st:  no*te.csv';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -44,27 +45,27 @@ describe('bulk-edit', () => {
           folioItem.instanceName,
           folioItem.itemBarcode,
         );
-        marcInstance.instanceId = InventoryInstances.createInstanceViaApi(
-          marcInstance.instanceName,
-          marcInstance.itemBarcode,
-        );
-        [marcInstance.instanceId, folioItem.instanceId].forEach((instanceId) => {
-          cy.getInstanceById(instanceId).then((body) => {
-            body.administrativeNotes = [adminNote];
-            cy.updateInstance(body);
+        cy.createSimpleMarcBibViaAPI(marcInstance.instanceName).then((instanceId) => {
+          marcInstance.instanceId = instanceId;
+
+          [marcInstance.instanceId, folioItem.instanceId].forEach((id) => {
+            cy.getInstanceById(id).then((body) => {
+              body.administrativeNotes = [adminNote];
+              cy.updateInstance(body);
+            });
           });
-        });
-        InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
-          cy.getInstanceById(marcInstance.instanceId).then((body) => {
-            body.source = marcSource.name;
-            body.sourceId = marcSource.id;
-            cy.updateInstance(body);
+          InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
+            cy.getInstanceById(marcInstance.instanceId).then((body) => {
+              body.source = marcSource.name;
+              body.sourceId = marcSource.id;
+              cy.updateInstance(body);
+            });
           });
+          FileManager.createFile(
+            `cypress/fixtures/${instanceUUIDsFileName}`,
+            `${marcInstance.instanceId}\n${folioItem.instanceId}`,
+          );
         });
-        FileManager.createFile(
-          `cypress/fixtures/${instanceUUIDsFileName}`,
-          `${marcInstance.instanceId}\n${folioItem.instanceId}`,
-        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -76,7 +77,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(folioItem.itemBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(marcInstance.itemBarcode);
+      InventoryInstance.deleteInstanceViaApi(marcInstance.instanceId);
       FileManager.deleteFile(`cypress/fixtures/${instanceUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         instanceUUIDsFileName,
@@ -110,18 +111,26 @@ describe('bulk-edit', () => {
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyItemAdminstrativeNoteActions();
-        BulkEditActions.noteRemove('Administrative note', adminNote);
+        BulkEditActions.noteRemove('Administrative note', '[administrative]');
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '2 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Administrative note', '', 0);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Administrative note', '', 1);
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Administrative note',
+          editedAdminNote,
+          0,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Administrative note',
+          editedAdminNote,
+          1,
+        );
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(2);
@@ -129,8 +138,8 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
 
         [folioItem.instanceName, marcInstance.instanceName].forEach((title) => {
@@ -160,14 +169,14 @@ describe('bulk-edit', () => {
 
         BulkEditLogs.downloadFileWithProposedChanges();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
       },
     );

@@ -119,7 +119,7 @@ function getCreatedRecordInfoWithSplitFiles(jobExecutionId, recordId) {
   return recurse(
     () => cy.okapiRequest({
       path: `metadata-provider/jobLogEntries/${jobExecutionId}/records/${recordId}`,
-      searchParams: { limit: 100 },
+      searchParams: { limit: 10000 },
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
     }),

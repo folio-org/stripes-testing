@@ -101,8 +101,8 @@ export default {
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
     cy.do(fulfillmentPreferenceSelect.choose(FULFILMENT_PREFERENCES.DELIVERY));
     cy.expect(deliveryTypeAddressTypeSelect.has({ disabled: false }));
-    cy.do(fulfillmentPreferenceSelect.choose(FULFILMENT_PREFERENCES.HOLD_SHELF));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
+    cy.do(fulfillmentPreferenceSelect.choose(FULFILMENT_PREFERENCES.HOLD_SHELF));
     cy.wait(500);
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
     cy.wait(500);
@@ -121,9 +121,9 @@ export default {
     cy.expect(requestExpirationDateInput.has({ disabled: false }));
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
-    cy.do(pickupServicePointSelect.choose(this.servicePoint));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[2].formValue));
     cy.do(holdShelfExpirationDateInput.fillIn(this.expirationDates[3].formValue));
+    cy.do(pickupServicePointSelect.choose(this.servicePoint));
     this.saveAndClose();
     cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[2].uiValue }));
@@ -145,8 +145,8 @@ export default {
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
     cy.expect(holdShelfExpirationDateKeyValue.has({ value: 'No value set-' }));
-    cy.do(pickupServicePointSelect.choose(this.servicePoint));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[4].formValue));
+    cy.do(pickupServicePointSelect.choose(this.servicePoint));
     this.saveAndClose();
     cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[4].uiValue }));

@@ -289,6 +289,7 @@ export const INSTANCE_STATUS_TERM_NAMES = {
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {
+  ALL: 'Call numbers (all)',
   OTHER_SCHEME: 'Other scheme',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
@@ -388,10 +389,9 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   CALL_NUMBERS_ALL: 'Call numbers (all)',
   DEWEY_DECIMAL: 'Dewey Decimal classification',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
-  // LOCAL: 'Local',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
-  // OTHER_SCHEME: 'Other scheme',
-  // SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
+  OTHER_SCHEME: 'Other scheme',
+  SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
 };
 
 export const BROWSE_CLASSIFICATION_OPTIONS = {
@@ -1006,17 +1006,34 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     NOTE: 'Note',
     ITEM_PERMANENT_LOCATION: 'Item permanent location',
     ITEM_TEMPORARY_LOCATION: 'Item temporary location',
+    ITEM_HRID: 'Item HRID',
   },
   USERS: {
     USERNAME: 'Username',
-    FIRST_NAME: 'First name',
-    LAST_NAME: 'Last name',
-    MIDDLE_NAME: 'Middle name',
-    EMAIL: 'Email',
-    PATRON_GROUP: 'Patron group',
-    BARCODE: 'Barcode',
     USER_ID: 'User id',
+    EXTERNAL_SYSTEM_ID: 'External System ID',
+    BARCODE: 'Barcode',
+    ACTIVE: 'Active',
+    TYPE: 'Type',
+    PATRON_GROUP: 'Patron group',
+    DEPARTMENTS: 'Departments',
+    PROXY_FOR: 'Proxy for',
+    LAST_NAME: 'Last name',
+    FIRST_NAME: 'First name',
+    MIDDLE_NAME: 'Middle name',
+    PREFFERED_FIRST_NAME: 'Preferred first name',
+    EMAIL: 'Email',
+    PHONE: 'Phone',
+    MOBILE_PHONE: 'Mobile phone',
+    BIRTH_DATE: 'Birth date',
+    ADDRESSES: 'Addresses',
+    PREFFERED_CONTACT_TYPE_ID: 'Preferred contact type id',
+    LINK_TO_THE_PROFILE_PICTURE: 'Link to the profile picture',
+    DATE_ENROLLED: 'Date enrolled',
     EXPIRATION_DATE: 'Expiration date',
+    TAGS: 'Tags',
+    CUSTOM_FIELDS: 'Custom fields',
+    PREFFERED_EMAIL_COMMUNICATIONS: 'Preferred email communications',
   },
 };
 
@@ -1120,4 +1137,10 @@ export const LDE_ADVANCED_SEARCH_CONDITIONS = {
   AND: 'AND',
   NOT: 'NOT',
   OR: 'OR',
+};
+
+export const AUTHORIZATION_ROLE_TYPES = {
+  REGULAR: 'Regular',
+  CONSORTIUM: 'Consortium',
+  DEFAULT: 'Default',
 };

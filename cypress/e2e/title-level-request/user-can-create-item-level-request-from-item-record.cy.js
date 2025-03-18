@@ -146,7 +146,6 @@ describe('Create Item or Title level request', () => {
       FilterItems.toggleAccordionItemsButton(testData.holdingId);
       InventoryInstance.openItemByBarcode(testData.itemBarcode);
       CreatePageTypeRequest.clickNewRequest(testData.itemBarcode);
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
