@@ -265,9 +265,10 @@ describe('Loans', () => {
         LoanDetails.openFeeFine();
         cy.wait(1000);
         UserAllFeesFines.selectAllFeeFines();
-        LoanDetails.payFeeFine(100, testData.paymentMethod);
+        LoanDetails.payFeeFine(125, testData.paymentMethod);
         // Navigate to closed loan details for loan "D" and check closed loan details.
         cy.visit(AppPaths.getClosedLoansPath(userData.userId));
+        cy.wait(3000);
         UserLoans.openLoanDetails(testData.folioInstances[3].barcodes[0]);
         LoanDetails.checkLoanClosed('System');
       },

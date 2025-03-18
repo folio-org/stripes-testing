@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  APPLICATION_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
@@ -19,6 +20,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -166,7 +168,9 @@ describe('Inventory', () => {
           HoldingsRecordEdit.addTag(tag);
         });
 
-        cy.visit(TopMenu.inventoryPath);
+        // cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        cy.wait(3000);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.byKeywords('Houston/Texas oil directory');
         InventoryInstances.selectInstance();

@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -10,6 +11,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -46,6 +48,7 @@ describe('Circulation log', () => {
         permissions.uiUsersView.gui,
         permissions.uiUserLoansChangeDueDate.gui,
         permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
+        permissions.uiInventoryViewInstances.gui,
       ],
       patronGroup.name,
     ).then((userAProperties) => {
@@ -111,7 +114,7 @@ describe('Circulation log', () => {
       ChangeDueDateForm.fillDate('10/07/2030');
       ChangeDueDateForm.saveAndClose();
 
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByUserBarcode(userB.barcode);
       SearchPane.checkResultSearch({
         userBarcode: userB.barcode,

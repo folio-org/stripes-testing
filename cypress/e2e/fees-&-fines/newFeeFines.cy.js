@@ -3,6 +3,7 @@ import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import AppPaths from '../../support/fragments/app-paths';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -190,6 +191,8 @@ describe('Fees&Fines', () => {
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemBarcode);
         CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(itemBarcode);
+        InTransit.unselectCheckboxPrintSlip();
+        InTransit.closeModal();
         CheckInActions.openNewFeeFinesPane();
 
         initialCheckNewFeeFineFragment(testData.owner.name);

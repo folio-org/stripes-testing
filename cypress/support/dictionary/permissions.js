@@ -1183,6 +1183,11 @@ export default {
     internal: 'ui-users.settings.usergroups.all',
     gui: 'Settings (Users): Can create, edit and remove patron groups',
   },
+  /// ///
+  testPerm: {
+    internal: 'settings.authorization-policies.enabled',
+    gui: 'Settings (Authorization policies): display list of settings pages',
+  },
   // Lists
   listsAll: {
     internal: 'module.lists.all',

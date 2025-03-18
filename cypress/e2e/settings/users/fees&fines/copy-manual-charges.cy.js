@@ -43,6 +43,7 @@ describe('Fees&Fines', () => {
       () => {
         // add manual charges to first owner
         ManualCharges.selectOwner(owners[0]);
+        ManualCharges.copyExisting(false);
         ManualCharges.createViaUi(manualCharge);
         manualCharge.amount = '$10.00';
         ManualCharges.checkResultsTableContent([manualCharge]);

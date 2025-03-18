@@ -8,7 +8,6 @@ describe('Consortia', () => {
   let user;
 
   before('Create users, data', () => {
-    cy.clearCookies({ domain: null });
     cy.getAdminToken();
     cy.setTenant(Affiliations.College);
     cy.createTempUser([Permissions.uiUsersView.gui]).then((userProperties) => {

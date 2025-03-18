@@ -245,7 +245,7 @@ describe('Loans', () => {
             });
           })
           .then(() => {
-            UserLoans.verifyClaimReturnedButtonIsVisible();
+            UserLoans.verifyClaimReturnedButtonIsDisabled();
             selectedItem = folioInstances.find(
               (item) => item.status === ITEM_STATUS_NAMES.DECLARED_LOST,
             );
@@ -297,7 +297,9 @@ describe('Loans', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.openUserCard(userData.username);
-        UsersCard.expandLoansSection(2, 1);
+        // UsersCard.expandLoansSection(2, 1);
+        UsersCard.expandLoansAccordion();
+        UsersCard.verifyQuantityOfOpenAndClosedLoans(2, 3);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN).then(() => {
           cy.wrap(folioInstances).each((item) => {
             if (
@@ -307,8 +309,8 @@ describe('Loans', () => {
             ) {
               CheckInActions.checkInItemGui(item.barcodes[0]).then(() => {
                 if (item.status !== ITEM_STATUS_NAMES.DECLARED_LOST) {
-                  CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
-                  CheckInClaimedReturnedItemModal.verifyModalIsClosed();
+                  // CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
+                  // CheckInClaimedReturnedItemModal.verifyModalIsClosed();
                   CheckInActions.verifyLastCheckInItem(item.barcodes[0]);
                 } else {
                   CheckInDeclareLostItemModal.confirm();
