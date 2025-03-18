@@ -64,7 +64,7 @@ describe('Patron notices', () => {
       NoticePolicyTemplate.deleteViaApi(testData.feeFineTemplateBody.id);
     });
 
-    it.only(
+    it(
       'C411712 C385655 Verify that token "feeCharge.additionalInfo" is selectable in Patron notice template settings (volaris)',
       { tags: ['extendedPath', 'volaris', 'C411712'] },
       () => {
