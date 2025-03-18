@@ -14,7 +14,7 @@ import GenerateItemBarcode from '../../../../support/utils/generateItemBarcode';
 describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const itemData = {
-      instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
+      instanceTitle: `AT_C3501_Instance_${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),
     };
     const anotherPermanentLocation = 'Main Library';

@@ -23,7 +23,7 @@ describe('Create Recall Item level request', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C350418_Instance_${getRandomPostfix()}`,
   };
   let defaultLocation;
   let requestId;

@@ -88,6 +88,7 @@ const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
+const closeIconButton = Button({ icon: 'times' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -475,8 +476,11 @@ export default {
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(keywordInput.fillIn(value));
+    cy.wait(500);
     cy.do(searchButton.focus());
+    cy.wait(500);
     cy.do(searchButton.click());
+    cy.wait(1000);
   },
   switchToItem: () => cy.do(itemToggleButton.click()),
   switchToHoldings() {
@@ -1192,5 +1196,11 @@ export default {
           .absent(),
       );
     }
+  },
+
+  clickOnCloseIcon() {
+    cy.wait(1000);
+    cy.do(closeIconButton.click());
+    cy.wait(1000);
   },
 };
