@@ -61,7 +61,11 @@ describe('Loans', () => {
           });
         });
       });
-      cy.createTempUser([Permissions.loansView.gui, Permissions.loansRenew.gui])
+      cy.createTempUser([
+        Permissions.loansView.gui,
+        Permissions.loansRenew.gui,
+        Permissions.uiInventoryViewInstances.gui,
+      ])
         .then((userProperties) => {
           testData.userA = userProperties;
         })
@@ -70,6 +74,7 @@ describe('Loans', () => {
             Permissions.loansView.gui,
             Permissions.loansRenew.gui,
             Permissions.loansRenewOverride.gui,
+            Permissions.uiInventoryViewInstances.gui,
           ])
             .then((userProperties) => {
               testData.userB = userProperties;

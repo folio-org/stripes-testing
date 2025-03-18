@@ -61,7 +61,7 @@ export default {
     cy.expect(ownerSelect.has({ value: id }));
     // wait required to prevent "+ New" button disabling
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300);
+    cy.wait(3000);
   },
   selectOwnerByName(owner) {
     cy.do(ownerSelect.choose(owner));
@@ -87,6 +87,19 @@ export default {
     cy.wait(500);
     this.fillInFields(manualCharge);
   },
+
+  copyExisting(copy = false) {
+    cy.wait(500);
+    SettingsPane.clickAddNewBtn();
+    cy.wait(500);
+    if (copy) {
+      cy.do([RadioButton('Yes').click(), Button('Continue').click()]);
+    } else {
+      cy.do([RadioButton('No').click(), Button('Continue').click()]);
+    }
+    cy.wait(500);
+  },
+
   editViaUi(manualCharge, newManualCharge) {
     SettingsPane.editViaUi(manualCharge.feeFineType);
     this.fillInFields(newManualCharge);

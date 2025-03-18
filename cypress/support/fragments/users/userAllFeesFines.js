@@ -103,7 +103,11 @@ export default {
     );
     cy.expect(Button('Waive', { disabled: !isActive }).exists());
   },
-  selectAllFeeFines: () => cy.do(MultiColumnListHeader({ index: 0 }).find(CheckBox()).click()),
+  selectAllFeeFines() {
+    cy.wait(3000);
+    cy.do(MultiColumnListHeader({ index: 0 }).find(CheckBox()).click());
+    cy.wait(1000);
+  },
   clickWaive: () => cy.do(waiveAllButton.click()),
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));

@@ -53,9 +53,11 @@ export default {
     return cy.expect(claimReturnedButton.absent());
   },
   verifyClaimReturnedButtonIsVisible() {
+    cy.wait(1000);
     return cy.expect(claimReturnedButton.exists());
   },
   checkOffLoanByBarcode: (itemBarcode) => {
+    cy.wait(500);
     // interactors don't allow to find element inside the cell column
     return cy
       .contains(itemBarcode)

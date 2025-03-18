@@ -46,7 +46,7 @@ module.exports = defineConfig({
     allureReuseAfterSpec: true,
     grepFilterSpecs: true,
     grepOmitFiltered: true,
-    rtrAuth: false,
+    rtrAuth: true,
     ecsEnabled: false,
     eureka: true,
     runAsAdmin: false,

@@ -98,7 +98,14 @@ describe('Check in', () => {
       patronGroup.id = patronGroupResponse;
     });
 
-    cy.createTempUser([permissions.checkinAll.gui, permissions.loansView.gui], patronGroup.name)
+    cy.createTempUser(
+      [
+        permissions.checkinAll.gui,
+        permissions.loansView.gui,
+        permissions.uiInventoryViewInstances.gui,
+      ],
+      patronGroup.name,
+    )
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;

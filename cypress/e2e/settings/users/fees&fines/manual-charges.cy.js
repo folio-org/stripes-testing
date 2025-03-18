@@ -43,6 +43,7 @@ describe('Fees&Fines', () => {
       { tags: ['extendedPath', 'vega', 'C442'] },
       () => {
         ManualCharges.selectOwner(owners[0]);
+        ManualCharges.copyExisting(false);
         ManualCharges.createViaUi(manualCharge);
         manualCharge.amount = '$10.00';
         ManualCharges.checkResultsTableContent([manualCharge]);

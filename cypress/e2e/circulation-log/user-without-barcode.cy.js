@@ -1,117 +1,115 @@
-import uuid from 'uuid';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import { getTestEntityValue } from '../../support/utils/stringTools';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
-  const testData = {
-    folioInstances: InventoryInstances.generateFolioInstances(),
-    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    requestsId: '',
+  const itemData = {
+    barcode: generateItemBarcode(),
+    instanceTitle: `Instance ${getRandomPostfix()}`,
   };
-  let userData = {
-    password: getTestEntityValue('Password'),
-    username: getTestEntityValue('cypresstestuser'),
-  };
-  let newUserProperties;
+  let servicePointId;
+  let userData = {};
 
   before('Create test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken()
+      .then(() => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
+          (servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          },
+        );
+        cy.getLocations({ limit: 1 });
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          itemData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          itemData.holdingTypeId = res[0].id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          itemData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          itemData.materialTypeId = res.id;
+          itemData.materialTypeName = res.name;
+        });
+      })
+      .then(() => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: itemData.instanceTypeId,
+            title: itemData.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: itemData.holdingTypeId,
+              permanentLocationId: Cypress.env('locations')[0].id,
+            },
+          ],
+          items: [
+            {
+              barcode: itemData.barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+          ],
+        });
+      })
+      .then((specialInstanceIds) => {
+        itemData.testInstanceIds = specialInstanceIds;
+      })
+      .then(() => {
+        cy.createTempUser(
+          [
+            Permissions.circulationLogAll.gui,
+            Permissions.checkinAll.gui,
+            Permissions.inventoryAll.gui,
+            Permissions.uiInventoryViewInstances.gui,
+          ],
+          'staff',
+          'patron',
+          false,
+        ).then((userProperties) => {
+          userData = userProperties;
 
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
-      });
-    });
-
-    PatronGroups.createViaApi().then((patronGroupId) => {
-      newUserProperties = {
-        patronGroup: patronGroupId,
-        barcode: null,
-        active: true,
-        username: userData.username,
-        personal: {
-          preferredContactTypeId: '002',
-          firstName: getTestEntityValue('testPermFirst'),
-          middleName: getTestEntityValue('testMiddleName'),
-          lastName: getTestEntityValue('testLastName'),
-          email: 'test@folio.org',
-        },
-      };
-      testData.patronGroupId = patronGroupId;
-      testData.userProperties = { barcode: uuid() };
-      const queryField = 'displayName';
-      const permissions = [
-        Permissions.circulationLogAll.gui,
-        Permissions.checkinAll.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.uiInventoryViewInstances.gui,
-      ];
-      cy.getPermissionsApi({
-        query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-      }).then((permissionsResponse) => {
-        Users.createViaApi(newUserProperties).then((userProperties) => {
-          userData = { ...userData, ...userProperties };
-          cy.setUserPassword(userData);
-          cy.addPermissionsToNewUserApi({
-            userId: userData.id,
-            permissions: [
-              ...permissionsResponse.body.permissions.map(
-                (permission) => permission.permissionName,
-              ),
-            ],
-          });
-          cy.overrideLocalSettings(userData.id);
-          UserEdit.addServicePointViaApi(
-            testData.servicePoint.id,
-            userData.id,
-            testData.servicePoint.id,
-          );
-          cy.login(userData.username, userData.password);
+          UserEdit.addServicePointsViaApi([servicePointId], userData.userId, servicePointId);
         });
       });
-    });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    Users.deleteViaApi(userData.id);
-    InventoryInstances.deleteInstanceViaApi({
-      instance: testData.folioInstances[0],
-      servicePoint: testData.servicePoint,
-      shouldCheckIn: true,
-    });
-    Locations.deleteViaApi(testData.defaultLocation);
-    PatronGroups.deleteViaApi(testData.patronGroupId);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePointId]);
+    Users.deleteViaApi(userData.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
   });
 
   it(
     'C360554 Verify that "-" shown if User does not have barcode (volaris) (TaaS)',
     { tags: ['extendedPath', 'volaris', 'C360554'] },
     () => {
-      const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItem(itemBarcode);
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.checkInPath,
+        waiter: CheckInActions.waitLoading,
+      });
+      CheckInActions.checkInItem(itemData.barcode);
+      ConfirmItemInModal.confirmInTransitModal();
       // The item is Checked in
       // Navigate to the "Circulation log" app
-      cy.visit(TopMenu.circulationLogPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       // Search for the checked in Item by "Item barcode" field => Click "Apply" button
-      SearchPane.searchByItemBarcode(itemBarcode);
+      SearchPane.searchByItemBarcode(itemData.barcode);
       // Check the row with the Item checked in (step 3) status
       // In the "User barcode" column "-" is displayed
       SearchPane.checkUserData('User barcode', '-', 0);

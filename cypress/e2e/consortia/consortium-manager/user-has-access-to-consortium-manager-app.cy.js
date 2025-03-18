@@ -12,10 +12,10 @@ describe('Consortia', () => {
   describe('Consortium manager', () => {
     let userData;
     const settingsList = Object.values(settingsItems);
-    const verifyFoundMembersAndTotalSelected = (members, total) => {
+    const verifyFoundMembersAndTotalSelected = (members, total, tenants) => {
       SelectMembers.verifyMembersFound(members);
       SelectMembers.verifyTotalSelected(total);
-      SelectMembers.verifyAvailableTenants([tenantNames.central]);
+      SelectMembers.verifyAvailableTenants(tenants);
     };
 
     before('Create users data', () => {
@@ -34,6 +34,7 @@ describe('Consortia', () => {
     });
 
     after('Delete users data', () => {
+      cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
