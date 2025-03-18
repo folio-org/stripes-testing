@@ -127,9 +127,9 @@ describe('MARC', () => {
               QuickMarcEditor.selectValidOptionsFor008FieldWhenUpdatingTypeDropdownInLDRField(
                 checkedTypeDropdownOption,
               );
-              cy.wait(1000);
+              cy.wait(1_000);
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(3_000);
               QuickMarcEditor.pressSaveAndClose();
               InventoryInstance.waitLoading();
             }

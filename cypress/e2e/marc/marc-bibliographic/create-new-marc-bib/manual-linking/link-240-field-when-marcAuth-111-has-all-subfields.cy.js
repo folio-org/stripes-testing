@@ -23,6 +23,7 @@ describe('MARC', () => {
           },
           successMessage:
             'This record has successfully saved and is in process. Changes may not appear immediately.',
+          searchQuery: 'C569598 Stockholm International Film Festival',
         };
 
         const newField = {
@@ -115,12 +116,12 @@ describe('MARC', () => {
             cy.wait(500);
             InventoryInstance.verifyAndClickLinkIcon(newField.tag);
             InventoryInstance.verifySelectMarcAuthorityModal();
-            MarcAuthorities.searchByParameter(newField.searchOption, newField.marcValue);
+            MarcAuthorities.searchByParameter(newField.searchOption, testData.searchQuery);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fieldAfterLink[1], fieldAfterLink[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...fieldAfterLink);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(testData.successMessage);
             QuickMarcEditor.checkAfterSaveAndClose();

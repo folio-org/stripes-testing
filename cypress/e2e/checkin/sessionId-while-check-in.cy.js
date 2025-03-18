@@ -24,7 +24,7 @@ describe('Check In - Actions ', () => {
   ];
   const itemData = {
     items: [getNewItem(), getNewItem(), getNewItem(), getNewItem()],
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C398022_Instance_${getRandomPostfix()}`,
   };
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();

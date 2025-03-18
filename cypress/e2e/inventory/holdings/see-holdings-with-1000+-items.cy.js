@@ -16,7 +16,7 @@ describe('Inventory', () => {
     const quantityOfItems = 1005;
     const quantityOfItemsOnPage = 200;
     const testData = {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
+      instanceTitle: `AT_C350639_Instance_${getRandomPostfix()}`,
     };
 
     before('Create test data and login', () => {
