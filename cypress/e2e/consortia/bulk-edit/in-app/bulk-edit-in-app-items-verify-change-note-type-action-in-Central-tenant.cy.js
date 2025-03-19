@@ -73,13 +73,10 @@ const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
 const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
 const previewFileName = BulkEditFiles.getPreviewFileName(todayDate, itemUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
-  todayDate,
-  itemUUIDsFileName,
-);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
 const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
-  todayDate,
   itemUUIDsFileName,
+  true,
 );
 
 describe('Bulk-edit', () => {
@@ -589,8 +586,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 4);
-          BulkEditSearchPane.verifyNonMatchedResults();
+          BulkEditSearchPane.verifyErrorLabel(4);
 
           collegeItemIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
@@ -629,12 +625,12 @@ describe('Bulk-edit', () => {
 
           collegeItemIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.College, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.College, 'note type')}`,
             ]);
           });
           universityItemIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 

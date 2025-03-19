@@ -489,7 +489,12 @@ export default {
     cy.do(searchButton.click());
     cy.wait(1000);
   },
-  switchToItem: () => cy.do(itemToggleButton.click()),
+
+  switchToItem: () => {
+    cy.do(itemToggleButton.click());
+    cy.wait(500);
+  },
+
   switchToHoldings() {
     cy.wait(200);
     cy.do(holdingsToggleButton.click());
