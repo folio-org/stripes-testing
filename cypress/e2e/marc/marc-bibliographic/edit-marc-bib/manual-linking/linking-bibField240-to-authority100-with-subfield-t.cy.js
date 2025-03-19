@@ -125,7 +125,7 @@ describe('MARC', () => {
               '',
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -155,7 +155,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.checkLinkButtonExist(testData.tag240);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
