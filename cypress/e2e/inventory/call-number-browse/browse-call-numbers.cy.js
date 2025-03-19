@@ -13,15 +13,30 @@ describe('Inventory', () => {
     });
 
     it(
-      'C347902 Verify "Browse call numbers" option on the Instances tab (firebird)',
-      { tags: ['smoke', 'firebird', 'C347902'] },
+      'C347902 Verify Browse call numbers form (spitfire)',
+      { tags: ['smoke', 'spitfire', 'C347902'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.selectBrowseCallNumbers();
+        InventorySearchAndFilter.validateBrowseToggleIsSelected();
         InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        InventoryActions.actionsIsAbsent();
+        InventorySearchAndFilter.verifyKeywordsAsDefault();
+        InventorySearchAndFilter.verifyActionButtonNotExistsInBrowseMode();
+        InventorySearchAndFilter.verifySearchButtonDisabled();
+        InventorySearchAndFilter.verifyResetAllButtonDisabled();
+        InventorySearchAndFilter.verifySearchButtonDisabled();
+
+        InventorySearchAndFilter.verifyBrowseOptions();
+
+        InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        InventorySearchAndFilter.fillInBrowseSearch('DE3');
+        InventorySearchAndFilter.verifySearchButtonDisabled(false);
+        InventorySearchAndFilter.verifyResetAllButtonDisabled(false);
+        InventorySearchAndFilter.clickSearch();
+        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+          records: [{ callNumber: 'DE3' }],
+        });
+        InventorySearchAndFilter.validateSearchTableHeaders();
       },
     );
 

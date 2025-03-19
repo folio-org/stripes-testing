@@ -78,15 +78,24 @@ export default {
       MultiColumnListCell(`${value}`).has({ innerHTML: including(`<strong>${value}</strong>`) }),
     ]);
   },
+
   resultRowsIsInRequiredOder(rows) {
-    cy.do(
-      MultiColumnListCell({ content: rows[0] }).perform((element) => {
-        const rowNumber = parseInt(element.parentElement.getAttribute('data-row-inner'), 10);
-        rows.forEach((el, i) => {
-          cy.expect(MultiColumnListCell(el).has({ row: rowNumber + i }));
-        });
-      }),
-    );
+    for (let i = 0; i < rows.length - 1; i++) {
+      cy.do(
+        MultiColumnListCell({ content: rows[i] }).perform((element) => {
+          cy.do(
+            MultiColumnListCell({ content: rows[i + 1] }).perform((element2) => {
+              const rowNumber1 = parseInt(element.parentElement.getAttribute('data-row-inner'), 10);
+              const rowNumber2 = parseInt(
+                element2.parentElement.getAttribute('data-row-inner'),
+                10,
+              );
+              expect(rowNumber1).to.be.lessThan(rowNumber2);
+            }),
+          );
+        }),
+      );
+    }
   },
 
   checkNumberOfTitlesForRow(callNumber, numberOfTitles) {
