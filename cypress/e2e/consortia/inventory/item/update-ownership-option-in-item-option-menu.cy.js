@@ -26,16 +26,13 @@ describe('Inventory', () => {
     const testData = {
       user: {},
       collegeTenant: {
-        locationId: '',
         locationName: '',
         instance: {},
         holdings: {},
         item: { barcode: uuid() },
       },
       universityTenant: {
-        firstLocationId: '',
         firstLocationName: '',
-        secondLocationId: '',
         secondLocationName: '',
         firstHoldings: {},
         secondHoldings: {
@@ -62,14 +59,13 @@ describe('Inventory', () => {
 
             ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then(
               (servicePoints) => {
-                testData.collegeTenant.holdings.location = Locations.getDefaultLocation({
+                const collegeLocationData = Locations.getDefaultLocation({
                   servicePointId: servicePoints[0].id,
                 }).location;
-                Locations.createViaApi(testData.collegeTenant.holdings.location).then(
-                  (location) => {
-                    testData.collegeTenant.locationName = location.name;
-                  },
-                );
+                Locations.createViaApi(collegeLocationData).then((location) => {
+                  testData.collegeTenant.location = location;
+                  testData.collegeTenant.locationName = location.name;
+                });
               },
             );
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
@@ -85,7 +81,7 @@ describe('Inventory', () => {
           .then(() => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: testData.collegeTenant.instance.instanceId,
-              permanentLocationId: testData.collegeTenant.holdings.location.id,
+              permanentLocationId: testData.collegeTenant.location.id,
               sourceId: testData.collegeTenant.holdings.sourceId,
             }).then((holding) => {
               testData.collegeTenant.holdings = holding;
@@ -113,22 +109,20 @@ describe('Inventory', () => {
       cy.withinTenant(Affiliations.University, () => {
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
           .then((servicePoints) => {
-            testData.universityTenant.firstHoldings.location = Locations.getDefaultLocation({
+            const universityFirstLocationData = Locations.getDefaultLocation({
               servicePointId: servicePoints[0].id,
             }).location;
-            testData.universityTenant.secondHoldings.location = Locations.getDefaultLocation({
+            const universitySecondLocationData = Locations.getDefaultLocation({
               servicePointId: servicePoints[0].id,
             }).location;
-            Locations.createViaApi(testData.universityTenant.firstHoldings.location).then(
-              (location) => {
-                testData.universityTenant.firstLocationName = location.name;
-              },
-            );
-            Locations.createViaApi(testData.universityTenant.secondHoldings.location).then(
-              (location) => {
-                testData.universityTenant.secondLocationName = location.name;
-              },
-            );
+            Locations.createViaApi(universityFirstLocationData).then((location) => {
+              testData.universityTenant.location1 = location;
+              testData.universityTenant.firstLocationName = location.name;
+            });
+            Locations.createViaApi(universitySecondLocationData).then((location) => {
+              testData.universityTenant.location2 = location;
+              testData.universityTenant.secondLocationName = location.name;
+            });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
               testData.universityTenant.firstHoldings.sourceId = folioSource.id;
             });
@@ -142,7 +136,7 @@ describe('Inventory', () => {
           .then(() => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: testData.collegeTenant.instance.instanceId,
-              permanentLocationId: testData.universityTenant.firstHoldings.location.id,
+              permanentLocationId: testData.universityTenant.location1.id,
               sourceId: testData.universityTenant.firstHoldings.sourceId,
             }).then((holding) => {
               testData.universityTenant.firstHoldings = holding;
@@ -187,38 +181,37 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       cy.withinTenant(Affiliations.College, () => {
-        cy.deleteItemViaApi(testData.collegeTenant.item.id);
-        cy.deleteHoldingRecordViaApi(testData.collegeTenant.holdings.id);
-        Locations.deleteViaApi(testData.collegeTenant.holdings.location.id);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"id"=="${testData.collegeTenant.instance.instanceId}"`,
+        }).then((instance) => {
+          instance.items.forEach((item) => {
+            cy.deleteItemViaApi(item.id);
+          });
+          instance.holdings.forEach((holding) => {
+            cy.deleteHoldingRecordViaApi(holding.id);
+          });
+        });
+        Locations.deleteViaApi(testData.collegeTenant.location);
       });
-      // InventoryInstance.deleteInstanceViaApi(testData.collegeTenant.instance.instanceId);
-      // InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.universityTenant.item.barcode);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-        testData.collegeTenant.instance.instanceId,
-      );
       cy.withinTenant(Affiliations.University, () => {
-        // cy.deleteItemViaApi(testData.universityTenant.item.id);
-        // cy.deleteHoldingRecordViaApi(testData.universityTenant.firstHoldings.id);
-        // cy.deleteHoldingRecordViaApi(testData.universityTenant.secondHoldings.id);
-        // InventoryInstance.deleteInstanceViaApi(testData.collegeTenant.instance.instanceId);
-        Locations.deleteViaApi(testData.universityTenant.firstHoldings.location.id);
-        Locations.deleteViaApi(testData.universityTenant.firstHoldings.location.id);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"id"=="${testData.collegeTenant.instance.instanceId}"`,
+        }).then((instance) => {
+          instance.items.forEach((item) => {
+            cy.deleteItemViaApi(item.id);
+          });
+          instance.holdings.forEach((holding) => {
+            cy.deleteHoldingRecordViaApi(holding.id);
+          });
+        });
+        Locations.deleteViaApi(testData.universityTenant.location1);
+        Locations.deleteViaApi(testData.universityTenant.location2);
       });
-      // cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-      // InventoryInstance.deleteInstanceViaApi(instance.id);
-      // InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.collegeTenant.item.barcode);
-      // cy.withinTenant(Affiliations.College, () => {
-      //   // Locations.deleteViaApi(testData.collegeTenant.locationId);
-      // });
-      // cy.withinTenant(Affiliations.University, () => {
-      // InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.universityTenant.item.barcode);
-      //   Locations.deleteViaApi(testData.universityTenant.firstLocationId);
-      //   Locations.deleteViaApi(testData.universityTenant.secondLocationId);
-      // });
-      // cy.withinTenant(Affiliations.College, () => {
-      // cy.deleteItemViaApi(testData.collegeTenant.item.id);
-      //   Locations.deleteViaApi(testData.collegeTenant.locationId);
-      // });
+      InventoryInstance.deleteInstanceViaApi(testData.collegeTenant.instance.instanceId);
     });
 
     it(
