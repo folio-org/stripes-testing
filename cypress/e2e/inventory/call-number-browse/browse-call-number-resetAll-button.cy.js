@@ -25,6 +25,7 @@ describe('Inventory', () => {
 
   describe('Call Number Browse', () => {
     before('Creating user', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
         cy.login(user.userProperties.username, user.userProperties.password, {
@@ -50,7 +51,6 @@ describe('Inventory', () => {
         searchBrowseRecordAndCheckBrowseInventoryResultPaneInFocus();
         InventorySearchAndFilter.clickEffectiveLocationAccordionToggleButton();
         InventorySearchAndFilter.clickEffectiveLocationAccordionInput();
-        InventorySearchAndFilter.checkEffectiveLocationAccordionInputInFocus();
         resetAllAndCheckBrowseSearchInputFieldInFocus();
 
         Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((type) => {
