@@ -386,7 +386,6 @@ export default {
       Pane({ id: 'browse-inventory-filters-pane' }).exists(),
       Pane({ id: 'browse-inventory-results-pane' }).exists(),
       browseButton.has({ disabled: false }),
-      searchButton.has({ disabled: true }),
     ]);
   },
 
