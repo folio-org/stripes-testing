@@ -172,7 +172,8 @@ describe('Inventory', () => {
       },
     );
 
-    it(
+    // skipped due to the issue with the https://folio-org.atlassian.net/browse/FAT-18556. New status Obsolete.
+    it.skip(
       'C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)',
       { tags: ['spitfire', 'criticalPath', 'C405529', 'eurekaPhase1'] },
       () => {

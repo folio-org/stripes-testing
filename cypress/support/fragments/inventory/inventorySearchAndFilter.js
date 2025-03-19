@@ -82,8 +82,10 @@ const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-b
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
+const getListHeader = (name) => inventorySearchResultsPane.find(MultiColumnListHeader(name));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
+const browseToggleButton = Button({ id: 'mode-navigation-browse' });
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
@@ -487,7 +489,12 @@ export default {
     cy.do(searchButton.click());
     cy.wait(1000);
   },
-  switchToItem: () => cy.do(itemToggleButton.click()),
+
+  switchToItem: () => {
+    cy.do(itemToggleButton.click());
+    cy.wait(500);
+  },
+
   switchToHoldings() {
     cy.wait(200);
     cy.do(holdingsToggleButton.click());
@@ -531,6 +538,14 @@ export default {
   verifySearchResult: (cellContent, isFound = true) => {
     if (isFound) cy.expect(MultiColumnListCell({ content: cellContent }).exists());
     else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
+  },
+
+  validateSearchTableHeaders() {
+    cy.expect([
+      getListHeader('Call number').exists(),
+      getListHeader('Title').exists(),
+      getListHeader('Number of titles').exists(),
+    ]);
   },
 
   verifySearchResultIncludingValue: (value) => {
@@ -820,6 +835,10 @@ export default {
     cy.wait(ONE_SECOND);
   },
 
+  fillInBrowseSearch(searchValue) {
+    cy.do([browseSearchInputField.fillIn(searchValue)]);
+  },
+
   browseSearch(searchValue) {
     cy.do([browseSearchInputField.fillIn(searchValue), searchButton.click()]);
   },
@@ -834,6 +853,14 @@ export default {
       Button(including('New')).exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
+  },
+
+  verifyActionButtonNotExists() {
+    cy.expect(paneResultsSection.find(actionsButton).absent());
+  },
+
+  verifyActionButtonNotExistsInBrowseMode() {
+    cy.expect(inventorySearchResultsPane.find(actionsButton).absent());
   },
 
   verifyNoExportJsonOption() {
@@ -863,8 +890,11 @@ export default {
   },
 
   verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
-  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
-  verifyResetAllButtonDisabled: (isDisabled) => cy.expect(resetAllBtn.has({ disabled: isDisabled })),
+  verifySearchButtonDisabled: (isDisabled = true) => cy.expect(searchButton.has({ disabled: isDisabled })),
+  verifyResetAllButtonDisabled: (isDisabled = true) => cy.expect(resetAllBtn.has({ disabled: isDisabled })),
+  verifyPreviouseButtonDisabled: (isDisabled = true) => cy.expect(previousButton.has({ disabled: isDisabled })),
+  verifyNextButtonDisabled: (isDisabled = true) => cy.expect(nextButton.has({ disabled: isDisabled })),
+
   verifyBrowseInventorySearchResults({ records = [] } = {}) {
     cy.expect(inventorySearchResultsPane.exists());
 
@@ -942,7 +972,7 @@ export default {
     });
   },
 
-  searchTabIsDefault() {
+  validateSearchTabIsDefault() {
     cy.do(
       searchToggleButton.perform((element) => {
         expect(element.classList[2]).to.include('primary');
@@ -950,8 +980,16 @@ export default {
     );
   },
 
+  validateBrowseToggleIsSelected() {
+    cy.do(
+      browseToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
   verifySearchAndFilterPane() {
-    this.searchTabIsDefault();
+    this.validateSearchTabIsDefault();
     this.instanceTabIsDefault();
     this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
     this.verifySearchFieldIsEmpty();
@@ -1081,7 +1119,7 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('#effectiveLocation').find('input').click();
+    cy.get('#callNumbersEffectiveLocation-multiselect-input').click();
   },
 
   checkEffectiveLocationAccordionInputInFocus() {

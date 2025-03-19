@@ -327,7 +327,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyErrorLabelAfterChanges('Bulk edit query', 2, 2);
+            BulkEditSearchPane.verifyErrorLabel(2);
 
             checkedOutItemIds.forEach((id) => {
               BulkEditSearchPane.verifyErrorByIdentifier(id, reasonForError);

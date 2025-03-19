@@ -107,7 +107,7 @@ describe.skip('bulk-edit', () => {
           expect(res.response.body.errors).to.have.length(5);
         });
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyErrorLabelAfterChanges(itemBarcodesFileName, 5, 5);
+        BulkEditSearchPane.verifyErrorLabel(5);
       },
     );
   });

@@ -285,7 +285,7 @@ describe('Bulk-edit', () => {
             );
             BulkEditActions.downloadErrors();
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${marcInstance.uuid},${errorReason}`,
+              `ERROR,${marcInstance.uuid},${errorReason}`,
             ]);
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

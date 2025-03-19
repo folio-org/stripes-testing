@@ -546,12 +546,12 @@ describe('Bulk-edit', () => {
 
           collegeHoldingIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.College, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.College, 'note type')}`,
             ]);
           });
           universityHoldingIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 

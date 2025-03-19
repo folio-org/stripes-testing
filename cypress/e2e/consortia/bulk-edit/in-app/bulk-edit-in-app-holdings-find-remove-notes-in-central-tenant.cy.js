@@ -17,7 +17,11 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import HoldingsNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/holdings/holdingsNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import { APPLICATION_NAMES, BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  HOLDING_NOTE_TYPES,
+} from '../../../../support/constants';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 
 let user;
@@ -25,31 +29,33 @@ let instanceTypeId;
 let locationId;
 let sourceId;
 let centralSharedHoldingNoteTypeData;
+const folioInstance = {
+  title: `AT_C552505_FolioInstance_${getRandomPostfix()}`,
+};
+const marcInstance = {
+  title: `AT_C552505_MarcInstance_${getRandomPostfix()}`,
+};
 const collegeHoldingIds = [];
 const collegeHoldingHrids = [];
 const universityHoldingIds = [];
 const universityHoldingHrids = [];
-const folioInstance = {
-  title: `C478258 folio instance testBulkEdit_${getRandomPostfix()}`,
+const notes = {
+  administrativeNoteText: 'te;st: [administrative] no*te',
+  sharedNoteText: 'test holdings shared note',
+  collegeLocalNoteText: 'test holdings local note',
 };
-const marcInstance = {
-  title: `C478258 marc instance testBulkEdit_${getRandomPostfix()}`,
+const editedNotes = {
+  administrativeNoteText: '[administrative] no*te',
+  sharedNoteText: ' holdings shared note',
+  collegeLocalNoteText: ' holdings local note',
 };
 const centralSharedHoldingNoteType = {
   payload: {
-    name: `C478258 shared note type ${getRandomPostfix()}`,
+    name: `AT_C552505 Shared NoteType ${getRandomPostfix()}`,
   },
 };
 const collegeHoldingNoteType = {
-  name: `C478258 College NoteType ${getRandomPostfix()}`,
-};
-const notes = {
-  adminUpperCase: 'Test [administrative] note',
-  adminLowerCase: 'test [administrative] note',
-  sharedUpperCase: 'Test item shared note',
-  sharedLowerCase: 'test item shared note',
-  collegeUpperCase: 'Test item college note',
-  collegeLowerCase: 'test item college note',
+  name: `AT_C552505 College NoteType ${getRandomPostfix()}`,
 };
 const collegeHoldingNoteTypeNameWithAffiliation = `${collegeHoldingNoteType.name} (${Affiliations.College})`;
 const instances = [folioInstance, marcInstance];
@@ -74,20 +80,16 @@ describe('Bulk-edit', () => {
         ]).then((userProperties) => {
           user = userProperties;
 
-          cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]);
-          cy.resetTenant();
-          cy.assignAffiliationToUser(Affiliations.University, user.userId);
-          cy.setTenant(Affiliations.University);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            permissions.bulkEditEdit.gui,
-            permissions.uiInventoryViewCreateEditHoldings.gui,
-          ]);
-          cy.resetTenant();
+          [Affiliations.College, Affiliations.University].forEach((affiliation) => {
+            cy.assignAffiliationToUser(affiliation, user.userId);
+            cy.setTenant(affiliation);
+            cy.assignPermissionsToExistingUser(user.userId, [
+              permissions.bulkEditEdit.gui,
+              permissions.uiInventoryViewCreateEditHoldings.gui,
+            ]);
+            cy.resetTenant();
+          });
+
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
             instanceTypeId = instanceTypeData[0].id;
           });
@@ -99,8 +101,8 @@ describe('Bulk-edit', () => {
           });
           // create shared holding note type in Central
           HoldingsNoteTypesConsortiumManager.createViaApi(centralSharedHoldingNoteType)
-            .then((newIHoldingNoteType) => {
-              centralSharedHoldingNoteTypeData = newIHoldingNoteType;
+            .then((newHoldingNoteType) => {
+              centralSharedHoldingNoteTypeData = newHoldingNoteType;
             })
             .then(() => {
               // create shared folio instance
@@ -133,27 +135,17 @@ describe('Bulk-edit', () => {
                     InventoryHoldings.createHoldingRecordViaApi({
                       instanceId: instance.uuid,
                       permanentLocationId: locationId,
-                      administrativeNotes: [notes.adminUpperCase, notes.adminLowerCase],
                       sourceId,
+                      administrativeNotes: [notes.administrativeNoteText],
                       notes: [
                         {
                           holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                          note: notes.sharedUpperCase,
-                          staffOnly: true,
-                        },
-                        {
-                          holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                          note: notes.sharedLowerCase,
+                          note: notes.sharedNoteText,
                           staffOnly: false,
                         },
                         {
                           holdingsNoteTypeId: collegeHoldingNoteType.id,
-                          note: notes.collegeUpperCase,
-                          staffOnly: true,
-                        },
-                        {
-                          holdingsNoteTypeId: collegeHoldingNoteType.id,
-                          note: notes.collegeLowerCase,
+                          note: notes.collegeLocalNoteText,
                           staffOnly: false,
                         },
                       ],
@@ -172,17 +164,12 @@ describe('Bulk-edit', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instance.uuid,
                   permanentLocationId: locationId,
-                  administrativeNotes: [notes.adminUpperCase, notes.adminLowerCase],
                   sourceId,
+                  administrativeNotes: [notes.administrativeNoteText],
                   notes: [
                     {
                       holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                      note: notes.sharedUpperCase,
-                      staffOnly: true,
-                    },
-                    {
-                      holdingsNoteTypeId: centralSharedHoldingNoteTypeData.settingId,
-                      note: notes.sharedLowerCase,
+                      note: notes.sharedNoteText,
                       staffOnly: false,
                     },
                   ],
@@ -242,8 +229,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C478258 Verify "Find & replace" action for Holdings notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C478258'] },
+        'C552505 Verify "Find & remove" action for Holdings notes in Central tenant (consortia) (firebird)',
+        { tags: ['smokeECS', 'firebird', 'C552505'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
@@ -261,8 +248,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyPreviousPaginationButtonDisabled();
-          BulkEditSearchPane.verifyNextPaginationButtonDisabled();
+          BulkEditSearchPane.verifyPaginatorInMatchedRecords(4);
           BulkEditActions.openActions();
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             false,
@@ -272,7 +258,6 @@ describe('Bulk-edit', () => {
           BulkEditSearchPane.changeShowColumnCheckbox(
             centralSharedHoldingNoteType.payload.name,
             collegeHoldingNoteTypeNameWithAffiliation,
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
           );
           BulkEditSearchPane.verifyCheckboxesInActionsDropdownMenuChecked(
             true,
@@ -280,33 +265,37 @@ describe('Bulk-edit', () => {
             collegeHoldingNoteTypeNameWithAffiliation,
           );
 
-          const initialHeaderValues = [
-            {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: `${notes.adminUpperCase};${notes.adminLowerCase}`,
-            },
+          const initialHeaderValueInCollege = [
             {
               header: centralSharedHoldingNoteType.payload.name,
-              value: `${notes.sharedUpperCase} (staff only) | ${notes.sharedLowerCase}`,
+              value: notes.sharedNoteText,
             },
-          ];
-          const collegeInitialHeaderValues = [
             {
               header: collegeHoldingNoteTypeNameWithAffiliation,
-              value: `${notes.collegeUpperCase} (staff only) | ${notes.collegeLowerCase}`,
+              value: notes.collegeLocalNoteText,
+            },
+          ];
+          const initialHeaderValueInUniversity = [
+            {
+              header: centralSharedHoldingNoteType.payload.name,
+              value: notes.sharedNoteText,
+            },
+            {
+              header: collegeHoldingNoteTypeNameWithAffiliation,
+              value: '',
             },
           ];
 
-          holdingHrids.forEach((hrid) => {
-            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
-              hrid,
-              initialHeaderValues,
-            );
-          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
               hrid,
-              collegeInitialHeaderValues,
+              initialHeaderValueInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInResultsAccordion(
+              hrid,
+              initialHeaderValueInUniversity,
             );
           });
 
@@ -326,20 +315,20 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadMatchedResults();
 
-          holdingHrids.forEach((hrid) => {
-            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              matchedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-              hrid,
-              initialHeaderValues,
-            );
-          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               matchedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              collegeInitialHeaderValues,
+              initialHeaderValueInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((hrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+              matchedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              hrid,
+              initialHeaderValueInUniversity,
             );
           });
 
@@ -357,100 +346,100 @@ describe('Bulk-edit', () => {
             collegeHoldingNoteTypeNameWithAffiliation,
           );
           BulkEditActions.clickOptionsSelection();
-          BulkEditActions.noteReplaceWith(
-            BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
-            notes.adminUpperCase,
-            notes.adminLowerCase,
-          );
+          BulkEditActions.noteRemove(HOLDING_NOTE_TYPES.ADMINISTRATIVE_NOTE, 'te;st: ');
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
-          BulkEditActions.noteReplaceWith(
-            centralSharedHoldingNoteType.payload.name,
-            notes.sharedUpperCase,
-            notes.sharedLowerCase,
-            1,
-          );
+          BulkEditActions.noteRemove(centralSharedHoldingNoteType.payload.name, 'test', 1);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(2);
-          BulkEditActions.noteReplaceWith(
-            collegeHoldingNoteTypeNameWithAffiliation,
-            notes.collegeUpperCase,
-            notes.collegeLowerCase,
-            2,
-          );
+          BulkEditActions.noteRemove(collegeHoldingNoteTypeNameWithAffiliation, 'test', 2);
           BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
 
-          const editedHeaderValues = [
+          const editedHeaderValuesInCollege = [
             {
-              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
-              value: `${notes.adminLowerCase};${notes.adminLowerCase}`,
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+              value: editedNotes.administrativeNoteText,
+            },
+            {
+              header: collegeHoldingNoteTypeNameWithAffiliation,
+              value: editedNotes.collegeLocalNoteText,
             },
             {
               header: centralSharedHoldingNoteType.payload.name,
-              value: `${notes.sharedLowerCase} (staff only) | ${notes.sharedLowerCase}`,
+              value: editedNotes.sharedNoteText,
             },
           ];
-          const collegeEditedHeaderValues = [
+          const editedHeaderValuesInUniversity = [
+            {
+              header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+              value: editedNotes.administrativeNoteText,
+            },
+            {
+              header: centralSharedHoldingNoteType.payload.name,
+              value: editedNotes.sharedNoteText,
+            },
             {
               header: collegeHoldingNoteTypeNameWithAffiliation,
-              value: `${notes.collegeLowerCase} (staff only) | ${notes.collegeLowerCase}`,
+              value: '',
             },
           ];
 
-          holdingHrids.forEach((hrid) => {
-            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
-              hrid,
-              editedHeaderValues,
-            );
-          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
               hrid,
-              collegeEditedHeaderValues,
+              editedHeaderValuesInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+              hrid,
+              editedHeaderValuesInUniversity,
             );
           });
 
           BulkEditActions.verifyAreYouSureForm(4);
           BulkEditActions.downloadPreview();
 
-          holdingHrids.forEach((hrid) => {
-            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              previewFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-              hrid,
-              editedHeaderValues,
-            );
-          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               previewFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              collegeEditedHeaderValues,
+              editedHeaderValuesInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((hrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+              previewFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              hrid,
+              editedHeaderValuesInUniversity,
             );
           });
 
           BulkEditActions.commitChanges();
           BulkEditActions.verifySuccessBanner(4);
 
-          holdingHrids.forEach((hrid) => {
-            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
-              hrid,
-              editedHeaderValues,
-            );
-          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
               hrid,
-              collegeEditedHeaderValues,
+              editedHeaderValuesInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((hrid) => {
+            BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+              hrid,
+              editedHeaderValuesInUniversity,
             );
           });
 
           BulkEditSearchPane.verifyErrorLabel(2);
+          BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
+          BulkEditSearchPane.verifyPaginatorInErrorsAccordion(2);
 
           universityHoldingIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
@@ -462,20 +451,20 @@ describe('Bulk-edit', () => {
           BulkEditActions.openActions();
           BulkEditActions.downloadChangedCSV();
 
-          holdingHrids.forEach((hrid) => {
-            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
-              changedRecordsFileName,
-              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
-              hrid,
-              editedHeaderValues,
-            );
-          });
           collegeHoldingHrids.forEach((hrid) => {
             BulkEditFiles.verifyHeaderValueInRowByIdentifier(
               changedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
               hrid,
-              collegeEditedHeaderValues,
+              editedHeaderValuesInCollege,
+            );
+          });
+          universityHoldingHrids.forEach((hrid) => {
+            BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+              changedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+              hrid,
+              editedHeaderValuesInUniversity,
             );
           });
 
@@ -487,8 +476,6 @@ describe('Bulk-edit', () => {
             ]);
           });
 
-          BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 2);
-
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
           collegeHoldingHrids.forEach((hrid) => {
@@ -497,33 +484,18 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.searchHoldingsByHRID(hrid);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
-            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase);
-            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase, 1);
-            HoldingsRecordView.checkNotesByType(
-              0,
-              collegeHoldingNoteType.name,
-              notes.collegeLowerCase,
-              'Yes',
-            );
-            HoldingsRecordView.checkNotesByType(
-              0,
-              collegeHoldingNoteType.name,
-              notes.collegeLowerCase,
-              'No',
-              1,
-            );
+            HoldingsRecordView.checkAdministrativeNote(editedNotes.administrativeNoteText);
             HoldingsRecordView.checkNotesByType(
               1,
               centralSharedHoldingNoteType.payload.name,
-              notes.sharedLowerCase,
-              'Yes',
+              editedNotes.sharedNoteText,
+              'No',
             );
             HoldingsRecordView.checkNotesByType(
-              1,
-              centralSharedHoldingNoteType.payload.name,
-              notes.sharedLowerCase,
+              0,
+              collegeHoldingNoteType.name,
+              editedNotes.collegeLocalNoteText,
               'No',
-              1,
             );
           });
 
@@ -535,20 +507,12 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.searchHoldingsByHRID(hrid);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
-            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase);
-            HoldingsRecordView.checkExactContentInAdministrativeNote(notes.adminLowerCase, 1);
+            HoldingsRecordView.checkAdministrativeNote(editedNotes.administrativeNoteText);
             HoldingsRecordView.checkNotesByType(
               0,
               centralSharedHoldingNoteType.payload.name,
-              notes.sharedLowerCase,
-              'Yes',
-            );
-            HoldingsRecordView.checkNotesByType(
-              0,
-              centralSharedHoldingNoteType.payload.name,
-              notes.sharedLowerCase,
+              editedNotes.sharedNoteText,
               'No',
-              1,
             );
           });
         },
