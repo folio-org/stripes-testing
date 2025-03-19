@@ -58,8 +58,6 @@ const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName);
-const errorsFromCommittingFileName =
-  BulkEditFiles.getErrorsFromCommittingFileName(itemUUIDsFileName);
 
 describe('Bulk-edit', () => {
   describe('In-app approach', () => {
@@ -236,7 +234,6 @@ describe('Bulk-edit', () => {
           matchedRecordsFileName,
           previewFileName,
           changedRecordsFileName,
-          errorsFromCommittingFileName,
         );
       });
 
