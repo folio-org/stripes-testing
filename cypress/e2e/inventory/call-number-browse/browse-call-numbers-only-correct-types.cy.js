@@ -63,7 +63,7 @@ describe('Inventory', () => {
         sudoc: 'A93.27:530',
         other: '7405-53.1',
         local: 'Diss 405 NU 1998',
-        folio: 'Folio45531',
+        udc: 'Folio45531',
       },
       {
         dewey: '574.0405',
@@ -72,7 +72,7 @@ describe('Inventory', () => {
         sudoc: 'A93.40:AGES 55-30',
         other: 'COP.QU.5.1989-2023',
         local: 'Diss 530 NU 2003',
-        folio: 'Folio45532',
+        udc: 'Folio45532',
       },
       {
         dewey: '530.4',
@@ -81,7 +81,7 @@ describe('Inventory', () => {
         sudoc: 'NS1.45:5/3',
         other: 'COP.YZ.4.2005-405',
         local: 'Diss 389 NU 1989',
-        folio: 'Folio45533',
+        udc: 'Folio45533',
       },
       {
         dewey: '614.405',
@@ -90,7 +90,7 @@ describe('Inventory', () => {
         sudoc: 'Y1.4/5:98-530',
         other: 'MG4-B0-55',
         local: 'Diss 550 NU 2003',
-        folio: 'Folio45534',
+        udc: 'Folio45534',
       },
       {
         dewey: '616.1530',
@@ -99,7 +99,7 @@ describe('Inventory', () => {
         sudoc: 'Y4.G45/7:T53/0',
         other: 'RG 4 L5L',
         local: 'Diss 455 NU 2018',
-        folio: 'Folio45535',
+        udc: 'Folio45535',
       },
       {
         dewey: '968.9530',
@@ -108,7 +108,7 @@ describe('Inventory', () => {
         sudoc: 'Y4.G78/2:405-53',
         other: 'RG40-A-5-c',
         local: 'Diss 453 NU 2022',
-        folio: 'Folio45536',
+        udc: 'Folio45536',
       },
       {
         dewey: '966.9405',
@@ -117,7 +117,7 @@ describe('Inventory', () => {
         sudoc: 'Y4.J40/5:530-13',
         other: 'RG4-D-5',
         local: 'Diss 553 NU 2001',
-        folio: 'Folio45537',
+        udc: 'Folio45537',
       },
     ];
 
@@ -182,9 +182,9 @@ describe('Inventory', () => {
             (el) => el.name === CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME,
           ).id;
           const callNumberTypeLocalId = testData.callNumberTypeLocalId;
-          const callNumberTypeFolioId = testData.callNumberTypes.filter(
-            (el) => el.source === 'folio',
-          )[0].id;
+          const callNumberTypeFolioId = testData.callNumberTypes.find(
+            (el) => el.name === CALL_NUMBER_TYPE_NAMES.UDC,
+          ).id;
 
           for (let i = 0; i < callNumbers.length; i++) {
             InventoryInstances.createFolioInstanceViaApi({
@@ -233,7 +233,7 @@ describe('Inventory', () => {
                   holdingsTypeId: instances[0].holdingTypeId,
                   permanentLocationId: instances[0].defaultLocation.id,
                   callNumberTypeId: callNumberTypeFolioId,
-                  callNumber: callNumbers[i].folio,
+                  callNumber: callNumbers[i].udc,
                 },
               ],
             }).then((instanceIds) => {
@@ -293,7 +293,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
-        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[1].local);
+        filterCNOfType(['lc', 'local']).forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         InventorySearchAndFilter.browseSearch(callNumbers[1].local);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].local);
         filterCNOfType(['lc', 'local']).forEach((callNumber) => {
@@ -303,7 +305,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
-        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].nlm);
+        filterCNOfType(['nlm', 'lc']).forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         InventorySearchAndFilter.browseSearch(callNumbers[0].nlm);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].nlm);
         filterCNOfType(['nlm', 'lc']).forEach((callNumber) => {
@@ -313,17 +317,22 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME,
         );
-        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].other);
+
+        filterCNOfType(['other', 'udc']).forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         InventorySearchAndFilter.browseSearch(callNumbers[0].other);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].other);
-        filterCNOfType(['other', 'folio']).forEach((callNumber) => {
+        filterCNOfType(['other', 'udc']).forEach((callNumber) => {
           BrowseCallNumber.checkValuePresentInResults(callNumber);
         });
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
         );
-        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[4].sudoc);
+        filterCNOfType(['sudoc']).forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
         filterCNOfType(['sudoc']).forEach((callNumber) => {

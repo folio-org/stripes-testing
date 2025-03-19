@@ -7,7 +7,7 @@ describe('Eureka', () => {
   describe('Authorization roles', () => {
     describe('Assigning users', () => {
       const testData = {
-        roleName: `Auto Role C627247 ${getRandomPostfix()}`,
+        roleName: `AT_C627247_UserRole_${getRandomPostfix()}`,
       };
 
       const capabSetsToAssign = [
@@ -17,34 +17,35 @@ describe('Eureka', () => {
       const capabsToAssign = [{ type: 'Settings', resource: 'Settings Enabled', action: 'View' }];
 
       before('Create users, roles', () => {
-        cy.getAdminToken();
-        cy.getUserGroups().then(() => {
-          testData.groupAName = Cypress.env('userGroups')[0].group;
-          testData.groupBName = Cypress.env('userGroups')[1].group;
-          cy.createTempUser([]).then((createdUserProperties) => {
-            testData.tempUser = createdUserProperties;
-            cy.assignCapabilitiesToExistingUser(
-              testData.tempUser.userId,
-              capabsToAssign,
-              capabSetsToAssign,
-            );
-            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
-            cy.createTempUser([], testData.groupAName).then((createdUserAProperties) => {
-              testData.userA = createdUserAProperties;
-              cy.createTempUser([], testData.groupBName).then((createdUserBProperties) => {
-                testData.userB = createdUserBProperties;
-                cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
-                  testData.roleId = role.id;
-                  if (Cypress.env('runAsAdmin')) {
-                    cy.updateRolesForUserApi(testData.userA.userId, [testData.roleId]);
-                    cy.updateRolesForUserApi(testData.userB.userId, [testData.roleId]);
-                  } else {
-                    cy.addRolesToNewUserApi(testData.userA.userId, [testData.roleId]);
-                    cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleId]);
-                  }
-                  cy.login(testData.tempUser.username, testData.tempUser.password, {
-                    path: TopMenu.settingsAuthorizationRoles,
-                    waiter: AuthorizationRoles.waitContentLoading,
+        cy.getAdminToken().then(() => {
+          cy.getUserGroups().then(() => {
+            testData.groupAName = Cypress.env('userGroups')[0].group;
+            testData.groupBName = Cypress.env('userGroups')[1].group;
+            cy.createTempUser([]).then((createdUserProperties) => {
+              testData.tempUser = createdUserProperties;
+              cy.assignCapabilitiesToExistingUser(
+                testData.tempUser.userId,
+                capabsToAssign,
+                capabSetsToAssign,
+              );
+              if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
+              cy.createTempUser([], testData.groupAName).then((createdUserAProperties) => {
+                testData.userA = createdUserAProperties;
+                cy.createTempUser([], testData.groupBName).then((createdUserBProperties) => {
+                  testData.userB = createdUserBProperties;
+                  cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+                    testData.roleId = role.id;
+                    if (Cypress.env('runAsAdmin')) {
+                      cy.updateRolesForUserApi(testData.userA.userId, [testData.roleId]);
+                      cy.updateRolesForUserApi(testData.userB.userId, [testData.roleId]);
+                    } else {
+                      cy.addRolesToNewUserApi(testData.userA.userId, [testData.roleId]);
+                      cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleId]);
+                    }
+                    cy.login(testData.tempUser.username, testData.tempUser.password, {
+                      path: TopMenu.settingsAuthorizationRoles,
+                      waiter: AuthorizationRoles.waitContentLoading,
+                    });
                   });
                 });
               });
