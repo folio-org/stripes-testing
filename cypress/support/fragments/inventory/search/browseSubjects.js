@@ -378,4 +378,22 @@ export default {
       });
     });
   },
+
+  verifyAccordionStatusByName(accordionName, status = true) {
+    cy.expect(searchFilterPane.find(Accordion(accordionName)).has({ open: status }));
+  },
+
+  verifySubjectTypeDropdownOptions(types) {
+    cy.expect(searchFilterPane.find(MultiSelect({ id: 'subjectType-multiselect' })).exists());
+    cy.do(MultiSelect({ id: 'subjectType-multiselect' }).open());
+    cy.expect(MultiSelectMenu().exists());
+    cy.wait(1500);
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      types.forEach((option) => {
+        cy.wrap(options).then(
+          (opts) => expect(opts.some((opt) => opt.includes(option))).to.be.true,
+        );
+      });
+    });
+  },
 };

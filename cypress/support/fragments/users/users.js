@@ -135,13 +135,37 @@ export default {
   checkOpenTransactionsModal(user, { ...transactions }) {
     cy.log(transactions);
     cy.expect(openTransactionsModal.find(Heading(including('Open transactions'))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including(`User ${user} has the following open transactions:`))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including(`Open loans: ${transactions.loans}`))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including(`Open requests: ${transactions.requests}`))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including(`Open fees/fines: ${transactions.feesFines}`))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including(`Open blocks: ${transactions.blocks}`))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including(`Open unexpired proxy: ${transactions.unexpiredProxy}`))).exists());
-    cy.expect(openTransactionsModal.find(HTML(including('Please resolve the transactions to proceed to delete the user.'))).exists());
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`User ${user} has the following open transactions:`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal.find(HTML(including(`Open loans: ${transactions.loans}`))).exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`Open requests: ${transactions.requests}`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`Open fees/fines: ${transactions.feesFines}`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal.find(HTML(including(`Open blocks: ${transactions.blocks}`))).exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including(`Open unexpired proxy: ${transactions.unexpiredProxy}`)))
+        .exists(),
+    );
+    cy.expect(
+      openTransactionsModal
+        .find(HTML(including('Please resolve the transactions to proceed to delete the user.')))
+        .exists(),
+    );
     cy.expect(openTransactionsModal.find(Button('OK')).exists());
   },
 
@@ -152,9 +176,21 @@ export default {
   },
 
   checkNoOpenTransactionsModal(user) {
-    cy.expect(noOpenTransactionsModal.find(Heading(including('Check for open transactions/delete user'))).exists());
-    cy.expect(noOpenTransactionsModal.find(HTML(including(`No open transactions for user ${user}.`))).exists());
-    cy.expect(noOpenTransactionsModal.find(HTML(including('Are you sure you want to delete this user?'))).exists());
+    cy.expect(
+      noOpenTransactionsModal
+        .find(Heading(including('Check for open transactions/delete user')))
+        .exists(),
+    );
+    cy.expect(
+      noOpenTransactionsModal
+        .find(HTML(including(`No open transactions for user ${user}.`)))
+        .exists(),
+    );
+    cy.expect(
+      noOpenTransactionsModal
+        .find(HTML(including('Are you sure you want to delete this user?')))
+        .exists(),
+    );
     cy.expect(noOpenTransactionsModal.find(Button('No')).exists());
     cy.expect(noOpenTransactionsModal.find(Button('Yes')).exists());
   },
