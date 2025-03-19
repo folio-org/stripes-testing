@@ -1,14 +1,17 @@
 import { Button, HTML, Section, Select, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const availableProxies = [
-  'guestaccess',
-  'Hosted EZproxy',
-  'perma',
-  'Proxy 1',
-  'Proxy 2',
-  'Proxy 3',
-];
+const API = {
+  getProxyTypesByApi() {
+    return cy
+      .okapiRequest({
+        path: 'eholdings/proxy-types',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.data);
+  },
+};
+
 const proxySelect = Select('Proxy');
 const saveAndCloseButton = Button('Save & close');
 
@@ -25,12 +28,15 @@ export default {
     return cy
       .then(() => proxySelect.value())
       .then((selectedProxy) => {
-        const notSelectedProxy = availableProxies.filter(
-          (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
-        )[0];
-        cy.do(proxySelect.choose(notSelectedProxy));
-        cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
-        return cy.wrap(notSelectedProxy);
+        API.getProxyTypesByApi().then((proxyTypes) => {
+          const availableProxies = proxyTypes.map((proxyType) => proxyType.attributes.name);
+          const notSelectedProxy = availableProxies.filter(
+            (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
+          )[1];
+          cy.do(proxySelect.choose(notSelectedProxy));
+          cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
+          return cy.wrap(notSelectedProxy);
+        });
       });
   },
 

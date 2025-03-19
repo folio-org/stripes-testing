@@ -80,7 +80,7 @@ Cypress.Commands.add(
   (permissions = [], patronGroupName, userType = 'staff', barcode = true) => {
     const userProperties = {
       username: `cypresstestuser${getRandomPostfix()}`,
-      password: 'password',
+      password: 'password_' + uuid(),
     };
 
     if (!Cypress.env('ecsEnabled')) {
