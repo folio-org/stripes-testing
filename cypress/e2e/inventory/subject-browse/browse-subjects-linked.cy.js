@@ -85,7 +85,7 @@ describe('Inventory', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(testData.rowIndex, testData.tag610);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1000);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -126,7 +126,7 @@ describe('Inventory', () => {
         QuickMarcEditor.clickUnlinkIconInTagField(20);
         QuickMarcEditor.confirmUnlinkingField();
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
         InventorySearchAndFilter.switchToBrowseTab();

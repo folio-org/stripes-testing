@@ -99,8 +99,9 @@ describe('MARC', () => {
           });
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
+          MarcAuthority.waitLoading();
           cy.getAdminToken();
           protectedMARCFields.forEach((marcFieldProtectionRule) => {
             MarcFieldProtection.createViaApi({
@@ -115,6 +116,7 @@ describe('MARC', () => {
             });
           });
 
+          MarcAuthorities.selectTitle(testData.authority.title);
           MarcAuthority.edit();
           MarcAuthority.checkInfoButton('655', 11);
           MarcAuthority.checkInfoButton('655', 14);

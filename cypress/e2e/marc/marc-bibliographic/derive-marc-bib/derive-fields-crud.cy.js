@@ -108,7 +108,7 @@ describe('MARC', () => {
           QuickMarcEditor.verifyTagValue(13, tags.tag100);
           QuickMarcEditor.verifyTagValue(14, tags.tag245);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.continueWithSaveAndCheckNewInstanceCreated();
           InventoryInstance.viewSource();
