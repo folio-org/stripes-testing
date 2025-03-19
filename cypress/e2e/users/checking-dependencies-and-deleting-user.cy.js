@@ -30,12 +30,10 @@ describe('Users', () => {
         testData.userWithTransactions = userProperties;
         testData.userWithTransactions.userFullName = `${userProperties.personal.lastName}, ${userProperties.personal.preferredFirstName} ${userProperties.personal.middleName}`;
       });
-      cy.createTempUser([]).then(
-        (userProperties) => {
-          testData.userWithoutTransactions = userProperties;
-          testData.userWithoutTransactions.userFullName = `${userProperties.personal.lastName}, ${userProperties.personal.preferredFirstName} ${userProperties.personal.middleName}`;
-        },
-      );
+      cy.createTempUser([]).then((userProperties) => {
+        testData.userWithoutTransactions = userProperties;
+        testData.userWithoutTransactions.userFullName = `${userProperties.personal.lastName}, ${userProperties.personal.preferredFirstName} ${userProperties.personal.middleName}`;
+      });
 
       // Create owner, service point, fee fine type, and waive reason
       ServicePoints.createViaApi(servicePoint);
@@ -96,8 +94,13 @@ describe('Users', () => {
 
       UsersSearchPane.searchByKeywords(testData.userWithTransactions.username);
       Users.checkTransactions();
-      Users.checkOpenTransactionsModal(testData.userWithTransactions.userFullName,
-        { loans: 0, requests: 0, feesFines: 1, blocks: 0, unexpiredProxy: 0 });
+      Users.checkOpenTransactionsModal(testData.userWithTransactions.userFullName, {
+        loans: 0,
+        requests: 0,
+        feesFines: 1,
+        blocks: 0,
+        unexpiredProxy: 0,
+      });
       Users.closeOpenTransactionsModal();
 
       UsersSearchPane.searchByKeywords(testData.userWithoutTransactions.username);
@@ -112,7 +115,9 @@ describe('Users', () => {
         `User ${testData.userWithoutTransactions.userFullName} deleted successfully.`,
       );
       UsersSearchPane.searchByKeywords(testData.userWithoutTransactions.username);
-      UsersSearchResultsPane.verifyUserIsNotPresentInTheList(testData.userWithoutTransactions.username);
+      UsersSearchResultsPane.verifyUserIsNotPresentInTheList(
+        testData.userWithoutTransactions.username,
+      );
     },
   );
 });

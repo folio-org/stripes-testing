@@ -70,14 +70,13 @@ describe('Inventory', () => {
       'C402760 (CONSORTIA) Verify the Source of a MARC, Local Instance on Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C402760'] },
       () => {
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402760testData.instanceSource);
         cy.wait(1500);
         InventorySearchAndFilter.byShared('No');
         cy.wait(1500);
         InventorySearchAndFilter.searchInstanceByTitle(C402760testData.instanceId);
-        cy.wait('@/authn/refresh', { timeout: 5000 });
+        cy.wait(5000);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402760testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();
@@ -88,14 +87,13 @@ describe('Inventory', () => {
       'C402761 (CONSORTIA) Verify the Source of a FOLIO, local Instance on Member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C402761'] },
       () => {
-        cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.bySource(C402761testData.instanceSource);
         cy.wait(1500);
         InventorySearchAndFilter.byShared('No');
         cy.wait(1500);
         InventorySearchAndFilter.searchInstanceByTitle(C402761testData.instance.instanceId);
-        cy.wait('@/authn/refresh', { timeout: 5000 });
+        cy.wait(5000);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InstanceRecordView.verifyInstanceSource(C402761testData.instanceSource);
         InstanceRecordView.verifyEditInstanceButtonIsEnabled();

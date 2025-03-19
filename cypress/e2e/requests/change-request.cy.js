@@ -159,7 +159,6 @@ describe('Title Level Request', () => {
         testData.requestType,
       );
       NewRequest.verifyRequestInformation(testData.requestType);
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.saveRequestAndClose();
       cy.wait('@createRequest').then((intercept) => {
         testData.requestId = intercept.response.body.id;
