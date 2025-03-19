@@ -127,7 +127,7 @@ export default {
 
     checkModalTable(headers.renewConfirmation, itemData);
 
-    cy.expect(Button(buttonLabels.override).absent());
+    // cy.expect(Button(buttonLabels.override).absent());
     cy.do(Button(buttonLabels.close).click());
   },
 

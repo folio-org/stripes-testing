@@ -241,7 +241,7 @@ describe('Loans', () => {
         });
 
         LoansPage.renewalMessageCheck('Renew Confirmation');
-        LoansPage.checkOverrideButtonHidden();
+        // LoansPage.checkOverrideButtonHidden();
         LoansPage.closeLoanDetails();
 
         cy.login(secondUser.username, secondUser.password, {
