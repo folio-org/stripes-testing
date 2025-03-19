@@ -204,7 +204,7 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -285,7 +285,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickLinkHeadingsButton();
             QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             rowIndexOfLinkedFields.forEach((linkedField) => {
               QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkedField);
@@ -294,6 +294,7 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(linkingTagAndValues[1].value, true, true);
             BrowseContributors.browse(linkingTagAndValues[0].value);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(linkingTagAndValues[1].value);
 

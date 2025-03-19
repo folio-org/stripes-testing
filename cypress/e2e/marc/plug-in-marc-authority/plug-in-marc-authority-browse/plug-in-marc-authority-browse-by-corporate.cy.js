@@ -22,7 +22,7 @@ describe('MARC', () => {
         typeOfHeadingB: 'Conference Name',
         value: 'UXPROD-4394C380552',
         valueFullText:
-          'UXPROD-4394C380552 updated Corporate name 110 Apple & Honey Productions subb subc subd subg subn subv subx suby subz',
+          'UXPROD-4394C380552 updated Corporate name 110 Apple & Honey Productions subb subc subd subg subn--subv--subx--suby--subz',
         validSearchResults: [
           'UXPROD-4394C380552 updated Corporate name 110',
           'UXPROD-4394C380552 updated Corporate name 410',

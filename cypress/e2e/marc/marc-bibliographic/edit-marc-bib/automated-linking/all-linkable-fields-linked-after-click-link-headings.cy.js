@@ -244,7 +244,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             fields.forEach((field) => {
@@ -290,7 +290,7 @@ describe('MARC', () => {
             );
             QuickMarcEditor.checkButtonsEnabled();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');

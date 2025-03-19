@@ -24,7 +24,8 @@ describe('Inventory', () => {
       volume: 'v.1',
       enumeration: 'e.2',
       chronology: 'ch.3',
-      shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
+      callNumberQueryWithSuffix: 'itemFullCallNumbers="PRT 718 suf"',
+      callNumberQuery: 'itemFullCallNumbers="RR 718"',
       effectiveItemCallNumber: 'RR 3718',
     };
 
@@ -123,6 +124,9 @@ describe('Inventory', () => {
               itemA2.holdingCallNumber,
               itemA2.itemCallNumber,
             );
+            BrowseCallNumber.waitForCallNumberToAppear(item.itemCallNumber);
+            BrowseCallNumber.waitForCallNumberToAppear(itemA1.itemCallNumber);
+            BrowseCallNumber.waitForCallNumberToAppear(itemA2.itemCallNumber);
           },
         );
       });
@@ -191,10 +195,11 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
         InventoryActions.actionsIsAbsent();
         InventorySearchAndFilter.showsOnlyEffectiveLocation();
+        BrowseCallNumber.waitForCallNumberToAppear(`${item.callNumber} ${item.callNumberSuffix}`);
         InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
         BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
         InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
+        InventorySearchAndFilter.verifyShelvingOrder(item.callNumberQueryWithSuffix);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
       },
     );
@@ -270,7 +275,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         InventorySearchAndFilter.selectFoundItem(item.itemCallNumber);
-        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumber);
+        InventorySearchAndFilter.verifyShelvingOrder(item.callNumberQuery);
         InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
 
         InventorySearchAndFilter.switchToBrowseTab();
