@@ -22,6 +22,7 @@ import {
   SearchField,
   Section,
   Select,
+  Selection,
   SelectionOption,
   Spinner,
   TextArea,
@@ -116,6 +117,8 @@ const selectReadingRoomAccess = Select({ id: 'reading-room-access-select' });
 const promoteUserModal = Modal('Keycloak user record');
 const confirmButton = Button('Confirm');
 const promoteUserModalText = 'This operation will create new record in Keycloak for';
+const userRolesEmptyText = 'No user roles found';
+const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
 
 const saveButton = Button({ id: 'clickable-save' });
 
@@ -923,7 +926,11 @@ export default {
   },
 
   verifyUserRolesAccordionEmpty() {
-    cy.expect(userRolesAccordion.find(ListItem()).absent());
+    cy.wait(2000);
+    cy.expect([
+      userRolesAccordion.find(ListItem()).absent(),
+      userRolesAccordion.find(HTML(userRolesEmptyText)).exists(),
+    ]);
   },
 
   clickAddUserRolesButton() {
@@ -1024,5 +1031,16 @@ export default {
   clickCancelInPromoteUserModal: () => {
     cy.do(promoteUserModal.find(cancelButton).click());
     cy.expect(promoteUserModal.absent());
+  },
+
+  checkSelectedRolesAffiliation(affiliation) {
+    cy.expect(
+      rolesAffiliationSelect.has({ singleValue: or(affiliation, `${affiliation} (Primary)`) }),
+    );
+  },
+
+  selectRolesAffiliation(affiliation) {
+    cy.do(rolesAffiliationSelect.choose(or(affiliation, `${affiliation} (Primary)`)));
+    this.checkSelectedRolesAffiliation(affiliation);
   },
 };

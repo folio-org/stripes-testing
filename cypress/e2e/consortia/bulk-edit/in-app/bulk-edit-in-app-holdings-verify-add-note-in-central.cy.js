@@ -519,7 +519,7 @@ describe('Bulk-edit', () => {
 
             instances.forEach((instance) => {
               ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-                `${instance.holdingIds[1]},${getReasonForTenantNotAssociatedError(instance.holdingIds[1], Affiliations.University, 'note type')}`,
+                `ERROR,${instance.holdingIds[1]},${getReasonForTenantNotAssociatedError(instance.holdingIds[1], Affiliations.University, 'note type')}`,
               ]);
             });
 
