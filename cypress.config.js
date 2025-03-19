@@ -40,6 +40,8 @@ module.exports = defineConfig({
     diku_password: 'folio-aqa',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
+    // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'bugfest' or 'LoC'
+    ecs_env_name: 'bugfest',
     is_kiwi_release: false,
     downloadTimeout: 2000,
     allure: true,
