@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import { calloutTypes } from '../../../../interactors';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
@@ -76,7 +75,7 @@ describe('Data Import', () => {
           // import a file
           DataImport.checkIsLandingPageOpened();
           DataImport.verifyUploadState();
-          DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
+          DataImport.uploadFile('marcBibFileForC356824.mrc', fileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
@@ -92,7 +91,7 @@ describe('Data Import', () => {
             `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
             calloutTypes.success,
           );
-          cy.reload();
+
           // check instance is updated
           InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
           InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
