@@ -10,6 +10,7 @@ export default {
 
   selectSoftwareVersions() {
     cy.xpath('//a[@href="/settings/about"]').should('be.visible');
+    // break the chain to avoid error on jenkins
     cy.wait(1000);
     cy.xpath('//a[@href="/settings/about"]').click();
     // added waiter to fix failures on jenkins with 'something went wrong'

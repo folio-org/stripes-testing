@@ -51,7 +51,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195624 - eholdings: search by provider, add tags for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
     () => {
       const expanded = 'true';
       // search and open Gale provider; check packages
@@ -73,7 +73,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
     () => {
       const testNote = {
         title: `autotest_TC195626_${getRandomPostfix()}`,
@@ -134,7 +134,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195671 - eholdings: add an agreement ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
     () => {
       // search by package
       EHoldingsSearch.switchToPackages();
