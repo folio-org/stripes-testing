@@ -22,7 +22,7 @@ describe('Requests', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C343043_Instance_${getRandomPostfix()}`,
   };
   let defaultLocation;
   let cancellationReason;

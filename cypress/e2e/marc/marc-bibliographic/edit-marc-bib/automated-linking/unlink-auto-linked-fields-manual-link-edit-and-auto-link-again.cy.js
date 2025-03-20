@@ -205,7 +205,7 @@ describe('MARC', () => {
               'Linked to MARC authority\n\t100\t   \t$a C388568 Robertson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052007C388568 $9',
             );
             InventoryViewSource.contains(
-              'Linked to MARC authority\n\t711\t   \t$a C388568 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $0 http://id.loc.gov/authorities/names/n79084169C388568 $9',
+              'Linked to MARC authority\n\t711\t   \t$a C388568 Roma Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Roma) $0 http://id.loc.gov/authorities/names/n79084169C388568 $9',
             );
             InventoryViewSource.contains(
               'Linked to MARC authority\n\t830\t   \t$a C388568 Robinson eminent scholar lecture series $0 http://id.loc.gov/authorities/names/no2011188426C388568 $9',

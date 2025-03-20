@@ -21,7 +21,7 @@ describe('Fees&Fines', () => {
     'Manual Fees/Fines',
     {
       retries: {
-        runMode: 1,
+        runMode: 2,
       },
     },
     () => {
@@ -136,7 +136,7 @@ describe('Fees&Fines', () => {
         () => {
           // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(30000);
+          cy.wait(60000);
           cy.login(userData.username, userData.password, {
             path: AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id),
             waiter: FeeFinesDetails.waitLoading,

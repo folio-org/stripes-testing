@@ -25,7 +25,7 @@ describe('Duplicate item level request', () => {
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C350560_Instance_${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
   let cancellationReason;
@@ -171,7 +171,6 @@ describe('Duplicate item level request', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
       NewRequest.choosePickupServicePoint(servicePoint2.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         requestId = intercept.response.body.id;
         // Request is created

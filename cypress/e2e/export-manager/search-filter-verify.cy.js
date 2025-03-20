@@ -21,7 +21,7 @@ let userData = {};
 const testData = {};
 const itemData = {
   barcode: getRandomPostfix(),
-  instanceTitle: `Instance ${getRandomPostfix()}`,
+  instanceTitle: `AT_C350727_Instance_${getRandomPostfix()}`,
 };
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const lastWeek = DateTools.getFormattedDate({ date: DateTools.getLastWeekDateObj() }, 'MM/DD/YYYY');

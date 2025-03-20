@@ -7,7 +7,6 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 describe('Staff slips', () => {
   const editStaffClipsHold = { ...EditStaffClips.defaultUiEditStaffClips };
   beforeEach('login', () => {
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.loginAsAdmin({
       path: SettingsMenu.circulationStaffSlipsPath,
       waiter: EditStaffClips.waitLoading,

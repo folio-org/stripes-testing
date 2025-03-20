@@ -7,6 +7,26 @@ export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+export const folioSubjectTypes = [
+  'Personal name',
+  'Corporate name',
+  'Meeting name',
+  'Uniform title',
+  'Named event',
+  'Chronological term',
+  'Topical term',
+  'Geographic name',
+  'Uncontrolled',
+  'Faceted topical terms',
+  'Genre/form',
+  'Occupation',
+  'Function',
+  'Curriculum objective',
+  'Hierarchical place name',
+  'Type of entity unspecified',
+];
+
 export default {
   createViaApi(body) {
     return cy

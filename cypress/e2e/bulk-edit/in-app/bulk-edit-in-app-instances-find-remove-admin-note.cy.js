@@ -22,14 +22,15 @@ const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(instanceU
 const previewFileName = BulkEditFiles.getPreviewFileName(instanceUUIDsFileName);
 const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(instanceUUIDsFileName);
 const folioItem = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_466312_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
 const marcInstance = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_466312_MarcInstance_${getRandomPostfix()}`,
   itemBarcode: `folioItem${getRandomPostfix()}`,
 };
-const adminNote = `Te;st: [administrative] no*te ${getRandomPostfix()}.csv`;
+const adminNote = 'Te;st: [administrative] no*te.csv';
+const editedAdminNote = 'Te;st:  no*te.csv';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -110,18 +111,26 @@ describe('bulk-edit', () => {
         BulkEditActions.openStartBulkEditInstanceForm();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyItemAdminstrativeNoteActions();
-        BulkEditActions.noteRemove('Administrative note', adminNote);
+        BulkEditActions.noteRemove('Administrative note', '[administrative]');
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyInputLabel(
           '2 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Administrative note', '', 0);
-        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow('Administrative note', '', 1);
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Administrative note',
+          editedAdminNote,
+          0,
+        );
+        BulkEditSearchPane.verifyExactChangesUnderColumnsByRow(
+          'Administrative note',
+          editedAdminNote,
+          1,
+        );
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditActions.verifySuccessBanner(2);
@@ -129,8 +138,8 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
 
         [folioItem.instanceName, marcInstance.instanceName].forEach((title) => {
@@ -160,14 +169,14 @@ describe('bulk-edit', () => {
 
         BulkEditLogs.downloadFileWithProposedChanges();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
 
         BulkEditLogs.downloadFileWithUpdatedRecords();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,,${folioItem.instanceName},`,
-          `,,${marcInstance.instanceName},`,
+          `,${editedAdminNote},${folioItem.instanceName},`,
+          `,${editedAdminNote},${marcInstance.instanceName},`,
         ]);
       },
     );

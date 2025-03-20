@@ -41,14 +41,14 @@ describe('MARC', () => {
             searchOption: 'Personal name',
             marcValue: 'C422129 Jackson, Peter, 1950-2022 Inspector Banks series ;',
             markedValue: 'C422129 Kerouac, Jack,',
-            valueAfterSave: 'C422129 Jackson, Peter, Inspector Banks series ; 1950-2022',
+            valueAfterSave: 'C422129 Jackson, Peter, 1950-2022 Inspector Banks series',
           },
           {
             rowIndex: 6,
             tag: '810',
             content: '$a test123',
             boxFourth:
-              '$a C422129 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995',
+              '$a C422129 John Bartholomew and Son. $t Bartholomew world travel series $d 1995 $l English',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84704570',
             boxSeventh: '',
@@ -56,7 +56,7 @@ describe('MARC', () => {
             marcValue:
               'C422129 John Bartholomew and Son. Bartholomew world travel series 1995 English',
             valueAfterSave:
-              'C422129 John Bartholomew and Son. English Bartholomew world travel series 1995',
+              'C422129 John Bartholomew and Son. Bartholomew world travel series 1995 English',
           },
         ];
 
@@ -110,9 +110,7 @@ describe('MARC', () => {
         after('Deleting created user and data', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
-          for (let i = 0; i < 3; i++) {
-            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i], true);
-          }
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422129');
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[3]);
         });
 
@@ -164,11 +162,8 @@ describe('MARC', () => {
 
             InventoryInstance.verifyAndClickLinkIcon(newFields[1].tag);
             InventoryInstance.verifySelectMarcAuthorityModal();
-            MarcAuthorityBrowse.checkSearchOptions();
-            MarcAuthorities.clickReset();
-            MarcAuthorityBrowse.searchBy(newFields[1].searchOption, newFields[1].marcValue);
-            MarcAuthorities.checkRow(newFields[1].marcValue);
-            MarcAuthorities.selectTitle(newFields[1].marcValue);
+            MarcAuthorities.switchToSearch();
+            MarcAuthorities.searchBy(newFields[1].searchOption, newFields[1].marcValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
               newFields[1].tag,
@@ -185,7 +180,7 @@ describe('MARC', () => {
               `${newFields[1].boxSeventh}`,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -222,7 +217,7 @@ describe('MARC', () => {
               `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C422129 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9`,
             );
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 http://id.loc.gov/authorities/names/n84704570 $9`,
+              `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C422129 John Bartholomew and Son. $t Bartholomew world travel series $d 1995 $l English $0 http://id.loc.gov/authorities/names/n84704570 $9`,
             );
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

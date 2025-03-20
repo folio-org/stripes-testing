@@ -7,6 +7,7 @@ import {
   Checkbox,
   Image,
   KeyValue,
+  List,
   ListItem,
   Modal,
   MultiColumnList,
@@ -63,9 +64,16 @@ const profilePictureCard = Image({ alt: 'Profile picture' });
 const lastNameField = KeyValue('Last name');
 const firstNameField = KeyValue('First name');
 const rolesAffiliationSelect = Section({ id: 'rolesSection' }).find(Selection('Affiliation'));
+const closeIconButton = Button({ icon: 'times' });
 
 export default {
   errors,
+
+  clickOnCloseIcon() {
+    cy.wait(1000);
+    cy.do(closeIconButton.click());
+    cy.wait(1000);
+  },
 
   openPatronBlocks() {
     cy.do(patronBlocksSection.clickHeader());
@@ -358,7 +366,7 @@ export default {
   },
 
   submitWrongExpirationDate() {
-    cy.do(Button('Keep editing').click());
+    cy.expect(saveAndCloseButton.has({ disabled: true }));
     cy.expect(
       Pane({ id: 'title-patron-block' })
         .find(TextField({ error: 'Expiration date must be in the future' }))
@@ -661,5 +669,9 @@ export default {
   close() {
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
     cy.expect(rootSection.absent());
+  },
+
+  verifyUserRolesRowsCount(expectedCount) {
+    cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
   },
 };
