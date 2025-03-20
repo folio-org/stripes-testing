@@ -1477,6 +1477,7 @@ export default {
   },
 
   verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.get('#accordion-toggle-button-location').scrollIntoView();
     cy.do(
       Accordion(accordionName)
         .find(Label(fieldLabel))
@@ -1593,6 +1594,7 @@ export default {
   },
 
   verifyPurchaseOrderStatusInfoMessage: (message) => {
+    cy.get('[name="profile.name"]').scrollIntoView();
     cy.do(
       Label('Purchase order status*')
         .find(IconButton({ icon: 'info' }))
@@ -1602,6 +1604,7 @@ export default {
   },
 
   verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {
+    cy.get('#accordion-toggle-button-location').scrollIntoView();
     cy.do(
       electronicResourceDetailsAccordion
         .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
@@ -1611,6 +1614,7 @@ export default {
   },
 
   verifyPhysicalResourceCreateInventoryInfoMessage: (message) => {
+    cy.get('#accordion-toggle-button-location').scrollIntoView();
     cy.do(
       Accordion({ id: 'physical-resource-details' })
         .find(Label('Create inventory').find(IconButton({ icon: 'info' })))

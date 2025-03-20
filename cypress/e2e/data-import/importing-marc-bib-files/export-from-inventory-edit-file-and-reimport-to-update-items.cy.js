@@ -265,6 +265,7 @@ describe('Data Import', () => {
           const itemHrid = initialItemHrId;
 
           ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.saveUUIDs();

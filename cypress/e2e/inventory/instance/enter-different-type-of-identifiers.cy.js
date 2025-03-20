@@ -31,7 +31,7 @@ describe('Inventory', () => {
             instanceId = specialInstanceId;
           });
         });
-      cy.wait(10000);
+
       cy.loginAsAdmin();
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
     });
@@ -42,6 +42,7 @@ describe('Inventory', () => {
     });
 
     const searchAndOpenInstance = (parametr, title) => {
+      InventorySearchAndFilter.waitLoading();
       InventorySearchAndFilter.searchByParameter(parametr, title);
       InventoryInstances.selectInstance();
     };
@@ -65,13 +66,13 @@ describe('Inventory', () => {
           searchAndOpenInstance('Title (all)', instanceTitle);
           InventoryInstance.editInstance();
           InstanceRecordEdit.addIdentifier(element.identifier, resourceIdentifier, element.line);
-          cy.wait(2000);
+          InventorySearchAndFilter.resetAll();
           searchAndOpenInstance(
             'Keyword (title, contributor, identifier, HRID, UUID)',
             resourceIdentifier,
           );
           InventoryInstance.checkInstanceIdentifier(resourceIdentifier, element.line);
-          // cy.wait(2000);
+          InventorySearchAndFilter.resetAll();
         },
       );
     });
