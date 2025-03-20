@@ -73,11 +73,6 @@ describe('Inventory', () => {
       InventorySearchAndFilter.browseSubjectsSearch(query);
     };
 
-    const searchAndOpenInstance = (parametr, title) => {
-      InventorySearchAndFilter.searchByParameter(parametr, title);
-      InventoryInstances.selectInstance();
-    };
-
     before('Creating user and instance with item with call number', () => {
       cy.getAdminToken().then(() => {
         cy.createTempUser([permissions.inventoryAll.gui, permissions.uiCallNumberBrowse.gui]).then(
