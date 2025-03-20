@@ -20,6 +20,7 @@ import InstanceRecordEdit from './instanceRecordEdit';
 import InstanceStates from './instanceStates';
 import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
@@ -349,6 +350,23 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
+  openHoldingItem({ name, barcode, shouldOpen = true }) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
+
+    cy.do(
+      holdingsSection
+        .find(MultiColumnListCell({ columnIndex: 0, content: barcode }))
+        .find(Button(including(barcode)))
+        .click(),
+    );
+
+    ItemRecordView.waitLoading();
+  },
+
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
 
   duplicate: () => {
@@ -558,9 +576,9 @@ export default {
     InventoryNewHoldings.waitLoading();
   },
 
-  addItem() {
-    cy.expect(addItemButton.exists());
-    cy.do(addItemButton.click());
+  clickAddItemByHoldingName({ holdingName } = {}) {
+    const holdingSection = rootSection.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).click());
   },
 
   editMarcBibliographicRecord: () => {
