@@ -1,44 +1,29 @@
-import uuid from 'uuid';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users', () => {
   const testData = {
     user: {},
     testUser: {},
-    editUser: {
-      barcode: 'No value set-',
-      firstName: 'No value set-',
-      username: getTestEntityValue('username'),
-      middleName: getTestEntityValue('middleName'),
-      lastName: getTestEntityValue('lastName'),
-      userType: 'Patron',
-      email: `test@${getRandomPostfix()}folio.org`,
-      preferredFirstName: getTestEntityValue('preferredFirstName'),
-      expirationDate: '11/11/2035',
-      externalSystemId: uuid(),
-      birthDate: '12/12/2000',
-      phone: '1234567890',
-      mobilePhone: '2345678901',
-      preferredContact: 'Text Message',
-      status: 'Inactive',
-    },
+    proxyUser: {},
   };
 
   beforeEach('Preconditions', () => {
     cy.getAdminToken().then(() => {
       cy.wrap(true)
         .then(() => {
-          cy.createTempUser([Permissions.uiUserEdit.gui]).then((userProperties) => {
+          cy.createTempUser([Permissions.uiUserProxies.gui]).then((userProperties) => {
             testData.user = userProperties;
           });
-          cy.createTempUser([], 'staff').then((userProperties) => {
+          cy.createTempUser([]).then((userProperties) => {
             testData.testUser = userProperties;
+          });
+          cy.createTempUser([]).then((userProperties) => {
+            testData.proxyUser = userProperties;
           });
         })
         .then(() => {
@@ -54,15 +39,26 @@ describe('Users', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     Users.deleteViaApi(testData.testUser.userId);
+    Users.deleteViaApi(testData.proxyUser.userId);
   });
 
-  it('C427 Edit user details (volaris)', { tags: ['criticalPath', 'volaris', 'C427'] }, () => {
+  it('C432 Add proxy user to user (volaris)', { tags: ['criticalPath', 'volaris', 'C432'] }, () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
-    UserEdit.editUserDetails(testData.editUser);
+
+    // Open the "Proxy/sponsor" accordion and click "Add" under "Proxies" section
+    UserEdit.openProxySponsorAccordion();
+    UserEdit.clickAddProxy();
+
+    // Perform search and select a user as proxy
+    UserEdit.searchAndSelectProxyUser(testData.proxyUser.username);
+    UserEdit.verifyUserProxyDetails(testData.proxyUser.username);
+
+    // Save and close the user record
     UserEdit.saveAndClose();
-    UsersCard.openExtendedInformationAccordion();
-    UsersCard.openContactInformationAccordion();
-    UsersCard.verifyUserDetails(testData.editUser);
+
+    // Verify the proxy user is added
+    UsersCard.openProxySponsorAccordion();
+    UsersCard.verifyUserProxyDetails(testData.proxyUser.username);
   });
 });

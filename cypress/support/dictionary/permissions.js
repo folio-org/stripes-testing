@@ -403,6 +403,7 @@ export default {
   },
   uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create and edit users' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
+  uiUserProxies: { internal: 'ui-users.proxies.all', gui: 'Users: Can create, edit and remove proxies' },
   uiUsersDelete: {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',

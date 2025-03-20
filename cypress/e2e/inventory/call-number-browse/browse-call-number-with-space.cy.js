@@ -1,7 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
@@ -169,48 +167,6 @@ describe('Inventory', () => {
         BrowseCallNumber.waitForCallNumberToAppear(itemA1.itemCallNumber);
         InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
         BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
-      },
-    );
-
-    // skipped due to the issue with the https://folio-org.atlassian.net/browse/FAT-18556. New status Obsolete.
-    it.skip(
-      'C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)',
-      { tags: ['spitfire', 'criticalPath', 'C405529', 'eurekaPhase1'] },
-      () => {
-        searchAndOpenInstance(testData.parameter, item.instanceName);
-        InventoryInstance.addItem();
-        InventoryInstance.fillItemRequiredFields();
-        InventoryInstance.addItemData(item.callNumber, item.copyNumber, item.callNumberSuffix);
-        InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
-        InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
-        BrowseCallNumber.clickBrowseBtn();
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.selectBrowseCallNumbers();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        InventoryActions.actionsIsAbsent();
-        InventorySearchAndFilter.showsOnlyEffectiveLocation();
-        BrowseCallNumber.waitForCallNumberToAppear(`${item.callNumber} ${item.callNumberSuffix}`);
-        InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
-        BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.verifyShelvingOrder(item.effectiveItemCallNumberWithSuffix);
-        InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
-      },
-    );
-
-    it.skip(
-      // test case obsolete
-      'C347906 Verify that look and list of available facets change according to search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347906', 'eurekaPhase1'] },
-      () => {
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.verifyBrowseOptions();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
-        InventorySearchAndFilter.byEffectiveLocation();
-        InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
-
-        InventorySearchAndFilter.selectBrowseSubjects();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
       },
     );
 
