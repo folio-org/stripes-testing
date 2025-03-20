@@ -167,4 +167,9 @@ export default {
   checkControllingLicenseDisplayed() {
     cy.expect(controllingLicense.exists());
   },
+
+  checkSwitchToLocalKbDisplayed() {
+    // using xpath to be able to run this on tenans with non-english localization
+    cy.xpath("//a[@href='/erm/packages']").should('be.visible');
+  },
 };

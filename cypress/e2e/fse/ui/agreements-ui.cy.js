@@ -25,6 +25,7 @@ describe('fse-agreements - UI for production tenants', () => {
     { tags: ['sanity', 'fse', 'ui', 'agreements'] },
     () => {
       SearchAgreements.verifyAgreementsFilterPane();
+      Agreements.checkSwitchToLocalKbDisplayed();
     },
   );
 });
