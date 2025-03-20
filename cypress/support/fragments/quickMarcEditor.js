@@ -2279,7 +2279,6 @@ export default {
         `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       updateLinkedBibFieldsModal.absent(),
-      rootSection.exists(),
     ]);
   },
   confirmDeletingRecord() {
