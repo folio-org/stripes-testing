@@ -1,11 +1,12 @@
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 const testData = {};
 const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -66,11 +67,12 @@ describe('Users', () => {
       UserEdit.checkActionsForShadowUser();
       UserEdit.openEdit();
       UserEdit.checkAccordionsForShadowUserInEditMode();
+      UserEdit.openServicePointsAccordion();
       UserEdit.addServicePoints(servicePoint.name);
       UserEdit.selectPreferableServicePoint(servicePoint.name);
       UserEdit.saveAndClose();
-      UserEdit.openServicePointsAccordion();
-      UserEdit.checkServicePoints(servicePoint.name);
+      UsersCard.openServicePointsAccordion();
+      UsersCard.checkServicePoints(servicePoint.name);
     },
   );
 });
