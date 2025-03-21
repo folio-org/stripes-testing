@@ -371,6 +371,7 @@ describe('Data Import', () => {
 
         // download .csv file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchByParameter('Subject', uniqueSubject);
         cy.wait(2000);
         InventorySearchAndFilter.saveUUIDs();
