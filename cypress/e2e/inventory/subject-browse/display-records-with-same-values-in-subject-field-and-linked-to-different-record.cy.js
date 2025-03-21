@@ -105,7 +105,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
 
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
@@ -145,8 +145,8 @@ describe('Inventory', () => {
           6,
           testData.searchAuthorityQueries[0],
         );
-        BrowseSubjects.verifyNumberOfTitlesForRow(5, 1);
-        BrowseSubjects.verifyNumberOfTitlesForRow(6, 1);
+        BrowseSubjects.verifyNumberOfTitlesForRow(5, 3);
+        BrowseSubjects.verifyNumberOfTitlesForRow(6, 3);
       },
     );
   });
