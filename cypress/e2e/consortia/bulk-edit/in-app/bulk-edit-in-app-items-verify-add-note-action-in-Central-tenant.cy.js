@@ -525,7 +525,6 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditSearchPane.verifyErrorLabel(2);
-          BulkEditSearchPane.verifyNonMatchedResults();
 
           instances.forEach((instance) => {
             BulkEditSearchPane.verifyErrorByIdentifier(

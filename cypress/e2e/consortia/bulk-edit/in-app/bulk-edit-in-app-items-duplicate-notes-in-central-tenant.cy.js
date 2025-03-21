@@ -206,6 +206,8 @@ describe('Bulk-edit', () => {
               matchedRecordsFileName,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              barcode,
             );
           });
 
@@ -313,6 +315,8 @@ describe('Bulk-edit', () => {
           itemBarcodes.forEach((barcode) => {
             BulkEditFiles.verifyValueInRowByUUID(
               matchedRecordsFileName,
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+              barcode,
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
               barcode,
             );

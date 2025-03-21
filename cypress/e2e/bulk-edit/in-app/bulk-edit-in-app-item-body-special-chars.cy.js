@@ -98,6 +98,7 @@ describe('bulk-edit', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
@@ -130,6 +131,7 @@ describe('bulk-edit', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
