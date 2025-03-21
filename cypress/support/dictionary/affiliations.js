@@ -17,7 +17,7 @@ export default {
 export const tenantNames = {
   sprint: {
     central: 'Central tenant',
-    college: 'Colleague tenant',
+    college: 'College tenant',
     university: 'University tenant',
     professional: 'Professional tenant',
     school: 'School tenant',
