@@ -47,51 +47,55 @@ describe('Inventory', () => {
     };
 
     before(() => {
-      cy.getAdminToken();
-      // make sure there are no duplicate records in the system
-      InventoryInstances.deleteInstanceByTitleViaApi('C468141*');
+      cy.getAdminToken()
+        .then(() => {
+          InventoryInstances.deleteInstanceByTitleViaApi('C468141');
 
-      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-        testData.preconditionUserId = userProperties.userId;
+          cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+            testData.preconditionUserId = userProperties.userId;
 
-        cy.getUserToken(userProperties.username, userProperties.password);
-        DataImport.uploadFileViaApi(
-          marcFile.marc,
-          marcFile.fileName,
-          marcFile.jobProfileToRun,
-        ).then((response) => {
-          response.forEach((record) => {
-            createdRecordIDs.push(record[marcFile.propertyName].id);
+            cy.getUserToken(userProperties.username, userProperties.password);
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
+            });
           });
+        })
+        .then(() => {
           cy.getAdminToken();
           cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties2) => {
             testData.user = userProperties2;
-
-            ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
-              testData.classificationBrowseId,
-            ).then((types) => {
-              testData.originalTypes = types;
-            });
           });
-        });
-        ClassificationBrowse.updateIdentifierTypesAPI(
-          testData.classificationBrowseId,
-          testData.classificationBrowseAlgorithm,
-          [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
-        );
+          ClassificationBrowse.getIdentifierTypesForCertainBrowseAPI(
+            testData.classificationBrowseId,
+          ).then((types) => {
+            testData.originalTypes = types;
+          });
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          ClassificationBrowse.updateIdentifierTypesAPI(
+            testData.classificationBrowseId,
+            testData.classificationBrowseAlgorithm,
+            [CLASSIFICATION_IDENTIFIER_TYPES.DEWEY],
+          );
+        })
+        .then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
+          InventorySearchAndFilter.verifyCallNumberBrowsePane();
+          BrowseClassifications.waitForClassificationNumberToAppear(
+            testData.searchQuery,
+            testData.classificationBrowseId,
+          );
         });
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
-        InventorySearchAndFilter.verifyCallNumberBrowsePane();
-        BrowseClassifications.waitForClassificationNumberToAppear(
-          testData.searchQuery,
-          testData.classificationBrowseId,
-        );
-      });
     });
 
     after(() => {

@@ -121,13 +121,15 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, itemsToEdit);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.switchToItem();
 
         itemsToEdit.forEach((item) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', item);
           ItemRecordView.waitLoading();
           ItemRecordView.verifyPermanentLocation('Online');
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

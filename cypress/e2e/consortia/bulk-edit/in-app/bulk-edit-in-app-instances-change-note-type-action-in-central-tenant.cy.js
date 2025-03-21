@@ -82,12 +82,17 @@ describe('Bulk-edit', () => {
             instanceTypeId = instanceTypes[0].id;
           });
           InstanceNoteTypes.getInstanceNoteTypesViaApi({
-            limit: 2,
-            query: 'name=="Reproduction note" or name=="Action note"',
+            limit: 1,
+            query: 'name=="Action note"',
+          }).then(({ instanceNoteTypes }) => {
+            actionNoteTypeId = instanceNoteTypes[0].id;
+          });
+          InstanceNoteTypes.getInstanceNoteTypesViaApi({
+            limit: 1,
+            query: 'name=="Reproduction note"',
           })
             .then(({ instanceNoteTypes }) => {
-              actionNoteTypeId = instanceNoteTypes[0].id;
-              reproductioNoteTypeId = instanceNoteTypes[1].id;
+              reproductioNoteTypeId = instanceNoteTypes[0].id;
             })
             .then(() => {
               InventoryInstances.createFolioInstanceViaApi({

@@ -482,6 +482,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.wait(500);
     cy.do(keywordInput.fillIn(value));
     cy.wait(500);
     cy.do(searchButton.focus());
@@ -491,6 +492,7 @@ export default {
   },
 
   switchToItem: () => {
+    cy.wait(500);
     cy.do(itemToggleButton.click());
     cy.wait(500);
   },
@@ -1046,6 +1048,7 @@ export default {
     cy.do(Accordion(accordionName).clickHeader());
   },
 
+  // To be removed after the checkboxes turn into a MultiSelect
   verifyFilterOptionCount(accordionName, optionName, expectedCount) {
     cy.expect(
       Accordion(accordionName)
@@ -1053,6 +1056,16 @@ export default {
           HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
         )
         .exists(),
+    );
+  },
+
+  verifyMultiSelectFilterOptionCount(accordionName, optionName, expectedCount) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.expect(
+      multiSelect
+        .find(MultiSelectOption({ innerHTML: including(optionName) }))
+        .has({ totalRecords: expectedCount }),
     );
   },
 
@@ -1074,12 +1087,18 @@ export default {
     cy.expect(nameTypeAccordion.find(MultiSelectOption(including(option))).exists());
   },
 
+  // To be removed after the checkboxes turn into a MultiSelect
   selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
     const checkbox = Accordion(accordionName).find(Checkbox(optionName));
     cy.do(checkbox.click());
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  selectMultiSelectFilterOption(accordionName, optionName) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(optionName)]);
   },
 
   checkSearchButtonEnabled() {
