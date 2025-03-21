@@ -66,7 +66,7 @@ describe('Citation: LDE permissions', () => {
 
   it(
     'C651425 [User journey] LDE - no LDE permissions for the User (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance
       InventoryInstances.searchByTitle(testData.uniqueTitle);
