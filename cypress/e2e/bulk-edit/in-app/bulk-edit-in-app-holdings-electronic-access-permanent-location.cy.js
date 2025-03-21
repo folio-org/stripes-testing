@@ -18,6 +18,7 @@ import {
 } from '../../../support/constants';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
@@ -315,13 +316,16 @@ describe('bulk-edit', () => {
           LOCATION_NAMES.MAIN_LIBRARY_UI,
         );
 
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.switchToHoldings();
+
         [item.holdingsHRID, secondItem.holdingsHRID].forEach((hrid) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.searchByParameter('Holdings HRID', hrid);
           InventorySearchAndFilter.selectSearchResultItem();
           InventorySearchAndFilter.selectViewHoldings();
           InventoryInstance.verifyHoldingsPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+          HoldingsRecordView.close();
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

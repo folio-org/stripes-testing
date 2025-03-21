@@ -17,6 +17,7 @@ describe('fse-lists - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'lists'] },
     () => {
       // check filters displayed
+      Lists.waitForSpinnerToDisappear();
       Lists.filtersWaitLoading();
     },
   );

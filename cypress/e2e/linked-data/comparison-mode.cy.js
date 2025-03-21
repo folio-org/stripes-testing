@@ -93,7 +93,7 @@ describe('Citation: edit existing instance', () => {
 
   it(
     'C692195 [User journey] LDE - Edit existing instance using comparison mode (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

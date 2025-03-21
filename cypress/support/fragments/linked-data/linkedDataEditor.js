@@ -95,4 +95,8 @@ export default {
     cy.xpath(compareSelectedButton).click();
     ComparisonForm.waitLoading();
   },
+
+  selectModuleMainHeading() {
+    cy.xpath("//a[@id='ModuleMainHeading']").should('be.visible').click();
+  },
 };
