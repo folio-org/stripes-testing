@@ -24,13 +24,12 @@ import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools'
 
 const tagsSection = Section({ id: 'packageShowTags' });
 const closeButton = Button({ icon: 'times' });
-const actionsButton = PaneHeader().find(Button('Actions'));
+const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
-const titlesActionsButton = titlesSection.find(Button('Actions'));
 const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
@@ -58,7 +57,7 @@ export default {
   },
 
   filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
-    cy.do([titlesActionsButton.click(), RadioButton(selectionStatus).click()]);
+    cy.do([titlesSection.find(actionsButton).click(), RadioButton(selectionStatus).click()]);
     waitTitlesLoading().then(() => {
       cy.expect(Spinner().absent());
     });
@@ -126,7 +125,7 @@ export default {
   },
 
   removeFromHoldings: () => {
-    cy.do(actionsButton.click());
+    cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(removeFromHoldingsButton.exists());
     cy.do(removeFromHoldingsButton.click());
     cy.expect(confirmationModal.exists());
@@ -138,7 +137,9 @@ export default {
     const newTag = `tag${getRandomPostfix()}`;
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
+      cy.wait(500);
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
+      cy.wait(500);
     });
     return newTag;
   },

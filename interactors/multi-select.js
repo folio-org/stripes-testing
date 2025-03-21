@@ -71,7 +71,9 @@ const select = async (interactor, values) => {
     valuesParam = [values];
   }
   for (const value of valuesParam) {
-    await MultiSelectMenu().find(MultiSelectOption(value)).click();
+    await MultiSelectMenu()
+      .find(MultiSelectOption(including(value)))
+      .click();
   }
 
   await interactor.close();
