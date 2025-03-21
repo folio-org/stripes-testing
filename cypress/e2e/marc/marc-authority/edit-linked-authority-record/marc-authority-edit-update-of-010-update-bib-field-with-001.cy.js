@@ -65,6 +65,8 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Erbil, H. Yıldırım');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
@@ -82,43 +84,48 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySearchOptions();
-          InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag100,
-            testData.authority100FieldValue,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
-          QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        })
+          .then(() => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag100,
+              testData.authority100FieldValue,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
+            QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.inventoryAll.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            ]).then((createdUserProperties) => {
+              testData.userProperties = createdUserProperties;
 
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          ]).then((createdUserProperties) => {
-            testData.userProperties = createdUserProperties;
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
-        });
       });
 
       after('Delete test data', () => {

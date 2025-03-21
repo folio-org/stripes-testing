@@ -39,9 +39,9 @@ const testData = {
     'series == "Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, Inspector Banks series ; 1950-2022',
+    'Robinson, Peter, 1950-2022 Inspector Banks series',
     'Robinson & Associates, Inc.',
-    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers Robinson College, Cambridge)',
+    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers (1988 : Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',
   ],
   searchResults: [
@@ -94,27 +94,9 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="Sleeping in the ground"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+        InventoryInstances.deleteInstanceByTitleViaApi('Sleeping in the ground');
         testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -141,7 +123,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySeriesStatement(0, including(testData.seriesStatement[i]));
         InventoryInstances.resetAllFilters();
