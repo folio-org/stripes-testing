@@ -25,6 +25,7 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Approvals from '../../../support/fragments/settings/invoices/approvals';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -231,10 +232,10 @@ describe('Finance: Transactions', () => {
                               workflowStatus: ORDER_STATUSES.OPEN,
                             });
                             cy.wait(10000);
-                            cy.loginAsAdmin({
-                              path: TopMenu.ordersPath,
-                              waiter: Orders.waitLoading,
-                            });
+                            cy.loginAsAdmin();
+                            TopMenuNavigation.openAppFromDropdown('Orders');
+                            Orders.selectOrdersPane();
+
                             Orders.searchByParameter('PO number', secondOrderNumber);
                             Orders.selectFromResultsList(secondOrderNumber);
                             Orders.newInvoiceFromOrder();
