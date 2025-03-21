@@ -57,6 +57,7 @@ Cypress.Commands.add('getEdgePatron', () => {
     )}?apikey=${Cypress.env(
       'EDGE_API_KEY',
     )}&includeLoans=true&includeCharges=true&includeHolds=true`,
+    failOnStatusCode: false,
     headers: {
       'user-agent': 'FSE_AQA_Suite',
     },

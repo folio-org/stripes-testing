@@ -50,8 +50,8 @@ describe('MARC', () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
           MarcAuthorityBrowse.searchBy('Uniform title', 'Cartoons & Comics');
-          MarcAuthorities.checkCellValueIsExists(5, 2, 'Cartoons & Comics');
-          MarcAuthorities.checkHeadingReferenceColumnValueIsBold(5);
+          MarcAuthorities.checkCellValueIsExists(0, 2, 'Cartoons & Comics');
+          MarcAuthorities.checkHeadingReferenceColumnValueIsBold(0);
         },
       );
     });

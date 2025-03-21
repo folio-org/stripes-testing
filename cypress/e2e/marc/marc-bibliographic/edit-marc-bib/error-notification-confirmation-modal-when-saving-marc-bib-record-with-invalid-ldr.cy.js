@@ -14,7 +14,7 @@ const testData = {
   fileName: `testMarcFileC375205.${getRandomPostfix()}.mrc`,
   jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
   propertyName: 'instance',
-  instanceTitle: 'The Journal of ecclesiastical history.',
+  instanceTitle: 'C375205 The Journal of ecclesiastical history.',
   searchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
   error: 'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
 };
@@ -25,13 +25,13 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       before('Create test data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C375205');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-
-          cy.getAdminToken();
           DataImport.uploadFileViaApi(
             testData.marc,
             testData.fileName,
@@ -70,14 +70,12 @@ describe('MARC', () => {
           QuickMarcEditor.fillInElvlBoxInLDRField('');
           QuickMarcEditor.deleteFieldByTagAndCheck('222');
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkDeleteModalClosed();
-          QuickMarcEditor.checkContent('$a The Journal of ecclesiastical history', 13);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          QuickMarcEditor.checkContent('$a  C375205 The Journal of ecclesiastical history', 13);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         },

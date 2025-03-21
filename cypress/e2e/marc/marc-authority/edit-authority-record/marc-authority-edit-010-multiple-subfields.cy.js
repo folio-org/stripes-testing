@@ -14,11 +14,11 @@ describe('MARC', () => {
       let createdAuthorityID;
       const testData = {
         authority: {
-          searchInput: 'Robinson, Peter',
+          searchInput: 'C376592 Robinson, Peter',
           searchOption: 'Keyword',
         },
         field010: { tag: '010', subfield1: '$a n90635366', subfield2: '$a n90635377' },
-        errorMultiple010Subfields: '010 can only have one $a.',
+        errorMultiple010Subfields: "Subfield 'a' is non-repeatable",
       };
       const authorityPostfix = '?authRefType=Authorized&heading';
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
@@ -28,6 +28,8 @@ describe('MARC', () => {
       };
 
       before('Upload files', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376592');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
@@ -79,10 +81,15 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(5, testData.errorMultiple010Subfields);
+
           MarcAuthority.changeField(testData.field010.tag, testData.field010.subfield1);
           QuickMarcEditor.checkContent(testData.field010.subfield1, 5);
           QuickMarcEditor.checkButtonsEnabled();
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
+
+          cy.wait(3000);
           MarcAuthority.changeField(
             testData.field010.tag,
             `${testData.field010.subfield1} ${testData.field010.subfield2}`,

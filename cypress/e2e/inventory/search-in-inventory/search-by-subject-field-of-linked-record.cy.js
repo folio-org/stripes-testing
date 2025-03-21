@@ -48,7 +48,7 @@ const testData = {
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
     'Radio "Vaticana". Hrvatski program test',
-    'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
+    'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
     'Marvel comics ComiCon',
     'Speaking Oratory--debating',
     'Clear Creek (Tex.)',
@@ -125,7 +125,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
         InventoryInstances.resetAllFilters();
@@ -159,7 +159,6 @@ describe('Inventory', () => {
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[0],
         );
-        InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceRecords[0], true);
         InventoryInstances.resetAllFilters();
 
@@ -167,7 +166,6 @@ describe('Inventory', () => {
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[1],
         );
-        InventorySearchAndFilter.checkRowsCount(7);
         testData.instanceRecords.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
         });

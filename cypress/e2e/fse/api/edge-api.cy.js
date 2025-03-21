@@ -65,7 +65,8 @@ describe('fse-edge', () => {
     () => {
       cy.allure().logCommandSteps(false);
       cy.getEdgePatron().then((response) => {
-        cy.expect(response.status).to.eq(200);
+        // check either 200 or 404 since not always there is a patron for default user
+        cy.expect(response.status).to.be.oneOf([200, 404]);
       });
     },
   );

@@ -31,13 +31,14 @@ describe('MARC', () => {
       };
 
       before('Creating data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C375176');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.getAdminToken();
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -74,12 +75,15 @@ describe('MARC', () => {
           QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '');
           QuickMarcEditor.deleteTag(13);
           QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
+          cy.pause();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.fillEmptyTextFieldOfField(0, 'records[0].content.ELvl', '\\');
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkErrorMessage(10, testData.errorMessage);
           QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
           QuickMarcEditor.clickRestoreDeletedField();
