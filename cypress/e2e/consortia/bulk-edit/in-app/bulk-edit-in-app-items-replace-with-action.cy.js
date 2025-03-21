@@ -427,20 +427,21 @@ describe('Bulk-edit', () => {
             });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.switchToItem();
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', barcode);
               ItemRecordView.waitLoading();
               ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.MISSING);
+              ItemRecordView.closeDetailView();
+              InventorySearchAndFilter.resetAll();
             });
             itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', barcode);
               ItemRecordView.waitLoading();
               ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
+              ItemRecordView.closeDetailView();
+              InventorySearchAndFilter.resetAll();
             });
           });
         },

@@ -88,9 +88,10 @@ describe('bulk-edit', () => {
           cy.wait(1000);
           BulkEditLogs.verifyDirection('Ended');
           cy.reload();
-          cy.wait(1000);
+          cy.wait(5000);
           BulkEditLogs.verifyDirection('Ended');
           BulkEditLogs.clickLogHeader('# of records');
+          cy.wait(1000);
           BulkEditLogs.verifyDirection('# of records', 'ascending');
           cy.reload();
           BulkEditLogs.verifyDirection('# of records', 'ascending');
