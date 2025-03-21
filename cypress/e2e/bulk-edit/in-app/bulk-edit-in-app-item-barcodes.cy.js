@@ -120,6 +120,7 @@ describe('bulk-edit', () => {
           ItemRecordView.closeDetailView();
           InventoryInstance.openHoldings(['']);
           InventoryInstance.verifyLoan('Selected');
+          InventorySearchAndFilter.resetAll();
         });
       },
     );
@@ -149,6 +150,7 @@ describe('bulk-edit', () => {
           ItemRecordView.closeDetailView();
           InventoryInstance.openHoldings(['']);
           InventoryInstance.verifyLoan('Selected');
+          InventorySearchAndFilter.resetAll();
         });
       },
     );
@@ -179,6 +181,7 @@ describe('bulk-edit', () => {
           InventorySearchAndFilter.selectSearchResultItem();
           InventoryInstance.openHoldings(['']);
           InventoryInstance.verifyLoanInItemPage(item.itemBarcode, '-');
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

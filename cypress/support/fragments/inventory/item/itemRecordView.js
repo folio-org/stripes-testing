@@ -14,6 +14,7 @@ import {
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import dateTools from '../../../utils/dateTools';
 import ConfirmDeleteItemModal from '../modals/confirmDeleteItemModal';
+import UpdateOwnershipModal from '../modals/updateOwnershipModal';
 import ItemRecordEdit from './itemRecordEdit';
 
 const actionsButton = Button('Actions');
@@ -64,6 +65,9 @@ const findRowAndClickLink = (enumerationValue) => {
     });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
+const clickUpdateOwnership = () => {
+  cy.do([actionsButton.click(), Button('Update ownership').click()]);
+};
 
 const itemStatuses = {
   onOrder: ITEM_STATUS_NAMES.ON_ORDER,
@@ -76,6 +80,10 @@ const itemStatuses = {
   checkedOut: ITEM_STATUS_NAMES.CHECKED_OUT,
   declaredLost: ITEM_STATUS_NAMES.DECLARED_LOST,
   awaitingDelivery: ITEM_STATUS_NAMES.AWAITING_DELIVERY,
+};
+
+export const actionsMenuOptions = {
+  updateOwnership: 'Update ownership',
 };
 
 export default {
@@ -91,6 +99,7 @@ export default {
   verifyItemStatusInPane,
   getAssignedHRID,
   findRowAndClickLink,
+  clickUpdateOwnership,
 
   suppressedAsDiscoveryIsAbsent() {
     cy.wait(1000);
@@ -149,6 +158,13 @@ export default {
         .find(Link({ href: including('/users/view') }))
         .click(),
     );
+  },
+
+  updateOwnership: (tenant, location) => {
+    clickUpdateOwnership();
+    UpdateOwnershipModal.validateUpdateOwnershipModalView(tenant);
+    UpdateOwnershipModal.validateAbilityToCreateNewHoldings(tenant);
+    UpdateOwnershipModal.updateHoldings(tenant, location);
   },
 
   verifyEffectiveLocationForItemInDetails: (location) => {
@@ -526,5 +542,18 @@ export default {
       administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).exists(),
       administrativeDataAccordion.find(HTML(including(`Source: ${userName}`))).exists(),
     ]);
+  },
+
+  validateOptionInActionsMenu(options) {
+    cy.do(actionsButton.click());
+    options.forEach(({ optionName, shouldExist }) => {
+      if (shouldExist) {
+        cy.expect(Button(optionName).exists());
+      } else {
+        cy.expect(Button(optionName).absent());
+      }
+    });
+    cy.do(actionsButton.click());
+    cy.wait(1500);
   },
 };

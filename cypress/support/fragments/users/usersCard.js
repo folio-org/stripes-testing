@@ -7,6 +7,7 @@ import {
   Checkbox,
   Image,
   KeyValue,
+  List,
   ListItem,
   Modal,
   MultiColumnList,
@@ -14,14 +15,15 @@ import {
   MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
+  or,
   Pane,
+  ProxyUser,
   Section,
   Selection,
   SelectionList,
   Spinner,
   TextArea,
-  TextField,
-  or,
+  TextField
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -31,11 +33,15 @@ const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const userInformationSection = Accordion({ id: 'userInformationSection' });
+const contactInfoSection = Accordion({ id: 'contactInfoSection' });
+const extendedInfoSection = Accordion({ id: 'extendedInfoSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const affiliationsSection = Section({ id: 'affiliationsSection' });
 const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const requestsAccordion = Accordion({ id: 'requestsSection' });
+const servicePointsAccordion = Accordion({ id: 'servicePointsSection' });
+const proxySponsorAccordion = Accordion({ id: 'proxySection' });
 const readingRoomAccessAccordion = Accordion({ id: 'readingRoomAccessSection' });
 const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
 const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
@@ -668,5 +674,69 @@ export default {
   close() {
     cy.do(rootSection.find(Button({ icon: 'times' })).click());
     cy.expect(rootSection.absent());
+  },
+
+  verifyUserRolesRowsCount(expectedCount) {
+    cy.expect(userRolesAccordion.find(List()).has({ count: expectedCount }));
+  },
+
+  checkServicePoints(...points) {
+    points.forEach((point) => {
+      cy.expect(servicePointsAccordion.find(HTML(including(point))).exists());
+    });
+  },
+
+  openServicePointsAccordion() {
+    cy.do(servicePointsAccordion.clickHeader());
+    cy.wait(1000);
+  },
+
+  openContactInformationAccordion() {
+    cy.do(contactInfoSection.clickHeader());
+    cy.wait(1000);
+  },
+
+  openExtendedInformationAccordion() {
+    cy.do(extendedInfoSection.clickHeader());
+    cy.wait(1000);
+  },
+
+  openProxySponsorAccordion() {
+    cy.do(proxySponsorAccordion.clickHeader());
+    cy.wait(1000);
+  },
+
+  verifyUserProxyDetails(username) {
+    const proxyUser = ProxyUser(including(username));
+    cy.expect([
+      proxyUser.exists(),
+      proxyUser.find(KeyValue('Relationship Status')).has({ value: 'Active' }),
+      proxyUser.find(KeyValue('Proxy can request for sponsor')).has({ value: 'Yes' }),
+      proxyUser.find(KeyValue('Notifications sent to')).has({ value: 'Proxy' }),
+      proxyUser.find(KeyValue('Expiration date')).has({ value: 'No value set-' }),
+    ]);
+  },
+
+  checkKeyValue(label, value) {
+    cy.expect(KeyValue(label, { value }).exists());
+  },
+
+  verifyUserDetails(user) {
+    // Limitation with permissions
+    // this.checkKeyValue('Username', user.username);
+    // this.checkKeyValue('Email', user.email);
+    this.checkKeyValue('First name', user.firstName);
+    this.checkKeyValue('Barcode', user.barcode);
+    this.checkKeyValue('Middle name', user.middleName);
+    this.checkKeyValue('Last name', user.lastName);
+    this.checkKeyValue('User type', user.userType.toLowerCase());
+    this.checkKeyValue('Preferred first name', user.preferredFirstName);
+    this.checkKeyValue('Expiration date', user.expirationDate);
+    this.checkKeyValue('External system ID', user.externalSystemId);
+    this.checkKeyValue('Birth date', user.birthDate);
+    this.checkKeyValue('Phone', user.phone);
+    this.checkKeyValue('Mobile phone', user.mobilePhone);
+    this.checkKeyValue('Preferred contact', user.preferredContact);
+    this.checkKeyValue('Status', user.status);
   },
 };

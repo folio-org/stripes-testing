@@ -302,7 +302,7 @@ describe('Bulk-edit', () => {
           );
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
           BulkEditSearchPane.verifyPaneTitleFileName(holdingUUIDsFileName);
-          BulkEditSearchPane.verifyPaneRecordsCount('2 holding');
+          BulkEditSearchPane.verifyPaneRecordsCount('2 holdings');
           BulkEditSearchPane.verifyFileNameHeadLine(holdingUUIDsFileName);
 
           instances.forEach((instance) => {

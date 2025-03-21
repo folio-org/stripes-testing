@@ -681,17 +681,6 @@ export default {
     });
   },
 
-  verifyReasonForErrorByIdentifier(identifier, errorText) {
-    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
-      cy.expect(
-        errorsAccordion
-          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ column: 'Reason for error', content: errorText }))
-          .exists(),
-      );
-    });
-  },
-
   verifyError(identifier, reasonMessage, status = 'Error') {
     cy.expect([
       errorsAccordion
@@ -748,37 +737,6 @@ export default {
     cy.expect(
       errorsAccordion
         .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
-        .exists(),
-    );
-  },
-
-  verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
-    cy.expect(
-      errorsAccordion
-        .find(
-          HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
-            } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
-          ),
-        )
-        .exists(),
-    );
-  },
-
-  verifyErrorLabelInErrorAccordion(
-    fileName,
-    numberOfEntries,
-    numberOfRecordsChanged,
-    numberOfErrors,
-  ) {
-    cy.expect(
-      Accordion('Errors')
-        .find(
-          HTML(
-            `${fileName}: ${numberOfEntries} entries * ${numberOfRecordsChanged} records changed * ${numberOfErrors} errors`,
-          ),
-        )
         .exists(),
     );
   },

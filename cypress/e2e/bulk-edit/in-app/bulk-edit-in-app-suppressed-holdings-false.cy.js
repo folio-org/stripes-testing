@@ -93,14 +93,16 @@ describe('bulk-edit', () => {
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkMarkAsSuppressedFromDiscoveryAbsent();
+        HoldingsRecordView.close();
+        InventorySearchAndFilter.resetAll();
 
-        TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.suppressedAsDiscoveryIsPresent();
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.resetAll();
 
-        TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.secondBarcode);
         ItemRecordView.waitLoading();

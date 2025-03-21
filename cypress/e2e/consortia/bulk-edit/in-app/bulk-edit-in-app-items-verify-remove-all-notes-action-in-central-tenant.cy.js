@@ -502,7 +502,7 @@ describe('Bulk-edit', () => {
 
           universityItemIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 
