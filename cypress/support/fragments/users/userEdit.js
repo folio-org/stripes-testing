@@ -35,7 +35,6 @@ import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
-
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -387,9 +386,7 @@ export default {
   },
 
   addServicePoints(...points) {
-    cy.do([
-      Button({ id: 'add-service-point-btn' }).click(),
-    ]);
+    cy.do([Button({ id: 'add-service-point-btn' }).click()]);
 
     points.forEach((point) => {
       cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
