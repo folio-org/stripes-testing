@@ -48,10 +48,12 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000) => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = true) => {
+  const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
     path: `capabilities?limit=${limit}`,
+    query,
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     cy.wrap(body.capabilities).as('capabs');
@@ -243,18 +245,24 @@ Cypress.Commands.add('getCapabilitySetsForUserApi', (userId, ignoreErrors = fals
   });
 });
 
-Cypress.Commands.add('getCapabilityIdViaApi', ({ type, resource, action }) => {
-  cy.okapiRequest({
-    path: 'capabilities',
-    searchParams: {
-      query: `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()}`,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    cy.wrap(body.capabilities[0].id).as('capabId');
-  });
-  return cy.get('@capabId');
-});
+Cypress.Commands.add(
+  'getCapabilityIdViaApi',
+  ({ type, resource, action }, ignoreDummyCapabs = true) => {
+    const query = ignoreDummyCapabs
+      ? `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()} and dummyCapability==false`
+      : `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()}`;
+    cy.okapiRequest({
+      path: 'capabilities',
+      searchParams: {
+        query,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      cy.wrap(body.capabilities[0].id).as('capabId');
+    });
+    return cy.get('@capabId');
+  },
+);
 
 Cypress.Commands.add('getCapabilitySetIdViaApi', ({ type, resource, action }) => {
   cy.okapiRequest({

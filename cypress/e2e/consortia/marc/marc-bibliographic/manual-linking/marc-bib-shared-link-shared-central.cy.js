@@ -132,6 +132,8 @@ describe('MARC', () => {
             linkingTagAndValues.seventhBox,
           );
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 

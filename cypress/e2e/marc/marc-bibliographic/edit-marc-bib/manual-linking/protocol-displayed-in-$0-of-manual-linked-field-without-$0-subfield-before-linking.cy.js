@@ -37,7 +37,7 @@ describe('MARC', () => {
             '\\',
             '$a C436826 Whiteread, Rachel, $d 1963-',
             '$e artist.',
-            '$0 http://id.loc.gov/authorities/names/nr94042914',
+            '$0 http://id.loc.gov/authorities/names/nr94436826',
             '',
           ],
           [12, '240', '1', '0', '$a Works. $k Selections', '', '$0 2018019878', ''],
@@ -236,13 +236,13 @@ describe('MARC', () => {
               QuickMarcEditor.verifyTagFieldAfterLinking(...field);
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
 
             InventoryInstance.viewSource();
             InventoryViewSource.contains(
-              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436826 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94042914 $9`,
+              `${testData.marcAuthIcon}\n\t100\t1  \t$a C436826 Whiteread, Rachel, $d 1963- $e artist. $0 http://id.loc.gov/authorities/names/nr94436826 $9`,
             );
             InventoryViewSource.contains(
               `${testData.marcAuthIcon}\n\t240\t1 0\t$a Works. $k Selections $0 2018019878 $9`,
