@@ -587,7 +587,11 @@ export default {
 
   chooseTypeOfHeading: (headingTypes) => {
     const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
-    cy.do(headingTypeAccordion.open());
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
     const multiSelect = headingTypeAccordion.find(MultiSelect());
     cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(headingTypesArray)]);
   },

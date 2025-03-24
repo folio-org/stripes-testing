@@ -1,13 +1,7 @@
-import {
-  DEFAULT_JOB_PROFILE_NAMES,
-  INSTANCE_SOURCE_NAMES,
-  JOB_STATUS_NAMES,
-} from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -86,63 +80,45 @@ describe('Inventory', () => {
               Permissions.uiInventoryViewInstances.gui,
             ]);
 
-            cy.loginAsAdmin().then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              cy.visit(TopMenu.dataImportPath);
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileNameImported);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles[0].jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImportedForConsortia(marcFiles[0].fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles[0].fileNameImported);
-              for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdInstanceIds.shared.push(link.split('/')[5]);
-                });
-              }
-
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              DataImport.waitLoading();
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFiles[1].marc, marcFiles[1].fileNameImported);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles[1].jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImportedForConsortia(marcFiles[1].fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles[1].fileNameImported);
-              for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdInstanceIds.college.push(link.split('/')[5]);
-                });
-              }
-
-              ConsortiumManager.switchActiveAffiliation(
-                tenantNames.college,
-                tenantNames.university,
-              );
-              DataImport.waitLoading();
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFiles[2].marc, marcFiles[2].fileNameImported);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles[2].jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImportedForConsortia(marcFiles[2].fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles[2].fileNameImported);
-              for (let i = 0; i < marcFiles[2].numberOftitles; i++) {
-                Logs.getCreatedItemsID(i).then((link) => {
-                  createdInstanceIds.university.push(link.split('/')[5]);
-                });
-              }
+            cy.resetTenant();
+            DataImport.uploadFileViaApi(
+              marcFiles[0].marc,
+              marcFiles[0].fileNameImported,
+              marcFiles[0].jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdInstanceIds.shared.push(record.instance.id);
+              });
             });
 
             cy.setTenant(Affiliations.College);
+            DataImport.uploadFileViaApi(
+              marcFiles[1].marc,
+              marcFiles[1].fileNameImported,
+              marcFiles[1].jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdInstanceIds.college.push(record.instance.id);
+              });
+            });
+
+            cy.setTenant(Affiliations.University);
+            DataImport.uploadFileViaApi(
+              marcFiles[2].marc,
+              marcFiles[2].fileNameImported,
+              marcFiles[2].jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdInstanceIds.university.push(record.instance.id);
+              });
+            });
+
+            cy.setTenant(Affiliations.College);
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                testData.collegeHoldingsSourceId = holdingSources[0].id;
+              },
+            );
             const collegeLocationData = Locations.getDefaultLocation({
               servicePointId: ServicePoints.getDefaultServicePoint().id,
             }).location;
@@ -159,6 +135,11 @@ describe('Inventory', () => {
             });
 
             cy.setTenant(Affiliations.University);
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                testData.universityHoldingsSourceId = holdingSources[0].id;
+              },
+            );
             const universityLocationData = Locations.getDefaultLocation({
               servicePointId: ServicePoints.getDefaultServicePoint().id,
             }).location;
@@ -179,16 +160,19 @@ describe('Inventory', () => {
               let targetLocation;
               let targetMaterialTypeId;
               let targetLoanTypeId;
+              let targetHoldingsSourceId;
               if (currentInstanceData.title.includes('M1')) {
                 cy.setTenant(Affiliations.College);
                 targetLocation = testData.collegeLocation;
                 targetMaterialTypeId = testData.collegeMaterialTypeId;
                 targetLoanTypeId = testData.collegeLoanTypeId;
+                targetHoldingsSourceId = testData.collegeHoldingsSourceId;
               } else {
                 cy.setTenant(Affiliations.University);
                 targetLocation = testData.universityLocation;
                 targetMaterialTypeId = testData.universityMaterialTypeId;
                 targetLoanTypeId = testData.universityLoanTypeId;
+                targetHoldingsSourceId = testData.universityHoldingsSourceId;
               }
 
               if (!currentInstanceData.callNumberInItem) {
@@ -196,6 +180,7 @@ describe('Inventory', () => {
                   instanceId: currentInstanceId,
                   permanentLocationId: targetLocation.id,
                   callNumber,
+                  sourceId: targetHoldingsSourceId,
                 }).then((holding) => {
                   if (currentInstanceData.title.includes('M1')) testData.collegeHoldings.push(holding);
                   else testData.universityHoldings.push(holding);
@@ -213,6 +198,7 @@ describe('Inventory', () => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: currentInstanceId,
                   permanentLocationId: targetLocation.id,
+                  sourceId: targetHoldingsSourceId,
                 }).then((holding) => {
                   if (currentInstanceData.title.includes('M1')) testData.collegeHoldings.push(holding);
                   else testData.universityHoldings.push(holding);
@@ -354,6 +340,8 @@ describe('Inventory', () => {
             'No',
             false,
           );
+          cy.setTenant(Affiliations.College);
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           BrowseSubjects.browse(callNumber);
           BrowseCallNumber.valueInResultTableIsHighlighted(callNumber);
           BrowseCallNumber.checkNumberOfTitlesForRow(callNumber, '6');
