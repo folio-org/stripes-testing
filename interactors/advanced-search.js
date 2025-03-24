@@ -34,4 +34,5 @@ export const AdvancedSearch = HTML.extend('advanced search')
   .actions({
     cancel: ({ find }) => find(Button('Cancel')).click(),
     search: ({ find }) => find(Button('Search')).click(),
+    resetAll: ({ find }) => find(Button({ dataTestID: 'advanced-search-button-resetAll' })).click(),
   });
