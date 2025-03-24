@@ -646,10 +646,10 @@ export default {
     );
   },
 
-  verifyMemberSubSubHoldingsAccordion(memberId, holdingsId, isOpen = true) {
+  verifyMemberSubSubHoldingsAccordion(tenant, memberId, holdingsId, isOpen = true) {
     cy.wait(2000);
     cy.expect([
-      Accordion({ id: memberId }).has({ open: isOpen }),
+      Accordion(tenant).has({ open: isOpen }),
       Accordion({ id: `consortialHoldings.${memberId}.${holdingsId}` }).exists(),
     ]);
   },

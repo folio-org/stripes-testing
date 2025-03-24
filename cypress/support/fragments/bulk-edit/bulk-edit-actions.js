@@ -1918,8 +1918,8 @@ export default {
 
   findAndRemoveSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Find', rowIndex);
-    this.verifyDataFieldRequired(2);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifyDataFieldRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Remove subfield', rowIndex);
@@ -1928,7 +1928,7 @@ export default {
   findAndRemoveFieldActionForMarc(fieldValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Find', rowIndex);
     this.verifyDataFieldRequired(rowIndex);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(fieldValue, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Remove field', rowIndex);
@@ -1937,7 +1937,7 @@ export default {
   findAndReplaceWithActionForMarc(fieldValue, replaceValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Find', rowIndex);
     this.verifyDataFieldRequired(rowIndex);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(fieldValue, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Replace with', rowIndex);
@@ -1954,7 +1954,7 @@ export default {
   ) {
     this.selectActionForMarcInstance('Find', rowIndex);
     this.verifyDataFieldRequired(rowIndex);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(subfieldValueToFind, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Append', rowIndex);

@@ -45,7 +45,7 @@ describe('MARC', () => {
             secondBox: '0',
             thirdBox: '0',
             fourthBox:
-              '$a C377026 Black Panther $b Numeration $c (Fictitious character) $c second title $d Dates associated with a name $g Miscellaneous information $j Attribution qualifier $q Fuller form of name $f Date of a work $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+              '$a C377026 Black Panther $b Numeration $c (Fictitious character) $d Dates associated with a name $c second title $f Date of a work $g Miscellaneous information $h Medium $j Attribution qualifier $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section of a work $o Arranged statement for music $p Name of part/section of a work $q Fuller form of name $r Key for music $s Version $t Wakanda Forever $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '$i comics',
             sixthBox: '$0 http://id.loc.gov/authorities/names/n2016004082',
             seventhBox: '$4 .prt $2 test',
@@ -57,7 +57,7 @@ describe('MARC', () => {
             secondBox: '\\',
             thirdBox: '\\',
             fourthBox:
-              '$a C377026 Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $g Miscellaneous information $f Date of a work $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+              '$a C377026 Radio Roma. $b Hrvatski program $c Location of meeting $d Date of meeting or treaty signing $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $m Medium of performance for music $n Number of part/section/meeting $o Arranged statement for music $p Name of part/section of a work $r Key for music $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 4510955',
             seventhBox: '',
@@ -69,7 +69,7 @@ describe('MARC', () => {
             secondBox: '\\',
             thirdBox: '\\',
             fourthBox:
-              '$a C377026 Roma Council $c Location of meeting $e Subordinate unit $q Name of meeting following jurisdiction name entry element $f Date of a work $h Medium $k Form subheading $l Language of a work $p Name of part/section of a work $s Version $t Title of a work $d Date of meeting or treaty signing $g Miscellaneous information $n Number of part/section/meeting $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
+              '$a C377026 Roma Council $c Location of meeting $d Date of meeting or treaty signing $e Subordinate unit $f Date of a work $g Miscellaneous information $h Medium $k Form subheading $l Language of a work $n Number of part/section/meeting $p Name of part/section of a work $q Name of meeting following jurisdiction name entry element $s Version $t Title of a work $v Form subdivision $x General subdivision $y Chronological subdivision $z Geographic subdivision',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/names/n79084170',
             seventhBox: '',
@@ -127,7 +127,7 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377026*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C377026');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -193,7 +193,7 @@ describe('MARC', () => {
             });
 
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutUpdatedRecord);
             bib6XXAfterLinkingToAuth1XX.forEach((field) => {
               QuickMarcEditor.verifyTagFieldAfterLinking(
