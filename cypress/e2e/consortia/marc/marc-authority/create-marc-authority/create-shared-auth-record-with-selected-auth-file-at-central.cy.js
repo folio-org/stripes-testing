@@ -67,10 +67,14 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+              cy.reload();
+              MarcAuthorities.waitLoading();
+            }, 20_000);
           });
       });
 
@@ -80,7 +84,7 @@ describe('MARC', () => {
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(testData.authorityId);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
-        cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID);
+        cy.deleteAuthoritySourceFileViaAPI(testData.authSourceID, true);
       });
 
       it(
@@ -94,7 +98,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkContentByTag('001', `${testData.prefix}${testData.startWithNumber}`);
           MarcAuthority.addNewField(3, newField.tag, newField.content);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           MarcAuthority.verifyAfterSaveAndClose();
           QuickMarcEditor.verifyPaneheaderWithContentAbsent(testData.headerText);
@@ -113,7 +117,7 @@ describe('MARC', () => {
 
           MarcAuthorities.chooseAuthoritySourceOption(testData.sourceName);
           MarcAuthorities.checkResultsSelectedByAuthoritySource([testData.sourceName]);
-          MarcAuthorities.selectTitle(testData.marcValue);
+          MarcAuthorities.selectTitle(`${testData.sharedIcon}\n${testData.marcValue}`);
           MarcAuthorities.checkAfterSearch(
             testData.AUTHORIZED,
             `${testData.sharedIcon}${testData.marcValue}`,
