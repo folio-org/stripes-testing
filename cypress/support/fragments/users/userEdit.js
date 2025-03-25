@@ -59,7 +59,7 @@ const deleteProfilePicturesModal = Modal({ header: 'Delete profile picture' });
 const areYouSureForm = Modal('Are you sure?');
 const updateProfilePictureModal = Modal('Update profile picture');
 const externalSystemIdTextfield = TextField('External system ID');
-const userSearch = TextField('User search');
+const userSearch = TextField({ name: 'query' });
 const externalImageUrlTextField = updateProfilePictureModal.find(
   TextField({ id: 'external-image-url' }),
 );
@@ -387,9 +387,7 @@ export default {
   },
 
   addServicePoints(...points) {
-    cy.do([
-      Button({ id: 'add-service-point-btn' }).click(),
-    ]);
+    cy.do([Button({ id: 'add-service-point-btn' }).click()]);
 
     points.forEach((point) => {
       cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());

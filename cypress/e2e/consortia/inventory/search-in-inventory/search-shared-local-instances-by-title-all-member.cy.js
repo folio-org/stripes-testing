@@ -142,27 +142,33 @@ describe('Inventory', () => {
             }).location;
             Locations.createViaApi(collegeLocationData).then((location) => {
               testData.collegeLocation = location;
-              InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId: testData.instanceTypeId,
-                  title: localFOLIOInstanceFromMember1.title,
-                  alternativeTitles: [
-                    {
-                      alternativeTitleTypeId: testData.alternativeTitleTypeIDCollege,
-                      alternativeTitle: localFOLIOInstanceFromMember1.alternativeTitle,
+              InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+                (holdingSources) => {
+                  testData.collegeHoldingSourceId = holdingSources[0].id;
+                  InventoryInstances.createFolioInstanceViaApi({
+                    instance: {
+                      instanceTypeId: testData.instanceTypeId,
+                      title: localFOLIOInstanceFromMember1.title,
+                      alternativeTitles: [
+                        {
+                          alternativeTitleTypeId: testData.alternativeTitleTypeIDCollege,
+                          alternativeTitle: localFOLIOInstanceFromMember1.alternativeTitle,
+                        },
+                      ],
                     },
-                  ],
+                    holdings: [
+                      {
+                        holdingsTypeId: testData.holdingTypeId,
+                        permanentLocationId: testData.collegeLocation.id,
+                        sourceId: testData.collegeHoldingSourceId,
+                      },
+                    ],
+                  }).then((specialInstanceIds) => {
+                    localFOLIOInstanceFromMember1.testInstanceId = specialInstanceIds.instanceId;
+                    createdHoldingsCollege.push(specialInstanceIds.holdingIds[0].id);
+                  });
                 },
-                holdings: [
-                  {
-                    holdingsTypeId: testData.holdingTypeId,
-                    permanentLocationId: testData.collegeLocation.id,
-                  },
-                ],
-              }).then((specialInstanceIds) => {
-                localFOLIOInstanceFromMember1.testInstanceId = specialInstanceIds.instanceId;
-                createdHoldingsCollege.push(specialInstanceIds.holdingIds[0].id);
-              });
+              );
             });
           })
           .then(() => {
@@ -182,28 +188,33 @@ describe('Inventory', () => {
             }).location;
             Locations.createViaApi(universityLocationData).then((location) => {
               testData.universityLocation = location;
-
-              InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId: testData.instanceTypeId,
-                  title: localFOLIOInstanceFromMember2.title,
-                  alternativeTitles: [
-                    {
-                      alternativeTitleTypeId: testData.alternativeTitleTypeIDUniversity,
-                      alternativeTitle: localFOLIOInstanceFromMember2.alternativeTitle,
+              InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+                (holdingSources) => {
+                  testData.universityHoldingSourceId = holdingSources[0].id;
+                  InventoryInstances.createFolioInstanceViaApi({
+                    instance: {
+                      instanceTypeId: testData.instanceTypeId,
+                      title: localFOLIOInstanceFromMember2.title,
+                      alternativeTitles: [
+                        {
+                          alternativeTitleTypeId: testData.alternativeTitleTypeIDUniversity,
+                          alternativeTitle: localFOLIOInstanceFromMember2.alternativeTitle,
+                        },
+                      ],
                     },
-                  ],
+                    holdings: [
+                      {
+                        holdingsTypeId: testData.holdingTypeId,
+                        permanentLocationId: testData.universityLocation.id,
+                        sourceId: testData.universityHoldingSourceId,
+                      },
+                    ],
+                  }).then((specialInstanceIds) => {
+                    localFOLIOInstanceFromMember2.testInstanceId = specialInstanceIds.instanceId;
+                    createdHoldingsUniversity.push(specialInstanceIds.holdingIds[0].id);
+                  });
                 },
-                holdings: [
-                  {
-                    holdingsTypeId: testData.holdingTypeId,
-                    permanentLocationId: testData.universityLocation.id,
-                  },
-                ],
-              }).then((specialInstanceIds) => {
-                localFOLIOInstanceFromMember2.testInstanceId = specialInstanceIds.instanceId;
-                createdHoldingsUniversity.push(specialInstanceIds.holdingIds[0].id);
-              });
+              );
             });
           })
           .then(() => {
@@ -239,18 +250,21 @@ describe('Inventory', () => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: sharedFOLIOInstancesFromCentral[1].testInstanceId,
               permanentLocationId: testData.collegeLocation.id,
+              sourceId: testData.collegeHoldingSourceId,
             }).then((holding) => {
               createdHoldingsCollege.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: marcFiles[0].createdRecordsId[1],
               permanentLocationId: testData.collegeLocation.id,
+              sourceId: testData.collegeHoldingSourceId,
             }).then((holding) => {
               createdHoldingsCollege.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: marcFiles[1].createdRecordsId[0],
               permanentLocationId: testData.collegeLocation.id,
+              sourceId: testData.collegeHoldingSourceId,
             }).then((holding) => {
               createdHoldingsCollege.push(holding.id);
             });
@@ -265,32 +279,38 @@ describe('Inventory', () => {
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: sharedFOLIOInstancesFromCentral[2].testInstanceId,
               permanentLocationId: testData.universityLocation.id,
+              sourceId: testData.universityHoldingSourceId,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: marcFiles[0].createdRecordsId[2],
               permanentLocationId: testData.universityLocation.id,
+              sourceId: testData.universityHoldingSourceId,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
             InventoryHoldings.createHoldingRecordViaApi({
               instanceId: marcFiles[2].createdRecordsId[0],
               permanentLocationId: testData.universityLocation.id,
+              sourceId: testData.universityHoldingSourceId,
             }).then((holding) => {
               createdHoldingsUniversity.push(holding.id);
             });
           });
 
-        cy.login(users.userProperties.username, users.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          InventorySearchAndFilter.instanceTabIsDefault();
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(users.userProperties.username, users.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        InventorySearchAndFilter.instanceTabIsDefault();
       });
     });
 

@@ -91,6 +91,7 @@ const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
+const heldByAccordion = Accordion('Held by');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1121,12 +1122,11 @@ export default {
   },
 
   checkOptionsWithCountersExistInAccordion(accordionName) {
-    cy.do(paneFilterSection.find(Accordion(accordionName)).find(MultiSelect()).open());
+    cy.do(Accordion(accordionName).find(MultiSelect()).open());
     cy.expect(
-      paneFilterSection
-        .find(Accordion(accordionName))
-        .find(MultiSelectOption())
-        .has({ text: matching(/.{1,}(\d{1,})/) }),
+      Accordion(accordionName)
+        .find(MultiSelectOption({ text: matching(/.{1,}(\d{1,})/) }))
+        .exists(),
     );
   },
 
@@ -1231,7 +1231,7 @@ export default {
 
   selectHeldByOption(tenantName, isSelected = true) {
     cy.wait(ONE_SECOND);
-    cy.do(Accordion('Held by').find(MultiSelect()).fillIn(tenantName));
+    cy.do(heldByAccordion.find(MultiSelect()).fillIn(tenantName));
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
     cy.do(
@@ -1246,14 +1246,14 @@ export default {
   checkHeldByOptionSelected: (tenantName, isSelected = true) => {
     if (isSelected) {
       cy.expect(
-        Accordion('Held by')
+        heldByAccordion
           .find(MultiSelect())
           .find(ValueChipRoot(including(tenantName)))
           .exists(),
       );
     } else {
       cy.expect(
-        Accordion('Held by')
+        heldByAccordion
           .find(MultiSelect())
           .find(ValueChipRoot(including(tenantName)))
           .absent(),
@@ -1265,5 +1265,10 @@ export default {
     cy.wait(1000);
     cy.do(closeIconButton.click());
     cy.wait(1000);
+  },
+
+  verifyHeldByOption(option) {
+    cy.do(heldByAccordion.find(Button({ ariaLabel: 'open menu' })).click());
+    cy.expect(heldByAccordion.find(MultiSelectOption(including(option))).exists());
   },
 };
