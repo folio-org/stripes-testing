@@ -51,6 +51,10 @@ const providerTokenValue = KeyValue('Provider token');
 const newNoteButton = Button({ id: 'note-create-button' });
 const assignUnassignNoteButton = Button({ id: 'note-assign-button' });
 const notesList = MultiColumnList({ id: 'notes-list' });
+const titlesSearchOptionSelect = titlesSection.find(
+  Select({ dataTestID: 'field-to-search-select' }),
+);
+const titlesSearchField = titlesSection.find(TextField({ type: 'search' }));
 
 export default {
   waitLoading: (specialPackage) => {
@@ -235,5 +239,22 @@ export default {
         .exists(),
       notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
     ]);
+  },
+  selectTitleSearchOption(searchOption) {
+    cy.do(titlesSearchOptionSelect.choose(searchOption));
+    this.verifySelectedTitleSearchOption(searchOption);
+  },
+  verifySelectedTitleSearchOption(searchOption) {
+    cy.expect(titlesSearchOptionSelect.has({ checkedOptionText: searchOption }));
+  },
+  searchTitles(searchValue, searchOption) {
+    if (searchOption) this.selectTitleSearchOption(searchOption);
+    cy.do(titlesSearchField.fillIn(searchValue));
+    cy.get('input[type="search"]').type('{enter}');
+    cy.wait(1000);
+    cy.expect(titlesSection.find(Spinner()).absent());
+  },
+  verifyTitleFound(title) {
+    cy.expect(titlesSection.find(MultiColumnListCell(title)).exists());
   },
 };
