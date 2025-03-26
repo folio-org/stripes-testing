@@ -64,6 +64,7 @@ describe('Eureka', () => {
             cy.assignAffiliationToUser(Affiliations.College, testUser.userId);
             cy.assignAffiliationToUser(Affiliations.University, testUser.userId);
             cy.assignAffiliationToUser(Affiliations.College, assignUser.userId);
+            cy.assignAffiliationToUser(Affiliations.University, assignUser.userId);
             cy.assignCapabilitiesToExistingUser(testUser.userId, capabsToAssign, capabSetsToAssign);
             [
               testData.centralRoleNameA,
@@ -134,8 +135,8 @@ describe('Eureka', () => {
         'C514904 Add/update roles when editing a user in Member tenant (eureka)',
         { tags: ['criticalPathECS', 'eureka', 'C514904'] },
         () => {
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('0');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('0');
@@ -230,8 +231,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.university);
@@ -243,8 +244,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
