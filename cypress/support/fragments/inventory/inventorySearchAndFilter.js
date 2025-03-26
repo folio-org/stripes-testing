@@ -31,7 +31,7 @@ import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
-const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const effectiveLocationInput = Accordion('Effective location (item)');
 const sourceAccordion = Accordion('Source');
 const sharedAccordion = Accordion({ id: 'shared' });
 const languageInput = Accordion({ id: 'language' });
@@ -300,7 +300,7 @@ export default {
 
   showsOnlyNameTypeAccordion() {
     cy.expect(Accordion({ id: 'nameType' }).exists());
-    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion('Effective location (item)').absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -316,7 +316,7 @@ export default {
   },
 
   showsOnlyEffectiveLocation() {
-    cy.expect(Accordion({ id: 'effectiveLocation' }).exists());
+    cy.expect(Accordion('Effective location (item)').exists());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -332,7 +332,7 @@ export default {
   },
 
   filtersIsAbsent() {
-    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion('Effective location (item)').absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -1094,7 +1094,7 @@ export default {
   },
 
   clearFilter(accordionName) {
-    cy.do(Button({ ariaLabel: `Clear selected filters for "${accordionName}"` }).click());
+    cy.do(Button({ ariaLabel: `Clear selected ${accordionName} filters` }).click());
   },
 
   checkSharedInstancesInResultList() {

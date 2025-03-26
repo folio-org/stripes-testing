@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import Permissions from '../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Users from '../../../../support/fragments/users/users';
@@ -7,6 +8,13 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../../support/constants';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
+import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
+import BrowseCallNumber from '../../../../support/fragments/inventory/search/browseCallNumber';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -14,6 +22,8 @@ describe('Inventory', () => {
       contributor: 'Contributors',
       value: 'a',
       subject: 'Subjects',
+      barcode: uuid(),
+      callNumber: 'randomC414981',
     };
 
     const Dropdowns = {
@@ -24,6 +34,12 @@ describe('Inventory', () => {
     };
 
     const users = {};
+    let instanceId;
+    let location;
+    let loanTypeId;
+    let materialTypeId;
+    let sourceId;
+    let callNumberTypeId;
 
     before('Create users, data', () => {
       cy.getAdminToken();
@@ -40,15 +56,66 @@ describe('Inventory', () => {
           ]);
         })
         .then(() => {
-          cy.resetTenant();
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+          cy.setTenant(Affiliations.University);
+          cy.then(() => {
+            const locationData = Locations.getDefaultLocation({
+              servicePointId: ServicePoints.getDefaultServicePoint().id,
+            }).location;
+            Locations.createViaApi(locationData).then((loc) => {
+              location = loc;
+            });
+            cy.createLoanType({
+              name: getTestEntityValue('type'),
+            }).then((loanType) => {
+              loanTypeId = loanType.id;
+            });
+            cy.getMaterialTypes({ limit: 1 }).then((matType) => {
+              materialTypeId = matType.id;
+            });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                sourceId = holdingSources[0].id;
+              },
+            );
+            InventoryInstances.getCallNumberTypes({
+              query: `name="${BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL}"`,
+            }).then((res) => {
+              callNumberTypeId = res[0].id;
+            });
           }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+            cy.resetTenant();
+            InventoryInstance.createInstanceViaApi().then((instanceData) => {
+              instanceId = instanceData.instanceData.instanceId;
+              cy.setTenant(Affiliations.University);
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId,
+                permanentLocationId: location.id,
+                callNumber: testData.callNumber,
+                callNumberTypeId,
+                sourceId,
+              }).then((holding) => {
+                InventoryItems.createItemViaApi({
+                  holdingsRecordId: holding.id,
+                  materialType: { id: materialTypeId },
+                  permanentLoanType: { id: loanTypeId },
+                  status: { name: 'Available' },
+                  barcode: testData.barcode,
+                }).then(() => {
+                  cy.resetTenant();
+                  cy.login(users.userProperties.username, users.userProperties.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
+                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+                  ConsortiumManager.switchActiveAffiliation(
+                    tenantNames.central,
+                    tenantNames.college,
+                  );
+                  InventoryInstances.waitContentLoading();
+                  ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+                });
+              });
+            });
           });
         });
     });
@@ -57,6 +124,10 @@ describe('Inventory', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(users.userProperties.userId);
+      cy.setTenant(Affiliations.University);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+      Locations.deleteViaApi(location);
+      cy.deleteLoanType(loanTypeId);
     });
 
     it(
@@ -96,7 +167,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        BrowseCallNumber.waitForCallNumberToAppear(testData.callNumber);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
@@ -104,7 +178,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
@@ -114,13 +190,18 @@ describe('Inventory', () => {
         cy.wait(3000);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');
+        InventorySearchAndFilter.verifyCheckboxInAccordion(
+          Dropdowns.HELD_BY,
+          tenantNames.university,
+        );
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);
         InventorySearchAndFilter.verifyTextFieldInAccordion(Dropdowns.EFFECTIVE_LOCATION, '');
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
@@ -128,7 +209,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
@@ -137,7 +220,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');
+        InventorySearchAndFilter.verifyCheckboxInAccordion(
+          Dropdowns.HELD_BY,
+          tenantNames.university,
+        );
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);

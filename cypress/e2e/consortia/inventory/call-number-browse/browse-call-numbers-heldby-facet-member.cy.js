@@ -227,6 +227,7 @@ describe('Inventory', () => {
       const locations = {};
       const loanTypeIds = {};
       const materialTypeIds = {};
+      let sourceId;
 
       function createFolioInstance(instanceTitle, tenantId) {
         const targetTenant = Object.keys(Affiliations)
@@ -259,6 +260,7 @@ describe('Inventory', () => {
             callNumber: instance.holdings[targetTenant].callNumberInHoldings
               ? instance.holdings[targetTenant].callNumber
               : null,
+            sourceId,
           }).then((holding) => {
             createdHoldingsIds[targetTenant].push(holding.id);
             instance.holdings[targetTenant].id = holding.id;
@@ -292,6 +294,9 @@ describe('Inventory', () => {
 
       before('Create user, data', () => {
         cy.getAdminToken();
+        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+          sourceId = folioSource.id;
+        });
         cy.createTempUser([])
           .then((userProperties) => {
             testData.userProperties = userProperties;
@@ -302,53 +307,55 @@ describe('Inventory', () => {
               Permissions.inventoryAll.gui,
             ]);
 
-            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileNameImported);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles[0].jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles[0].fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles[0].fileNameImported);
-              for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
-                let currentInstanceId;
-                Logs.getCreatedItemsID(i).then((link) => {
-                  currentInstanceId = link.split('/')[5];
-                  createdInstanceIds.consortia.push(currentInstanceId);
-                });
-                Logs.getCreatedItemsTitle(i).then((title) => {
-                  testData.instances[
-                    testData.instances.findIndex((instance) => instance.title === title)
-                  ].instanceId = currentInstanceId;
-                });
-              }
+            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+              () => {
+                DataImport.verifyUploadState();
+                DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileNameImported);
+                JobProfiles.waitFileIsUploaded();
+                JobProfiles.waitLoadingList();
+                JobProfiles.search(marcFiles[0].jobProfileToRun);
+                JobProfiles.runImportFile();
+                JobProfiles.waitFileIsImported(marcFiles[0].fileNameImported);
+                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+                Logs.openFileDetails(marcFiles[0].fileNameImported);
+                for (let i = 0; i < marcFiles[0].numberOftitles; i++) {
+                  let currentInstanceId;
+                  Logs.getCreatedItemsID(i).then((link) => {
+                    currentInstanceId = link.split('/')[5];
+                    createdInstanceIds.consortia.push(currentInstanceId);
+                  });
+                  Logs.getCreatedItemsTitle(i).then((title) => {
+                    testData.instances[
+                      testData.instances.findIndex((instance) => instance.title === title)
+                    ].instanceId = currentInstanceId;
+                  });
+                }
 
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              DataImport.waitLoading();
-              DataImport.verifyUploadState();
-              DataImport.uploadFileAndRetry(marcFiles[1].marc, marcFiles[1].fileNameImported);
-              JobProfiles.waitFileIsUploaded();
-              JobProfiles.waitLoadingList();
-              JobProfiles.search(marcFiles[1].jobProfileToRun);
-              JobProfiles.runImportFile();
-              JobProfiles.waitFileIsImported(marcFiles[1].fileNameImported);
-              Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-              Logs.openFileDetails(marcFiles[1].fileNameImported);
-              for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
-                let currentInstanceId;
-                Logs.getCreatedItemsID(i).then((link) => {
-                  currentInstanceId = link.split('/')[5];
-                  createdInstanceIds.college.push(currentInstanceId);
-                });
-                Logs.getCreatedItemsTitle(i).then((title) => {
-                  testData.instances[
-                    testData.instances.findIndex((instance) => instance.title === title)
-                  ].instanceId = currentInstanceId;
-                });
-              }
-            });
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+                DataImport.waitLoading();
+                DataImport.verifyUploadState();
+                DataImport.uploadFileAndRetry(marcFiles[1].marc, marcFiles[1].fileNameImported);
+                JobProfiles.waitFileIsUploaded();
+                JobProfiles.waitLoadingList();
+                JobProfiles.search(marcFiles[1].jobProfileToRun);
+                JobProfiles.runImportFile();
+                JobProfiles.waitFileIsImported(marcFiles[1].fileNameImported);
+                Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+                Logs.openFileDetails(marcFiles[1].fileNameImported);
+                for (let i = 0; i < marcFiles[1].numberOftitles; i++) {
+                  let currentInstanceId;
+                  Logs.getCreatedItemsID(i).then((link) => {
+                    currentInstanceId = link.split('/')[5];
+                    createdInstanceIds.college.push(currentInstanceId);
+                  });
+                  Logs.getCreatedItemsTitle(i).then((title) => {
+                    testData.instances[
+                      testData.instances.findIndex((instance) => instance.title === title)
+                    ].instanceId = currentInstanceId;
+                  });
+                }
+              },
+            );
 
             cy.setTenant(Affiliations.College);
             const collegeLocationData = Locations.getDefaultLocation({
@@ -458,6 +465,10 @@ describe('Inventory', () => {
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
             InventorySearchAndFilter.selectBrowseCallNumbers();
+          });
+          cy.setTenant(Affiliations.College);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           });
           BrowseSubjects.browse(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
