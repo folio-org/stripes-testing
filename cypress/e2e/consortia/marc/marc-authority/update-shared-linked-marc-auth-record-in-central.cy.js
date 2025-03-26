@@ -104,6 +104,8 @@ describe('MARC', () => {
       before('Create users, data', () => {
         cy.getAdminToken();
 
+        InventoryInstances.deleteInstanceByTitleViaApi('C405927');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405927');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -117,6 +119,7 @@ describe('MARC', () => {
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            InventoryInstances.deleteInstanceByTitleViaApi('C405927');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -125,6 +128,7 @@ describe('MARC', () => {
             cy.wait(10_000);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
+            InventoryInstances.deleteInstanceByTitleViaApi('C405927');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -154,10 +158,11 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.waitForAuthRefresh(() => {
+              cy.resetTenant();
               cy.loginAsAdmin({ path: '/', waiter: () => true });
               cy.visit(TopMenu.inventoryPath);
               cy.reload();
-            });
+            }, 30_000);
             InventoryInstances.waitContentLoading();
 
             linkingInTenants.forEach((tenants) => {

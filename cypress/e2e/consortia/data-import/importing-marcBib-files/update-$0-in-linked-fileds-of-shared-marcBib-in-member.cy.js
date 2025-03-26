@@ -85,20 +85,20 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 21,
+        rowIndex: 20,
         value: 'C407696 Marvel comics',
         tag: '630',
         content:
           '$a C407696 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
       },
       {
-        rowIndex: 22,
+        rowIndex: 21,
         value: 'C407696 Speaking Oratory',
         tag: '650',
         content: '$a C407696 Speaking Oratory $b debating $2 fast',
       },
       {
-        rowIndex: 27,
+        rowIndex: 26,
         value: 'C407696 Radio "Vaticana".',
         tag: '710',
         boxFourth: '$a C407696 Radio "Vaticana". $b Hrvatski program',
@@ -196,8 +196,14 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath);
+          cy.resetTenant();
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.waitContentLoading();
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -210,6 +216,8 @@ describe('Data Import', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
@@ -234,14 +242,17 @@ describe('Data Import', () => {
               });
             },
           );
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
     });
 
@@ -295,7 +306,7 @@ describe('Data Import', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImportedForConsortia(nameForUpdatedMarcFile);
+        JobProfiles.waitFileIsImportedForConsortia(nameForUpdatedMarcFile);
         Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
