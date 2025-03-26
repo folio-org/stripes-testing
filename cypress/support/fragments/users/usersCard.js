@@ -37,7 +37,7 @@ const contactInfoSection = Accordion({ id: 'contactInfoSection' });
 const extendedInfoSection = Accordion({ id: 'extendedInfoSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
-const affiliationsSection = Section({ id: 'affiliationsSection' });
+const affiliationsSection = Accordion({ id: 'affiliationsSection' });
 const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const requestsAccordion = Accordion({ id: 'requestsSection' });
 const servicePointsAccordion = Accordion({ id: 'servicePointsSection' });
@@ -121,13 +121,14 @@ export default {
     cy.expect(affiliationsSection.find(Badge()).has({ value: quantity }));
   },
 
-  varifyUserCardOpened() {
+  verifyUserCardOpened() {
     cy.expect(Section({ id: 'pane-userdetails' }).exists());
     cy.wait(6000);
   },
 
   expandAffiliationsAccordion() {
-    cy.do(affiliationsSection.find(affiliationsButton).click());
+    cy.do(affiliationsSection.clickHeader());
+    cy.wait(1000);
   },
 
   affiliationsAccordionIsAbsent() {

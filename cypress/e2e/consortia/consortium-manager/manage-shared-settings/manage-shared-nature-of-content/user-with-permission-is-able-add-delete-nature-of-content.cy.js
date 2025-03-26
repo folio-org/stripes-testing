@@ -141,14 +141,17 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(natureContent1.name);
 
             cy.visit(SettingsMenu.natureOfContent);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(natureContent1.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.natureOfContent);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(natureContent1.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.natureOfContent);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(natureContent1.name);
           },
         );

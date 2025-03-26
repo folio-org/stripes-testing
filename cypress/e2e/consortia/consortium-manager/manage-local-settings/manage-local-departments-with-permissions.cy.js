@@ -70,16 +70,6 @@ describe('Consortium manager', () => {
 
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
           DepartmentsConsortiumManager.choose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
 
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);

@@ -150,14 +150,14 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedType.payload.name,
             'consortium',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.centralLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.central,
             ],
             ['edit', 'trash'],
@@ -167,7 +167,7 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.college,
             ],
             ['edit', 'trash'],
@@ -176,7 +176,7 @@ describe('Consortium manager', () => {
             [
               testData.universityLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.university,
             ],
             ['edit', 'trash'],
@@ -190,7 +190,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedType.payload.name,
             'consortium',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
@@ -201,7 +201,7 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.college,
             ],
             ['edit', 'trash'],
@@ -210,7 +210,7 @@ describe('Consortium manager', () => {
             [
               testData.universityLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.university,
             ],
             ['edit', 'trash'],
@@ -238,14 +238,14 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedType.payload.name,
             'consortium',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.centralLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.central,
             ],
             ['edit', 'trash'],
@@ -255,7 +255,7 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.college,
             ],
             ['edit', 'trash'],
@@ -272,14 +272,14 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedType.payload.name,
             'consortium',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.centralLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.central,
             ],
             ['edit', 'trash'],
@@ -310,7 +310,7 @@ describe('Consortium manager', () => {
             [
               testData.centralSharedType.payload.name,
               'consortium',
-              `${moment().format('l')} by SystemConsortia`,
+              `${moment().format('l')} by`,
               'All',
             ],
             ['edit', 'trash'],
@@ -319,7 +319,7 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.central,
             ],
             ['edit', 'trash'],
@@ -329,7 +329,7 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.college,
             ],
             ['edit', 'trash'],
@@ -338,7 +338,7 @@ describe('Consortium manager', () => {
             [
               testData.universityLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.university,
             ],
             ['edit', 'trash'],
@@ -354,7 +354,7 @@ describe('Consortium manager', () => {
             [
               testData.centralSharedType.payload.name,
               'consortium',
-              `${moment().format('l')} by SystemConsortia`,
+              `${moment().format('l')} by`,
               'All',
             ],
             ['edit', 'trash'],
@@ -363,7 +363,7 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalType.name,
               'local',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.central,
             ],
             ['edit', 'trash'],

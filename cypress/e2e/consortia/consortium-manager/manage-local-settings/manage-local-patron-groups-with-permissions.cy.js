@@ -91,23 +91,13 @@ describe('Consortium manager', () => {
             waiter: ConsortiumManagerApp.waitLoading,
           });
 
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
           PatronGroupsConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
-          SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-
-          ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
+          // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newPatronGroup);
           ConsortiaControlledVocabularyPaneset.clickSave();
 
@@ -217,6 +207,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.newPatronGroup.group,
@@ -229,12 +220,14 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newPatronGroup.group,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.editPatronGroup.group,

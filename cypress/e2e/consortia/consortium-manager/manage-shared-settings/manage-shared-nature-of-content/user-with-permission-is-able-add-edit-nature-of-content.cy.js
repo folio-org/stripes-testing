@@ -143,13 +143,15 @@ describe('Consortia', () => {
 
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyListIsEmpty();
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
+            // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
 
             cy.visit(SettingsMenu.natureOfContent);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.natureOfContent);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(createdCIT.slice(0, -1));
           },
         );

@@ -43,7 +43,7 @@ describe('Consortia', () => {
     () => {
       UsersSearchPane.searchByUsername(firstUser.username);
       UsersSearchPane.selectUserFromList(firstUser.username);
-      UsersCard.varifyUserCardOpened();
+      UsersCard.verifyUserCardOpened();
       UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.expandAffiliationsAccordion();
       UsersCard.verifyAffiliationsDetails(tenantNames.central, 1, tenantNames.central);

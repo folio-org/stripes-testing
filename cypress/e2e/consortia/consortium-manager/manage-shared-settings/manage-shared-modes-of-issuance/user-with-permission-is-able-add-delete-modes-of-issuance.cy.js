@@ -135,14 +135,17 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(modesIssuance1.name);
 
             cy.visit(SettingsMenu.modesOfIssuancePath);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(modesIssuance1.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.modesOfIssuancePath);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(modesIssuance1.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.modesOfIssuancePath);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(modesIssuance1.name);
           },
         );

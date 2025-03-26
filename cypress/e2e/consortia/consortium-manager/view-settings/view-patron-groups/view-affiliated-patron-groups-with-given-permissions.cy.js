@@ -1,36 +1,39 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import permissions from '../../../../../support/dictionary/permissions';
-import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
-import Users from '../../../../../support/fragments/users/users';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
+import uuid from 'uuid';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import permissions from '../../../../../support/dictionary/permissions';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import PatronGroups from '../../../../../support/fragments/settings/users/patronGroups';
 import PatronGroupsConsortiumManager from '../../../../../support/fragments/consortium-manager/users/patronGroupsConsortiumManager';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import PatronGroups from '../../../../../support/fragments/settings/users/patronGroups';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 const testData = {
   centralSharedPatronGroup: {
     payload: {
-      group: getTestEntityValue('centralSharedPatronGroup_name'),
+      group: 'centralSharedPatronGroup_name',
     },
   },
   centralLocalPatronGroup: {
     id: uuid(),
     name: getTestEntityValue('centralLocalPatronGroup_name'),
+    description: 'centralLocalPatronGroup_description',
   },
   collegeLocalPatronGroup: {
     id: uuid(),
     name: getTestEntityValue('collegeLocalPatronGroup_name'),
+    description: 'collegeLocalPatronGroup_description',
   },
   universityLocalPatronGroup: {
     id: uuid(),
     name: getTestEntityValue('universityLocalPatronGroup_name'),
+    description: 'universityLocalPatronGroup_description',
   },
 };
 
@@ -44,7 +47,7 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup = newPatronGroup;
           },
         );
-        PatronGroups.createViaApi(testData.centralLocalPatronGroup.name).then((response) => {
+        PatronGroups.createViaApi(testData.centralLocalPatronGroup.name, testData.centralLocalPatronGroup.description).then((response) => {
           testData.centralLocalPatronGroup.id = response;
         });
 
@@ -67,7 +70,7 @@ describe('Consortium manager', () => {
               testData.user754 = user;
             })
             .then(() => {
-              PatronGroups.createViaApi(testData.collegeLocalPatronGroup.name).then((response) => {
+              PatronGroups.createViaApi(testData.collegeLocalPatronGroup.name, testData.collegeLocalPatronGroup.description).then((response) => {
                 testData.collegeLocalPatronGroup.id = response;
               });
               cy.resetTenant();
@@ -87,7 +90,7 @@ describe('Consortium manager', () => {
               cy.assignPermissionsToExistingUser(testData.user754.userId, [
                 permissions.uiUsersViewPatronGroups.gui,
               ]);
-              PatronGroups.createViaApi(testData.universityLocalPatronGroup.name).then(
+              PatronGroups.createViaApi(testData.universityLocalPatronGroup.name, testData.universityLocalPatronGroup.description).then(
                 (response) => {
                   testData.universityLocalPatronGroup.id = response;
                 },
@@ -114,6 +117,8 @@ describe('Consortium manager', () => {
         cy.getAdminToken();
         PatronGroups.deleteViaApi(testData.centralLocalPatronGroup.id);
         PatronGroupsConsortiumManager.deleteViaApi(testData.centralSharedPatronGroup);
+        PatronGroupsConsortiumManager.deletePatronGroupByNameAndTenant(testData.centralLocalPatronGroup.name, Affiliations.College);
+        PatronGroupsConsortiumManager.deletePatronGroupByNameAndTenant(testData.centralLocalPatronGroup.name, Affiliations.University);
         Users.deleteViaApi(testData.user753.userId);
         Users.deleteViaApi(testData.user754.userId);
       });
@@ -135,33 +140,65 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.centralLocalPatronGroup.name,
-            '',
-            '',
-            `${moment().format('l')} by Admin, ECS`,
             tenantNames.central,
-          ]);
-
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-            testData.collegeLocalPatronGroup.name,
-            '',
-            '',
-            `${moment().format('l')} by Admin, ECS`,
+            [
+              testData.centralLocalPatronGroup.name,
+              testData.centralLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.central,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralLocalPatronGroup.name,
             tenantNames.college,
-          ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.centralLocalPatronGroup.name,
+              testData.centralLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.college,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralLocalPatronGroup.name,
+            tenantNames.university,
+            [
+              testData.centralLocalPatronGroup.name,
+              testData.centralLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.university,
+            ]
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.collegeLocalPatronGroup.name,
+            tenantNames.college,
+            [
+              testData.collegeLocalPatronGroup.name,
+              testData.collegeLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.college,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.universityLocalPatronGroup.name,
+            tenantNames.university,
             [
               testData.universityLocalPatronGroup.name,
-              '',
-              '',
-              `${moment().format('l')} by Admin, ECS`,
+              testData.universityLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            ['edit', 'trash']
           );
 
           ConsortiumManagerApp.clickSelectMembers();
@@ -173,29 +210,57 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.centralLocalPatronGroup.name, tenantNames.central
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.centralLocalPatronGroup.name,
+            tenantNames.college,
+            [
+              testData.centralLocalPatronGroup.name,
+              testData.centralLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.college,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralLocalPatronGroup.name,
+            tenantNames.university,
+            [
+              testData.centralLocalPatronGroup.name,
+              testData.centralLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.university,
+            ]
           );
 
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.collegeLocalPatronGroup.name,
-            '',
-            '',
-            `${moment().format('l')} by Admin, ECS`,
             tenantNames.college,
-          ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+            [
+              testData.collegeLocalPatronGroup.name,
+              testData.collegeLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
+              tenantNames.college,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.universityLocalPatronGroup.name,
+            tenantNames.university,
             [
               testData.universityLocalPatronGroup.name,
-              '',
-              '',
-              `${moment().format('l')} by Admin, ECS`,
+              testData.universityLocalPatronGroup.description,
+              '10',
+              `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            ['edit', 'trash']
           );
         },
       );
@@ -222,29 +287,49 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.centralLocalPatronGroup.name,
-            '',
-            '',
-            `${moment().format('l')} by Admin, ECS`,
             tenantNames.central,
-          ]);
+            [
+              testData.centralLocalPatronGroup.name,
+              '',
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.central,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.centralLocalPatronGroup.name,
+            tenantNames.college,
+            [
+              testData.centralLocalPatronGroup.name,
+              '',
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.college,
+            ]
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.centralLocalPatronGroup.name, tenantNames.university
+          );
 
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.collegeLocalPatronGroup.name,
+            tenantNames.college,
             [
               testData.collegeLocalPatronGroup.name,
               '',
               '',
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               tenantNames.college,
             ],
-            ['edit', 'trash'],
+            ['edit', 'trash']
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-            testData.universityLocalPatronGroup.name,
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.universityLocalPatronGroup.name, tenantNames.university
           );
 
           ConsortiumManagerApp.clickSelectMembers();
@@ -256,22 +341,32 @@ describe('Consortium manager', () => {
             testData.centralSharedPatronGroup.payload.group,
             '',
             '',
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             'All',
           ]);
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.centralLocalPatronGroup.name,
-            '',
-            '',
-            `${moment().format('l')} by Admin, ECS`,
             tenantNames.central,
-          ]);
-
-          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-            testData.collegeLocalPatronGroup.name,
+            [
+              testData.centralLocalPatronGroup.name,
+              '',
+              '',
+              `${moment().format('l')} by`,
+              tenantNames.central,
+            ]
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
-            testData.universityLocalPatronGroup.name,
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.centralLocalPatronGroup.name, tenantNames.college
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.centralLocalPatronGroup.name, tenantNames.university
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.collegeLocalPatronGroup.name, tenantNames.college
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.universityLocalPatronGroup.name, tenantNames.university
           );
         },
       );

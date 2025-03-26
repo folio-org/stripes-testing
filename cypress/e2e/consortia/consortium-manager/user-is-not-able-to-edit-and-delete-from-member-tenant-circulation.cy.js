@@ -1,18 +1,19 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
+import permissions from '../../../support/dictionary/permissions';
+import RequestCancellationReasonsConsortiumManager from '../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
+import ConsortiaControlledVocabularyPaneset from '../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
-import RequestCancellationReasonsConsortiumManager from '../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import CancellationReason from '../../../support/fragments/settings/circulation/cancellationReason';
-import ConsortiaControlledVocabularyPaneset from '../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 const testData = {
   centralSharedReason: {
@@ -61,12 +62,14 @@ describe('Consortium manager', () => {
             permissions.settingsCircView.gui,
           ]);
           cy.addCancellationReasonApi(testData.universityLocalReason);
+          cy.resetTenant();
+          cy.wait(10000);
           cy.loginAsAdmin({
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
           SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(7);
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
           RequestCancellationReasonsConsortiumManager.choose();
 
@@ -118,6 +121,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user400666.username, testData.user400666.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+          cy.wait(4000);
 
           CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
@@ -128,12 +132,34 @@ describe('Consortium manager', () => {
             actions: ['edit', 'trash'],
           });
 
-          CancellationReason.clickTrashButtonForReason({
+          CancellationReason.verifyReasonIsNotInTheList({
+            name: testData.universityLocalReason.name,
+          });
+
+          CancellationReason.clickEditButtonForReason(testData.collegeLocalReason.name);
+          testData.collegeLocalReason.name += '_edited';
+          testData.collegeLocalReason.description = 'edited description';
+          testData.collegeLocalReason.publicDescription = 'edited public description';
+          CancellationReason.fillCancellationReason(testData.collegeLocalReason);
+          CancellationReason.saveCancellationReason();
+          InteractorsTools.checkCalloutMessage(
+            `The  ${testData.collegeLocalReason.name} was successfully updated`,
+          );
+          CancellationReason.verifyReasonInTheList(testData.collegeLocalReason);
+
+          CancellationReason.clickTrashButtonForReason(testData.collegeLocalReason.name);
+          CancellationReason.clickTrashButtonConfirm();
+          InteractorsTools.checkCalloutMessage(
+            `The cancel reason ${testData.collegeLocalReason.name} was successfully deleted`,
+          );
+
+          CancellationReason.verifyReasonIsNotInTheList({
             name: testData.collegeLocalReason.name,
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+          cy.wait(4000);
 
           CancellationReason.verifyReasonInTheList({
             name: testData.universityLocalReason.name,
@@ -146,7 +172,7 @@ describe('Consortium manager', () => {
           CancellationReason.verifyReasonInTheList({
             name: testData.centralSharedReason.payload.name,
           });
-          CancellationReason.verifyReasonAbsentInTheList({
+          CancellationReason.verifyReasonIsNotInTheList({
             name: testData.collegeLocalReason.name,
           });
         },
