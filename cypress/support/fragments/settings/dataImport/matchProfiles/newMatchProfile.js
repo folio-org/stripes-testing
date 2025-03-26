@@ -227,7 +227,6 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-      cy.pause();
       selectMatchCriterion(matchCriterion);
       fillExistingRecordFields(existingRecordFields.field, 'field');
       fillExistingRecordFields(existingRecordFields.in1, 'in1');
