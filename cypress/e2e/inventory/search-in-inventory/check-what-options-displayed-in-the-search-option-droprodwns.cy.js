@@ -28,8 +28,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C464058 Check what options displayed in the search option dropdown in three segments: Instance, Holdings, Item (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C464058'] },
+      'C703348 Check what options displayed in the search option dropdown in three segments: Instance, Holdings, Item (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C703348'] },
       () => {
         // 1 Click on the Search option dropdown placed at the "Search & filter" pane
         InventoryInstances.verifyInstanceSearchOptionsInOrder();

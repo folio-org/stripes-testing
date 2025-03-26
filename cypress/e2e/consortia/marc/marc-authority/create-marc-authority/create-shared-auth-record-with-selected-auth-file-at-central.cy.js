@@ -87,8 +87,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423572 Create a new shared MARC authority record with "Local" authority file selected at Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C423572'] },
+        'C703365 Create a new shared MARC authority record with "Local" authority file selected at Central tenant (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'C703365'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

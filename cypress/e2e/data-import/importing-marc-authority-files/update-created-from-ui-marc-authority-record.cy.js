@@ -179,8 +179,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C423564 Update of created from UI MARC authority record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C423564'] },
+      'C703367 Update of created from UI MARC authority record (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C703367'] },
       () => {
         // Click on "Actions" button in second pane >> Select "+ New" option
         MarcAuthorities.clickActionsAndNewAuthorityButton();
