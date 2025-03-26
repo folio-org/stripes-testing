@@ -35,7 +35,6 @@ const searchInstancesOptions = [
   'Instance administrative notes',
   'Place of publication',
   'Subject',
-  'Effective call number (item), shelving order',
   'Instance HRID',
   'Instance UUID',
   'Authority UUID',
