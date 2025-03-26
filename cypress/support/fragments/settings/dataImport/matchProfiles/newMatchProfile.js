@@ -18,7 +18,7 @@ const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
 const matchProfileDetailsAccordion = Accordion({ id: 'match-profile-details' });
 const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
-const matchCriterionSelect = Select('Match criterion');
+const matchCriterionSelect = Select({ name: 'profile.matchDetails[0].matchCriterion' });
 const nameTextField = TextField('Name*');
 const closeButton = Button('Close');
 
@@ -227,6 +227,7 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
       fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+      cy.pause();
       selectMatchCriterion(matchCriterion);
       fillExistingRecordFields(existingRecordFields.field, 'field');
       fillExistingRecordFields(existingRecordFields.in1, 'in1');
