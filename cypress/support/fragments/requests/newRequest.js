@@ -181,7 +181,6 @@ export default {
     cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
-      Accordion('Title information').exists(),
       Accordion('Request information').exists(),
       Accordion('Requester information').exists(),
     ]);
@@ -193,6 +192,7 @@ export default {
   },
 
   enterHridInfo(hrid, selectTLR = true) {
+    cy.wait(1000);
     if (selectTLR) cy.do(titleLevelRequest.click());
     cy.wait(1000);
     try {

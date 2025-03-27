@@ -53,6 +53,7 @@ module.exports = defineConfig({
     eureka: true,
     runAsAdmin: false,
     systemRoleName: 'EBSCOAdminRole',
+    selectTenantOnUI: false,
   },
   reporterOptions: reportportalOptions,
   e2e: {

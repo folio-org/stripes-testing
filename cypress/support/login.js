@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, TextField, Heading, including, TextInput } from '../../interactors';
+import { Button, Dropdown, Heading, including, Select, TextField, TextInput } from '../../interactors';
 
 Cypress.Commands.add(
   'login',
@@ -19,6 +19,15 @@ Cypress.Commands.add(
       cy.logoutViaApi();
       cy.clearCookies({ domain: null }).then(() => {
         cy.visit(visitPath.path);
+
+        if (Cypress.env('selectTenantOnUI')) {
+          cy.wait(500);
+          cy.do(Select('Tenant/Library').choose(Cypress.env('OKAPI_TENANT')));
+          cy.wait(500);
+          cy.do(Button('Continue').click());
+          cy.wait(1000);
+        }
+
         cy.do([
           TextInput('Username').fillIn(username),
           TextInput('Password').fillIn(password),

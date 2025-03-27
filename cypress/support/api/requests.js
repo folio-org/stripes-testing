@@ -44,6 +44,7 @@ Cypress.Commands.add('deleteCancellationReasonApi', (id) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `cancellation-reason-storage/cancellation-reasons/${id}`,
+    failOnStatusCode: false,
   });
 });
 

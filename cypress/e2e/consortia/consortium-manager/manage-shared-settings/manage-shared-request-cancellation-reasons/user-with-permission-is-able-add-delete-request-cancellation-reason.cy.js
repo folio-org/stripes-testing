@@ -140,16 +140,19 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(cancelReason.name);
           },
