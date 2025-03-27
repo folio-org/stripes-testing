@@ -156,7 +156,7 @@ describe('Consortia Vega', () => {
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewTitleRequestPage(true);
-      NewRequest.enterHridInfo(testData.instanceHRID, false);
+      NewRequest.enterHridInfo(testData.instanceHRID, true);
       NewRequest.verifyHridInformation([testData.instanceTitle]);
       NewRequest.enterEcsRequesterInfoWithRequestType(
         {

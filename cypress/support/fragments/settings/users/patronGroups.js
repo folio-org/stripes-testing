@@ -130,7 +130,7 @@ export default {
   },
   clickTrashButtonForGroup(name) {
     cy.do(
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: true })
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .find(Button({ icon: 'trash' }))
         .click(),
@@ -148,18 +148,20 @@ export default {
     cy.do(okayButton.click());
     cy.expect(cannotDeleteModal.absent());
   },
-  createViaApi: (patronGroup = defaultPatronGroup.group) => cy
-    .okapiRequest({
+  createViaApi(patronGroup = defaultPatronGroup.group, description = 'Patron_group_description') {
+    return cy.okapiRequest({
       method: 'POST',
       path: 'groups',
       isDefaultSearchParamsRequired: false,
       body: {
         group: patronGroup,
-        desc: `Patron_group_description${getRandomPostfix()}`,
+        desc: description,
         expirationOffsetInDays: '10',
       },
-    })
-    .then((response) => response.body.id),
+    }).then((response) => {
+      return response.body.id;
+    });
+  },
   deleteViaApi: (patronGroupId) => {
     cy.okapiRequest({
       method: 'DELETE',
@@ -218,7 +220,7 @@ export default {
   },
 
   verifyGroupInTheList({ name, description = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),

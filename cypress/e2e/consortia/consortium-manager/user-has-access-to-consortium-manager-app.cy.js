@@ -34,6 +34,7 @@ describe('Consortia', () => {
     });
 
     after('Delete users data', () => {
+      cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });

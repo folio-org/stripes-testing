@@ -144,7 +144,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByKeywords(userCollege.userId);
-        UsersCard.varifyUserCardOpened();
+        UsersCard.verifyUserCardOpened();
         UsersCard.verifyUserRolesCounter('0');
       },
     );
