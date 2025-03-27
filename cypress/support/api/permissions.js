@@ -52,8 +52,9 @@ Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = tr
   const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
-    path: `capabilities?limit=${limit}`,
+    path: 'capabilities',
     searchParams: {
+      limit,
       query,
     },
     isDefaultSearchParamsRequired: false,
