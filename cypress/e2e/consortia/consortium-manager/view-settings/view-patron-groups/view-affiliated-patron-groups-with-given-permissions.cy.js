@@ -17,7 +17,7 @@ import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 const testData = {
   centralSharedPatronGroup: {
     payload: {
-      group: 'centralSharedPatronGroup_name',
+      group: getTestEntityValue('centralSharedPatronGroup_name'),
     },
   },
   centralLocalPatronGroup: {
