@@ -210,8 +210,10 @@ describe('Invoices', () => {
       { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
       () => {
         filter.filterActions();
+        cy.pause();
         Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
         Invoices.closeInvoiceDetailsPane();
+        cy.pause();
         Invoices.resetFilters();
       },
     );

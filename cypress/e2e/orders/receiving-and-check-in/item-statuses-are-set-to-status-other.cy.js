@@ -72,7 +72,9 @@ describe('Orders', () => {
                 order.vendor = organizationsResponse;
               });
 
-              cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+              cy.loginAsAdmin();
+              TopMenuNavigation.openAppFromDropdown('Orders');
+              Orders.selectOrdersPane();
               cy.createOrderApi(order).then((response) => {
                 orderNumber = response.body.poNumber;
                 Orders.searchByParameter('PO number', orderNumber);
@@ -233,7 +235,7 @@ describe('Orders', () => {
         ItemRecordView.checkItemDetails(
           location.name,
           barcodeForFourItem,
-          ITEM_STATUS_NAMES.ON_ORDER,
+          ITEM_STATUS_NAMES.IN_PROCESS,
         );
         InventoryItems.closeItem();
         InventoryInstance.openHoldingsAccordion(location.name);
