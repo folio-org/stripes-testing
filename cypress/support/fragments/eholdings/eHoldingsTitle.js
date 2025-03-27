@@ -28,10 +28,12 @@ export default {
 
   filterPackages(selectionStatus = FILTER_STATUSES.NOT_SELECTED, packageName) {
     this.openFilterPackagesModal();
+    cy.wait(1000);
 
     if (packageName) {
       FilterPackagesModal.selectPackageName(packageName);
     }
+    cy.wait(1000);
     FilterPackagesModal.selectPackageStatus(selectionStatus);
     FilterPackagesModal.clickSearchButton();
 
