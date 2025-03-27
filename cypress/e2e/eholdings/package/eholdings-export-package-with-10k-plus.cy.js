@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
@@ -13,6 +14,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
+import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -21,7 +23,7 @@ describe('eHoldings', () => {
       selectedStatus: 'selected',
       packageExportFields: ['Holdings status', 'Package Id'],
       titleExportFields: ['Alternate title(s)', 'Description'],
-      titleFilterParams: ['Title', 'Francaise e', 'Not selected'],
+      titleFilterParams: ['Francaise e', 'Title'],
       fileName: `C367972exportCSVFile${getRandomPostfix()}.csv`,
       fileMask: '*_package.csv',
     };
@@ -81,7 +83,8 @@ describe('eHoldings', () => {
         EHoldingsPackageView.clickExportAllTitleFields();
         ExportSettingsModal.verifyExportButtonDisabled();
         ExportSettingsModal.clickCancelButton();
-        EHoldingsPackages.titlesSearchFilter(...testData.titleFilterParams);
+        EHoldingsPackage.searchTitles(...testData.titleFilterParams);
+        EHoldingsPackage.filterTitles(FILTER_STATUSES.NOT_SELECTED);
         // wait for titles list to update
         cy.wait(6000);
         EHoldingsPackageView.verifyNumberOfTitlesLessThan(10000);

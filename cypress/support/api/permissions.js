@@ -52,8 +52,11 @@ Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = tr
   const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
-    path: `capabilities?limit=${limit}`,
-    query,
+    path: 'capabilities',
+    searchParams: {
+      limit,
+      query,
+    },
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     cy.wrap(body.capabilities).as('capabs');
@@ -488,4 +491,24 @@ Cypress.Commands.add('shareRoleWithCapabilitiesApi', ({ id, name, description = 
       );
     });
   });
+});
+
+Cypress.Commands.add('verifyAssignedRolesCountForUserApi', (userId, rolesCount) => {
+  return cy.recurse(
+    () => {
+      return cy.okapiRequest({
+        path: 'roles/users',
+        searchParams: {
+          query: `userId==${userId}`,
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    },
+    (response) => response.body.userRoles.length === rolesCount,
+    {
+      limit: 12,
+      delay: 5000,
+      timeout: 65000,
+    },
+  );
 });

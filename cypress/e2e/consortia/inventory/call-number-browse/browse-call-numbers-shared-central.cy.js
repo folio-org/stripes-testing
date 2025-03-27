@@ -136,6 +136,7 @@ describe('Inventory', () => {
       let location;
       let loanTypeId;
       let materialTypeId;
+      let collegeSourceId;
 
       function createFolioInstance(instanceTitle, tenantId) {
         const targetTenant = Object.keys(Affiliations)
@@ -164,6 +165,7 @@ describe('Inventory', () => {
           callNumber: instance.holdings.college.callNumberInHoldings
             ? instance.holdings.college.callNumber
             : null,
+          sourceId: collegeSourceId,
         }).then((holding) => {
           createdHoldingsIds.push(holding.id);
           instance.holdings.college.id = holding.id;
@@ -211,6 +213,11 @@ describe('Inventory', () => {
             cy.getMaterialTypes({ limit: 1 }).then((matType) => {
               materialTypeId = matType.id;
             });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                collegeSourceId = holdingSources[0].id;
+              },
+            );
           })
           .then(() => {
             testData.instances
@@ -246,13 +253,16 @@ describe('Inventory', () => {
         testData.instances.forEach((instance) => {
           addItemRecordInCollege(instance.instanceId);
         });
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          InventorySearchAndFilter.selectBrowseCallNumbers();
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        InventorySearchAndFilter.selectBrowseCallNumbers();
       });
 
       after('Delete user, data', () => {
@@ -284,6 +294,10 @@ describe('Inventory', () => {
         'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C410759'] },
         () => {
+          cy.resetTenant();
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          });
           InventorySearchAndFilter.browseSearch(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
           allVisibleCNs.forEach((callNumber) => {
