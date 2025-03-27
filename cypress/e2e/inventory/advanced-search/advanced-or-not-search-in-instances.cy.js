@@ -124,8 +124,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C422016'] },
+      'C704290 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
+      { tags: ['criticalPath', 'spitfire', 'C704290'] },
       () => {
         cy.getInstance({
           limit: 1,
