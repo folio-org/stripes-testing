@@ -46,6 +46,9 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Clovio, Giulio');
+        InventoryInstances.deleteInstanceByTitleViaApi('C375171');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
@@ -84,22 +87,24 @@ describe('MARC', () => {
               testData.tag600RowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3_000);
             QuickMarcEditor.pressSaveAndClose();
-          });
+            cy.wait(3_000);
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+            ]).then((createdUserProperties) => {
+              testData.userProperties = createdUserProperties;
 
-        cy.createTempUser([
-          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+            });
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -130,7 +135,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3_000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
 

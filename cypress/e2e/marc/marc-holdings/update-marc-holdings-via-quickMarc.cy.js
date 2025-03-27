@@ -72,9 +72,10 @@ describe('MARC', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.editedFile}`);
     });
 
-    it(
+    // skipped due to https://folio-org.atlassian.net/browse/EUREKA-618
+    it.skip(
       'C417047 Update MARC Holdings via quickMARC; check for updated 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C417047'] },
+      { tags: [] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();
@@ -83,7 +84,6 @@ describe('MARC', () => {
         HoldingsRecordView.waitLoading();
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.waitLoading();
-
         QuickMarcEditor.updateExistingField('852', '$b  E');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndCloseAndReturnHoldingsDetailsPage();

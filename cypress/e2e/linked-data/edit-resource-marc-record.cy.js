@@ -99,7 +99,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C627245 [User journey] LDE - Edit existing resource | create MARC derived record (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

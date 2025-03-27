@@ -52,9 +52,19 @@ describe('Data Import', () => {
       contributorType: 'Producer',
       absentContributorName: 'Stelfreeze, Brian (to be removed)',
       subjects: [
-        { row: 0, name: 'Black Panther (Fictitious character) C411794' },
-        { row: 1, name: 'New Subject C411794' },
-        { row: 2, name: 'Superfighters (C411794)' },
+        {
+          row: 0,
+          name: 'Black Panther (Fictitious character) C411794',
+          source: 'Library of Congress Subject Headings',
+          type: 'Personal name',
+        },
+        { row: 1, name: 'New Subject C411794', source: 'No value set-', type: 'Corporate name' },
+        {
+          row: 2,
+          name: 'Superfighters (C411794)',
+          source: 'Library of Congress Subject Headings',
+          type: 'Topical term',
+        },
       ],
       instanceTitle: 'C411794 Instance Shared Central',
       tag100: {
@@ -254,8 +264,8 @@ describe('Data Import', () => {
           InstanceRecordView.verifyInstanceSubject({
             indexRow: subject.row,
             subjectHeadings: subject.name,
-            subjectSource: 'No value set-',
-            subjectType: 'No value set-',
+            subjectSource: subject.source,
+            subjectType: subject.type,
           });
         });
         InstanceRecordView.viewSource();
@@ -281,8 +291,8 @@ describe('Data Import', () => {
           InstanceRecordView.verifyInstanceSubject({
             indexRow: subject.row,
             subjectHeadings: subject.name,
-            subjectSource: 'No value set-',
-            subjectType: 'No value set-',
+            subjectSource: subject.source,
+            subjectType: subject.type,
           });
         });
         InstanceRecordView.viewSource();

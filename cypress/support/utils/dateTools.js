@@ -110,9 +110,30 @@ export default {
     )}`;
   },
 
+  get3DaysAfterTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + 4,
+    )}`;
+  },
+
+  get4DaysAfterTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + 5,
+    )}`;
+  },
+
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 3);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate(),
+    )}/${currentDate.getFullYear()}`;
+  },
+  get3DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 4);
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
       currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;

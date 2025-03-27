@@ -298,7 +298,7 @@ describe('Bulk-edit', () => {
               (changedFileName) => {
                 downloadedFileNameForUpload = changedFileName;
                 previewFileName = `*-Updates-Preview-CSV-${downloadedFileNameForUpload}`;
-                changedRecordsFileName = `*-Changed-Records-${downloadedFileNameForUpload}`;
+                changedRecordsFileName = `*-Changed-Records-CSV-${downloadedFileNameForUpload}`;
 
                 instances.forEach((instance) => {
                   BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(

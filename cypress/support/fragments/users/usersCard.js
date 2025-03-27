@@ -23,11 +23,23 @@ import {
   SelectionList,
   Spinner,
   TextArea,
-  TextField
+  TextField,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 
+const affiliationsAccordion = Accordion('Affiliations');
+const patronBlocksAccordion = Accordion('Patron blocks');
+const loansAccordion = Accordion('Loans');
+const notesAccordion = Accordion('Notes');
+const extendedInformationAccordion = Accordion('Extended information');
+const contactInformationAccordion = Accordion('Contact information');
+const customFieldsAccordion = Accordion('Custom fields');
+const userPermissionsAccordion = Accordion('User permissions');
+const createRequestActionsButton = Button('Create request');
+const createFeeFineActionsButton = Button('Create fee/fine');
+const createPatronBlockActionsButton = Button('Create block');
+const userInformationAccordion = Accordion('User information');
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
@@ -739,5 +751,35 @@ export default {
     this.checkKeyValue('Mobile phone', user.mobilePhone);
     this.checkKeyValue('Preferred contact', user.preferredContact);
     this.checkKeyValue('Status', user.status);
+  },
+
+  checkAccordionsForShadowUser() {
+    cy.expect([
+      userInformationAccordion.exists(),
+      affiliationsAccordion.exists(),
+      extendedInformationAccordion.exists(),
+      contactInformationAccordion.exists(),
+      customFieldsAccordion.exists(),
+      servicePointsAccordion.exists(),
+    ]);
+    if (!Cypress.env('eureka')) cy.expect(userPermissionsAccordion.exists());
+    else cy.expect(userPermissionsAccordion.absent());
+    cy.expect([
+      patronBlocksAccordion.absent(),
+      proxySponsorAccordion.absent(),
+      feesFinesAccordion.absent(),
+      loansAccordion.absent(),
+      requestsAccordion.absent(),
+      notesAccordion.absent(),
+    ]);
+  },
+  checkActionsForShadowUser() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      createRequestActionsButton.absent(),
+      createFeeFineActionsButton.absent(),
+      createPatronBlockActionsButton.absent(),
+    ]);
+    cy.do(actionsButton.click());
   },
 };

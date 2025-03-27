@@ -17,12 +17,15 @@ describe('Eureka', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
-        centralRoleNameA: `AT_C514902_UserRole_CA_${randomPostfix}`,
-        centralRoleNameB: `AT_C514902_UserRole_CB_${randomPostfix}`,
-        centralRoleNameC: `AT_C514902_UserRole_CC_${randomPostfix}`,
-        collegeRoleNameA: `AT_C514902_UserRole_M1A_${randomPostfix}`,
-        collegeRoleNameB: `AT_C514902_UserRole_M1B_${randomPostfix}`,
-        collegeRoleNameC: `AT_C514902_UserRole_M1C_${randomPostfix}`,
+        centralRoleNameA: `AT_C514904_UserRole_CA_${randomPostfix}`,
+        centralRoleNameB: `AT_C514904_UserRole_CB_${randomPostfix}`,
+        centralRoleNameC: `AT_C514904_UserRole_CC_${randomPostfix}`,
+        collegeRoleNameA: `AT_C514904_UserRole_M1A_${randomPostfix}`,
+        collegeRoleNameB: `AT_C514904_UserRole_M1B_${randomPostfix}`,
+        collegeRoleNameC: `AT_C514904_UserRole_M1C_${randomPostfix}`,
+        universityRoleNameA: `AT_C514904_UserRole_M2A_${randomPostfix}`,
+        universityRoleNameB: `AT_C514904_UserRole_M2B_${randomPostfix}`,
+        universityRoleNameC: `AT_C514904_UserRole_M2C_${randomPostfix}`,
       };
 
       const capabSetsToAssign = [
@@ -45,6 +48,7 @@ describe('Eureka', () => {
       const assignUser = {};
       const centralRoleIds = [];
       const collegeRoleIds = [];
+      const universityRoleIds = [];
 
       before('Create users, roles', () => {
         cy.getAdminToken();
@@ -53,7 +57,9 @@ describe('Eureka', () => {
           cy.createTempUser([]).then((assignUserProperties) => {
             Object.assign(assignUser, assignUserProperties);
             cy.assignAffiliationToUser(Affiliations.College, testUser.userId);
+            cy.assignAffiliationToUser(Affiliations.University, testUser.userId);
             cy.assignAffiliationToUser(Affiliations.College, assignUser.userId);
+            cy.assignAffiliationToUser(Affiliations.University, assignUser.userId);
             cy.assignCapabilitiesToExistingUser(testUser.userId, capabsToAssign, capabSetsToAssign);
             [
               testData.centralRoleNameA,
@@ -75,6 +81,18 @@ describe('Eureka', () => {
                 collegeRoleIds.push(role.id);
               });
             });
+            cy.setTenant(Affiliations.University);
+            cy.wait(10_000);
+            cy.assignCapabilitiesToExistingUser(testUser.userId, capabsToAssign, capabSetsToAssign);
+            [
+              testData.universityRoleNameA,
+              testData.universityRoleNameB,
+              testData.universityRoleNameC,
+            ].forEach((roleName) => {
+              cy.createAuthorizationRoleApi(roleName).then((role) => {
+                universityRoleIds.push(role.id);
+              });
+            });
           });
         });
       });
@@ -84,6 +102,7 @@ describe('Eureka', () => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.reload();
         }, 20_000);
         Users.waitLoading();
@@ -101,11 +120,15 @@ describe('Eureka', () => {
         collegeRoleIds.forEach((roleId) => {
           cy.deleteAuthorizationRoleApi(roleId);
         });
+        cy.setTenant(Affiliations.University);
+        universityRoleIds.forEach((roleId) => {
+          cy.deleteAuthorizationRoleApi(roleId);
+        });
       });
 
       it(
-        'C514902 Add/update roles when editing a user in Central tenant (eureka)',
-        { tags: ['criticalPathECS', 'eureka', 'C514902'] },
+        'C514904 Add/update roles when editing a user in Member tenant (eureka)',
+        { tags: ['criticalPathECS', 'eureka', 'C514904'] },
         () => {
           UsersSearchPane.searchByUsername(assignUser.username);
           UsersSearchPane.openUser(assignUser.username);
@@ -113,16 +136,7 @@ describe('Eureka', () => {
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('0');
           UserEdit.clickUserRolesAccordion();
-          UserEdit.checkSelectedRolesAffiliation(tenantNames.central);
-          UserEdit.verifyUserRolesAccordionEmpty();
-          UserEdit.clickAddUserRolesButton();
-          UserEdit.verifySelectRolesModal();
-          UserEdit.selectRoleInModal(testData.centralRoleNameA);
-          UserEdit.selectRoleInModal(testData.centralRoleNameB);
-          UserEdit.saveAndCloseRolesModal();
-          UserEdit.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
-          UserEdit.verifyUserRolesRowsCount(2);
-          UserEdit.selectRolesAffiliation(tenantNames.college);
+          UserEdit.checkSelectedRolesAffiliation(tenantNames.college);
           UserEdit.verifyUserRolesAccordionEmpty();
           UserEdit.clickAddUserRolesButton();
           UserEdit.verifySelectRolesModal();
@@ -131,43 +145,59 @@ describe('Eureka', () => {
           UserEdit.saveAndCloseRolesModal();
           UserEdit.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
           UserEdit.verifyUserRolesRowsCount(2);
+          UserEdit.selectRolesAffiliation(tenantNames.central);
+          UserEdit.verifyUserRolesAccordionEmpty();
+          UserEdit.clickAddUserRolesButton();
+          UserEdit.verifySelectRolesModal();
+          UserEdit.selectRoleInModal(testData.centralRoleNameA);
+          UserEdit.selectRoleInModal(testData.centralRoleNameB);
+          UserEdit.saveAndCloseRolesModal();
+          UserEdit.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
+          UserEdit.verifyUserRolesRowsCount(2);
+          UserEdit.selectRolesAffiliation(tenantNames.university);
+          UserEdit.verifyUserRolesAccordionEmpty();
+          UserEdit.clickAddUserRolesButton();
+          UserEdit.verifySelectRolesModal();
+          UserEdit.selectRoleInModal(testData.universityRoleNameA);
+          UserEdit.selectRoleInModal(testData.universityRoleNameB);
+          UserEdit.saveAndCloseRolesModal();
+          UserEdit.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameB,
+          ]);
+          UserEdit.verifyUserRolesRowsCount(2);
           UserEdit.saveEditedUser();
           UsersCard.waitLoading();
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
-          UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
-          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
-          UsersCard.verifyUserRolesRowsCount(2);
-          UsersCard.selectRolesAffiliation(tenantNames.college);
+          UsersCard.checkSelectedRolesAffiliation(tenantNames.college);
           UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
           UsersCard.verifyUserRolesRowsCount(2);
+          UsersCard.selectRolesAffiliation(tenantNames.central);
+          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
+          UsersCard.verifyUserRolesRowsCount(2);
+          UsersCard.selectRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameB,
+          ]);
+          UsersCard.verifyUserRolesRowsCount(2);
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          Users.waitLoading();
-          UsersSearchPane.searchByUsername(assignUser.username);
-          UsersSearchPane.openUser(assignUser.username);
-          UsersCard.verifyUserRolesCounter('2');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('2');
           UserEdit.clickUserRolesAccordion();
           UserEdit.checkSelectedRolesAffiliation(tenantNames.college);
           UserEdit.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
           UserEdit.verifyUserRolesRowsCount(2);
+          UserEdit.clickAddUserRolesButton();
+          UserEdit.verifySelectRolesModal();
+          UserEdit.selectRoleInModal(testData.collegeRoleNameB, false);
+          UserEdit.selectRoleInModal(testData.collegeRoleNameC);
+          UserEdit.saveAndCloseRolesModal();
+          UserEdit.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameC]);
+          UserEdit.verifyUserRolesRowsCount(2);
           UserEdit.selectRolesAffiliation(tenantNames.central);
           UserEdit.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
-          UserEdit.verifyUserRolesRowsCount(2);
-
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-          Users.waitLoading();
-          UsersSearchPane.searchByUsername(assignUser.username);
-          UsersSearchPane.openUser(assignUser.username);
-          UsersCard.verifyUserRolesCounter('2');
-          UserEdit.openEdit();
-          UserEdit.verifyUserRolesCounter('2');
-          UserEdit.clickUserRolesAccordion();
-          UserEdit.selectRolesAffiliation(tenantNames.central);
-          UserEdit.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
-          UserEdit.verifyUserRolesRowsCount(2);
           UserEdit.clickAddUserRolesButton();
           UserEdit.verifySelectRolesModal();
           UserEdit.selectRoleInModal(testData.centralRoleNameB, false);
@@ -175,29 +205,55 @@ describe('Eureka', () => {
           UserEdit.saveAndCloseRolesModal();
           UserEdit.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameC]);
           UserEdit.verifyUserRolesRowsCount(2);
-          UserEdit.selectRolesAffiliation(tenantNames.college);
-          UserEdit.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameB]);
+          UserEdit.selectRolesAffiliation(tenantNames.university);
+          UserEdit.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameB,
+          ]);
           UserEdit.clickAddUserRolesButton();
           UserEdit.verifySelectRolesModal();
-          UserEdit.selectRoleInModal(testData.collegeRoleNameB, false);
-          UserEdit.selectRoleInModal(testData.collegeRoleNameC);
+          UserEdit.selectRoleInModal(testData.universityRoleNameB, false);
+          UserEdit.selectRoleInModal(testData.universityRoleNameC);
           UserEdit.saveAndCloseRolesModal();
-          UserEdit.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameC]);
+          UserEdit.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameC,
+          ]);
+          UserEdit.verifyUserRolesRowsCount(2);
           UserEdit.saveEditedUser();
           UsersCard.waitLoading();
           UsersCard.verifyUserRolesCounter('2');
 
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           Users.waitLoading();
           UsersSearchPane.searchByUsername(assignUser.username);
           UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
-          UsersCard.checkSelectedRolesAffiliation(tenantNames.college);
+          UsersCard.checkSelectedRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameC,
+          ]);
+          UsersCard.verifyUserRolesRowsCount(2);
+
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university, tenantNames.central);
+          Users.waitLoading();
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
+          UsersCard.verifyUserRolesCounter('2');
+          UsersCard.clickUserRolesAccordion();
+          UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
+          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameC]);
+          UsersCard.verifyUserRolesRowsCount(2);
+          UsersCard.selectRolesAffiliation(tenantNames.college);
           UsersCard.verifyUserRoleNames([testData.collegeRoleNameA, testData.collegeRoleNameC]);
           UsersCard.verifyUserRolesRowsCount(2);
-          UsersCard.selectRolesAffiliation(tenantNames.central);
-          UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameC]);
+          UsersCard.selectRolesAffiliation(tenantNames.university);
+          UsersCard.verifyUserRoleNames([
+            testData.universityRoleNameA,
+            testData.universityRoleNameC,
+          ]);
           UsersCard.verifyUserRolesRowsCount(2);
         },
       );

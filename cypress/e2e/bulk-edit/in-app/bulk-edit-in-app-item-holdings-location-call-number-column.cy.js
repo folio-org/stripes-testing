@@ -241,13 +241,15 @@ describe('bulk-edit', () => {
           newPermanentLoanType,
         ]);
         ExportFile.verifyFileIncludes(changedRecordsFileName, [headersInCsvToCheck]);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.switchToItem();
 
         instance.itemIds.forEach((itemId) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Item UUID', itemId);
           ItemRecordView.waitLoading();
           ItemRecordView.verifyPermanentLoanType(newPermanentLoanType);
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

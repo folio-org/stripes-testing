@@ -41,6 +41,7 @@ describe('Inventory', () => {
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         ]);
+        cy.resetTenant();
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

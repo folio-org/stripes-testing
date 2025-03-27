@@ -53,11 +53,11 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForThirdFY = DateTools.get3DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   const adjustmentDescription = `test_description${getRandomPostfix()}`;
   const barcode = FinanceHelp.getRandomBarcode();
   const enumeration = 'autotestCaption';
@@ -101,7 +101,7 @@ describe('Invoices', () => {
           });
         });
         defaultOrder.vendor = organization.name;
-        TopMenuNavigation.navigateToApp('Orders');
+        TopMenuNavigation.openAppFromDropdown('Orders');
         Orders.selectOrdersPane();
         Orders.createApprovedOrderForRollover(defaultOrder, true, true).then(
           (firstOrderResponse) => {

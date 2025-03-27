@@ -63,31 +63,37 @@ describe('Inventory', () => {
             }).location;
             Locations.createViaApi(collegeLocationData).then((location) => {
               testData.collegeLocation = location;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.sharedInstance.id,
-                permanentLocationId: testData.collegeLocation.id,
-              }).then((holding) => {
-                testData.collegeHoldings.push(holding);
-              });
-            });
+              InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+                (holdingSources) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: testData.sharedInstance.id,
+                    permanentLocationId: testData.collegeLocation.id,
+                    sourceId: holdingSources[0].id,
+                  }).then((holding) => {
+                    testData.collegeHoldings.push(holding);
+                  });
 
-            InventoryInstance.createInstanceViaApi({
-              instanceTitle: testData.localInstance.title,
-            }).then((instanceDataLocal) => {
-              testData.localInstance.id = instanceDataLocal.instanceData.instanceId;
-              cy.getInstanceById(testData.localInstance.id).then((body) => {
-                const requestBodyLocal = body;
-                requestBodyLocal.subjects = testData.localInstance.subjects;
-                cy.updateInstance(requestBodyLocal);
-              });
+                  InventoryInstance.createInstanceViaApi({
+                    instanceTitle: testData.localInstance.title,
+                  }).then((instanceDataLocal) => {
+                    testData.localInstance.id = instanceDataLocal.instanceData.instanceId;
+                    cy.getInstanceById(testData.localInstance.id).then((body) => {
+                      const requestBodyLocal = body;
+                      requestBodyLocal.subjects = testData.localInstance.subjects;
+                      cy.updateInstance(requestBodyLocal);
+                    });
 
-              // adding Holdings in College for local Instance
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.localInstance.id,
-                permanentLocationId: testData.collegeLocation.id,
-              }).then((holding) => {
-                testData.collegeHoldings.push(holding);
-              });
+                    // adding Holdings in College for local Instance
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: testData.localInstance.id,
+                      permanentLocationId: testData.collegeLocation.id,
+                      sourceId: holdingSources[0].id,
+                    }).then((holding) => {
+                      testData.collegeHoldings.push(holding);
+                    });
+                  });
+                },
+              );
             });
 
             // adding Holdings in University for shared Instance
@@ -97,24 +103,32 @@ describe('Inventory', () => {
             }).location;
             Locations.createViaApi(universityLocationData).then((location) => {
               testData.universityLocation = location;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: testData.sharedInstance.id,
-                permanentLocationId: location.id,
-              }).then((holding) => {
-                testData.universityHoldings.push(holding);
-              });
+              InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+                (holdingSources) => {
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: testData.sharedInstance.id,
+                    permanentLocationId: location.id,
+                    sourceId: holdingSources[0].id,
+                  }).then((holding) => {
+                    testData.universityHoldings.push(holding);
+                  });
+                },
+              );
             });
           });
 
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
             InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-          });
+          }, 20_000);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
         });
     });
 
@@ -157,6 +171,9 @@ describe('Inventory', () => {
           false,
         );
 
+        cy.setTenant(Affiliations.University);
+        BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[0].value);
+        BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[1].value);
         BrowseSubjects.browse(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.checkValueIsBold(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(

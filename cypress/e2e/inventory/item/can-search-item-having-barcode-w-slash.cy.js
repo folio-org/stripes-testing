@@ -122,6 +122,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToItem();
 
         // Select "Barcode" in "Keyword" dropdown ->  Enter populated barcode
+        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchByParameter('Barcode', testData.barcodes[0]);
         InventorySearchAndFilter.verifyResultPaneEmpty({
           noResultsFound: true,

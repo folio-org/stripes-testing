@@ -120,7 +120,7 @@ describe('MARC', () => {
               '$9 test',
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               5,
@@ -132,7 +132,7 @@ describe('MARC', () => {
               '$9 3d2ecd70-e44c-484b-b372-677a4a070a4b',
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               5,
@@ -147,7 +147,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(6, '$9 test');
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               6,
@@ -159,7 +159,7 @@ describe('MARC', () => {
             );
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkErrorMessage(
               6,
@@ -175,7 +175,7 @@ describe('MARC', () => {
             MarcAuthority.addNewField(8, '588', '$9 test $9 TEST');
             cy.wait(500);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

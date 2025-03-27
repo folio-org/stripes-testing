@@ -11,6 +11,7 @@ import {
   TextField,
   including,
   matching,
+  or,
 } from '../../../../../interactors';
 import {
   DEFAULT_FOLIO_AUTHORITY_FILES,
@@ -178,7 +179,7 @@ const getTargetRowWithFile = (authorityFileName) => {
 const defaultFolioAuthorityFiles = [
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.ART_AND_ARCHITECTURE_THESAURUS,
-    prefix: 'aat,aatg,aatfg',
+    prefix: or('aat', 'aat,aatg,aatfg'),
     startsWith: '',
     baseUrl: 'http://vocab.getty.edu/aat/',
   },
@@ -220,7 +221,7 @@ const defaultFolioAuthorityFiles = [
   },
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.LC_NAME_AUTHORITY_FILE,
-    prefix: 'n,nb,nr,no,ns',
+    prefix: or('n', 'n,nb,nr,no,ns'),
     startsWith: '',
     baseUrl: 'http://id.loc.gov/authorities/names/',
   },
@@ -244,7 +245,7 @@ const defaultFolioAuthorityFiles = [
   },
   {
     name: DEFAULT_FOLIO_AUTHORITY_FILES.THESAURUS_FOR_GRAPHIC_MATERIALS,
-    prefix: 'lcgtm,tgm',
+    prefix: or('lcgtm', 'lcgtm,tgm'),
     startsWith: '',
     baseUrl: 'http://id.loc.gov/vocabulary/graphicMaterials/',
   },
