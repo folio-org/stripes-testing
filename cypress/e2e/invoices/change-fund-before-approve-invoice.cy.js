@@ -132,10 +132,12 @@ describe('Invoices', () => {
       OrderLines.fillInPOLineInfoWithFund(firstFund);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
+      Orders.closeThirdPane();
+      Orders.resetFilters();
       TopMenuNavigation.navigateToApp('Invoices');
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLinePOLLookUp(orderNumber);
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);

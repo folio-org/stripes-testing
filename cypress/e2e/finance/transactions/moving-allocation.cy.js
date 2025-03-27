@@ -84,13 +84,11 @@ describe('Finance', () => {
         FinanceHelper.searchByName(toFund.name);
         Funds.selectFund(toFund.name);
         Funds.selectBudgetDetails();
-
         const amount = '10';
         Funds.moveAllocation({ toFund, fromFund, amount });
         InteractorsTools.checkCalloutErrorMessage(
-          `$${amount}.00 was not successfully allocated because ${fromFund.code} has no budget`,
+          `$10.00 was not successfully allocated to the budget ${toBudget.name}`,
         );
-        Funds.closeTransferModal();
       },
     );
   });
