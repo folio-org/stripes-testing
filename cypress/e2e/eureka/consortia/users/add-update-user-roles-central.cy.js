@@ -35,11 +35,6 @@ describe('Eureka', () => {
 
       const capabsToAssign = [
         {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
           type: CAPABILITY_TYPES.DATA,
           resource: 'Consortia User-Tenants Collection',
           action: CAPABILITY_ACTIONS.VIEW,
