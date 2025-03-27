@@ -14,7 +14,6 @@ const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 describe('Users', () => {
   before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(servicePoint);
     cy.resetTenant();
     cy.createTempUser(
       [
@@ -29,6 +28,8 @@ describe('Users', () => {
       testData.user1 = userProperties;
       cy.assignAffiliationToUser(Affiliations.College, testData.user1.userId);
       cy.setTenant(Affiliations.College);
+      ServicePoints.createViaApi(servicePoint);
+
       cy.assignPermissionsToExistingUser(testData.user1.userId, [
         Permissions.uiUserCanAssignUnassignPermissions.gui,
         Permissions.uiUsersEdituserservicepoints.gui,
@@ -45,10 +46,12 @@ describe('Users', () => {
   after('Delete test data', () => {
     cy.resetTenant();
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(testData.user2.userId, [servicePoint.id]);
-    ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.user1.userId);
     Users.deleteViaApi(testData.user2.userId);
+    cy.resetTenant();
+    cy.setTenant(Affiliations.College);
+    cy.wait(5000);
+    ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it(
@@ -63,8 +66,8 @@ describe('Users', () => {
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       UsersSearchPane.searchByUsername(testData.user2.username);
       UsersSearchPane.waitLoading();
-      UserEdit.checkAccordionsForShadowUser();
-      UserEdit.checkActionsForShadowUser();
+      UsersCard.checkAccordionsForShadowUser();
+      UsersCard.checkActionsForShadowUser();
       UserEdit.openEdit();
       UserEdit.checkAccordionsForShadowUserInEditMode();
       UserEdit.openServicePointsAccordion();
