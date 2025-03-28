@@ -92,12 +92,14 @@ describe('Inventory', () => {
               itemData.testInstanceIds = specialInstanceIds;
             });
 
-            cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
+            // need to create user for checkout item
+            cy.createTempUser([Permissions.checkoutAll.gui]).then((userProperties) => {
               Checkout.checkoutItemViaApi({
                 itemBarcode: itemData.barcode,
-                userBarcode: users[0].barcode,
+                userBarcode: userProperties.barcode,
                 servicePointId: firstServicePoint.id,
               });
+              Users.deleteViaApi(userProperties.userId);
             });
           });
 
