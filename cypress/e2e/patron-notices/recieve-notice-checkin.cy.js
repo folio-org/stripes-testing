@@ -212,8 +212,7 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-        cy.wait('@/authn/refresh', { timeout: 30000 });
-
+        cy.wait(10000);
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();

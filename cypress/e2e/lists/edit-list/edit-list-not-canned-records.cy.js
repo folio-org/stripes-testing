@@ -79,6 +79,8 @@ describe('Lists', () => {
         Lists.cancelList();
         Lists.closeWithoutSaving();
         Lists.closeListDetailsPane();
+        // workaround for the issue UILISTS-222
+        Lists.closeListDetailsPane();
 
         Lists.verifyListIsPresent(listData.name);
         Lists.openList(listData.name);

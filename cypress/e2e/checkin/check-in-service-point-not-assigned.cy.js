@@ -57,7 +57,6 @@ describe('Check in', () => {
               userData.userId,
               testData.servicePointS.id,
             );
-            cy.login(userData.username, userData.password);
           });
       });
     });
@@ -89,8 +88,7 @@ describe('Check in', () => {
     "C588 Check in: at service point not assigned to item's effective location (vega) (TaaS)",
     { tags: ['criticalPath', 'vega', 'C588'] },
     () => {
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      cy.login(userData.username, userData.password, { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
 
       // Scan item in Check In app
       CheckInActions.checkInItemGui(ITEM_BARCODE);
