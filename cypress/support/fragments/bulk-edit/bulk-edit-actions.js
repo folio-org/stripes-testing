@@ -67,6 +67,8 @@ export default {
     cy.wait(2000);
   },
   openInAppStartBulkEditFrom() {
+    this.openActionsIfNotYet();
+    cy.wait(500);
     cy.do(startBulkEditButton.click());
     cy.wait(2000);
   },
