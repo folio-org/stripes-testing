@@ -170,6 +170,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
+    // for Sunflower bugfest environment, hrId column index is 9
     const hrIdColumnIndex = 8;
     const cells = [];
 
