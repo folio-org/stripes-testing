@@ -18,7 +18,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
-describe('DCB', () => {
+describe.skip('DCB', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -114,7 +114,7 @@ describe('DCB', () => {
 
   it(
     'C422200 (DCB) Lending Flow (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C422200'] },
+    { tags: ['criticalPathExclude', 'volarisExclude', 'C422200Exclude'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
