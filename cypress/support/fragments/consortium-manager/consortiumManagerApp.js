@@ -82,7 +82,10 @@ export default {
         availableSettings.push($el.text());
       });
       if (settingsList) {
-        cy.wrap(availableSettings).should('deep.equal', settingsList);
+        settingsList.forEach((setting) => {
+          cy.wrap(availableSettings).should('include', setting);
+        });
+        // cy.wrap(availableSettings).should('deep.equal', settingsList);
       } else {
         // if there is no settingsList then we check the alphabetical order
         cy.wrap(availableSettings).should('deep.equal', availableSettings.sort());

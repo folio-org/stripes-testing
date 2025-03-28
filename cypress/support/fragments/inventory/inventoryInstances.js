@@ -89,7 +89,6 @@ const searchInstancesOptions = [
   'Instance administrative notes',
   'Place of publication',
   'Subject',
-  'Effective call number (item), shelving order',
   'Instance HRID',
   'Instance UUID',
   'Authority UUID',
@@ -141,7 +140,6 @@ const searchInstancesOptionsValues = [
   'instanceAdministrativeNotes',
   'placeOfPublication',
   'subject',
-  'callNumber',
   'hrid',
   'id',
   'authorityId',
@@ -179,7 +177,7 @@ const searchItemsOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 17);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues

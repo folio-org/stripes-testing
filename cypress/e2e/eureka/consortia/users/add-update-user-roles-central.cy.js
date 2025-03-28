@@ -35,11 +35,6 @@ describe('Eureka', () => {
 
       const capabsToAssign = [
         {
-          type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Enabled',
-          action: CAPABILITY_ACTIONS.VIEW,
-        },
-        {
           type: CAPABILITY_TYPES.DATA,
           resource: 'Consortia User-Tenants Collection',
           action: CAPABILITY_ACTIONS.VIEW,
@@ -112,8 +107,8 @@ describe('Eureka', () => {
         'C514902 Add/update roles when editing a user in Central tenant (eureka)',
         { tags: ['criticalPathECS', 'eureka', 'C514902'] },
         () => {
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('0');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('0');
@@ -149,8 +144,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('2');
@@ -164,8 +159,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('2');
@@ -194,8 +189,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.college);

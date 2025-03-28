@@ -6,7 +6,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
@@ -30,7 +30,9 @@ describe('Orders', () => {
     });
     cy.createOrderApi(order).then((orderResponse) => {
       orderNumber = orderResponse.body.poNumber;
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.loginAsAdmin();
+      TopMenuNavigation.openAppFromDropdown('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.addPOLine();
@@ -53,10 +55,9 @@ describe('Orders', () => {
       permissions.uiOrdersUpdateEncumbrances.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
     });
   });
 

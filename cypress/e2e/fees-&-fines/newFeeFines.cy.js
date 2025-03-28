@@ -23,6 +23,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Modals from '../../support/fragments/modals';
 
 describe('Fees&Fines', () => {
   describe('Manual Fees/Fines', () => {
@@ -190,9 +191,7 @@ describe('Fees&Fines', () => {
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(testData.barcode);
         CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(testData.barcode);
-        InTransit.verifyModalTitle();
-        InTransit.unselectCheckboxPrintSlip();
-        InTransit.closeModal();
+        Modals.closeModalWithPrintSlipCheckboxIfAny();
         CheckInActions.openNewFeeFinesPane();
 
         initialCheckNewFeeFineFragment(testData.owner.name);

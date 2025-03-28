@@ -46,7 +46,7 @@ describe('Inventory', () => {
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+              query: `("username"="${userProperties.username}") and ("active"="true")`,
             });
           })
           .then(() => {

@@ -42,7 +42,7 @@ describe('Consortia', () => {
         cy.assignAffiliationToUser(Affiliations.College, user.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
+          // Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
           Permissions.uiUserCanAssignUnassignPermissions.gui,
           Permissions.uiUsersCreate.gui,
           Permissions.uiUsersPermissionsView.gui,
@@ -52,7 +52,7 @@ describe('Consortia', () => {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
         });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
       });
   });
 
@@ -60,7 +60,9 @@ describe('Consortia', () => {
     cy.resetTenant();
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    cy.setTenant(Affiliations.College);
     Users.deleteViaApi(testUser.id);
+    cy.resetTenant();
   });
 
   it(
@@ -70,12 +72,12 @@ describe('Consortia', () => {
       Users.createViaUi(testUser).then((id) => {
         testUser.id = id;
       });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
       UsersSearchPane.searchByUsername(testUser.username);
       Users.verifyUserDetailsPane();
       UsersCard.verifyAffiliationsQuantity('2');
       UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('College', 2, 'Central Office');
+      UsersCard.verifyAffiliationsDetails(tenantNames.college, 2, tenantNames.central);
     },
   );
 });

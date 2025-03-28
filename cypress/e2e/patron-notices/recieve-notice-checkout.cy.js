@@ -222,8 +222,8 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+        cy.wait(10000);
         NewNoticePolicy.waitLoading();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
         NewNoticePolicy.startAdding();
         NewNoticePolicy.checkInitialState();
         NewNoticePolicy.fillGeneralInformation(noticePolicy);
@@ -276,10 +276,9 @@ describe('Patron notices', () => {
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
         cy.visit(settingsMenu.circulationOtherSettingsPath);
-        OtherSettings.waitLoading();
         cy.wait(10000);
+        OtherSettings.waitLoading();
         OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
-
         cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
         cy.wait(10000);
         NewNoticePolicy.waitLoading();

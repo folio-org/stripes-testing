@@ -41,6 +41,7 @@ function parseCommand() {
         if (
           selectedStatus.includes(test.status_id) &&
           selectedTeams.includes(test.custom_dev_team)
+          // && test.custom_test_group === 1     ---> to select smoke tests
         ) {
           ids.push('C' + test.case_id + ' ');
         }
@@ -68,6 +69,7 @@ function parseCommand() {
           console.log(`Number of filtered tests with duplicates: ${filteredFiles.length}\n`);
           // remove duplicates
           filteredFiles = Array.from(new Set(filteredFiles));
+          console.log(`Number of filtered tests without duplicates: ${filteredFiles.length}\n`);
           filteredFiles.sort();
           if (shuffle) {
             filteredFiles.sort(() => Math.random() - 0.5);

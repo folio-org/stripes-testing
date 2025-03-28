@@ -77,7 +77,7 @@ describe('Consortia', () => {
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-            DepartmentsConsortiumManager.choose();
+            DepartmentsConsortiumManager.chooseWithEmptyList();
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
             ConsortiaControlledVocabularyPaneset.createViaUi(true, sharedDepartment);
@@ -148,16 +148,19 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
 
             cy.visit(SettingsMenu.departments);
+            cy.wait(5000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.departments);
+            cy.wait(5000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.departments);
+            cy.wait(5000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(sharedDepartment.name);
           },

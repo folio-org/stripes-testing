@@ -35,7 +35,6 @@ import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
-
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
