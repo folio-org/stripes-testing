@@ -134,6 +134,11 @@ describe('eHoldings', () => {
     let userId;
     const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
 
+    before('Create package', () => {
+      cy.getAdminToken();
+      EHoldingsPackages.createPackageViaAPI();
+    });
+
     afterEach(() => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
@@ -153,29 +158,27 @@ describe('eHoldings', () => {
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
           userId = userProperties.userId;
-          EHoldingsPackages.createPackageViaAPI().then(() => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.eholdingsPath,
-              waiter: EHoldingsPackages.waitLoading,
-            });
-
-            const yesterday = DateTools.getPreviousDayDate();
-            const yesterdayPaddingZero = DateTools.clearPaddingZero(yesterday);
-            const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
-            const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
-            EHoldingSearch.switchToPackages();
-            // wait until package is created via API
-            cy.wait(15000);
-            UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
-            EHoldingsPackages.openPackage();
-            EHoldingsPackage.editProxyActions();
-            EHoldingsPackages.fillDateCoverage(yesterday, today);
-            EHoldingsPackage.saveAndClose();
-            EHoldingsPackages.verifyCustomCoverageDates(
-              yesterdayPaddingZero,
-              todayWithoutPaddingZero,
-            );
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsPackages.waitLoading,
           });
+
+          const yesterday = DateTools.getPreviousDayDate();
+          const yesterdayPaddingZero = DateTools.clearPaddingZero(yesterday);
+          const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
+          EHoldingSearch.switchToPackages();
+          // wait until package is created via API
+          cy.wait(15000);
+          UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+          EHoldingsPackages.openPackage();
+          EHoldingsPackage.editProxyActions();
+          EHoldingsPackages.fillDateCoverage(yesterday, today);
+          EHoldingsPackage.saveAndClose();
+          EHoldingsPackages.verifyCustomCoverageDates(
+            yesterdayPaddingZero,
+            todayWithoutPaddingZero,
+          );
         });
       },
     );

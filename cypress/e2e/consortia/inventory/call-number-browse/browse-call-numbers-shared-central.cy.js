@@ -286,6 +286,10 @@ describe('Inventory', () => {
         'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C410759'] },
         () => {
+          cy.resetTenant();
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          });
           InventorySearchAndFilter.browseSearch(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
           allVisibleCNs.forEach((callNumber) => {

@@ -476,6 +476,10 @@ describe('Inventory', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
+            cy.setTenant(Affiliations.College);
+            allVisibleCNs.forEach((callNumber) => {
+              BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+            });
             InventorySearchAndFilter.selectBrowseCallNumbers();
           });
           BrowseSubjects.browse(callNumberPrefix);

@@ -6,7 +6,6 @@ import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
@@ -63,12 +62,11 @@ describe('Inventory', () => {
     ];
 
     before('Create user, data', () => {
+      cy.resetTenant();
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           users.userProperties = userProperties;
-
-          cy.resetTenant();
-          cy.getAdminToken();
 
           ServicePoints.createViaApi(testData.servicePoint);
           testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
@@ -192,7 +190,6 @@ describe('Inventory', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               InventorySearchAndFilter.instanceTabIsDefault();
             });
           });

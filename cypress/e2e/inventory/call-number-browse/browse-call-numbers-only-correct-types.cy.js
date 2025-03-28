@@ -258,6 +258,11 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        callNumbers.forEach((group) => {
+          Object.values(group).forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          });
+        });
         InventorySearchAndFilter.browseSearch(callNumbers[5].dewey);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].dewey);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('dewey', 5));

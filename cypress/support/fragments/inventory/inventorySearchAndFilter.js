@@ -1065,11 +1065,14 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('#effectiveLocation').find('input').click();
+    cy.do([
+      effectiveLocationInput.find(TextField()).click(),
+      effectiveLocationInput.find(TextField()).focus(),
+    ]);
   },
 
   checkEffectiveLocationAccordionInputInFocus() {
-    cy.expect(TextField({ type: 'search' }).has({ focused: true }));
+    cy.expect(effectiveLocationInput.find(TextField()).has({ focused: true }));
   },
 
   checkBrowseSearchInputFieldContent(text) {

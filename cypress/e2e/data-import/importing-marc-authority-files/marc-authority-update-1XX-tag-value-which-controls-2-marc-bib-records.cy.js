@@ -225,6 +225,7 @@ describe('Data Import', () => {
         Users.deleteViaApi(testData.user.userId);
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
+        MarcAuthorities.deleteViaAPI(testData.createdRecordIDs[2], true);
       });
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);

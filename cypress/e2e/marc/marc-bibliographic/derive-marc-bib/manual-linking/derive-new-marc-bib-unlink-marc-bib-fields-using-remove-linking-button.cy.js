@@ -68,7 +68,7 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before(() => {
-        cy.loginAsAdmin();
+        cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((createdUserProperties) => {
@@ -103,7 +103,7 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
