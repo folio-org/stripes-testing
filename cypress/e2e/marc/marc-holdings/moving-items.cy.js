@@ -62,7 +62,7 @@ describe('MARC', () => {
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
-              query: `username=${userProperties.username}`,
+              query: `("username"="${userProperties.username}") and ("active"="true")`,
             });
           })
           .then(() => {
