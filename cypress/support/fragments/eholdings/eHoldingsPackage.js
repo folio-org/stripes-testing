@@ -144,6 +144,7 @@ export default {
       cy.wait(500);
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
       cy.wait(500);
+      cy.do(tagsSection.find(MultiSelect()).close());
     });
     return newTag;
   },
