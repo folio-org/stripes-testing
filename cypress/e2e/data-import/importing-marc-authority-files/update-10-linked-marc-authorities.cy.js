@@ -63,15 +63,15 @@ describe('Data Import', () => {
       postfixForLinkedFields: 'UPDATED using 999 ff s match',
     };
     const mappingProfile = {
-      name: `C624349 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      name: `AT_C624349_MappingProfile Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
     };
     const actionProfile = {
-      name: `C624349 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      name: `AT_C624349_ActionProfile Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_AUTHORITY',
     };
     const matchProfile = {
-      profileName: `C624349 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      profileName: `AT_C624349_MatchProfile Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -87,7 +87,7 @@ describe('Data Import', () => {
       recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
-      profileName: `C624349 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      profileName: `AT_C624349_JobProfie Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
     };
     const marcFiles = [
       {

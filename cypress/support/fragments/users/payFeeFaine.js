@@ -34,6 +34,7 @@ export default {
         .find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') }))
         .click(),
     );
+    cy.wait(1000);
   },
   checkPartialPayConfirmation: () => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
   setAmount(amount) {

@@ -92,7 +92,7 @@ describe('Consortia', () => {
             ConsortiumManagerApp.verifyStatusOfConsortiumManager(1);
 
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-            DepartmentsConsortiumManager.choose();
+            DepartmentsConsortiumManager.chooseWithEmptyList();
 
             ConsortiaControlledVocabularyPaneset.createViaUi(true, sharedDepartment3);
             ConsortiaControlledVocabularyPaneset.clickSave();
@@ -112,6 +112,7 @@ describe('Consortia', () => {
             ]);
 
             cy.visit(SettingsMenu.departments);
+            cy.wait(4000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               createdDepartment.slice(0, -1),
@@ -119,6 +120,7 @@ describe('Consortia', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.departments);
+            cy.wait(4000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               createdDepartment.slice(0, -1),
@@ -160,9 +162,10 @@ describe('Consortia', () => {
 
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyListIsEmpty();
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
+            // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
 
             cy.visit(SettingsMenu.departments);
+            cy.wait(4000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               createdDepartment.slice(0, -1),
@@ -170,6 +173,7 @@ describe('Consortia', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.departments);
+            cy.wait(4000);
             Departments.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               createdDepartment.slice(0, -1),

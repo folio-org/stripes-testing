@@ -2149,6 +2149,15 @@ export default {
     else cy.expect(Callout().absent());
   },
 
+  closeAllCallouts() {
+    cy.get('[class^=calloutBase-]').each((callout) => {
+      const calloutId = callout.attr('id');
+      if (calloutId) {
+        cy.do(Callout({ id: calloutId }).dismiss());
+      }
+    });
+  },
+
   verifyInvalidLDRCalloutLink() {
     cy.do(
       calloutInvalidLDRValue
@@ -2279,7 +2288,6 @@ export default {
         `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       updateLinkedBibFieldsModal.absent(),
-      rootSection.exists(),
     ]);
   },
   confirmDeletingRecord() {

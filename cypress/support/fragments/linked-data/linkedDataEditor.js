@@ -4,10 +4,12 @@ import InventoryInstances from '../inventory/inventoryInstances';
 import InventoryInstance from '../inventory/inventoryInstance';
 import PreviewResource from './previewResource';
 import SearchAndFilter from './searchAndFilter';
+import ComparisonForm from './comparisonForm';
 
 const searchSection = "//div[@class='item-search-content']";
 const actionsButton = "//button[@data-testid='search-view-actions-dropdown']";
 const newResourceButton = "//button[contains(@data-testid,'newResource')]";
+const compareSelectedButton = "//button[contains(@data-testid,'compareSelected')]";
 const searchSelect = "//select[@id='id-search-select']";
 const searchButton = "//button[@data-testid='id-search-button']";
 const workPreviewPanel = "//div[@class='preview-panel']";
@@ -82,5 +84,19 @@ export default {
     EditResource.saveAndClose();
     // search for LDE is displayed
     SearchAndFilter.waitLoading();
+  },
+
+  selectInventoryInstance(rowNumber) {
+    cy.xpath(`(//input[contains(@id, 'row-select')])[${rowNumber}]`).should('be.visible').click();
+  },
+
+  openComparisonForm: () => {
+    cy.xpath(actionsButton).click();
+    cy.xpath(compareSelectedButton).click();
+    ComparisonForm.waitLoading();
+  },
+
+  selectModuleMainHeading() {
+    cy.xpath("//a[@id='ModuleMainHeading']").should('be.visible').click();
   },
 };

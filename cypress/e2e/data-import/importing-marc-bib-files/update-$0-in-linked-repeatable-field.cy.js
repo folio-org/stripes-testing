@@ -94,7 +94,7 @@ describe('Data Import', () => {
     before('Creating user and test data', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385663*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C385663');
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -244,7 +244,7 @@ describe('Data Import', () => {
           '700',
           '1',
           '\\',
-          '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
+          '$a C385663 Lee, Stan, $d 1922-2018, $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
         );
 
         QuickMarcEditor.closeEditorPane();

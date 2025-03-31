@@ -172,7 +172,6 @@ describe('Create Item or Title level request', () => {
     'C350417 Check that user can create "Hold" Title level request (vega)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C350417'] },
     () => {
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.enterHridInfo(testData.instanceHRID);

@@ -81,47 +81,44 @@ describe('Inventory', () => {
         testData.consortiaId = consortiaId;
       });
       cy.setTenant(Affiliations.College);
-      InventoryInstance.createInstanceViaApi()
-        .then(({ instanceData }) => {
-          testData.instance = instanceData;
+      InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+        testData.instance = instanceData;
 
-          InventoryInstance.shareInstanceViaApi(
-            testData.instance.instanceId,
-            testData.consortiaId,
-            Affiliations.College,
-            Affiliations.Consortia,
-          );
-        })
-        .then(() => {
-          cy.loginAsAdmin();
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
-          InventoryInstances.searchByTitle(testData.instance.instanceId);
-          InventorySearchAndFilter.closeInstanceDetailPane();
-          InventorySearchAndFilter.selectResultCheckboxes(1);
-          InventorySearchAndFilter.exportInstanceAsMarc();
-          cy.intercept('/data-export/quick-export').as('getHrid');
-          cy.wait('@getHrid', getLongDelay()).then((req) => {
-            const expectedRecordHrid = req.response.body.jobExecutionHrId;
+        InventoryInstance.shareInstanceViaApi(
+          testData.instance.instanceId,
+          testData.consortiaId,
+          Affiliations.College,
+          Affiliations.Consortia,
+        );
+        cy.resetTenant();
 
-            // download exported marc file
-            cy.setTenant(Affiliations.College).then(() => {
-              // use cy.getToken function to get toket for current tenant
-              cy.getCollegeAdminToken();
-              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
-              ExportFile.waitLandingPageOpened();
-              ExportFile.downloadExportedMarcFileWithRecordHrid(
-                expectedRecordHrid,
-                testData.exportedFileName,
-              );
-              FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
-            });
+        cy.loginAsAdmin();
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        InventoryInstances.searchByTitle(testData.instance.instanceId);
+        InventorySearchAndFilter.closeInstanceDetailPane();
+        InventorySearchAndFilter.selectResultCheckboxes(1);
+        InventorySearchAndFilter.exportInstanceAsMarc();
+        cy.intercept('/data-export/quick-export').as('getHrid');
+        cy.wait('@getHrid', getLongDelay()).then((req) => {
+          const expectedRecordHrid = req.response.body.jobExecutionHrId;
+
+          // download exported marc file
+          cy.setTenant(Affiliations.College).then(() => {
+            // use cy.getToken function to get toket for current tenant
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.DATA_EXPORT);
+            ExportFile.waitLandingPageOpened();
+            ExportFile.downloadExportedMarcFileWithRecordHrid(
+              expectedRecordHrid,
+              testData.exportedFileName,
+            );
+            FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
           });
-          cy.resetTenant();
         });
+      });
 
-      cy.getAdminToken();
+      cy.resetTenant();
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
         .then((userProperties) => {
           testData.user = userProperties;

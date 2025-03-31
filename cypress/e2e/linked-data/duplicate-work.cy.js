@@ -98,7 +98,7 @@ describe('Citation: duplicate resource', () => {
 
   it(
     'C624234 [User journey] LDE - Duplicate existing work (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['smoke', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);
@@ -112,7 +112,8 @@ describe('Citation: duplicate resource', () => {
       // close uncontrolled authority modal
       UncontrolledAuthModal.closeIfDisplayed();
       // add instance
-      EditResource.openNewInstanceFormViaActions();
+      // click on new instance button since resource was duplicated without instances
+      EditResource.openNewInstanceFormViaNewInstanceButton();
       NewInstance.addMainInstanceTitle(testData.uniqueInstanceTitle);
       NewInstance.addInstanceIdentifiers(testData);
       EditResource.saveAndClose();

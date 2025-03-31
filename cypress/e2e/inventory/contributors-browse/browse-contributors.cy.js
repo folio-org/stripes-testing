@@ -41,6 +41,7 @@ describe('Inventory', () => {
     ];
 
     before(() => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.uiCallNumberBrowse.gui,

@@ -1,6 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -8,6 +9,7 @@ import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -17,6 +19,7 @@ describe('eHoldings', () => {
     };
 
     before('Creating user, logging in', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
@@ -46,7 +49,8 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
 
-        EHoldingsPackages.titlesSearchFilter('Title', '', testData.selectedStatus);
+        EHoldingsPackage.searchTitles('', 'Title');
+        EHoldingsPackage.filterTitles(FILTER_STATUSES.SELECTED);
         EHoldingsPackageView.selectTitleRecord();
 
         eHoldingsResourceView.openExportModal();

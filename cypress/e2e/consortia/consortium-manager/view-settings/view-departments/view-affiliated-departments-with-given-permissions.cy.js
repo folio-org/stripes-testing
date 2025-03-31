@@ -204,7 +204,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedDepartment.payload.name,
             testData.centralSharedDepartment.payload.code,
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             '6',
             'All',
           ]);
@@ -212,7 +212,7 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalDepartment.name,
               testData.centralLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '3',
               tenantNames.central,
             ],
@@ -222,7 +222,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.collegeLocalDepartment.name,
             testData.collegeLocalDepartment.code,
-            `${moment().format('l')} by Admin, ECS`,
+            `${moment().format('l')} by`,
             '2',
             tenantNames.college,
           ]);
@@ -230,7 +230,7 @@ describe('Consortium manager', () => {
             [
               testData.universityLocalDepartment.name,
               testData.universityLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '-',
               tenantNames.university,
             ],
@@ -244,7 +244,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedDepartment.payload.name,
             testData.centralSharedDepartment.payload.code,
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             '3',
             'All',
           ]);
@@ -256,7 +256,7 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalDepartment.name,
               testData.collegeLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '2',
               tenantNames.college,
             ],
@@ -266,7 +266,7 @@ describe('Consortium manager', () => {
             [
               testData.universityLocalDepartment.name,
               testData.universityLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '-',
               tenantNames.university,
             ],
@@ -295,7 +295,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedDepartment.payload.name,
             testData.centralSharedDepartment.payload.code,
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             '5',
             'All',
           ]);
@@ -303,7 +303,7 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalDepartment.name,
               testData.centralLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '3',
               tenantNames.central,
             ],
@@ -314,13 +314,13 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalDepartment.name,
               testData.collegeLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '2',
               tenantNames.college,
             ],
             ['edit'],
           );
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.universityLocalDepartment.name,
           );
 
@@ -332,7 +332,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedDepartment.payload.name,
             testData.centralSharedDepartment.payload.code,
-            `${moment().format('l')} by SystemConsortia`,
+            `${moment().format('l')} by`,
             '3',
             'All',
           ]);
@@ -340,17 +340,17 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalDepartment.name,
               testData.centralLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '3',
               tenantNames.central,
             ],
             ['edit'],
           );
 
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.collegeLocalDepartment.name,
           );
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.universityLocalDepartment.name,
           );
         },
@@ -372,7 +372,7 @@ describe('Consortium manager', () => {
             [
               testData.centralSharedDepartment.payload.name,
               testData.centralSharedDepartment.payload.code,
-              `${moment().format('l')} by SystemConsortia`,
+              `${moment().format('l')} by`,
               '6',
               'All',
             ],
@@ -382,7 +382,7 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalDepartment.name,
               testData.centralLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '3',
               tenantNames.central,
             ],
@@ -393,7 +393,7 @@ describe('Consortium manager', () => {
             [
               testData.collegeLocalDepartment.name,
               testData.collegeLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '2',
               tenantNames.college,
             ],
@@ -403,7 +403,7 @@ describe('Consortium manager', () => {
             [
               testData.universityLocalDepartment.name,
               testData.universityLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '-',
               tenantNames.university,
             ],
@@ -420,7 +420,7 @@ describe('Consortium manager', () => {
             [
               testData.centralSharedDepartment.payload.name,
               testData.centralSharedDepartment.payload.code,
-              `${moment().format('l')} by SystemConsortia`,
+              `${moment().format('l')} by`,
               '3',
               'All',
             ],
@@ -430,17 +430,17 @@ describe('Consortium manager', () => {
             [
               testData.centralLocalDepartment.name,
               testData.centralLocalDepartment.code,
-              `${moment().format('l')} by Admin, ECS`,
+              `${moment().format('l')} by`,
               '3',
               tenantNames.central,
             ],
             ['edit'],
           );
 
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.collegeLocalDepartment.name,
           );
-          ConsortiaControlledVocabularyPaneset.verifyNoDepartmentInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.universityLocalDepartment.name,
           );
         },

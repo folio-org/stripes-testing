@@ -107,7 +107,6 @@ describe('Title Level Request. Create Item or Title level request', () => {
         waiter: RequestsSearchResultsPane.waitLoading,
       });
       // create title-level request for user
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
       NewRequest.enterHridInfo(testData.instanceHRID);

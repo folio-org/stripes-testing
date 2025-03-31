@@ -56,7 +56,7 @@ describe('Consortia', () => {
         ConsortiumManager.verifyMembersSelected();
         ConsortiumManager.verifyPaneIncludesSettings(settingsList.sort());
         const randomSetting = Arrays.getRandomElement(settingsList);
-        chooseSettingItem(randomSetting, 1);
+        chooseSettingItem(randomSetting, 0);
         ConsortiumManager.clickSelectMembers();
         SelectMembers.changeSelectAllCheckbox('check');
         SelectMembers.verifyStatusOfSelectMembersModal(1);
@@ -72,7 +72,7 @@ describe('Consortia', () => {
         ConsortiumManager.verifyMembersSelected(0);
         chooseSettingItem(randomSetting, 0);
         ConsortiumManager.clickSelectMembers();
-        SelectMembers.verifyStatusOfSelectMembersModal(0);
+        SelectMembers.verifyStatusOfSelectMembersModal(1);
         verifyFoundMembersAndTotalSelected(1, 0);
         checkConsortiumManagerAfterSelectMembersSave(randomSetting, 0);
       },

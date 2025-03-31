@@ -46,7 +46,7 @@ describe('Loans', () => {
             });
             cy.getUsers({
               limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+              query: `username=${userProperties.username}`,
             });
           })
           .then(() => {

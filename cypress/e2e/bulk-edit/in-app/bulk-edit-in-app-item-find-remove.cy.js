@@ -1,6 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -9,7 +10,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { ITEM_NOTES } from '../../../support/constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS, ITEM_NOTES } from '../../../support/constants';
 
 let user;
 const notes = {
@@ -19,12 +20,19 @@ const notes = {
   checkOut: 'Te;st: [sample] no*te',
   copy: 'Te;st: [sample] no*te',
 };
-
+const editedNotes = {
+  admin: '] no*te',
+  action: ' [sample] no*te',
+  checkIn: 'Te;st: [sample] ',
+  checkOut: 'Te;st: [] no*te',
+};
 const item = {
   barcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
+const previewFileName = BulkEditFiles.getPreviewFileName(itemHRIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemHRIDsFileName, true);
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -49,7 +57,7 @@ describe('bulk-edit', () => {
               {
                 itemNoteTypeId: ITEM_NOTES.ACTION_NOTE,
                 note: notes.action,
-                staffOnly: true,
+                staffOnly: false,
               },
               {
                 itemNoteTypeId: ITEM_NOTES.COPY_NOTE,
@@ -58,8 +66,8 @@ describe('bulk-edit', () => {
               },
             ];
             itemData.circulationNotes = [
-              { noteType: 'Check in', note: notes.checkIn, staffOnly: true },
-              { noteType: 'Check out', note: notes.checkOut, staffOnly: true },
+              { noteType: 'Check in', note: notes.checkIn, staffOnly: false },
+              { noteType: 'Check out', note: notes.checkOut, staffOnly: false },
             ];
             cy.updateItemViaApi(itemData);
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
@@ -77,6 +85,7 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(previewFileName, changedRecordsFileName);
     });
 
     it(
@@ -98,40 +107,93 @@ describe('bulk-edit', () => {
           'Copy note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.noteRemove('Administrative note', notes.admin);
+        BulkEditActions.noteRemove('Administrative note', 'Te;st: [sample');
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteRemove('Check in note', notes.checkIn, 1);
+        BulkEditActions.noteRemove('Check in note', 'no*te', 1);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteRemove('Action note', notes.action, 2);
+        BulkEditActions.noteRemove('Check out note', 'sample', 2);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteRemove('Check out note', 'sample', 3);
+        BulkEditActions.noteRemove('Action note', 'Te;st:', 3);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteRemove('Copy note', 'sample', 4);
-
+        BulkEditActions.noteRemove('Copy note', 'Test: sample note', 4);
         BulkEditActions.confirmChanges();
+
+        const editedHeaderValue = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            value: editedNotes.admin,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+            value: editedNotes.checkIn,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+            value: editedNotes.checkOut,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+            value: editedNotes.action,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE,
+            value: notes.copy,
+          },
+        ];
+
+        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInAreYouSureForm(
+          item.hrid,
+          editedHeaderValue,
+        );
+        BulkEditActions.verifyAreYouSureForm(1);
+
+        const editedHeaderValueInFiles = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            value: editedNotes.admin,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ACTION_NOTE,
+            value: editedNotes.action,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.COPY_NOTE,
+            value: notes.copy,
+          },
+        ];
+
+        BulkEditActions.downloadPreview();
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+          item.hrid,
+          editedHeaderValueInFiles,
+        );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
+          item.hrid,
+          editedHeaderValue,
+        );
         BulkEditSearchPane.verifyChangedResults(item.barcode);
         BulkEditActions.openActions();
-
-        BulkEditSearchPane.verifyChangesUnderColumns(
-          'Check out note',
-          `${notes.checkIn} (staff only)`,
+        BulkEditActions.downloadChangedCSV();
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_HRID,
+          item.hrid,
+          editedHeaderValueInFiles,
         );
-        BulkEditSearchPane.verifyChangesUnderColumns('Check in note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', notes.copy);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckOutNote(notes.checkOut, '-');
-        ItemRecordView.checkItemNote(notes.copy, 'No', 'Copy note');
-        ItemRecordView.verifyTextAbsent('Check in note');
-        ItemRecordView.verifyTextAbsent('Action note');
-        ItemRecordView.checkItemAdministrativeNote('-');
+        ItemRecordView.checkItemAdministrativeNote(editedNotes.admin);
+        ItemRecordView.checkCheckInNote(editedNotes.checkIn, 'No');
+        ItemRecordView.checkCheckOutNote(editedNotes.checkOut, 'No');
+        ItemRecordView.checkActionNote(editedNotes.action);
+        ItemRecordView.checkMultipleItemNotesWithStaffOnly(1, 'No', 'Copy note', notes.copy);
       },
     );
   });

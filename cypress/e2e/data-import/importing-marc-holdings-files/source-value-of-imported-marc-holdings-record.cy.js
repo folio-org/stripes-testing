@@ -73,7 +73,8 @@ describe('Data Import', () => {
       );
     });
 
-    it(
+    // skipped due EUREKA-618
+    it.skip(
       'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C356820'] },
       () => {

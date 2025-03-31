@@ -79,23 +79,23 @@ describe('Citation: check navigation', () => {
 
   it(
     'C491276 Linked Data Editor: Verify user is navigated to Linked data editor home page when Application header icon is clicked (citation)',
-    { tags: ['citation', 'linked-data-editor', 'sanity', 'shiftLeft'] },
+    { tags: ['smoke', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // check search is displayed with lccn option
       LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
       // open new resource form
       LinkedDataEditor.openNewResourceForm();
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked data editor');
+      TopMenuNavigation.openAppFromDropdown('Linked Data Editor - beta');
       LinkedDataEditor.waitLoading();
       // search by any title
-      SearchAndFilter.searchResourceByTitle('*');
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       // open work
       LinkedDataEditor.selectFromSearchTable(1);
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked data editor');
+      LinkedDataEditor.selectModuleMainHeading();
       LinkedDataEditor.waitLoading();
-      LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
+      LinkedDataEditor.checkSearchOptionIsDisplayed('title');
     },
   );
 });

@@ -15,11 +15,12 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const item = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceName: `AT_C422240_FolioInstance_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const publicNote = 'publicNote';
-const newPublicNote = 'new publicNote';
+const publicNote = 'My URL public note';
+const newPublicNote = 'My new URL public note';
+const editedPublicNote = ' URL public note';
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(holdingUUIDsFileName);
 const previewFileName = BulkEditFiles.getPreviewFileName(holdingUUIDsFileName);
@@ -107,7 +108,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyConfirmButtonDisabled(true);
         BulkEditActions.selectSecondAction('Replace with');
         BulkEditActions.verifyConfirmButtonDisabled(true);
-        BulkEditActions.fillInFirstTextArea(publicNote);
+        BulkEditActions.fillInFirstTextArea('My');
         BulkEditActions.fillInSecondTextArea(newPublicNote);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.selectSecondAction('Remove');
@@ -115,22 +116,22 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyInputLabel(
           '1 records will be changed if the Commit changes button is clicked. You may choose Download preview to review all changes prior to saving.',
         );
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, editedPublicNote);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [';uri.com;;;"']);
+        ExportFile.verifyFileIncludes(previewFileName, [`;uri.com;;;${editedPublicNote}"`]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, '');
+        BulkEditSearchPane.verifyElectronicAccessElementByIndex(4, editedPublicNote);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [';uri.com;;;"']);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [';uri.com;;; URL public note"']);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingsHRID);
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
-        HoldingsRecordView.verifyElectronicAccessByElementIndex(4, '-');
+        HoldingsRecordView.verifyElectronicAccessByElementIndex(4, editedPublicNote);
       },
     );
   });

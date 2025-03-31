@@ -110,7 +110,7 @@ describe('MARC', () => {
             tag: '711',
             content: '$a C389483 Delaware $0 n84745425C389483',
             value:
-              'C389483 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
+              'C389483 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             type: 'Contributor',
           },
           {

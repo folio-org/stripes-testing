@@ -26,6 +26,10 @@ describe('MARC', () => {
       };
 
       before('Creating data', () => {
+        cy.getAdminToken();
+        ['C350643', 'C357549'].forEach((record) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(record);
+        });
         cy.createTempUser([
           Permissions.settingsDataImportView.gui,
           Permissions.moduleDataImportEnabled.gui,

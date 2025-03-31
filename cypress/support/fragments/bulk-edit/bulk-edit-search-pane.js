@@ -44,6 +44,13 @@ const searchColumnNameTextfield = TextField({ placeholder: 'Search column name' 
 const areYouSureForm = Modal('Are you sure?');
 const previousPaginationButton = Button('Previous');
 const nextPaginationButton = Button('Next');
+const getScrollableElementInForm = (formName) => {
+  return cy
+    .get('[class^=previewAccordion-]')
+    .contains(formName)
+    .closest('[class^=previewAccordion-]')
+    .find('div[class^="mclScrollable"]');
+};
 
 export const userIdentifiers = ['User UUIDs', 'User Barcodes', 'External IDs', 'Usernames'];
 
@@ -84,9 +91,84 @@ export default {
     cy.wait(1000);
   },
 
-  scrollInChangedAccordion(direction) {
-    cy.get('[class^=previewAccordion-] div[class^="mclScrollable"]').scrollTo(direction);
+  verifyAreYouSureFormScrollableHorizontally() {
+    cy.get('[class^=modal-] div[class^="mclScrollable"]').then(($el) => {
+      const scrollWidth = $el[0].scrollWidth;
+      const clientWidth = $el[0].clientWidth;
+
+      expect(scrollWidth, 'The Are you sure form is not horizontally scrollable').to.be.greaterThan(
+        clientWidth,
+      );
+    });
+  },
+
+  verifyAreYouSureFormScrollableVertically() {
+    cy.get('[class^=modal-] div[class^="mclScrollable"]').then(($el) => {
+      const scrollHeight = $el[0].scrollHeight;
+      const clientHeight = $el[0].clientHeight;
+
+      expect(scrollHeight, 'The Are you sure form is not vertically scrollable').to.be.greaterThan(
+        clientHeight,
+      );
+    });
+  },
+
+  scrollInMatchedAccordion(direction) {
+    getScrollableElementInForm('Preview of record matched').scrollTo(direction);
     cy.wait(1000);
+  },
+
+  verifyPreviewOfRecordMatchedScrollableHorizontally() {
+    getScrollableElementInForm('Preview of record matched').then(($el) => {
+      const scrollWidth = $el[0].scrollWidth;
+      const clientWidth = $el[0].clientWidth;
+
+      expect(
+        scrollWidth,
+        'The Preview of record matched is not horizontally scrollable',
+      ).to.be.greaterThan(clientWidth);
+    });
+  },
+
+  verifyPreviewOfRecordMatchedScrollableVertically() {
+    getScrollableElementInForm('Preview of record matched').then(($el) => {
+      const scrollHeight = $el[0].scrollHeight;
+      const clientHeight = $el[0].clientHeight;
+
+      expect(
+        scrollHeight,
+        'The Preview of record matched is not vertically scrollable',
+      ).to.be.greaterThan(clientHeight);
+    });
+  },
+
+  scrollInChangedAccordion(direction) {
+    getScrollableElementInForm('Preview of record changed').scrollTo(direction);
+    cy.wait(1000);
+  },
+
+  verifyPreviewOfRecordChangedScrollableHorizontally() {
+    getScrollableElementInForm('Preview of record changed').then(($el) => {
+      const scrollWidth = $el[0].scrollWidth;
+      const clientWidth = $el[0].clientWidth;
+
+      expect(
+        scrollWidth,
+        'The Preview of record changed is not horizontally scrollable',
+      ).to.be.greaterThan(clientWidth);
+    });
+  },
+
+  verifyPreviewOfRecordChangedScrollableVertically() {
+    getScrollableElementInForm('Preview of record changed').then(($el) => {
+      const scrollHeight = $el[0].scrollHeight;
+      const clientHeight = $el[0].clientHeight;
+
+      expect(
+        scrollHeight,
+        'The Preview of record changed is not vertically scrollable',
+      ).to.be.greaterThan(clientHeight);
+    });
   },
 
   checkForUploading(fileName) {
@@ -599,17 +681,6 @@ export default {
     });
   },
 
-  verifyReasonForErrorByIdentifier(identifier, errorText) {
-    cy.then(() => errorsAccordion.find(MultiColumnListCell(identifier)).row()).then((index) => {
-      cy.expect(
-        errorsAccordion
-          .find(MultiColumnListRow({ indexRow: `row-${index}` }))
-          .find(MultiColumnListCell({ column: 'Reason for error', content: errorText }))
-          .exists(),
-      );
-    });
-  },
-
   verifyError(identifier, reasonMessage, status = 'Error') {
     cy.expect([
       errorsAccordion
@@ -666,37 +737,6 @@ export default {
     cy.expect(
       errorsAccordion
         .find(Checkbox({ labelText: 'Show warnings', disabled: isDisabled, checked: isChecked }))
-        .exists(),
-    );
-  },
-
-  verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
-    cy.expect(
-      errorsAccordion
-        .find(
-          HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
-            } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
-          ),
-        )
-        .exists(),
-    );
-  },
-
-  verifyErrorLabelInErrorAccordion(
-    fileName,
-    numberOfEntries,
-    numberOfRecordsChanged,
-    numberOfErrors,
-  ) {
-    cy.expect(
-      Accordion('Errors')
-        .find(
-          HTML(
-            `${fileName}: ${numberOfEntries} entries * ${numberOfRecordsChanged} records changed * ${numberOfErrors} errors`,
-          ),
-        )
         .exists(),
     );
   },

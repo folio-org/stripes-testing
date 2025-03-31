@@ -18,13 +18,13 @@ import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 const testData = {
   newInstanceNoteType: {
-    name: getTestEntityValue('C410862_new'),
+    name: getTestEntityValue('C410916_new'),
   },
   editInstanceNoteType: {
-    name: getTestEntityValue('C410862_edit'),
+    name: getTestEntityValue('C410916_edit'),
   },
   tempInstanceNoteType: {
-    name: getTestEntityValue('C410862'),
+    name: getTestEntityValue('C410916'),
   },
 };
 
@@ -88,16 +88,6 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           InstanceNoteTypesConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
@@ -181,6 +171,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
           cy.visit(SettingsMenu.instanceNoteTypes);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newInstanceNoteType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
@@ -188,12 +179,14 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.instanceNoteTypes);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newInstanceNoteType.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.instanceNoteTypes);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editInstanceNoteType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

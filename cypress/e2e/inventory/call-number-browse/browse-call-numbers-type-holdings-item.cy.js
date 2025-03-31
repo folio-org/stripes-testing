@@ -10,6 +10,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { CallNumberTypes } from '../../../support/fragments/settings/inventory/instances/callNumberTypes';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -33,7 +34,7 @@ describe('Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.createLocalCallNumberTypeViaApi(testData.localCNtypeName).then(
+          CallNumberTypes.createCallNumberTypeViaApi({ name: testData.localCNtypeName }).then(
             (id) => {
               testData.callNumberTypeLocalId = id;
             },
@@ -165,7 +166,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
-      InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
+      CallNumberTypes.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
     });
 
     it(
@@ -178,6 +179,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].value);
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
 
@@ -190,12 +192,14 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE,
         );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[2].value);
         InventorySearchAndFilter.browseSearch(callNumbers[2].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
         );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[3].value);
         InventorySearchAndFilter.browseSearch(callNumbers[3].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
 
@@ -214,15 +218,19 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
         );
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].value);
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
 
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[1].value);
         InventorySearchAndFilter.browseSearch(callNumbers[1].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
 
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[2].value);
         InventorySearchAndFilter.browseSearch(callNumbers[2].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
 
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[3].value);
         InventorySearchAndFilter.browseSearch(callNumbers[3].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
 

@@ -5,6 +5,7 @@ import {
   MultiColumnListRow,
   PaneHeader,
   TextField,
+  and,
   including,
 } from '../../../../interactors';
 
@@ -59,7 +60,9 @@ export default {
   },
 
   clickSave() {
+    cy.wait(500);
     cy.do(saveButton.click());
+    cy.wait(1000);
   },
 
   confirmDelete() {
@@ -74,7 +77,7 @@ export default {
   performAction(recordName, action) {
     // actions are selected by button name: trash(delete) or edit
     cy.do(
-      MultiColumnListRow({ content: including(recordName) })
+      MultiColumnListRow({ content: including(recordName), isContainer: true })
         .find(Button({ icon: action }))
         .click(),
     );
@@ -82,7 +85,38 @@ export default {
 
   verifyRecordInTheList(record, actionButtons = []) {
     cy.then(() => MultiColumnListRow({
-      content: including(record[0]),
+      content: including(record[0]), isContainer: true
+    }).rowIndexInParent()).then((rowIndexInParent) => {
+      cy.wrap(record).each((text, columnIndex) => {
+        cy.expect(
+          MultiColumnListRow({ rowIndexInParent })
+            .find(MultiColumnListCell({ innerText: including(text), columnIndex }))
+            .exists(),
+        );
+      });
+
+      const actionsCell = MultiColumnListRow({ rowIndexInParent }).find(
+        MultiColumnListCell({ columnIndex: record.length }),
+      );
+      if (actionButtons.length === 0) {
+        cy.expect(actionsCell.has({ content: '' }));
+      } else {
+        cy.wrap(Object.values(actionIcons)).each((action) => {
+          if (actionButtons.includes(action)) {
+            cy.expect(actionsCell.find(Button({ icon: action })).exists());
+          } else {
+            cy.expect(actionsCell.find(Button({ icon: action })).absent());
+          }
+        });
+      }
+    });
+  },
+
+  // if some entity is created for all tenants, it should be searched by name and member name
+  // use for searching identifiers array
+  verifyRecordInTheListForMultipleRecords(identifiers, record, actionButtons = []) {
+    cy.then(() => MultiColumnListRow({
+      content: and(including(identifiers[0]), including(identifiers[1])), isContainer: true
     }).rowIndexInParent()).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
@@ -124,6 +158,7 @@ export default {
       });
   },
 
+  // MultiColumnListRow({ content: and(including(identifiers[0]), including(identifiers[1])), isContainer: true })
   verifyRecordIsInTheList(name, tenant, record, actionButtons = []) {
     cy.xpath(
       `.//*[(contains(@class, 'mclRowFormatterContainer')) and (./*[(./*[text()='${name}']) and (./*[text()='${tenant}'])])]`,

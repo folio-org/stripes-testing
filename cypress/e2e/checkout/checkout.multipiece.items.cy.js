@@ -24,7 +24,6 @@ describe('Check out', () => {
   const defaultDescription = `autotest_description_${getRandomPostfix()}`;
 
   beforeEach(() => {
-    cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
     cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
@@ -85,7 +84,7 @@ describe('Check out', () => {
       .then(() => {
         cy.getUsers({
           limit: 1,
-          query: `"personal.lastName"="${user.username}" and "active"="true"`,
+          query: `username=${user.username}`,
         }).then((users) => {
           userBarcode = users[0].barcode;
         });

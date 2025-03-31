@@ -166,10 +166,11 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.waitForAuthRefresh(() => {
+              cy.resetTenant();
               cy.loginAsAdmin();
               cy.visit(TopMenu.inventoryPath);
               cy.reload();
-            });
+            }, 30_000);
             InventoryInstances.waitContentLoading();
 
             linkingInTenants.forEach((tenants) => {

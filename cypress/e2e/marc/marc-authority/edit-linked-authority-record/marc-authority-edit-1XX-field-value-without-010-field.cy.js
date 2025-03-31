@@ -75,34 +75,37 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          testData.userProperties = createdUserProperties;
+        ])
+          .then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-          cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIcon(testData.tag611);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResults(linkingTagAndValue.value);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-              linkingTagAndValue.tag,
-              linkingTagAndValue.rowIndex,
-            );
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+            cy.visit(TopMenu.inventoryPath).then(() => {
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              InventoryInstance.verifyAndClickLinkIcon(testData.tag611);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.searchResults(linkingTagAndValue.value);
+              InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+                linkingTagAndValue.tag,
+                linkingTagAndValue.rowIndex,
+              );
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
+              QuickMarcEditor.checkAfterSaveAndClose();
+              cy.wait(3_000);
+            });
+          })
+          .then(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
-        });
       });
 
       after('Deleting user, data', () => {

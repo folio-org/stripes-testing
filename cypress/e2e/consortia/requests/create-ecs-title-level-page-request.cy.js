@@ -154,10 +154,9 @@ describe('Consortia Vega', () => {
     'C624255 Check that user can create ECS Title level Page request (consortia) (vega)',
     { tags: ['smokeECS', 'vega', 'C624255'] },
     () => {
-      cy.intercept('POST', 'circulation-bff/requests').as('createRequest');
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewTitleRequestPage(true);
-      NewRequest.enterHridInfo(testData.instanceHRID, false);
+      NewRequest.enterHridInfo(testData.instanceHRID, true);
       NewRequest.verifyHridInformation([testData.instanceTitle]);
       NewRequest.enterEcsRequesterInfoWithRequestType(
         {

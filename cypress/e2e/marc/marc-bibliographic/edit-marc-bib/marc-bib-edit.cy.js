@@ -42,6 +42,7 @@ describe('MARC', () => {
       const createdInstanceIDs = [];
 
       before(() => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 

@@ -6,8 +6,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Ledgers', () => {
   before(() => {
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.ledgerPath);
+    cy.loginAsAdmin({ path: TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
   });
 
   it(

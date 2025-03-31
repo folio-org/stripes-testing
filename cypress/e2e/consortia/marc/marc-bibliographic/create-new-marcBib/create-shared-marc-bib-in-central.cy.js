@@ -88,6 +88,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
           QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             createdInstanceID.push(id);
@@ -95,11 +97,14 @@ describe('MARC', () => {
           InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkContributor(testData.contributor);
-
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userBProperties.username, users.userBProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
           InventoryInstances.selectInstance();

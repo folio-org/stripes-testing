@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -41,6 +42,7 @@ describe('eHoldings', () => {
     ];
 
     before('Creating user, logging in', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -72,8 +74,9 @@ describe('eHoldings', () => {
         EHoldingsPackages.verifyPackageInResults(testData.packageName);
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
-        EHoldingsPackages.titlesSearchFilter('Title', testData.title, testData.selectedStatus);
-        EHoldingsPackageView.selectTitleRecord();
+        EHoldingsPackage.searchTitles(testData.title, 'Title');
+        EHoldingsPackage.filterTitles(testData.selectedStatus);
+        EHoldingsPackageView.selectTitleRecordByTitle(testData.title);
         eHoldingsResourceView.openExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.clickExportSelectedTitleFields();

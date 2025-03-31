@@ -133,10 +133,10 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.addNewField(testData.tag008, '', testData.tag008RowIndex);
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
           QuickMarcEditor.updateExistingTagValue(4, testData.tag00);

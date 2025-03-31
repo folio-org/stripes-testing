@@ -82,12 +82,16 @@ const listInventoryNextPagingButton = Button({ id: 'list-inventory-next-paging-b
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const listInventoryPreviousPagingButton = Button({ id: 'list-inventory-prev-paging-button' });
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
+const getListHeader = (name) => inventorySearchResultsPane.find(MultiColumnListHeader(name));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
+const browseToggleButton = Button({ id: 'mode-navigation-browse' });
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
+const closeIconButton = Button({ icon: 'times' });
+const heldByAccordion = Accordion('Held by');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -232,7 +236,7 @@ export default {
 
   byLanguage(lang) {
     cy.do(languageInput.clickHeader());
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do([
       languageInput.find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(including(lang ?? 'English(')).click(),
@@ -381,6 +385,11 @@ export default {
   switchToBrowseTab() {
     cy.wait(1000);
     cy.do(browseButton.click());
+    cy.expect([
+      Pane({ id: 'browse-inventory-filters-pane' }).exists(),
+      Pane({ id: 'browse-inventory-results-pane' }).exists(),
+      browseButton.has({ disabled: false }),
+    ]);
   },
 
   verifySpecificTabHighlighted(tab) {
@@ -473,12 +482,23 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(keywordInput.fillIn(value));
-    cy.do(searchButton.focus());
-    cy.do(searchButton.click());
+    cy.do([
+      SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
+      keywordInput.fillIn(value),
+      cy.wait(500),
+      searchButton.focus(),
+      cy.wait(500),
+      searchButton.click(),
+      cy.wait(1000),
+    ]);
   },
-  switchToItem: () => cy.do(itemToggleButton.click()),
+
+  switchToItem: () => {
+    cy.wait(500);
+    cy.do(itemToggleButton.click());
+    cy.wait(500);
+  },
+
   switchToHoldings() {
     cy.wait(200);
     cy.do(holdingsToggleButton.click());
@@ -522,6 +542,14 @@ export default {
   verifySearchResult: (cellContent, isFound = true) => {
     if (isFound) cy.expect(MultiColumnListCell({ content: cellContent }).exists());
     else cy.expect(MultiColumnListCell({ content: cellContent }).absent());
+  },
+
+  validateSearchTableHeaders() {
+    cy.expect([
+      getListHeader('Call number').exists(),
+      getListHeader('Title').exists(),
+      getListHeader('Number of titles').exists(),
+    ]);
   },
 
   verifySearchResultIncludingValue: (value) => {
@@ -811,6 +839,10 @@ export default {
     cy.wait(ONE_SECOND);
   },
 
+  fillInBrowseSearch(searchValue) {
+    cy.do([browseSearchInputField.fillIn(searchValue)]);
+  },
+
   browseSearch(searchValue) {
     cy.do([browseSearchInputField.fillIn(searchValue), searchButton.click()]);
   },
@@ -825,6 +857,14 @@ export default {
       Button(including('New')).exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
+  },
+
+  verifyActionButtonNotExists() {
+    cy.expect(paneResultsSection.find(actionsButton).absent());
+  },
+
+  verifyActionButtonNotExistsInBrowseMode() {
+    cy.expect(inventorySearchResultsPane.find(actionsButton).absent());
   },
 
   verifyNoExportJsonOption() {
@@ -854,8 +894,11 @@ export default {
   },
 
   verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
-  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
-  verifyResetAllButtonDisabled: (isDisabled) => cy.expect(resetAllBtn.has({ disabled: isDisabled })),
+  verifySearchButtonDisabled: (isDisabled = true) => cy.expect(searchButton.has({ disabled: isDisabled })),
+  verifyResetAllButtonDisabled: (isDisabled = true) => cy.expect(resetAllBtn.has({ disabled: isDisabled })),
+  verifyPreviouseButtonDisabled: (isDisabled = true) => cy.expect(previousButton.has({ disabled: isDisabled })),
+  verifyNextButtonDisabled: (isDisabled = true) => cy.expect(nextButton.has({ disabled: isDisabled })),
+
   verifyBrowseInventorySearchResults({ records = [] } = {}) {
     cy.expect(inventorySearchResultsPane.exists());
 
@@ -933,7 +976,7 @@ export default {
     });
   },
 
-  searchTabIsDefault() {
+  validateSearchTabIsDefault() {
     cy.do(
       searchToggleButton.perform((element) => {
         expect(element.classList[2]).to.include('primary');
@@ -941,8 +984,16 @@ export default {
     );
   },
 
+  validateBrowseToggleIsSelected() {
+    cy.do(
+      browseToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
   verifySearchAndFilterPane() {
-    this.searchTabIsDefault();
+    this.validateSearchTabIsDefault();
     this.instanceTabIsDefault();
     this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
     this.verifySearchFieldIsEmpty();
@@ -999,6 +1050,7 @@ export default {
     cy.do(Accordion(accordionName).clickHeader());
   },
 
+  // To be removed after the checkboxes turn into a MultiSelect
   verifyFilterOptionCount(accordionName, optionName, expectedCount) {
     cy.expect(
       Accordion(accordionName)
@@ -1006,6 +1058,16 @@ export default {
           HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
         )
         .exists(),
+    );
+  },
+
+  verifyMultiSelectFilterOptionCount(accordionName, optionName, expectedCount) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do(multiSelect.open());
+    cy.expect(
+      multiSelect
+        .find(MultiSelectOption({ innerHTML: including(optionName) }))
+        .has({ totalRecords: expectedCount }),
     );
   },
 
@@ -1027,12 +1089,18 @@ export default {
     cy.expect(nameTypeAccordion.find(MultiSelectOption(including(option))).exists());
   },
 
+  // To be removed after the checkboxes turn into a MultiSelect
   selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
     const checkbox = Accordion(accordionName).find(Checkbox(optionName));
     cy.do(checkbox.click());
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  selectMultiSelectFilterOption(accordionName, optionName) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(optionName)]);
   },
 
   checkSearchButtonEnabled() {
@@ -1054,12 +1122,11 @@ export default {
   },
 
   checkOptionsWithCountersExistInAccordion(accordionName) {
-    cy.do(paneFilterSection.find(Accordion(accordionName)).find(MultiSelect()).open());
+    cy.do(Accordion(accordionName).find(MultiSelect()).open());
     cy.expect(
-      paneFilterSection
-        .find(Accordion(accordionName))
-        .find(MultiSelectOption())
-        .has({ text: matching(/.{1,}(\d{1,})/) }),
+      Accordion(accordionName)
+        .find(MultiSelectOption({ text: matching(/.{1,}(\d{1,})/) }))
+        .exists(),
     );
   },
 
@@ -1072,7 +1139,7 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('#effectiveLocation').find('input').click();
+    cy.get('#callNumbersEffectiveLocation-multiselect-input').click();
   },
 
   checkEffectiveLocationAccordionInputInFocus() {
@@ -1164,7 +1231,7 @@ export default {
 
   selectHeldByOption(tenantName, isSelected = true) {
     cy.wait(ONE_SECOND);
-    cy.do(Accordion('Held by').find(MultiSelect()).fillIn(tenantName));
+    cy.do(heldByAccordion.find(MultiSelect()).fillIn(tenantName));
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
     cy.do(
@@ -1179,18 +1246,29 @@ export default {
   checkHeldByOptionSelected: (tenantName, isSelected = true) => {
     if (isSelected) {
       cy.expect(
-        Accordion('Held by')
+        heldByAccordion
           .find(MultiSelect())
           .find(ValueChipRoot(including(tenantName)))
           .exists(),
       );
     } else {
       cy.expect(
-        Accordion('Held by')
+        heldByAccordion
           .find(MultiSelect())
           .find(ValueChipRoot(including(tenantName)))
           .absent(),
       );
     }
+  },
+
+  clickOnCloseIcon() {
+    cy.wait(1000);
+    cy.do(closeIconButton.click());
+    cy.wait(1000);
+  },
+
+  verifyHeldByOption(option) {
+    cy.do(heldByAccordion.find(Button({ ariaLabel: 'open menu' })).click());
+    cy.expect(heldByAccordion.find(MultiSelectOption(including(option))).exists());
   },
 };

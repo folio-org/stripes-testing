@@ -1,12 +1,54 @@
 import { including } from '@interactors/html';
 import { Button, EditableListRow, MultiColumnListCell } from '../../../../../../interactors';
+import { REQUEST_METHOD } from '../../../../constants';
 import DateTools from '../../../../utils/dateTools';
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+export const folioSubjectTypes = [
+  'Personal name',
+  'Corporate name',
+  'Meeting name',
+  'Uniform title',
+  'Named event',
+  'Chronological term',
+  'Topical term',
+  'Geographic name',
+  'Uncontrolled',
+  'Faceted topical terms',
+  'Genre/form',
+  'Occupation',
+  'Function',
+  'Curriculum objective',
+  'Hierarchical place name',
+  'Type of entity unspecified',
+];
+
 export default {
+  createViaApi(body) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'subject-types',
+        body,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  deleteViaApi(id) {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `subject-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   verifySourceTypeAbsent(name) {
     cy.get('#editList-subjecttypes, #editList-subject-types') // Selects either if present
       .should('exist') // Ensures at least one exists before proceeding

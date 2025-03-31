@@ -89,7 +89,6 @@ const searchInstancesOptions = [
   'Instance administrative notes',
   'Place of publication',
   'Subject',
-  'Effective call number (item), shelving order',
   'Instance HRID',
   'Instance UUID',
   'Authority UUID',
@@ -141,7 +140,6 @@ const searchInstancesOptionsValues = [
   'instanceAdministrativeNotes',
   'placeOfPublication',
   'subject',
-  'callNumber',
   'hrid',
   'id',
   'authorityId',
@@ -179,7 +177,7 @@ const searchItemsOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 17);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
@@ -650,6 +648,33 @@ export default {
       });
   },
 
+  deleteFullInstancesWithCallNumber({ type, value }) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `browse/call-numbers/${type}/instances`,
+        searchParams: {
+          query: `(fullCallNumber>="${value}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.items)
+      .then((items) => {
+        items.forEach((item) => {
+          return cy
+            .okapiRequest({
+              path: `search/instances?query=itemFullCallNumbers="${item.fullCallNumber}"`,
+              isDefaultSearchParamsRequired: false,
+            })
+            .then(({ body: { instances } }) => {
+              instances.forEach((instance) => {
+                this.deleteFullInstancesByTitleViaApi(instance.title);
+              });
+            });
+        });
+      });
+  },
+
   createLoanType: (loanType) => {
     return cy
       .okapiRequest({
@@ -1078,29 +1103,6 @@ export default {
           if (instance.id) InventoryInstance.deleteInstanceViaApi(instance.id);
         });
       });
-  },
-
-  createLocalCallNumberTypeViaApi: (name) => {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'call-number-types',
-        body: {
-          id: uuid(),
-          name,
-          source: 'local',
-        },
-      })
-      .then((res) => {
-        return res.body.id;
-      });
-  },
-
-  deleteLocalCallNumberTypeViaApi(id) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `call-number-types/${id}`,
-    });
   },
 
   createMarcBibliographicRecordViaApiByReadingFromMrkFile(

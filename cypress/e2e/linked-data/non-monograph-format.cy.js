@@ -60,7 +60,7 @@ describe('Citation: LDE permissions', () => {
 
   it(
     'C651426 [User journey] LDE - non-monograph format (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance
       InventoryInstances.searchByTitle(testData.uniqueTitle);

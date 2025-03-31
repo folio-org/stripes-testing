@@ -42,7 +42,7 @@ const templateBody = {
 };
 const noticePolicy = getDefaultNoticePolicy({ templateId: templateBody.id });
 const item = {
-  instanceTitle: `Instance ${getRandomPostfix()}`,
+  instanceTitle: `AT_C17092_Instance_${getRandomPostfix()}`,
   barcode: `item-${getRandomPostfix()}`,
 };
 const testData = {

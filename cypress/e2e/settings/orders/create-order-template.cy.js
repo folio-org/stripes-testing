@@ -5,7 +5,7 @@ import Organizations from '../../../support/fragments/organizations/organization
 import AcquisitionMethods from '../../../support/fragments/settings/orders/acquisitionMethods';
 import OrderTemplate from '../../../support/fragments/settings/orders/orderTemplates';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -56,10 +56,12 @@ describe('orders: Settings', () => {
       );
       OrderTemplate.saveTemplate();
       OrderTemplate.checkTemplateCreated(orderTemplateName);
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.createOrderByTemplate(orderTemplateName);
       Orders.checkCreatedOrderFromTemplate(organization.name);
-      cy.visit(SettingsMenu.ordersOrderTemplatesPath);
+      TopMenuNavigation.navigateToApp('Settings');
+      OrderTemplate.goToTemplatesFromOrders();
       OrderTemplate.deleteTemplate(orderTemplateName);
     },
   );

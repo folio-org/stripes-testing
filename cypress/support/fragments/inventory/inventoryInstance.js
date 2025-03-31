@@ -486,11 +486,11 @@ export default {
 
   newMarcBibRecord() {
     cy.do([paneResultsSection.find(actionsBtn).click(), newMarcBibButton.click()]);
-    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
+    this.verifyNewQuickMarcEditorPaneExists();
   },
 
   verifyNewQuickMarcEditorPaneExists() {
-    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
+    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: matching(/new/i) })]);
   },
 
   checkInstanceTitle(title) {
@@ -1277,6 +1277,10 @@ export default {
     cy.wait(6000);
   },
 
+  openAccordion: (name) => {
+    cy.do(Accordion(name).clickHeader());
+  },
+
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
@@ -1806,7 +1810,7 @@ export default {
     cy.wait(2000);
     cy.do(actionsButton.click());
     cy.do(editInLdeButton.click());
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   checkEditInstanceInLdeButtonNotDisplayed: () => {

@@ -428,7 +428,7 @@ describe('Bulk-edit', () => {
 
           universityHoldingIds.forEach((universityHoldingId) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${universityHoldingId},${getReasonForTenantNotAssociatedError(
+              `ERROR,${universityHoldingId},${getReasonForTenantNotAssociatedError(
                 universityHoldingId,
                 Affiliations.University,
                 'URL relationship',

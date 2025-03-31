@@ -18,7 +18,7 @@ describe('Choose requester without a barcode', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C10956_Instance_${getRandomPostfix()}`,
   };
   let requestId;
   let defaultLocation;
@@ -108,7 +108,6 @@ describe('Choose requester without a barcode', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.choosePickupServicePoint(servicePoint.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         requestId = intercept.response.body.id;
         // Request is created

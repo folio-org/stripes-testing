@@ -4,6 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Organizations', () => {
   const organization = {
@@ -40,10 +41,7 @@ describe('Organizations', () => {
       permissions.uiOrganizationsViewEditCreateDeletePrivilegedDonorInformation.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.organizationsPath,
-        waiter: Organizations.waitLoading,
-      });
+      cy.login(user.username, user.password);
     });
   });
 
@@ -61,6 +59,7 @@ describe('Organizations', () => {
     'C423690 Add privileged donor information in Organization (NOT a vendor) record (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      TopMenuNavigation.navigateToApp('Organizations');
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.editOrganization();

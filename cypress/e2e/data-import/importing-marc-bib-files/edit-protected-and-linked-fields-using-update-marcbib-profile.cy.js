@@ -93,11 +93,11 @@ describe('Data Import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 16,
-        value: 'C380511 Ludwig van, Beethoven, 1770-1827.',
+        value: 'C380511 Ludwig V, Beethoven, 1770-1827.',
         tag: '100',
       },
       {
-        rowIndex: 18,
+        rowIndex: 17,
         value:
           'C380511 Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
         tag: '240',
@@ -123,7 +123,7 @@ describe('Data Import', () => {
     before('Creating user', () => {
       cy.getAdminToken();
       // make sure there are no duplicate authority records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380511*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380511');
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -307,17 +307,17 @@ describe('Data Import', () => {
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          17,
+          16,
           '100',
           '1',
           '\\',
-          '$a C380511 Ludwig van, Beethoven, $d 1770-1827',
+          '$a C380511 Ludwig V, Beethoven, $d 1770-1827',
           '$e composer.',
           '$0 http://id.loc.gov/authorities/names/n79107741',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          18,
+          17,
           '240',
           '1',
           '0',
@@ -327,7 +327,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          41,
+          40,
           '650',
           '\\',
           '0',
@@ -337,7 +337,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          50,
+          49,
           '700',
           '1',
           '\\',
@@ -351,24 +351,24 @@ describe('Data Import', () => {
           '700',
           '1',
           '2',
-          '$a C380511 Ludwig van, Beethoven, $d 1770-1827',
+          '$a C380511 Beethoven, Ludwig van, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           '$i Container of (work):',
-          '$0 http://id.loc.gov/authorities/names/n79107741',
+          '$0 http://id.loc.gov/authorities/names/n83130832',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          52,
+          50,
           '700',
           '1',
           '\\',
           '$a C380511 Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          53,
+          52,
           '700',
           '1',
           '2',
-          '$a C380511 Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):',
+          '$a C380511 Beethoven, Ludwig van, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $i Container of (work): $0 http://id.loc.gov/authorities/names/n83130832',
         );
       },
     );

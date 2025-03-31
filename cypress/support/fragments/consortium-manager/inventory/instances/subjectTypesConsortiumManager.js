@@ -197,7 +197,9 @@ export default {
     cy.do(confirmButton.click());
     cy.expect([confirmMemberLibrariesModal.absent(), rootPane.exists()]);
     InteractorsTools.checkCalloutMessage(
-      `${subjectTypeName} was successfully created for ${libraries[0]}, ${libraries[1]}, ${libraries[2]} libraries.`,
+      including(
+        `${subjectTypeName} was successfully created for ${libraries[0]}, ${libraries[1]}, ${libraries[2]} libraries.`,
+      ),
     );
   },
 

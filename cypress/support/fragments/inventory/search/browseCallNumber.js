@@ -9,8 +9,8 @@ import {
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const browseButton = Button({ id: 'mode-navigation-browse' });
-const instanceDetailsPane = Section({ id: 'pane-instancedetails' });
-const resultList = MultiColumnList({ id: 'browse-results-list-callNumbers' });
+const instanceDetailsPane = Section({ id: 'pane-results' });
+const resultList = MultiColumnList({ id: including('browse-results-list-') });
 const nextButton = Button({ id: including('-next-paging-button') });
 const previousButton = Button({ id: including('-prev-paging-button') });
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
@@ -78,15 +78,24 @@ export default {
       MultiColumnListCell(`${value}`).has({ innerHTML: including(`<strong>${value}</strong>`) }),
     ]);
   },
+
   resultRowsIsInRequiredOder(rows) {
-    cy.do(
-      MultiColumnListCell({ content: rows[0] }).perform((element) => {
-        const rowNumber = parseInt(element.parentElement.getAttribute('data-row-inner'), 10);
-        rows.forEach((el, i) => {
-          cy.expect(MultiColumnListCell(el).has({ row: rowNumber + i }));
-        });
-      }),
-    );
+    for (let i = 0; i < rows.length - 1; i++) {
+      cy.do(
+        MultiColumnListCell({ content: rows[i] }).perform((element) => {
+          cy.do(
+            MultiColumnListCell({ content: rows[i + 1] }).perform((element2) => {
+              const rowNumber1 = parseInt(element.parentElement.getAttribute('data-row-inner'), 10);
+              const rowNumber2 = parseInt(
+                element2.parentElement.getAttribute('data-row-inner'),
+                10,
+              );
+              expect(rowNumber1).to.be.lessThan(rowNumber2);
+            }),
+          );
+        }),
+      );
+    }
   },
 
   checkNumberOfTitlesForRow(callNumber, numberOfTitles) {
@@ -134,20 +143,26 @@ export default {
     cy.expect(previousButton.has({ disabled: !isActive }));
   },
 
+  getCallNumbersViaApi(typeCode, callNumberValue) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `browse/call-numbers/${typeCode}/instances`,
+        searchParams: {
+          query: `(fullCallNumber>="${callNumberValue}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.items);
+  },
+
   waitForCallNumberToAppear(callNumber, isPresent = true, typeCode = 'all') {
     return cy.recurse(
       () => {
-        return cy.okapiRequest({
-          method: 'GET',
-          path: `browse/call-numbers/${typeCode}/instances`,
-          searchParams: {
-            query: `(fullCallNumber>="${callNumber}")`,
-          },
-          isDefaultSearchParamsRequired: false,
-        });
+        return this.getCallNumbersViaApi(typeCode, callNumber);
       },
       (response) => {
-        const foundCallNumbers = response.body.items.filter((item) => {
+        const foundCallNumbers = response.filter((item) => {
           return item.fullCallNumber === callNumber;
         });
         return isPresent ? foundCallNumbers.length > 0 : foundCallNumbers.length === 0;

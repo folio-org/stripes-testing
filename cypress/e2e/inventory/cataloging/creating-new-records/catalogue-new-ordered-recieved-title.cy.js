@@ -174,7 +174,7 @@ describe('Inventory', () => {
           InventoryInstance.verifyItemBarcode('No barcode');
           InventoryInstance.verifyLoan('Can circulate');
           InventoryInstance.openItemByBarcode('No barcode');
-          ItemRecordView.checkBarcode('No value set-');
+          ItemRecordView.checkBarcode('-');
           InventoryItems.edit();
           ItemRecordEdit.waitLoading(instanceTitle);
           ItemRecordEdit.addBarcode(barcode);
@@ -217,6 +217,7 @@ describe('Inventory', () => {
           ConfirmItemInModal.confirmInTransitModal();
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter(
             'Keyword (title, contributor, identifier, HRID, UUID)',
             instanceTitle,

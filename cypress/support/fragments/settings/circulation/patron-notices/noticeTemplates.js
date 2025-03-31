@@ -29,7 +29,9 @@ export default {
   },
   getDefaultTemplate,
   checkPreview(previewText) {
+    cy.wait(1000);
     cy.do(Button('Preview').click());
+    cy.wait(2000);
     cy.expect([
       previewModal.has({ header: including('Preview of patron notice template') }),
       previewModal.has({ content: including(previewText) }),

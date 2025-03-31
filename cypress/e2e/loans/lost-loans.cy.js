@@ -201,7 +201,7 @@ describe('Loans', () => {
         const comment = 'Declare lost';
         // Navigate to open loan "A".
         cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-        cy.wait(3000);
+        cy.wait(5000);
         UserLoans.openLoanDetails(testData.folioInstances[0].barcodes[0]);
         // Declare item lost.
         LoanDetails.declareItemLost(comment);
@@ -210,7 +210,7 @@ describe('Loans', () => {
 
         // Navigate to open loan "B".
         cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-        cy.wait(3000);
+        cy.wait(5000);
         UserLoans.openLoanDetails(testData.folioInstances[1].barcodes[0]);
         // Declare item lost.
         LoanDetails.declareItemLost(comment);
@@ -227,13 +227,13 @@ describe('Loans', () => {
         );
         // Navigate to closed loan details for loan "B" and check closed loan details.
         cy.visit(AppPaths.getClosedLoansPath(userData.userId));
-        cy.wait(3000);
+        cy.wait(5000);
         UserLoans.openLoanDetails(testData.folioInstances[1].barcodes[0]);
         LoanDetails.checkLoanClosed('System');
 
         // Navigate to loan "C".
         cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-        cy.wait(3000);
+        cy.wait(5000);
         UserLoans.openLoanDetails(testData.folioInstances[2].barcodes[0]);
         // Declare item lost.
         LoanDetails.declareItemLost(comment);
@@ -245,13 +245,13 @@ describe('Loans', () => {
         );
         // Navigate to closed loan details for loan "C" and check closed loan details.
         cy.visit(AppPaths.getClosedLoansPath(userData.userId));
-        cy.wait(3000);
+        cy.wait(5000);
         UserLoans.openLoanDetails(testData.folioInstances[2].barcodes[0]);
         LoanDetails.checkLoanClosed('System');
 
         // Navigate to loan "D".
         cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-        cy.wait(3000);
+        cy.wait(5000);
         UserLoans.createNewFeeFine(
           testData.folioInstances[3].barcodes[0],
           ownerData.name,
@@ -263,11 +263,12 @@ describe('Loans', () => {
         LoanDetails.checkKeyValue('Fees/fines incurred', `$${totalAmount}.00`);
         // Navigate to the fee and pay the total combined amount.
         LoanDetails.openFeeFine();
-        cy.wait(1000);
+        cy.wait(5000);
         UserAllFeesFines.selectAllFeeFines();
         LoanDetails.payFeeFine(totalAmount, testData.paymentMethod);
         // Navigate to closed loan details for loan "D" and check closed loan details.
         cy.visit(AppPaths.getClosedLoansPath(userData.userId));
+        cy.wait(5000);
         UserLoans.openLoanDetails(testData.folioInstances[3].barcodes[0]);
         LoanDetails.checkLoanClosed('System');
       },

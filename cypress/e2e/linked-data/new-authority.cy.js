@@ -116,7 +116,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C633470 [User journey] LDE - Create new MARC authority (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();

@@ -209,6 +209,7 @@ describe('bulk-edit', () => {
           InventoryInstance.verifyHoldingsTemporaryLocation('-');
           InventoryInstance.closeHoldingsView();
 
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.searchByParameter('Instance HRID', instance2.hrid);
           InventorySearchAndFilter.selectSearchResultItem();
           InventorySearchAndFilter.selectViewHoldings();

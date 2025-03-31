@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   Pane,
@@ -65,6 +66,41 @@ const API = {
       cy.wrap(response.body.callNumberTypes).as('callNumberTypes');
     });
     return cy.get('@callNumberTypes');
+  },
+  createCallNumberTypeViaApi({ id, name, source }) {
+    const payload = {
+      id: id || uuid(),
+      name: name || 'Test call number type',
+      source: source || 'local',
+    };
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'call-number-types',
+        body: payload,
+        isDefaultSearchParams: false,
+      })
+      .then((res) => {
+        return res.body.id;
+      });
+  },
+  deleteLocalCallNumberTypeViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `call-number-types/${id}`,
+    });
+  },
+
+  deleteCallNumberTypesLike(name) {
+    return this.getCallNumberTypesViaAPI().then((callNumberTypes) => {
+      callNumberTypes
+        .filter((callNumberType) => {
+          return callNumberType.name.includes(name);
+        })
+        .map((callNumberType) => {
+          return this.deleteLocalCallNumberTypeViaApi(callNumberType.id);
+        });
+    });
   },
 };
 

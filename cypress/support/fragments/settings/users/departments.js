@@ -43,7 +43,7 @@ export default {
   },
 
   verifyDepartmentsInTheList({ name, code = '', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect([
       row.exists(),
@@ -69,7 +69,7 @@ export default {
   },
 
   clickEditButtonForGroup(name) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.do(
       row
@@ -77,10 +77,11 @@ export default {
         .find(Button({ icon: 'edit' }))
         .click(),
     );
+    cy.wait(1000);
   },
 
   clickTrashButtonForGroup(name) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.do([
       row
@@ -89,5 +90,6 @@ export default {
         .click(),
       Button('Delete').click(),
     ]);
+    cy.wait(1000);
   },
 };

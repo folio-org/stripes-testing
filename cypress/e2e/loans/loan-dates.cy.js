@@ -24,7 +24,7 @@ const folioInstances = InventoryInstances.generateFolioInstances({
 });
 
 let checkOutUser;
-const checkInUser = {};
+let checkInUser = {};
 const expirationUserDate = DateTools.getFutureWeekDateObj();
 let servicePointId;
 let servicePointName;
@@ -57,7 +57,7 @@ describe('Loans', () => {
               });
               cy.getUsers({
                 limit: 1,
-                query: `"personal.lastName"="${checkOutUser.username}" and "active"="true"`,
+                query: `username=${checkOutUser.username}`,
               });
             })
             .then(() => {
@@ -87,8 +87,10 @@ describe('Loans', () => {
               });
             })
             .then(() => {
-              cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
-                checkInUser.barcode = users[0].barcode;
+              cy.createTempUser([
+                Permissions.checkinAll.gui,
+              ]).then((userProperties1) => {
+                checkInUser = userProperties1;
               });
             });
         });
@@ -110,6 +112,7 @@ describe('Loans', () => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
         });
         Users.deleteViaApi(checkOutUser.userId);
+        Users.deleteViaApi(checkInUser.userId);
       });
 
       it(

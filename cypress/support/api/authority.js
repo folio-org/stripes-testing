@@ -179,3 +179,13 @@ Cypress.Commands.add('createMarcAuthorityViaAPI', (LDR, fields) => {
     });
   });
 });
+
+Cypress.Commands.add('getAuthoritiesCountViaAPI', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'authority-storage/authorities?limit=1',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.totalRecords;
+  });
+});

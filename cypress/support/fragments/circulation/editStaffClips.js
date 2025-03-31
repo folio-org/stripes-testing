@@ -184,22 +184,33 @@ export default {
   },
   editAndClearHold() {
     this.editHold();
+    cy.wait(500);
     this.clearStaffClips();
+    cy.wait(500);
   },
   editAndClearPickslip() {
     cy.do(Button({ icon: 'times' }).click());
+    cy.wait(500);
     this.editPickslip();
+    cy.wait(500);
     this.clearStaffClips();
+    cy.wait(500);
   },
   editAndClearRequestDelivery() {
     cy.do(Button({ icon: 'times' }).click());
+    cy.wait(500);
     this.editRequestDelivery();
+    cy.wait(500);
     this.clearStaffClips();
+    cy.wait(500);
   },
   editAndClearTransit() {
     cy.do(Button({ icon: 'times' }).click());
+    cy.wait(500);
     this.editTransit();
+    cy.wait(500);
     this.clearStaffClips();
+    cy.wait(500);
   },
   collapseAll() {
     this.findPane().then((pane) => {

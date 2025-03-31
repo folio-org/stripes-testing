@@ -51,8 +51,8 @@ const startBulkEditMarcInstanceButton = Button('Instances with source MARC');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
-const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
-const downloadChagedMarcRecordsButton = Button('Download changed records (MARC)');
+const downloadChangedRecordsButton = Button('Download changed records (CSV)');
+const downloadChangedMarcRecordsButton = Button('Download changed records (MARC)');
 const commitChanges = Button('Commit changes');
 const locationSelection = Selection({ name: 'locationId' });
 const oldEmail = TextField({ testid: 'input-email-0' });
@@ -358,7 +358,7 @@ export default {
   },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
-    cy.expect([downloadChnagedRecordsButton.exists(), downloadErrorsButton.exists()]);
+    cy.expect([downloadChangedRecordsButton.exists(), downloadErrorsButton.exists()]);
   },
 
   verifySuccessBanner(validRecordsCount = 1) {
@@ -1213,20 +1213,20 @@ export default {
   },
 
   verifyActionsDownloadChangedCSV() {
-    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).exists());
+    cy.expect(DropdownMenu().find(downloadChangedRecordsButton).exists());
   },
 
   verifyDownloadChangedRecordsAbsent() {
-    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).absent());
+    cy.expect(DropdownMenu().find(downloadChangedRecordsButton).absent());
   },
 
   downloadChangedCSV() {
-    cy.do(downloadChnagedRecordsButton.click());
+    cy.do(downloadChangedRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
   downloadChangedMarc() {
-    cy.do(downloadChagedMarcRecordsButton.click());
+    cy.do(downloadChangedMarcRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
@@ -1918,8 +1918,8 @@ export default {
 
   findAndRemoveSubfieldActionForMarc(subfieldValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Find', rowIndex);
-    this.verifyDataFieldRequired(2);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifyDataFieldRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(subfieldValue, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Remove subfield', rowIndex);
@@ -1928,7 +1928,7 @@ export default {
   findAndRemoveFieldActionForMarc(fieldValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Find', rowIndex);
     this.verifyDataFieldRequired(rowIndex);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(fieldValue, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Remove field', rowIndex);
@@ -1937,7 +1937,7 @@ export default {
   findAndReplaceWithActionForMarc(fieldValue, replaceValue, rowIndex = 0) {
     this.selectActionForMarcInstance('Find', rowIndex);
     this.verifyDataFieldRequired(rowIndex);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(fieldValue, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Replace with', rowIndex);
@@ -1954,7 +1954,7 @@ export default {
   ) {
     this.selectActionForMarcInstance('Find', rowIndex);
     this.verifyDataFieldRequired(rowIndex);
-    this.verifySelectSecondActionRequired(rowIndex);
+    this.verifySelectSecondActionRequired(true, rowIndex);
     this.fillInDataTextAreaForMarcInstance(subfieldValueToFind, rowIndex);
     this.verifyConfirmButtonDisabled(true);
     this.selectSecondActionForMarcInstance('Append', rowIndex);

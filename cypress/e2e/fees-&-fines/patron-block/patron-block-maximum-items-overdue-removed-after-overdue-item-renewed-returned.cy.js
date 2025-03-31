@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../support/fragments/checkout/checkout';
@@ -17,7 +17,7 @@ import PatronGroups from '../../../support/fragments/settings/users/patronGroups
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserLoans from '../../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
@@ -36,11 +36,11 @@ describe('Fees&Fines', () => {
     const userData = {};
     const itemsData = {
       itemsWithSeparateInstance: [
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350654_Instance_${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350654_Instance_${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350654_Instance_${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350654_Instance_${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350654_Instance_${getRandomPostfix()}` },
       ],
     };
     const testData = {
@@ -78,7 +78,7 @@ describe('Fees&Fines', () => {
     };
 
     const findPatron = () => {
-      cy.visit(TopMenu.usersPath);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
     };
@@ -182,12 +182,12 @@ describe('Fees&Fines', () => {
             userData.userId,
             testData.userServicePoint.id,
           );
-          cy.login(userData.username, userData.password);
-          cy.visit(SettingsMenu.conditionsPath);
-          Conditions.waitLoading();
+          cy.login(userData.username, userData.password,
+            { path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
           Conditions.select('Maximum number of overdue items');
           Conditions.setConditionState(blockMessage);
           cy.visit(SettingsMenu.limitsPath);
+          cy.wait(3000);
           Limits.selectGroup(patronGroup.name);
           Limits.setLimit('Maximum number of overdue items', '4');
         });
@@ -278,7 +278,7 @@ describe('Fees&Fines', () => {
         cy.wait(2000);
         Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-        cy.visit(TopMenu.checkInPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
         const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
         CheckInActions.checkInItemGui(itemForCheckIn.barcode);
         CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
