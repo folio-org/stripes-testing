@@ -50,7 +50,6 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.byName();
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
-            cy.reload();
             const addedTag2 = EHoldingsPackage.addTag();
             EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byName(selectedPackage);
