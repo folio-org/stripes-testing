@@ -9,6 +9,8 @@ export default {
   },
 
   selectSoftwareVersions() {
+    // scroll to software version if needed
+    cy.xpath('//a[@href="/settings/about"]').scrollIntoView();
     cy.xpath('//a[@href="/settings/about"]').should('be.visible');
     // break the chain to avoid error on jenkins
     cy.wait(1000);
