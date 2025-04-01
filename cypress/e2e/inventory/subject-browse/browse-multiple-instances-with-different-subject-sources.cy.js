@@ -4,7 +4,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 // import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-// import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -24,7 +24,7 @@ describe('Inventory', () => {
       jobProfile: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
 
-    before('Import file', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         const preconditionUserId = userProperties.userId;
 
@@ -36,9 +36,7 @@ describe('Inventory', () => {
         cy.getAdminToken();
         Users.deleteViaApi(preconditionUserId);
       });
-    });
 
-    before('Create user and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -61,6 +59,8 @@ describe('Inventory', () => {
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
+        BrowseSubjects.searchBrowseSubjects('Horror stories');
+        cy.pause();
         // BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         // BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
         // BrowseSubjects.expandAccordion('Subject source');
