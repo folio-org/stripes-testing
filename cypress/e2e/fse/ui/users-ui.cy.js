@@ -20,7 +20,7 @@ describe('fse-users - UI', () => {
     () => {
       Users.waitLoading();
       UsersSearchPane.searchByKeywords(`${Cypress.env('diku_login')}`);
-      UsersCard.varifyUserCardOpened();
+      UsersCard.verifyUserCardOpened();
     },
   );
 });
