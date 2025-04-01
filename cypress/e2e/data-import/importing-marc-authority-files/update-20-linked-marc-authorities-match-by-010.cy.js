@@ -37,84 +37,213 @@ describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
       createdRecordIDs: [],
-      searchValue: 'C624349',
-      searchValueUpdated:
-        'C624349 Black Panther UPDATED using 999 ff s match (Fictitious character)',
+      searchValue: 'C624340',
+      searchValueUpdated: 'C624340 Black Panther A UPDATED by 010 match (Fictitious character)',
       searchOption: 'Keyword',
-      csvFile: `C624349 exportedCSVFile${getRandomPostfix()}.csv`,
-      exportedMarcFile: `C624349 exportedMarcAuthFile${getRandomPostfix()}.mrc`,
-      marcFileForModify: 'marcAuthFileForC624349_preupdated.mrc',
-      modifiedMarcFile: `C624349 editedMarcFile${getRandomPostfix()}.mrc`,
-      uploadModifiedMarcFile: `C624349 testMarcAuthFile${getRandomPostfix()}.mrc`,
-      updated700Field: [
+      csvFile: `C624340 exportedCSVFile${getRandomPostfix()}.csv`,
+      exportedMarcFile: `C624340 exportedMarcAuthFile${getRandomPostfix()}.mrc`,
+      marcFileForModify: 'marcAuthFileForC624340_preupdated.mrc',
+      modifiedMarcFile: `C624340 editedMarcFile${getRandomPostfix()}.mrc`,
+      uploadModifiedMarcFile: `C624340 testMarcAuthFile${getRandomPostfix()}.mrc`,
+      updated600Field: [
         46,
         '600',
         '0',
         '0',
-        '$a C624349 Black Panther UPDATED using 999 ff s match $c (Fictitious character)',
+        '$a C624340 Black Panther A UPDATED by 010 match $c (Fictitious character)',
         '',
-        '$0 http://id.loc.gov/authorities/names/n2016243491',
+        '$0 http://id.loc.gov/authorities/names/n2062434002',
         '',
       ],
       instanceTitle:
-        "C624349 Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
+        "C624340 Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
       calloutMessage:
         "is complete. The .csv downloaded contains selected records' UIIDs. To retrieve the .mrc file, please go to the Data export app.",
-      postfixForLinkedFields: 'UPDATED using 999 ff s match',
+      postfixForLinkedFields: 'UPDATED by 010 match',
     };
     const mappingProfile = {
-      name: `AT_C624349_MappingProfile Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      name: `AT_C624340_MappingProfile Update MARC authority records by matching 010 $a subfield value ${getRandomPostfix()}`,
     };
     const actionProfile = {
-      name: `AT_C624349_ActionProfile Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      name: `AT_C624340_ActionProfile Update MARC authority records by matching 010 $a subfield value ${getRandomPostfix()}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_AUTHORITY',
     };
     const matchProfile = {
-      profileName: `AT_C624349_MatchProfile Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      profileName: `AT_C624340_MatchProfile Update MARC authority records by matching 010 $a subfield value ${getRandomPostfix()}`,
       incomingRecordFields: {
-        field: '999',
-        in1: 'f',
-        in2: 'f',
-        subfield: 's',
+        field: '010',
+        in1: '',
+        in2: '',
+        subfield: 'a',
       },
       existingRecordFields: {
-        field: '999',
-        in1: 'f',
-        in2: 'f',
-        subfield: 's',
+        field: '010',
+        in1: '',
+        in2: '',
+        subfield: 'a',
       },
       recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
-      profileName: `AT_C624349_JobProfie Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      profileName: `AT_C624340_JobProfie Update MARC authority records by matching 010 $a subfield value ${getRandomPostfix()}`,
     };
     const marcFiles = [
       {
-        marc: 'marcBibFileForC624349.mrc',
-        fileName: `C624349 testMarcFile${getRandomPostfix()}.mrc`,
+        marc: 'marcBibFileForC624340.mrc',
+        fileName: `C624340 testMarcFile${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       },
       {
-        marc: 'marcAuthFileForC624349.mrc',
-        fileName: `C624349 testMarcFile.${getRandomPostfix()}.mrc`,
+        marc: 'marcAuthFileForC624340.mrc',
+        fileName: `C624340 testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         propertyName: 'authority',
       },
     ];
     const linkingTagAndValues = [
-      { tag: '100', rowIndex: 33, value: 'C624349 Coates, Ta-Nehisi', uuidIndex: 1 },
-      { tag: '600', rowIndex: 46, value: 'C624349 Black Panther', uuidIndex: 2 },
-      { tag: '650', rowIndex: 47, value: 'C624349 Kings and rulers', uuidIndex: 3 },
-      { tag: '650', rowIndex: 49, value: 'C624349 Insurgency', uuidIndex: 4 },
-      { tag: '650', rowIndex: 51, value: 'C624349 Black people', uuidIndex: 5 },
-      { tag: '655', rowIndex: 66, value: 'C624349 Comics (Graphic works)', uuidIndex: 6 },
-      { tag: '655', rowIndex: 70, value: 'C624349 Comics (Graphic works)', uuidIndex: 6 },
-      { tag: '655', rowIndex: 69, value: 'C624349 Superhero comics', uuidIndex: 7 },
-      { tag: '700', rowIndex: 75, value: 'C624349 Sprouse, Chris', uuidIndex: 8 },
-      { tag: '700', rowIndex: 79, value: 'C624349 Kirby, Jack', uuidIndex: 9 },
-      { tag: '700', rowIndex: 80, value: 'C624349 Acuña, Daniel,', uuidIndex: 0 },
+      {
+        tag: '100',
+        rowIndex: 33,
+        value: 'C624340 Coates, Ta-Nehisi',
+        uuidIndex: '01',
+        remainsLinked: true,
+      },
+      {
+        tag: '600',
+        rowIndex: 46,
+        value: 'C624340 Black Panther A',
+        uuidIndex: '02',
+        remainsLinked: true,
+      },
+      {
+        tag: '650',
+        rowIndex: 47,
+        value: 'C624340 Kings and rulers',
+        uuidIndex: '03',
+        remainsLinked: true,
+      },
+      {
+        tag: '650',
+        rowIndex: 49,
+        value: 'C624340 Insurgency',
+        uuidIndex: '04',
+        remainsLinked: true,
+      },
+      {
+        tag: '650',
+        rowIndex: 50,
+        value: 'C624340 Good and evil',
+        uuidIndex: '05',
+        remainsLinked: true,
+      },
+      {
+        tag: '650',
+        rowIndex: 51,
+        value: 'C624340 Black people',
+        uuidIndex: '06',
+        remainsLinked: true,
+      },
+      {
+        tag: '650',
+        rowIndex: 64,
+        value: 'C624340 Graphic novels',
+        uuidIndex: '07',
+        remainsLinked: true,
+      },
+      { tag: '651', rowIndex: 52, value: 'C624340 Africa', uuidIndex: '08', remainsLinked: false },
+      {
+        tag: '655',
+        rowIndex: 67,
+        value: 'C624340 Comics (Graphic works)',
+        uuidIndex: '09',
+        remainsLinked: false,
+      },
+      {
+        tag: '655',
+        rowIndex: 66,
+        value: 'C624340 Superhero comics',
+        uuidIndex: '10',
+        remainsLinked: false,
+      },
+      {
+        tag: '655',
+        rowIndex: 71,
+        value: 'C624340 Comics (Graphic works)',
+        uuidIndex: '09',
+        remainsLinked: false,
+      },
+      {
+        tag: '700',
+        rowIndex: 74,
+        value: 'C624340 Stelfreeze, Brian',
+        uuidIndex: '11',
+        remainsLinked: true,
+      },
+      {
+        tag: '700',
+        rowIndex: 76,
+        value: 'C624340 Martin, Laura',
+        uuidIndex: '12',
+        remainsLinked: true,
+      },
+      {
+        tag: '700',
+        rowIndex: 75,
+        value: 'C624340 Sprouse, Chris',
+        uuidIndex: '13',
+        remainsLinked: false,
+      },
+      {
+        tag: '700',
+        rowIndex: 77,
+        value: 'C624340 Sabino, Joe',
+        uuidIndex: '14',
+        remainsLinked: true,
+      },
+      {
+        tag: '700',
+        rowIndex: 79,
+        value: 'C624340 Kirby, Jack',
+        uuidIndex: '15',
+        remainsLinked: false,
+      },
+      {
+        tag: '700',
+        rowIndex: 80,
+        value: 'C624340 Acuña, Daniel,',
+        uuidIndex: '16',
+        remainsLinked: false,
+      },
+      {
+        tag: '700',
+        rowIndex: 81,
+        value: 'C624340 Neilson, Donald,',
+        uuidIndex: '17',
+        remainsLinked: false,
+      },
+      {
+        tag: '710',
+        rowIndex: 82,
+        value: 'C624340 Black Panther Movement',
+        uuidIndex: '18',
+        remainsLinked: false,
+      },
+      {
+        tag: '711',
+        rowIndex: 83,
+        value: 'C624340 Panther Photographic International',
+        uuidIndex: '19',
+        remainsLinked: false,
+      },
+      {
+        tag: '830',
+        rowIndex: 84,
+        value: 'C624340 Black Panther, Wakanda forever (Motion picture)',
+        uuidIndex: '20',
+        remainsLinked: false,
+      },
     ];
 
     function replace999SubfieldsInPreupdatedFile(
@@ -137,7 +266,7 @@ describe('Data Import', () => {
           let firstString = content[0].slice();
           linkingTagAndValues.forEach((linkingTagAndValue) => {
             firstString = firstString.replace(
-              `ffs00000000-0000-0000-0000-00000000000${linkingTagAndValue.uuidIndex}i00000000-0000-0000-0000-00000000000${linkingTagAndValue.uuidIndex}`,
+              `ffs00000000-0000-0000-0000-0000000000${linkingTagAndValue.uuidIndex}i00000000-0000-0000-0000-0000000000${linkingTagAndValue.uuidIndex}`,
               linkingTagAndValue.field999data,
             );
           });
@@ -150,7 +279,7 @@ describe('Data Import', () => {
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C624349*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.searchValue);
 
       // create Field mapping profile
       NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
@@ -200,7 +329,7 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        linkingTagAndValues.forEach((linkingTagAndValue) => {
+        for (const linkingTagAndValue of linkingTagAndValues) {
           InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
@@ -210,13 +339,15 @@ describe('Data Import', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
-        });
+        }
         QuickMarcEditor.pressSaveAndClose();
         cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
+        cy.wait(4000);
       });
 
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
@@ -228,12 +359,15 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-        MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.searchValue);
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+        }, 20_000);
+        MarcAuthorities.waitLoading();
+        MarcAuthorities.verifyDisabledSearchButton();
       });
     });
 
@@ -255,18 +389,19 @@ describe('Data Import', () => {
     });
 
     it(
-      'C624349 Update 10 linked MARC authority records which are linked to the same MARC bibliographic record using 999 ff $s for match (5 links are retained, 6 links are deleted) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C624349'] },
+      'C624340 Update 20 linked MARC authority records which are linked to the same MARC bibliographic record using 010 $a for match (10 links are retained, 11 links are deleted) (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C624340'] },
       () => {
+        MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.searchValue);
         cy.wait(1000);
         MarcAuthorities.selectAllRecords();
-        MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('10 records selected');
+        MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('20 records selected');
         MarcAuthorities.exportSelected();
         cy.wait(1000);
         MarcAuthorities.checkCallout(testData.calloutMessage);
         ExportFile.downloadCSVFile(testData.csvFile, 'QuickAuthorityExport*');
         MarcAuthorities.verifyAllCheckboxesAreUnchecked();
-        MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('10 records found');
+        MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('20 records found');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.csvFile);
@@ -286,7 +421,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        cy.wait(3000); // wait for file details to be loaded
+        cy.wait(5000); // wait for file details to be loaded
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.UPDATED,
@@ -305,9 +440,9 @@ describe('Data Import', () => {
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-        QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        linkingTagAndValues.forEach((linkingTagAndValue, index) => {
-          if (index < 5) {
+        QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated600Field);
+        for (const linkingTagAndValue of linkingTagAndValues) {
+          if (linkingTagAndValue.remainsLinked) {
             QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex);
             QuickMarcEditor.checkLinkedFieldContainsControlledValueByIndex(
               linkingTagAndValue.rowIndex,
@@ -322,7 +457,8 @@ describe('Data Import', () => {
               linkingTagAndValue.tag,
             );
           }
-        });
+          cy.wait(500);
+        }
       },
     );
   });
