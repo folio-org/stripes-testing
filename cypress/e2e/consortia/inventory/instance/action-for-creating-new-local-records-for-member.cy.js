@@ -19,6 +19,7 @@ describe('Inventory', () => {
 
     before('Create test data', () => {
       cy.clearCookies({ domain: null });
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           user = userProperties;
