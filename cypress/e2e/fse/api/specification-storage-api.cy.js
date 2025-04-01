@@ -10,8 +10,10 @@ describe('fse-specification-storage', () => {
     `TC195707 - Get a collection of specifications for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['ramsons', 'fse', 'api', 'specification-storage'] },
     () => {
-      cy.getSpecificatoinIds().then((response) => {
+      cy.checkSpecificationStorageApi().then((response) => {
         cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('specifications');
+        cy.expect(response.body).to.have.property('totalRecords');
       });
     },
   );

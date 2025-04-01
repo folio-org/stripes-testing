@@ -24,16 +24,12 @@ describe('Eureka', () => {
 
     const capabSetsToAssign = [
       { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       { type: 'Data', resource: 'Roles Users', action: 'Manage' },
       { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+      { type: 'Data', resource: 'UI-Users Roles', action: 'Manage' },
     ];
 
     const capabsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
       { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
       { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
       { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
