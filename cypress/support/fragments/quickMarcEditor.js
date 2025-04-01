@@ -2821,4 +2821,32 @@ export default {
         .exists(),
     );
   },
+
+  checkFieldContainsValueByIndex(rowIndex, value, tag) {
+    const targetRow = QuickMarcEditorRow({ index: rowIndex });
+    cy.expect(
+      targetRow
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(value) }),
+    );
+    if (tag) {
+      cy.expect(
+        targetRow.find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      );
+    }
+  },
+
+  checkLinkedFieldContainsControlledValueByIndex(rowIndex, value, tag) {
+    const targetRow = QuickMarcEditorRow({ index: rowIndex });
+    cy.expect(
+      targetRow
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+        .has({ value: including(value) }),
+    );
+    if (tag) {
+      cy.expect(
+        targetRow.find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      );
+    }
+  },
 };
