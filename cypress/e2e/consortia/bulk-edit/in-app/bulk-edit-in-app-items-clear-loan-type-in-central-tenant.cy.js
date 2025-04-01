@@ -90,9 +90,6 @@ describe('Bulk-edit', () => {
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            materialTypeId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -101,6 +98,9 @@ describe('Bulk-edit', () => {
           });
 
           cy.setTenant(Affiliations.College);
+          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            materialTypeId = res.id;
+          });
           // create local item loan type in College
           LoanTypes.createLoanTypesViaApi(collegeItemLoanType)
             .then((typeId) => {
@@ -158,6 +158,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
 
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
