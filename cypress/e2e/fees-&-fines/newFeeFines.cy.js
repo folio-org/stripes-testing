@@ -2,7 +2,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
