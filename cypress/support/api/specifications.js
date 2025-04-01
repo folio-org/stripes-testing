@@ -17,3 +17,11 @@ Cypress.Commands.add('syncSpecifications', (specificationId) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('checkSpecificationStorageApi', () => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: 'specification-storage/specifications',
+    isDefaultSearchParamsRequired: false,
+  });
+});
