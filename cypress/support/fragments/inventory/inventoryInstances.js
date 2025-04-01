@@ -75,7 +75,7 @@ const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
 const advSearchItemModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
-const searchInstancesOptions = [
+export const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
   'Title (all)',

@@ -30,7 +30,7 @@ import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstance from './inventoryInstance';
-import InventoryInstances from './inventoryInstances';
+import InventoryInstances, { searchInstancesOptions } from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -995,7 +995,7 @@ export default {
   verifySearchAndFilterPane() {
     this.validateSearchTabIsDefault();
     this.instanceTabIsDefault();
-    this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
+    this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
     this.verifySearchFieldIsEmpty();
     cy.expect([
       searchToggleButton.exists(),
@@ -1270,5 +1270,9 @@ export default {
   verifyHeldByOption(option) {
     cy.do(heldByAccordion.find(Button({ ariaLabel: 'open menu' })).click());
     cy.expect(heldByAccordion.find(MultiSelectOption(including(option))).exists());
+  },
+
+  verifyDefaultSearchInstanceOptionSelected() {
+    this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
   },
 };
