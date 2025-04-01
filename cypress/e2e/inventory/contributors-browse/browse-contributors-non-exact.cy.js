@@ -62,6 +62,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyBrowseOptions();
         BrowseContributors.select();
         BrowseContributors.checkSearch();
+        BrowseContributors.waitForContributorToAppear(instanceA.contributors[0].name);
         BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
         BrowseContributors.checkSearchResultsTable();
         BrowseContributors.checkNonExactSearchResult(
