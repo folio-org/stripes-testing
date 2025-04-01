@@ -296,15 +296,19 @@ describe('Inventory', () => {
             });
           });
         cy.resetTenant();
+        cy.intercept('/authn/refresh').as('/authn/refresh');
         cy.login(users.userProperties.username, users.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         }).then(() => {
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          InventorySearchAndFilter.instanceTabIsDefault();
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+          cy.wait('@/authn/refresh', { timeout: 20_000 });
         });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+        InventorySearchAndFilter.instanceTabIsDefault();
       });
     });
 

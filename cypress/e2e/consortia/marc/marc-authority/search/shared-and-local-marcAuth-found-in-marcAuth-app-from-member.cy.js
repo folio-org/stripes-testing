@@ -99,10 +99,14 @@ describe('MARC', () => {
               });
             });
 
+            cy.intercept('/authn/refresh').as('refresh');
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             }).then(() => {
+              cy.reload();
+              cy.wait('@refresh', { timeout: 20_000 });
+              MarcAuthorities.waitLoading();
               ConsortiumManager.switchActiveAffiliation(
                 tenantNames.central,
                 tenantNames.university,

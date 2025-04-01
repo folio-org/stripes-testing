@@ -71,6 +71,7 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410814');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -174,6 +175,8 @@ describe('MARC', () => {
               linkingTagAndValues.seventhBox,
             );
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(4000);
+            QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             InventoryInstance.verifyRecordAndMarcAuthIcon(
@@ -203,6 +206,12 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            cy.setTenant(Affiliations.College);
+            BrowseContributors.waitForContributorToAppear(
+              linkingTagAndValues.authorityHeading,
+              true,
+              true,
+            );
             BrowseContributors.browse(linkingTagAndValues.authorityHeading);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,

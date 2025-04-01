@@ -27,7 +27,7 @@ describe('MARC', () => {
           updatedTag100Value: `$a Dante Alighieri C405537, $d 1265-2024, $t Divine Comedy ${randomFourDigits}`,
           updatedTag046Value: '$g 928-125-2024 $2 asmg',
           tag400Value: `$a Данте Алигери C405537 ${randomFourDigits} $d 1265-1321`,
-          tag010Value: '$a n78095495405537',
+          tag010Value: '$a n  84405537',
           tag377Value: '$a itaC405537',
           viewSharedRecordText: 'Shared MARC authority record',
           editSharedRecordText: 'Edit shared MARC authority record',
@@ -42,6 +42,7 @@ describe('MARC', () => {
 
         before('Create test data', () => {
           cy.getAdminToken();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405537');
           cy.resetTenant();
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -74,10 +75,14 @@ describe('MARC', () => {
             cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
+            cy.intercept('/authn/refresh').as('refresh');
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             }).then(() => {
+              cy.reload();
+              MarcAuthorities.waitLoading();
+              cy.wait('@refresh', { timeout: 20_000 });
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               MarcAuthorities.waitLoading();
@@ -102,8 +107,8 @@ describe('MARC', () => {
             MarcAuthority.verifySharedAuthorityDetailsHeading(testData.title);
             MarcAuthority.contains(testData.viewSharedRecordText);
             MarcAuthority.edit();
-            // To be uncommented when UIMARCAUTH-385 is fixed
-            // QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+
+            QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
             QuickMarcEditor.addEmptyFields(8);
             QuickMarcEditor.checkEmptyFieldAdded(9);
             QuickMarcEditor.addValuesToExistingField(
@@ -125,7 +130,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickArrowDownButton(4);
             QuickMarcEditor.verifyTagValue(5, testData.tag010);
             MarcAuthority.clickSaveAndCloseButton();
-            cy.wait(1500);
+            cy.wait(4000);
             MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkDeleteModal(1);
             MarcAuthority.continueWithSaveAndCheck();
@@ -154,8 +159,8 @@ describe('MARC', () => {
             MarcAuthorities.searchBeats(testData.updatedTitle);
             MarcAuthorities.select(createdAuthorityID);
             MarcAuthority.verifySharedAuthorityDetailsHeading(testData.updatedTitle);
-            // To be uncommented when UIMARCAUTH-385 is fixed
-            // MarcAuthority.contains(testData.viewSharedRecordText);
+
+            MarcAuthority.contains(testData.viewSharedRecordText);
             MarcAuthority.contains(testData.updatedTag100Value);
             MarcAuthority.contains(testData.updatedTag046Value);
             MarcAuthority.contains(testData.tag400Value);
