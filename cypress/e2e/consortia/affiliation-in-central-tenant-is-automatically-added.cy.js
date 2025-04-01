@@ -42,7 +42,7 @@ describe('Consortia', () => {
         cy.assignAffiliationToUser(Affiliations.College, user.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
+          // Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
           Permissions.uiUserCanAssignUnassignPermissions.gui,
           Permissions.uiUsersCreate.gui,
           Permissions.uiUsersPermissionsView.gui,
@@ -60,7 +60,9 @@ describe('Consortia', () => {
     cy.resetTenant();
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    cy.setTenant(Affiliations.College);
     Users.deleteViaApi(testUser.id);
+    cy.resetTenant();
   });
 
   it(
@@ -75,7 +77,7 @@ describe('Consortia', () => {
       Users.verifyUserDetailsPane();
       UsersCard.verifyAffiliationsQuantity('2');
       UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('College', 2, 'Central Office');
+      UsersCard.verifyAffiliationsDetails(tenantNames.college, 2, tenantNames.central);
     },
   );
 });

@@ -19,6 +19,8 @@ import MarcAuthorityBrowse from '../../../../../../support/fragments/marcAuthori
 import MarcAuthoritiesSearch from '../../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import HoldingsRecordEdit from '../../../../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../../../../support/fragments/inventory/holdingsRecordView';
+import Location from '../../../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -51,6 +53,7 @@ describe('MARC', () => {
         };
 
         const users = {};
+        const location = {};
 
         const marcFiles = [
           {
@@ -71,7 +74,6 @@ describe('MARC', () => {
 
         before('Create users, data', () => {
           cy.getAdminToken();
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410814');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -81,10 +83,21 @@ describe('MARC', () => {
           ])
             .then((userProperties) => {
               users.userProperties = userProperties;
+              MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(
+                linkingTagAndValues.authorityHeading,
+              );
+              InventoryInstances.deleteInstanceByTitleViaApi('C410814');
             })
             .then(() => {
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
               cy.setTenant(Affiliations.College);
+              ServicePoints.getViaApi().then((servicePoint) => {
+                Location.createViaApi(Location.getDefaultLocation(servicePoint[0].id)).then(
+                  (res) => {
+                    Object.assign(location, res);
+                  },
+                );
+              });
               cy.assignPermissionsToExistingUser(users.userProperties.userId, [
                 Permissions.inventoryAll.gui,
                 Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -92,7 +105,7 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.loginAsAdmin().then(() => {
+              cy.getAdminToken().then(() => {
                 marcFiles.forEach((marcFile) => {
                   DataImport.uploadFileViaApi(
                     marcFile.marc,
@@ -107,32 +120,48 @@ describe('MARC', () => {
               });
             })
             .then(() => {
-              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+              cy.waitForAuthRefresh(() => {
+                cy.loginAsAdmin();
+                TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+                InventoryInstances.waitContentLoading();
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.pressAddHoldingsButton();
-              HoldingsRecordEdit.changePermanentLocation('Migration (Migration) ');
+              HoldingsRecordEdit.changePermanentLocation(location.name);
               HoldingsRecordEdit.saveAndClose();
               InventoryInstance.openHoldingView();
               HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
                 createdRecordIDs.push(holdingsID);
               });
-
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
             });
         });
 
         after('Delete users, data', () => {
-          cy.setTenant(Affiliations.College);
-          cy.deleteHoldingRecordViaApi(createdRecordIDs[2]);
           cy.resetTenant();
           cy.getAdminToken();
+          cy.setTenant(Affiliations.College);
+          cy.deleteHoldingRecordViaApi(createdRecordIDs[2]);
+          Location.deleteInstitutionCampusLibraryLocationViaApi(
+            location.institutionId,
+            location.campusId,
+            location.libraryId,
+            location.id,
+          );
+          cy.resetTenant();
           Users.deleteViaApi(users.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
           MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
@@ -146,7 +175,6 @@ describe('MARC', () => {
             InventoryInstances.selectInstance();
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
-            cy.wait(3000);
             QuickMarcEditor.updateExistingField('245', testData.instanceValueToUpdate);
             QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
             MarcAuthorityBrowse.checkSearchOptions();
@@ -175,24 +203,20 @@ describe('MARC', () => {
               linkingTagAndValues.zeroSubfield,
               linkingTagAndValues.seventhBox,
             );
-            QuickMarcEditor.deleteField(4);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(3000);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
             InventoryInstance.verifyRecordAndMarcAuthIcon(
               testData.contributor,
               `${testData.linkAuthorityIcon}\n${linkingTagAndValues.authorityHeading}`,
             );
-            cy.reload();
-            cy.wait('@/authn/refresh', { timeout: 20000 });
-            InventoryInstance.checkPresentedText(testData.updatedInstanceTitle);
+
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+            cy.visit(TopMenu.marcAuthorities);
             MarcAuthorities.searchBy(
               testData.authoritySearchOption,
               linkingTagAndValues.authorityHeading,
@@ -211,6 +235,11 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            BrowseContributors.waitForContributorToAppear(
+              linkingTagAndValues.authorityHeading,
+              true,
+              true,
+            );
             BrowseContributors.browse(linkingTagAndValues.authorityHeading);
             BrowseSubjects.checkRowWithValueAndAuthorityIconExists(
               linkingTagAndValues.authorityHeading,

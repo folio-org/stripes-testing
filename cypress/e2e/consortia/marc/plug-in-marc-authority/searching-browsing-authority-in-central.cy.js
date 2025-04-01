@@ -67,10 +67,7 @@ describe('MARC', () => {
           users.userProperties = userProperties;
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
+          cy.getAdminToken();
         })
         .then(() => {
           marcFiles.forEach((marcFile) => {

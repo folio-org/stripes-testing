@@ -253,6 +253,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
         );
+        [...holdingsCallNumbers, ...itemsCallNumbers].forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         // * Fill browse input field with "331"
         // * Click "Search" button
         InventorySearchAndFilter.browseSearch('331');

@@ -48,6 +48,10 @@ export default {
     );
   },
 
+  chooseWithEmptyList() {
+    ConsortiumManagerApp.chooseSecondMenuItem('Departments');
+  },
+
   waitLoading() {
     cy.expect(
       PaneHeader({

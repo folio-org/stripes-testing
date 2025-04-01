@@ -57,13 +57,17 @@ describe('MARC', () => {
       const createdAuthorityID = [];
 
       before(() => {
+        cy.getAdminToken();
+        records.forEach((record) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(record);
+        });
+
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
           (createdUserProperties) => {
             testData.userProperties = createdUserProperties;
           },
         );
 
-        cy.getAdminToken();
         DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, jobProfileToRun).then(
           (response) => {
             response.forEach((record) => {

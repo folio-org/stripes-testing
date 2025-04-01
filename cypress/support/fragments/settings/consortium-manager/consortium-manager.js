@@ -76,7 +76,7 @@ export default {
   },
 
   switchActiveAffiliation(currentTenantName, newTenantName) {
-    cy.wait(10000);
+    cy.wait(5000);
     cy.expect(myProfileButton.find(HTML({ text: including(currentTenantName) })).exists());
     cy.do([myProfileButton.click(), switchActiveAffiliationButton.click()]);
     cy.wait(2000);
@@ -94,14 +94,14 @@ export default {
   },
 
   switchActiveAffiliationIsAbsent() {
-    cy.wait(8000);
+    cy.wait(5000);
     cy.do(myProfileButton.click());
     cy.expect(switchActiveAffiliationButton.absent());
     cy.do(myProfileButton.click());
   },
 
   switchActiveAffiliationExists() {
-    cy.wait(8000);
+    cy.wait(5000);
     cy.do(myProfileButton.click());
     cy.expect(switchActiveAffiliationButton.exists());
     cy.do(myProfileButton.click());

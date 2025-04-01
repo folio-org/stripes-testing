@@ -34,7 +34,7 @@ const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' 
 const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
-const affiliationsSection = Section({ id: 'affiliationsSection' });
+const affiliationsSection = Accordion({ id: 'affiliationsSection' });
 const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const requestsAccordion = Accordion({ id: 'requestsSection' });
 const readingRoomAccessAccordion = Accordion({ id: 'readingRoomAccessSection' });
@@ -109,13 +109,14 @@ export default {
     cy.expect(affiliationsSection.find(Badge()).has({ value: quantity }));
   },
 
-  varifyUserCardOpened() {
+  verifyUserCardOpened() {
     cy.expect(Section({ id: 'pane-userdetails' }).exists());
     cy.wait(6000);
   },
 
   expandAffiliationsAccordion() {
-    cy.do(affiliationsSection.find(affiliationsButton).click());
+    cy.do(affiliationsSection.clickHeader());
+    cy.wait(1000);
   },
 
   affiliationsAccordionIsAbsent() {
