@@ -514,6 +514,7 @@ export default {
       failOnStatusCode: false,
     })
     .then((servicePointsUsers) => {
+      if (servicePointsUsers.body.servicePointsUsers.length === 0) { return; }
       cy.okapiRequest({
         method: 'PUT',
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
