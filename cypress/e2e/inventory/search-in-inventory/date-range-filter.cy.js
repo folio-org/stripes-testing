@@ -50,10 +50,10 @@ describe('Inventory', () => {
       };
       const filterData = [
         { range: ['0000', '9999'], dates: testData.allDates1Sorted },
-        { range: ['0035', '1078'], dates: testData.allDates1Sorted.slice(9, 20) },
-        { range: ['1670', '1678'], dates: testData.allDates1Sorted.slice(23, 25) },
-        { range: ['1670', ''], dates: testData.allDates1Sorted.slice(23) },
-        { range: ['', '1670'], dates: testData.allDates1Sorted.slice(0, 24) },
+        { range: ['0035', '1078'], dates: testData.allDates1Sorted.slice(9, 21) },
+        { range: ['1670', '1678'], dates: testData.allDates1Sorted.slice(25, 27) },
+        { range: ['1670', ''], dates: testData.allDates1Sorted.slice(25) },
+        { range: ['', '1670'], dates: testData.allDates1Sorted.slice(0, 26) },
       ];
       const marcFile = {
         marc: 'marcBibFileC553056.mrc',
@@ -68,7 +68,8 @@ describe('Inventory', () => {
           cy.getAdminToken();
           // delete existing related instances
           InventoryInstances.getInstancesViaApi({
-            title: testData.searchQuery,
+            limit: 200,
+            query: `title="${testData.searchQuery}"`,
           }).then((instances) => {
             if (instances) {
               instances.forEach(({ id }) => {
@@ -111,12 +112,15 @@ describe('Inventory', () => {
           testData.allDates1Sorted.forEach((date) => {
             InventorySearchAndFilter.verifyResultWithDate1Found(date);
           });
-          InventorySearchAndFilter.filterByDateRange(...filterData[0].range);
-          filterData[0].dates.forEach((date) => {
-            InventorySearchAndFilter.verifyResultWithDate1Found(date);
-          });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(filterData[0].dates.length);
-          InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
+          for (const filterDatum of filterData) {
+            InventorySearchAndFilter.filterByDateRange(...filterDatum.range);
+            filterDatum.dates.forEach((date) => {
+              InventorySearchAndFilter.verifyResultWithDate1Found(date);
+            });
+            InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
+            InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
+            InventorySearchAndFilter.closeDateRangeAccordion();
+          }
         },
       );
     });

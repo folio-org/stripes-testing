@@ -34,7 +34,8 @@ describe('Inventory', () => {
       cy.getAdminToken();
       // delete existing related instances
       InventoryInstances.getInstancesViaApi({
-        title: 'C543871',
+        limit: 100,
+        query: 'title="C543871"',
       }).then((instances) => {
         if (instances) {
           instances.forEach(({ id }) => {
@@ -73,7 +74,6 @@ describe('Inventory', () => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
       Users.deleteViaApi(testData.userProperties.userId);
-      Users.deleteViaApi(testData.settingsUserProperties.userId);
     });
 
     it(

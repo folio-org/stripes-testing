@@ -1292,13 +1292,19 @@ export default {
 
   filterByDateRange(dateFrom, dateTo) {
     cy.intercept('/search/instances**').as('searchCall');
+    cy.do(dateRangeAccordion.clickHeader());
+    cy.expect(dateRangeAccordion.has({ open: true }));
     cy.do([
-      dateRangeAccordion.clickHeader(),
       dateRangeFromField.fillIn(dateFrom),
       dateRangeToField.fillIn(dateTo),
       dateRangeAccordion.find(filterApplyButton).click(),
     ]);
     cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
     cy.wait(1000);
+  },
+
+  closeDateRangeAccordion() {
+    cy.do(dateRangeAccordion.clickHeader());
+    cy.expect(dateRangeAccordion.has({ open: false }));
   },
 };
