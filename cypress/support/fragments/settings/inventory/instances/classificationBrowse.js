@@ -12,6 +12,7 @@ import {
   MultiSelect,
   MultiSelectMenu,
   including,
+  ListItem,
 } from '../../../../../../interactors';
 
 const classificationBrowseSectionName = 'Classification browse';
@@ -198,13 +199,32 @@ export default {
   },
 
   selectClassificationIdentifierTypesDropdownOption(option) {
-    cy.do(MultiSelectMenu().find(MultiSelectOption(option)).click());
+    cy.do([cy.wait(500), MultiSelectMenu().find(MultiSelectOption(option)).click(), cy.wait(500)]);
+  },
+
+  /**
+   * Selects options from the Classification Identifier Types dropdown.
+   * Closes
+   *
+   * @param {string[]} options - An array of options to be selected from the dropdown.
+   * @returns {void}
+   */
+  selectClassificationIdentifierTypesDropdownOptions(options) {
+    cy.do([cy.wait(500), MultiSelect().select(options), cy.wait(500)]);
   },
 
   checkOptionSelectedInClassificationIdentifierTypesDropdown(browseOption, option) {
     const targetRow = this.getTargetRowWithClassificationName(browseOption);
 
     cy.expect(targetRow.find(MultiSelect({ selected: option })).exists());
+  },
+
+  validateClassificationIdentifierTypesSelectedOptions(browseOption, option) {
+    const targetRow = this.getTargetRowWithClassificationName(browseOption);
+    const targetCell = targetRow.find(
+      MultiColumnListCell({ column: 'Classification identifier types' }),
+    );
+    cy.expect(targetCell.find(ListItem({ text: option })).exists());
   },
 
   clickSaveButtonInBrowseOption(browseOption) {

@@ -44,7 +44,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     column: (el) => {
       const headers = el
         .closest('[class^=mclContainer]')
-        .querySelector('[class^=mclHeaderRow]')
+        .querySelector('[class^=mclHeaderContainer]')
         .querySelectorAll('[role=columnheader]');
       return headers ? headers[childIndex(el)]?.textContent : undefined;
     },
