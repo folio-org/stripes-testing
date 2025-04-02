@@ -182,9 +182,14 @@ describe('bulk-edit', () => {
           ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
             `ERROR,${marcInstance.instanceId},${errorReason}`,
           ]);
-          ExportFile.verifyFileIncludes(changedRecordsFileName, [
-            `,General note;${notes.reproductionNote};false|General note;${notes.reproductionNoteStaffOnly};true\n`,
-          ]);
+          BulkEditFiles.verifyValueInRowByUUID(
+            changedRecordsFileName,
+            'Instance UUID',
+            folioItem.instanceId,
+            'Notes',
+            `General note;${notes.reproductionNote};false|General note;${notes.reproductionNoteStaffOnly};true`,
+          );
+
           TopMenuNavigation.navigateToApp('Inventory');
           InventorySearchAndFilter.searchInstanceByTitle(folioItem.instanceName);
           InventoryInstances.selectInstance();
