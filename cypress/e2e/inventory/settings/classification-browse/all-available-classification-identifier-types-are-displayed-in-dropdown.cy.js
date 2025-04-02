@@ -5,14 +5,31 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ClassificationBrowse from '../../../../support/fragments/settings/inventory/instances/classificationBrowse';
 import ClassificationIdentifierTypes from '../../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import interactorsTools from '../../../../support/utils/interactorsTools';
+
+const resetClassificationBrowse = () => {
+  // Reset the classification browse settings to default values
+  [
+    { id: 'all', shelvingAlgorithm: 'default' },
+    { id: 'dewey', shelvingAlgorithm: 'dewey' },
+    { id: 'lc', shelvingAlgorithm: 'lc' },
+  ].forEach(({ id, shelvingAlgorithm }) => {
+    ClassificationBrowse.updateIdentifierTypesAPI(id, shelvingAlgorithm, []);
+  });
+};
 
 describe('Inventory', () => {
   describe('Settings', () => {
     describe('Classification browse', () => {
-      const localClassificationIdentifierType = {
-        name: `C451642 Classification identifier type ${getRandomPostfix()}`,
-        source: 'local',
-      };
+      const localClassificationIdentifierTypes = Array(5)
+        .fill({})
+        .map((_, idx) => {
+          return {
+            name: `AT_C451642 Classification identifier type ${idx} ${getRandomPostfix()}`,
+            source: 'local',
+          };
+        });
+
       const defaultClassificationBrowseNames = [
         'Classification (all)',
         'Dewey Decimal classification',
@@ -20,22 +37,25 @@ describe('Inventory', () => {
       ];
       const optionToSelect = 'Additional Dewey';
       let user;
-      let classificationIdentifierTypeId;
+      let classificationIdentifierTypesAll;
 
       before('Create user, login', () => {
         cy.getAdminToken();
-        ClassificationIdentifierTypes.createViaApi(localClassificationIdentifierType).then(
-          (response) => {
-            classificationIdentifierTypeId = response.body.id;
-          },
-        );
-
+        localClassificationIdentifierTypes.forEach((classificationIdentifierType) => {
+          ClassificationIdentifierTypes.createViaApi(classificationIdentifierType);
+        });
         cy.createTempUser([
           Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
           Permissions.crudClassificationIdentifierTypes.gui,
         ]).then((userProperties) => {
           user = userProperties;
-
+          ClassificationIdentifierTypes.getViaApi()
+            .then((classificationIdentifierTypes) => {
+              classificationIdentifierTypesAll = classificationIdentifierTypes;
+            })
+            .then(() => {
+              resetClassificationBrowse();
+            });
           cy.login(user.username, user.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
           cy.intercept('browse/config/instance-classification*').as('instanceClassifications');
@@ -47,7 +67,7 @@ describe('Inventory', () => {
       after('Delete user', () => {
         cy.getAdminToken();
         Users.deleteViaApi(user.userId);
-        ClassificationIdentifierTypes.deleteViaApi(classificationIdentifierTypeId);
+        ClassificationIdentifierTypes.deleteViaApiByName('C451642');
       });
 
       it(
@@ -73,7 +93,7 @@ describe('Inventory', () => {
             );
             ClassificationBrowse.checkClassificationIdentifierTypesDropdownDefaultOptions();
             ClassificationBrowse.checkClassificationIdentifierTypesDropdownOption(
-              localClassificationIdentifierType.name,
+              localClassificationIdentifierTypes[0].name,
             );
 
             // Select any option from expanded multi-select dropdown
@@ -91,6 +111,30 @@ describe('Inventory', () => {
             ClassificationBrowse.clickCancelButtonInBrowseOption(classificationBrowseName);
             cy.wait(1000);
             ClassificationBrowse.checkClassificationBrowseInTable(classificationBrowseName, '');
+          });
+
+          // Select all options from the multi-select dropdown and save changes
+          const classificationBrowseName = defaultClassificationBrowseNames[0];
+          ClassificationBrowse.clickEditButtonInBrowseOption(classificationBrowseName);
+
+          ClassificationBrowse.expandClassificationIdentifierTypesDropdownInBrowseOption(
+            classificationBrowseName,
+          );
+
+          ClassificationBrowse.selectClassificationIdentifierTypesDropdownOptions(
+            classificationIdentifierTypesAll.map((_) => _.name),
+          );
+          ClassificationBrowse.clickSaveButtonInBrowseOption(classificationBrowseName);
+          interactorsTools.checkCalloutMessage(
+            `The Classification browse type ${classificationBrowseName} was successfully updated`,
+          );
+
+          // Check that the selected options are displayed as saved in the "Classification identifier types" column of the browse option
+          classificationIdentifierTypesAll.forEach((classificationIdentifierType) => {
+            ClassificationBrowse.validateClassificationIdentifierTypesSelectedOptions(
+              classificationBrowseName,
+              classificationIdentifierType.name,
+            );
           });
         },
       );
