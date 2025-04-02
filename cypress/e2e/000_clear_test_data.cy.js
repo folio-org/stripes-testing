@@ -8,7 +8,7 @@ import Users from '../support/fragments/users/users';
 import PatronGroups from '../support/fragments/settings/users/patronGroups';
 
 describe('Delete test entities', () => {
-  it.only('001 Delete test users, groups and service points created by autotests',
+  it('001 Delete test users, groups and service points created by autotests',
     { tags: ['deleteTestData'] },
     () => {
       let defaultServicePointId = '';
