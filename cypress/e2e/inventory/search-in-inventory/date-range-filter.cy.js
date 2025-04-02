@@ -16,9 +16,9 @@ describe('Inventory', () => {
         searchQuery: 'C553056 Sorting by Date',
         allDates1Sorted: [
           '0000',
-          '1',
+          '   1',
           '___2',
-          'd',
+          'd #3',
           '!()4',
           'uuu5',
           'abc6',
@@ -27,31 +27,34 @@ describe('Inventory', () => {
           '0037',
           'dd99',
           '0337',
-          '677',
+          ' 677',
           'u678',
           'c679',
           'd999',
-          '1',
+          '1   ',
           '1uu1',
           '1ab2',
-          '1',
+          '1 77',
           '1u78',
           '1d79',
-          '16',
+          '16  ',
           '16u1',
           '16a2',
-          '167',
+          '167 ',
           '1678',
           '168u',
           '169b',
           '9999',
         ],
+        dateRangeAccordionName: 'Date range',
       };
-      const dates1from0035to1078 = testData.allDates1Sorted.slice(9, 20);
-      const dates1from1670to1678 = testData.allDates1Sorted.slice(23, 25);
-      const dates1from1670 = testData.allDates1Sorted.slice(23);
-      const dates1to1670 = testData.allDates1Sorted.slice(0, 24);
-
+      const filterData = [
+        { range: ['0000', '9999'], dates: testData.allDates1Sorted },
+        { range: ['0035', '1078'], dates: testData.allDates1Sorted.slice(9, 20) },
+        { range: ['1670', '1678'], dates: testData.allDates1Sorted.slice(23, 25) },
+        { range: ['1670', ''], dates: testData.allDates1Sorted.slice(23) },
+        { range: ['', '1670'], dates: testData.allDates1Sorted.slice(0, 24) },
+      ];
       const marcFile = {
         marc: 'marcBibFileC553056.mrc',
         fileName: `testMarcFileC553056.${randomPostfix()}.mrc`,
@@ -96,7 +99,7 @@ describe('Inventory', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userId);
         createdInstanceIds.forEach((id) => {
-          InventoryInstances.deleteInstanceViaApi(id);
+          InventoryInstance.deleteInstanceViaApi(id);
         });
       });
 
@@ -105,7 +108,15 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'C553056'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
-          InventorySearchAndFilter.verifySearchResult(testData.searchQuery);
+          testData.allDates1Sorted.forEach((date) => {
+            InventorySearchAndFilter.verifyResultWithDate1Found(date);
+          });
+          InventorySearchAndFilter.filterByDateRange(...filterData[0].range);
+          filterData[0].dates.forEach((date) => {
+            InventorySearchAndFilter.verifyResultWithDate1Found(date);
+          });
+          InventorySearchAndFilter.verifyNumberOfSearchResults(filterData[0].dates.length);
+          InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
         },
       );
     });

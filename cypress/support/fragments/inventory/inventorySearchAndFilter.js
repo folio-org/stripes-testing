@@ -92,6 +92,10 @@ const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
 const heldByAccordion = Accordion('Held by');
+const dateRangeAccordion = Accordion('Date range');
+const dateRangeFromField = dateRangeAccordion.find(TextField({ name: 'startDate' }));
+const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }));
+const filterApplyButton = Button('Apply');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -1274,5 +1278,27 @@ export default {
 
   verifyDefaultSearchInstanceOptionSelected() {
     this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
+  },
+
+  verifyResultWithDate1Found(date1Value, isFound = true) {
+    const escapedDate1Value = date1Value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const targetCell = MultiColumnListCell({
+      column: 'Date',
+      content: matching(`^${escapedDate1Value}`),
+    });
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  filterByDateRange(dateFrom, dateTo) {
+    cy.intercept('/search/instances**').as('searchCall');
+    cy.do([
+      dateRangeAccordion.clickHeader(),
+      dateRangeFromField.fillIn(dateFrom),
+      dateRangeToField.fillIn(dateTo),
+      dateRangeAccordion.find(filterApplyButton).click(),
+    ]);
+    cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
+    cy.wait(1000);
   },
 };
