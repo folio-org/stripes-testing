@@ -47,6 +47,7 @@ describe('Inventory', () => {
             waiter: InventoryInstances.waitContentLoading,
           });
           InventorySearchAndFilter.selectBrowseContributors();
+          BrowseContributors.waitForContributorToAppear(exactSearchName);
         });
     });
 

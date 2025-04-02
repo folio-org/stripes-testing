@@ -108,10 +108,14 @@ describe('MARC', () => {
               });
             });
 
+            cy.intercept('/authn/refresh').as('refresh');
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.reload();
+            cy.wait('@refresh', { timeout: 20_000 });
+            InventoryInstances.waitContentLoading();
           });
         });
 
@@ -160,7 +164,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field700.tag, field700.rowIndex);
             QuickMarcEditor.verifyTagFieldAfterLinking(...field700.contentAfterLinking);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
             QuickMarcEditor.checkViewMarcAuthorityTooltipText(field700.rowIndex);
             QuickMarcEditor.clickViewMarcAuthorityIconInTagField(field700.rowIndex);
@@ -201,7 +205,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterUnlinking(...field700.contentAfterUnlinking);
             QuickMarcEditor.verifyIconsAfterUnlinking(field700.rowIndex);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout(testData.successMsg);
 

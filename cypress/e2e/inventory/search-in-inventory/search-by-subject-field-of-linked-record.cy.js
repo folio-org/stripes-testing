@@ -43,12 +43,12 @@ const testData = {
   ],
   searchQueries: [
     'subjects = "Black Panther (Fictitious character)"',
-    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio Vaticana. Hrvatski program" OR subjects = "Vatican Council 1962-1965" OR subjects = "Marvel comics ComiCon" OR subjects == "Speaking Oratory--debating"  OR subjects == "Clear Creek (Tex.)--Place in Texas" OR subjects = "Drama--Genre"',
+    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio Vaticana. Hrvatski program" OR subjects = "Vatican Council (2nd : 1962-1965" OR subjects = "Marvel comics ComiCon" OR subjects == "Speaking Oratory--debating"  OR subjects == "Clear Creek (Tex.)--Place in Texas" OR subjects = "Drama--Genre"',
   ],
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
     'Radio "Vaticana". Hrvatski program test',
-    'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
+    'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
     'Marvel comics ComiCon',
     'Speaking Oratory--debating',
     'Clear Creek (Tex.)',
@@ -80,6 +80,16 @@ describe('Inventory', () => {
       InventoryInstances.getInstancesViaApi({
         limit: 100,
         query: testData.searchQueryBeforeTest,
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: testData.searchQueries[1],
       }).then((instances) => {
         if (instances) {
           instances.forEach(({ id }) => {
@@ -125,7 +135,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
         InventoryInstances.resetAllFilters();

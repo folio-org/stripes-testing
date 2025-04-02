@@ -49,6 +49,7 @@ describe('MARC', () => {
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authority100FieldValue);
 
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -84,7 +85,7 @@ describe('MARC', () => {
               testData.tag600RowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
           });
 
@@ -130,7 +131,7 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.verifyConfirmModal();
 

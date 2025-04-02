@@ -9,6 +9,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -57,7 +58,7 @@ describe('MARC', () => {
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.getMarcAuthoritiesViaApi({
             limit: 100,
-            query: 'keyword="374142" and (authRefType==("Authorized" or "Auth/Ref"))',
+            query: 'keyword="C374142" and (authRefType==("Authorized" or "Auth/Ref"))',
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
@@ -92,6 +93,7 @@ describe('MARC', () => {
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
           InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+          MarcAuthoritiesSearch.selectAuthorityByIndex(0);
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag111,
             testData.authority111FieldValue,
@@ -99,7 +101,7 @@ describe('MARC', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
 
           cy.createTempUser([

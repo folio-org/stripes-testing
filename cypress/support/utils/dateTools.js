@@ -157,8 +157,9 @@ export default {
 
   getTwoPreviousDaysDateForFiscalYear: () => {
     const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 2);
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
-      currentDate.getDate() - 2,
+      currentDate.getDate(),
     )}`;
   },
 

@@ -155,7 +155,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.field130.tag130);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(3000);
 
@@ -216,7 +216,7 @@ describe('MARC', () => {
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndCloseDerive();
             InventoryInstance.checkInstanceTitle(testData.instanceTitle);

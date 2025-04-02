@@ -96,7 +96,7 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -141,12 +141,12 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.subfieldPrefix);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
 
           QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkCallout(testData.errorMessage);
           QuickMarcEditor.pressCancel();

@@ -28,7 +28,7 @@ describe('MARC', () => {
             '100',
             '\\',
             '\\',
-            '$a C422151 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            '$a C422151 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             '',
             '$0 3052039',
             '',

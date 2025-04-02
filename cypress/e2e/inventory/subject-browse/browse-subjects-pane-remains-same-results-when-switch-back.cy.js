@@ -97,6 +97,7 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventorySearchAndFilter.selectBrowseSubjects();
+        BrowseSubjects.waitForSubjectToAppear(testData.inventorySubject);
         InventorySearchAndFilter.browseSubjectsSearch(testData.inventorySubject);
         BrowseSubjects.checkValueIsBold(testData.inventorySubject);
 

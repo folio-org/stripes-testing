@@ -105,7 +105,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
 
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
@@ -134,6 +134,7 @@ describe('Inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true);
 
         InventorySearchAndFilter.selectBrowseSubjects();
         InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);

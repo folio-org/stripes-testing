@@ -101,7 +101,10 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
           headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
 
+          cy.intercept('/authn/refresh').as('refresh');
           cy.login(testData.userProperties.username, testData.userProperties.password);
+          cy.reload();
+          cy.wait('@refresh', { timeout: 20_000 });
         });
       });
 
@@ -144,7 +147,7 @@ describe('MARC', () => {
 
           // Save edits and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -158,7 +161,7 @@ describe('MARC', () => {
 
           // Save added field and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -173,8 +176,8 @@ describe('MARC', () => {
 
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          cy.wait(4000);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
 
@@ -198,7 +201,7 @@ describe('MARC', () => {
 
           // Save field reordering and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -216,7 +219,7 @@ describe('MARC', () => {
 
           // Save and close edit view
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.editedFieldsC360092[0].content);

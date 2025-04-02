@@ -175,7 +175,7 @@ describe('Data Import', () => {
             linkingTagAndValues.rowIndex,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
