@@ -19,6 +19,7 @@ describe('Eureka', () => {
           username: `userc627399${randomString}`,
           roleName: `Auto Role C627399 ${randomString}`,
           promotePath: '/users-keycloak/auth-users',
+          userType: 'Staff',
         };
 
         const capabSetsToAssign = [
@@ -47,10 +48,14 @@ describe('Eureka', () => {
                 capabsToAssign,
                 capabSetsToAssign,
               );
-              cy.login(testData.tempUser.username, testData.tempUser.password, {
-                path: TopMenu.usersPath,
-                waiter: Users.waitLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.tempUser.username, testData.tempUser.password, {
+                  path: TopMenu.usersPath,
+                  waiter: Users.waitLoading,
+                });
+                cy.reload();
+              }, 20_000);
+              Users.waitLoading();
             });
           });
         });
@@ -73,7 +78,7 @@ describe('Eureka', () => {
               testData.lastName,
               userGroupOption,
               testData.userEmail,
-              null,
+              testData.userType,
               testData.username,
             );
             Users.saveCreatedUser();
