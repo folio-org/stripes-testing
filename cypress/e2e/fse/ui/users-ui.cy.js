@@ -19,7 +19,8 @@ describe('fse-users - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
       Users.waitLoading();
-      UsersSearchPane.searchByKeywords(`${Cypress.env('diku_login')}`);
+      UsersSearchPane.searchByUsername(`${Cypress.env('diku_login')}`);
+      UsersSearchPane.selectUserFromList(`${Cypress.env('diku_login')}`);
       UsersCard.verifyUserCardOpened();
     },
   );
