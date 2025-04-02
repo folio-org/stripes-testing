@@ -31,7 +31,7 @@ describe('fse-eholdings - UI for production tenants', () => {
 
   it(
     `TC195279 - verify that eholdings module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'eholdings'] },
+    { tags: ['fse', 'ui', 'eholdings'] },
     () => {
       EHoldingsTitlesSearch.byTitle('time');
       eHoldingsTitles.openTitle(0);
