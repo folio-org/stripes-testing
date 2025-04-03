@@ -39,10 +39,14 @@ describe('Eureka', () => {
           testData.userBId = userId;
           userIds.push(userId);
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userC).then((userId) => {
-          testData.userCId = userId;
-          userIds.push(userId);
-        });
+
+        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          cy.createUserWithoutKeycloakInEurekaApi(userC).then((userId) => {
+            testData.userCId = userId;
+            userIds.push(userId);
+          });
+        }
+
         Users.createViaApi(userD).then((user) => {
           testData.userDId = user.id;
           userIds.push(user.id);
@@ -91,24 +95,26 @@ describe('Eureka', () => {
           },
         );
 
-        cy.addCapabilitiesToNewUserApi(testData.userCId, testData.capabilityIds, true).then(
-          (response) => {
-            expect(response.status).to.eq(404);
-            expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            cy.getCapabilitiesForUserApi(testData.userCId, true).then(({ status }) => {
-              expect(status).to.eq(404);
-            });
-          },
-        );
-        cy.addCapabilitySetsToNewUserApi(testData.userCId, testData.capabilitySetIds, true).then(
-          (response) => {
-            expect(response.status).to.eq(404);
-            expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            cy.getCapabilitySetsForUserApi(testData.userCId, true).then(({ status }) => {
-              expect(status).to.eq(404);
-            });
-          },
-        );
+        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          cy.addCapabilitiesToNewUserApi(testData.userCId, testData.capabilityIds, true).then(
+            (response) => {
+              expect(response.status).to.eq(404);
+              expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
+              cy.getCapabilitiesForUserApi(testData.userCId, true).then(({ status }) => {
+                expect(status).to.eq(404);
+              });
+            },
+          );
+          cy.addCapabilitySetsToNewUserApi(testData.userCId, testData.capabilitySetIds, true).then(
+            (response) => {
+              expect(response.status).to.eq(404);
+              expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
+              cy.getCapabilitySetsForUserApi(testData.userCId, true).then(({ status }) => {
+                expect(status).to.eq(404);
+              });
+            },
+          );
+        }
 
         cy.addCapabilitiesToNewUserApi(testData.userDId, testData.capabilityIds).then(
           (response) => {
