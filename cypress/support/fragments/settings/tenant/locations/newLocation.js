@@ -55,9 +55,33 @@ const getDefaultLocation = (
   return location;
 };
 
+function getViaApi() {
+  return cy
+    .okapiRequest({ path: 'locations', isDefaultSearchParamsRequired: false })
+    .then((response) => {
+      return response.body;
+    });
+}
+
+const getSystemLocation = (code) => {
+  return Institutions.getViaApi().then((institutions) => {
+    const institution = institutions.locinsts.find((inst) => inst.code === code);
+    Campuses.getViaApi().then((campuses) => {
+      const campus = campuses.loccamps.find((camp) => camp.institutionId === institution.id);
+      Libraries.getViaApi().then((libraries) => {
+        const library = libraries.loclibs.find((lib) => lib.campusId === campus.id);
+        getViaApi().then((locations) => {
+          const location = locations.locations.find((loc) => loc.libraryId === library.id);
+          return location;
+        });
+      });
+    });
+  });
+};
+
 export default {
   getDefaultLocation,
-
+  getSystemLocation,
   createViaApi: ({
     id,
     code,
