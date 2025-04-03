@@ -55,6 +55,7 @@ describe('Inventory', () => {
       cy.reload();
       cy.wait('@/authn/refresh', { timeout: 20000 });
       InventoryInstances.waitContentLoading();
+      cy.wait(3000);
     });
 
     after('Delete test data', () => {
