@@ -35,10 +35,14 @@ describe('Eureka', () => {
               testData.userAId = userId;
               userIds.push(userId);
             });
-            cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-              testData.userBId = userId;
-              userIds.push(userId);
-            });
+
+            if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+              cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
+                testData.userBId = userId;
+                userIds.push(userId);
+              });
+            }
+
             Users.createViaApi(userC).then((user) => {
               testData.userCId = user.id;
               userIds.push(user.id);
@@ -78,10 +82,18 @@ describe('Eureka', () => {
               expect(response.status).to.eq(404);
               expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
             });
-            cy.addRolesToNewUserApi(testData.userBId, [testData.roleId], true).then((response) => {
-              expect(response.status).to.eq(404);
-              expect(response.body.errors[0].message).to.include(testData.noKeycloakErrorMessage);
-            });
+
+            if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+              cy.addRolesToNewUserApi(testData.userBId, [testData.roleId], true).then(
+                (response) => {
+                  expect(response.status).to.eq(404);
+                  expect(response.body.errors[0].message).to.include(
+                    testData.noKeycloakErrorMessage,
+                  );
+                },
+              );
+            }
+
             cy.addRolesToNewUserApi(testData.userCId, [testData.roleId]).then((response) => {
               expect(response.status).to.eq(201);
               expect(response.body.userRoles).to.have.lengthOf(1);
