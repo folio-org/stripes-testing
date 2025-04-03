@@ -133,8 +133,11 @@ describe('Inventory', () => {
     const testData = {
       servicePoint: ServicePoints.getDefaultServicePoint(),
       defaultLocation: {},
+      folioSourceId: {},
+      loanTypeId: {},
+      materialTypeId: {},
     };
-    const tenants = [tenantNames.college];
+    const tenants = [Affiliations.College];
     const removeInstancesByTitle = (title) => {
       [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
@@ -155,17 +158,17 @@ describe('Inventory', () => {
       });
 
       cy.then(() => {
-        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-          testData.folioSourceId = folioSource.id;
-        });
-        InventoryInstances.getLoanTypes().then((loanTypes) => {
-          testData.loanTypeId = loanTypes[0].id;
-        });
-        InventoryInstances.getMaterialTypes().then((materialTypes) => {
-          testData.materialTypeId = materialTypes[0].id;
-        });
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {
+            InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+              testData.folioSourceId[tenant] = folioSource.id;
+            });
+            InventoryInstances.getLoanTypes().then((loanTypes) => {
+              testData.loanTypeId[tenant] = loanTypes[0].id;
+            });
+            InventoryInstances.getMaterialTypes().then((materialTypes) => {
+              testData.materialTypeId[tenant] = materialTypes[0].id;
+            });
             ServicePoints.getViaApi({ query: 'name=Circ Desk' }).then((servicePoints) => {
               testData.defaultLocation[tenant] = Location.getDefaultLocation(servicePoints[0].id);
               Location.createViaApi(testData.defaultLocation[tenant]);
@@ -195,13 +198,13 @@ describe('Inventory', () => {
                     ...instance.holdings[0],
                     instanceId: instance.instanceId,
                     permanentLocationId: currentLocation.id,
-                    sourceId: testData.folioSourceId,
+                    sourceId: testData.folioSourceId[Affiliations.College],
                   }).then((holding) => {
                     InventoryItems.createItemViaApi({
                       ...instance.items[0],
                       holdingsRecordId: holding.id,
-                      materialType: { id: testData.materialTypeId },
-                      permanentLoanType: { id: testData.loanTypeId },
+                      materialType: { id: testData.materialTypeId[Affiliations.College] },
+                      permanentLoanType: { id: testData.loanTypeId[Affiliations.College] },
                     });
                   });
                 });
