@@ -40,6 +40,7 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 

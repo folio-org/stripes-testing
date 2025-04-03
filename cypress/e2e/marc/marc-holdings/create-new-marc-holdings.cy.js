@@ -66,6 +66,7 @@ describe('MARC', () => {
     let servicePointId;
 
     before('Create user, data', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,

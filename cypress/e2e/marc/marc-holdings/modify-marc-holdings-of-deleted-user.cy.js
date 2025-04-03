@@ -33,6 +33,7 @@ describe('MARC', () => {
     const user = {};
 
     before('Creating user', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
