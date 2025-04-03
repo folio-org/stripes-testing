@@ -13,7 +13,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Filters', () => {
       const testData = {
-        searchQuery: 'C553056 Sorting by Date',
+        searchQuery: 'C553014 Sorting by Date',
         allDates1Sorted: [
           '0000',
           '   1',
@@ -56,8 +56,8 @@ describe('Inventory', () => {
         { range: ['', '1670'], dates: testData.allDates1Sorted.slice(0, 26) },
       ];
       const marcFile = {
-        marc: 'marcBibFileC553056.mrc',
-        fileName: `testMarcFileC553056.${randomPostfix()}.mrc`,
+        marc: 'marcBibFileC553014.mrc',
+        fileName: `testMarcFileC553014.${randomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
@@ -105,14 +105,14 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553056 Verify that "Date range" filter is working on computed field from "Date 1" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553056'] },
+        'C553014 Verify that "Date range" filter is working on computed field from "Date 1" field (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C553014'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
           testData.allDates1Sorted.forEach((date) => {
             InventorySearchAndFilter.verifyResultWithDate1Found(date);
           });
-          for (const filterDatum of filterData) {
+          filterData.forEach((filterDatum) => {
             InventorySearchAndFilter.filterByDateRange(...filterDatum.range);
             filterDatum.dates.forEach((date) => {
               InventorySearchAndFilter.verifyResultWithDate1Found(date);
@@ -120,7 +120,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
             InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
             InventorySearchAndFilter.closeDateRangeAccordion();
-          }
+          });
         },
       );
     });
