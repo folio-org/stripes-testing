@@ -112,7 +112,7 @@ describe('Inventory', () => {
           testData.allDates1Sorted.forEach((date) => {
             InventorySearchAndFilter.verifyResultWithDate1Found(date);
           });
-          for (const filterDatum of filterData) {
+          filterData.forEach((filterDatum) => {
             InventorySearchAndFilter.filterByDateRange(...filterDatum.range);
             filterDatum.dates.forEach((date) => {
               InventorySearchAndFilter.verifyResultWithDate1Found(date);
@@ -120,7 +120,7 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
             InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
             InventorySearchAndFilter.closeDateRangeAccordion();
-          }
+          });
         },
       );
     });

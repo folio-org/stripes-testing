@@ -56,10 +56,14 @@ describe('Eureka', () => {
       const originalRoleIds = originalRoleNamesRandomized.map((roleName) => testData[roleName].id);
       if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, originalRoleIds);
       else cy.addRolesToNewUserApi(testData.userA.userId, originalRoleIds);
-      cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
-        waiter: UsersCard.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.tempUser.username, testData.tempUser.password, {
+          path: `${TopMenu.usersPath}/preview/${testData.userA.userId}`,
+          waiter: UsersCard.waitLoading,
+        });
+        cy.reload();
+      }, 20_000);
+      UsersCard.waitLoading();
     });
 
     after('Delete roles, users', () => {
