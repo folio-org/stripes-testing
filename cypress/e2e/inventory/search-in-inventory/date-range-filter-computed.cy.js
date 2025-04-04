@@ -118,8 +118,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifyResultWithDate1Found(date);
             });
             InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
-            InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
-            InventorySearchAndFilter.closeDateRangeAccordion();
+            InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName, false);
           });
         },
       );

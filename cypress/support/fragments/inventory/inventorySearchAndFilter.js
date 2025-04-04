@@ -1292,8 +1292,7 @@ export default {
 
   filterByDateRange(dateFrom, dateTo) {
     cy.intercept('/search/instances**').as('searchCall');
-    cy.do(dateRangeAccordion.clickHeader());
-    cy.expect(dateRangeAccordion.has({ open: true }));
+    this.toggleAccordionByName('Date range');
     cy.do([
       dateRangeFromField.fillIn(dateFrom),
       dateRangeToField.fillIn(dateTo),
@@ -1303,8 +1302,16 @@ export default {
     cy.wait(1000);
   },
 
-  closeDateRangeAccordion() {
-    cy.do(dateRangeAccordion.clickHeader());
-    cy.expect(dateRangeAccordion.has({ open: false }));
+  toggleAccordionByName(accordionName, isOpen = true) {
+    this.clickAccordionByName(accordionName);
+    this.verifyAccordionByNameExpanded(accordionName, isOpen);
+  },
+
+  verifyDateRangeAccordionValues(fromDate, toDate) {
+    cy.expect([
+      dateRangeFromField.has({ value: fromDate }),
+      dateRangeToField.has({ value: toDate }),
+      dateRangeAccordion.find(filterApplyButton).exists(),
+    ]);
   },
 };
