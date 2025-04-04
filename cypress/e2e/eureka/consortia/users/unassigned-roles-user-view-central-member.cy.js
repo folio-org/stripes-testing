@@ -25,7 +25,7 @@ describe('Eureka', () => {
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
         { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users', action: 'View' },
+        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
       ];
 
       const capabsToAssign = [
