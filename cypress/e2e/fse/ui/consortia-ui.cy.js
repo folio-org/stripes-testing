@@ -21,7 +21,7 @@ describe('fse-consortia - UI for production tenants', () => {
       cy.getUserTenants().then((userTenants) => {
         // get primary tenant
         const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
-        cy.wait(2000);
+        cy.wait(6000);
         ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
       });
       cy.getUserAffiliationsCount().then((count) => {
