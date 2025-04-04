@@ -15,7 +15,7 @@ describe('fse-users - okapi', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195392 - Get by username for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'users', 'loc'] },
+    { tags: ['fse', 'api', 'users'] },
     () => {
       cy.getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` }).then(
         (users) => {
