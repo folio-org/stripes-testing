@@ -593,7 +593,8 @@ export default {
       }
     });
     const multiSelect = headingTypeAccordion.find(MultiSelect());
-    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(headingTypesArray)]);
+    const matchers = headingTypesArray.map((value) => including(value));
+    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(matchers)]);
   },
 
   enterTypeOfHeading: (headingType) => {
@@ -618,7 +619,7 @@ export default {
     const multiSelect = sourceFileAccordion.find(
       MultiSelect({ label: including('Authority source') }),
     );
-    cy.do([cy.wait(1000), multiSelect.select(option)]);
+    cy.do([cy.wait(1000), multiSelect.select(including(option))]);
   },
 
   verifyEmptyAuthorityField: () => {
@@ -730,7 +731,7 @@ export default {
   },
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
-    cy.do([headingTypeAccordion.clickHeader(), typeOfHeadingSelect.select(headingType)]);
+    cy.do([headingTypeAccordion.clickHeader(), typeOfHeadingSelect.select(including(headingType))]);
     cy.expect([
       MultiSelect({ selected: including(headingType) }).exists(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).absent(),

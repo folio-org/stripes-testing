@@ -53,7 +53,7 @@ describe('MARC', () => {
             tag: '711',
             content: '$j something $0 n79084169C388560 $2 fast',
             boxFourth:
-              '$a C388560Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd :',
+              '$a C388560Roma Council $n (2nd : $d 1962-1965 : $c Basilica di San Pietro in Roma)',
             boxFifth: '$j something',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n79084169C388560',
             boxSeventh: '$2 fast',
@@ -137,11 +137,14 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
