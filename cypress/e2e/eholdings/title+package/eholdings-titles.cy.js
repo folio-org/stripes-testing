@@ -25,6 +25,7 @@ describe('eHoldings', () => {
       'C16994 Add a title in a package to holdings (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16994'], retries: 2 },
       () => {
+        cy.getAdminToken();
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
           permissions.uieHoldingsPackageTitleSelectUnselect.gui,
@@ -60,6 +61,7 @@ describe('eHoldings', () => {
       'C700 Title: Add or Edit custom coverage (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C700'], retries: 1 },
       () => {
+        cy.getAdminToken();
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
           cy.login(userProperties.username, userProperties.password, {
@@ -117,6 +119,7 @@ describe('eHoldings', () => {
       'C691 Remove a title in a package from your holdings (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C691'] },
       () => {
+        cy.getAdminToken();
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
           permissions.uieHoldingsPackageTitleSelectUnselect.gui,
@@ -149,6 +152,7 @@ describe('eHoldings', () => {
       'C693 Create a custom title. (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C693'] },
       () => {
+        cy.getAdminToken();
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
           permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
@@ -171,6 +175,7 @@ describe('eHoldings', () => {
       'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C157916'] },
       () => {
+        cy.getAdminToken();
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
           cy.login(userProperties.username, userProperties.password, {
@@ -194,6 +199,7 @@ describe('eHoldings', () => {
       'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C17090'] },
       () => {
+        cy.getAdminToken();
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
           cy.login(userProperties.username, userProperties.password, {

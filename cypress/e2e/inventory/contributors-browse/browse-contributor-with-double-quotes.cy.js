@@ -24,6 +24,7 @@ describe('Inventory', () => {
     const exactSearchName = 'Dalla Torre, "Giuseppe"';
 
     before('Creating user and test data', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         user.userProperties = createdUserProperties;
         DataImport.uploadFileViaApi(
@@ -41,6 +42,7 @@ describe('Inventory', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         InventorySearchAndFilter.selectBrowseContributors();
+        BrowseContributors.waitForContributorToAppear(exactSearchName);
       });
     });
 
@@ -56,7 +58,7 @@ describe('Inventory', () => {
       () => {
         BrowseContributors.searchRecordByName(notExactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);
-        BrowseContributors.checkNonExactSearchResultForARow(notExactSearchName, 0);
+        BrowseContributors.checkNonExactMatchPlaceholder(notExactSearchName);
         BrowseContributors.searchRecordByName(exactSearchName);
         BrowseContributors.checkBrowseContributorsResulstListVisible(true);
         BrowseContributors.checkSearchResultRecord(exactSearchName);

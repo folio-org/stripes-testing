@@ -22,7 +22,7 @@ describe('MARC', () => {
           '100',
           '1',
           '\\',
-          '$a C422060 Robinson, Peter, $c Inspector Banks series ; $d 1950-2022',
+          '$a C422060 Robinson, Peter, $d 1950-2022 $c Inspector Banks series ;',
           '$e author.',
           '$0 http://id.loc.gov/authorities/names/n123123',
           '',
@@ -92,10 +92,14 @@ describe('MARC', () => {
         ]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -114,7 +118,6 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,

@@ -1617,4 +1617,13 @@ export default {
         .has({ content: expectedValue.toString() }),
     );
   },
+
+  validateOptionInActionsMenu(optionName, shouldExist = true) {
+    cy.do(actionsButton.click());
+    if (shouldExist) {
+      cy.expect(Button(optionName).exists());
+    } else {
+      cy.expect(Button(optionName).absent());
+    }
+  },
 };

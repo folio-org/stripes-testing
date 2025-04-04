@@ -106,8 +106,11 @@ describe('MARC', () => {
       });
 
       beforeEach('Visit MARC Authorities', () => {
-        cy.visit(TopMenu.marcAuthorities);
-        MarcAuthorities.waitLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.marcAuthorities);
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
       });
 
       after('Delete test data', () => {
