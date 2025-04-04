@@ -85,6 +85,9 @@ describe('Eureka', () => {
         SelectMembers.selectAllMembers();
         ConsortiumManager.verifyMembersSelected(3);
         ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
+        AuthorizationRoles.waitLoading();
+        AuthorizationRoles.closeAllCalloutsIfShown();
+        SelectMembers.selectMember(tenantNames.university);
         AuthorizationRoles.verifyAccessErrorShown();
         AuthorizationRoles.waitLoading();
         SelectMembers.selectMember(tenantNames.central);
@@ -99,6 +102,9 @@ describe('Eureka', () => {
         AuthorizationRoles.verifyAccessErrorShown();
         AuthorizationRoles.waitLoading();
         SelectMembers.selectMember(tenantNames.university);
+        AuthorizationRoles.verifyAccessErrorShown();
+        AuthorizationRoles.waitLoading();
+        SelectMembers.selectMember(tenantNames.college);
         AuthorizationRoles.verifyAccessErrorShown();
         AuthorizationRoles.waitLoading();
       },
