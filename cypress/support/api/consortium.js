@@ -90,7 +90,7 @@ Cypress.Commands.add('waitForPrimaryAffiliationSetup', (consortiaId, targetUserI
       expect(response.body.userTenants.filter((el) => el.isPrimary === true)).to.have.lengthOf(1);
     },
     {
-      limit: 10,
+      limit: 20,
       timeout: 40000,
       delay: 1000,
     },
