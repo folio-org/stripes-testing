@@ -1314,4 +1314,26 @@ export default {
       dateRangeAccordion.find(filterApplyButton).exists(),
     ]);
   },
+
+  filterByDateRangeWithValidation(dateFrom, dateTo, fromError, toError) {
+    cy.intercept('/search/instances**').as('searchCall');
+    this.toggleAccordionByName('Date range');
+    cy.do([dateRangeFromField.fillIn(dateFrom), dateRangeToField.fillIn(dateTo)]);
+    if (fromError) this.verifyErrorMessageInTextField(dateRangeFromField, true, fromError);
+    else if (fromError === false) this.verifyErrorMessageInTextField(dateRangeFromField, false);
+    if (toError) this.verifyErrorMessageInTextField(dateRangeToField, true, toError);
+    else if (toError === false) this.verifyErrorMessageInTextField(dateRangeToField, false);
+    cy.do(dateRangeAccordion.find(filterApplyButton).click());
+    if (fromError) this.verifyErrorMessageInTextField(dateRangeFromField, true, fromError);
+    else if (fromError === false) this.verifyErrorMessageInTextField(dateRangeFromField, false);
+    if (toError) this.verifyErrorMessageInTextField(dateRangeToField, true, toError);
+    else if (toError === false) this.verifyErrorMessageInTextField(dateRangeToField, false);
+    if (!fromError && !toError) cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
+    cy.wait(1000);
+  },
+
+  verifyErrorMessageInTextField(textFieldInteractor, isError = true, errorText) {
+    if (isError) cy.expect(textFieldInteractor.has({ error: errorText, errorBorder: true, errorIcon: true }));
+    else cy.expect(textFieldInteractor.has({ error: '', errorBorder: false, errorIcon: false }));
+  },
 };
