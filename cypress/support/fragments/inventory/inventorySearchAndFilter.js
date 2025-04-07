@@ -1297,18 +1297,6 @@ export default {
     else cy.expect(targetCell.absent());
   },
 
-  filterByDateRange(dateFrom, dateTo) {
-    cy.intercept('/search/instances**').as('searchCall');
-    this.toggleAccordionByName('Date range');
-    cy.do([
-      dateRangeFromField.fillIn(dateFrom),
-      dateRangeToField.fillIn(dateTo),
-      dateRangeAccordion.find(filterApplyButton).click(),
-    ]);
-    cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
-    cy.wait(1000);
-  },
-
   toggleAccordionByName(accordionName, isOpen = true) {
     this.clickAccordionByName(accordionName);
     this.verifyAccordionByNameExpanded(accordionName, isOpen);
@@ -1322,7 +1310,7 @@ export default {
     ]);
   },
 
-  filterByDateRangeWithValidation(dateFrom, dateTo, fromError, toError) {
+  filterByDateRange(dateFrom, dateTo, fromError, toError) {
     cy.intercept('/search/instances**').as('searchCall');
     this.toggleAccordionByName('Date range');
     cy.do([dateRangeFromField.fillIn(dateFrom), dateRangeToField.fillIn(dateTo)]);

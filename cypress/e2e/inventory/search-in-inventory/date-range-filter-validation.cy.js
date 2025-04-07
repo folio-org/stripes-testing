@@ -140,7 +140,7 @@ describe('Inventory', () => {
         { tags: ['criticalPath', 'spitfire', 'C553027'] },
         () => {
           filterData.forEach((filterDatum) => {
-            InventorySearchAndFilter.filterByDateRangeWithValidation(
+            InventorySearchAndFilter.filterByDateRange(
               ...filterDatum.range,
               filterDatum.fromError,
               filterDatum.toError,
