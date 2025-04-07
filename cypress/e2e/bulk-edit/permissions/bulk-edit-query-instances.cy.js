@@ -1,6 +1,5 @@
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -10,10 +9,11 @@ import {
   CAPABILITY_ACTIONS,
 } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 const testData = {
-  roleName: `Auto Role C376991 ${getRandomPostfix()}`,
+  roleName: `Auto Role C423695 ${getRandomPostfix()}`,
   capabSetIds: [],
 };
 const capabSetsToAssign = [
@@ -29,7 +29,7 @@ const capabSetsToAssign = [
   },
   {
     type: CAPABILITY_TYPES.DATA,
-    resource: 'UI-Inventory Item',
+    resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.EDIT,
   },
   {
@@ -98,11 +98,6 @@ describe('bulk-edit', () => {
           cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
           cy.addRolesToNewUserApi(user.userId, [testData.roleId]);
         });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
     });
 
@@ -113,9 +108,13 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C376991 Verify Query tab capability sets (In app items) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C376991'] },
+      'C423695 Verify Query tab capability sets (In app Instances) (firebird)',
+      { tags: ['criticalPath', 'firebird', 'C423695'] },
       () => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
@@ -143,6 +142,7 @@ describe('bulk-edit', () => {
         capabSetToUnselect.forEach((capabSet) => {
           AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
         });
+
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,

@@ -73,15 +73,19 @@ describe('MARC', () => {
           ]).then((userProperties) => {
             testData.user = userProperties;
 
-            cy.loginAsAdmin();
+            cy.getAdminToken();
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -114,7 +118,7 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification(testData.tag700);
             QuickMarcEditor.deleteField(83);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.confirmDeletingFields();
             // need to wait until fields will be deleted

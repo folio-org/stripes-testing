@@ -18,10 +18,10 @@ describe('MARC', () => {
         const testData = {
           tag700: '700',
           tag337: '337',
-          ta337content: '$a video $b v $2 rdamedia $0 n91074080',
-          tag130seventhBoxContent: '$0 n91074080',
+          ta337content: '$a video $b v $2 rdamedia $0 n93885611',
+          tag130seventhBoxContent: '$0 n93885611',
           tag700content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n91074080333',
-          newTag700content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n91074080',
+          newTag700content: '$a Roberts, Julia, $d 1967- $e Actor. $0 n93885613',
           createdRecordIDs: [],
           errorCalloutMessage: 'Field 700 must be set manually by selecting the link icon.',
           successCalloutMessage: 'Field 700 has been linked to MARC authority record(s).',
@@ -32,8 +32,8 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Runaway Bride (Motion picture)',
             '',
-            '$0 http://id.loc.gov/authorities/names/n2002076264',
-            '$0 n91074080',
+            '$0 http://id.loc.gov/authorities/names/n93885611',
+            '$0 n93885611',
           ],
           bib700AfterLinkingToAuth100: [
             55,
@@ -42,7 +42,7 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Roberts, Julia, $d 1967-',
             '$e Actor.',
-            '$0 http://id.loc.gov/authorities/names/n91074080',
+            '$0 http://id.loc.gov/authorities/names/n93885613',
             '',
           ],
           bib700_1AfterLinkingToAuth100: [
@@ -52,7 +52,7 @@ describe('MARC', () => {
             '\\',
             '$a C388561 Gere, Richard, $d 1949-',
             '$e Actor.',
-            '$0 http://id.loc.gov/authorities/names/n86041334',
+            '$0 http://id.loc.gov/authorities/names/n93885612',
             '',
           ],
           bib700AfterUnlinking: [
@@ -60,7 +60,7 @@ describe('MARC', () => {
             '700',
             '1',
             '\\',
-            '$a C388561 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n86041334',
+            '$a C388561 Gere, Richard, $d 1949- $e Actor. $0 http://id.loc.gov/authorities/names/n93885612',
           ],
         };
 
@@ -111,7 +111,6 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388561*');
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374161');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -152,10 +151,14 @@ describe('MARC', () => {
               QuickMarcEditor.checkAfterSaveAndClose();
             });
 
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 

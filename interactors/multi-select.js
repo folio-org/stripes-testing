@@ -67,7 +67,7 @@ export const ValueChipRoot = HTML.extend('value chip root')
 const select = async (interactor, values) => {
   await interactor.open();
   let valuesParam = values;
-  if (typeof values === 'string') {
+  if (!Array.isArray(values)) {
     valuesParam = [values];
   }
   for (const value of valuesParam) {

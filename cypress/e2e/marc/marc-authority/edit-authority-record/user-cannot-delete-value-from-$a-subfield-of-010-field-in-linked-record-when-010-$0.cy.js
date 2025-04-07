@@ -24,7 +24,7 @@ describe('MARC', () => {
         },
         errorMessage: 'Cannot delete 010. It is required.',
         bib700AfterLinkingToAuth100: [
-          56,
+          55,
           '700',
           '1',
           '\\',
@@ -53,12 +53,13 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValue = {
-        rowIndex: 56,
+        rowIndex: 55,
         value: 'C376936 Roberts, Julia',
         tag: '700',
       };
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
