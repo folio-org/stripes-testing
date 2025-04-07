@@ -31,6 +31,7 @@ describe('MARC', () => {
       const instanceIDs = [];
 
       before('Creating test user and an inventory instance', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

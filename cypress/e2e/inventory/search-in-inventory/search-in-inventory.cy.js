@@ -19,6 +19,7 @@ describe('Inventory', () => {
     const createdInstanceIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,

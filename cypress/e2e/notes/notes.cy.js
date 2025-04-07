@@ -15,6 +15,7 @@ describe('Note creation', () => {
   note.details += String().padEnd(4000 - note.details.length - 1, 'test');
 
   before('Creating data', () => {
+    cy.getAdminToken();
     cy.createTempUser([
       Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
