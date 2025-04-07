@@ -18,9 +18,73 @@ describe('Inventory', () => {
         dateRangeAccordionName: 'Date range',
       };
       const filterData = [
-        { range: ['1903', '1905'], dates: testData.allDates1Sorted.slice(1, 4) },
-        { range: ['1903', '1903'], dates: testData.allDates1Sorted.slice(1, 2) },
-        { range: ['1899', '1999'], dates: testData.allDates1Sorted },
+        { range: ['1902', '1906'] },
+        {
+          range: ['19035', '19056'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        {
+          range: ['19035', '1905'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: false,
+        },
+        {
+          range: ['1903', '19055'],
+          fromError: false,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        {
+          range: ['190', '1905'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: false,
+        },
+        {
+          range: ['1903', '190'],
+          fromError: false,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        {
+          range: ['0', '1905'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: false,
+        },
+        {
+          range: ['1903', '9'],
+          fromError: false,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        {
+          range: ['190u', '1905'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: false,
+        },
+        {
+          range: ['1903', 'd905'],
+          fromError: false,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        {
+          range: ['190\\', '1905'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: false,
+        },
+        {
+          range: ['1903', '19_5'],
+          fromError: false,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        {
+          range: ['190 ', '1905'],
+          fromError: InventorySearchAndFilter.invalidDateErrorText,
+          toError: false,
+        },
+        {
+          range: ['1903', '19 5'],
+          fromError: false,
+          toError: InventorySearchAndFilter.invalidDateErrorText,
+        },
+        { range: ['1935', '1934'], fromError: InventorySearchAndFilter.dateOrderErrorText },
       ];
       const marcFile = {
         marc: 'marcBibFileC553014.mrc',
@@ -75,32 +139,34 @@ describe('Inventory', () => {
         'C553027 Validation of "From" / "To" boxes in "Date range" filter (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C553027'] },
         () => {
-          InventoryInstances.searchByTitle(testData.searchQuery);
-          testData.allDates1Sorted.forEach((date) => {
-            InventorySearchAndFilter.verifyResultWithDate1Found(date);
-          });
-
           filterData.forEach((filterDatum) => {
-            InventorySearchAndFilter.filterByDateRange(...filterDatum.range);
-            filterDatum.dates.forEach((date) => {
+            InventorySearchAndFilter.filterByDateRangeWithValidation(
+              ...filterDatum.range,
+              filterDatum.fromError,
+              filterDatum.toError,
+            );
+            testData.allDates1Sorted.forEach((date) => {
               InventorySearchAndFilter.verifyResultWithDate1Found(date);
             });
-            InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1Sorted.length);
             InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName, false);
           });
-          testData.allDates1Sorted.forEach((date) => {
-            InventorySearchAndFilter.verifyResultWithDate1Found(date);
-          });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1Sorted.length);
           InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName);
-          InventorySearchAndFilter.verifyDateRangeAccordionValues(...filterData[2].range);
-          testData.allDates1Sorted.forEach((date) => {
-            InventorySearchAndFilter.verifyResultWithDate1Found(date);
-          });
-          InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1Sorted.length);
+          InventorySearchAndFilter.verifyErrorMessageInAccordion(
+            InventorySearchAndFilter.dateRangeAccordion,
+            InventorySearchAndFilter.dateOrderErrorText,
+          );
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
           InventorySearchAndFilter.verifyDateRangeAccordionValues('', '');
           InventorySearchAndFilter.verifySearchFieldIsEmpty();
+          InventorySearchAndFilter.verifyErrorMessageInTextField(
+            InventorySearchAndFilter.dateRangeFromField,
+            false,
+          );
+          InventorySearchAndFilter.verifyErrorMessageInTextField(
+            InventorySearchAndFilter.dateRangeToField,
+            false,
+          );
         },
       );
     });
