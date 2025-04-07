@@ -11,6 +11,7 @@ Cypress.Commands.add('getConsortiaId', () => {
 Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUserId) => {
   cy.wait(15000);
   cy.getConsortiaId().then((consortiaId) => {
+    cy.waitForPrimaryAffiliationSetup(consortiaId, targetUserId);
     cy.okapiRequest({
       method: 'POST',
       path: `consortia/${consortiaId}/user-tenants`,
@@ -70,4 +71,28 @@ Cypress.Commands.add('getUserTenants', () => {
       return body.userTenants;
     });
   });
+});
+
+Cypress.Commands.add('waitForPrimaryAffiliationSetup', (consortiaId, targetUserId) => {
+  cy.recurse(
+    () => {
+      return cy.okapiRequest({
+        path: `consortia/${consortiaId}/user-tenants`,
+        searchParams: {
+          userId: targetUserId,
+          limit: 50,
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    },
+    (response) => {
+      expect(response.body).to.have.property('userTenants');
+      expect(response.body.userTenants.filter((el) => el.isPrimary === true)).to.have.lengthOf(1);
+    },
+    {
+      limit: 20,
+      timeout: 40000,
+      delay: 1000,
+    },
+  );
 });

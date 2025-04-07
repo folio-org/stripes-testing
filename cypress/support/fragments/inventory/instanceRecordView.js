@@ -203,7 +203,7 @@ export const actionsMenuOptions = {
   shareLocalInstance: 'Share local instance',
   newRequest: 'New request',
   setRecordForDeletion: 'Set record for deletion',
-  newMarcBibRecord: 'New MARC bib record',
+  newMarcBibRecord: 'New MARC bibliographic record',
 };
 
 export default {

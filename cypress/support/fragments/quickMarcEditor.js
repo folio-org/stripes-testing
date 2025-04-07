@@ -1650,24 +1650,24 @@ export default {
   },
 
   checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, userName) {
-    cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
-    cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
-      (subtitle) => {
-        cy.expect(
-          Pane({
-            subtitle: and(
-              including('Status:'),
-              including(status),
-              including(headingType),
-              including('Last updated:'),
-              including(`Source: ${userName}`),
-            ),
-          }).exists(),
-        );
-        const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
-        dateTools.verifyDate(Date.parse(stringDate), 120_000);
-      },
+    cy.expect(
+      Pane(matching(new RegExp(`Edit .*MARC authority record - ${headingTypeFrom1XX}`))).exists(),
     );
+    cy.then(() => Pane(matching(new RegExp(`Edit .*MARC authority record - ${headingTypeFrom1XX}`))).subtitle()).then((subtitle) => {
+      cy.expect(
+        Pane({
+          subtitle: and(
+            including('Status:'),
+            including(status),
+            including(headingType),
+            including('Last updated:'),
+            including(`Source: ${userName}`),
+          ),
+        }).exists(),
+      );
+      const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
+      dateTools.verifyDate(Date.parse(stringDate), 120_000);
+    });
   },
 
   checkReadOnlyTags() {

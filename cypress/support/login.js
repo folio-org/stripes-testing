@@ -20,13 +20,20 @@ Cypress.Commands.add(
       cy.clearCookies({ domain: null }).then(() => {
         cy.visit(visitPath.path);
 
-        if (Cypress.env('selectTenantOnUI')) {
-          cy.wait(500);
-          cy.do(Select('Tenant/Library').choose(Cypress.env('OKAPI_TENANT')));
-          cy.wait(500);
-          cy.do(Button('Continue').click());
-          cy.wait(1000);
-        }
+        cy.get('img').then(() => {
+          cy.wait(1000).then(() => {
+            cy.get('body').then(($body) => {
+              if ($body.find('select').length > 0) {
+                cy.do(Select('Tenant/Library').choose(Cypress.env('OKAPI_TENANT')));
+                cy.wait(500);
+                cy.do(Button('Continue').click());
+                cy.wait(1000);
+              } else {
+                cy.log('No tenant/library select found');
+              }
+            });
+          });
+        });
 
         cy.do([
           TextInput('Username').fillIn(username),
