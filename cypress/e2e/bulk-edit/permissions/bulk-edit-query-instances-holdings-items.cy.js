@@ -1,126 +1,149 @@
+import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import TopMenu from '../../../support/fragments/topMenu';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import QueryModal from '../../../support/fragments/bulk-edit/query-modal';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  CAPABILITY_TYPES,
+  CAPABILITY_ACTIONS,
+} from '../../../support/constants';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-let firstUser;
-let secondUser;
+let user;
+const testData = {
+  roleName: `Auto Role C423696 ${getRandomPostfix()}`,
+  capabSetIds: [],
+};
+const capabSetsToAssign = [
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Bulk-Edit Inventory',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Authorization-Roles Settings',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Authorization-Roles Settings',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Authorization-Roles Users Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Roles',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+];
+const capabSetToSelect = {
+  table: CAPABILITY_TYPES.PROCEDURAL,
+  resource: 'UI-Bulk-Edit Query',
+  action: CAPABILITY_ACTIONS.EXECUTE,
+};
+const capabSetToUnselect = [
+  {
+    table: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Authorization-Roles Settings',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  {
+    table: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Authorization-Roles Settings',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  {
+    table: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Authorization-Roles Users Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  {
+    table: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Roles',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+];
 
 describe('bulk-edit', () => {
   describe('permissions', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiUsersView.gui,
-        permissions.uiUserCanAssignUnassignPermissions.gui,
-        permissions.uiUserEdit.gui,
-      ]).then((userProperties) => {
-        firstUser = userProperties;
-      });
+      cy.createTempUser([]).then((userProperties) => {
+        user = userProperties;
+        cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+          testData.roleId = role.id;
 
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiUsersView.gui,
-        permissions.uiUserCanAssignUnassignPermissions.gui,
-        permissions.uiUserEdit.gui,
-      ]).then((userProperties) => {
-        secondUser = userProperties;
+          capabSetsToAssign.forEach((capabilitySet) => {
+            cy.getCapabilitySetIdViaApi(capabilitySet).then((capabSetId) => {
+              testData.capabSetIds.push(capabSetId);
+            });
+          });
+
+          cy.addCapabilitySetsToNewRoleApi(testData.roleId, testData.capabSetIds);
+          cy.addRolesToNewUserApi(user.userId, [testData.roleId]);
+        });
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
+      Users.deleteViaApi(user.userId);
+      cy.deleteAuthorizationRoleApi(testData.roleId);
     });
 
     it(
-      'C423696 Verify Query tab permissions (In app Instances, Holdings, Items) (firebird)',
+      'C423696 Verify Query tab capability sets (In app Instances, Holdings, Items) (firebird)',
       { tags: ['criticalPath', 'firebird', 'C423696'] },
       () => {
-        cy.login(firstUser.username, firstUser.password, {
+        cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-        UsersSearchPane.searchByUsername(firstUser.username);
-        UsersSearchPane.openUser(firstUser.username);
-        // Add bulkEditQueryView permission and remove next three
-        UserEdit.addPermissions([
-          permissions.bulkEditQueryView.gui,
-          permissions.uiUsersView.gui,
-          permissions.uiUserCanAssignUnassignPermissions.gui,
-          permissions.uiUserEdit.gui,
-        ]);
-        UserEdit.saveAndClose();
-        UsersCard.verifyPermissions([
-          permissions.bulkEditView.gui,
-          permissions.bulkEditEdit.gui,
-          permissions.uiInventoryViewInstances.gui,
-          permissions.bulkEditQueryView.gui,
-        ]);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Authorization roles');
+        AuthorizationRoles.waitContentLoading();
+        AuthorizationRoles.searchRole(testData.roleName);
+        AuthorizationRoles.clickOnRoleName(testData.roleName);
+        AuthorizationRoles.openForEdit();
+        AuthorizationRoles.clickSelectApplication();
+        AuthorizationRoles.selectAllApplicationsInModal();
+        AuthorizationRoles.clickSaveInModal();
+        AuthorizationRoles.checkCapabilitySpinnersShown();
+        AuthorizationRoles.checkCapabilitySpinnersAbsent();
+        AuthorizationRoles.selectCapabilitySetCheckbox(capabSetToSelect);
 
-        cy.login(firstUser.username, firstUser.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        capabSetToUnselect.forEach((capabSet) => {
+          AuthorizationRoles.selectCapabilitySetCheckbox(capabSet, false);
         });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.isHoldingsRadioChecked(false);
-        BulkEditSearchPane.isInstancesRadioChecked(false);
-        BulkEditSearchPane.isItemsRadioChecked(false);
-        BulkEditSearchPane.verifyUsersRadioAbsent();
-        BulkEditSearchPane.verifyInputLabel(
-          'Select a record type and then click the Build query button.',
-        );
-        QueryModal.buildQueryButtonDisabled();
-      },
-    );
 
-    it(
-      'C423695 Verify Query tab permissions (In app Instances) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423695'] },
-      () => {
-        cy.login(secondUser.username, secondUser.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        AuthorizationRoles.clickSaveButton();
+        AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
+        AuthorizationRoles.clickOnCapabilitySetsAccordion();
+        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
+
+        capabSetToUnselect.forEach((capabSet) => {
+          AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
         });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
 
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
-        UsersSearchPane.searchByUsername(secondUser.username);
-        UsersSearchPane.openUser(secondUser.username);
-        // Add bulkEditQueryView permission and remove next three
-        UserEdit.addPermissions([
-          permissions.bulkEditQueryView.gui,
-          permissions.uiUsersView.gui,
-          permissions.uiUserCanAssignUnassignPermissions.gui,
-          permissions.uiUserEdit.gui,
-        ]);
-        UserEdit.saveAndClose();
-        UsersCard.verifyPermissions([
-          permissions.bulkEditView.gui,
-          permissions.bulkEditEdit.gui,
-          permissions.uiInventoryViewCreateEditInstances.gui,
-          permissions.bulkEditQueryView.gui,
-        ]);
-
-        cy.login(secondUser.username, secondUser.password, {
+        cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
