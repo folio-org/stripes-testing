@@ -163,7 +163,6 @@ describe('Consortia Vega', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
       NewRequest.choosePickupServicePoint(servicePoint.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation-bff/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('requestId');
       });

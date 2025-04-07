@@ -3,6 +3,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import usersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Users', () => {
@@ -53,11 +54,12 @@ describe('Users', () => {
     () => {
       UsersSearchPane.searchByUsername(testData.testUser.username);
       UserEdit.openEdit();
+      UserEdit.openServicePointsAccordion();
       UserEdit.addServicePoints(servicePoint1.name, servicePoint2.name);
       UserEdit.selectPreferableServicePoint(servicePoint1.name);
       UserEdit.saveAndClose();
-      UserEdit.openServicePointsAccordion();
-      UserEdit.checkServicePoints(servicePoint1.name, servicePoint2.name);
+      usersCard.openServicePointsAccordion();
+      usersCard.checkServicePoints(servicePoint1.name, servicePoint2.name);
     },
   );
 });

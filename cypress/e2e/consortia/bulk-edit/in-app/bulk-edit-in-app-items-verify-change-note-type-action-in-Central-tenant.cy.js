@@ -18,7 +18,6 @@ import InventoryItems from '../../../../support/fragments/inventory/item/invento
 import ItemNoteTypes from '../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import ItemNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DateTools from '../../../../support/utils/dateTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import {
   APPLICATION_NAMES,
@@ -70,16 +69,12 @@ const collegeItemNoteTypeNameWithAffiliation = `${collegeItemNoteType.name} (${A
 const universityItemNoteTypeNameWithAffiliation = `${universityItemNoteType.name} (${Affiliations.University})`;
 const instances = [folioInstance, marcInstance];
 const itemUUIDsFileName = `itemUUIdsFileName_${getRandomPostfix()}.csv`;
-const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 const matchedRecordsFileName = BulkEditFiles.getMatchedRecordsFileName(itemUUIDsFileName, true);
-const previewFileName = BulkEditFiles.getPreviewFileName(todayDate, itemUUIDsFileName);
-const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(
-  todayDate,
-  itemUUIDsFileName,
-);
+const previewFileName = BulkEditFiles.getPreviewFileName(itemUUIDsFileName, true);
+const changedRecordsFileName = BulkEditFiles.getChangedRecordsFileName(itemUUIDsFileName, true);
 const errorsFromCommittingFileName = BulkEditFiles.getErrorsFromCommittingFileName(
-  todayDate,
   itemUUIDsFileName,
+  true,
 );
 
 describe('Bulk-edit', () => {
@@ -113,9 +108,6 @@ describe('Bulk-edit', () => {
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            materialTypeId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -142,6 +134,9 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               // create local item note type in College
               ItemNoteTypes.createItemNoteTypeViaApi(collegeItemNoteType.name)
                 .then((noteId) => {
@@ -194,6 +189,9 @@ describe('Bulk-edit', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.University);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               // create local item note type in University tenant
               ItemNoteTypes.createItemNoteTypeViaApi(universityItemNoteType.name)
                 .then((noteId) => {
@@ -589,8 +587,7 @@ describe('Bulk-edit', () => {
             );
           });
 
-          BulkEditSearchPane.verifyErrorLabelInErrorAccordion(itemUUIDsFileName, 4, 4, 4);
-          BulkEditSearchPane.verifyNonMatchedResults();
+          BulkEditSearchPane.verifyErrorLabel(4);
 
           collegeItemIds.forEach((id) => {
             BulkEditSearchPane.verifyErrorByIdentifier(
@@ -629,12 +626,12 @@ describe('Bulk-edit', () => {
 
           collegeItemIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.College, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.College, 'note type')}`,
             ]);
           });
           universityItemIds.forEach((id) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
+              `ERROR,${id},${getReasonForTenantNotAssociatedError(id, Affiliations.University, 'note type')}`,
             ]);
           });
 

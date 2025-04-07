@@ -421,13 +421,17 @@ describe('bulk-edit', () => {
           cy.wait(1000);
           HoldingsRecordView.checkMarkAsSuppressedFromDiscoveryAbsent();
         });
+
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.switchToItem();
+
         itemBarcodes.forEach((itemBarcode) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
           ItemRecordView.waitLoading();
           cy.wait(1000);
           ItemRecordView.suppressedAsDiscoveryIsAbsent();
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

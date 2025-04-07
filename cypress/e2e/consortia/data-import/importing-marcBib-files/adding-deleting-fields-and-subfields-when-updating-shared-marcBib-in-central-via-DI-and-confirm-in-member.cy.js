@@ -51,9 +51,19 @@ describe('Data Import', () => {
       contributorType: 'Translator',
       absentContributorName: 'Stelfreeze, Brian (to be deleted)',
       subjects: [
-        { row: 0, name: 'Black Panther (Fictitious character) C405531' },
-        { row: 1, name: 'New Subject C405531' },
-        { row: 2, name: 'Superfighters (C405531)' },
+        {
+          row: 0,
+          name: 'Black Panther (Fictitious character) C405531',
+          source: 'Library of Congress Subject Headings',
+          type: 'Personal name',
+        },
+        { row: 1, name: 'New Subject C405531', source: 'No value set-', type: 'Corporate name' },
+        {
+          row: 2,
+          name: 'Superfighters (C405531)',
+          source: 'Library of Congress Subject Headings',
+          type: 'Topical term',
+        },
       ],
       instanceTitle: 'C405531 Instance Shared Central',
       tag100: {
@@ -209,7 +219,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
+        InventoryInstances.resetAllFilters();
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
@@ -218,8 +228,8 @@ describe('Data Import', () => {
           InstanceRecordView.verifyInstanceSubject({
             indexRow: subject.row,
             subjectHeadings: subject.name,
-            subjectSource: 'No value set-',
-            subjectType: 'No value set-',
+            subjectSource: subject.source,
+            subjectType: subject.type,
           });
         });
         InventoryInstance.viewSource();
@@ -245,8 +255,8 @@ describe('Data Import', () => {
           InstanceRecordView.verifyInstanceSubject({
             indexRow: subject.row,
             subjectHeadings: subject.name,
-            subjectSource: 'No value set-',
-            subjectType: 'No value set-',
+            subjectSource: subject.source,
+            subjectType: subject.type,
           });
         });
         InventoryInstance.viewSource();

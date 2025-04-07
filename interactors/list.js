@@ -9,6 +9,7 @@ export const ListItem = HTML.extend('list item')
     link: (el) => el.querySelector('a'),
     h3Value: (el) => el.querySelector('a[href]>h3').textContent,
     h4Value: (el) => el.querySelector('a[href]>h4').textContent,
+    text: (el) => el.textContent,
   });
 
 export default createInteractor('list')

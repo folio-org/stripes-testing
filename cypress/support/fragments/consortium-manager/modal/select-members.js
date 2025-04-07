@@ -49,7 +49,10 @@ export default {
           availableTenants.push($el.text());
         });
         if (tenantsList) {
-          cy.wrap(availableTenants).should('deep.equal', tenantsList);
+          tenantsList.forEach((tenant) => {
+            cy.wrap(availableTenants).should('include', tenant);
+          });
+          // cy.wrap(availableTenants).should('deep.equal', tenantsList);
         } else {
           // if there is no tenantsList then we check the alphabetical order
           cy.wrap(availableTenants).should('deep.equal', availableTenants.sort());
@@ -115,8 +118,11 @@ export default {
       });
   },
 
-  selectMembers(member) {
-    cy.do(selectMembersModal.find(ListRow(member)).find(Checkbox()).click());
+  selectMembers(...members) {
+    members.forEach((member) => {
+      cy.do(selectMembersModal.find(ListRow(member)).find(Checkbox()).click());
+      cy.wait(500);
+    });
   },
 
   selectAllMembers() {

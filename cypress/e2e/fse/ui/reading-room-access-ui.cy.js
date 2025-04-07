@@ -14,7 +14,7 @@ describe('fse-reading-room-access - UI for productions tenants', () => {
 
   it(
     `TC195705 - verify that reading-room page is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['ramsons', 'fse', 'ui', 'reading-room'] },
+    { tags: ['fse', 'ui', 'reading-room'] },
     () => {
       ReadingRoom.checkFieldsDisplayed();
     },

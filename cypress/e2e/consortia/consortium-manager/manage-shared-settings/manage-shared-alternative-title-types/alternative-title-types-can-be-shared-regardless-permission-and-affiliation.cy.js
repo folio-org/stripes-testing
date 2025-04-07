@@ -148,16 +148,18 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.clickCancel();
 
             cy.logout();
-            cy.login(userBData.username, userBData.password);
-            cy.visit(SettingsMenu.alternativeTitleTypes);
+            cy.login(userBData.username, userBData.password,
+              { path: SettingsMenu.alternativeTitleTypes, waiter: () => cy.wait(3000) });
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.alternativeTitleTypes);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.alternativeTitleTypes);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck.slice(0, -1));
           },
         );

@@ -77,7 +77,7 @@ describe('Eureka', () => {
           cy.wait('@createCall').then((call) => {
             testData.roleId = call.response.body.id;
             createdDateTime = DateTools.getFormattedEndDateWithTimUTC(new Date(), true);
-            AuthorizationRoles.checkAfterSaveCreate(testData.roleName);
+            AuthorizationRoles.checkRoleFound(testData.roleName);
             AuthorizationRoles.searchRole(testData.roleName);
             AuthorizationRoles.clickOnRoleName(testData.roleName);
             AuthorizationRoles.verifyGeneralInformationWhenCollapsed(createdDateTime);
@@ -102,7 +102,7 @@ describe('Eureka', () => {
             AuthorizationRoles.clickSaveButton();
             cy.wait('@updateCall').then(() => {
               updatedDateTime = DateTools.getFormattedEndDateWithTimUTC(new Date(), true);
-              AuthorizationRoles.checkAfterSaveEdit(testData.updatedRoleName);
+              AuthorizationRoles.verifyRoleViewPane(testData.updatedRoleName);
               AuthorizationRoles.verifyGeneralInformationWhenCollapsed(updatedDateTime);
               AuthorizationRoles.verifyGeneralInformationWhenExpanded(
                 updatedDateTime,

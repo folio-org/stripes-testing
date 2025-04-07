@@ -1,7 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
@@ -24,8 +22,8 @@ describe('Inventory', () => {
       volume: 'v.1',
       enumeration: 'e.2',
       chronology: 'ch.3',
-      shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
-      effectiveItemCallNumber: 'RR 3718',
+      effectiveItemCallNumberWithSuffix: 'itemFullCallNumbers="PRT 718 suf"',
+      effectiveItemCallNumber: 'itemFullCallNumbers="RR 718"',
     };
 
     const itemA1 = {
@@ -73,11 +71,6 @@ describe('Inventory', () => {
       InventoryActions.actionsIsAbsent();
       InventorySearchAndFilter.showsOnlyEffectiveLocation();
       InventorySearchAndFilter.browseSubjectsSearch(query);
-    };
-
-    const searchAndOpenInstance = (parametr, title) => {
-      InventorySearchAndFilter.searchByParameter(parametr, title);
-      InventoryInstances.selectInstance();
     };
 
     before('Creating user and instance with item with call number', () => {
@@ -173,47 +166,6 @@ describe('Inventory', () => {
     );
 
     it(
-      'C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)',
-      { tags: ['spitfire', 'criticalPath', 'C405529', 'eurekaPhase1'] },
-      () => {
-        searchAndOpenInstance(testData.parameter, item.instanceName);
-        InventoryInstance.addItem();
-        InventoryInstance.fillItemRequiredFields();
-        InventoryInstance.addItemData(item.callNumber, item.copyNumber, item.callNumberSuffix);
-        InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
-        InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
-        BrowseCallNumber.clickBrowseBtn();
-        InventorySearchAndFilter.verifyKeywordsAsDefault();
-        InventorySearchAndFilter.selectBrowseCallNumbers();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-        InventoryActions.actionsIsAbsent();
-        InventorySearchAndFilter.showsOnlyEffectiveLocation();
-        BrowseCallNumber.waitForCallNumberToAppear(`${item.callNumber} ${item.callNumberSuffix}`);
-        InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
-        BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-        InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
-        InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
-      },
-    );
-
-    it.skip(
-      // test case obsolete
-      'C347906 Verify that look and list of available facets change according to search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347906', 'eurekaPhase1'] },
-      () => {
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.verifyBrowseOptions();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
-        InventorySearchAndFilter.byEffectiveLocation();
-        InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
-
-        InventorySearchAndFilter.selectBrowseSubjects();
-        InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
-      },
-    );
-
-    it(
       'C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)',
       { tags: ['spitfire', 'criticalPath', 'C347910', 'eurekaPhase1'] },
       () => {
@@ -240,8 +192,6 @@ describe('Inventory', () => {
         InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
         BrowseCallNumber.checkExactSearchResult(item.itemCallNumber);
         BrowseCallNumber.checkSearchResultsTable();
-        InventorySearchAndFilter.clickPreviousPaginationButton();
-        InventorySearchAndFilter.clickNextPaginationButton();
         BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.clickResetAllButton();

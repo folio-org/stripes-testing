@@ -40,11 +40,11 @@ describe('Fees&Fines', () => {
     const recallUserData = {};
     const itemsData = {
       itemsWithSeparateInstance: [
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
-        { instanceTitle: `Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350650_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350650_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350650_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350650_Instance ${getRandomPostfix()}` },
+        { instanceTitle: `AT_C350650_Instance ${getRandomPostfix()}` },
       ],
     };
     const testData = {

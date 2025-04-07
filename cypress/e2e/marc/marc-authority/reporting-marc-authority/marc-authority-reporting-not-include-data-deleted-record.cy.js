@@ -86,15 +86,9 @@ describe('MARC', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C380532"' }).then(
-          (records) => {
-            records.forEach((record) => {
-              if (record.authRefType === 'Authorized') {
-                MarcAuthority.deleteViaAPI(record.id);
-              }
-            });
-          },
-        );
+        ['C375230', 'C380532'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,

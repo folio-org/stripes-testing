@@ -46,6 +46,7 @@ export { default as List, ListItem } from './list';
 export { default as MessageBanner, MessageBannerTypes } from './messagebanner';
 export { default as MetaSection } from './metasection';
 export { default as Modal } from './modal';
+export { default as ProxyUser } from './proxy-user';
 export {
   MultiColumnList,
   MultiColumnListRow,

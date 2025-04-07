@@ -100,9 +100,6 @@ describe('Bulk-edit', () => {
               (loanType) => loanType.name === LOAN_TYPE_NAMES.CAN_CIRCULATE,
             )[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            materialTypeId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
             sourceId = folioSource.id;
           });
@@ -137,6 +134,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
 
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
@@ -176,7 +176,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
-
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instance.uuid,
@@ -542,7 +544,7 @@ describe('Bulk-edit', () => {
 
           instances.forEach((instance) => {
             ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
-              `${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'temporary loan type')}`,
+              `ERROR,${instance.itemIds[1]},${getReasonForTenantNotAssociatedError(instance.itemIds[1], Affiliations.University, 'temporary loan type')}`,
             ]);
           });
 

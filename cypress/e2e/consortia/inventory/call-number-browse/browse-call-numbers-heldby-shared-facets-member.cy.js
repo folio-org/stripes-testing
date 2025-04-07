@@ -417,6 +417,10 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             InventorySearchAndFilter.selectBrowseCallNumbers();
           });
+          cy.setTenant(Affiliations.College);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          });
           BrowseSubjects.browse(`${callNumberPrefix} M1 Shared 1`);
           allVisibleCNs.forEach((callNumber) => {
             BrowseCallNumber.checkValuePresentInResults(callNumber);

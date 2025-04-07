@@ -1,14 +1,16 @@
 import uuid from 'uuid';
-import permissions from '../../support/dictionary/permissions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import TopMenu from '../../support/fragments/topMenu';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Users from '../../support/fragments/users/users';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import { getTestEntityValue } from '../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
+import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 
 describe('Users', () => {
   const patronGroup = {
@@ -85,7 +87,8 @@ describe('Users', () => {
     () => {
       UsersSearchPane.searchByKeywords(userData.middleName);
       Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
-      cy.visit(TopMenu.checkOutPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
       Checkout.waitLoading();
       CheckOutActions.addPatron(userData.middleName);
     },

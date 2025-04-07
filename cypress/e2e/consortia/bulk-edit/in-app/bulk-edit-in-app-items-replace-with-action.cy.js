@@ -98,9 +98,6 @@ describe('Bulk-edit', () => {
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             loanTypeId = res[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            materialTypeId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource()
             .then((folioSource) => {
               sourceId = folioSource.id;
@@ -125,6 +122,10 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in member tenant
               cy.setTenant(Affiliations.College);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
+
               instances.forEach((instance) => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instance.uuid,
@@ -327,7 +328,7 @@ describe('Bulk-edit', () => {
               );
             });
 
-            BulkEditSearchPane.verifyErrorLabelAfterChanges('Bulk edit query', 2, 2);
+            BulkEditSearchPane.verifyErrorLabel(2);
 
             checkedOutItemIds.forEach((id) => {
               BulkEditSearchPane.verifyErrorByIdentifier(id, reasonForError);
@@ -427,20 +428,21 @@ describe('Bulk-edit', () => {
             });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.switchToItem();
             itemBarcodeWithAvailableStatus.forEach((barcode) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', barcode);
               ItemRecordView.waitLoading();
               ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.MISSING);
+              ItemRecordView.closeDetailView();
+              InventorySearchAndFilter.resetAll();
             });
             itemBarcodeWithCheckedOutStatus.forEach((barcode) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', barcode);
               ItemRecordView.waitLoading();
               ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
+              ItemRecordView.closeDetailView();
+              InventorySearchAndFilter.resetAll();
             });
           });
         },

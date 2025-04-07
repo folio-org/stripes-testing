@@ -135,23 +135,26 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3_000);
+          });
+        })
+        .then(() => {
+          cy.getAdminToken();
+          cy.createTempUser([
+            Permissions.inventoryAll.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
           });
         });
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      ]).then((createdUserProperties) => {
-        testData.userProperties = createdUserProperties;
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-      });
     });
 
     after('Delete test data', () => {

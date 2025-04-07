@@ -61,7 +61,9 @@ export default {
 
   createNewExpenseClass(expenseClass) {
     cy.do(Button({ id: 'clickable-add-expenseClasses' }).click());
+    cy.wait(2000);
     this.fillRequiredFields(expenseClass);
+    cy.wait(4000);
   },
 
   editExpenseClass(expenseClass, oldExpenseClassName) {

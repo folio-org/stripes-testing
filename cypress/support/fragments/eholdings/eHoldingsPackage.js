@@ -1,5 +1,4 @@
 import {
-  Accordion,
   Button,
   Checkbox,
   HTML,
@@ -23,7 +22,6 @@ import { FILTER_STATUSES } from './eholdingsConstants';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
 
-const titlesFilterModal = Modal({ id: 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
 const closeButton = Button({ icon: 'times' });
 const actionsButton = Button('Actions');
@@ -51,6 +49,10 @@ const providerTokenValue = KeyValue('Provider token');
 const newNoteButton = Button({ id: 'note-create-button' });
 const assignUnassignNoteButton = Button({ id: 'note-assign-button' });
 const notesList = MultiColumnList({ id: 'notes-list' });
+const titlesSearchOptionSelect = titlesSection.find(
+  Select({ dataTestID: 'field-to-search-select' }),
+);
+const titlesSearchField = titlesSection.find(TextField({ type: 'search' }));
 
 export default {
   waitLoading: (specialPackage) => {
@@ -59,18 +61,7 @@ export default {
   },
 
   filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
-    cy.do(titlesSection.find(Button({ icon: 'search' })).click());
-    cy.expect(titlesFilterModal.exists());
-    const selectionStatusAccordion = titlesFilterModal.find(
-      Accordion({ id: 'filter-titles-selected' }),
-    );
-    const selectionStatusButton = selectionStatusAccordion.find(
-      Button({ id: 'accordion-toggle-button-filter-titles-selected' }),
-    );
-    cy.do(selectionStatusButton.click());
-    cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
-    cy.do(titlesFilterModal.find(Button('Search')).click());
-    cy.expect(titlesFilterModal.absent());
+    cy.do([titlesSection.find(actionsButton).click(), RadioButton(selectionStatus).click()]);
     waitTitlesLoading().then(() => {
       cy.expect(Spinner().absent());
     });
@@ -138,7 +129,7 @@ export default {
   },
 
   removeFromHoldings: () => {
-    cy.do(actionsButton.click());
+    cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(removeFromHoldingsButton.exists());
     cy.do(removeFromHoldingsButton.click());
     cy.expect(confirmationModal.exists());
@@ -150,7 +141,10 @@ export default {
     const newTag = `tag${getRandomPostfix()}`;
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(() => {
       cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
+      cy.wait(500);
       cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
+      cy.wait(500);
+      cy.do(tagsSection.find(MultiSelect()).close());
     });
     return newTag;
   },
@@ -190,7 +184,7 @@ export default {
 
   editProxyActions: () => {
     cy.expect(Spinner().absent());
-    cy.do(actionsButton.click());
+    cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
   },
@@ -235,5 +229,30 @@ export default {
         .exists(),
       notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
     ]);
+  },
+  selectTitleSearchOption(searchOption) {
+    cy.do(titlesSearchOptionSelect.choose(searchOption));
+    this.verifySelectedTitleSearchOption(searchOption);
+  },
+  verifySelectedTitleSearchOption(searchOption) {
+    cy.expect(titlesSearchOptionSelect.has({ checkedOptionText: searchOption }));
+  },
+  searchTitles(searchValue, searchOption) {
+    if (searchOption) this.selectTitleSearchOption(searchOption);
+    cy.do(titlesSearchField.fillIn(searchValue));
+    cy.get('input[type="search"]').type('{enter}');
+    cy.wait(1000);
+    this.verifyTitlesSearchQuery(searchValue);
+    cy.expect(titlesSection.find(Spinner()).absent());
+  },
+  verifyTitleFound(title) {
+    cy.expect(titlesSection.find(MultiColumnListCell(title)).exists());
+  },
+  verifyTitlesSearchQuery(query) {
+    cy.expect(titlesSearchField.has({ value: query }));
+  },
+  toggleTitlesAccordion(isOpen = true) {
+    cy.do(titlesSection.toggle());
+    cy.expect(titlesSection.is({ expanded: isOpen }));
   },
 };

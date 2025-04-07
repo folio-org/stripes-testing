@@ -486,11 +486,11 @@ export default {
 
   newMarcBibRecord() {
     cy.do([paneResultsSection.find(actionsBtn).click(), newMarcBibButton.click()]);
-    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
+    this.verifyNewQuickMarcEditorPaneExists();
   },
 
   verifyNewQuickMarcEditorPaneExists() {
-    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
+    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: matching(/new/i) })]);
   },
 
   checkInstanceTitle(title) {

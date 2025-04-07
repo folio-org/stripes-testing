@@ -45,6 +45,8 @@ describe('Inventory', () => {
       NO: 'No',
     };
 
+    let instancesCount;
+
     before('Create user, data', () => {
       cy.getAdminToken();
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
@@ -94,17 +96,23 @@ describe('Inventory', () => {
               });
             });
           });
-
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            InventorySearchAndFilter.searchTabIsDefault();
-            InventorySearchAndFilter.instanceTabIsDefault();
+          cy.setTenant(Affiliations.College);
+          cy.getInstancesCountViaApi().then((count) => {
+            instancesCount = count;
           });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          InventorySearchAndFilter.validateSearchTabIsDefault();
+          InventorySearchAndFilter.instanceTabIsDefault();
         });
     });
 
@@ -178,21 +186,23 @@ describe('Inventory', () => {
         cy.wait(3000);
         InventorySearchAndFilter.checkSharedAndLocalInstancesInResultList();
 
-        // 9 Scroll down to the end of the result list and click on the "Next" pagination button.
-        InventorySearchAndFilter.clickListInventoryNextPaginationButton();
-        InventorySearchAndFilter.verifyContentNotExistInSearchResult(sharedFOLIOInstance.title);
-        InventorySearchAndFilter.verifyContentNotExistInSearchResult(localFOLIOInstance.title);
-        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+        if (instancesCount > 100) {
+          // 9 Scroll down to the end of the result list and click on the "Next" pagination button.
+          InventorySearchAndFilter.clickListInventoryNextPaginationButton();
+          InventorySearchAndFilter.verifyContentNotExistInSearchResult(sharedFOLIOInstance.title);
+          InventorySearchAndFilter.verifyContentNotExistInSearchResult(localFOLIOInstance.title);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
 
-        // 10 Scroll down to the end of the result list and click on the "Previous" pagination button.
-        InventorySearchAndFilter.clickListInventoryPreviousPaginationButton();
-        InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstance.title);
-        InventorySearchAndFilter.verifySearchResult(localFOLIOInstance.title);
-        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+          // 10 Scroll down to the end of the result list and click on the "Previous" pagination button.
+          InventorySearchAndFilter.clickListInventoryPreviousPaginationButton();
+          InventorySearchAndFilter.verifySearchResult(sharedFOLIOInstance.title);
+          InventorySearchAndFilter.verifySearchResult(localFOLIOInstance.title);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+        }
 
         // 11 Collapse "Shared" accordion by clicking on it.
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);

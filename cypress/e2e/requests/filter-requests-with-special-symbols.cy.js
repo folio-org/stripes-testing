@@ -23,7 +23,7 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C374173_Instance_${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
   let defaultLocation;

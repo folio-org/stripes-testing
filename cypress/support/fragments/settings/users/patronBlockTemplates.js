@@ -45,16 +45,18 @@ export default {
 
   findPatronTemplate(templateName) {
     cy.do(NavListItem(templateName).click());
+    cy.wait(1000);
   },
 
   editPatronTemplate() {
     cy.do(Button({ id: 'clickable-edit-item' }).click());
+    cy.wait(1000);
   },
 
   deletePatronTemplate() {
-    cy.do([
-      Button({ id: 'clickable-delete-block-template' }).click(),
-      Button({ id: 'clickable-delete-block-template-confirmation-confirm' }).click(),
-    ]);
+    cy.do(Button({ id: 'clickable-delete-block-template' }).click());
+    cy.wait(1000);
+    cy.do(Button({ id: 'clickable-delete-block-template-confirmation-confirm' }).click());
+    cy.wait(1000);
   },
 };

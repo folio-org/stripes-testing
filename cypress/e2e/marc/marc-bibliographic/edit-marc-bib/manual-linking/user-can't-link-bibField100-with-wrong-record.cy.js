@@ -222,6 +222,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
+            MarcAuthorities.closeMarcViewPane();
             MarcAuthorities.checkRow(testData.authorityFieldValue.field155);
             cy.wait(2000);
             MarcAuthorities.selectTitle(testData.authorityFieldValue.field155);

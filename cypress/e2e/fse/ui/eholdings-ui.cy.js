@@ -1,6 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
@@ -14,23 +15,27 @@ import ExistingNoteView from '../../../support/fragments/notes/existingNoteView'
 import DeleteConfirmationModal from '../../../support/fragments/notes/modal/deleteConfirmationModal';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 
 describe('fse-eholdings - UI for production tenants', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.eholdingsPath,
-      waiter: EHoldingsSearch.waitLoading,
+      path: `${TopMenu.eholdingsPath}?searchType=titles`,
+      waiter: EHoldingsTitlesSearch.waitLoading,
     });
     cy.allure().logCommandSteps();
   });
 
   it(
     `TC195279 - verify that eholdings module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'ui', 'eholdings'] },
+    { tags: ['fse', 'ui', 'eholdings'] },
     () => {
-      EHoldingsSearch.waitLoading();
+      EHoldingsTitlesSearch.byTitle('time');
+      eHoldingsTitles.openTitle(0);
+      eHoldingsTitle.waitPackagesLoading();
     },
   );
 });
@@ -51,7 +56,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195624 - eholdings: search by provider, add tags for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
     () => {
       const expanded = 'true';
       // search and open Gale provider; check packages
@@ -73,7 +78,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195626 - eholdings: search by package, add notes for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
     () => {
       const testNote = {
         title: `autotest_TC195626_${getRandomPostfix()}`,
@@ -134,7 +139,7 @@ describe('fse-eholdings - UI for non-production tenants', () => {
 
   it(
     `TC195671 - eholdings: add an agreement ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'eholdings'] },
+    { tags: ['nonProd', 'fse', 'ui', 'eholdings', 'fse-user-journey'] },
     () => {
       // search by package
       EHoldingsSearch.switchToPackages();

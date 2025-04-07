@@ -272,7 +272,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
@@ -282,6 +282,7 @@ describe('MARC', () => {
               InventorySearchAndFilter.verifyKeywordsAsDefault();
               // Select "Contributors" as browse option
               BrowseContributors.select();
+              BrowseContributors.waitForContributorToAppear('Lee, Stan, 1922-2018', true, true);
               // Fill in the search box with contributor name from any linked field, ex.: "Lee, Stan, 1922-2018"
               // Click on the "Search" button.
               BrowseContributors.browse('Lee, Stan, 1922-2018');

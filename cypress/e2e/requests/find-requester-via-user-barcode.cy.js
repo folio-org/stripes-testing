@@ -23,7 +23,7 @@ describe('Find requester via user barcode', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: `AT_C554_Instance_${getRandomPostfix()}`,
   };
   let defaultLocation;
   let requestId;
@@ -122,7 +122,6 @@ describe('Find requester via user barcode', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.choosePickupServicePoint(servicePoint.name);
       NewRequest.saveRequestAndClose();
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
         requestId = intercept.response.body.id;
         cy.location('pathname').should('eq', `/requests/view/${requestId}`);

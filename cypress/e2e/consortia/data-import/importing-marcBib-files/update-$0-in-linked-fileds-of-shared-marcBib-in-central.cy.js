@@ -85,20 +85,20 @@ describe('Data Import', () => {
     ];
     const linkingTagAndValues = [
       {
-        rowIndex: 21,
+        rowIndex: 20,
         value: 'C411802 Marvel comics',
         tag: '630',
         content:
           '$a C411802 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
       },
       {
-        rowIndex: 22,
+        rowIndex: 21,
         value: 'C411802 Speaking Oratory',
         tag: '650',
         content: '$a C411802 Speaking Oratory $b debating $2 fast',
       },
       {
-        rowIndex: 27,
+        rowIndex: 26,
         value: 'C411802 Radio "Vaticana".',
         tag: '710',
         boxFourth: '$a C411802 Radio "Vaticana". $b Hrvatski program',
@@ -195,10 +195,14 @@ describe('Data Import', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.resetTenant();
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstances.waitContentLoading();
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -211,6 +215,8 @@ describe('Data Import', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
@@ -242,12 +248,17 @@ describe('Data Import', () => {
           }).location;
           Locations.createViaApi(collegeLocationData).then((location) => {
             testData.collegeLocation = location;
-            InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: createdAuthorityIDs[0],
-              permanentLocationId: testData.collegeLocation.id,
-            }).then((holding) => {
-              testData.collegeHoldings.push(holding);
-            });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: createdAuthorityIDs[0],
+                  permanentLocationId: testData.collegeLocation.id,
+                  sourceId: holdingSources[0].id,
+                }).then((holding) => {
+                  testData.collegeHoldings.push(holding);
+                });
+              },
+            );
           });
 
           cy.resetTenant();

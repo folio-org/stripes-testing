@@ -35,10 +35,12 @@ describe('Consortia', () => {
     });
 
     after('Delete users data', () => {
+      cy.resetTenant();
       cy.loginAsAdmin();
       Users.deleteViaApi(userData.userId);
     });
 
+    // not applicable
     it(
       'C398014 User created in central tenant is able to view the list of permission sets of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },

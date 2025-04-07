@@ -85,13 +85,16 @@ describe('bulk-edit', () => {
           `secondBarcode_${item.itemBarcode}`,
         );
 
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.switchToItem();
+
         [item.itemBarcode, `secondBarcode_${item.itemBarcode}`].forEach((barcode) => {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', barcode);
           ItemRecordView.waitLoading();
           ItemRecordView.suppressedAsDiscoveryIsAbsent();
           ItemRecordView.verifyPermanentLoanType('Reading room');
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
         });
       },
     );

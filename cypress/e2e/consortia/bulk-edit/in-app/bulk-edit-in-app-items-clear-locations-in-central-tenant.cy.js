@@ -78,9 +78,6 @@ describe('Bulk-edit', () => {
               (loanType) => loanType.name === LOAN_TYPE_NAMES.CAN_CIRCULATE,
             )[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            materialTypeId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource()
             .then((folioSource) => {
               sourceId = folioSource.id;
@@ -105,6 +102,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
                 const locations = resp.filter((location) => location.name !== 'DCB');
                 locationsInCollegeData.permanentLocation = locations[0];
@@ -148,6 +148,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
                 const locations = resp.filter((location) => location.name !== 'DCB');
                 locationsInUniversityData.permanentLocation = locations[0];
@@ -339,21 +342,21 @@ describe('Bulk-edit', () => {
           });
 
           BulkEditActions.openInAppStartBulkEditFrom();
-          BulkEditSearchPane.verifyBulkEditsAccordionExists();
+          BulkEditActions.verifyBulkEditsAccordionExists();
           BulkEditActions.verifyOptionsDropdown();
           BulkEditActions.verifyRowIcons();
           BulkEditActions.verifyCancelButtonDisabled(false);
-          BulkEditSearchPane.isConfirmButtonDisabled(true);
+          BulkEditActions.verifyConfirmButtonDisabled(true);
           BulkEditActions.selectOption('Permanent item location');
           BulkEditSearchPane.verifyInputLabel('Permanent item location');
           BulkEditActions.selectSecondAction('Clear field');
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.addNewBulkEditFilterString();
           BulkEditActions.verifyNewBulkEditRow(1);
           BulkEditActions.selectOption('Temporary item location', 1);
           BulkEditSearchPane.verifyInputLabel('Temporary item location', 1);
           BulkEditActions.selectSecondAction('Clear field', 1);
-          BulkEditSearchPane.isConfirmButtonDisabled(false);
+          BulkEditActions.verifyConfirmButtonDisabled(false);
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(4);
           BulkEditActions.verifyAreYouSureForm(4);
@@ -411,27 +414,29 @@ describe('Bulk-edit', () => {
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           instances.forEach((instance) => {
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.byKeywords(instance.title);
             InventoryInstance.openHoldings(['']);
             InventoryInstance.openItemByBarcode(instance.barcodeInCollege);
             ItemRecordView.waitLoading();
             ItemRecordView.verifyPermanentLocation('No value set-');
             ItemRecordView.verifyTemporaryLocation('No value set-');
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           instances.forEach((instance) => {
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.byKeywords(instance.title);
             InventoryInstance.openHoldings(['']);
             InventoryInstance.openItemByBarcode(instance.barcodeInUniversity);
             ItemRecordView.waitLoading();
             ItemRecordView.verifyPermanentLocation('No value set-');
             ItemRecordView.verifyTemporaryLocation('No value set-');
+            ItemRecordView.closeDetailView();
+            InventorySearchAndFilter.resetAll();
           });
         },
       );

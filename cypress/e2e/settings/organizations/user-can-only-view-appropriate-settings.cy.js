@@ -28,9 +28,9 @@ describe('Organizations', () => {
       { tags: ['criticalPath', 'thunderjet'] },
       () => {
         SettingsOrganizations.selectCategories();
-        SettingsOrganizations.checkButtonNewInCategoriesIsDisabled();
+        SettingsOrganizations.checkButtonNewInCategoriesIsAbsent();
         SettingsOrganizations.selectTypes();
-        SettingsOrganizations.checkButtonNewInTypesIsDisabled();
+        SettingsOrganizations.checkButtonNewInTypesIsAbsent();
       },
     );
   });

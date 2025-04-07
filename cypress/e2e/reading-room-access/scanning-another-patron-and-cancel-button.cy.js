@@ -64,6 +64,7 @@ describe('Reading Room Access', () => {
     UsersSearchPane.searchByUsername(Cypress.env('diku_login'));
     UserEdit.openEdit();
     UserEdit.changePreferredContact();
+    UserEdit.openServicePointsAccordion();
     UserEdit.addServicePoints(testData.servicePoint.name);
     UserEdit.saveAndClose();
     SwitchServicePoint.switchServicePoint(testData.servicePoint.name);

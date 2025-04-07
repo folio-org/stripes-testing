@@ -629,3 +629,15 @@ Cypress.Commands.add('toggleLocSingleImportProfileViaAPI', (enable = true) => {
     }
   });
 });
+
+Cypress.Commands.add('getInstancesCountViaApi', (ignoreStaffSuppressed = true) => {
+  const path = ignoreStaffSuppressed
+    ? '/search/instances?query=staffSuppress==false&limit=1'
+    : '/search/instances?query=(title all *)&limit=1';
+  cy.okapiRequest({
+    path,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.totalRecords;
+  });
+});

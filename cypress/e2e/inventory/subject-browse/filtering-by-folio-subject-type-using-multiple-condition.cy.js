@@ -16,6 +16,7 @@ describe('Inventory', () => {
       notProduceSubjectName: 'Test49',
       firstConditionForFiltering: 'Corporate name',
       secondConditionForFiltering: 'Geographic name',
+      columnName: 'Subject type',
     };
     const marcFile = {
       filePath: 'marcBibFileForC584509.mrc',
@@ -23,7 +24,7 @@ describe('Inventory', () => {
       jobProfile: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
     };
 
-    before('Import file', () => {
+    before('Create test data and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         const preconditionUserId = userProperties.userId;
 
@@ -35,9 +36,7 @@ describe('Inventory', () => {
         cy.getAdminToken();
         Users.deleteViaApi(preconditionUserId);
       });
-    });
 
-    beforeEach('Create user and login', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -50,14 +49,10 @@ describe('Inventory', () => {
       });
     });
 
-    after('Delete created instance', () => {
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-    });
-
-    afterEach('Delete user', () => {
+    after('Delete created test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
 
     it(
@@ -69,10 +64,10 @@ describe('Inventory', () => {
         BrowseSubjects.expandAccordion('Subject type');
         BrowseSubjects.selectSubjectType(testData.firstConditionForFiltering);
         BrowseSubjects.selectSubjectType(testData.secondConditionForFiltering);
-        BrowseSubjects.verifySearchResult([
-          testData.firstConditionForFiltering,
-          testData.secondConditionForFiltering,
-        ]);
+        BrowseSubjects.verifySearchResult(
+          [testData.firstConditionForFiltering, testData.secondConditionForFiltering],
+          testData.columnName,
+        );
       },
     );
   });

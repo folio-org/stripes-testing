@@ -15,10 +15,10 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
-import InteractorsTools from '../../utils/interactorsTools';
-import InventoryInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
-import InstanceStates from './instanceStates';
 import { INSTANCE_DATE_TYPES } from '../../constants';
+import InteractorsTools from '../../utils/interactorsTools';
+import InstanceStates from './instanceStates';
+import InventoryInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
 
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save & close');

@@ -1,6 +1,5 @@
 import {
   Button,
-  EditableListRow,
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
@@ -55,12 +54,12 @@ export default {
     cy.expect(MultiColumnListRow(including(message)).exists());
   },
 
-  verifyNoReasonInTheList(name) {
+  verifyReasonIsNotInTheList(name) {
     cy.expect(MultiColumnListRow({ content: including(name) }).absent());
   },
 
   verifyReasonInTheList({ name, description = '', publicDescription = '', actions = [] }) {
-    const row = EditableListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: description })).exists(),
@@ -81,13 +80,8 @@ export default {
     }
   },
 
-  verifyReasonAbsentInTheList({ name }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    cy.expect(row.absent());
-  },
-
   clickEditButtonForReason(name) {
-    const row = EditableListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.do(
       row
@@ -95,10 +89,11 @@ export default {
         .find(Button({ icon: 'edit' }))
         .click(),
     );
+    cy.wait(1000);
   },
 
   clickTrashButtonForReason(name) {
-    const row = EditableListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.do(
       row
@@ -106,11 +101,13 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
+    cy.wait(1000);
   },
 
   clickTrashButtonConfirm() {
+    cy.wait(1000);
     cy.do(confirmTrashButton.click());
-    cy.wait(2000);
+    cy.wait(1000);
   },
 
   getCancellationReasonsViaAPI() {

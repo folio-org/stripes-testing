@@ -19,7 +19,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
 describe('Invoices', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const firstOrder = { ...NewOrder.defaultOneTimeOrder, approved: true, reEncumber: true };
@@ -111,7 +111,6 @@ describe('Invoices', () => {
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
-      cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(firstOrderNumber);
       Invoices.approveInvoice();

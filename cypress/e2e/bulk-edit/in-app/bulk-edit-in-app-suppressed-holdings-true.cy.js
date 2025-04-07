@@ -77,15 +77,11 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
+        ItemRecordView.waitLoading();
+        ItemRecordView.suppressedAsDiscoveryIsPresent();
         ItemRecordView.closeDetailView();
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.suppressedAsDiscoveryIsPresent();
       },
     );
   });

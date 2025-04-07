@@ -75,7 +75,7 @@ const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
 const advSearchItemModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
-const searchInstancesOptions = [
+export const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
   'Title (all)',
@@ -89,7 +89,6 @@ const searchInstancesOptions = [
   'Instance administrative notes',
   'Place of publication',
   'Subject',
-  'Effective call number (item), shelving order',
   'Instance HRID',
   'Instance UUID',
   'Authority UUID',
@@ -141,7 +140,6 @@ const searchInstancesOptionsValues = [
   'instanceAdministrativeNotes',
   'placeOfPublication',
   'subject',
-  'callNumber',
   'hrid',
   'id',
   'authorityId',
@@ -179,7 +177,7 @@ const searchItemsOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
-const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 17);
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 16);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 9);
 const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 11);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
@@ -1618,5 +1616,14 @@ export default {
         .find(MultiColumnListCell({ column: columnName }))
         .has({ content: expectedValue.toString() }),
     );
+  },
+
+  validateOptionInActionsMenu(optionName, shouldExist = true) {
+    cy.do(actionsButton.click());
+    if (shouldExist) {
+      cy.expect(Button(optionName).exists());
+    } else {
+      cy.expect(Button(optionName).absent());
+    }
   },
 };

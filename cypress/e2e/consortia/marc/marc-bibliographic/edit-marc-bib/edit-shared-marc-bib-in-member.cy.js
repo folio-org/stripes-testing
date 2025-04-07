@@ -56,13 +56,16 @@ describe('MARC', () => {
               DataImport.uploadFilesViaApi(marcFiles).then((ids) => {
                 createdRecordIDs.push(...ids.createdInstanceIDs);
               });
-
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              }).then(() => {
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                }).then(() => {
+                  cy.reload();
+                  InventoryInstances.waitContentLoading();
+                });
+              }, 20_000);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
         });
 

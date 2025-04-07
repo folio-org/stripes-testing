@@ -4,17 +4,14 @@ import {
   Button,
   Checkbox,
   Link,
-  MultiSelect,
   MultiColumnListCell,
+  MultiColumnListRow,
+  MultiSelect,
   Pane,
   PaneHeader,
   Select,
   TextField,
-  Section,
-  MultiColumnListRow,
 } from '../../../../interactors';
-
-const resetAllButton = Button({ id: 'clickable-reset-all' });
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
@@ -22,7 +19,7 @@ const waitClick = () => {
 };
 
 export default {
-  waitLoading: () => cy.expect(PaneHeader('User search').exists()),
+  waitLoading: () => cy.expect(PaneHeader('User search results').exists()),
 
   searchByStatus(status) {
     waitClick();
@@ -85,9 +82,15 @@ export default {
   },
 
   resetAllFilters() {
-    cy.do(resetAllButton.click());
-    cy.expect(Section({ id: 'pane-userdetails' }).absent());
-    cy.wait(1000);
+    cy.get('#clickable-reset-all').then(($button) => {
+      if (!$button.prop('disabled')) {
+        cy.wrap($button).click();
+      } else {
+        cy.log('Reset all button is disabled!!!');
+      }
+    });
+
+    cy.wait(3000);
   },
 
   clickOnUserRowContaining(text) {

@@ -5,6 +5,7 @@ import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPac
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -14,8 +15,18 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
+    const testData = {
+      titleOption: 'Title',
+      issnOption: 'ISSN/ISBN',
+      publisherOption: 'Publisher',
+      subjectOption: 'Subject',
+    };
+
     let userId;
 
+    before(() => {
+      cy.getAdminToken();
+    });
     afterEach(() => {
       cy.getAdminToken();
       Users.deleteViaApi(userId);
@@ -39,7 +50,6 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.byName();
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
-            cy.reload();
             const addedTag2 = EHoldingsPackage.addTag();
             EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byName(selectedPackage);
@@ -119,10 +129,29 @@ describe('eHoldings', () => {
           EHoldingSearch.switchToPackages();
           UHoldingsProvidersSearch.byProvider('Wiley Online Library');
           EHoldingsPackagesSearch.bySelectionStatus('Selected');
-          EHoldingsPackages.openPackage();
-          EHoldingsPackages.titlesSearch('Subject', 'engineering');
+          EHoldingsPackages.openPackageWithExpectedName('Wiley Online Library');
+          EHoldingsPackage.waitLoading('Wiley Online Library');
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.titleOption);
+          EHoldingsPackage.searchTitles('About Campus');
+          EHoldingsPackage.verifyTitleFound('About Campus');
+          EHoldingsPackage.searchTitles('0044-5983', testData.issnOption);
+          EHoldingsPackage.verifyTitleFound('Acta Botanica Neerlandica');
+          EHoldingsPackage.searchTitles('John Wiley', testData.publisherOption);
           EHoldingsPackageView.selectTitleRecord();
-          EHoldingsPackages.subjectsAssertion();
+          EHoldingsTitle.verifyPublisherIncludesValue('John Wiley');
+          EHoldingsTitle.closeHoldingsTitleView();
+          EHoldingsPackage.waitLoading('Wiley Online Library');
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
+          EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
+          EHoldingsPackage.toggleTitlesAccordion(false);
+          EHoldingsPackage.toggleTitlesAccordion();
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
+          EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
+
+          EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
+          EHoldingsPackage.verifyTitleFound('Active and Passive Electronic Components');
+          EHoldingsPackageView.selectTitleRecord();
+          EHoldingsTitle.verifySubjectIncludesValue('Engineering');
         });
       },
     );

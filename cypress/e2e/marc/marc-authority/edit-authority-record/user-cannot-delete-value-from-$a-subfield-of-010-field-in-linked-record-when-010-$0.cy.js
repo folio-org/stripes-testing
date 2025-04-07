@@ -22,9 +22,9 @@ describe('MARC', () => {
           keyword: 'Keyword',
           nameTitle: 'C376936 Roberts',
         },
-        errorMessage: 'Cannot remove 010 $a for this record.',
+        errorMessage: 'Cannot delete 010. It is required.',
         bib700AfterLinkingToAuth100: [
-          56,
+          55,
           '700',
           '1',
           '\\',
@@ -53,12 +53,13 @@ describe('MARC', () => {
         },
       ];
       const linkingTagAndValue = {
-        rowIndex: 56,
+        rowIndex: 55,
         value: 'C376936 Roberts, Julia',
         tag: '700',
       };
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
           .then((userProperties) => {
             testData.preconditionUserId = userProperties.userId;
@@ -89,8 +90,10 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            }).then(() => {
               InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -105,7 +108,7 @@ describe('MARC', () => {
                 linkingTagAndValue.rowIndex,
               );
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(3000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -150,15 +153,15 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag010, testData.subfieldPrefix);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkCallout(testData.errorMessage);
+          QuickMarcEditor.closeAllCallouts();
 
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditingButton();
-          QuickMarcEditor.checkErrorMessage(4, testData.errorMessage);
+          QuickMarcEditor.checkCallout(testData.errorMessage);
+          QuickMarcEditor.closeAllCallouts();
+
           QuickMarcEditor.pressCancel();
+          QuickMarcEditor.closeWithoutSavingInEditConformation();
           MarcAuthorities.checkDetailViewIncludesText(
             `${testData.subfieldPrefix} ${testData.tag010content}`,
           );

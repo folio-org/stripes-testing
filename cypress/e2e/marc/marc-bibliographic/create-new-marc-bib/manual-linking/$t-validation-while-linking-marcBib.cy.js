@@ -125,7 +125,7 @@ describe('MARC', () => {
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);
               // wait for error message to appear
-              cy.wait(1000);
+              cy.wait(4000);
               InventoryInstance.closeFindAuthorityModal();
             });
           },

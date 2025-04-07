@@ -151,19 +151,23 @@ describe('Consortia', () => {
               alternativeTitleTypes1.name,
             );
 
+            cy.wait(2000);
             cy.visit(SettingsMenu.alternativeTitleTypes);
+            cy.wait(6000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
               alternativeTitleTypes1.name,
             );
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.alternativeTitleTypes);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
               alternativeTitleTypes1.name,
             );
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.alternativeTitleTypes);
+            cy.wait(4000);
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
               alternativeTitleTypes1.name,
             );

@@ -35,10 +35,12 @@ const testData = {
   collegeLocalPatronGroup: {
     id: uuid(),
     name: getTestEntityValue('collegeLocalPatronGroup_name'),
+    description: getTestEntityValue('collegeLocalPatronGroup_description'),
   },
   universityLocalPatronGroup: {
     id: uuid(),
     name: getTestEntityValue('universityLocalPatronGroup_name'),
+    description: getTestEntityValue('universityLocalPatronGroup_description'),
   },
 };
 
@@ -70,7 +72,7 @@ describe('Consortium manager', () => {
             permissions.departmentsAll.gui,
           ]);
           Departments.createViaApi(testData.collegeLocalDepartment);
-          PatronGroups.createViaApi(testData.collegeLocalPatronGroup.name).then((response) => {
+          PatronGroups.createViaApi(testData.collegeLocalPatronGroup.name, testData.collegeLocalPatronGroup.description).then((response) => {
             testData.collegeLocalPatronGroup.id = response;
           });
           cy.resetTenant();
@@ -82,7 +84,7 @@ describe('Consortium manager', () => {
             permissions.departmentsAll.gui,
           ]);
           Departments.createViaApi(testData.universityLocalDepartment);
-          PatronGroups.createViaApi(testData.universityLocalPatronGroup.name).then((response) => {
+          PatronGroups.createViaApi(testData.universityLocalPatronGroup.name, testData.universityLocalPatronGroup.description).then((response) => {
             testData.universityLocalPatronGroup.id = response;
           });
           cy.resetTenant();
@@ -106,6 +108,7 @@ describe('Consortium manager', () => {
         () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
 
           PatronGroups.verifyGroupInTheList({
             name: testData.centralSharedPatronGroup.payload.group,
@@ -113,6 +116,7 @@ describe('Consortium manager', () => {
 
           PatronGroups.verifyGroupInTheList({
             name: testData.collegeLocalPatronGroup.name,
+            description: testData.collegeLocalPatronGroup.description,
             actions: ['edit', 'trash'],
           });
 
@@ -126,6 +130,7 @@ describe('Consortium manager', () => {
             name: testData.collegeLocalPatronGroup.name,
           });
           cy.visit(SettingsMenu.departments);
+          cy.wait(4000);
 
           Departments.verifyDepartmentsInTheList({
             name: testData.centralSharedDepartment.payload.name,
@@ -149,12 +154,15 @@ describe('Consortium manager', () => {
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
+
           PatronGroups.verifyGroupInTheList({
             name: testData.centralSharedPatronGroup.payload.group,
           });
 
           PatronGroups.verifyGroupInTheList({
             name: testData.universityLocalPatronGroup.name,
+            description: testData.universityLocalPatronGroup.description,
             actions: ['edit', 'trash'],
           });
 
@@ -170,6 +178,7 @@ describe('Consortium manager', () => {
           });
 
           cy.visit(SettingsMenu.departments);
+          cy.wait(4000);
 
           Departments.verifyDepartmentsInTheList({
             name: testData.centralSharedDepartment.payload.name,
