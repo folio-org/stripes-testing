@@ -89,7 +89,7 @@ describe('Eureka', () => {
           capabilities: {
             Settings: 1,
             Procedural: 2,
-            Data: 5,
+            Data: 4,
           },
         },
         absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.PROCEDURAL],
