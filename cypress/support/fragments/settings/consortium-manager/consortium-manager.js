@@ -108,11 +108,13 @@ export default {
   },
 
   checkCurrentTenantInTopMenu(tenantName) {
+    cy.do(myProfileButton.click());
     cy.expect(
       Dropdown({ id: 'profileDropdown' })
         .find(HTML({ text: tenantName }))
         .exists(),
     );
+    cy.do(myProfileButton.click());
   },
 
   editTenantName(oldName, newName) {
