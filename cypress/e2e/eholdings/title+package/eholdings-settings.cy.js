@@ -19,6 +19,7 @@ describe('eHoldings', () => {
     };
 
     before('Creating user, data', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiSettingseholdingsViewEditCreateDelete.gui,
         Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
