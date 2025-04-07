@@ -18,6 +18,7 @@ describe('fse-consortia - UI for production tenants', () => {
     )}`,
     { tags: ['consortia-sanity', 'fse', 'ui'] },
     () => {
+      cy.wait(8000);
       cy.getUserTenants().then((userTenants) => {
         // get primary tenant
         const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
