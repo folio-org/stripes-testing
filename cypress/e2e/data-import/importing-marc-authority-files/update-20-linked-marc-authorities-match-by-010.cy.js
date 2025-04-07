@@ -322,30 +322,34 @@ describe('Data Import', () => {
           });
         });
       });
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      }).then(() => {
-        InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        for (const linkingTagAndValue of linkingTagAndValues) {
-          InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.searchResults(linkingTagAndValue.value);
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-            linkingTagAndValue.tag,
-            linkingTagAndValue.rowIndex,
-          );
-        }
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-        cy.wait(4000);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
+      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
+      linkingTagAndValues.forEach((linkingTagAndValue) => {
+        InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.searchResults(linkingTagAndValue.value);
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+          linkingTagAndValue.tag,
+          linkingTagAndValue.rowIndex,
+        );
+        cy.wait(200);
       });
+      QuickMarcEditor.pressSaveAndClose();
+      cy.wait(4000);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      cy.wait(4000);
 
       cy.getAdminToken();
       cy.createTempUser([
@@ -441,7 +445,7 @@ describe('Data Import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated600Field);
-        for (const linkingTagAndValue of linkingTagAndValues) {
+        linkingTagAndValues.forEach((linkingTagAndValue) => {
           if (linkingTagAndValue.remainsLinked) {
             QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex);
             QuickMarcEditor.checkLinkedFieldContainsControlledValueByIndex(
@@ -458,7 +462,7 @@ describe('Data Import', () => {
             );
           }
           cy.wait(500);
-        }
+        });
       },
     );
   });
