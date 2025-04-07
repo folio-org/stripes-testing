@@ -15,7 +15,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
-      contributorName: 'Lee, Stan, 1922-2018',
+      contributorName: 'C388531 Lee, Stan, 1922-2018',
     };
 
     const marcFiles = [
@@ -90,10 +90,14 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login to the application', () => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
     });
 
     after('Deleting created user and data', () => {

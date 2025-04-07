@@ -12,7 +12,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
-      const paneHeader = 'Edit MARC record';
+      const paneHeader = /Edit .*MARC record/;
       const instanceTitle = 'C451561Long. Live. A$AP [sound recording] / A$AP Rocky.';
       const contributorFieldValue = 'A$AP Rocky (Rapper), 1988-';
       const fieldValue = {
@@ -50,11 +50,14 @@ describe('MARC', () => {
               instanceId = record[marcFile.propertyName].id;
             });
           });
-
-          cy.login(user.userProperties.username, user.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(user.userProperties.username, user.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
       });
 
