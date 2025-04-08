@@ -18,4 +18,44 @@ export default {
       }
     });
   },
+
+  changeDefaultInstanceStatusViaApi: (statusCode) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'configurations/entries?query=(module==FAST_ADD%20and%20configName==fastAddSettings)',
+      isDefaultSearchParamsRequired: false,
+    }).then((instanceStatusResp) => {
+      const currentValue = JSON.parse(instanceStatusResp.body.configs[0].value);
+      if (currentValue.instanceStatusCode !== statusCode) {
+        const config = instanceStatusResp.body.configs[0];
+
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `configurations/entries/${config.id}`,
+          body: {
+            id: config.id,
+            module: config.module,
+            configName: config.configName,
+            enabled: config.enabled,
+            value: `{"instanceStatusCode":"${statusCode}","defaultDiscoverySuppress":"true"}`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      }
+      //   const config = instanceStatusResp.body.configs[0];
+
+      //   cy.okapiRequest({
+      //     method: 'PUT',
+      //     path: `configurations/entries/${config.id}`,
+      //     body: {
+      //       id: config.id,
+      //       module: config.module,
+      //       configName: config.configName,
+      //       enabled: config.enabled,
+      //       value: `{"instanceStatusCode":"${statusCode}","defaultDiscoverySuppress":"true"}`,
+      //     },
+      //     isDefaultSearchParamsRequired: false,
+      //   });
+    });
+  },
 };
