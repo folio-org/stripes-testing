@@ -1,7 +1,15 @@
 import localforage from 'localforage';
 import Tenant from './tenant';
 
-import { Button, Dropdown, Heading, including, Select, TextField, TextInput } from '../../interactors';
+import {
+  Button,
+  Dropdown,
+  Heading,
+  including,
+  Select,
+  TextField,
+  TextInput,
+} from '../../interactors';
 
 Cypress.Commands.add(
   'login',

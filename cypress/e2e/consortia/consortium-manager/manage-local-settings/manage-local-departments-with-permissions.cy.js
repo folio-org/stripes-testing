@@ -81,20 +81,29 @@ describe('Consortium manager', () => {
           ConfirmCreate.clickConfirm();
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newDepartment.name, tenantNames.central,
+            testData.newDepartment.name,
+            tenantNames.central,
             [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.central],
             ['edit', 'trash'],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newDepartment.name, tenantNames.college,
+            testData.newDepartment.name,
+            tenantNames.college,
             [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.college],
             ['edit', 'trash'],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newDepartment.name, tenantNames.university,
-            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.university],
+            testData.newDepartment.name,
+            tenantNames.university,
+            [
+              testData.newDepartment.name,
+              testData.newDepartment.code,
+              '',
+              '',
+              tenantNames.university,
+            ],
             ['edit', 'trash'],
           );
 
@@ -114,8 +123,15 @@ describe('Consortium manager', () => {
           ConfirmShare.clickConfirm();
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-            testData.newDepartment.name, tenantNames.central,
-            [testData.editDepartment.name, testData.editDepartment.code, '', '', tenantNames.central],
+            testData.newDepartment.name,
+            tenantNames.central,
+            [
+              testData.editDepartment.name,
+              testData.editDepartment.code,
+              '',
+              '',
+              tenantNames.central,
+            ],
             ['edit', 'trash'],
           );
 
@@ -153,7 +169,13 @@ describe('Consortium manager', () => {
           cy.wait(4000);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.university],
+            [
+              testData.newDepartment.name,
+              testData.newDepartment.code,
+              '',
+              '',
+              tenantNames.university,
+            ],
             ['edit', 'trash'],
           );
         },
