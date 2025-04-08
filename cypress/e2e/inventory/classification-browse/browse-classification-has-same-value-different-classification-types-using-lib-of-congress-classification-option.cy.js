@@ -179,6 +179,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
         );
+        BrowseClassifications.waitForClassificationNumberToAppear(
+          testData.classificationValue,
+          testData.classificationBrowseId,
+        );
         InventorySearchAndFilter.browseSearch(testData.classificationValue);
         BrowseClassifications.verifySearchResultsTable();
         InventorySearchAndFilter.verifySearchResultIncludingValue(testData.classificationValue);
