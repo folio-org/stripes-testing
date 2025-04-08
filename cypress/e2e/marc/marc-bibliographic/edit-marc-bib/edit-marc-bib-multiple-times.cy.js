@@ -14,7 +14,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialSource: { name: 'Diku_admin' },
+        initialSource: { name: Cypress.env('diku_login') },
         authority: {
           source: INSTANCE_SOURCE_NAMES.MARC,
           searchInput: 'C350697 On the Road',
@@ -131,7 +131,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             // #11 Click on the "Save & close" button.
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             // *The success saving message is displayed.
             // *Detail record opened in the third pane.

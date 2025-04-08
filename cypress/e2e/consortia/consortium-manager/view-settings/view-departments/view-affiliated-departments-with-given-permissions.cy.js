@@ -161,22 +161,18 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
+        cy.resetTenant();
+        cy.getAdminToken();
         cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
         Users.deleteViaApi(testUsers[5].userId);
         Departments.deleteViaApi(testData.universityLocalDepartment.id);
 
-        cy.resetTenant();
-        cy.getAdminToken();
-
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         Users.deleteViaApi(testUsers[3].userId);
         Users.deleteViaApi(testUsers[4].userId);
         Departments.deleteViaApi(testData.collegeLocalDepartment.id);
 
-        cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
+        cy.resetTenant();
         Users.deleteViaApi(testUsers[0].userId);
         Users.deleteViaApi(testUsers[1].userId);
         Users.deleteViaApi(testUsers[2].userId);
@@ -279,7 +275,7 @@ describe('Consortium manager', () => {
         'C404400 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user400.username, testData.user400.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
@@ -360,7 +356,7 @@ describe('Consortium manager', () => {
         'C407747 User with "Consortium manager: Can share settings to all members" permission is able to view the list of departments of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user747.username, testData.user747.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
