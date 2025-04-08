@@ -210,6 +210,7 @@ describe('Data Import', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
+          cy.wait(200);
         });
         QuickMarcEditor.pressSaveAndClose();
         cy.wait(4000);
@@ -313,26 +314,24 @@ describe('Data Import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        linkingTagAndValues.entries().forEach(
-          ([index, linkingTagAndValue]) => {
-            if (index < 5) {
-              QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex);
-              QuickMarcEditor.checkLinkedFieldContainsControlledValueByIndex(
-                linkingTagAndValue.rowIndex,
-                `$a ${linkingTagAndValue.value} ${testData.postfixForLinkedFields}`,
-                linkingTagAndValue.tag,
-              );
-            } else {
-              QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex, false);
-              QuickMarcEditor.checkFieldContainsValueByIndex(
-                linkingTagAndValue.rowIndex,
-                `$a ${linkingTagAndValue.value} $`,
-                linkingTagAndValue.tag,
-              );
-            }
-            cy.wait(500);
-          },
-        );
+        linkingTagAndValues.forEach((linkingTagAndValue, index) => {
+          if (index < 5) {
+            QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex);
+            QuickMarcEditor.checkLinkedFieldContainsControlledValueByIndex(
+              linkingTagAndValue.rowIndex,
+              `$a ${linkingTagAndValue.value} ${testData.postfixForLinkedFields}`,
+              linkingTagAndValue.tag,
+            );
+          } else {
+            QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex, false);
+            QuickMarcEditor.checkFieldContainsValueByIndex(
+              linkingTagAndValue.rowIndex,
+              `$a ${linkingTagAndValue.value} $`,
+              linkingTagAndValue.tag,
+            );
+          }
+          cy.wait(500);
+        });
       },
     );
   });

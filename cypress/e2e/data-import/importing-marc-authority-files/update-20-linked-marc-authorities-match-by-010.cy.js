@@ -322,30 +322,35 @@ describe('Data Import', () => {
           });
         });
       });
-      cy.loginAsAdmin({
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      }).then(() => {
-        InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        linkingTagAndValues.forEach((linkingTagAndValue) => {
-          InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.searchResults(linkingTagAndValue.value);
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-            linkingTagAndValue.tag,
-            linkingTagAndValue.rowIndex,
-          );
+
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(4000);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-        cy.wait(4000);
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
+      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
+      linkingTagAndValues.forEach((linkingTagAndValue) => {
+        InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.searchResults(linkingTagAndValue.value);
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+          linkingTagAndValue.tag,
+          linkingTagAndValue.rowIndex,
+        );
+        cy.wait(200);
       });
+      QuickMarcEditor.pressSaveAndClose();
+      cy.wait(4000);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      cy.wait(4000);
 
       cy.getAdminToken();
       cy.createTempUser([

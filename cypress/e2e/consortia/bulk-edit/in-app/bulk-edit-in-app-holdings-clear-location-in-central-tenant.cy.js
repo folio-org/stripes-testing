@@ -170,7 +170,7 @@ describe('Bulk-edit', () => {
             )[1];
             matchedRecordsQueryFileName = `*-Matched-Records-Query-${interceptedUuid}.csv`;
             previewQueryFileName = `*-Updates-Preview-CSV-Query-${interceptedUuid}.csv`;
-            changedRecordsQueryFileName = `*-Changed-Records-Query-${interceptedUuid}.csv`;
+            changedRecordsQueryFileName = `*-Changed-Records-CSV-Query-${interceptedUuid}.csv`;
 
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 holdings');
@@ -278,14 +278,17 @@ describe('Bulk-edit', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.switchToHoldings();
+
             instances.forEach((instance) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToHoldings();
               InventorySearchAndFilter.searchInstanceByTitle(instance.title);
               InventorySearchAndFilter.selectViewHoldings();
               HoldingsRecordView.waitLoading();
               HoldingsRecordView.checkPermanentLocation(locationInCollegeData.name);
               HoldingsRecordView.checkTemporaryLocation('-');
+              HoldingsRecordView.close();
+              InventorySearchAndFilter.resetAll();
             });
           });
         },

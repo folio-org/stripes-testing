@@ -242,9 +242,17 @@ export default {
     cy.do(titlesSearchField.fillIn(searchValue));
     cy.get('input[type="search"]').type('{enter}');
     cy.wait(1000);
+    this.verifyTitlesSearchQuery(searchValue);
     cy.expect(titlesSection.find(Spinner()).absent());
   },
   verifyTitleFound(title) {
     cy.expect(titlesSection.find(MultiColumnListCell(title)).exists());
+  },
+  verifyTitlesSearchQuery(query) {
+    cy.expect(titlesSearchField.has({ value: query }));
+  },
+  toggleTitlesAccordion(isOpen = true) {
+    cy.do(titlesSection.toggle());
+    cy.expect(titlesSection.is({ expanded: isOpen }));
   },
 };

@@ -5,38 +5,35 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../support/fragments/users/usersCard';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
-const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records-${userUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditCsvView.gui,
-        permissions.bulkEditCsvEdit.gui,
-        permissions.uiUserEdit.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.wait(3000);
+      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.wait(3000);
 
-        cy.login(user.username, user.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
-        BulkEditSearchPane.waitLoading();
+          cy.login(user.username, user.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+          BulkEditSearchPane.waitLoading();
 
-        FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.username);
-      });
+          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.username);
+        },
+      );
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       FileManager.deleteFileFromDownloadsByMask(
         `*${matchedRecordsFileName}`,
         changedRecordsFileName,
@@ -53,28 +50,21 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
 
-        const changedFirstName = `testedNameChanged_${getRandomPostfix()}`;
-        BulkEditActions.downloadMatchedResults();
-        BulkEditActions.prepareValidBulkEditFile(
-          matchedRecordsFileName,
-          editedFileName,
-          'testPermFirst',
-          changedFirstName,
-        );
+        const oldEmail = user.personal.email;
+        const newEmail = 'new_email@google.com';
+        BulkEditActions.replaceEmail(oldEmail, newEmail);
 
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditSearchPane.uploadFile(editedFileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditActions.clickNext();
-
+        BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
 
-        BulkEditSearchPane.verifyChangedResults(user.username);
-        BulkEditSearchPane.verifyChangedResults(changedFirstName);
-        BulkEditSearchPane.verifyPaneTitleFileName(editedFileName);
+        BulkEditSearchPane.verifyChangedResults(newEmail);
+        BulkEditSearchPane.verifyPaneTitleFileName(userUUIDsFileName);
         BulkEditSearchPane.verifyUserBarcodesResultAccordion();
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Email');
         BulkEditSearchPane.verifyUsersActionShowColumns();
         BulkEditActions.verifyActionsDownloadChangedCSV();
 
@@ -82,8 +72,10 @@ describe('bulk-edit', () => {
 
         cy.loginAsAdmin();
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
-        UsersSearchPane.searchByKeywords(changedFirstName);
-        UsersSearchPane.openUser(changedFirstName);
+        UsersSearchPane.searchByKeywords(user.username);
+        UsersSearchPane.openUser(user.username);
+        UsersCard.openContactInfo();
+        UsersCard.verifyEmail(newEmail);
       },
     );
   });
