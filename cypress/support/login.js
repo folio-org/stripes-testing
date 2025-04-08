@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import Tenant from './tenant';
 
 import { Button, Dropdown, Heading, including, Select, TextField, TextInput } from '../../interactors';
 
@@ -24,7 +25,7 @@ Cypress.Commands.add(
           cy.wait(1000).then(() => {
             cy.get('body').then(($body) => {
               if ($body.find('select').length > 0) {
-                cy.do(Select('Tenant/Library').choose(Cypress.env('OKAPI_TENANT')));
+                cy.do(Select('Tenant/Library').choose(Tenant.get()));
                 cy.wait(500);
                 cy.do(Button('Continue').click());
                 cy.wait(1000);

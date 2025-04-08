@@ -1,12 +1,13 @@
-import Permissions from '../../support/dictionary/permissions';
 import Affiliations, {
-  tenantNames,
   tenantCodes,
   tenantErrors,
+  tenantNames,
 } from '../../support/dictionary/affiliations';
-import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import Permissions from '../../support/dictionary/permissions';
+import ConsortiaControlledVocabularyPaneset from '../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Consortia', () => {
   const character151 =
@@ -14,7 +15,7 @@ describe('Consortia', () => {
   let user;
 
   before('Create users, data', () => {
-    cy.setTenant(Affiliations.Consortia);
+    cy.resetTenant();
     cy.getAdminToken();
     cy.createTempUser([Permissions.consortiaSettingsSettingsMembershipEdit.gui])
       .then((userProperties) => {
@@ -41,36 +42,33 @@ describe('Consortia', () => {
       ConsortiumManager.selectMembership();
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
-      ConsortiumManager.checkEditedTenantInformation(
-        2,
+      ConsortiumManager.saveEditingTenantInformation();
+      ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
-      );
+        Affiliations.Professional
+      ]);
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(
-        2,
         tenantCodes.professional,
         tenantNames.professional,
       );
-      ConsortiumManager.saveEditingTenantInformation(2);
-      ConsortiumManager.checkEditedTenantInformation(
-        2,
+      ConsortiumManager.saveEditingTenantInformation();
+      ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
         tenantCodes.professional,
         tenantNames.professional,
-      );
+        Affiliations.Professional
+      ]);
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-ED`, character151);
+      ConsortiumManager.editTenantInformation(`${tenantCodes.professional}-ED`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(
-        2,
         tenantErrors.code,
         tenantErrors.name,
       );
-      ConsortiumManager.cancelEditingTenantInformation(2);
+      ConsortiumManager.cancelEditingTenantInformation();
     },
   );
 });

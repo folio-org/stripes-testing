@@ -85,6 +85,7 @@ describe('MARC', () => {
               ]);
             })
             .then(() => {
+              cy.resetTenant();
               cy.login(users.userAProperties.username, users.userAProperties.password, {
                 path: TopMenu.dataImportPath,
                 waiter: DataImport.waitLoading,
