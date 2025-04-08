@@ -165,6 +165,7 @@ describe('Invoices', () => {
           });
         })
           .then(() => {
+            cy.resetTenant();
             cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

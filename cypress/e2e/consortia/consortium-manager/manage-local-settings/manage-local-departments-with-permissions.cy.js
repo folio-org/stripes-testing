@@ -19,12 +19,12 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 const testData = {
   newDepartment: {
-    name: getTestEntityValue('a_new'),
-    code: getTestEntityValue('a_new'),
+    name: getTestEntityValue('407002_local_departments'),
+    code: getTestEntityValue('407002_local_departments'),
   },
   editDepartment: {
-    name: getTestEntityValue('a_edit'),
-    code: getTestEntityValue('a_edit'),
+    name: getTestEntityValue('407002_local_departments_edit'),
+    code: getTestEntityValue('407002_local_departments_edit'),
   },
 };
 
@@ -63,6 +63,7 @@ describe('Consortium manager', () => {
         'C407002 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local departments of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
@@ -81,19 +82,19 @@ describe('Consortium manager', () => {
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newDepartment.name, tenantNames.central,
-            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.central],
+            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.central],
             ['edit', 'trash'],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newDepartment.name, tenantNames.college,
-            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.college],
+            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.college],
             ['edit', 'trash'],
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newDepartment.name, tenantNames.university,
-            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.university],
+            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.university],
             ['edit', 'trash'],
           );
 
@@ -114,7 +115,7 @@ describe('Consortium manager', () => {
 
           ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newDepartment.name, tenantNames.central,
-            [testData.editDepartment.name, testData.editDepartment.code, tenantNames.central],
+            [testData.editDepartment.name, testData.editDepartment.code, '', '', tenantNames.central],
             ['edit', 'trash'],
           );
 
@@ -143,7 +144,7 @@ describe('Consortium manager', () => {
           cy.wait(4000);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.college],
+            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.college],
             ['edit', 'trash'],
           );
 
@@ -152,7 +153,7 @@ describe('Consortium manager', () => {
           cy.wait(4000);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.university],
+            [testData.newDepartment.name, testData.newDepartment.code, '', '', tenantNames.university],
             ['edit', 'trash'],
           );
         },

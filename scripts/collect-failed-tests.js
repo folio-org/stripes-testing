@@ -7,7 +7,7 @@ const { createTestRailClient } = require('./helpers/api.client');
 const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
-const selectedStatus = [status.Failed, status.Retest, status.Untested];
+const selectedStatus = [status.Untested];
 const selectedTeams = [
   team.Firebird,
   team.Folijet,
@@ -29,7 +29,7 @@ const getTests = getTestRunResults.bind(null, testrailClient, runId);
 const ids = [];
 const arrayOfFiles = [];
 let filteredFiles = [];
-const shuffle = true;
+const shuffle = false;
 const numberOfChunks = 1;
 const chunks = [];
 

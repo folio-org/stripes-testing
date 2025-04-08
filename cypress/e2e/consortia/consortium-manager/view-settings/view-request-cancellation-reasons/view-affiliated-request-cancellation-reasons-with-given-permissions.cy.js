@@ -89,19 +89,15 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
-
         cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.University);
+        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
 
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
 
-        cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
+        cy.resetTenant();
         cy.deleteCancellationReasonApi(testData.centralLocalReason.id);
         RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
         Users.deleteViaApi(testData.user834.userId);
@@ -172,9 +168,9 @@ describe('Consortium manager', () => {
         'C410837 User with "Consortium manager: Can share settings to all members" permission is able to view the list of request cancellation reasons of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user837.username, testData.user837.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           cy.wait(4000);
           SelectMembers.selectAllMembers();

@@ -407,6 +407,7 @@ describe('Inventory', () => {
         'C404360 Use "Held by" facet when browsing Call numbers in Consortia tenant (applying "Shared" facet) (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C404360'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: '/',
             waiter: () => true,
