@@ -2,7 +2,6 @@ import { Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
 import Localication from '../../../support/fragments/settings/tenant/general/localication';
-// import SSOSettings from '../../../support/fragments/settings/tenant/general/ssoSettings';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
