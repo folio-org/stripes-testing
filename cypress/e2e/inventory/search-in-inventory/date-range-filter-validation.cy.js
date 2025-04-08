@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Permissions } from '../../../support/dictionary';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
