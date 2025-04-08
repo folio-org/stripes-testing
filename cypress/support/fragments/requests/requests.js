@@ -85,6 +85,7 @@ function createRequestApi(
     },
     departments: [],
     patronGroup: null,
+    type: 'staff',
   };
   const userRequestPreferences = {
     id: uuid(),

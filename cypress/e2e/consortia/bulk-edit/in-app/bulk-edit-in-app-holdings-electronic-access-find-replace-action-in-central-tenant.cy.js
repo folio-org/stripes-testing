@@ -191,7 +191,7 @@ describe('Bulk-edit', () => {
                 `${collegeHoldingIds.join('\n')}\n${universityHoldingIds.join('\n')}`,
               );
             });
-
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

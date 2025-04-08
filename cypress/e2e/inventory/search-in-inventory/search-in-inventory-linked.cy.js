@@ -80,16 +80,19 @@ describe('Inventory', () => {
             });
           });
         });
-
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000).then(() => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           // here and below - wait for detail view to be fully loaded
-          cy.wait(1500);
+          cy.wait(3000);
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag130);
           MarcAuthorities.switchToSearch();
@@ -102,12 +105,12 @@ describe('Inventory', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag130);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstances.searchByTitle(createdRecordIDs[1]);
           InventoryInstances.selectInstance();
-          cy.wait(1500);
+          cy.wait(3000);
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
           MarcAuthorities.switchToSearch();
@@ -124,10 +127,14 @@ describe('Inventory', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 

@@ -1,13 +1,13 @@
 import {
   Button,
+  Dropdown,
+  HTML,
   Modal,
   NavListItem,
   Section,
   SelectionOption,
   TextField,
   including,
-  HTML,
-  Dropdown,
 } from '../../../../../interactors';
 
 const myProfileButton = Dropdown({ id: 'profileDropdown' }).find(
@@ -23,13 +23,13 @@ export default {
     cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
   },
 
-  varifyConsortiumManagerOnPage() {
+  verifyConsortiumManagerOnPage() {
     cy.expect(
       Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).exists(),
     );
   },
 
-  varifyConsortiumManagerIsAbsent() {
+  verifyConsortiumManagerIsAbsent() {
     cy.expect(
       Section({ id: 'settings-nav-pane' }).find(NavListItem('Consortium manager')).absent(),
     );
@@ -46,32 +46,25 @@ export default {
       .click();
   },
 
-  editTenantInformation(tenantIndex, codeText, nameText) {
+  editTenantInformation(codeText, nameText) {
     cy.do([
-      TextField({ name: `items[${tenantIndex}].code` }).fillIn(codeText),
-      TextField({ name: `items[${tenantIndex}].name` }).fillIn(nameText),
+      TextField({ placeholder: 'code' }).fillIn(codeText),
+      TextField({ placeholder: 'name' }).fillIn(nameText),
     ]);
   },
 
-  saveEditingTenantInformation(tenantIndex) {
-    cy.do(Button({ id: `clickable-save-consortia-membership-${tenantIndex}` }).click());
+  saveEditingTenantInformation() {
+    cy.do(Button('Save').click());
   },
 
-  cancelEditingTenantInformation(tenantIndex) {
-    cy.do(Button({ id: `clickable-cancel-consortia-membership-${tenantIndex}` }).click());
+  cancelEditingTenantInformation() {
+    cy.do(Button('Cancel').click());
   },
 
-  checkEditedTenantInformation(tenantIndex, codeText, nameText) {
+  checkErrorsInEditedTenantInformation(codeText, nameText) {
     cy.expect([
-      TextField({ name: `items[${tenantIndex}].code` }).has({ value: codeText }),
-      TextField({ name: `items[${tenantIndex}].name` }).has({ value: nameText }),
-    ]);
-  },
-
-  checkErrorsInEditedTenantInformation(tenantIndex, codeText, nameText) {
-    cy.expect([
-      TextField({ name: `items[${tenantIndex}].code` }).has({ error: codeText }),
-      TextField({ name: `items[${tenantIndex}].name` }).has({ error: nameText }),
+      TextField({ placeholder: 'code' }).has({ error: codeText }),
+      TextField({ placeholder: 'name' }).has({ error: nameText }),
     ]);
   },
 

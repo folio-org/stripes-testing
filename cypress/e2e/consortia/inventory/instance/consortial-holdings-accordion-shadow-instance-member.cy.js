@@ -35,6 +35,7 @@ describe('Inventory', () => {
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
 
+        cy.resetTenant();
         cy.login(testData.user.username, testData.user.password);
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
