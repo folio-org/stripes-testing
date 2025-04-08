@@ -60,7 +60,6 @@ export default {
       TENANTS.ADDRESSES,
       TENANTS.LANGUAGE_AND_LOCALIZATION,
       TENANTS.PREFERRED_PLUGINS,
-      TENANTS.SSO_SETTINGS,
       TENANTS.SERVICE_POINTS,
     ].forEach((item) => {
       if (exist) {
