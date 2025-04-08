@@ -1,20 +1,19 @@
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
+import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 Cypress.on('uncaught:exception', () => false);
 
