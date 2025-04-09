@@ -1,4 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
+import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -37,9 +38,9 @@ describe('orders: Settings', () => {
     OrderTemplate.saveTemplate();
     OrderTemplate.checkTemplateCreated(orderTemplateName);
     cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewEditOrderTemplates.gui,
-      permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
-      permissions.uiOrdersCreate.gui,
+      Permissions.uiSettingsOrdersCanViewEditOrderTemplates.gui,
+      Permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
+      Permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -64,6 +65,7 @@ describe('orders: Settings', () => {
       OrderTemplate.editTemplate(`${orderTemplateName}-edited`);
       OrderTemplate.checkTemplateCreated(`${orderTemplateName}-edited`);
       TopMenuNavigation.navigateToApp('Orders');
+      OrderLines.selectOrders();
       Orders.createOrderByTemplate(`${orderTemplateName}-edited`);
       Orders.checkCreatedOrderFromTemplate(organization.name);
       TopMenuNavigation.navigateToApp('Settings');
