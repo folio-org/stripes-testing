@@ -105,7 +105,7 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 10_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
-  cy.wait('@/authn/refresh', { timeout });
+  cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
 });
 
 Cypress.Commands.add('getConsortiaStatus', () => {
