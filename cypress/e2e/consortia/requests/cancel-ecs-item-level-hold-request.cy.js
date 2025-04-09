@@ -55,46 +55,44 @@ describe('Consortia Vega', () => {
         }).then((specialInstanceIds) => {
           testData.testInstanceIds = specialInstanceIds;
           requestData.instanceId = specialInstanceIds.instanceId;
+          cy.wait(1000).then(() => {
+            cy.setTenant(Affiliations.College).then(() => {
+              cy.getLocations({ limit: 1 }).then((res) => {
+                testData.locationId = res.id;
+              });
 
-          cy.wait(1000)
-            .then(() => {
-              cy.setTenant(Affiliations.College).then(() => {
-                cy.getLocations({ limit: 1 }).then((res) => {
-                  testData.locationId = res.id;
-                });
+              InventoryHoldings.getHoldingsFolioSource().then((holdingSources) => {
+                testData.holdingSource = holdingSources.id;
 
-                InventoryHoldings.getHoldingsFolioSource().then((holdingSources) => {
-                  testData.holdingSource = holdingSources.id;
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.testInstanceIds.instanceId,
+                  permanentLocationId: testData.locationId,
+                  sourceId: testData.holdingSource,
+                })
+                  .then((holding) => {
+                    testData.holding = holding;
 
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: testData.testInstanceIds.instanceId,
-                    permanentLocationId: testData.locationId,
-                    sourceId: testData.holdingSource,
-                  })
-                    .then((holding) => {
-                      testData.holding = holding;
-
-                      cy.getLoanTypes({ limit: 1 }).then((res) => {
-                        testData.loanTypeId = res[0].id;
-                      });
-                      cy.getMaterialTypes({ limit: 1 }).then((res) => {
-                        testData.materialTypeId = res.id;
-                      });
-                    })
-                    .then(() => {
-                      InventoryItems.createItemViaApi({
-                        barcode: testData.itemBarcode,
-                        holdingsRecordId: testData.holding.id,
-                        materialType: { id: testData.materialTypeId },
-                        permanentLoanType: { id: testData.loanTypeId },
-                        status: { name: itemStatus },
-                      }).then((item) => {
-                        testData.item = item;
-                      });
+                    cy.getLoanTypes({ limit: 1 }).then((res) => {
+                      testData.loanTypeId = res[0].id;
                     });
-                });
+                    cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                      testData.materialTypeId = res.id;
+                    });
+                  })
+                  .then(() => {
+                    InventoryItems.createItemViaApi({
+                      barcode: testData.itemBarcode,
+                      holdingsRecordId: testData.holding.id,
+                      materialType: { id: testData.materialTypeId },
+                      permanentLoanType: { id: testData.loanTypeId },
+                      status: { name: itemStatus },
+                    }).then((item) => {
+                      testData.item = item;
+                    });
+                  });
               });
             });
+          });
         });
       });
 

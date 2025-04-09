@@ -16,7 +16,7 @@ const defaultApiPatron = {
     preferredContactTypeId: '002',
   },
   departments: [],
-  type:'staff',
+  type: 'staff',
 };
 
 const defaultUiPatron = {

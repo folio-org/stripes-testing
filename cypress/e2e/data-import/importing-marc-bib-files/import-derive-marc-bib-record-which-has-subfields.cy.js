@@ -23,6 +23,7 @@ let createdAuthorityID;
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     before('Creating data', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -30,10 +31,14 @@ describe('Data Import', () => {
         Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
+          cy.reload();
+          DataImport.waitLoading();
+        }, 20_000);
       });
     });
 
@@ -71,7 +76,7 @@ describe('Data Import', () => {
         QuickMarcEditor.updateExistingFieldContent(10, testData.new082fieldRecord);
         QuickMarcEditor.updateExistingFieldContent(13, testData.new260fieldRecord);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkFieldContentToEqual(

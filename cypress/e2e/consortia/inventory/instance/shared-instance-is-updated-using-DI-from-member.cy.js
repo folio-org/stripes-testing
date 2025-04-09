@@ -93,6 +93,7 @@ describe('Inventory', () => {
         cy.resetTenant();
 
         cy.loginAsAdmin();
+        cy.reload();
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();

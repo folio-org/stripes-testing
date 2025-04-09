@@ -49,25 +49,20 @@ describe('Consortia', () => {
       ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
         `${tenantCodes.professional}E`,
         `${tenantNames.professional}-Edited`,
-        Affiliations.Professional
+        Affiliations.Professional,
       ]);
       ConsortiumManager.editTenant(tenantNames.professional);
-      ConsortiumManager.editTenantInformation(
-        tenantCodes.professional,
-        tenantNames.professional,
-      );
+      ConsortiumManager.editTenantInformation(tenantCodes.professional, tenantNames.professional);
       ConsortiumManager.saveEditingTenantInformation();
       ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
         tenantCodes.professional,
         tenantNames.professional,
-        Affiliations.Professional
+        Affiliations.Professional,
       ]);
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(`${tenantCodes.professional}-ED`, character151);
-      ConsortiumManager.checkErrorsInEditedTenantInformation(
-        tenantErrors.code,
-        tenantErrors.name,
-      );
+      ConsortiumManager.checkErrorsInEditedTenantInformation(tenantErrors.code, tenantErrors.name);
+
       ConsortiumManager.cancelEditingTenantInformation();
     },
   );

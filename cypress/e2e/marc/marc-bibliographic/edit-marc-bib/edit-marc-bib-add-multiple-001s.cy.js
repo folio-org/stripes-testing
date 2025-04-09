@@ -7,6 +7,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -68,6 +69,10 @@ describe('MARC', () => {
         () => {
           InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);
+          cy.ifConsortia(() => {
+            InventorySearchAndFilter.byShared('No');
+            InventoryInstances.verifyInstanceResultListIsAbsent(false);
+          });
           InventoryInstances.selectInstance();
 
           InventoryInstance.waitLoading();
@@ -79,9 +84,7 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField('', testData.tag001Content);
           QuickMarcEditor.updateTagNameToLockedTag(5, testData.tag001);
           QuickMarcEditor.checkFourthBoxEditable(5, false);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.waitLoading();
 
