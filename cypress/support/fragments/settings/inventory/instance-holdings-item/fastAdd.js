@@ -1,4 +1,4 @@
-import { Select, Button } from '../../../../../../interactors';
+import { Button, Select } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
 const calloutMessages = {
@@ -42,20 +42,6 @@ export default {
           isDefaultSearchParamsRequired: false,
         });
       }
-      //   const config = instanceStatusResp.body.configs[0];
-
-      //   cy.okapiRequest({
-      //     method: 'PUT',
-      //     path: `configurations/entries/${config.id}`,
-      //     body: {
-      //       id: config.id,
-      //       module: config.module,
-      //       configName: config.configName,
-      //       enabled: config.enabled,
-      //       value: `{"instanceStatusCode":"${statusCode}","defaultDiscoverySuppress":"true"}`,
-      //     },
-      //     isDefaultSearchParamsRequired: false,
-      //   });
     });
   },
 };
