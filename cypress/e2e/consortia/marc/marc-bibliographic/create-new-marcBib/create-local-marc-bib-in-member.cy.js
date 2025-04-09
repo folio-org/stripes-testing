@@ -71,10 +71,14 @@ describe('MARC', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C422124'] },
         () => {
           cy.resetTenant();
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userBProperties.username, users.userBProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateExistingField(
@@ -85,7 +89,7 @@ describe('MARC', () => {
           MarcAuthority.addNewField(4, newField.tag, newField.content);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
           QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.getId().then((id) => {
             createdInstanceID.push(id);

@@ -531,6 +531,7 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest');
     cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.wait(2000);
     cy.do(saveAndCloseButton.click());
   },
 
