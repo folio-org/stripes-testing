@@ -126,8 +126,8 @@ export default {
   // checks
   checkSource: (sourceValue) => cy.expect(KeyValue('Source', { value: sourceValue }).exists()),
   checkHrId: (expectedHrId) => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
-  checkPermanentLocation: (expectedLocation) => cy.expect(KeyValue('Permanent', { value: including(including(expectedLocation)) }).exists()),
-  checkTemporaryLocation: (expectedLocation) => cy.expect(KeyValue('Temporary', { value: including(including(expectedLocation)) }).exists()),
+  checkPermanentLocation: (expectedLocation) => cy.expect(KeyValue('Permanent', { value: including(expectedLocation) }).exists()),
+  checkTemporaryLocation: (expectedLocation) => cy.expect(KeyValue('Temporary', { value: including(expectedLocation) }).exists()),
   checkEffectiveLocation: (expectedLocation) => cy.expect(
     KeyValue('Effective location for holdings', { value: including(expectedLocation) }).exists(),
   ),
