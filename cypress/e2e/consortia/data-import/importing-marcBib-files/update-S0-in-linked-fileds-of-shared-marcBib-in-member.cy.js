@@ -198,9 +198,10 @@ describe('Data Import', () => {
         .then(() => {
           cy.resetTenant();
           cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin();
-            cy.visit(TopMenu.inventoryPath);
-            InventoryInstances.waitContentLoading();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             cy.reload();
           }, 20_000);
           InventoryInstances.waitContentLoading();
