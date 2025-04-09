@@ -278,6 +278,7 @@ describe('Inventory', () => {
                 addHoldingsAndItem(createdInstanceIds.university[index], universityInstance);
               });
 
+            cy.resetTenant();
             cy.login(testData.userProperties.username, testData.userProperties.password).then(
               () => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

@@ -22,7 +22,6 @@ describe('ui-requests: Filter requests by pickup service point', () => {
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(newServicePoint).then((response) => {
         servicePointId = response.body.id;

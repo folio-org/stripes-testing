@@ -1282,7 +1282,7 @@ export default {
   },
 
   verifyHoldingLocation(content) {
-    cy.expect(MultiColumnListCell({ content }).exists());
+    cy.expect(MultiColumnListCell({ content: including(content) }).exists());
   },
   openHoldingItem({ name, barcode, shouldOpen = true }) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
@@ -1340,11 +1340,15 @@ export default {
   },
 
   verifyHoldingsPermanentLocation(permanentLocation) {
-    cy.expect(holdingsPane.find(KeyValue('Permanent')).has({ value: `${permanentLocation}` }));
+    cy.expect(
+      holdingsPane.find(KeyValue('Permanent')).has({ value: including(permanentLocation) }),
+    );
   },
 
   verifyHoldingsTemporaryLocation(temporaryLocation) {
-    cy.expect(holdingsPane.find(KeyValue('Temporary')).has({ value: `${temporaryLocation}` }));
+    cy.expect(
+      holdingsPane.find(KeyValue('Temporary')).has({ value: including(temporaryLocation) }),
+    );
   },
 
   closeHoldingsView() {
@@ -1532,7 +1536,7 @@ export default {
 
   verifyCellsContent: (...content) => {
     content.forEach((itemContent) => {
-      cy.expect(MultiColumnListCell({ content: itemContent }).exists());
+      cy.expect(MultiColumnListCell({ content: including(itemContent) }).exists());
     });
   },
 
