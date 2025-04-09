@@ -102,6 +102,9 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C368026', 'eurekaPhase1'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
+          cy.ifConsortia(() => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
