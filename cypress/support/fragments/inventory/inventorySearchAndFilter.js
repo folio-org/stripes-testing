@@ -1229,6 +1229,7 @@ export default {
   },
 
   selectYesfilterStaffSuppress: () => {
+    cy.wait(1000);
     cy.do([
       stuffSupressAccordion.clickHeader(),
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
