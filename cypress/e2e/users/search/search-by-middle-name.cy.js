@@ -48,6 +48,7 @@ describe('Users', () => {
             lastName: getTestEntityValue('testLastName'),
             email: 'test@folio.org',
           },
+          type: 'staff',
         }).then((newUserProperties) => {
           userData = { ...userData, ...newUserProperties };
           cy.setUserPassword(userData);
