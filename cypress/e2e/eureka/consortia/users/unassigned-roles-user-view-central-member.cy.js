@@ -25,7 +25,7 @@ describe('Eureka', () => {
       const capabSetsToAssign = [
         { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
         { type: 'Data', resource: 'Roles Users', action: 'Manage' },
-        { type: 'Data', resource: 'UI-Users', action: 'View' },
+        { type: 'Data', resource: 'UI-Users Roles', action: 'View' },
       ];
 
       const capabsToAssign = [
@@ -105,6 +105,7 @@ describe('Eureka', () => {
         cy.setTenant(Affiliations.University);
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.testUser.userId, [testData.roleM2AId]);
         else cy.addRolesToNewUserApi(testData.testUser.userId, [testData.roleM2AId]);
+        cy.resetTenant();
         cy.login(testData.tempUser.username, testData.tempUser.password, {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,

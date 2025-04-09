@@ -7,6 +7,7 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
@@ -22,6 +23,7 @@ describe('MARC', () => {
       let createdRecordIDs;
 
       before('Creating data', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.dataImportUploadAll.gui,
@@ -30,20 +32,23 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
-            DataImport.uploadFileViaApi(
-              testData.marcBibFilePath,
-              testData.marcBibFileName,
-              testData.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs = record[testData.propertyName].id;
-              });
+          DataImport.uploadFileViaApi(
+            testData.marcBibFilePath,
+            testData.marcBibFileName,
+            testData.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              createdRecordIDs = record[testData.propertyName].id;
             });
           });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
       });
 
@@ -57,8 +62,10 @@ describe('MARC', () => {
         'C380646 Derive "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C380646'] },
         () => {
-          cy.visit(TopMenu.inventoryPath);
           InventoryInstances.searchByTitle(testData.marcBibTitle);
+          cy.ifConsortia(() => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstance.selectTopRecord();
           InventoryInstance.deriveNewMarcBib();
           QuickMarcEditor.addNewField('010', '$a   766384', 6);

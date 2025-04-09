@@ -36,6 +36,7 @@ describe('MARC', () => {
       };
 
       before('Creating user', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -72,10 +73,14 @@ describe('MARC', () => {
               });
             });
           });
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           InventoryInstances.searchByTitle(testData.instanceTitle);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();

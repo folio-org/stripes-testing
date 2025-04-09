@@ -37,10 +37,14 @@ describe('Eureka', () => {
           testData.userAId = userId;
           userIds.push(userId);
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-          testData.userBId = userId;
-          userIds.push(userId);
-        });
+
+        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
+            testData.userBId = userId;
+            userIds.push(userId);
+          });
+        }
+
         Users.createViaApi(userC).then((user) => {
           testData.userCId = user.id;
           userIds.push(user.id);
@@ -68,14 +72,18 @@ describe('Eureka', () => {
           expect(status).to.eq(404);
           expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
         });
-        cy.checkIfUserHasKeycloakApi(testData.userBId).then(({ status, body }) => {
-          expect(status).to.eq(404);
-          expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
-        });
-        cy.promoteUserToKeycloakApi(testData.userBId, true).then(({ status, body }) => {
-          expect(status).to.eq(400);
-          expect(body.errors[0].message).to.eq(testData.noUsernameErrorMsg);
-        });
+
+        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          cy.checkIfUserHasKeycloakApi(testData.userBId).then(({ status, body }) => {
+            expect(status).to.eq(404);
+            expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);
+          });
+          cy.promoteUserToKeycloakApi(testData.userBId, true).then(({ status, body }) => {
+            expect(status).to.eq(400);
+            expect(body.errors[0].message).to.eq(testData.noUsernameErrorMsg);
+          });
+        }
+
         cy.promoteUserToKeycloakApi(testData.randomUuid, true).then(({ status, body }) => {
           expect(status).to.eq(404);
           expect(body.errors[0].message).to.eq(testData.notFoundErrorMsg);

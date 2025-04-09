@@ -193,6 +193,7 @@ describe('Inventory', () => {
             createdHoldingsCollege.push(holding.id);
           });
 
+          cy.resetTenant();
           cy.waitForAuthRefresh(() => {
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.inventoryPath,

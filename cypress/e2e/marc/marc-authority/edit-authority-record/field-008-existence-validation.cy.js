@@ -137,12 +137,12 @@ describe('MARC', () => {
           // #5 Click "Save & close" button
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.closeAllCallouts();
 
           // #6 Click "Save & keep editing" button
           QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.closeAllCallouts();
 
           // #7 Add new field and fill MARC tag box with "008".
           QuickMarcEditor.addNewField(testData.tag008, '', testData.tag008RowIndex - 1);
