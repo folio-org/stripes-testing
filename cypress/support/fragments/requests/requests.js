@@ -1,36 +1,36 @@
-import uuid from 'uuid';
-import { Keyboard } from '@interactors/keyboard';
 import { HTML, including } from '@interactors/html';
+import { Keyboard } from '@interactors/keyboard';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
+  Checkbox,
+  Heading,
+  IconButton,
+  KeyValue,
+  Link,
   MultiColumnListCell,
-  MultiColumnListRow,
   MultiColumnListHeader,
+  MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
   Pane,
-  IconButton,
-  TextArea,
-  ValueChipRoot,
-  Checkbox,
-  TextField,
   Section,
-  Heading,
   Spinner,
-  KeyValue,
-  Link,
+  TextArea,
+  TextField,
+  ValueChipRoot
 } from '../../../../interactors';
 import {
-  REQUEST_TYPES,
-  REQUEST_LEVELS,
-  ITEM_STATUS_NAMES,
   FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
 } from '../../constants';
-import users from '../users/users';
+import Helper from '../finance/financeHelper';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
-import Helper from '../finance/financeHelper';
+import users from '../users/users';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const requestDetailsSection = Pane({ title: 'Request details' });
@@ -645,23 +645,15 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  /* for miltiselect 'Pickup service point' we have to redefine attribute 'aria-labelledby' to make it unique,
- because there are 4 elements with same 'aria-labelledby' on the page so the function 'createInteractor()'
-  in interactors\multi-select.js takes as argument the first one and it's not we needed
-  */
   filterRequestsByServicePoints(servicePoint) {
-    // wait untill element is visible and interactable
-    cy.wait(3000);
-    const pickupServicePointFilterSelector = '[id="req-pickup-service-point-filter"]';
-    cy.get(pickupServicePointFilterSelector).click();
-    cy.get(pickupServicePointFilterSelector)
-      .find('[aria-labelledby="accordion-toggle-button-pickupServicePoints"]')
-      .first()
-      .invoke('attr', 'aria-labelledby', 'pickupServicePoints');
-    cy.do([
-      MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).focus(),
-      MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint),
-    ]);
+    cy.wait(5000);
+    const pickupServicePointFilterSelector = 'req-pickup-service-point-filter';
+    cy.do(HTML({ id: pickupServicePointFilterSelector }).click());
+    cy.wait(1000);
+    cy.do(MultiSelect({ id: pickupServicePointFilterSelector }).fillIn(servicePoint));
+    cy.wait(1000);
+    cy.do(MultiSelect({ id: pickupServicePointFilterSelector }).choose(servicePoint));
+    cy.wait(1000);
   },
 
   selectTheFirstRequest() {

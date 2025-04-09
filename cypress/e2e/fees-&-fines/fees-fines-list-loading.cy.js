@@ -9,7 +9,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';

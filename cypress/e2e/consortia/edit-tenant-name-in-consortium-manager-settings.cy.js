@@ -62,6 +62,7 @@ describe('Consortia', () => {
       ConsortiumManager.editTenant(tenantNames.professional);
       ConsortiumManager.editTenantInformation(`${tenantCodes.professional}-ED`, character151);
       ConsortiumManager.checkErrorsInEditedTenantInformation(tenantErrors.code, tenantErrors.name);
+
       ConsortiumManager.cancelEditingTenantInformation();
     },
   );
