@@ -305,7 +305,7 @@ describe('Inventory', () => {
             });
             InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
               (holdingSources) => {
-                sourceIds[Affiliations.College] = holdingSources[0].id;
+                sourceIds.college = holdingSources[0].id;
               },
             );
 
@@ -326,7 +326,7 @@ describe('Inventory', () => {
             });
             InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
               (holdingSources) => {
-                sourceIds[Affiliations.University] = holdingSources[0].id;
+                sourceIds.university = holdingSources[0].id;
               },
             );
           })

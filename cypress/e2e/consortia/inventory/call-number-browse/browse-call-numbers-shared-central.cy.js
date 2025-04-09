@@ -253,6 +253,7 @@ describe('Inventory', () => {
         testData.instances.forEach((instance) => {
           addItemRecordInCollege(instance.instanceId);
         });
+        cy.resetTenant();
         cy.waitForAuthRefresh(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
