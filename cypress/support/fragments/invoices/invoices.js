@@ -812,6 +812,8 @@ export default {
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
       TextField({ name: `fundDistributions[${index}].value` }).fillIn(value),
     ]);
+    cy.wait(4000);
+    cy.do(TextField({ name: `fundDistributions[${index}].value` }).fillIn(value));
   },
 
   saveLine: () => {
@@ -1359,6 +1361,7 @@ export default {
         .find(Button({ id: 'clickable-invoice-line-currency-confirmation-confirm' }))
         .click(),
     );
+    cy.wait(4000);
   },
 
   verifySearchResult(invoiceNumber) {

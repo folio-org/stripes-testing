@@ -1918,6 +1918,7 @@ export default {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
     this.submitOrderLine();
+    cy.wait(4000);
   },
 
   openInstance: () => {
@@ -2606,7 +2607,7 @@ export default {
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       currencyButton.click(),
       SelectionOption(currency).click(),
-      Checkbox({ id: 'use-set-exhange-rate' }).click(),
+      Checkbox({ id: 'use-set-exchange-rate' }).click(),
       TextField({ name: 'cost.exchangeRate' }).fillIn(exchangeRate),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
