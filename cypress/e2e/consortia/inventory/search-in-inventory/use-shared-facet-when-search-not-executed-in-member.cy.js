@@ -53,13 +53,11 @@ describe('Inventory', () => {
         .then((userProperties) => {
           users.userProperties = userProperties;
           InventoryInstances.deleteInstanceByTitleViaApi('C402330');
-
-          cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-          cy.setTenant(Affiliations.College);
-          InventoryInstances.deleteInstanceByTitleViaApi('C402330');
-          cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-            Permissions.uiInventoryViewInstances.gui,
-          ]);
+          cy.affiliateUserToTenant({
+            userId: users.userProperties.userId,
+            tenantId: Affiliations.College,
+            permissions: [Permissions.uiInventoryViewInstances.gui],
+          });
         })
         .then(() => {
           cy.resetTenant();
