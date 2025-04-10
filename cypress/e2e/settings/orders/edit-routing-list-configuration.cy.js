@@ -8,44 +8,46 @@ import SettingOrdersNavigationMenu from '../../../support/fragments/settings/ord
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: Settings', () => {
-  const listConfigurationDesription = `LCD${getRandomPostfix()}`;
-  const routingAddressLink = 'routing-address';
-  let user;
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    const listConfigurationDesription = `LCD${getRandomPostfix()}`;
+    const routingAddressLink = 'routing-address';
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.ordersListConfigurationPath,
-          waiter: ListConfiguration.waitLoading,
-        });
+      cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.ordersListConfigurationPath,
+            waiter: ListConfiguration.waitLoading,
+          });
+        },
+      );
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C466275 Edit routing list configuration (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        ListConfiguration.edit();
+        ListConfiguration.fillInfoSectionFields(listConfigurationDesription, routingAddressLink);
+        ListConfiguration.addLinkInBody();
+        ListConfiguration.save();
+        ListConfiguration.clickOnLinkInBody(routingAddressLink);
+        RoutingAddress.waitLoading();
+        SettingOrdersNavigationMenu.selectListConfiguration();
+        ListConfiguration.preview();
+        ListConfiguration.clickOnLinkInPreview(routingAddressLink);
+        RoutingAddress.waitLoading();
       },
     );
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C466275 Edit routing list configuration (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
-    () => {
-      ListConfiguration.edit();
-      ListConfiguration.fillInfoSectionFields(listConfigurationDesription, routingAddressLink);
-      ListConfiguration.addLinkInBody();
-      ListConfiguration.save();
-      ListConfiguration.clickOnLinkInBody(routingAddressLink);
-      RoutingAddress.waitLoading();
-      SettingOrdersNavigationMenu.selectListConfiguration();
-      ListConfiguration.preview();
-      ListConfiguration.clickOnLinkInPreview(routingAddressLink);
-      RoutingAddress.waitLoading();
-    },
-  );
 });
