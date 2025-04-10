@@ -19,7 +19,6 @@ import {
   Spinner,
   TextArea,
   TextField,
-  including,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -293,8 +292,8 @@ export default {
     ).select(acquisitionMethod);
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
-      ftpSection.find(TextField(including('Server address'))).fillIn(serverAddress),
-      ftpSection.find(TextField(including('FTP port'))).fillIn(FTPport),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
       ftpSection.find(TextField('Username')).fillIn('folio'),
       ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
