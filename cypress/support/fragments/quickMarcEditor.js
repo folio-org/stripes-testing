@@ -531,6 +531,7 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest');
     cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.wait(2000);
     cy.do(saveAndCloseButton.click());
   },
 
@@ -1650,24 +1651,24 @@ export default {
   },
 
   checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, userName) {
-    cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
-    cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
-      (subtitle) => {
-        cy.expect(
-          Pane({
-            subtitle: and(
-              including('Status:'),
-              including(status),
-              including(headingType),
-              including('Last updated:'),
-              including(`Source: ${userName}`),
-            ),
-          }).exists(),
-        );
-        const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
-        dateTools.verifyDate(Date.parse(stringDate), 120_000);
-      },
+    cy.expect(
+      Pane(matching(new RegExp(`Edit .*MARC authority record - ${headingTypeFrom1XX}`))).exists(),
     );
+    cy.then(() => Pane(matching(new RegExp(`Edit .*MARC authority record - ${headingTypeFrom1XX}`))).subtitle()).then((subtitle) => {
+      cy.expect(
+        Pane({
+          subtitle: and(
+            including('Status:'),
+            including(status),
+            including(headingType),
+            including('Last updated:'),
+            including(`Source: ${userName}`),
+          ),
+        }).exists(),
+      );
+      const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
+      dateTools.verifyDate(Date.parse(stringDate), 120_000);
+    });
   },
 
   checkReadOnlyTags() {
@@ -1929,15 +1930,19 @@ export default {
   },
 
   checkPaneheaderContains(text) {
-    cy.expect(PaneHeader({ text: including(text) }).exists());
+    if (text instanceof RegExp) cy.expect(PaneHeader({ text: matching(text) }).exists());
+    else cy.expect(PaneHeader({ text: including(text) }).exists());
   },
 
   checkRecordStatusNew() {
-    cy.expect(Pane('Create a new  MARC authority record').has({ subtitle: 'Status:New' }));
+    cy.expect(
+      Pane(matching(/Create a new .*MARC authority record/)).has({ subtitle: 'Status:New' }),
+    );
   },
 
   verifyPaneheaderWithContentAbsent(text) {
-    cy.expect(PaneHeader({ text: including(text) }).absent());
+    if (text instanceof RegExp) cy.expect(PaneHeader({ text: matching(text) }).absent());
+    else cy.expect(PaneHeader({ text: including(text) }).absent());
   },
 
   checkUpdateLinkedBibModalAbsent() {

@@ -13,8 +13,9 @@ export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
-export default {
-  createViaApi: (body) => {
+
+const API = {
+  createViaApi(body) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -26,11 +27,30 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `classification-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `classification-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+  getViaApi() {
+    return cy.okapiRequest({ path: 'classification-types' }).then((response) => {
+      return response.body?.classificationTypes;
+    });
+  },
+
+  deleteViaApiByName(name) {
+    return this.getViaApi().then((classificationIdentifierTypes) => {
+      classificationIdentifierTypes
+        .filter((classificationIdentifierType) => new RegExp(name).test(classificationIdentifierType.name))
+        .map((classificationIdentifierType) => this.deleteViaApi(classificationIdentifierType.id));
+    });
+  },
+};
+
+export default {
+  ...API,
   verifyConsortiumClassificationIdentifierTypesInTheList({
     name,
     source = 'consortium',

@@ -129,7 +129,7 @@ describe('eHoldings', () => {
           EHoldingSearch.switchToPackages();
           UHoldingsProvidersSearch.byProvider('Wiley Online Library');
           EHoldingsPackagesSearch.bySelectionStatus('Selected');
-          EHoldingsPackages.openPackageWithExpectedName('Wiley Online Library', true);
+          EHoldingsPackages.openPackageWithExpectedName('Wiley Online Library');
           EHoldingsPackage.waitLoading('Wiley Online Library');
           EHoldingsPackage.verifySelectedTitleSearchOption(testData.titleOption);
           EHoldingsPackage.searchTitles('About Campus');
@@ -137,11 +137,16 @@ describe('eHoldings', () => {
           EHoldingsPackage.searchTitles('0044-5983', testData.issnOption);
           EHoldingsPackage.verifyTitleFound('Acta Botanica Neerlandica');
           EHoldingsPackage.searchTitles('John Wiley', testData.publisherOption);
-          EHoldingsPackage.verifyTitleFound('Anthropology of Work Review');
           EHoldingsPackageView.selectTitleRecord();
           EHoldingsTitle.verifyPublisherIncludesValue('John Wiley');
           EHoldingsTitle.closeHoldingsTitleView();
           EHoldingsPackage.waitLoading('Wiley Online Library');
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
+          EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
+          EHoldingsPackage.toggleTitlesAccordion(false);
+          EHoldingsPackage.toggleTitlesAccordion();
+          EHoldingsPackage.verifySelectedTitleSearchOption(testData.publisherOption);
+          EHoldingsPackage.verifyTitlesSearchQuery('John Wiley');
 
           EHoldingsPackage.searchTitles('engineering', testData.subjectOption);
           EHoldingsPackage.verifyTitleFound('Active and Passive Electronic Components');

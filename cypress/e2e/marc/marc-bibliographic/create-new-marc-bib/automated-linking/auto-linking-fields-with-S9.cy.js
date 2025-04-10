@@ -28,7 +28,7 @@ describe('MARC', () => {
             '100',
             '\\',
             '\\',
-            '$a C422151 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+            '$a C422151 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ;',
             '',
             '$0 3052039',
             '',
@@ -131,11 +131,14 @@ describe('MARC', () => {
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
-
-            cy.login(testData.user.username, testData.user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.user.username, testData.user.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 

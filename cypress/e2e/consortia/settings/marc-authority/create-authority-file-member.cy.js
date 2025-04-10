@@ -40,6 +40,7 @@ describe('MARC', () => {
               cy.assignPermissionsToExistingUser(testData.user.userId, [
                 Permissions.uiSettingsViewAuthorityFiles.gui,
               ]);
+              cy.resetTenant();
               cy.waitForAuthRefresh(() => {
                 cy.login(testData.user.username, testData.user.password);
                 cy.reload();

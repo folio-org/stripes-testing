@@ -33,6 +33,7 @@ describe('Bulk-edit', () => {
             permissions.uiInventoryViewCreateEditItems.gui,
           ]);
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

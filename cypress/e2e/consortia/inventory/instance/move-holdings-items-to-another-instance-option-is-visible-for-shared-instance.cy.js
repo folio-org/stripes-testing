@@ -27,29 +27,20 @@ describe('Inventory', () => {
         });
       });
       cy.withinTenant(Affiliations.College, () => {
-        cy.getLocations({ limit: 1 }).then((res) => {
-          testData.locationId = res.id;
-        });
-        InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-          testData.sourceId = folioSource.id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
-          testData.materialTypeId = res.id;
-        });
-        cy.getLoanTypes({ limit: 1 }).then((res) => {
-          testData.loanTypeId = res[0].id;
-        });
-      });
-
-      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
-
-          cy.affiliateUserToTenant({
-            tenantId: Affiliations.College,
-            userId: testData.user.userId,
-            permissions: [Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui],
+        cy.then(() => {
+          cy.getLocations({ limit: 1 }).then((res) => {
+            testData.locationId = res.id;
           });
+          InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+            testData.sourceId = folioSource.id;
+          });
+          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            testData.materialTypeId = res.id;
+          });
+          cy.getLoanTypes({ limit: 1 }).then((res) => {
+            testData.loanTypeId = res[0].id;
+          });
+        }).then(() => {
           InventoryHoldings.createHoldingRecordViaApi({
             instanceId: testData.instance.instanceId,
             permanentLocationId: testData.locationId,
@@ -63,7 +54,19 @@ describe('Inventory', () => {
               barcode: testData.itemBarcode,
             });
           });
-          cy.resetTenant();
+        });
+      });
+
+      cy.resetTenant();
+      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui]).then(
+        (userProperties) => {
+          testData.user = userProperties;
+
+          cy.affiliateUserToTenant({
+            tenantId: Affiliations.College,
+            userId: testData.user.userId,
+            permissions: [Permissions.inventoryAll.gui, Permissions.uiInventoryMoveItems.gui],
+          });
 
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,
@@ -96,6 +99,7 @@ describe('Inventory', () => {
           false,
         );
 
+        cy.resetTenant();
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

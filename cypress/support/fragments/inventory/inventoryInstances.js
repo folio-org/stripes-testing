@@ -75,7 +75,7 @@ const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
 const advSearchItemModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
-const searchInstancesOptions = [
+export const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
   'Title (all)',
@@ -1616,5 +1616,14 @@ export default {
         .find(MultiColumnListCell({ column: columnName }))
         .has({ content: expectedValue.toString() }),
     );
+  },
+
+  validateOptionInActionsMenu(optionName, shouldExist = true) {
+    cy.do(actionsButton.click());
+    if (shouldExist) {
+      cy.expect(Button(optionName).exists());
+    } else {
+      cy.expect(Button(optionName).absent());
+    }
   },
 };

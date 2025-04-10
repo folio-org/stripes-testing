@@ -80,6 +80,7 @@ describe('MARC', () => {
 
       before('Upload files', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C360092');
         cy.getAdminSourceRecord().then((record) => {
           adminUser = record;
         });
@@ -106,8 +107,11 @@ describe('MARC', () => {
       });
 
       beforeEach('Visit MARC Authorities', () => {
-        cy.visit(TopMenu.marcAuthorities);
-        MarcAuthorities.waitLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.visit(TopMenu.marcAuthorities);
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
       });
 
       after('Delete test data', () => {
@@ -144,7 +148,7 @@ describe('MARC', () => {
 
           // Save edits and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -173,8 +177,8 @@ describe('MARC', () => {
 
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
-          QuickMarcEditor.clickSaveAndKeepEditing();
+          cy.wait(3000);
+          QuickMarcEditor.clickSaveAndKeepEditingButton();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
 
@@ -189,7 +193,7 @@ describe('MARC', () => {
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();

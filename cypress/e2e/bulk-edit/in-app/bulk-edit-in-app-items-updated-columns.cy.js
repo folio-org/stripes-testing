@@ -11,7 +11,13 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ITEM_NOTES, LOAN_TYPE_IDS, LOCATION_IDS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  ITEM_NOTES,
+  LOAN_TYPE_IDS,
+  LOCATION_IDS,
+} from '../../../support/constants';
 
 let user;
 const notes = {
@@ -90,6 +96,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.barcode]);
+
         const columnNames = [
           'Check out note',
           'Check in note',
@@ -102,11 +109,14 @@ describe('bulk-edit', () => {
           'Item permanent location',
           'Item temporary location',
         ];
+
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(...columnNames);
         BulkEditSearchPane.changeShowColumnCheckbox(...columnNames);
+
         columnNames.forEach((column) => {
           BulkEditSearchPane.verifyResultColumnTitlesDoNotInclude(column);
         });
+
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.addItemNote('Administrative note', notes.admin);
         BulkEditActions.addNewBulkEditFilterString();
@@ -124,17 +134,62 @@ describe('bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearTemporaryLocation('item', 7);
         BulkEditActions.addNewBulkEditFilterString();
-        const suppressFromDiscovery = false;
-        BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 8);
 
+        const suppressFromDiscovery = false;
+
+        BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 8);
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [
-          notes.admin,
-          `${suppressFromDiscovery},${item.hrid}`,
-          `${notes.noteNote} (staff only),,,Reading room,,Available,${notes.checkInNote},${notes.checkInNote},Online,,`,
-        ]);
 
+        const editedHeaderValues = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ADMINISTRATIVE_NOTE,
+            value: notes.admin,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_IN_NOTE,
+            value: notes.checkInNote,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.CHECK_OUT_NOTE,
+            value: notes.checkInNote,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.NOTE,
+            value: `${notes.noteNote} (staff only)`,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.PERMANENT_LOAN_TYPE,
+            value: 'Reading room',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.TEMPORARY_LOAN_TYPE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_PERMANENT_LOCATION,
+            value: 'Online',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.ITEM_TEMPORARY_LOCATION,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.STATUS,
+            value: 'Available',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.SUPPRESS_FROM_DISCOVERY,
+            value: `${suppressFromDiscovery}`,
+          },
+        ];
+
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.barcode,
+          editedHeaderValues,
+        );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check out note', notes.checkInNote);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check in note', notes.checkInNote);
@@ -158,13 +213,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyExactChangesUnderColumns('Item temporary location', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          notes.admin,
-          `${suppressFromDiscovery},${item.hrid}`,
-          `${notes.noteNote} (staff only),,,Reading room,,Available,${notes.checkInNote},${notes.checkInNote},Online,,`,
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_ITEMS.BARCODE,
+          item.barcode,
+          editedHeaderValues,
+        );
 
-        TopMenuNavigation.navigateToApp('Inventory');
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();

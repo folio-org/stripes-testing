@@ -1,25 +1,25 @@
 import moment from 'moment';
 
 import {
+  Button,
+  including,
+  KeyValue,
+  Link,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Button,
-  TextArea,
-  KeyValue,
-  Link,
-  Modal,
-  including,
-  Select,
-  TextInput,
   Pane,
+  Select,
+  TextArea,
+  TextInput,
 } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import DateTools from '../../../utils/dateTools';
 import { getFullName } from '../../../utils/users';
 import FeeFinesDetails from '../feeFineDetails';
-import PayFeeFaine from '../payFeeFaine';
+import PayFeeFine from '../payFeeFine';
 
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
 const DeclareLostButton = Button('Declare lost');
@@ -268,10 +268,10 @@ export default {
   payFeeFine(amount, paymentMethod) {
     FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
-    PayFeeFaine.checkAmount(amount);
-    PayFeeFaine.setAmount(amount);
-    PayFeeFaine.setPaymentMethod(paymentMethod);
-    // PayFeeFaine.checkRestOfPay(amount);
-    PayFeeFaine.submitAndConfirm();
+    PayFeeFine.checkAmount(amount);
+    PayFeeFine.setAmount(amount);
+    PayFeeFine.setPaymentMethod(paymentMethod);
+    // PayFeeFine.checkRestOfPay(amount);
+    PayFeeFine.submitAndConfirm();
   },
 };

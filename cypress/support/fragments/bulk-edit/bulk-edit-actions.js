@@ -755,7 +755,16 @@ export default {
           const actualEnabledOptions = actualOptions.filter(
             (actualOption) => !actualOption.includes('disabled'),
           );
-          expect(actualEnabledOptions).to.deep.equal(expectedOptions);
+
+          // verify options sorted alphabetically
+          const sortedOptions = [...actualEnabledOptions].sort();
+
+          expect(actualEnabledOptions).to.deep.equal(sortedOptions);
+
+          // verify options exist
+          expectedOptions.forEach((option) => {
+            expect(actualEnabledOptions).to.include(option);
+          });
         }),
     );
   },

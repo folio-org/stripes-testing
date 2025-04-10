@@ -13,7 +13,6 @@ describe('Inventory', () => {
     const testData = {
       advSearchOption: 'Advanced search',
       expectedSearchResult: 'The Beatles in mono. Adv search 001',
-      callNumberValue: 'YCN002003400616',
       itemBarcode: 'ITBRCC400616',
       expectedSearchResultsC400616: [
         'Humans and machines Adv Search 003',
@@ -108,10 +107,14 @@ describe('Inventory', () => {
       'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C466156'] },
       () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.checkAdvSearchInstancesModalFields(0);
         InventoryInstances.checkAdvSearchInstancesModalFields(1);
@@ -228,10 +231,14 @@ describe('Inventory', () => {
       'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C414977', 'eurekaPhase1'] },
       () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,

@@ -30,7 +30,7 @@ import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstance from './inventoryInstance';
-import InventoryInstances from './inventoryInstances';
+import InventoryInstances, { searchInstancesOptions } from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -92,6 +92,12 @@ const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
 const heldByAccordion = Accordion('Held by');
+const dateRangeAccordion = Accordion('Date range');
+const dateRangeFromField = dateRangeAccordion.find(TextField({ name: 'startDate' }));
+const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }));
+const filterApplyButton = Button('Apply');
+const invalidDateErrorText = 'Please enter a valid year';
+const dateOrderErrorText = 'Start date is greater than end date';
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -193,6 +199,11 @@ export default {
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
+  dateRangeFromField,
+  dateRangeToField,
+  invalidDateErrorText,
+  dateOrderErrorText,
+  dateRangeAccordion,
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
@@ -995,7 +1006,7 @@ export default {
   verifySearchAndFilterPane() {
     this.validateSearchTabIsDefault();
     this.instanceTabIsDefault();
-    this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
+    this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
     this.verifySearchFieldIsEmpty();
     cy.expect([
       searchToggleButton.exists(),
@@ -1100,7 +1111,12 @@ export default {
 
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
-    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(optionName)]);
+    const escapedValue = optionName.replace(/[-[\]{}()*+?\\^$]/g, '\\$&');
+    cy.do([
+      multiSelect.open(),
+      cy.wait(1000),
+      multiSelect.select(matching(`${escapedValue}\\(\\d+\\)`)),
+    ]);
   },
 
   checkSearchButtonEnabled() {
@@ -1213,6 +1229,7 @@ export default {
   },
 
   selectYesfilterStaffSuppress: () => {
+    cy.wait(1000);
     cy.do([
       stuffSupressAccordion.clickHeader(),
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
@@ -1270,5 +1287,71 @@ export default {
   verifyHeldByOption(option) {
     cy.do(heldByAccordion.find(Button({ ariaLabel: 'open menu' })).click());
     cy.expect(heldByAccordion.find(MultiSelectOption(including(option))).exists());
+  },
+
+  verifyDefaultSearchInstanceOptionSelected() {
+    this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
+  },
+
+  verifyResultWithDate1Found(date1Value, isFound = true) {
+    const escapedDate1Value = date1Value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const targetCell = MultiColumnListCell({
+      column: 'Date',
+      content: matching(`^${escapedDate1Value}`),
+    });
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  toggleAccordionByName(accordionName, isOpen = true) {
+    this.clickAccordionByName(accordionName);
+    this.verifyAccordionByNameExpanded(accordionName, isOpen);
+  },
+
+  verifyDateRangeAccordionValues(fromDate, toDate) {
+    cy.expect([
+      dateRangeFromField.has({ value: fromDate }),
+      dateRangeToField.has({ value: toDate }),
+      dateRangeAccordion.find(filterApplyButton).exists(),
+    ]);
+  },
+
+  filterByDateRange(dateFrom, dateTo, fromError, toError) {
+    cy.intercept('/search/instances**').as('searchCall');
+    this.toggleAccordionByName('Date range');
+    cy.do([dateRangeFromField.fillIn(dateFrom), dateRangeToField.fillIn(dateTo)]);
+    if (fromError !== dateOrderErrorText) this.checkDateRangeFieldsValidation(fromError, toError);
+    else this.checkDateRangeFieldsValidation(false, false);
+    cy.do(dateRangeAccordion.find(filterApplyButton).click());
+    if (fromError !== dateOrderErrorText) this.checkDateRangeFieldsValidation(fromError, toError);
+    else {
+      this.checkDateRangeFieldsValidation(false, false);
+      this.verifyErrorMessageInAccordion(dateRangeAccordion, dateOrderErrorText);
+    }
+    if (!fromError && !toError) cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
+    cy.wait(1000);
+  },
+
+  checkDateRangeFieldsValidation(fromError, toError) {
+    cy.wait(500);
+    if (fromError) this.verifyErrorMessageInTextField(dateRangeFromField, true, fromError);
+    else if (fromError === false) this.verifyErrorMessageInTextField(dateRangeFromField, false);
+    if (toError) this.verifyErrorMessageInTextField(dateRangeToField, true, toError);
+    else if (toError === false) this.verifyErrorMessageInTextField(dateRangeToField, false);
+  },
+
+  verifyErrorMessageInTextField(textFieldInteractor, isError = true, errorText) {
+    if (isError) cy.expect(textFieldInteractor.has({ error: errorText, errorBorder: true, errorIcon: true }));
+    else {
+      cy.expect(
+        textFieldInteractor.has({ error: undefined, errorBorder: false, errorIcon: false }),
+      );
+    }
+  },
+
+  verifyErrorMessageInAccordion(accordionInteractor, errorText) {
+    if (errorText) {
+      cy.expect(accordionInteractor.find(HTML(errorText)).exists());
+    }
   },
 };
