@@ -11,58 +11,60 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: Settings', () => {
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };
-  const orderTemplateName = `OTname${getRandomPostfix()}`;
-  let user;
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };
+    const orderTemplateName = `OTname${getRandomPostfix()}`;
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-    });
-    AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
-    cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
-      permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
-      permissions.uiOrdersCreate.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.ordersOrderTemplatesPath,
-        waiter: OrderTemplate.waitLoading,
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+      });
+      AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
+      cy.createTempUser([
+        permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
+        permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
+        permissions.uiOrdersCreate.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.ordersOrderTemplatesPath,
+          waiter: OrderTemplate.waitLoading,
+        });
       });
     });
-  });
 
-  after(() => {
-    cy.getAdminToken();
-    Organizations.deleteOrganizationViaApi(organization.id);
-    AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id);
-    Users.deleteViaApi(user.userId);
-  });
+    after(() => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id);
+      Users.deleteViaApi(user.userId);
+    });
 
-  it(
-    'C6725 Create order template (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      OrderTemplate.clickNewOrderTemplateButton();
-      OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
-        orderTemplateName,
-        organization.name,
-        acquisitionMethod.value,
-      );
-      OrderTemplate.saveTemplate();
-      OrderTemplate.checkTemplateCreated(orderTemplateName);
-      TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrdersPane();
-      Orders.createOrderByTemplate(orderTemplateName);
-      Orders.checkCreatedOrderFromTemplate(organization.name);
-      TopMenuNavigation.navigateToApp('Settings');
-      OrderTemplate.goToTemplatesFromOrders();
-      OrderTemplate.deleteTemplate(orderTemplateName);
-    },
-  );
+    it(
+      'C6725 Create order template (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      () => {
+        OrderTemplate.clickNewOrderTemplateButton();
+        OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
+          orderTemplateName,
+          organization.name,
+          acquisitionMethod.value,
+        );
+        OrderTemplate.saveTemplate();
+        OrderTemplate.checkTemplateCreated(orderTemplateName);
+        TopMenuNavigation.navigateToApp('Orders');
+        Orders.selectOrdersPane();
+        Orders.createOrderByTemplate(orderTemplateName);
+        Orders.checkCreatedOrderFromTemplate(organization.name);
+        TopMenuNavigation.navigateToApp('Settings');
+        OrderTemplate.goToTemplatesFromOrders();
+        OrderTemplate.deleteTemplate(orderTemplateName);
+      },
+    );
+  });
 });

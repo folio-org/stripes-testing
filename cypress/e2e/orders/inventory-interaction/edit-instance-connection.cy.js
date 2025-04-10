@@ -1,10 +1,10 @@
-import { Permissions } from '../../../support/dictionary';
-import { InventoryInstances, InventoryHoldings } from '../../../support/fragments/inventory';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
 import { ORDER_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import { InventoryHoldings, InventoryInstances } from '../../../support/fragments/inventory';
+import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import ChangeInstanceModal from '../../../support/fragments/orders/modals/changeInstanceModal';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -123,6 +123,7 @@ describe('Orders', () => {
 
         // Click on "Title" link in "Item details" accordion" on "PO Line details" pane
         const InventoryInstance = OrderLineDetails.openInventoryItem();
+        cy.wait(3000);
         InventoryInstance.checkInstanceTitle(testData.folioInstances[0].instanceTitle);
         InventoryInstance.checkHoldingTitle({ title: testData.location.name });
         InventoryInstance.checkAcquisitionsDetails([

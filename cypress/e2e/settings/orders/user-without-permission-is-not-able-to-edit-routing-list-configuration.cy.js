@@ -5,36 +5,38 @@ import Users from '../../../support/fragments/users/users';
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: Settings', () => {
-  let user;
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    cy.createTempUser([permissions.uiSettingsOrdersCanViewAllSettings.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.ordersListConfigurationPath,
-          waiter: ListConfiguration.waitLoading,
-        });
+      cy.createTempUser([permissions.uiSettingsOrdersCanViewAllSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.ordersListConfigurationPath,
+            waiter: ListConfiguration.waitLoading,
+          });
+        },
+      );
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C466273 A user without " Settings (Orders): Can view and edit all settings" permission is not able to edit routing list configuration (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        ListConfiguration.editIsDisabled();
+        ListConfiguration.preview();
+        ListConfiguration.closePreviewModal();
+        ListConfiguration.editIsDisabled();
       },
     );
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C466273 A user without " Settings (Orders): Can view and edit all settings" permission is not able to edit routing list configuration (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
-    () => {
-      ListConfiguration.editIsDisabled();
-      ListConfiguration.preview();
-      ListConfiguration.closePreviewModal();
-      ListConfiguration.editIsDisabled();
-    },
-  );
 });

@@ -1,4 +1,4 @@
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../../support/fragments/finance/funds/funds';
@@ -13,7 +13,7 @@ describe('ui-finance: Funds', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-  let user;
+  let userA;
 
   before(() => {
     cy.getAdminToken();
@@ -26,32 +26,10 @@ describe('ui-finance: Funds', () => {
       });
     });
     cy.createTempUser([
-      permissions.uiFinanceFinanceViewGroup.gui,
-      permissions.uiFinanceCreateAllocations.gui,
-      permissions.uiFinanceCreateTransfers.gui,
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceExportFinanceRecords.gui,
-      permissions.uiFinanceManageAcquisitionUnits.gui,
-      permissions.uiFinanceManuallyReleaseEncumbrance.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewGroups.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewEditFiscalYear.gui,
-      permissions.uiFinanceViewEditFundAndBudget.gui,
-      permissions.uiFinanceViewEditGroup.gui,
-      permissions.uiFinanceViewEditLedger.gui,
-      permissions.uiFinanceViewEditCreateFiscalYear.gui,
-      permissions.uiFinanceViewEditCreateFundAndBudget.gui,
-      permissions.uiFinanceCreateViewEditGroups.gui,
-      permissions.uiFinanceViewEditCreateLedger.gui,
-      permissions.uiFinanceViewEditDeleteFiscalYear.gui,
-      permissions.uiFinanceViewEditDeletFundBudget.gui,
-      permissions.uiFinanceViewEditDeletGroups.gui,
-      permissions.uiFinanceViewEditDeleteLedger.gui,
-      permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
+      Permissions.uiFinanceViewEditCreateFundAndBudget.gui,
+      Permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      userA = userProperties;
     });
   });
 
@@ -69,7 +47,7 @@ describe('ui-finance: Funds', () => {
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(userA.userId);
   });
 
   it(
@@ -84,24 +62,38 @@ describe('ui-finance: Funds', () => {
       AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
       // Need to wait,while data is load
       cy.wait(2000);
-      AcquisitionUnits.assignUser(user.username);
-      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      AcquisitionUnits.assignUser(userA.username);
+
+      cy.login(userA.username, userA.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+      });
       Funds.createFundWithAU(defaultfund, defaultLedger, defaultAcquisitionUnit.name);
+
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
-      AcquisitionUnits.unAssignUser(user.username, defaultAcquisitionUnit.name);
-      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      AcquisitionUnits.unAssignUser(userA.username, defaultAcquisitionUnit.name);
+
+      cy.login(userA.username, userA.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+      });
       FinanceHelp.searchByName(defaultfund.name);
       Funds.checkZeroSearchResultsHeader();
+
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
       AcquisitionUnits.edit(defaultAcquisitionUnit.name);
       AcquisitionUnits.selectViewCheckbox();
-      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+
+      cy.login(userA.username, userA.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+      });
       FinanceHelp.searchByName(defaultfund.name);
       Funds.selectFund(defaultfund.name);
     },
