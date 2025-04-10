@@ -602,6 +602,8 @@ export default {
     cy.do(Button('Order lines').click());
   },
   selectOrdersPane: () => {
+    cy.wait(4000);
+
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {

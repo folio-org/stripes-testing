@@ -1,7 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../support/fragments/users/users';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -17,6 +16,7 @@ import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../suppo
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import Receiving from '../../support/fragments/receiving/receiving';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Receiving', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -127,10 +127,7 @@ describe('Receiving', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
     });
   });
 
@@ -143,6 +140,8 @@ describe('Receiving', () => {
     'C466265 Create new routing list from PO line (thunderjet)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', firstOrderNumber);
       Orders.selectFromResultsList(firstOrderNumber);
       OrderLines.selectPOLInOrder();

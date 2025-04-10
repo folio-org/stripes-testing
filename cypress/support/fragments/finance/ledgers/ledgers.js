@@ -92,7 +92,10 @@ export default {
   },
 
   exportBudgetInformation: () => {
-    cy.do([actionsButton.click(), Button('Export budget information (CSV)').click()]);
+    cy.do([
+      ledgerDetailsSection.find(actionsButton).click(),
+      Button('Export budget information (CSV)').click(),
+    ]);
   },
 
   closeRolloverInfo: () => {

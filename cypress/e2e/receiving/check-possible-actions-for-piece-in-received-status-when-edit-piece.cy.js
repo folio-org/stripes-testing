@@ -10,7 +10,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -47,7 +46,10 @@ describe('Orders: Inventory interaction', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          cy.loginAsAdmin();
+          TopMenuNavigation.openAppFromDropdown('Finance');
+          FinanceHelp.selectFundsNavigation();
+
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -94,15 +96,16 @@ describe('Orders: Inventory interaction', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
     });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin();
+    TopMenuNavigation.openAppFromDropdown('Orders');
+    Orders.selectOrdersPane();
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();

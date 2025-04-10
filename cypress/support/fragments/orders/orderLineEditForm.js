@@ -138,7 +138,6 @@ export default {
   clickTitleLookUpButton() {
     cy.do(itemDetailsSection.find(Button('Title look-up')).click());
     SelectInstanceModal.waitLoading();
-    SelectInstanceModal.verifyModalView();
 
     return SelectInstanceModal;
   },

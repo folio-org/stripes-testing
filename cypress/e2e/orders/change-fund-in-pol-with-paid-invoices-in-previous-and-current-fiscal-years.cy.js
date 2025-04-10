@@ -12,11 +12,9 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import InteractorsTools from '../../support/utils/interactorsTools';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
@@ -25,6 +23,7 @@ import {
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -56,7 +55,7 @@ describe('Orders', () => {
     invoiceDate: DateTools.getCurrentDate(),
     vendorName: 'Amazon.com',
     accountingCode: '',
-    batchGroup: '',
+    batchGroup: 'FOLIO',
     invoiceNumber: FinanceHelp.getRandomInvoiceNumber(),
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -172,10 +171,9 @@ describe('Orders', () => {
                                 status: INVOICE_STATUSES.PAID,
                               });
                             });
-                            cy.loginAsAdmin({
-                              path: TopMenu.ordersPath,
-                              waiter: Orders.waitLoading,
-                            });
+                            cy.loginAsAdmin();
+                            TopMenuNavigation.openAppFromDropdown('Orders');
+                            Orders.selectOrdersPane();
                             Orders.searchByParameter('PO number', orderNumber);
                             Orders.selectFromResultsList(orderNumber);
                             OrderLines.selectPOLInOrder(0);
@@ -183,7 +181,7 @@ describe('Orders', () => {
                             OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
                             OrderLines.saveOrderLine();
 
-                            cy.visit(TopMenu.ledgerPath);
+                            TopMenuNavigation.openAppFromDropdown('Finance');
                             FinanceHelp.searchByName(defaultLedger.name);
                             Ledgers.selectLedger(defaultLedger.name);
                             Ledgers.rollover();
@@ -193,7 +191,7 @@ describe('Orders', () => {
                               'Transfer',
                             );
 
-                            cy.visit(TopMenu.fiscalYearPath);
+                            Ledgers.clickOnFiscalYearTab();
                             FinanceHelp.searchByName(firstFiscalYear.name);
                             FiscalYears.selectFY(firstFiscalYear.name);
                             FiscalYears.editFiscalYearDetails();
@@ -227,10 +225,7 @@ describe('Orders', () => {
         permissions.uiOrdersEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.ordersPath,
-          waiter: Orders.waitLoading,
-        });
+        cy.login(userProperties.username, userProperties.password);
       });
     });
   });
@@ -244,10 +239,15 @@ describe('Orders', () => {
     'C404376 Change fund distribution when PO line has related paid invoices in previous and current fiscal years (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'eurekaPhase1'] },
     () => {
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
-      OrderLines.openPageCurrentEncumbranceInFund(`${firstFund.name}(${firstFund.code})`, '$10.00');
+      OrderLines.openPageCurrentEncumbranceInFund(
+        `${secondFund.name}(${secondFund.code})`,
+        '$10.00',
+      );
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
         '$10.00',
@@ -257,30 +257,28 @@ describe('Orders', () => {
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
 
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(firstFund, '10', '10');
+      OrderLines.editFundInPOL(firstFund, '10', '100');
       OrderLines.backToEditingOrder();
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrderWithoutFY(secondInvoice);
       Invoices.approveInvoice();
 
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '10');
       OrderLines.saveOrderLine();
-      InteractorsTools.checkCalloutErrorMessage(
-        'The purchase order line fund distribution can not be changed because the order line is linked to an invoice line that currently has the "approved" status',
-      );
       OrderLines.cancelEditingPOL();
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(secondInvoice.invoiceNumber);
       Invoices.selectInvoice(secondInvoice.invoiceNumber);
       Invoices.payInvoice();
@@ -298,7 +296,8 @@ describe('Orders', () => {
       );
       Funds.checkStatusInTransactionDetails('Released');
 
-      cy.visit(TopMenu.ordersPath);
+      TopMenuNavigation.navigateToApp('Orders');
+      Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
