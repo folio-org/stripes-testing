@@ -1,4 +1,5 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
+import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -13,10 +14,9 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -118,9 +118,9 @@ describe('ui-orders: Orders', () => {
       Invoices.cancelInvoice();
     });
     cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiOrdersEdit.gui,
+      Permissions.uiFinanceViewFundAndBudget.gui,
+      Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      Permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {

@@ -58,13 +58,13 @@ export default {
     );
   },
 
-  checkBatchGroup: (batchGroup) => {
+  checkBatchGroup: (batchGroup, userName) => {
     cy.do(
       MultiColumnListCell({ content: batchGroup.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-        })} by ADMINISTRATOR, Diku_admin`;
+        })} by ${userName}`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))

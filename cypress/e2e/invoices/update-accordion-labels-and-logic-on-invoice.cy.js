@@ -72,12 +72,13 @@ describe('Invoices', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.deleteInvoiceViaActions();
-    Invoices.confirmInvoiceDeletion();
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
+    Invoices.getInvoiceViaApi({
+      query: `vendorInvoiceNo="${invoice.invoiceNumber}"`,
+    }).then(({ invoices }) => {
+      Invoices.deleteInvoiceViaApi(invoices[0].id);
+    });
   });
 
   it(

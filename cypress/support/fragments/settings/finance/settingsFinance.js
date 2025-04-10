@@ -41,7 +41,7 @@ export default {
   },
 
   verifyItemInDetailPanel() {
-    cy.expect([actions.absent(), newButton.has({ disabled: true })]);
+    cy.expect([actions.absent(), newButton.absent()]);
   },
 
   fillRequiredFields: (expenseClasses) => {
@@ -76,13 +76,13 @@ export default {
     );
   },
 
-  checkExpenseClass: (expenseClass) => {
+  checkExpenseClass: (expenseClass, userName) => {
     cy.do(
       MultiColumnListCell({ content: expenseClass.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-        })} by ADMINISTRATOR, Diku_admin`;
+        })} by ${userName}`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))

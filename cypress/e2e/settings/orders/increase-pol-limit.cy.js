@@ -14,113 +14,115 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: Settings', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-  };
-  const organization = {
-    ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
-        accountNo: getRandomPostfix(),
-        accountStatus: 'Active',
-        acqUnitIds: [],
-        appSystemNo: '',
-        description: 'Main library account',
-        libraryCode: 'COB',
-        libraryEdiCode: getRandomPostfix(),
-        name: 'TestAccout1',
-        notes: '',
-        paymentMethod: 'Cash',
-      },
-    ],
-  };
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    const order = {
+      ...NewOrder.defaultOneTimeOrder,
+      approved: true,
+    };
+    const organization = {
+      ...NewOrganization.defaultUiOrganizations,
+      accounts: [
+        {
+          accountNo: getRandomPostfix(),
+          accountStatus: 'Active',
+          acqUnitIds: [],
+          appSystemNo: '',
+          description: 'Main library account',
+          libraryCode: 'COB',
+          libraryEdiCode: getRandomPostfix(),
+          name: 'TestAccout1',
+          notes: '',
+          paymentMethod: 'Cash',
+        },
+      ],
+    };
 
-  let orderNumber;
-  let user;
-  let effectiveLocationServicePoint;
-  let location;
+    let orderNumber;
+    let user;
+    let effectiveLocationServicePoint;
+    let location;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+        ).then((locationResponse) => {
+          location = locationResponse;
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
+          });
+          cy.createOrderApi(order).then((response) => {
+            orderNumber = response.body.poNumber;
+          });
         });
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
+      });
+
+      cy.createTempUser([
+        permissions.uiOrdersCreate.gui,
+        permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
         });
       });
     });
 
-    cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
+    after(() => {
+      cy.loginAsAdmin({
         path: SettingsMenu.ordersPurchaseOrderLinesLimit,
         waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
       });
-    });
-  });
+      SettingsOrders.setPurchaseOrderLinesLimit(3);
+      SettingsOrders.setPurchaseOrderLinesLimit(1);
+      Orders.deleteOrderViaApi(order.id);
 
-  after(() => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-      waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-    });
-    SettingsOrders.setPurchaseOrderLinesLimit(3);
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
-    Orders.deleteOrderViaApi(order.id);
+      Organizations.deleteOrganizationViaApi(organization.id);
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+        location.institutionId,
+        location.campusId,
+        location.libraryId,
+        location.id,
+      );
 
-    Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
-      location.institutionId,
-      location.campusId,
-      location.libraryId,
-      location.id,
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      () => {
+        SettingsOrders.setPurchaseOrderLinesLimit(5);
+        SettingsOrders.setPurchaseOrderLinesLimit(2);
+        TopMenuNavigation.navigateToApp('Orders');
+        Orders.selectOrdersPane();
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+          'Purchase',
+          location.name,
+          '4',
+        );
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+        OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+          'Purchase',
+          location.name,
+          '4',
+        );
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        Orders.checkPurchaseOrderLineLimitReachedModal();
+      },
     );
-
-    Users.deleteViaApi(user.userId);
   });
-
-  it(
-    'C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      SettingsOrders.setPurchaseOrderLinesLimit(5);
-      SettingsOrders.setPurchaseOrderLinesLimit(2);
-      TopMenuNavigation.navigateToApp('Orders');
-      Orders.selectOrdersPane();
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-        'Purchase',
-        location.name,
-        '4',
-      );
-      OrderLines.backToEditingOrder();
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-        'Purchase',
-        location.name,
-        '4',
-      );
-      OrderLines.backToEditingOrder();
-      Orders.createPOLineViaActions();
-      Orders.checkPurchaseOrderLineLimitReachedModal();
-    },
-  );
 });

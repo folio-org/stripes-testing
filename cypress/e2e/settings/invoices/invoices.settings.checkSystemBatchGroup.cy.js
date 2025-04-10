@@ -8,17 +8,14 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
   const systemBatchGroupName = 'FOLIO';
   const systemBatchGroupDescription = 'System default';
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getAdminSourceRecord().then((adminSourceRecord) => {
-          batchGroup.source = adminSourceRecord;
-          systemBatchGroup.source = adminSourceRecord;
-        });
-      })
-      .then(() => {
-        cy.loginAsAdmin();
-        cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
+    cy.getAdminToken().then(() => {
+      cy.getAdminSourceRecord().then((adminSourceRecord) => {
+        batchGroup.source = adminSourceRecord;
+        systemBatchGroup.source = adminSourceRecord;
       });
+    });
+    cy.loginAsAdmin();
+    cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 
   it(
@@ -27,14 +24,15 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
     () => {
       systemBatchGroup.name = systemBatchGroupName;
       systemBatchGroup.description = systemBatchGroupDescription;
+
       SettingsInvoices.waitBatchGroupsLoading();
       SettingsInvoices.checkNotDeletingGroup(systemBatchGroupName);
       SettingsInvoices.editBatchGroup(batchGroup, systemBatchGroupName);
-      SettingsInvoices.checkBatchGroup(batchGroup);
+      SettingsInvoices.checkBatchGroup(batchGroup, systemBatchGroup.source);
       SettingsInvoices.checkNotDeletingGroup(batchGroup.name);
       // revert changes in system batch group
       SettingsInvoices.editBatchGroup(systemBatchGroup, batchGroup.name);
-      SettingsInvoices.checkBatchGroup(systemBatchGroup);
+      SettingsInvoices.checkBatchGroup(systemBatchGroup, systemBatchGroup.source);
     },
   );
 });

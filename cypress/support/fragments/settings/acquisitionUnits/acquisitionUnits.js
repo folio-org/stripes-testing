@@ -97,6 +97,7 @@ export default {
       .parent('div[class*="mclRow-"]')
       .find('button[icon="trash"]')
       .click();
+    cy.wait(1500);
   },
 
   unAssignAdmin: (AUName) => {

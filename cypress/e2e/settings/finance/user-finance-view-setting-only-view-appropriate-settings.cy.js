@@ -28,10 +28,15 @@ describe('Fund type view', () => {
       });
       ExpenseClasses.createExpenseClassViaApi(newExpenseClass);
       FundTypes.createFundTypesViaApi(newFundTypes);
+      cy.getAdminSourceRecord().then((adminSourceRecord) => {
+        newExpenseClass.source = adminSourceRecord;
+      });
+
       cy.createTempUser([Permissions.uiSettingsFinanceView.gui], patronGroup.name).then(
         (userProperties) => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.fundTypesPath,
             waiter: SettingsFinance.waitFundTypesLoading,
@@ -59,7 +64,7 @@ describe('Fund type view', () => {
       SettingsFinance.checkEditDeleteIcon(newFundTypes);
       SettingsFinance.clickExpenseClass();
       SettingsFinance.verifyItemInDetailPanel();
-      SettingsFinance.checkExpenseClass(newExpenseClass);
+      SettingsFinance.checkExpenseClass(newExpenseClass, newExpenseClass.source);
       SettingsFinance.checkEditDeleteIcon(newExpenseClass);
     },
   );

@@ -62,10 +62,14 @@ describe('MARC', () => {
           permissions.dataExportUploadExportDownloadFileViewLogs.gui,
         ]).then((userProperties) => {
           testData.userProperties = userProperties;
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           InventoryInstances.searchByTitle(testData.createdInstanceIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -98,10 +102,14 @@ describe('MARC', () => {
         'C369080 Export and Import "MARC Bibliographic" record with linked fields (which have $9 with UUID) (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C369080'] },
         () => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
 
           InventoryInstances.searchByTitle(testData.createdInstanceIDs[0]);
           InventoryInstances.selectInstanceCheckboxByIndex(0);

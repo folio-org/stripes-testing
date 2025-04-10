@@ -5,53 +5,55 @@ import Users from '../../../support/fragments/users/users';
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: Settings', () => {
-  let user;
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.ordersListConfigurationPath,
-          waiter: ListConfiguration.waitLoading,
-        });
+      cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.ordersListConfigurationPath,
+            waiter: ListConfiguration.waitLoading,
+          });
+        },
+      );
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C466279 Add tokens to routing list configuration (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        ListConfiguration.edit();
+        ListConfiguration.clickOnAddTokensInBody();
+        ListConfiguration.selectToken('routingList.name');
+        ListConfiguration.selectToken('routingList.notes');
+        ListConfiguration.addToken();
+        ListConfiguration.save();
+        ListConfiguration.preview();
+        ListConfiguration.checkTokenInPreview('Routing Name');
+        ListConfiguration.checkTokenInPreview('Routing notes');
+        ListConfiguration.closePreviewModal();
+        ListConfiguration.edit();
+        ListConfiguration.clickOnAddTokensInBody();
+        ListConfiguration.selectToken('routingList.name');
+        ListConfiguration.addToken();
+        ListConfiguration.selectToken('routingList.notes');
+        ListConfiguration.cancelAddToken();
+        ListConfiguration.cancelAndKeepEditing();
+        ListConfiguration.clickOnAddTokensInBody();
+        ListConfiguration.selectToken('routingList.name');
+        ListConfiguration.cancelAddToken();
+        ListConfiguration.cancel();
       },
     );
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C466279 Add tokens to routing list configuration (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
-    () => {
-      ListConfiguration.edit();
-      ListConfiguration.clickOnAddTokensInBody();
-      ListConfiguration.selectToken('routingList.name');
-      ListConfiguration.selectToken('routingList.notes');
-      ListConfiguration.addToken();
-      ListConfiguration.save();
-      ListConfiguration.preview();
-      ListConfiguration.checkTokenInPreview('Routing Name');
-      ListConfiguration.checkTokenInPreview('Routing notes');
-      ListConfiguration.closePreviewModal();
-      ListConfiguration.edit();
-      ListConfiguration.clickOnAddTokensInBody();
-      ListConfiguration.selectToken('routingList.name');
-      ListConfiguration.addToken();
-      ListConfiguration.selectToken('routingList.notes');
-      ListConfiguration.cancelAddToken();
-      ListConfiguration.cancelAndKeepEditing();
-      ListConfiguration.clickOnAddTokensInBody();
-      ListConfiguration.selectToken('routingList.name');
-      ListConfiguration.cancelAddToken();
-      ListConfiguration.cancel();
-    },
-  );
 });
