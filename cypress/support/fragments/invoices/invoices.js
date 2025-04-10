@@ -12,6 +12,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
   MultiSelectOption,
   Pane,
   PaneHeader,
@@ -798,7 +799,6 @@ export default {
       Button({ id: 'fundDistributions-add-button' }).click(),
       Selection('Fund ID*').open(),
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
-      saveAndClose.click(),
     ]);
     cy.wait(2000);
     cy.do(saveAndClose.click());
@@ -1089,6 +1089,7 @@ export default {
   },
 
   resetFilters: () => {
+    cy.wait(1500);
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
   },
@@ -1249,7 +1250,8 @@ export default {
         .click(),
     ]);
     cy.wait(4000);
-    cy.do(fundCodeFilterSection.find(MultiSelectOption(fundCode)).click());
+    cy.do(fundCodeFilterSection.find(MultiSelect({ id: 'fund-filter' })).fillIn(fundCode));
+    cy.do(MultiSelectOption(fundCode).click());
   },
 
   selectFiscalYearFilter: (fiscalYear) => {
