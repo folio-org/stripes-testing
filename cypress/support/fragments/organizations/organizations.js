@@ -19,6 +19,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  including,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import DateTools from '../../utils/dateTools';
@@ -272,12 +273,13 @@ export default {
   ) => {
     cy.wait(4000);
     cy.do([
+      Select('Integration type*').choose('Ordering'),
       Section({ id: 'integrationInfo' })
         .find(TextField('Integration name*'))
         .fillIn(integrationName),
       TextArea('Description').fillIn(integartionDescription),
-      ediSection.find(TextField('Vendor EDI code')).fillIn(vendorEDICode),
-      ediSection.find(TextField('Library EDI code')).fillIn(libraryEDICode),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
       ediSection.find(Button({ icon: 'info' })).click(),
       Checkbox({
         name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
@@ -294,11 +296,13 @@ export default {
     ).select(acquisitionMethod);
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
-      ftpSection.find(TextField('Server address')).fillIn(serverAddress),
-      ftpSection.find(TextField('FTP port')).fillIn(FTPport),
+      ftpSection.find(TextField(including('Server address'))).fillIn(serverAddress),
+      ftpSection.find(TextField(including('FTP port'))).fillIn(FTPport),
       ftpSection.find(TextField('Username')).fillIn('folio'),
       ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
+    ]);
+    cy.do([
       schedulingSection
         .find(
           Checkbox({
