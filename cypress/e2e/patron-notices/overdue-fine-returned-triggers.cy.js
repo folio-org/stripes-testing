@@ -26,7 +26,7 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -354,8 +354,8 @@ describe('Patron notices', () => {
           UsersCard.showOpenedFeeFines();
           UserAllFeesFines.clickRowCheckbox(0);
           UserAllFeesFines.paySelectedFeeFines();
-          PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-          PayFeeFaine.submitAndConfirm();
+          PayFeeFine.setPaymentMethod(testData.paymentMethod);
+          PayFeeFine.submitAndConfirm();
 
           cy.visit(TopMenu.circulationLogPath);
           // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid

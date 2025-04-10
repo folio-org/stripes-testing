@@ -1374,9 +1374,7 @@ export default {
       const noteColumnNames = columnNames.slice(
         columnNames.findIndex((item) => item === 'Publication range') + 1,
       );
-      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort((a, b) => {
-        return a.localeCompare(b);
-      });
+      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort();
 
       // verify alphabetical order
       expect(noteColumnNames).to.deep.equal(noteColumnNamesInAlphabeticOrder);

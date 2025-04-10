@@ -148,6 +148,7 @@ describe('Orders', () => {
             });
           })
           .then(() => {
+            cy.resetTenant();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.ordersPath,
               waiter: Orders.waitLoading,

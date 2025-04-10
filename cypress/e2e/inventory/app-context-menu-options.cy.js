@@ -80,7 +80,7 @@ describe('Inventory', () => {
       // #7 Fill in the "Keyword (title, contributor, identifier)" search box any existing Instance to retrieve the result list/ For example: "*"
       // Entered value is displayed in the search field
       // "Search" button is active
-      InventoryInstances.searchInstancesWithOption(defaultSearchOption, '*');
+      InventoryInstances.searchInstancesWithOption(defaultSearchOption, item.instanceName);
 
       // #8 Click "Search" button
       // A result list with instances is retrieved

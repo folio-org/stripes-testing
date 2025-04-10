@@ -117,6 +117,7 @@ describe('Inventory', () => {
             });
           });
 
+          cy.resetTenant();
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,

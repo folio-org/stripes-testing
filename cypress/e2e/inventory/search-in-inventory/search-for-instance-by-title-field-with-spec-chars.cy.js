@@ -74,6 +74,9 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C368027', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
+          cy.ifConsortia(() => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(8);
           testData.searchResults.forEach((result) => {
@@ -82,6 +85,9 @@ describe('Inventory', () => {
           InventoryInstances.resetAllFilters();
         });
 
+        cy.ifConsortia(() => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle('Harry Potter and the cursed child Parts one, two');
         InventorySearchAndFilter.checkRowsCount(3);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[0], true);
@@ -89,6 +95,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
+        cy.ifConsortia(() => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle(
           'Harry Potter & the cursed child : Parts one / two, (a new play by writer Jack Thorne).',
         );

@@ -8,7 +8,11 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import { APPLICATION_NAMES, INSTANCE_NOTE_IDS } from '../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+  INSTANCE_NOTE_IDS,
+} from '../../../support/constants';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -167,18 +171,31 @@ describe('bulk-edit', () => {
             row,
           );
         });
+
+        const headerValueToEdit = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.ADMINISTRATIVE_NOTE,
+            value: notes.administrativeNote,
+          },
+          {
+            header: 'Notes',
+            value: `Data quality note;${notes.dataQualityNote};false|Exhibitions note;${notes.exhibitionsNote};true`,
+          },
+        ];
+
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [
-          [`${marcInstance.hrid},MARC,,,single unit,,${notes.administrativeNote}`],
-        ]);
-        ExportFile.verifyFileIncludes(previewFileName, [
-          [`${folioItem.hrid},FOLIO,,,,,${notes.administrativeNote}`],
-        ]);
-        ExportFile.verifyFileIncludes(previewFileName, [
-          [
-            `Data quality note;${notes.dataQualityNote};false|Exhibitions note;${notes.exhibitionsNote};true`,
-          ],
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+          folioItem.instanceId,
+          headerValueToEdit,
+        );
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+          marcInstance.instanceId,
+          headerValueToEdit,
+        );
         ExportFile.verifyFileIncludes(previewFileName, ['Dissertation note'], false);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInChangesAccordion(

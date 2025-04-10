@@ -98,6 +98,7 @@ describe('Eureka', () => {
       'C514966 ECS | Eureka | Verify detail view of selected Authorization policy (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C514966'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();

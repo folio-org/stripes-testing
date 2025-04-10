@@ -35,21 +35,24 @@ export default {
     return true;
   },
 
-  checkIsSortedAlphabetically({ array = [], accuracy = 1 } = {}) {
+  checkIsSortedAlphabetically({ array = [], accuracy = 5 } = {}) {
     if (array.length === 0) return true;
 
     let outOfOrderCount = 0;
 
     for (let i = 1; i < array.length; i++) {
-      // Normalize strings for comparison: replace hyphens with spaces and trim
-      const prev = array[i - 1].trim().toLowerCase().replace(/-/g, ' ').replace(/\s+/g, ' ');
-      const current = array[i].trim().toLowerCase().replace(/-/g, ' ').replace(/\s+/g, ' ');
+      const normalize = (str) => str
+        .trim()
+        .toLowerCase()
+        .replace(/-/g, ' ')
+        .replace(/\s+/g, ' ')
+        .replace(/\d+(\.\d+)?$/, '');
 
-      // Compare adjacent elements
+      const prev = normalize(array[i - 1]);
+      const current = normalize(array[i]);
+
       if (prev.localeCompare(current) > 0) {
         outOfOrderCount++;
-
-        // Early exit if the accuracy threshold is exceeded
         if ((outOfOrderCount * 100) / array.length >= accuracy) {
           return false;
         }

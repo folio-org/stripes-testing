@@ -71,6 +71,7 @@ describe('Bulk-edit', () => {
   describe('In-app approach', () => {
     describe('Consortia', () => {
       before('create test data', () => {
+        cy.clearLocalStorage();
         cy.getAdminToken();
         cy.createTempUser([
           permissions.bulkEditEdit.gui,
@@ -151,6 +152,7 @@ describe('Bulk-edit', () => {
               });
           });
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

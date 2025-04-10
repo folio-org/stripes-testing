@@ -68,8 +68,8 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
         cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.MICROFORM}"` }).then(
-          (materilaTypes) => {
-            materialTypeId = materilaTypes.id;
+          (materialTypes) => {
+            materialTypeId = materialTypes.id;
           },
         );
         cy.getUserGroups({ limit: 1 }).then((patronGroups) => {
@@ -88,6 +88,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           },
           patronGroup: patronGroupId,
           departments: [],
+          type: 'staff',
         }).then((user) => {
           userData = { ...user };
         });

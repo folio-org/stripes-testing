@@ -137,6 +137,7 @@ describe('Eureka', () => {
       'C514962 ECS | Eureka | User is able to filter Authorization policies in Consortium manager from different tenants (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C514962'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();

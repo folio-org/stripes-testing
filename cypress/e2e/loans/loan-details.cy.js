@@ -16,7 +16,7 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -164,17 +164,27 @@ describe('Loans', () => {
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
 
       // Click linked value for item title
       UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        title: testData.folioInstances[0].instanceTitle,
-        expectedPage: 'Instance',
+      cy.ifConsortia(true, () => {
+        LoansPage.verifyLinkRedirectsCorrectPage({
+          title: testData.folioInstances[0].instanceTitle,
+          expectedPage: 'Local instance',
+        });
+      });
+      cy.ifConsortia(false, () => {
+        LoansPage.verifyLinkRedirectsCorrectPage({
+          title: testData.folioInstances[0].instanceTitle,
+          expectedPage: 'Instance',
+        });
       });
 
       // Click linked value for barcode
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         title: itemBarcode,
@@ -183,6 +193,7 @@ describe('Loans', () => {
 
       // Click linked value for Loan policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         href: '/settings/circulation/loan-policies',
@@ -191,6 +202,7 @@ describe('Loans', () => {
 
       // Click on linked value for Fine incurred
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyButtonRedirectsToCorrectPage({
         title: '100.00',
@@ -199,6 +211,7 @@ describe('Loans', () => {
 
       // Add another fee/fine to loan and click linked value for Fine incurred
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyButtonRedirectsToCorrectPage({
@@ -212,14 +225,15 @@ describe('Loans', () => {
       FeeFinesDetails.openActions();
       FeeFinesDetails.openPayModal();
       PayFeeFine.checkAmount(200);
-      PayFeeFine.setPaymentMethod(testData.paymentMethod);
       PayFeeFine.setAmount(200);
-      PayFeeFine.checkRestOfPay(200);
+      PayFeeFine.setPaymentMethod(testData.paymentMethod);
+      PayFeeFine.checkRestOfPay(0);
       PayFeeFine.submitAndConfirm();
       PayFeeFine.checkConfirmModalClosed();
 
       // Click on linked value for overdue policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         href: '/settings/circulation/fine-policies',
@@ -228,6 +242,7 @@ describe('Loans', () => {
 
       // Click on linked value for lost item policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({
         href: '/settings/circulation/lost-item-fee-policy',
@@ -236,6 +251,7 @@ describe('Loans', () => {
 
       // Click on linked value for Request queue
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      cy.wait(5000);
       UserLoans.openLoanDetails(itemBarcode);
       LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
     },

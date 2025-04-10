@@ -13,6 +13,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import {
   APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
   electronicAccessRelationshipId,
   electronicAccessRelationshipName,
   LOCATION_IDS,
@@ -39,6 +40,8 @@ const electronicAccess = [
   },
 ];
 const electronicBookplateNote = 'electronicBookplateNote';
+const electronicAccessTableHeadersInFile =
+  'URL relationship;URI;Link text;Materials specified;URL public note\n';
 const notes = {
   admin: 'adminNote',
   action: 'actionNote',
@@ -111,7 +114,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-        let contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+
+        const contentToVerify = `"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};${electronicAccess[0].linkText};${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
+
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [contentToVerify]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Electronic access');
         BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
@@ -141,7 +146,9 @@ describe('bulk-edit', () => {
         BulkEditActions.fillInSecondTextArea(notes.action, 3);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.findValue('Binding', 4);
+
         const possibleActions = ['Remove', 'Replace with'];
+
         BulkEditActions.verifyPossibleActions(possibleActions, 4);
         BulkEditActions.verifyCheckboxAbsentByRow(4);
         BulkEditActions.selectAction('Add note', 4);
@@ -167,7 +174,9 @@ describe('bulk-edit', () => {
         BulkEditActions.checkStaffOnlyCheckbox(9);
         BulkEditActions.verifyConfirmButtonDisabled(false);
         BulkEditActions.addNewBulkEditFilterString();
+
         const suppressFromDiscovery = 'true';
+
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 10);
         BulkEditActions.checkApplyToItemsRecordsCheckbox();
         BulkEditActions.deleteRow(2);
@@ -178,7 +187,6 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyStaffOnlyCheckbox(true, 7);
         BulkEditActions.verifyStaffOnlyCheckbox(true, 8);
         BulkEditActions.applyToItemsRecordsCheckboxExists(true);
-
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyAreYouSureForm(1, item.holdingsHRID);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
@@ -216,7 +224,6 @@ describe('bulk-edit', () => {
           'Suppress from discovery',
           suppressFromDiscovery,
         );
-
         BulkEditActions.clickKeepEditingBtn();
         BulkEditActions.uncheckStaffOnlyCheckbox(7);
         BulkEditActions.confirmChanges();
@@ -249,15 +256,70 @@ describe('bulk-edit', () => {
           'Reproduction note',
           `${notes.reproduction} (staff only)`,
         );
+
+        const editedHeaderValues = [
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE]: notes.admin,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ACTION_NOTE]: notes.action,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE]:
+              `${notes.binding} (staff only)`,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.COPY_NOTE]:
+              `${notes.copy} (staff only)`,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_BOOKPLATE_NOTE]: '',
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID]: item.holdingsHRID,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_TEMPORARY_LOCATION]:
+              LOCATION_NAMES.MAIN_LIBRARY_UI,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_PERMANENT_LOCATION]:
+              LOCATION_NAMES.MAIN_LIBRARY_UI,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.SUPPRESS_FROM_DISCOVERY]: true,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.NOTE]: `${notes.note} (staff only)`,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE]: notes.provenance,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION]:
+              `${notes.reproduction} (staff only)`,
+          },
+          {
+            [BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ELECTRONIC_ACCESS]:
+              `${electronicAccessTableHeadersInFile}${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}`,
+          },
+        ];
+
         BulkEditActions.downloadPreview();
-        contentToVerify = `${item.holdingsHRID},FOLIO,,,,${notes.admin},${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.MAIN_LIBRARY_UI},,,,,1,,,,,,,,,${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only),"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
-        ExportFile.verifyFileIncludes(previewFileName, [contentToVerify]);
+        FileManager.convertCsvToJson(previewFileName).then((csvFileData) => {
+          editedHeaderValues.forEach((headerValue) => {
+            expect(csvFileData[0]).to.include(headerValue);
+          });
+        });
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        contentToVerify = `${item.holdingsHRID},FOLIO,,,,${notes.admin},${LOCATION_NAMES.MAIN_LIBRARY_UI},${LOCATION_NAMES.MAIN_LIBRARY_UI},,,,,1,,,,,,,,,${notes.action},${notes.binding} (staff only),${notes.copy} (staff only),,${notes.note} (staff only),${notes.provenance},${notes.reproduction} (staff only),"URL relationship;URI;Link text;Materials specified;URL public note\n${electronicAccessRelationshipName.RESOURCE};${electronicAccess[0].uri};;${electronicAccess[0].materialsSpecification};${electronicAccess[0].publicNote}",`;
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [contentToVerify]);
+        FileManager.convertCsvToJson(changedRecordsFileName).then((csvFileData) => {
+          editedHeaderValues.forEach((headerValue) => {
+            cy.expect(csvFileData[0]).to.include(headerValue);
+          });
+        });
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', notes.admin);
         BulkEditSearchPane.verifyElectronicAccessElementByIndex(
           0,

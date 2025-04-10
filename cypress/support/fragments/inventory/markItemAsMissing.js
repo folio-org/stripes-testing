@@ -146,6 +146,7 @@ export default {
       },
       departments: [],
       patronGroup: null,
+      type: 'staff',
     };
     const requestData = {
       id: uuid(),

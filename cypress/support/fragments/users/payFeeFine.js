@@ -38,6 +38,7 @@ export default {
   },
   checkPartialPayConfirmation: () => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
   setAmount(amount) {
+    cy.wait(500);
     cy.do(amountTextfield.fillIn(amount.toString()));
     cy.wait(500);
   },
@@ -46,7 +47,10 @@ export default {
       .find(Button({ id: matching('clickable-confirmation-[0-9]+-cancel') }))
       .click(),
   ),
-  checkRestOfPay: (rest) => cy.expect(rootModal.find(HTML(including(`Remaining amount:\n$${rest.toFixed(2)}`))).exists()),
+  checkRestOfPay(rest) {
+    cy.wait(500);
+    cy.expect(rootModal.find(HTML(including(`Remaining amount:\n$${rest.toFixed(2)}`))).exists());
+  },
   checkConfirmModalClosed: () => cy.expect(HTML(including('Pay fee/fine')).absent()),
   payFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({
     method: 'POST',

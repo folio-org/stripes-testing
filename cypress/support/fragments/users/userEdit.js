@@ -238,7 +238,6 @@ export default {
     this.clearBarcode();
     this.changeMiddleName(user.middleName);
     this.changeLastName(user.lastName);
-    this.changeUserType(user.userType);
     this.changePreferredFirstName(user.preferredFirstName);
     this.changeExpirationDate(user.expirationDate);
     this.changeExternalSystemId(user.externalSystemId);
@@ -247,6 +246,7 @@ export default {
     this.changeMobilePhone(user.mobilePhone);
     this.changePreferredContact(user.preferredContact);
     this.changeStatus(user.status);
+    this.changeUserType(user.userType);
   },
 
   checkKeyValue(label, value) {
@@ -476,8 +476,14 @@ export default {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
-    cy.wait(2000);
+    cy.wait(3000);
     cy.expect(rootPane.absent());
+  },
+
+  confirmChangingUserType() {
+    cy.wait(1000);
+    cy.do(Modal().find(Button('Confirm')).click());
+    cy.wait(500);
   },
 
   saveEditedUser() {

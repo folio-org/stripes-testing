@@ -59,10 +59,14 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.login(users.userAProperties.username, users.userAProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userAProperties.username, users.userAProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
       });
 

@@ -29,6 +29,8 @@ describe('Consortia', () => {
             Permissions.consortiaSettingsSettingsMembershipEdit.gui,
             Permissions.consortiaSettingsSettingsMembershipView.gui,
           ]);
+
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: SettingsMenu.consortiumManagerPath,
             waiter: ConsortiumManager.waitLoading,
@@ -46,11 +48,11 @@ describe('Consortia', () => {
       'C386869 "Consortium manager" option is displayed in "Settings" only for Central Tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet'] },
       () => {
-        ConsortiumManager.varifyConsortiumManagerOnPage();
+        ConsortiumManager.verifyConsortiumManagerOnPage();
         ConsortiumManager.switchActiveAffiliationExists();
         ConsortiumManager.switchActiveAffiliation(tenantNames.college);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-        ConsortiumManager.varifyConsortiumManagerIsAbsent();
+        ConsortiumManager.verifyConsortiumManagerIsAbsent();
       },
     );
   });

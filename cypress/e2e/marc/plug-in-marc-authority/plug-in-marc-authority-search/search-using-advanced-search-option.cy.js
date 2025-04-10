@@ -54,6 +54,7 @@ describe('MARC', () => {
       };
 
       before('Creating user', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -79,7 +80,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });
@@ -131,6 +132,10 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C380573'] },
         () => {
           MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery, true);
+          cy.ifConsortia(() => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.checkRowsCount(4);
           MarcAuthorities.selectItem(testData.authRows.interboroughAuth.title, false);
           MarcAuthorities.checkFieldAndContentExistence(

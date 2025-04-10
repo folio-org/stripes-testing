@@ -38,8 +38,8 @@ describe('Consortium manager', () => {
   describe('Manage local settings', () => {
     describe('Manage local Patron groups', () => {
       before('Create test data', () => {
-        cy.getAdminToken();
         cy.resetTenant();
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
           Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
@@ -56,7 +56,6 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
           ]);
-          cy.resetTenant();
         });
       });
 
@@ -86,6 +85,7 @@ describe('Consortium manager', () => {
         'C410705 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local patron groups of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,

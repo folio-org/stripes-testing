@@ -54,6 +54,7 @@ const defaultUser = {
   // should be defined
   patronGroup: undefined,
   departments: [],
+  type: 'staff',
 };
 
 export default {
@@ -252,13 +253,15 @@ export default {
       TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
       TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
       Select({ id: 'adduser_group' }).choose(userData.patronGroup),
-      Select({ id: 'type' }).choose(userData.userType),
       TextField({ name: 'barcode' }).fillIn(userData.barcode),
       TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
       TextField({ id: 'adduser_username' }).fillIn(userData.username),
-      Button({ id: 'clickable-save' }).click(),
-      Dropdown('Actions').absent(),
-    ]);
+      Select({ id: 'type' }).choose(userData.userType ? userData.userType : 'Staff'),
+    ])
+      .then(() => {
+        cy.wait(1000);
+        cy.do(Button({ id: 'clickable-save' }).click());
+      });
   },
 
   verifyUsernameMandatory(mandatory = true) {
@@ -273,8 +276,12 @@ export default {
     cy.expect(Section({ id: 'users-search-results-pane' }).exists());
   },
 
-  closeWithoutSavingButton: () => {
-    cy.do([closeWithoutSavingButton.click()]);
+  cancel() {
+    cy.do(Button('Cancel').click());
+  },
+
+  closeWithoutSavingButton() {
+    cy.do(closeWithoutSavingButton.click());
   },
 
   checkIsUserCreated: (userData) => {

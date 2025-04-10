@@ -15,6 +15,7 @@ describe('Notes', () => {
   let agreementId;
 
   before('Creating data', () => {
+    cy.getAdminToken();
     cy.createTempUser([
       Permissions.uiUsersView.gui,
       Permissions.uiAgreementsSearchAndView.gui,
@@ -27,10 +28,9 @@ describe('Notes', () => {
       Permissions.uiNotesSettingsEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
-    });
-    cy.getAdminToken();
-    Agreements.createViaApi().then((agreement) => {
-      agreementId = agreement.id;
+      Agreements.createViaApi().then((agreement) => {
+        agreementId = agreement.id;
+      });
     });
   });
 
@@ -60,6 +60,8 @@ describe('Notes', () => {
       NewNote.verifyNewNoteIsDisplayed();
       NewNote.verifyNoteTypeExists(noteType);
       cy.visit(TopMenu.notesPath);
+      NoteTypes.waitLoading();
+      cy.wait(2000);
       NoteTypes.deleteNoteType(noteType);
       InteractorsTools.checkCalloutMessage(getCalloutMessage(noteType));
       NoteTypes.checkNoteTypeIsNotDisplayed(noteType);

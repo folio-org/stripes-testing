@@ -43,6 +43,7 @@ describe('Data Import', () => {
           ]);
         })
         .then(() => {
+          cy.resetTenant();
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,

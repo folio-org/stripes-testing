@@ -15,10 +15,10 @@ import TransferAccounts from '../../support/fragments/settings/users/transferAcc
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import CancelFeeFaine from '../../support/fragments/users/cancelFeeFaine';
+import CancelFeeFine from '../../support/fragments/users/cancelFeeFine';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -261,7 +261,7 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(
+        PayFeeFine.payFeeFineViaApi(
           getActionBody(testData.paymentMethodName, partiallAmount),
           testData.feeFineId,
         );
@@ -285,7 +285,7 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(
+        PayFeeFine.payFeeFineViaApi(
           getActionBody(testData.paymentMethodName, fullAmount),
           testData.feeFineId,
         );
@@ -309,7 +309,7 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(
+        PayFeeFine.payFeeFineViaApi(
           getActionBody(testData.paymentMethodName, fullAmount),
           testData.feeFineId,
         );
@@ -337,7 +337,7 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(
+        PayFeeFine.payFeeFineViaApi(
           getActionBody(testData.paymentMethodName, fullAmount),
           testData.feeFineId,
         );
@@ -413,7 +413,7 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        CancelFeeFaine.cancelFeeFineViaApi(
+        CancelFeeFine.cancelFeeFineViaApi(
           {
             notifyPatron: false,
             comments: `STAFF : ${getTestEntityValue()}`,

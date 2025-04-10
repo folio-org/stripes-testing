@@ -173,7 +173,9 @@ describe('bulk-edit', () => {
         QueryModal.fillInValueTextfield(
           `${randomNumberForTitles} Test Instance notes - Staff only`,
         );
+        cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
         QueryModal.clickTestQuery();
+        QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
         QueryModal.verifyPreviewOfRecordsMatched();
         QueryModal.clickRunQuery();
         QueryModal.verifyClosed();

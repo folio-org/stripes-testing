@@ -139,6 +139,7 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,

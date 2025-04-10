@@ -1,7 +1,7 @@
 describe.skip('Specifications sync', () => {
   it(
     'Sync marc bibliographic and marc authority records fields (smoke tests)',
-    { tags: ['smoke', 'spitfire'] },
+    { tags: ['smokeSkip', 'spitfire'] },
     () => {
       cy.getAdminToken();
       cy.getSpecificatoinIds().then((specifications) => {
@@ -13,7 +13,7 @@ describe.skip('Specifications sync', () => {
 
   it(
     'Sync marc bibliographic and marc authority records fields (criticalPath tests)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['criticalPathSkip', 'spitfire'] },
     () => {
       cy.getAdminToken();
       cy.getSpecificatoinIds().then((specifications) => {
@@ -25,7 +25,7 @@ describe.skip('Specifications sync', () => {
 
   it(
     'Sync marc bibliographic and marc authority records fields (extendedPath tests)',
-    { tags: ['extendedPath', 'spitfire'] },
+    { tags: ['extendedPathSkip', 'spitfire'] },
     () => {
       cy.getAdminToken();
       cy.getSpecificatoinIds().then((specifications) => {

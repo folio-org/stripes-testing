@@ -51,6 +51,7 @@ describe('MARC', () => {
                     Permissions.uiSettingsViewAuthorityFiles.gui,
                     Permissions.uiSettingsManageAuthorityFiles.gui,
                   ]);
+                  cy.resetTenant();
                 },
               );
             },

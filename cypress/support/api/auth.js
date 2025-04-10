@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import Tenant from '../tenant';
 import { adminUsernames } from '../dictionary/affiliations';
 
@@ -104,5 +105,34 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 10_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
-  cy.wait('@/authn/refresh', { timeout });
+  cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
+});
+
+Cypress.Commands.add('getConsortiaStatus', () => {
+  cy.okapiRequest({
+    path: 'consortia-configuration',
+    failOnStatusCode: false,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body, status }) => {
+    cy.log('getConsortiaStatus', body, status);
+    if (status === 200) {
+      return cy.wrap({ centralTenantId: body.centralTenantId, isConsortia: true });
+    }
+    return cy.wrap({ centralTenantId: null, isConsortia: false });
+  });
+});
+
+Cypress.Commands.add('ifConsortia', (condition, callback) => {
+  return cy.wrap(Cypress.env('isConsortia')).then((isConsortiaStatus) => {
+    if (isConsortiaStatus === undefined) {
+      cy.getConsortiaStatus().then(({ isConsortia }) => {
+        Cypress.env('isConsortia', isConsortia);
+        if (condition === isConsortia) {
+          return cy.wrap(callback());
+        }
+      });
+    } else if (condition === isConsortiaStatus) {
+      return cy.wrap(callback());
+    }
+  });
 });

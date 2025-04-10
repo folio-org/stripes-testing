@@ -30,6 +30,7 @@ describe('Users', () => {
               email: 'test@folio.org',
             },
             departments: [],
+            type: 'staff',
           }).then((newUserProperties) => {
             usersWithSameName[index] = newUserProperties;
           });
@@ -45,6 +46,7 @@ describe('Users', () => {
               email: 'test@folio.org',
             },
             departments: [],
+            type: 'staff',
           }).then((newUserProperties) => {
             usersWithSameLastName[index] = newUserProperties;
           });

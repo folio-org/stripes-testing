@@ -42,6 +42,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Create user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 

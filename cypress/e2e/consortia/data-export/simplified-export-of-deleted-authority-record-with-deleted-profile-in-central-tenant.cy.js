@@ -50,7 +50,7 @@ describe('Data Export', () => {
           // delete authority record
           MarcAuthority.deleteViaAPI(createdAuthorityId);
         });
-
+        cy.resetTenant();
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,

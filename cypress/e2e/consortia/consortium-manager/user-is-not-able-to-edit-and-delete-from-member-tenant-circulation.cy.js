@@ -68,6 +68,8 @@ describe('Consortium manager', () => {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
+          cy.reload();
+          cy.wait(5000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager();
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.circulation);
@@ -96,19 +98,15 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
-
-        cy.resetTenant();
         cy.getAdminToken();
 
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
 
-        cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
+        cy.setTenant(Affiliations.University);
+        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
+
+        cy.resetTenant();
         RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
         Users.deleteViaApi(testData.user400666.userId);
       });

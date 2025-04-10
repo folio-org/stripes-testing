@@ -59,7 +59,11 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        cy.reload();
+        DataImport.waitLoading();
+      }, 20_000).then(() => {
         testData.instanceSearchQueries.forEach((query) => {
           InventoryInstances.getInstancesViaApi({
             limit: 100,
@@ -108,7 +112,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifyAlternativeTitle(0, 1, including(testData.alternativeTitles[i]));
         InventoryInstances.resetAllFilters();

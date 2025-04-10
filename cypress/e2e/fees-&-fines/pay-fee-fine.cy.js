@@ -10,7 +10,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';

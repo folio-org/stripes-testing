@@ -76,10 +76,14 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
@@ -97,6 +101,9 @@ describe('Inventory', () => {
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);
+          cy.ifConsortia(() => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -111,6 +118,9 @@ describe('Inventory', () => {
         });
 
         InventoryInstances.searchByTitle('Philippine Question Books No 10 in catalog');
+        cy.ifConsortia(() => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
       },

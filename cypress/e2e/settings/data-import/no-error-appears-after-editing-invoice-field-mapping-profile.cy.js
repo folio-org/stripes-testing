@@ -22,13 +22,14 @@ describe('Data Import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: BATCH_GROUP.AMHERST,
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,
     };
     const newMappingProfileName = `C491301 newAutoTestMappingProf.${getRandomPostfix()}`;
 
     before('Create user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 

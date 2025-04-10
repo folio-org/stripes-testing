@@ -73,6 +73,7 @@ describe('MARC', () => {
                 Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
               ]);
 
+              cy.resetTenant();
               cy.login(testData.userProperties.username, testData.userProperties.password, {
                 path: TopMenu.marcAuthorities,
                 waiter: MarcAuthorities.waitLoading,

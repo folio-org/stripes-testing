@@ -566,6 +566,7 @@ export default {
   },
 
   verifyDirection(header, direction = 'descending') {
+    cy.wait(3000);
     cy.get('[class^="mclHeader"]')
       .contains(header)
       .then((mclHeader) => {

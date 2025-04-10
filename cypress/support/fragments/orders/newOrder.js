@@ -4,6 +4,7 @@ import NewOrganization from '../organizations/newOrganization';
 const getDefaultOrder = ({ vendorId, poNumber, manualPo, orderType = 'One-Time' } = {}) => {
   const defaultOrder = {
     id: uuid(),
+    approved: true,
     vendor: vendorId,
     poNumber,
     manualPo,

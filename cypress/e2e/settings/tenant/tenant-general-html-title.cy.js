@@ -2,7 +2,6 @@ import { Permissions } from '../../../support/dictionary';
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
 import Localication from '../../../support/fragments/settings/tenant/general/localication';
-import SSOSettings from '../../../support/fragments/settings/tenant/general/ssoSettings';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
@@ -28,7 +27,6 @@ describe('Tenant', () => {
         Permissions.uiTenantSettingsServicePointsCRUD.gui,
         Permissions.settingsTenantEditLanguageLocationAndCurrency.gui,
         Permissions.uiSettingsTenantPlugins.gui,
-        Permissions.uiSettingsTenantSSO.gui,
         Permissions.uiSettingsTenantAddresses.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
@@ -72,11 +70,6 @@ describe('Tenant', () => {
         TenantPane.selectTenant(TENANTS.PREFERRED_PLUGINS);
         // Verify opened page title format: HTML page title is "Tenant settings - Preferred plugins - FOLIO"
         TenantPane.verifyPageTitle('Tenant settings - Preferred plugins - FOLIO');
-        // Click "SSO settings" option under "General" label
-        TenantPane.selectTenant(TENANTS.SSO_SETTINGS);
-        SSOSettings.waitLoading();
-        // Verify opened page title format: HTML page title is "Tenant settings - SSO settings - FOLIO"
-        TenantPane.verifyPageTitle('Tenant settings - SSO settings - FOLIO');
         // Click "Service points" option under "General" label
         TenantPane.selectTenant(TENANTS.SERVICE_POINTS);
         ServicePoints.waitLoading();

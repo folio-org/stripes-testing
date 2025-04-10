@@ -79,6 +79,7 @@ describe('Eureka', () => {
       'C503093 ECS | Eureka | A user with not appropriate capabilities is not able to view authorization roles (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C503093'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();

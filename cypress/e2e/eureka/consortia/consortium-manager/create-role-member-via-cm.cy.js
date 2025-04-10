@@ -130,6 +130,7 @@ describe('Eureka', () => {
       'C523593 ECS | Eureka | Create authorization role for member tenant through "Consortium manager" (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523593'] },
       () => {
+        cy.resetTenant();
         cy.login(tempUser.username, tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.clickSelectMembers();

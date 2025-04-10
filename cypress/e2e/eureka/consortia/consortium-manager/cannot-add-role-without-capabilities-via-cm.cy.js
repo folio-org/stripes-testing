@@ -83,6 +83,7 @@ describe('Eureka', () => {
       'C523582 ECS | Eureka | User with insufficient capabilities cannot add authorization role through "Consortium manager" (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C523582'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);

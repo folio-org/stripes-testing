@@ -105,6 +105,7 @@ describe('Eureka', () => {
         cy.setTenant(Affiliations.University);
         if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.testUser.userId, [testData.roleM2AId]);
         else cy.addRolesToNewUserApi(testData.testUser.userId, [testData.roleM2AId]);
+        cy.resetTenant();
         cy.login(testData.tempUser.username, testData.tempUser.password, {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,

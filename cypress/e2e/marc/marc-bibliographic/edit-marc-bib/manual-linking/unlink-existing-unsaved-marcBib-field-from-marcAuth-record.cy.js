@@ -119,7 +119,6 @@ describe('MARC', () => {
         ];
 
         before('Creating user and test data', () => {
-          cy.loginAsAdmin();
           cy.getAdminToken().then(() => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,

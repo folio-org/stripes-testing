@@ -23,8 +23,7 @@ describe('Inventory', () => {
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
       });
-      cy.setTenant(Affiliations.College);
-      cy.getCollegeAdminToken()
+      cy.setTenant(Affiliations.College)
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
@@ -79,7 +78,6 @@ describe('Inventory', () => {
         });
 
       cy.resetTenant();
-      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
 

@@ -48,6 +48,7 @@ describe('Consortia', () => {
           Permissions.uiUsersPermissionsView.gui,
           Permissions.uiUsersView.gui,
         ]);
+        cy.resetTenant();
         cy.login(user.username, user.password, {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
@@ -62,7 +63,6 @@ describe('Consortia', () => {
     Users.deleteViaApi(user.userId);
     cy.setTenant(Affiliations.College);
     Users.deleteViaApi(testUser.id);
-    cy.resetTenant();
   });
 
   it(

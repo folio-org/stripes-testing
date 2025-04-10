@@ -322,6 +322,7 @@ describe('Data Import', () => {
           });
         });
       });
+
       cy.waitForAuthRefresh(() => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,

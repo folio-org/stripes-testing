@@ -209,6 +209,7 @@ describe('Data Import', () => {
       'C411795 User can update "MARC Bib" in Central tenant via import and check updated in member tenant (consortia) (folijet)',
       { tags: ['criticalPathECS', 'folijet', 'C411795'] },
       () => {
+        cy.resetTenant();
         cy.login(users.userAProperties.username, users.userAProperties.password);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

@@ -173,6 +173,7 @@ describe('Eureka', () => {
       cy.addCapabilitiesToNewRoleApi(roleCollegeId, capabIdsCollege);
       cy.setTenant(Affiliations.University);
       cy.addCapabilitySetsToNewRoleApi(roleUniversityId, capabSetIdsUniversity);
+      cy.resetTenant();
       cy.login(tempUser.username, tempUser.password);
     });
 

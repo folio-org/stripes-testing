@@ -45,6 +45,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
         InventoryInstances.createInstanceViaApi(
@@ -89,11 +90,16 @@ describe('Inventory', () => {
       'C380405 Browse subjects pane remains same results when user switches to search pane and back (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C380405', 'eurekaPhase1'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventorySearchAndFilter.selectBrowseSubjects();
+        BrowseSubjects.waitForSubjectToAppear(testData.inventorySubject);
         InventorySearchAndFilter.browseSubjectsSearch(testData.inventorySubject);
         BrowseSubjects.checkValueIsBold(testData.inventorySubject);
 

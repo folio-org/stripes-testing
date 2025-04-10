@@ -74,6 +74,7 @@ describe('Inventory', () => {
           Permissions.uiInventoryViewCreateInstances.gui,
         ]);
       });
+      cy.resetTenant();
     });
 
     after('Delete test data', () => {

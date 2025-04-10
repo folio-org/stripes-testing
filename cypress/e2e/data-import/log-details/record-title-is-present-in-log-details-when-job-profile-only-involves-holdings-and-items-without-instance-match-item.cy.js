@@ -186,6 +186,7 @@ describe('Data Import', () => {
         ExportNewJobProfile.createNewJobProfileViaApi(exportJobProfileName, response.body.id);
       });
 
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,

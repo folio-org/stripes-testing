@@ -71,6 +71,7 @@ describe('Orders', () => {
 
             Orders.createOrderViaApi(testData.order).then((orderResponse) => {
               testData.order = orderResponse;
+              cy.setTenant(Affiliations.College);
               cy.loginAsCollegeAdmin({
                 path: TopMenu.ordersPath,
                 waiter: Orders.waitLoading,

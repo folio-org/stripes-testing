@@ -79,11 +79,14 @@ describe('MARC', () => {
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
-
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -141,7 +144,7 @@ describe('MARC', () => {
             QuickMarcEditor.afterDeleteNotification(fieldsToUpdate[1].tag);
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.checkNoDeletePlaceholder();

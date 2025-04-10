@@ -122,25 +122,31 @@ describe('MARC', () => {
             column: 'Type of heading',
             expectedValues: testData.headingTypes,
           });
+
           MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[0]);
+          cy.wait(2000);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
             expectedValues: testData.headingTypes[0],
           });
 
           MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[1]);
+          cy.wait(2000);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
             expectedValues: testData.headingTypes,
           });
 
           MarcAuthorities.unselectHeadingType(testData.headingTypes[0]);
+          cy.wait(2000);
+
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
             expectedValues: testData.headingTypes[1],
           });
 
           MarcAuthorities.resetTypeOfHeading();
+          cy.wait(2000);
           MarcAuthorities.verifyColumnValuesOnlyExist({
             column: 'Type of heading',
             expectedValues: testData.headingTypes,

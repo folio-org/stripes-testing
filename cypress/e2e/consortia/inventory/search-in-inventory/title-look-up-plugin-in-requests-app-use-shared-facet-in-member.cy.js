@@ -137,6 +137,7 @@ describe('Inventory', () => {
           );
         })
         .then(() => {
+          cy.resetTenant();
           cy.login(users.userProperties.username, users.userProperties.password).then(() => {
             ConsortiumManager.switchActiveAffiliation(
               tenantNames.central,

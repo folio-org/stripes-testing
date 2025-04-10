@@ -6,7 +6,6 @@ describe('ui-organizations: Search organization', () => {
   const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;

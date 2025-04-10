@@ -2,7 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -11,17 +10,15 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import { HOLDING_NOTES } from '../../../support/constants';
+import { BULK_EDIT_TABLE_COLUMN_HEADERS, HOLDING_NOTES } from '../../../support/constants';
 
 let user;
-
 const notes = {
   admin: 'Admin_Note_text',
   binding: 'Note_text',
   provenance: 'provenance-Note_text',
   reproduction: 'reproduction-Note_text',
 };
-
 const item = {
   barcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
@@ -93,10 +90,28 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
         BulkEditActions.downloadMatchedResults();
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [`FOLIO,,,,${notes.admin},`]);
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `,${notes.binding},,,,${notes.provenance},`,
-        ]);
+
+        const initialHeaderValues = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+            value: notes.admin,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE,
+            value: notes.binding,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE,
+            value: notes.provenance,
+          },
+        ];
+
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          matchedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+          item.holdingHRID,
+          initialHeaderValues,
+        );
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
           'Binding note',
@@ -109,25 +124,48 @@ describe('bulk-edit', () => {
         BulkEditActions.noteRemoveAll('Binding', 1);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.addItemNote('Reproduction', notes.reproduction, 2);
-
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Administrative note', ['']);
         BulkEditActions.verifyChangesInAreYouSureForm('Binding note', ['']);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, ['FOLIO,,,,,']);
-        ExportFile.verifyFileIncludes(previewFileName, [
-          `,${notes.provenance},${notes.reproduction},`,
-        ]);
+
+        const editedHeaderValues = [
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.ADMINISTRATIVE_NOTE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.BINDING_NOTE,
+            value: '',
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.PROVENANCE_NOTE,
+            value: notes.provenance,
+          },
+          {
+            header: BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.REPRODUCTION,
+            value: notes.reproduction,
+          },
+        ];
+
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          previewFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+          item.holdingHRID,
+          editedHeaderValues,
+        );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Binding note', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, ['FOLIO,,,,,']);
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,${notes.provenance},${notes.reproduction},`,
-        ]);
+        BulkEditFiles.verifyHeaderValueInRowByIdentifier(
+          changedRecordsFileName,
+          BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_HRID,
+          item.holdingHRID,
+          editedHeaderValues,
+        );
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToHoldings();

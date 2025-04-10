@@ -7,7 +7,7 @@ const { createTestRailClient } = require('./helpers/api.client');
 const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
-const selectedStatus = [status.Failed, status.Retest, status.Untested];
+const selectedStatus = [status.Untested];
 const selectedTeams = [
   team.Firebird,
   team.Folijet,

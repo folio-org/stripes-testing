@@ -60,6 +60,7 @@ describe('Data Export', () => {
           permissions: userPermissionSet,
         });
 
+        cy.resetTenant();
         cy.login(users.username, users.password, {
           path: TopMenu.marcAuthorities,
           waiter: MarcAuthorities.waitLoading,

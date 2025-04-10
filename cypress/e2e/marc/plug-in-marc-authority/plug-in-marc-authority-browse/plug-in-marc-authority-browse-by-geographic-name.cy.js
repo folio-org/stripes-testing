@@ -63,10 +63,14 @@ describe('MARC', () => {
       });
 
       beforeEach('Login to the application', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
 
       after('Deleting created user', () => {
@@ -95,7 +99,7 @@ describe('MARC', () => {
           MarcAuthorities.selectTitle(testData.value);
           MarcAuthorities.checkFieldAndContentExistence('151', testData.value);
           InventoryInstance.checkRecordDetailPage(testData.value);
-          MarcAuthorities.searchBy('Personal name', 'North End (Boston, Mass.) C380553');
+          MarcAuthorities.searchBy(testData.searchOption, 'North End (Boston, Mass.) C380553');
           MarcAuthorities.selectTitle('North End (Boston, Mass.) C380553');
           InventoryInstance.checkRecordDetailPage('North End (Boston, Mass.) C380553');
         },

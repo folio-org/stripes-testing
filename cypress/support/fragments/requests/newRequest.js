@@ -197,8 +197,10 @@ export default {
 
   enterHridInfo(hrid, selectTLR = true) {
     cy.wait(1000);
-    if (selectTLR) cy.do(titleLevelRequest.click());
-    cy.wait(1000);
+    if (selectTLR) {
+      cy.do(titleLevelRequest.checkIfNotSelected());
+      cy.wait(1000);
+    }
     try {
       cy.do(instanceHridInput.fillIn(hrid));
     } catch (e) {

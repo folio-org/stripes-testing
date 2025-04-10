@@ -27,6 +27,7 @@ describe('Inventory', () => {
                 Permissions.crudClassificationIdentifierTypes.gui,
               ]);
 
+              cy.resetTenant();
               cy.login(user.username, user.password);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');

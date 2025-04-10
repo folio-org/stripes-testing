@@ -25,6 +25,7 @@ describe('Inventory', () => {
       'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.uiInventorySingleRecordImport.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -57,6 +58,7 @@ describe('Inventory', () => {
         Z3950TargetProfiles.create();
         NewTargetProfile.newFormContains();
         NewTargetProfile.fillName(targetProfileName);
+        cy.wait(1500);
         NewTargetProfile.save();
         NewTargetProfile.verifyErrorMessageIsPresented();
         NewTargetProfile.verifyJobProfileForImportCreateAccordion();
@@ -76,6 +78,7 @@ describe('Inventory', () => {
         NewTargetProfile.removeJobProfileForImportCreate(secondCreateProfileName, secondRow);
         NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
         NewTargetProfile.setDefaultJobProfileForUpdate();
+        cy.wait(5000);
         NewTargetProfile.save();
         Z3950TargetProfiles.verifyTargetProfileIsCreated(targetProfileName);
 

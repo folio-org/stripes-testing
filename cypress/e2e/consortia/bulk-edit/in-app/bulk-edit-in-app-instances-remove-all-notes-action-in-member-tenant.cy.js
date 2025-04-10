@@ -133,6 +133,7 @@ describe('Bulk-edit', () => {
               });
           });
 
+          cy.resetTenant();
           cy.login(user.username, user.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

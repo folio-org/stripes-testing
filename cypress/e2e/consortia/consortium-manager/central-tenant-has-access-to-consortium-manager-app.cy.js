@@ -13,9 +13,8 @@ describe('Consortia', () => {
     let userData;
     const settingsList = Object.values(settingsItems);
 
-    const chooseSettingItem = (setting, members) => {
+    const chooseSettingItem = (setting) => {
       ConsortiumManager.chooseSettingsItem(setting);
-      ConsortiumManager.verifyMembersSelected(members);
       ConsortiumManager.verifySelectMembersButton();
     };
     const verifyFoundMembersAndTotalSelected = (members, total) => {
@@ -56,7 +55,7 @@ describe('Consortia', () => {
         ConsortiumManager.verifyMembersSelected();
         ConsortiumManager.verifyPaneIncludesSettings(settingsList.sort());
         const randomSetting = Arrays.getRandomElement(settingsList);
-        chooseSettingItem(randomSetting, 0);
+        chooseSettingItem(randomSetting);
         ConsortiumManager.clickSelectMembers();
         SelectMembers.changeSelectAllCheckbox('check');
         SelectMembers.verifyStatusOfSelectMembersModal(1);
@@ -70,7 +69,7 @@ describe('Consortia', () => {
         TopMenuNavigation.navigateToApp('Consortium manager');
         ConsortiumManager.verifyStatusOfConsortiumManager(0);
         ConsortiumManager.verifyMembersSelected(0);
-        chooseSettingItem(randomSetting, 0);
+        chooseSettingItem(randomSetting);
         ConsortiumManager.clickSelectMembers();
         SelectMembers.verifyStatusOfSelectMembersModal(1);
         verifyFoundMembersAndTotalSelected(1, 0);

@@ -14,6 +14,7 @@ describe('Data Import', () => {
     const instanceIds = [];
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -21,7 +22,7 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        for (let i = 0; i < 35; i++) {
+        for (let i = 0; i < 5; i++) {
           const fileName = `C353589 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(

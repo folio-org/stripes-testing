@@ -51,6 +51,7 @@ describe('Inventory', () => {
               Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
             ]);
 
+            cy.resetTenant();
             cy.login(user.username, user.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

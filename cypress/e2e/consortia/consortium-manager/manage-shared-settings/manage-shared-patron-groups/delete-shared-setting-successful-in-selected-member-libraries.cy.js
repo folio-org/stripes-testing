@@ -38,7 +38,6 @@ describe('Consortia', () => {
                 },
               );
               cy.setTenant(Affiliations.College);
-              cy.getCollegeAdminToken();
               cy.createTempUser([], sharedPatronGroup.payload.group).then((userAProperties) => {
                 userAData = userAProperties;
               });
@@ -79,7 +78,6 @@ describe('Consortia', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userBData.userId);
           cy.setTenant(Affiliations.College);
-          cy.getCollegeAdminToken();
           Users.deleteViaApi(userAData.userId);
           cy.getUserGroups({
             limit: 1,

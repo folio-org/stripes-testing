@@ -74,6 +74,7 @@ describe('Eureka', () => {
       'C503095 ECS | Eureka | User with insufficient capability sets for member tenant is not able to view authorization roles associated to that tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C503095'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password).then(() => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           ConsortiumManager.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);

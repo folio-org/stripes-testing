@@ -46,6 +46,7 @@ describe('Inventory', () => {
       'C411289 (CONSORTIA) Check the action of the "Share local instance" button on Source = FOLIO Instance on Member tenant (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C411289'] },
       () => {
+        cy.resetTenant();
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,

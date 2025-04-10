@@ -4,14 +4,14 @@ import getRandomPostfix, { getTestEntityValue } from '../../support/utils/string
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import CancelFeeFine from '../../support/fragments/users/cancelFeeFaine';
+import CancelFeeFine from '../../support/fragments/users/cancelFeeFine';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import RefundReasons from '../../support/fragments/settings/users/refundReasons';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../support/dictionary/permissions';
-import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserEdit from '../../support/fragments/users/userEdit';

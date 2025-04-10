@@ -137,7 +137,7 @@ describe('MARC', () => {
                 InventoryInstances.waitContentLoading();
                 cy.reload();
                 InventoryInstances.waitContentLoading();
-              }, 20_000);
+              }, 30_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -151,6 +151,7 @@ describe('MARC', () => {
                 createdRecordIDs.push(holdingsID);
               });
 
+              cy.resetTenant();
               cy.waitForAuthRefresh(() => {
                 cy.login(users.userProperties.username, users.userProperties.password, {
                   path: TopMenu.inventoryPath,

@@ -84,7 +84,17 @@ export default {
   createViaUi(manualCharge) {
     cy.wait(500);
     SettingsPane.clickAddNewBtn();
-    cy.wait(500);
+    cy.wait(2000);
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal---]').length > 0) {
+        cy.do(Modal().find(Button('Cancel')).click());
+        cy.wait(1000);
+        SettingsPane.clickAddNewBtn();
+      } else {
+        cy.log("Modal didn't appear");
+      }
+    });
+
     this.fillInFields(manualCharge);
   },
   editViaUi(manualCharge, newManualCharge) {

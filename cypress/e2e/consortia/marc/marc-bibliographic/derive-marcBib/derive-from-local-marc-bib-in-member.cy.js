@@ -82,6 +82,7 @@ describe('MARC', () => {
               });
             });
 
+            cy.resetTenant();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,

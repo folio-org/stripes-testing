@@ -69,6 +69,7 @@ describe('Data Import', () => {
     const nameMarcFileForCreate = `C6709 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,

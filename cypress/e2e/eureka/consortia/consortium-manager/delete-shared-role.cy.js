@@ -139,6 +139,7 @@ describe('Eureka', () => {
       'C543755 ECS | Eureka | Delete shared role from consortium manager with users assigned to it (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C543755'] },
       () => {
+        cy.resetTenant();
         cy.login(testUser.username, testUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);

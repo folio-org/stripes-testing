@@ -101,6 +101,7 @@ describe('Inventory', () => {
             });
           });
 
+          cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,

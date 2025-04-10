@@ -24,6 +24,7 @@ describe('MARC', () => {
 
     before('create test data and login', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('The wolves / Alex Berenson.');
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,

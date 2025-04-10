@@ -47,6 +47,7 @@ describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       before('Creating test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -72,7 +73,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });

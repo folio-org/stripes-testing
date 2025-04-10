@@ -30,13 +30,14 @@ describe('Consortia', () => {
           cy.assignPermissionsToExistingUser(userData.userId, [
             Permissions.uiUsersViewPermissionSets.gui,
           ]);
+          cy.resetTenant();
           cy.login(userData.username, userData.password);
         });
     });
 
     after('Delete users data', () => {
       cy.resetTenant();
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });
 

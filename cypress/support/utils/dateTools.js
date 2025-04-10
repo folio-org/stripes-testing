@@ -124,6 +124,20 @@ export default {
     )}`;
   },
 
+  get5DaysAfterTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + 6,
+    )}`;
+  },
+
+  get7DaysAfterTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + 8,
+    )}`;
+  },
+
   get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 3);

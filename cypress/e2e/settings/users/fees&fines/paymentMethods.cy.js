@@ -8,7 +8,6 @@ describe('Fees&Fines', () => {
   describe('Settings Users (Fee/fine)', () => {
     let specialOwnerId;
     before(() => {
-      cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
         UsersOwners.createViaApi({ owner: uuid() }).then(({ id }) => {
           specialOwnerId = id;

@@ -93,6 +93,7 @@ describe('Eureka', () => {
       'C552519 ECS | Eureka | User with insufficient capability sets for Central tenant is not able to view authorization policies associated to that tenant (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C552519'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.verifyStatusOfConsortiumManager();

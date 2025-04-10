@@ -86,6 +86,7 @@ describe('MARC', () => {
               MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(
                 linkingTagAndValues.authorityHeading,
               );
+              InventoryInstances.deleteInstanceByTitleViaApi('C410814');
             })
             .then(() => {
               cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
@@ -119,6 +120,7 @@ describe('MARC', () => {
               });
             })
             .then(() => {
+              cy.resetTenant();
               cy.waitForAuthRefresh(() => {
                 cy.loginAsAdmin();
                 TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
@@ -138,6 +140,7 @@ describe('MARC', () => {
               HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
                 createdRecordIDs.push(holdingsID);
               });
+              cy.resetTenant();
               cy.waitForAuthRefresh(() => {
                 cy.login(users.userProperties.username, users.userProperties.password, {
                   path: TopMenu.inventoryPath,

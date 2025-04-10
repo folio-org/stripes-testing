@@ -1,16 +1,15 @@
 import uuid from 'uuid';
-import permissions from '../../../../../support/dictionary/permissions';
-import Users from '../../../../../support/fragments/users/users';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
+import permissions from '../../../../../support/dictionary/permissions';
+import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
+import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import RequestCancellationReasonsConsortiumManager from '../../../../../support/fragments/consortium-manager/circulation/requestCancellationReasonsConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 const testData = {
   centralSharedReason: {
@@ -89,19 +88,15 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
-
         cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.University);
+        cy.deleteCancellationReasonApi(testData.universityLocalReason.id);
 
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         cy.deleteCancellationReasonApi(testData.collegeLocalReason.id);
 
-        cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
+        cy.resetTenant();
         cy.deleteCancellationReasonApi(testData.centralLocalReason.id);
         RequestCancellationReasonsConsortiumManager.deleteViaApi(testData.centralSharedReason);
         Users.deleteViaApi(testData.user834.userId);
@@ -172,9 +167,9 @@ describe('Consortium manager', () => {
         'C410837 User with "Consortium manager: Can share settings to all members" permission is able to view the list of request cancellation reasons of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user837.username, testData.user837.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           cy.wait(4000);
           SelectMembers.selectAllMembers();

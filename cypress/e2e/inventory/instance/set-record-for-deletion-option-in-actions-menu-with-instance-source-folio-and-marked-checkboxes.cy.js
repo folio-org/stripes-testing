@@ -37,7 +37,6 @@ describe('Inventory', () => {
         });
         InventorySearchAndFilter.selectYesfilterStaffSuppress();
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);
-        InventoryInstances.selectInstance();
       });
     });
 
