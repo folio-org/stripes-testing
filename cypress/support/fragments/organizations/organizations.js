@@ -116,8 +116,9 @@ export default {
     cy.do([
       organizationStatus.choose(organization.status),
       organizationNameField.fillIn(organization.name),
-      organizationCodeField.fillIn(organization.code),
     ]);
+    cy.wait(3000);
+    cy.do([organizationCodeField.fillIn(organization.code)]);
   },
 
   newOrganization: () => {

@@ -5,6 +5,8 @@ import { NewOrganization, Organizations } from '../../support/fragments/organiza
 import { ORDER_STATUSES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import OrderLineEditForm from '../../support/fragments/orders/orderLineEditForm';
+import SelectInstanceModal from '../../support/fragments/orders/modals/selectInstanceModal';
 
 describe('Orders', () => {
   const testData = {
@@ -59,10 +61,10 @@ describe('Orders', () => {
       });
 
       // Click "Actions" button in "PO lines" accordion, Select "+Add PO line" option
-      const OrderLineEditForm = OrderDetails.selectAddPOLine();
+      OrderDetails.selectAddPOLine();
 
       // Click "Title look-up" link below "Title" field in "Item details" accordion
-      const SelectInstanceModal = OrderLineEditForm.clickTitleLookUpButton();
+      OrderLineEditForm.clickTitleLookUpButton();
 
       // Enter any value in the "Search" field, Click on the "Search" button
       SelectInstanceModal.searchByName(testData.instance.instanceTitle);
