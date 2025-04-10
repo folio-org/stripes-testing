@@ -1,6 +1,7 @@
 # Change history for stripes-testing
 
 ## 5.1.0 IN PROGRESS
+* Export the Applist interactor.
 
 ## [5.0.0](https://github.com/folio-org/stripes-testing/tree/v5.0.0) (2025-02-24)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.8.0...v5.0.0)

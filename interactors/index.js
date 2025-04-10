@@ -19,6 +19,7 @@ export {
 export { default as converge } from './converge';
 
 export { default as Accordion } from './accordion';
+export { AppList } from './applist';
 export { default as AutoSuggest } from './autosuggest';
 export { default as Avatar } from './avatar';
 export { default as Badge } from './badge';
