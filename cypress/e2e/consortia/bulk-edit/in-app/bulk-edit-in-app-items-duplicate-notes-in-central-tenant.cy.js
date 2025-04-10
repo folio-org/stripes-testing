@@ -141,6 +141,7 @@ describe('Bulk-edit', () => {
               );
             });
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

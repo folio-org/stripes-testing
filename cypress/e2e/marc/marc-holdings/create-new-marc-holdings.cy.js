@@ -261,7 +261,7 @@ describe('MARC', () => {
       'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C359242'] },
       () => {
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchBySource(testData.sourceMARC);

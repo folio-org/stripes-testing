@@ -93,6 +93,7 @@ describe('Eureka', () => {
         cy.setTenant(Affiliations.University);
         cy.addRolesToNewUserApi(assignUser.userId, universityRoleIds);
         cy.verifyAssignedRolesCountForUserApi(assignUser.userId, universityRoleIds.length);
+        cy.resetTenant();
         cy.waitForAuthRefresh(() => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);

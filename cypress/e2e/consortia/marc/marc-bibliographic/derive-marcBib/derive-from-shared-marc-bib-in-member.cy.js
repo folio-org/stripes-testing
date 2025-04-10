@@ -79,19 +79,22 @@ describe('MARC', () => {
               });
             });
 
+            cy.resetTenant();
             cy.waitForAuthRefresh(() => {
               cy.login(users.userProperties.username, users.userProperties.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
-              }).then(() => {
-                ConsortiumManager.switchActiveAffiliation(
-                  tenantNames.central,
-                  tenantNames.university,
-                );
-                InventoryInstances.waitContentLoading();
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
               });
-            }, 20_000);
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000).then(() => {
+              ConsortiumManager.switchActiveAffiliation(
+                tenantNames.central,
+                tenantNames.university,
+              );
+              InventoryInstances.waitContentLoading();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
+            });
           });
       });
 
@@ -108,7 +111,8 @@ describe('MARC', () => {
         'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C402769'] },
         () => {
-          cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
+          InventoryInstances.searchByTitle(createdInstanceIDs[0]);
+          InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InventoryInstance.checkPresentedText(testData.instanceTitle);
 

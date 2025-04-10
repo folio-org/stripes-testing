@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { APPLICATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
@@ -8,6 +9,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -49,6 +51,7 @@ describe('Circulation log', () => {
           lastName: getTestEntityValue('testLastName'),
           email: 'test@folio.org',
         },
+        type: 'staff',
       };
       testData.patronGroupId = patronGroupId;
       testData.userProperties = { barcode: uuid() };
@@ -78,7 +81,6 @@ describe('Circulation log', () => {
             userData.id,
             testData.servicePoint.id,
           );
-          cy.login(userData.username, userData.password);
         });
       });
     });
@@ -104,11 +106,13 @@ describe('Circulation log', () => {
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)
-      cy.visit(TopMenu.checkInPath);
+      cy.login(userData.username, userData.password,
+        { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
       CheckInActions.checkInItem(itemBarcode);
       // The item is Checked in
       // Navigate to the "Circulation log" app
-      cy.visit(TopMenu.circulationLogPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       // Search for the checked in Item by "Item barcode" field => Click "Apply" button
       SearchPane.searchByItemBarcode(itemBarcode);
       // Check the row with the Item checked in (step 3) status

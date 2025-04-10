@@ -44,6 +44,7 @@ describe('Inventory', () => {
       'C404357 (CONSORTIA) Verify the header of a local Instance on edit page for a Member tenant (consortia) (folijet)',
       { tags: ['extendedPathECS', 'folijet', 'C404357'] },
       () => {
+        cy.resetTenant();
         cy.login(testData.user.username, testData.user.password);
 
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

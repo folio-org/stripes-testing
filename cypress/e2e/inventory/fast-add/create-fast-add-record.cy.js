@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FastAddNewRecord from '../../../support/fragments/inventory/fastAddNewRecord';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -8,9 +8,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FastAdd from '../../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
-import SettingsInventory, {
-  INVENTORY_SETTINGS_TABS,
-} from '../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
@@ -23,18 +20,15 @@ describe('Inventory', () => {
       start: null,
       end: null,
     };
-    const instanceStatusCodeValue = INSTANCE_STATUS_TERM_NAMES.UNCATALOGED;
     let user;
 
-    beforeEach('Create test data and login', () => {
-      cy.loginAsAdmin();
-      TopMenuNavigation.openAppFromDropdown(
-        APPLICATION_NAMES.SETTINGS,
-        APPLICATION_NAMES.INVENTORY,
-      );
-      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
-      FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
+    before('Set instance status', () => {
+      cy.getAdminToken();
+      FastAdd.changeDefaultInstanceStatusViaApi('uncat');
+    });
 
+    beforeEach('Create test user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -49,13 +43,6 @@ describe('Inventory', () => {
         );
         Users.deleteViaApi(user.userId);
       });
-      cy.loginAsAdmin();
-      TopMenuNavigation.openAppFromDropdown(
-        APPLICATION_NAMES.SETTINGS,
-        APPLICATION_NAMES.INVENTORY,
-      );
-      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FAST_ADD);
-      FastAdd.changeDefaultInstanceStatus('Select instance status');
     });
 
     it(
@@ -135,6 +122,9 @@ describe('Inventory', () => {
         fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber()}`;
         fastAddRecord.note = 'Note For Journal Issue';
 
+        cy.intercept('POST', '/inventory/instances').as('createInstance');
+        cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
+        cy.intercept('POST', '/inventory/items').as('createItem');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
         InventoryActions.openNewFastAddRecordForm();

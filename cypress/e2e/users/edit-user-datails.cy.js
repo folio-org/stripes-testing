@@ -60,6 +60,7 @@ describe('Users', () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
     UserEdit.editUserDetails(testData.editUser);
+    UserEdit.confirmChangingUserType();
     UserEdit.saveAndClose();
     UsersCard.openExtendedInformationAccordion();
     UsersCard.openContactInformationAccordion();

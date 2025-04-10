@@ -30,7 +30,6 @@ describe('ui-requests: Filter requests by tags', () => {
   ];
 
   beforeEach(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
       Object.values(requestTypes).forEach((requestType) => {
         const itemStatus =

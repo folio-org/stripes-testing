@@ -173,11 +173,14 @@ describe('Data Import', () => {
               actionProfile.id,
             );
           });
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
@@ -219,7 +222,7 @@ describe('Data Import', () => {
           cy.wait(1000);
         });
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
