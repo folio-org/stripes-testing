@@ -55,7 +55,6 @@ describe('Consortia Vega', () => {
         }).then((specialInstanceIds) => {
           testData.testInstanceIds = specialInstanceIds;
           requestData.instanceId = specialInstanceIds.instanceId;
-
           cy.wait(1000).then(() => {
             cy.setTenant(Affiliations.College).then(() => {
               cy.getLocations({ limit: 1 }).then((res) => {

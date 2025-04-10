@@ -105,7 +105,7 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
 Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 10_000) => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
   callback();
-  cy.wait('@/authn/refresh', { timeout });
+  cy.wait('@/authn/refresh', { timeout }).its('response.statusCode').should('eq', 201);
 });
 
 Cypress.Commands.add('getConsortiaStatus', () => {
@@ -122,16 +122,16 @@ Cypress.Commands.add('getConsortiaStatus', () => {
   });
 });
 
-Cypress.Commands.add('ifConsortia', (callback) => {
+Cypress.Commands.add('ifConsortia', (condition, callback) => {
   return cy.wrap(Cypress.env('isConsortia')).then((isConsortiaStatus) => {
     if (isConsortiaStatus === undefined) {
       cy.getConsortiaStatus().then(({ isConsortia }) => {
         Cypress.env('isConsortia', isConsortia);
-        if (isConsortia) {
+        if (condition === isConsortia) {
           return cy.wrap(callback());
         }
       });
-    } else if (isConsortiaStatus === true) {
+    } else if (condition === isConsortiaStatus) {
       return cy.wrap(callback());
     }
   });

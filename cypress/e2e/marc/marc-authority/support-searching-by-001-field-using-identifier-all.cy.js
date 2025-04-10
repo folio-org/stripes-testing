@@ -42,22 +42,25 @@ const testData = {
       numberOfRecords: 1,
     },
   ],
+  identifierQueries: ['01233282023710', '012332820237*', '*93648'],
 };
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
         .then((userProperties) => {
           testData.user = userProperties;
-          Object.values(testData.authRows).forEach((query) => {
+
+          testData.identifierQueries.forEach((query) => {
             MarcAuthorities.getMarcAuthoritiesViaApi({
               limit: 100,
-              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+              query: `(keyword all "${query}" or identifiers.value=="${query}" or naturalId="${query}")`,
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });
@@ -77,10 +80,14 @@ describe('MARC', () => {
           });
         })
         .then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
     });
 
