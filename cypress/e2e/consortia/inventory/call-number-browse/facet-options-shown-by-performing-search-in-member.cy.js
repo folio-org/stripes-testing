@@ -60,7 +60,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C414981 Facet options shown after clicking "Reset all" in Browse and performing search in Member tenant (consortia) (spitfire)',
+      'C721678 Facet options shown after clicking "Reset all" in Browse and performing search in Member tenant (consortia) (spitfire)',
       { tags: ['criticalPathECS', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
