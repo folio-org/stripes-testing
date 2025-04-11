@@ -36,9 +36,9 @@ Cypress.Commands.add(
                 cy.getAdminToken();
                 cy.getAllTenants().then((userTenants) => {
                   const currentTenant = userTenants.filter(
-                    (element) => element.tenantId === Tenant.get(),
+                    (element) => element.id === Tenant.get(),
                   )[0];
-                  cy.do(Select('Tenant/Library').choose(currentTenant.tenantName));
+                  cy.do(Select('Tenant/Library').choose(currentTenant.name));
                   cy.wait(500);
                   cy.do(Button('Continue').click());
                   cy.wait(1000);

@@ -101,10 +101,10 @@ Cypress.Commands.add('getAllTenants', () => {
   cy.getConsortiaId().then((consortiaId) => {
     cy.okapiRequest({
       method: 'GET',
-      path: `consortia/${consortiaId}/user-tenants`,
+      path: `consortia/${consortiaId}/tenants`,
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
-      return body.userTenants;
+      return body.tenants;
     });
   });
 });
