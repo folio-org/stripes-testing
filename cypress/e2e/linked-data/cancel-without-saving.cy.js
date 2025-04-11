@@ -67,19 +67,14 @@ describe('Citation: cancel without saving', () => {
     cy.getAdminToken();
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.getInstanceIdApi({
-      limit: 1,
-      query: `title="${resourceData.title}"`,
-    }).then((id) => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-    });
+    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
     Work.getInstancesByTitle(testData.uniqueDuplicateTitle).then((instances) => {
       const filteredInstances = instances.filter(
-        (element) => element.titles[0].value === testData.uniqueTitle,
+        (element) => element.titles[0].value === testData.uniqueDuplicateTitle,
       );
       Work.deleteById(filteredInstances[0].id);
     });
-    Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
+    Work.getIdByTitle(testData.uniqueDuplicateTitle).then((id) => Work.deleteById(id));
   });
 
   beforeEach('Apply test data manually', () => {
@@ -93,7 +88,7 @@ describe('Citation: cancel without saving', () => {
 
   it(
     'C656342 [User journey] LDE - Cancel without saving (Yes/No) (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();
@@ -102,8 +97,8 @@ describe('Citation: cancel without saving', () => {
       AdvancedSearch.setCondition(
         1,
         '',
-        'Cypress test',
-        LDE_ADVANCED_SEARCH_OPTIONS.STARTS_WITH,
+        resourceData.title,
+        LDE_ADVANCED_SEARCH_OPTIONS.CONTAINS_ALL,
         LDE_SEARCH_OPTIONS.TITLE,
       );
       AdvancedSearch.setCondition(
@@ -120,7 +115,6 @@ describe('Citation: cancel without saving', () => {
       EditResource.setValueForTheField(testData.uniqueDuplicateTitle, instanceMainTitleField);
       // click on Cancel - YES
       EditResource.clickCancelWithOption('yes');
-      // TODO: as for now this part failed due to UILD-493
       LinkedDataEditor.waitLoading();
 
       // TODO: uncomment once UILD-170 implemented
@@ -143,6 +137,8 @@ describe('Citation: cancel without saving', () => {
       // );
       // AdvancedSearch.clickSearch();
 
+      // as for now - search by title
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       // verify value was not changed
       EditResource.checkTextValueOnField(testData.uniqueTitle, instanceMainTitleField);
@@ -153,6 +149,9 @@ describe('Citation: cancel without saving', () => {
       // save changes
       EditResource.saveAndClose();
       LinkedDataEditor.waitLoading();
+
+      // check that value was changed
+      SearchAndFilter.searchResourceByTitle(resourceData.title);
       LinkedDataEditor.editInstanceFromSearchTable(1, 1);
       EditResource.checkTextValueOnField(testData.uniqueDuplicateTitle, instanceMainTitleField);
     },
