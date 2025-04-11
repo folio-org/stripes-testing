@@ -60,7 +60,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.NAME_TYPE, true);
-        InventorySearchAndFilter.verifyNameTypeOption('Personal name');
+        InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(Dropdowns.NAME_TYPE);
 
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.browseSearch(testData.value);
