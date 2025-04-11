@@ -34,14 +34,19 @@ Cypress.Commands.add(
             cy.get('body').then(($body) => {
               if ($body.find('select').length > 0) {
                 cy.getAdminToken();
-                cy.getAllTenants().then((userTenants) => {
-                  const currentTenant = userTenants.filter(
-                    (element) => element.id === Tenant.get(),
-                  )[0];
-                  cy.do(Select('Tenant/Library').choose(currentTenant.name));
-                  cy.wait(500);
-                  cy.do(Button('Continue').click());
-                  cy.wait(1000);
+                cy.getConsortiaStatus().then((consortiaData) => {
+                  const targetTenantId = Tenant.get();
+                  cy.setTenant(consortiaData.centralTenantId);
+                  cy.getAllTenants().then((userTenants) => {
+                    const currentTenant = userTenants.filter(
+                      (element) => element.id === targetTenantId,
+                    )[0];
+                    cy.setTenant(targetTenantId);
+                    cy.do(Select('Tenant/Library').choose(currentTenant.name));
+                    cy.wait(500);
+                    cy.do(Button('Continue').click());
+                    cy.wait(1000);
+                  });
                 });
               } else {
                 cy.log('No tenant/library select found');
