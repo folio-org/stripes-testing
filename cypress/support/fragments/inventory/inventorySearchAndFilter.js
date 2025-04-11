@@ -1132,4 +1132,13 @@ export default {
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
     ]);
   },
+
+  checkMultiSelectOptionsWithCountersExistInAccordion(accordionName) {
+    cy.do(Accordion(accordionName).find(MultiSelect()).open());
+    cy.expect(
+      Accordion(accordionName)
+        .find(MultiSelectOption({ text: matching(/.{1,}(\d{1,})/) }))
+        .exists(),
+    );
+  },
 };

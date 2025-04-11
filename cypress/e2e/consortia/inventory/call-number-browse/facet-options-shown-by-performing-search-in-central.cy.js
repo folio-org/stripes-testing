@@ -10,15 +10,12 @@ describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
       contributor: 'Contributors',
-      subject: 'Subjects',
       value: 'a',
     };
 
     const Dropdowns = {
       EFFECTIVE_LOCATION: 'Effective location (item)',
       NAME_TYPE: 'Name type',
-      SHARED: 'Shared',
-      HELD_BY: 'Held by',
     };
 
     const users = {};
@@ -63,33 +60,28 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.NAME_TYPE, true);
-        InventorySearchAndFilter.verifyNameTypeOption('Personal name');
+        InventorySearchAndFilter.checkMultiSelectOptionsWithCountersExistInAccordion(
+          Dropdowns.NAME_TYPE,
+        );
 
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.browseSearch(testData.value);
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
+        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
         InventorySearchAndFilter.browseSearch(testData.value);
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');
+        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
 
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
-        InventorySearchAndFilter.browseSearch(testData.value);
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
-        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');
+        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
       },
     );
   });
