@@ -1088,6 +1088,11 @@ export default {
     cy.wait(2000);
   },
 
+  backToInvoiceDetailsView: () => {
+    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'arrow-left' })).click());
+    cy.wait(2000);
+  },
+
   resetFilters: () => {
     cy.wait(1500);
     cy.do(resetButton.click());

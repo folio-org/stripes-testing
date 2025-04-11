@@ -56,7 +56,7 @@ describe('Orders', () => {
     invoiceDate: DateTools.getCurrentDate(),
     vendorName: 'Amazon.com',
     accountingCode: '',
-    batchGroup: '',
+    batchGroup: 'FOLIO',
     invoiceNumber: FinanceHelp.getRandomInvoiceNumber(),
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -247,7 +247,10 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
-      OrderLines.openPageCurrentEncumbranceInFund(`${firstFund.name}(${firstFund.code})`, '$10.00');
+      OrderLines.openPageCurrentEncumbranceInFund(
+        `${secondFund.name}(${secondFund.code})`,
+        '$10.00',
+      );
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
         '$10.00',
@@ -262,7 +265,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(firstFund, '10', '10');
+      OrderLines.editFundInPOL(firstFund, '10', '100');
       OrderLines.backToEditingOrder();
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrderWithoutFY(secondInvoice);
@@ -273,7 +276,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '10');
+      OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
       OrderLines.saveOrderLine();
       InteractorsTools.checkCalloutErrorMessage(
         'The purchase order line fund distribution can not be changed because the order line is linked to an invoice line that currently has the "approved" status',
@@ -303,7 +306,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '10', '10');
+      OrderLines.editFundInPOL(secondFund, '10', '100');
       OrderLines.openPageCurrentEncumbrance('$0.00');
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
