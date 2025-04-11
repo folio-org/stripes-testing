@@ -33,10 +33,16 @@ Cypress.Commands.add(
           cy.wait(1000).then(() => {
             cy.get('body').then(($body) => {
               if ($body.find('select').length > 0) {
-                cy.do(Select('Tenant/Library').choose(Tenant.get()));
-                cy.wait(500);
-                cy.do(Button('Continue').click());
-                cy.wait(1000);
+                cy.getAdminToken();
+                cy.getAllTenants().then((userTenants) => {
+                  const currentTenant = userTenants.filter(
+                    (element) => element.tenantId === Tenant.get(),
+                  )[0];
+                  cy.do(Select('Tenant/Library').choose(currentTenant.tenantName));
+                  cy.wait(500);
+                  cy.do(Button('Continue').click());
+                  cy.wait(1000);
+                });
               } else {
                 cy.log('No tenant/library select found');
               }
