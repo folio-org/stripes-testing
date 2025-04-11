@@ -127,70 +127,69 @@ describe('MARC', () => {
       const authorityIDs = [];
 
       before(() => {
-        cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-          preconditionUserId = userProperties.userId;
-
-          testData.searchAuthorityQueries.forEach((query) => {
-            MarcAuthorities.getMarcAuthoritiesViaApi({
-              limit: 100,
-              query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-            }).then((authorities) => {
-              if (authorities) {
-                authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+        cy.getAdminToken();
+        testData.searchAuthorityQueries.forEach((query) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
+        });
+        cy.createTempUser([Permissions.moduleDataImportEnabled.gui])
+          .then((userProperties) => {
+            preconditionUserId = userProperties.userId;
+          })
+          .then(() => {
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  if (
+                    marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
+                  ) {
+                    instanceIDs.push(record[marcFile.propertyName].id);
+                  } else {
+                    authorityIDs.push(record[marcFile.propertyName].id);
+                  }
                 });
-              }
-            });
-          });
-
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                if (
-                  marcFile.jobProfileToRun === DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS
-                ) {
-                  instanceIDs.push(record[marcFile.propertyName].id);
-                } else {
-                  authorityIDs.push(record[marcFile.propertyName].id);
-                }
               });
+              cy.wait(5000);
             });
-            cy.wait(5000);
-          });
-        });
-
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          instanceIDs.forEach((instanceRecord, index) => {
-            InventoryInstances.searchByTitle(instanceRecord);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            linkingData[index].forEach((record) => {
-              InventoryInstance.verifyAndClickLinkIconByIndex(record.instanseFieldRowIndex);
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.searchResults(record.authorityTitle);
-              MarcAuthorities.checkFieldAndContentExistence(
-                record.authorityFieldTag,
-                record.authorityFieldValue,
-              );
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
-                record.instanseFieldTag,
-                record.instanseFieldRowIndex,
-              );
-              QuickMarcEditor.closeCallout();
+          })
+          .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
+            instanceIDs.forEach((instanceRecord, index) => {
+              InventoryInstances.searchByTitle(instanceRecord);
+              InventoryInstances.selectInstance();
+              InventoryInstance.editMarcBibliographicRecord();
+              linkingData[index].forEach((record) => {
+                InventoryInstance.verifyAndClickLinkIconByIndex(record.instanseFieldRowIndex);
+                InventoryInstance.verifySelectMarcAuthorityModal();
+                MarcAuthorities.switchToSearch();
+                InventoryInstance.searchResults(record.authorityTitle);
+                MarcAuthorities.checkFieldAndContentExistence(
+                  record.authorityFieldTag,
+                  record.authorityFieldValue,
+                );
+                InventoryInstance.clickLinkButton();
+                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+                  record.instanseFieldTag,
+                  record.instanseFieldRowIndex,
+                );
+                QuickMarcEditor.closeCallout();
+              });
+              QuickMarcEditor.pressSaveAndClose();
+              cy.wait(1500);
+              QuickMarcEditor.pressSaveAndClose();
             });
-            QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
-            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(1000);
           });
-          cy.wait(1000);
-        });
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -201,10 +200,14 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           userData = createdUserProperties;
 
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
           MarcAuthorities.switchToBrowse();
         });
       });

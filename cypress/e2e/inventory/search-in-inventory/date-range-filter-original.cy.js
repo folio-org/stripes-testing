@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Permissions } from '../../../support/dictionary';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -13,51 +12,18 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Filters', () => {
       const testData = {
-        searchQuery: 'C553056 Sorting by Date',
-        allDates1Sorted: [
-          '0000',
-          '   1',
-          '___2',
-          'd #3',
-          '!()4',
-          'uuu5',
-          'abc6',
-          '0007',
-          'ddd9',
-          '0037',
-          'dd99',
-          '0337',
-          ' 677',
-          'u678',
-          'c679',
-          'd999',
-          '1   ',
-          '1uu1',
-          '1ab2',
-          '1 77',
-          '1u78',
-          '1d79',
-          '16  ',
-          '16u1',
-          '16a2',
-          '167 ',
-          '1678',
-          '168u',
-          '169b',
-          '9999',
-        ],
+        searchQuery: 'C553014 filter using 2 dates test',
+        allDates1Sorted: ['1902', '1903', '1904', '1905', '1906'],
         dateRangeAccordionName: 'Date range',
       };
       const filterData = [
-        { range: ['0000', '9999'], dates: testData.allDates1Sorted },
-        { range: ['0035', '1078'], dates: testData.allDates1Sorted.slice(9, 21) },
-        { range: ['1670', '1678'], dates: testData.allDates1Sorted.slice(25, 27) },
-        { range: ['1670', ''], dates: testData.allDates1Sorted.slice(25) },
-        { range: ['', '1670'], dates: testData.allDates1Sorted.slice(0, 26) },
+        { range: ['1903', '1905'], dates: testData.allDates1Sorted.slice(1, 4) },
+        { range: ['1903', '1903'], dates: testData.allDates1Sorted.slice(1, 2) },
+        { range: ['1899', '1999'], dates: testData.allDates1Sorted },
       ];
       const marcFile = {
-        marc: 'marcBibFileC553056.mrc',
-        fileName: `testMarcFileC553056.${randomPostfix()}.mrc`,
+        marc: 'marcBibFileC553014.mrc',
+        fileName: `testMarcFileC553014.${randomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
       };
@@ -105,8 +71,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553056 Verify that "Date range" filter is working on computed field from "Date 1" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553056'] },
+        'C553014 Filter "Instance" records by "Date range" filter using "From" and "To" boxes (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C553014'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
           testData.allDates1Sorted.forEach((date) => {
@@ -118,9 +84,21 @@ describe('Inventory', () => {
               InventorySearchAndFilter.verifyResultWithDate1Found(date);
             });
             InventorySearchAndFilter.verifyNumberOfSearchResults(filterDatum.dates.length);
-            InventorySearchAndFilter.clearFilter(testData.dateRangeAccordionName);
-            InventorySearchAndFilter.closeDateRangeAccordion();
+            InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName, false);
           });
+          testData.allDates1Sorted.forEach((date) => {
+            InventorySearchAndFilter.verifyResultWithDate1Found(date);
+          });
+          InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1Sorted.length);
+          InventorySearchAndFilter.toggleAccordionByName(testData.dateRangeAccordionName);
+          InventorySearchAndFilter.verifyDateRangeAccordionValues(...filterData[2].range);
+          testData.allDates1Sorted.forEach((date) => {
+            InventorySearchAndFilter.verifyResultWithDate1Found(date);
+          });
+          InventorySearchAndFilter.verifyNumberOfSearchResults(testData.allDates1Sorted.length);
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          InventorySearchAndFilter.verifyDateRangeAccordionValues('', '');
+          InventorySearchAndFilter.verifySearchFieldIsEmpty();
         },
       );
     });

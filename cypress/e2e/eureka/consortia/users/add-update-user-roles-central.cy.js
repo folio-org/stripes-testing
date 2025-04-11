@@ -80,6 +80,7 @@ describe('Eureka', () => {
       });
 
       before('Login', () => {
+        cy.resetTenant();
         cy.waitForAuthRefresh(() => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);

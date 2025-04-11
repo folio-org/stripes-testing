@@ -81,6 +81,7 @@ describe('MARC', () => {
       };
 
       before('Creating user and data', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -89,24 +90,24 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFileViaApi(
-                marcFile.marc,
-                marcFile.fileName,
-                marcFile.jobProfileToRun,
-              ).then((response) => {
-                response.forEach((record) => {
-                  testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-                });
-              });
-            },
-          );
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
+          DataImport.uploadFileViaApi(
+            marcFile.marc,
+            marcFile.fileName,
+            marcFile.jobProfileToRun,
+          ).then((response) => {
+            response.forEach((record) => {
+              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
+            });
           });
+
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
       });
 
@@ -133,7 +134,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonSaveAndCloseEnable();
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
-          QuickMarcEditor.closeCallout();
+          QuickMarcEditor.closeAllCallouts();
           QuickMarcEditor.addNewField(testData.tag008, '', testData.tag008RowIndex);
           QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets);
           QuickMarcEditor.updateExistingTagValue(4, testData.tag00);
@@ -149,9 +150,7 @@ describe('MARC', () => {
             );
             cy.wait(500);
           });
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.checkContentByTag('245', `$a ${testData.tag245Value}`);

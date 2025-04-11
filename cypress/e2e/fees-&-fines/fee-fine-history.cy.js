@@ -12,7 +12,7 @@ import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
@@ -145,8 +145,8 @@ describe('Fees&Fines', () => {
           FeeFinesDetails.openPayModal();
           PayFeeFine.checkAmount(feeFineAccount.amount);
           PayFeeFine.setAmount(feeFineAccount.amount - 2);
-          PayFeeFine.checkRestOfPay(2);
           PayFeeFine.setPaymentMethod(paymentMethod);
+          PayFeeFine.checkRestOfPay(2);
           PayFeeFine.submitAndConfirm();
           PayFeeFine.checkConfirmModalClosed();
           FeeFinesDetails.waitLoading();
@@ -160,8 +160,8 @@ describe('Fees&Fines', () => {
           FeeFinesDetails.openActions();
           FeeFinesDetails.openPayModal();
           PayFeeFine.checkAmount(2);
-          PayFeeFine.setPaymentMethod(paymentMethod);
           PayFeeFine.setAmount(2);
+          PayFeeFine.setPaymentMethod(paymentMethod);
           PayFeeFine.checkRestOfPay(0);
           PayFeeFine.submitAndConfirm();
         },

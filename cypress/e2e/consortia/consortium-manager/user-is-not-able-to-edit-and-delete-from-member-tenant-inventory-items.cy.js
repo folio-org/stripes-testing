@@ -1,16 +1,16 @@
 import uuid from 'uuid';
+import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import permissions from '../../../support/dictionary/permissions';
+import ItemNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
+import LoanTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/loanTypesConsortiumManager';
+import MaterialTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/materialTypesConsortiumManager';
+import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
+import LoanTypes from '../../../support/fragments/settings/inventory/items/loanTypes';
+import MaterialTypes from '../../../support/fragments/settings/inventory/items/materialTypes';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
-import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
-import ItemNoteTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/itemNoteTypesConsortiumManager';
-import LoanTypes from '../../../support/fragments/settings/inventory/items/loanTypes';
-import LoanTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/loanTypesConsortiumManager';
-import MaterialTypes from '../../../support/fragments/settings/inventory/items/materialTypes';
-import MaterialTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/materialTypesConsortiumManager';
 
 const testData = {
   centralSharedItemNoteTypes: {
@@ -76,7 +76,7 @@ describe('Consortium manager', () => {
             permissions.inventoryCRUDItemNoteTypes.gui,
             permissions.uiCreateEditDeleteLoanTypes.gui,
           ]);
-          ItemNoteTypes.createNoteTypeViaApi(testData.collegeLocalItemNoteTypes);
+          ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteTypes);
           LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanTypes);
           cy.resetTenant();
           cy.getAdminToken();
@@ -93,7 +93,6 @@ describe('Consortium manager', () => {
 
       after('delete test data', () => {
         cy.resetTenant();
-        cy.setTenant(Affiliations.Consortia);
         cy.getAdminToken();
         ItemNoteTypesConsortiumManager.deleteViaApi(testData.centralSharedItemNoteTypes);
         LoanTypesConsortiumManager.deleteViaApi(testData.centralSharedLoanTypes);

@@ -11,7 +11,7 @@ import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons
 import TopMenu from '../../../support/fragments/topMenu';
 import FinancialTransactionDetailReportModal from '../../../support/fragments/users/financialTransactionDetailReportModal';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
-import PayFeeFane from '../../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../../support/fragments/users/payFeeFine';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 
@@ -101,7 +101,7 @@ describe('Fees&Fines', () => {
                       servicePointId: servicePoint.id,
                       userName: adminSourceRecord,
                     };
-                    PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
+                    PayFeeFine.payFeeFineViaApi(payBody, feeFineAccountId);
                   });
                 });
               });

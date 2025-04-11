@@ -43,6 +43,9 @@ export default {
             cy.log(cellValue);
           });
       })
-      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
+      .then(() => {
+        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
+        cy.expect(isSorted).to.equal(true);
+      });
   },
 };

@@ -11,5 +11,6 @@ Cypress.Commands.add(
       TextField({ id: 'adduser_email' }).fillIn(email),
       Button({ id: 'clickable-save' }).click(),
     ]);
+    cy.wait(10000);
   },
 );

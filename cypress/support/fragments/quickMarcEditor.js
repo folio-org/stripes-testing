@@ -531,6 +531,7 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.wait('@validateRequest');
     cy.expect(saveAndCloseButton.is({ disabled: false }));
+    cy.wait(2000);
     cy.do(saveAndCloseButton.click());
   },
 
@@ -1929,15 +1930,19 @@ export default {
   },
 
   checkPaneheaderContains(text) {
-    cy.expect(PaneHeader({ text: including(text) }).exists());
+    if (text instanceof RegExp) cy.expect(PaneHeader({ text: matching(text) }).exists());
+    else cy.expect(PaneHeader({ text: including(text) }).exists());
   },
 
   checkRecordStatusNew() {
-    cy.expect(Pane('Create a new  MARC authority record').has({ subtitle: 'Status:New' }));
+    cy.expect(
+      Pane(matching(/Create a new .*MARC authority record/)).has({ subtitle: 'Status:New' }),
+    );
   },
 
   verifyPaneheaderWithContentAbsent(text) {
-    cy.expect(PaneHeader({ text: including(text) }).absent());
+    if (text instanceof RegExp) cy.expect(PaneHeader({ text: matching(text) }).absent());
+    else cy.expect(PaneHeader({ text: including(text) }).absent());
   },
 
   checkUpdateLinkedBibModalAbsent() {

@@ -14,10 +14,13 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         user = createdUserProperties;
-
-        cy.login(createdUserProperties.username, createdUserProperties.password);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.login(createdUserProperties.username, createdUserProperties.password);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventorySearchAndFilter.instanceTabIsDefault();
       });
     });

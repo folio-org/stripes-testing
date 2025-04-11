@@ -4,11 +4,13 @@ import { Permissions } from '../../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import { InventoryInstances } from '../../../support/fragments/inventory';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import { Receivings } from '../../../support/fragments/receiving';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('Orders', () => {
@@ -88,7 +90,6 @@ describe('Orders', () => {
       () => {
         // Click on Instance name from PO line from preconditions
         InventoryInstances.searchByTitle(testData.orderLine.titleOrPackage);
-        const InventoryInstance = InventoryInstances.selectInstance();
         InventoryInstance.checkHoldingTitle({ title: testData.location.name, count: 1 });
 
         // Expand "Holdings" accordion
@@ -104,7 +105,7 @@ describe('Orders', () => {
           shouldOpen: false,
         });
         ItemRecordView.checkItemRecordDetails({
-          itemData: [{ label: 'Copy number', conditions: { value: '-' } }],
+          itemData: [{ label: 'Copy number', conditions: { value: 'No value set-' } }],
           acquisitionData: [
             { label: 'POL number', conditions: { value: `${testData.order.poNumber}-1` } },
           ],
@@ -127,7 +128,7 @@ describe('Orders', () => {
         });
 
         // Go to "Receiving" app
-        cy.visit(TopMenu.receivingPath);
+        TopMenuNavigation.navigateToApp('Receiving');
         Receivings.waitLoading();
 
         // Search for PO line from Precondition

@@ -72,7 +72,7 @@ describe('Export Manager', () => {
         permissions.uiOrganizationsViewEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.log(user.username, user.password, {
+        cy.login(user.username, user.password, {
           path: TopMenu.organizationsPath,
           waiter: Organizations.waitLoading,
         });
