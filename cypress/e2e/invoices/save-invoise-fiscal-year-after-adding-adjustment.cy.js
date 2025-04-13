@@ -80,12 +80,15 @@ describe('Invoices', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          cy.loginAsAdmin();
+          TopMenuNavigation.openAppFromDropdown('Finance');
+          Ledgers.clickOnFundTab();
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
+          Funds.closeFundDetails();
         });
-        cy.getAdminToken();
         ServicePoints.getViaApi().then((servicePoint) => {
           servicePointId = servicePoint[0].id;
           NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -135,7 +138,8 @@ describe('Invoices', () => {
           thirdFiscalYear.id = thirdFiscalYearResponse.id;
         });
 
-        cy.visit(TopMenu.ledgerPath);
+        TopMenuNavigation.openAppFromDropdown('Finance');
+        Funds.clickOnLedgerTab();
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
@@ -147,7 +151,8 @@ describe('Invoices', () => {
       });
     });
 
-    cy.visit(TopMenu.fiscalYearPath);
+    TopMenuNavigation.openAppFromDropdown('Finance');
+    Ledgers.clickOnFiscalYearTab();
     FinanceHelp.searchByName(firstFiscalYear.name);
     FiscalYears.selectFY(firstFiscalYear.name);
     FiscalYears.editFiscalYearDetails();
@@ -175,10 +180,8 @@ describe('Invoices', () => {
       Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
+      cy.login(userProperties.username, userProperties.password);
+      TopMenuNavigation.navigateToApp('Invoices');
     });
   });
 
@@ -228,7 +231,7 @@ describe('Invoices', () => {
         `${defaultFund.name} (${defaultFund.code})`,
       );
 
-      cy.visit(TopMenu.ledgerPath);
+      TopMenuNavigation.navigateToApp('Finance');
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
@@ -254,7 +257,7 @@ describe('Invoices', () => {
         periodEndForThirdFY,
       );
 
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.payInvoice();
