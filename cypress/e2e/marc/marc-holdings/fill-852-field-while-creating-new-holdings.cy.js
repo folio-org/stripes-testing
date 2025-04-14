@@ -30,6 +30,7 @@ describe('MARC', () => {
     let user;
 
     before(() => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,

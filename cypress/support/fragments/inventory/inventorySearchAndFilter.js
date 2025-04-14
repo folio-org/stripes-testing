@@ -697,7 +697,10 @@ export default {
 
   searchTag(tag) {
     cy.wait(500);
-    cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
+    cy.do([
+      tagsAccordionButton.click(),
+      MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
+    ]);
   },
 
   filterByTag(tag) {
@@ -712,7 +715,7 @@ export default {
 
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
-    cy.expect(HTML('No matching options').exists());
+    cy.expect(HTML('No matching items found!').exists());
   },
 
   verifyContributorsColumResult(cellContent) {
@@ -1111,12 +1114,7 @@ export default {
 
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
-    const escapedValue = optionName.replace(/[-[\]{}()*+?\\^$]/g, '\\$&');
-    cy.do([
-      multiSelect.open(),
-      cy.wait(1000),
-      multiSelect.select(matching(`${escapedValue}\\(\\d+\\)`)),
-    ]);
+    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select([including(optionName)])]);
   },
 
   checkSearchButtonEnabled() {

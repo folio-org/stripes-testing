@@ -15,6 +15,7 @@ import users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -99,8 +100,10 @@ describe('MARC', () => {
               ],
             });
             cy.wait(5000);
-            cy.login(userProperties.username, userProperties.password);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
       });
     });
@@ -143,6 +146,7 @@ describe('MARC', () => {
       'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
       { tags: ['smoke', 'spitfire', 'C345404'] },
       () => {
+        cy.wait(5000);
         InventoryActions.import();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           // additional instance record which will linked with holdings record initially
