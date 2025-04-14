@@ -126,9 +126,12 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.deleteField(4);
                 QuickMarcEditor.pressSaveAndClose();
                 cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
+                cy.wait(4000);
+                QuickMarcEditor.confirmDelete();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
 

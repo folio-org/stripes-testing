@@ -64,7 +64,7 @@ describe('MARC', () => {
       before('Create users, data', () => {
         cy.getAdminToken();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(linkingTagAndValues.authorityHeading);
-
+        InventoryInstances.deleteInstanceByTitleViaApi('C397343');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -75,22 +75,26 @@ describe('MARC', () => {
             users.userProperties = userProperties;
           })
           .then(() => {
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-              Permissions.inventoryAll.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-            ]);
+            cy.affiliateUserToTenant({
+              tenantId: Affiliations.College,
+              userId: users.userProperties.userId,
+              permissions: [
+                Permissions.inventoryAll.gui,
+                Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+                Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+              ],
+            });
           })
           .then(() => {
-            cy.setTenant(Affiliations.University);
-            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-              Permissions.inventoryAll.gui,
-              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            ]);
+            cy.affiliateUserToTenant({
+              tenantId: Affiliations.University,
+              userId: users.userProperties.userId,
+              permissions: [
+                Permissions.inventoryAll.gui,
+                Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              ],
+            });
           })
           .then(() => {
             cy.resetTenant();
@@ -151,6 +155,8 @@ describe('MARC', () => {
             linkingTagAndValues.zeroSubfield,
             linkingTagAndValues.seventhBox,
           );
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.instanceTitle);

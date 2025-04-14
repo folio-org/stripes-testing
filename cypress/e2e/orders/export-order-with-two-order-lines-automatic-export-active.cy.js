@@ -1,5 +1,9 @@
 import moment from 'moment';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import {
+  APPLICATION_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import {
@@ -8,8 +12,9 @@ import {
   Organizations,
 } from '../../support/fragments/organizations';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
-import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders', () => {
   describe('Export in edifact format', () => {
@@ -134,7 +139,7 @@ describe('Orders', () => {
         ]);
 
         // Go back to "Orders" app and click on "PO line #1" record in "PO lines" accordion
-        cy.visit(TopMenu.ordersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
         Orders.selectOrderByPONumber(testData.order.poNumber);
         const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLines[0].titleOrPackage);
 

@@ -7,49 +7,51 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('orders: Settings', () => {
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };
-  const orderTemplateName = `OTname${getRandomPostfix()}`;
-  let user;
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };
+    const orderTemplateName = `OTname${getRandomPostfix()}`;
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+      });
+      AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
+      cy.createTempUser([permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.ordersOrderTemplatesPath,
+            waiter: OrderTemplate.waitLoading,
+          });
+        },
+      );
     });
-    AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
-    cy.createTempUser([permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.ordersOrderTemplatesPath,
-          waiter: OrderTemplate.waitLoading,
-        });
+
+    after(() => {
+      cy.getAdminToken();
+      Organizations.deleteOrganizationViaApi(organization.id);
+      AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id);
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C350602 Select Acquisition Method in Order Template (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
+      () => {
+        OrderTemplate.clickNewOrderTemplateButton();
+        OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
+          orderTemplateName,
+          organization.name,
+          acquisitionMethod.value,
+        );
+        OrderTemplate.saveTemplate();
+        OrderTemplate.checkTemplateCreated(orderTemplateName);
       },
     );
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Organizations.deleteOrganizationViaApi(organization.id);
-    AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id);
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C350602 Select Acquisition Method in Order Template (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'eurekaPhase1'] },
-    () => {
-      OrderTemplate.clickNewOrderTemplateButton();
-      OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
-        orderTemplateName,
-        organization.name,
-        acquisitionMethod.value,
-      );
-      OrderTemplate.saveTemplate();
-      OrderTemplate.checkTemplateCreated(orderTemplateName);
-    },
-  );
 });

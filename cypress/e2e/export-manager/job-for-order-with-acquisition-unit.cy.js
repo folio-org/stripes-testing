@@ -10,7 +10,6 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
-import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Export Manager', () => {
@@ -46,7 +45,6 @@ describe('Export Manager', () => {
       let location;
       let servicePointId;
       let orderNumber;
-      const UTCTime = DateTools.getUTCDateForScheduling();
 
       before(() => {
         cy.getAdminToken();
@@ -88,7 +86,6 @@ describe('Export Manager', () => {
           libraryEDICodeFor1Integration,
           organization.accounts[0].accountNo,
           'Purchase',
-          UTCTime,
         );
 
         cy.createOrderApi(order).then((response) => {
