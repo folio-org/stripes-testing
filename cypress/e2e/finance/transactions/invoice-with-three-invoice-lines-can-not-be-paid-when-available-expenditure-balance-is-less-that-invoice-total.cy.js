@@ -228,10 +228,10 @@ describe('Finance: Transactions', () => {
       );
       Invoices.selectInvoiceLineByNumber('$95.00');
       Invoices.verifyCurrentEncumbrance('$95.00');
-      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.backToInvoiceDetailsView();
       Invoices.selectInvoiceLineByNumber('$10.00');
       Invoices.verifyCurrentEncumbrance('$10.00');
-      Invoices.closeInvoiceLineDetailsPane();
+      Invoices.backToInvoiceDetailsView();
       Invoices.selectInvoiceLineByNumber('$5.00');
       Invoices.verifyCurrentEncumbrance('$5.00');
       InvoiceLineDetails.openFundDetailsPane(firstFund.name);
