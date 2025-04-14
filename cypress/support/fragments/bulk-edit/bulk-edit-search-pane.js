@@ -21,8 +21,8 @@ import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
 import FileManager from '../../utils/fileManager';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
-const matchedAccordion = Accordion('Preview of record matched');
-const changesAccordion = Accordion('Preview of record changed');
+const matchedAccordion = Accordion('Preview of records matched');
+const changesAccordion = Accordion('Preview of records changed');
 const errorsAccordion = Accordion('Errors & warnings');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
@@ -114,12 +114,12 @@ export default {
   },
 
   scrollInMatchedAccordion(direction) {
-    getScrollableElementInForm('Preview of record matched').scrollTo(direction);
+    getScrollableElementInForm('Preview of records matched').scrollTo(direction);
     cy.wait(1000);
   },
 
   verifyPreviewOfRecordMatchedScrollableHorizontally() {
-    getScrollableElementInForm('Preview of record matched').then(($el) => {
+    getScrollableElementInForm('Preview of records matched').then(($el) => {
       const scrollWidth = $el[0].scrollWidth;
       const clientWidth = $el[0].clientWidth;
 
@@ -131,7 +131,7 @@ export default {
   },
 
   verifyPreviewOfRecordMatchedScrollableVertically() {
-    getScrollableElementInForm('Preview of record matched').then(($el) => {
+    getScrollableElementInForm('Preview of records matched').then(($el) => {
       const scrollHeight = $el[0].scrollHeight;
       const clientHeight = $el[0].clientHeight;
 
@@ -143,12 +143,12 @@ export default {
   },
 
   scrollInChangedAccordion(direction) {
-    getScrollableElementInForm('Preview of record changed').scrollTo(direction);
+    getScrollableElementInForm('Preview of records changed').scrollTo(direction);
     cy.wait(1000);
   },
 
   verifyPreviewOfRecordChangedScrollableHorizontally() {
-    getScrollableElementInForm('Preview of record changed').then(($el) => {
+    getScrollableElementInForm('Preview of records changed').then(($el) => {
       const scrollWidth = $el[0].scrollWidth;
       const clientWidth = $el[0].clientWidth;
 
@@ -160,7 +160,7 @@ export default {
   },
 
   verifyPreviewOfRecordChangedScrollableVertically() {
-    getScrollableElementInForm('Preview of record changed').then(($el) => {
+    getScrollableElementInForm('Preview of records changed').then(($el) => {
       const scrollHeight = $el[0].scrollHeight;
       const clientHeight = $el[0].clientHeight;
 
