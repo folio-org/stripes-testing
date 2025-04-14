@@ -1354,4 +1354,24 @@ export default {
       cy.expect(accordionInteractor.find(HTML(errorText)).exists());
     }
   },
+
+  verifyMultiSelectFilterOptionSelected(accordionName, optionName, isSelected = true) {
+    const multiSelect = Accordion(accordionName).find(
+      MultiSelect({ selected: including(optionName) }),
+    );
+    if (isSelected) cy.expect(multiSelect.exists());
+    else cy.expect(multiSelect.absent());
+  },
+
+  typeValueInMultiSelectFilterFieldAndCheck(accordionName, value, isFound = true, foundCount = 1) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(value));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([
+        multiSelect.find(MultiSelectOption(including(value))).exists(),
+        multiSelect.has({ optionsCount: foundCount }),
+      ]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
+  },
 };

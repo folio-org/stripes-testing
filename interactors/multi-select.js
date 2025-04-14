@@ -100,6 +100,7 @@ export default createInteractor('multi select')
         .filter(Boolean);
     },
     selectedCount: (el) => el.querySelectorAll('[class^=valueChipValue-]').length,
+    optionsCount: (el) => el.querySelectorAll('[class^=multiSelectOption-]').length,
     filterValue: (el) => el.querySelector('input').value,
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
