@@ -1077,10 +1077,11 @@ export default {
 
   verifyMultiSelectFilterOptionCount(accordionName, optionName, expectedCount) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.open());
     cy.expect(
       multiSelect
-        .find(MultiSelectOption({ innerHTML: including(optionName) }))
+        .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
         .has({ totalRecords: expectedCount }),
     );
   },
@@ -1114,7 +1115,12 @@ export default {
 
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
-    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select([including(optionName)])]);
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do([
+      multiSelect.open(),
+      cy.wait(1000),
+      multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]),
+    ]);
   },
 
   checkSearchButtonEnabled() {

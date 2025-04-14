@@ -69,7 +69,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
             testData.resourceTypeAccordionName,
           );
-          // InventorySearchAndFilter.toggleAccordionByName(testData.resourceTypeAccordionName, false);
           cy.intercept('/search/instances*').as('getInstances1');
           InventorySearchAndFilter.selectMultiSelectFilterOption(
             testData.resourceTypeAccordionName,
@@ -85,7 +84,9 @@ describe('Inventory', () => {
               instanceTypes[0].name,
               instances1.response.body.totalRecords,
             );
-            InventoryInstances.checkSearchResultCount(instances1.response.body.totalRecords);
+            InventoryInstances.checkSearchResultCount(
+              instances1.response.body.totalRecords.toLocaleString('en-US'),
+            );
             InventoryInstances.selectInstance();
             InventoryInstance.waitInventoryLoading();
             InstanceRecordView.verifyResourceType(instanceTypes[0].name);
@@ -104,7 +105,9 @@ describe('Inventory', () => {
               instanceTypes[1].name,
             );
             cy.wait('@getInstances2', { timeout: 10_000 }).then((instances2) => {
-              InventoryInstances.checkSearchResultCount(instances2.response.body.totalRecords);
+              InventoryInstances.checkSearchResultCount(
+                instances2.response.body.totalRecords.toLocaleString('en-US'),
+              );
               InventoryInstances.selectInstance(1);
               InventoryInstance.waitInventoryLoading();
               InstanceRecordView.verifyResourceType(
@@ -131,7 +134,9 @@ describe('Inventory', () => {
                   instanceTypes[1].name,
                   instances3.response.body.totalRecords,
                 );
-                InventoryInstances.checkSearchResultCount(instances3.response.body.totalRecords);
+                InventoryInstances.checkSearchResultCount(
+                  instances3.response.body.totalRecords.toLocaleString('en-US'),
+                );
                 InventoryInstances.selectInstance();
                 InventoryInstance.waitInventoryLoading();
                 InstanceRecordView.verifyResourceType(instanceTypes[1].name);
@@ -155,7 +160,9 @@ describe('Inventory', () => {
                     instanceTypes[5].name,
                     instances4.response.body.totalRecords,
                   );
-                  InventoryInstances.checkSearchResultCount(instances4.response.body.totalRecords);
+                  InventoryInstances.checkSearchResultCount(
+                    instances4.response.body.totalRecords.toLocaleString('en-US'),
+                  );
                   InventoryInstances.selectInstance();
                   InventoryInstance.waitInventoryLoading();
                   InstanceRecordView.verifyResourceType(instanceTypes[5].name);
@@ -181,7 +188,7 @@ describe('Inventory', () => {
                   );
                   cy.wait('@getInstances5', { timeout: 10_000 }).then((instances5) => {
                     InventoryInstances.checkSearchResultCount(
-                      instances5.response.body.totalRecords,
+                      instances5.response.body.totalRecords.toLocaleString('en-US'),
                     );
                   });
                 });
