@@ -76,8 +76,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
-      cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      cy.getAdminToken().then(() => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
           query: testData.searchQueryBeforeTest,
@@ -112,7 +111,13 @@ describe('Inventory', () => {
           });
         });
       });
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
@@ -151,10 +156,14 @@ describe('Inventory', () => {
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375259'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[0],

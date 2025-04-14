@@ -96,3 +96,15 @@ Cypress.Commands.add('waitForPrimaryAffiliationSetup', (consortiaId, targetUserI
     },
   );
 });
+
+Cypress.Commands.add('getAllTenants', () => {
+  cy.getConsortiaId().then((consortiaId) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `consortia/${consortiaId}/tenants`,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.tenants;
+    });
+  });
+});

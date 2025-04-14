@@ -15,7 +15,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 
-describe('ui-orders: Orders', () => {
+describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -37,7 +37,6 @@ describe('ui-orders: Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-
     FiscalYears.createViaApi(defaultFiscalYear).then((defaultFiscalYearResponse) => {
       defaultFiscalYear.id = defaultFiscalYearResponse.id;
       firstBudget.fiscalYearId = defaultFiscalYearResponse.id;
