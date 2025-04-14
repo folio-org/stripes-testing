@@ -16,6 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -56,12 +57,13 @@ describe('Orders', () => {
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
+          Funds.closeFundDetails();
         });
 
         Funds.createViaApi(secondFund).then((secondFundResponse) => {
           secondFund.id = secondFundResponse.fund.id;
 
-          cy.visit(TopMenu.fundPath);
           FinanceHelp.searchByName(secondFund.name);
           Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -82,7 +84,9 @@ describe('Orders', () => {
       firstOrder.orderType = 'One-time';
     });
     firstOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
+    TopMenuNavigation.openAppFromDropdown('Orders');
+    Orders.selectOrdersPane();
+
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
@@ -146,7 +150,7 @@ describe('Orders', () => {
       Funds.checkStatusInTransactionDetails('Released');
       Funds.checkExpendedInTransactionDetails('$50.00');
       Funds.checkInitialEncumbranceDetails('$20.00');
-      cy.visit(TopMenu.invoicesPath);
+      TopMenuNavigation.navigateToApp('Invoices');
       Invoices.searchByNumber(firstInvoice.invoiceNumber);
       Invoices.selectInvoice(firstInvoice.invoiceNumber);
       InvoiceView.selectInvoiceLine();
