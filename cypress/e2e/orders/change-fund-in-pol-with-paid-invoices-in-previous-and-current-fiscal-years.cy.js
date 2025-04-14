@@ -274,7 +274,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '10');
+      OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
       OrderLines.saveOrderLine();
       OrderLines.cancelEditingPOL();
 
@@ -302,7 +302,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '10', '10');
+      OrderLines.editFundInPOL(secondFund, '10', '100');
       OrderLines.openPageCurrentEncumbrance('$0.00');
       Funds.varifyDetailsInTransaction(
         secondFiscalYear.code,
