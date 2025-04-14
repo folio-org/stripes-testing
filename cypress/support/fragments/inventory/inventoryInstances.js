@@ -4,6 +4,7 @@ import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
 import {
   AdvancedSearch,
+  MultiSelectMenu,
   AdvancedSearchRow,
   Button,
   Checkbox,
@@ -393,12 +394,15 @@ export default {
     // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
     cy.wait('@getTags');
-
-    cy.wait(500);
-    cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).toggle());
-    cy.wait(500);
-    cy.do(MultiSelectOption(including(tagName)).click());
-    cy.wait(500);
+    cy.do(MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tagName));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(tagName)))
+        .click(),
+    );
+    cy.wait(2000);
   },
 
   searchAndVerify(value) {
