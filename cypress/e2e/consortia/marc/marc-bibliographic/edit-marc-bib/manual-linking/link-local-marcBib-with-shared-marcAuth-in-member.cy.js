@@ -126,9 +126,12 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.deleteField(4);
                 QuickMarcEditor.pressSaveAndClose();
                 cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
+                cy.wait(4000);
+                QuickMarcEditor.confirmDelete();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
 
@@ -145,6 +148,7 @@ describe('MARC', () => {
                 });
               });
 
+              cy.resetTenant();
               cy.waitForAuthRefresh(() => {
                 cy.login(users.userProperties.username, users.userProperties.password, {
                   path: TopMenu.inventoryPath,

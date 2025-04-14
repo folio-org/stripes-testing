@@ -12,6 +12,7 @@ let testUser_C350674;
 
 describe('Users', () => {
   before('create test users', () => {
+    cy.getAdminToken();
     cy.createTempUser([]).then((userProperties) => {
       testUser_C350673 = userProperties;
     });

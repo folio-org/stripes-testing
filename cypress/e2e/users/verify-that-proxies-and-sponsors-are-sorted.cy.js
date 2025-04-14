@@ -31,6 +31,7 @@ describe('Users', () => {
               lastName: `${user}${getRandomPostfix()}`,
               email: 'test@folio.org',
             },
+            type: 'staff',
           }).then((newUserProperties) => {
             usersData.push(newUserProperties);
           });

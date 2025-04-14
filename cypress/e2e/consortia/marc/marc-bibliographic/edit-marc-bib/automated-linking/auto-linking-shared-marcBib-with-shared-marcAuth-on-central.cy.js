@@ -162,6 +162,9 @@ describe('MARC', () => {
           'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C400663'] },
           () => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+            }, 30_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.checkExpectedMARCSource();
@@ -176,9 +179,12 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked650Field);
+            QuickMarcEditor.deleteField(4);
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(2500);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(2500);
+            QuickMarcEditor.confirmDelete();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.checkExpectedMARCSource();
 
@@ -190,6 +196,12 @@ describe('MARC', () => {
             InventoryInstance.checkExpectedMARCSource();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.checkPaneheaderContains(testData.editSharedRecordText);
+
+            testData.linked100Field[0]--;
+            testData.linked600Field_1[0]--;
+            testData.linked600Field_2[0]--;
+            testData.linked650Field[0]--;
+
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_1);
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked600Field_2);

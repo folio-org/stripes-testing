@@ -19,7 +19,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -248,9 +248,9 @@ describe('Patron notices', () => {
         cy.get('@feeFineId').then((feeFineId) => {
           openUserFeeFine(userData.userId, feeFineId);
           FeeFineDetails.openPayModal();
-          PayFeeFaine.setAmount(2);
-          PayFeeFaine.setPaymentMethod({ name: testData.paymentMethodName });
-          PayFeeFaine.submitAndConfirm();
+          PayFeeFine.setAmount(2);
+          PayFeeFine.setPaymentMethod({ name: testData.paymentMethodName });
+          PayFeeFine.submitAndConfirm();
           checkNoticeIsSent([
             {
               userBarcode: userData.barcode,

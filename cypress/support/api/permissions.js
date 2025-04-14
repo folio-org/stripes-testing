@@ -5,6 +5,7 @@ Cypress.Commands.add('getPermissionsApi', (searchParams) => {
   return cy.okapiRequest({
     path: 'perms/permissions',
     searchParams,
+    isDefaultSearchParamsRequired: false,
   });
 });
 

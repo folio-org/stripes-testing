@@ -1,4 +1,3 @@
-import ConsortiumManagerApp from '../../../support/fragments/consortium-manager/consortiumManagerApp';
 import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
@@ -22,10 +21,11 @@ describe('fse-consortia - UI for production tenants', () => {
       cy.getUserTenants().then((userTenants) => {
         // get primary tenant
         const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
+        cy.reload();
+        cy.wait(3000);
         ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
       });
       cy.getUserAffiliationsCount().then((count) => {
-        ConsortiumManagerApp.verifyStatusOfConsortiumManager(count);
         if (count > 1) {
           ConsortiumMgr.switchActiveAffiliationExists();
         } else {

@@ -50,7 +50,6 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.crudAlternativeTitleTypes.gui,
           ]);
-          cy.resetTenant();
         });
       });
 
@@ -80,6 +79,7 @@ describe('Consortium manager', () => {
         'C410862 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local alternative title types of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,

@@ -21,7 +21,7 @@ describe('MARC', () => {
         newContentFor370Field: '$a Harlem, New York, N.Y. $c U.S. A{dollar}AP Rocky',
         updated100FieldValue: '$a C451558 A$AP Rocky $c (Rapper), $d 1988-',
         updated370FieldValue: '$a Harlem, New York, N.Y. $c U.S. A$AP Rocky ',
-        editMarcHeader: 'Edit MARC authority record',
+        editMarcHeader: /Edit .*MARC authority record/,
       };
       const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY;
       const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;

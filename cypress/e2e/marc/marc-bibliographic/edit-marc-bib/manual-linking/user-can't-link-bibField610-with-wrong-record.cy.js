@@ -122,11 +122,14 @@ describe('MARC', () => {
                 });
               });
             });
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -164,7 +167,6 @@ describe('MARC', () => {
             linkValuesWithAuthoritySource.forEach((linkValue) => {
               MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
               MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
-              MarcAuthorities.selectTitle(linkValue.value);
               MarcAuthorities.selectTitle(linkValue.value);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);

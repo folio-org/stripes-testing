@@ -157,13 +157,14 @@ describe('MARC', () => {
             });
           })
           .then(() => {
+            cy.resetTenant();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             cy.waitForAuthRefresh(() => {
-              cy.resetTenant();
-              cy.loginAsAdmin({ path: '/', waiter: () => true });
-              cy.visit(TopMenu.inventoryPath);
               cy.reload();
             }, 30_000);
-            InventoryInstances.waitContentLoading();
 
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
@@ -183,9 +184,12 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.deleteField(4);
                 QuickMarcEditor.pressSaveAndClose();
                 cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
+                cy.wait(2000);
+                QuickMarcEditor.confirmDelete();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -199,7 +203,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[1]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[2]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[3]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[3], true);
         cy.setTenant(Affiliations.University);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[4]);
         cy.setTenant(Affiliations.College);

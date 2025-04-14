@@ -27,7 +27,7 @@ describe('Users', () => {
     { tags: ['extendedPath', 'volaris', 'C422168', 'eurekaPhase1'] },
     () => {
       UsersSearchResultsPane.openNewUser();
-      cy.createUser(userLastName, 'undergrad (Undergraduate Student)', 'test@folio.org');
+      cy.createUser(userLastName, 'undergrad (Undergraduate Student)', 'test@folio.org', 'Staff', userLastName);
       UsersCard.waitLoading();
     },
   );

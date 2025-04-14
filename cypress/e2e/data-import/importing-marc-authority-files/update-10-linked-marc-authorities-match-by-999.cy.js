@@ -200,7 +200,7 @@ describe('Data Import', () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        for (const linkingTagAndValue of linkingTagAndValues) {
+        linkingTagAndValues.forEach((linkingTagAndValue) => {
           InventoryInstance.verifyAndClickLinkIconByIndex(linkingTagAndValue.rowIndex);
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
@@ -210,7 +210,8 @@ describe('Data Import', () => {
             linkingTagAndValue.tag,
             linkingTagAndValue.rowIndex,
           );
-        }
+          cy.wait(200);
+        });
         QuickMarcEditor.pressSaveAndClose();
         cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
@@ -313,7 +314,7 @@ describe('Data Import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
-        for (const [index, linkingTagAndValue] of linkingTagAndValues.entries()) {
+        linkingTagAndValues.forEach((linkingTagAndValue, index) => {
           if (index < 5) {
             QuickMarcEditor.verifyRowLinked(linkingTagAndValue.rowIndex);
             QuickMarcEditor.checkLinkedFieldContainsControlledValueByIndex(
@@ -330,7 +331,7 @@ describe('Data Import', () => {
             );
           }
           cy.wait(500);
-        }
+        });
       },
     );
   });

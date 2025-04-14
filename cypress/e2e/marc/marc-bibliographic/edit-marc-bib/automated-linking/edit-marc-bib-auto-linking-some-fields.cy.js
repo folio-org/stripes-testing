@@ -102,7 +102,7 @@ describe('MARC', () => {
                 query: `naturalId="${id}*" and authRefType=="Authorized"`,
               }).then((records) => {
                 records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
+                  MarcAuthority.deleteViaAPI(record.id, true);
                 });
               });
             });
@@ -130,10 +130,14 @@ describe('MARC', () => {
             userData = createdUserProperties;
 
             linkableFields.forEach((field) => QuickMarcEditor.setRulesForField(field, true));
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -185,7 +189,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // #5 Click on the "Save & keep editing" button.
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditing();
             // #6 Go to "MARC authority" app.
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);

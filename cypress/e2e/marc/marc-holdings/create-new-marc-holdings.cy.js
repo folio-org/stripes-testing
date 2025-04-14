@@ -16,6 +16,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -260,6 +261,9 @@ describe('MARC', () => {
       'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C359242'] },
       () => {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchBySource(testData.sourceMARC);
         InventoryInstances.selectInstance();
         InventoryInstance.goToMarcHoldingRecordAdding();

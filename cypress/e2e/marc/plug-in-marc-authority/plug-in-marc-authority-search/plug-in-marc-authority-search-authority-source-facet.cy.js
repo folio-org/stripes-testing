@@ -13,6 +13,7 @@ describe('MARC', () => {
   describe('plug-in MARC authority', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {
+        searchQuery: 'C422166',
         facetOptions: {
           optionA: 'Thesaurus for Graphic Materials (TGM)',
           optionB: 'GSAFD Genre Terms (GSAFD)',
@@ -36,7 +37,6 @@ describe('MARC', () => {
         marc: 'marcBibFileForC422166.mrc',
         fileName: `C422166 marcFileOneBib.${getRandomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-        numOfRecords: 1,
         propertyName: 'instance',
       };
       const marcAuthFiles = [
@@ -44,13 +44,13 @@ describe('MARC', () => {
           marc: 'marcFileForC422166.mrc',
           fileName: `C422166 marcFileGenre.${getRandomPostfix()}.mrc`,
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-          numOfRecords: 13,
           propertyName: 'authority',
         },
       ];
       const createdAuthorityIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
@@ -104,9 +104,9 @@ describe('MARC', () => {
         Users.deleteViaApi(testData.userProperties.userId);
         Users.deleteViaApi(testData.preconditionUserId);
         InventoryInstance.deleteInstanceViaApi(testData.createdInstanceId);
-        for (let i = 0; i < 13; i++) {
-          MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
-        }
+        createdAuthorityIDs.forEach((id) => {
+          MarcAuthority.deleteViaAPI(id);
+        });
       });
 
       it(
@@ -114,7 +114,7 @@ describe('MARC', () => {
         { tags: ['extendedPath', 'spitfire', 'C422166'] },
         () => {
           // #1 - #3 Fill in the input field placed at the "Search & filter" pane with " * ", select search option: "Keyword", click on the "Search" button
-          MarcAuthorities.searchByParameter('Keyword', '*');
+          MarcAuthorities.searchByParameter('Keyword', testData.searchQuery);
           MarcAuthorities.checkResultsExistance('Authorized');
           // #4 Click on the multiselect element titled "Authority source" and check dropdown options
           MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
@@ -150,6 +150,7 @@ describe('MARC', () => {
           // #11 Delete the selected at step 6 "Authority source" facet option from multiselect box by clicking on the "X" icon placed in the tag.
           MarcAuthorities.removeAuthoritySourceOption(testData.facetOptions.optionA);
           cy.wait(1000);
+          MarcAuthorities.selectTitle(testData.facetValues.valueB);
           // #13 Verify that the prefix value from "010 $a" ("001") field matched to selected "Authority source" facet option.
           MarcAuthority.contains(testData.prefixValues.prefixValB);
 

@@ -1,6 +1,15 @@
 import localforage from 'localforage';
+import Tenant from './tenant';
 
-import { Button, Dropdown, Heading, including, Select, TextField, TextInput } from '../../interactors';
+import {
+  Button,
+  Dropdown,
+  Heading,
+  including,
+  Select,
+  TextField,
+  TextInput,
+} from '../../interactors';
 
 Cypress.Commands.add(
   'login',
@@ -24,10 +33,21 @@ Cypress.Commands.add(
           cy.wait(1000).then(() => {
             cy.get('body').then(($body) => {
               if ($body.find('select').length > 0) {
-                cy.do(Select('Tenant/Library').choose(Cypress.env('OKAPI_TENANT')));
-                cy.wait(500);
-                cy.do(Button('Continue').click());
-                cy.wait(1000);
+                cy.getAdminToken();
+                cy.getConsortiaStatus().then((consortiaData) => {
+                  const targetTenantId = Tenant.get();
+                  cy.setTenant(consortiaData.centralTenantId);
+                  cy.getAllTenants().then((userTenants) => {
+                    const targetTenant = userTenants.filter(
+                      (element) => element.id === targetTenantId,
+                    )[0];
+                    cy.setTenant(targetTenantId);
+                    cy.do(Select('Tenant/Library').choose(targetTenant.name));
+                    cy.wait(500);
+                    cy.do(Button('Continue').click());
+                    cy.wait(1000);
+                  });
+                });
               } else {
                 cy.log('No tenant/library select found');
               }
@@ -74,28 +94,28 @@ Cypress.Commands.add('logout', () => {
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {
   cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), visitPath);
   if (Cypress.env('eureka')) {
-    cy.getAdminToken();
+    // cy.getAdminToken();
   }
 });
 
 Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {
   cy.login('ECS0001Admin', Cypress.env('diku_password'), visitPath);
   if (Cypress.env('eureka')) {
-    cy.getAdminToken();
+    // cy.getAdminToken();
   }
 });
 
 Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
   cy.login('ECS0005Admin', Cypress.env('diku_password'), visitPath);
   if (Cypress.env('eureka')) {
-    cy.getAdminToken();
+    // cy.getAdminToken();
   }
 });
 
 Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
   cy.login('consortium_admin', Cypress.env('diku_password'), visitPath);
   if (Cypress.env('eureka')) {
-    cy.getAdminToken();
+    // cy.getAdminToken();
   }
 });
 

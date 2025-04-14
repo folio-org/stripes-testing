@@ -86,9 +86,13 @@ describe('MARC', () => {
         });
       });
 
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.inventoryPath).then(() => {
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.inventoryPath);
         InventoryInstances.waitContentLoading();
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000).then(() => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -115,10 +119,14 @@ describe('MARC', () => {
           testData.user = createdUserProperties;
         })
         .then(() => {
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
     });
 

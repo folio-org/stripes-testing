@@ -10,7 +10,6 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { escapeRegex, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -54,42 +53,45 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: 'title="Black Tiger"',
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+      testData.searchAuthorityQueries.forEach((query) => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({
           limit: 100,
-          query: 'title="Black Tiger"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
             });
           }
         });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-        });
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.createdRecordIDs.push(record[marcFile.propertyName].id);
-            });
+      });
+      testData.marcFiles.forEach((marcFile) => {
+        DataImport.uploadFileViaApi(
+          marcFile.marc,
+          marcFile.fileName,
+          marcFile.jobProfileToRun,
+        ).then((response) => {
+          response.forEach((record) => {
+            testData.createdRecordIDs.push(record[marcFile.propertyName].id);
           });
         });
       });
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        cy.reload();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length - 1; i++) {
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
@@ -102,7 +104,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
 
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
@@ -129,11 +131,12 @@ describe('Inventory', () => {
       'C375222 Browse | Display records with same values in "Subject" field and linked to the same "MARC authority" record (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C375222'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password);
+          cy.reload();
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         BrowseSubjects.waitForSubjectToAppear(testData.subjectHeading[0], true, true);
 
         testData.browseQueries.forEach((query) => {

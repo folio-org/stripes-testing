@@ -81,6 +81,9 @@ describe('MARC', () => {
               waiter: MarcAuthorities.waitLoading,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+              }, 30_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               MarcAuthorities.waitLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
