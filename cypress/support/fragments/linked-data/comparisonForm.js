@@ -9,11 +9,12 @@ export default {
 
   editInstance(instanceTitle) {
     // select instance to be edited by the title
+    // section[@class='comparison']//h3//span[text()='Instance AQA title 397.6468909927109306']/../..//button[@data-testid='preview-actions-dropdown']
     cy.xpath(
-      `${comparisonSection}//h3[text()='${instanceTitle}']/..//button[@data-testid='preview-actions-dropdown']`,
+      `${comparisonSection}//h3//span[text()='${instanceTitle}']/../..//button[@data-testid='preview-actions-dropdown']`,
     ).click();
     cy.xpath(
-      `${comparisonSection}//h3[text()='${instanceTitle}']/..//button[contains(@data-testid, 'edit')]`,
+      `${comparisonSection}//h3//span[text()='${instanceTitle}']/../..//button[contains(@data-testid, 'edit')]`,
     ).click();
     EditResource.waitLoading();
   },
