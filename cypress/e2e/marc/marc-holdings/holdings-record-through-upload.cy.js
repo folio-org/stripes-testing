@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -6,7 +6,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -18,10 +18,7 @@ describe('MARC', () => {
     let holdingsID;
 
     before(() => {
-      cy.loginAsAdmin();
-      // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
       cy.getAdminToken();
-
       DataImport.uploadFileViaApi(marcFile, fileName, jobProfileToRun).then((response) => {
         response.forEach((record) => {
           createdInstanceID = record[propertyName].id;
@@ -39,7 +36,10 @@ describe('MARC', () => {
       'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345408'] },
       () => {
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventoryInstances.searchByTitle(createdInstanceID);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
