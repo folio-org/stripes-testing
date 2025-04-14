@@ -19,9 +19,9 @@ import {
   Spinner,
   TextArea,
   TextField,
+  including,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
-import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import SearchHelper from '../finance/financeHelper';
@@ -51,8 +51,6 @@ const organizationStatus = Select('Organization status*');
 const organizationNameField = TextField('Name*');
 const nameTextField = TextField('[object Object] 0');
 const organizationCodeField = TextField('Code*');
-const today = new Date();
-const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
 const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
   id: 'accordion-toggle-button-contactPeopleSection',
@@ -119,8 +117,9 @@ export default {
     cy.do([
       organizationStatus.choose(organization.status),
       organizationNameField.fillIn(organization.name),
-      organizationCodeField.fillIn(organization.code),
     ]);
+    cy.wait(3000);
+    cy.do([organizationCodeField.fillIn(organization.code)]);
   },
 
   newOrganization: () => {
@@ -268,7 +267,6 @@ export default {
     libraryEDICode,
     accountNumber,
     acquisitionMethod,
-    UTCTime,
   ) => {
     cy.wait(4000);
     cy.do([
@@ -295,36 +293,11 @@ export default {
     ).select(acquisitionMethod);
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
-      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
-      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField(including('Server address'))).fillIn(serverAddress),
+      ftpSection.find(TextField(including('FTP port'))).fillIn(FTPport),
       ftpSection.find(TextField('Username')).fillIn('folio'),
       ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
-    ]);
-    cy.do([
-      schedulingSection
-        .find(
-          Checkbox({
-            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
-          }),
-        )
-        .click(),
-      schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
-      schedulingSection
-        .find(
-          Select({
-            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod',
-          }),
-        )
-        .choose('Daily'),
-      schedulingSection
-        .find(
-          TextField({
-            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate',
-          }),
-        )
-        .fillIn(`${todayDate}`),
-      schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
     cy.do(saveAndClose.click());
     cy.wait(4000);
