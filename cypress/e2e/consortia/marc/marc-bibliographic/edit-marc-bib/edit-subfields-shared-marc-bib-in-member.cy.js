@@ -99,7 +99,9 @@ describe('MARC', () => {
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                cy.reload();
+                cy.waitForAuthRefresh(() => {
+                  cy.reload();
+                }, 30_000);
                 ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
                 InventoryInstances.waitContentLoading();
                 ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
