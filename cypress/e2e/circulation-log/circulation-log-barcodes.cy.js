@@ -27,6 +27,7 @@ describe('Circulation log', () => {
       lastName: 'secondUserLastName',
       email: 'test2@folio.org',
     },
+    type: 'staff',
   };
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
