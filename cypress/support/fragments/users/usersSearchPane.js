@@ -19,7 +19,11 @@ const waitClick = () => {
 };
 
 export default {
-  waitLoading: () => cy.expect(PaneHeader('User search results').exists()),
+  waitLoading() {
+    cy.wait(500);
+    cy.expect(PaneHeader('User search results').exists());
+    cy.wait(500);
+  },
 
   searchByStatus(status) {
     waitClick();

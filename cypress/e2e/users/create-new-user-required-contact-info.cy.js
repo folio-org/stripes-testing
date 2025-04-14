@@ -24,8 +24,8 @@ describe('Users', () => {
   userWithSameBarcode.barcode = user.barcode;
   const userWithSameUsername = createUserData();
   userWithSameUsername.username = user.username;
+
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin({
       path: TopMenu.usersPath,
       waiter: UsersSearchPane.waitLoading,
@@ -49,12 +49,16 @@ describe('Users', () => {
         userWithSameName.id = id;
       });
       UsersSearchPane.waitLoading();
-      Users.createViaUi(userWithSameBarcode);
+      Users.createViaUiIncomplete(userWithSameBarcode);
+      cy.wait(10000);
       InteractorsTools.checkTextFieldError('Barcode', 'This barcode has already been taken');
-      cy.visit(TopMenu.usersPath);
+      Users.cancel();
+      Users.closeWithoutSavingButton();
+
       UsersSearchPane.waitLoading();
-      Users.createViaUi(userWithSameUsername);
-      InteractorsTools.checkTextFieldError('Username', 'This username already exists');
+      Users.createViaUiIncomplete(userWithSameUsername);
+      cy.wait(10000);
+      InteractorsTools.checkTextFieldError('Username*', 'This username already exists');
     },
   );
 });

@@ -13,7 +13,7 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -147,10 +147,10 @@ describe('Fees&Fines', () => {
 
           NewFeeFine.chargeAndPayNow();
 
-          PayFeeFaine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
-          PayFeeFaine.setPaymentMethod(testData.paymentMethod);
+          PayFeeFine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+          PayFeeFine.setPaymentMethod(testData.paymentMethod);
 
-          PayFeeFaine.submitAndConfirm();
+          PayFeeFine.submitAndConfirm();
         };
         // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
         UsersCard.openFeeFines();

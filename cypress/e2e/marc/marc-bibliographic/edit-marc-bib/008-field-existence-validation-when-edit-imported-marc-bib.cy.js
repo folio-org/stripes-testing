@@ -85,6 +85,7 @@ describe('MARC', () => {
       };
 
       before('Creating user and data', () => {
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -92,7 +93,6 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
-          cy.getAdminToken();
           DataImport.uploadFileViaApi(
             marcFile.marc,
             marcFile.fileName,
@@ -102,11 +102,14 @@ describe('MARC', () => {
               testData.createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
       });
 
@@ -153,14 +156,12 @@ describe('MARC', () => {
             cy.wait(500);
           });
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
           QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
           QuickMarcEditor.check008FieldContent();
           QuickMarcEditor.deleteValuesIn008Boxes();
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.saveAndCloseWithValidationWarnings();
           cy.intercept(`/inventory/instances/${testData.createdRecordIDs[0]}`).as('recordUpdated');
           QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait('@recordUpdated').then(() => {

@@ -28,7 +28,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -386,8 +386,8 @@ describe('Patron notices', () => {
           UsersCard.showOpenedFeeFines();
           UserAllFeesFines.clickRowCheckbox(0);
           UserAllFeesFines.paySelectedFeeFines();
-          PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-          PayFeeFaine.submitAndConfirm();
+          PayFeeFine.setPaymentMethod(testData.paymentMethod);
+          PayFeeFine.submitAndConfirm();
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
           // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid

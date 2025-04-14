@@ -281,6 +281,7 @@ describe('Data Import', () => {
           );
         });
 
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,

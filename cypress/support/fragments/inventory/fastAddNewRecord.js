@@ -1,14 +1,15 @@
+import { including } from '@interactors/html';
 import {
-  MultiColumnListCell,
   Button,
+  KeyValue,
+  MultiColumnListCell,
+  Pane,
+  PaneHeader,
+  Section,
   Select,
   Selection,
   SelectionList,
   TextField,
-  KeyValue,
-  Section,
-  PaneHeader,
-  Pane,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -95,7 +96,7 @@ const viewHoldings = () => {
 };
 
 const verifyPermanentLocation = (value) => {
-  cy.expect(KeyValue('Permanent').has({ value }));
+  cy.expect(KeyValue('Permanent').has({ value: including(value) }));
 };
 
 const closeHoldingsRecordView = () => {

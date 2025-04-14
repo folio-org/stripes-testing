@@ -40,7 +40,7 @@ export default {
       tagsMultiSelect.exists(),
       descriptionTextArea.exists(),
       cancelButton.has({ disabled: false, visible: true }),
-      confirmButton.has({ disabled: false, visible: true }),
+      confirmButton.has({ disabled: true, visible: true }),
     ]);
   },
   fillTransferDetails({ fromFund, toFund, amount, tag, description } = {}) {

@@ -33,52 +33,55 @@ describe('MARC', () => {
     const user = {};
 
     before('Creating user', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
-      ]).then((createdUserProperties) => {
-        user.userAProperties = createdUserProperties;
+      ])
+        .then((createdUserProperties) => {
+          user.userAProperties = createdUserProperties;
 
-        cy.getUserToken(user.userAProperties.username, user.userAProperties.password);
-        cy.login(user.userAProperties.username, user.userAProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        }).then(() => {
-          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
-            (response) => {
-              response.forEach((record) => {
-                instanceID = record[propertyName].id;
-              });
-            },
-          );
-          Logs.waitFileIsImported(fileName);
-          Logs.checkJobStatus(fileName, 'Completed');
-          Logs.openFileDetails(fileName);
-          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
-          InventorySteps.addMarcHoldingRecord();
-          cy.wait(4000);
+          cy.getUserToken(user.userAProperties.username, user.userAProperties.password);
+          cy.login(user.userAProperties.username, user.userAProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          }).then(() => {
+            DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName, jobProfileToRun).then(
+              (response) => {
+                response.forEach((record) => {
+                  instanceID = record[propertyName].id;
+                });
+              },
+            );
+            Logs.waitFileIsImported(fileName);
+            Logs.checkJobStatus(fileName, 'Completed');
+            Logs.openFileDetails(fileName);
+            Logs.goToTitleLink(RECORD_STATUSES.CREATED);
+            InventorySteps.addMarcHoldingRecord();
+            cy.wait(4000);
+          });
+        })
+        .then(() => {
+          cy.getAdminToken();
+          cy.createTempUser([
+            Permissions.inventoryAll.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+            Permissions.uiUsersCheckTransactions.gui,
+            Permissions.uiUsersDelete.gui,
+            Permissions.uiUserEdit.gui,
+            Permissions.uiUsersView.gui,
+          ]).then((createdUserProperties) => {
+            user.userBProperties = createdUserProperties;
+            cy.login(user.userBProperties.username, user.userBProperties.password, {
+              path: TopMenu.usersPath,
+              waiter: UsersSearchPane.waitLoading,
+            });
+          });
         });
-      });
-
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-        Permissions.uiUsersCheckTransactions.gui,
-        Permissions.uiUsersDelete.gui,
-        Permissions.uiUserEdit.gui,
-        Permissions.uiUsersView.gui,
-      ]).then((createdUserProperties) => {
-        user.userBProperties = createdUserProperties;
-
-        cy.login(user.userBProperties.username, user.userBProperties.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
-      });
     });
 
     after('Deleting created user', () => {

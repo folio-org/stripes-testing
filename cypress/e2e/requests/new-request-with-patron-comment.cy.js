@@ -25,7 +25,7 @@ describe('Requests', () => {
   before(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
+        cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
           user.barcode = users[0].barcode;
         });
       })
@@ -84,7 +84,7 @@ describe('Requests', () => {
   });
 
   it(
-    'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
+    'C199704 Create a New Request with Patron Comment (vega) (TaaS)',
     { tags: ['criticalPath', 'vega', 'shiftLeft', 'C199704'] },
     () => {
       NewRequest.openNewRequestPane();

@@ -1,4 +1,5 @@
 import {
+  APPLICATION_NAMES,
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
@@ -13,6 +14,7 @@ import Requests from '../../support/fragments/requests/requests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -111,10 +113,6 @@ describe('Circulation log', () => {
           requesterId: userData.userId,
         }).then((request) => {
           testData.requestsId = request.body.id;
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.requestsPath,
-            waiter: Requests.waitLoading,
-          });
         });
       });
   });
@@ -138,12 +136,18 @@ describe('Circulation log', () => {
     'C358981 Verify that request source is correctly stored in the log (Volaris) (TaaS)',
     { tags: ['extendedPath', 'volaris', 'C358981'] },
     () => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
+      });
+
       Requests.findCreatedRequest(instanceData.itemBarcode);
-      Requests.selectFirstRequest(instanceData.itemBarcode);
+      Requests.selectFirstRequest(instanceData.title);
       EditRequest.openRequestEditForm();
       NewRequest.choosePickupServicePoint('Circ Desk 1');
       EditRequest.saveAndClose();
-      cy.visit(TopMenu.circulationLogPath);
+
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.waitLoading();
       SearchPane.searchByUserBarcode(userData.barcode);
       const createdRecords = getSearchResultsData('Created', testData.adminSourceRecord);

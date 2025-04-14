@@ -1,41 +1,41 @@
 import {
-  Button,
-  SearchField,
-  PaneHeader,
-  Select,
   Accordion,
+  Button,
+  Card,
   Checkbox,
+  HTML,
+  including,
+  KeyValue,
+  Link,
+  matching,
+  Modal,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
-  Modal,
-  TextField,
-  SelectionOption,
   Pane,
   PaneContent,
-  Link,
-  including,
-  matching,
+  PaneHeader,
+  SearchField,
   Section,
-  KeyValue,
-  Card,
+  Select,
+  SelectionOption,
   TextArea,
-  HTML,
+  TextField,
 } from '../../../../interactors';
-import getRandomPostfix from '../../utils/stringTools';
-import SelectInstanceModal from './modals/selectInstanceModal';
-import SearchHelper from '../finance/financeHelper';
-import OrderLineDetails from './orderLineDetails';
 import {
-  ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
-  RECEIVING_WORKFLOW_NAMES,
   MATERIAL_TYPE_NAMES,
+  ORDER_FORMAT_NAMES,
   ORDER_PAYMENT_STATUS,
   RECEIPT_STATUS_SELECTED,
+  RECEIVING_WORKFLOW_NAMES,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import getRandomPostfix from '../../utils/stringTools';
+import SearchHelper from '../finance/financeHelper';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import selectLocationModal from './modals/selectLocationModal';
+import OrderLineDetails from './orderLineDetails';
 
 const path = require('path');
 
@@ -1918,6 +1918,7 @@ export default {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
     this.submitOrderLine();
+    cy.wait(4000);
   },
 
   openInstance: () => {
@@ -2606,7 +2607,7 @@ export default {
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       currencyButton.click(),
       SelectionOption(currency).click(),
-      Checkbox({ id: 'use-set-exhange-rate' }).click(),
+      Checkbox({ id: 'use-set-exchange-rate' }).click(),
       TextField({ name: 'cost.exchangeRate' }).fillIn(exchangeRate),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),

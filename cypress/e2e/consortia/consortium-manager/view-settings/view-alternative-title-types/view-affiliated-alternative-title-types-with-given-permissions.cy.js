@@ -114,19 +114,15 @@ describe('Consortium manager', () => {
       });
 
       after('delete test data', () => {
-        cy.setTenant(Affiliations.University);
-        cy.getUniversityAdminToken();
-        cy.deleteAlternativeTitleTypes(testData.universityLocalType.id);
-
         cy.resetTenant();
         cy.getAdminToken();
+        cy.setTenant(Affiliations.University);
+        cy.deleteAlternativeTitleTypes(testData.universityLocalType.id);
 
         cy.setTenant(Affiliations.College);
-        cy.getCollegeAdminToken();
         cy.deleteAlternativeTitleTypes(testData.collegeLocalType.id);
 
-        cy.setTenant(Affiliations.Consortia);
-        cy.getAdminToken();
+        cy.resetTenant();
         cy.deleteAlternativeTitleTypes(testData.centralLocalType.id);
         AlternativeTitleTypesConsortiumManager.deleteViaApi(testData.centralSharedType);
         Users.deleteViaApi(testData.user855.userId);
@@ -222,9 +218,9 @@ describe('Consortium manager', () => {
         'C410856 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of alternative title types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user856.username, testData.user856.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);

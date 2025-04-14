@@ -84,6 +84,7 @@ describe('Eureka', () => {
       'C422010 ECS | Eureka | A user with appropriate role can view authorization roles from different tenants (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C422010'] },
       () => {
+        cy.resetTenant();
         cy.login(userData.username, userData.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManager.verifyStatusOfConsortiumManager();

@@ -52,6 +52,7 @@ describe('Inventory', () => {
               Permissions.uiInventorySettingsConfigureClassificationBrowse.gui,
             ]);
 
+            cy.resetTenant();
             cy.login(user.username, user.password, {
               path: TopMenu.settingsPath,
               waiter: SettingsPane.waitLoading,

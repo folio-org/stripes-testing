@@ -83,7 +83,7 @@ describe('MARC', () => {
               }
             });
 
-            cy.loginAsAdmin().then(() => {
+            cy.getAdminToken().then(() => {
               marcFiles.forEach((marcFile) => {
                 DataImport.uploadFileViaApi(
                   marcFile.marc,
@@ -96,8 +96,14 @@ describe('MARC', () => {
                 });
               });
             });
-
-            cy.visit(TopMenu.inventoryPath).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000).then(() => {
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
               InventoryInstance.editMarcBibliographicRecord();
@@ -117,11 +123,14 @@ describe('MARC', () => {
               cy.wait(1500);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
-
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(userData.username, userData.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               InventoryInstances.searchByTitle(createdRecordIDs[0]);
               InventoryInstances.selectInstance();
             });

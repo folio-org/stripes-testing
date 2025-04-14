@@ -81,6 +81,7 @@ export default {
     // edit edition
     EditResource.waitLoading();
     EditResource.setEdition(title);
+    EditResource.setValueForTheField(this.generateValidLccn(), 'LCCN');
     EditResource.saveAndClose();
     // search for LDE is displayed
     SearchAndFilter.waitLoading();

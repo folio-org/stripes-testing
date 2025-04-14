@@ -46,6 +46,7 @@ describe('Inventory', () => {
           testData.instanceHRID = instance.hrid;
         });
 
+        cy.resetTenant();
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -57,8 +58,8 @@ describe('Inventory', () => {
 
     after('Delete test data', () => {
       cy.resetTenant();
+      cy.getAdminToken();
       cy.setTenant(Affiliations.College);
-      cy.getCollegeAdminToken();
       cy.getInstance({
         limit: 1,
         expandAll: true,
@@ -69,7 +70,6 @@ describe('Inventory', () => {
       });
       Locations.deleteViaApi(testData.collegeLocation);
       cy.resetTenant();
-      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     });
@@ -104,6 +104,7 @@ describe('Inventory', () => {
         InventoryInstance.openHoldingsAccordion(testData.collegeLocation.name);
         InventoryInstance.checkIsItemCreated(testData.itemBarcode);
 
+        cy.resetTenant();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
         InventorySearchAndFilter.searchInstanceByHRID(testData.instanceHRID);

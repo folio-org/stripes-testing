@@ -58,7 +58,7 @@ describe('Permissions', () => {
         InventorySearchAndFilter.browseSearch('K1');
         InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(false);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults();
-        InventorySearchAndFilter.resetAll();
+        InventorySearchAndFilter.clickResetAllButton();
         InventorySearchAndFilter.selectBrowseSubjects();
         InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(true);
         InventorySearchAndFilter.browseSearch('art');
