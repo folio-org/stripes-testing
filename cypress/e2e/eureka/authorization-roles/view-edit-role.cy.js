@@ -115,9 +115,9 @@ describe('Eureka', () => {
         ],
         newCapabilitySet: {
           application: 'app-platform-complete',
-          table: 'Procedural',
-          resource: 'UI-Users Loans Renew',
-          action: 'Execute',
+          table: 'Data',
+          resource: 'UI-Users Loans-Renew',
+          action: 'Create',
         },
         newCapabilitiesInSet: [
           {
@@ -125,6 +125,12 @@ describe('Eureka', () => {
             table: 'Data',
             resource: 'Inventory-Storage Location-Units Libraries Collection',
             action: 'View',
+          },
+          {
+            application: 'app-platform-complete',
+            table: 'Data',
+            resource: 'UI-Users Loans-Renew',
+            action: 'Create',
           },
           {
             application: 'app-platform-complete',
@@ -144,15 +150,15 @@ describe('Eureka', () => {
         expectedRowCounts: {
           capabilitySets: {
             Settings: 1,
-            Procedural: 1,
+            Data: 1,
           },
           capabilities: {
             Settings: 4,
             Procedural: 1,
-            Data: 4,
+            Data: 5,
           },
         },
-        absentCapabilitySetTables: ['Data'],
+        absentCapabilitySetTables: ['Procedural'],
         capabSetIds: [],
         capabIds: [],
       };
@@ -222,7 +228,7 @@ describe('Eureka', () => {
 
       it(
         'C627446 Viewing/editing existing authorization role',
-        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C424001'] },
+        { tags: ['criticalPath', 'eureka', 'eurekaPhase1', 'C627446'] },
         () => {
           const roleViewUrl = `${Cypress.config().baseUrl}${TopMenu.settingsAuthorizationRoles}/${
             testData.roleId
