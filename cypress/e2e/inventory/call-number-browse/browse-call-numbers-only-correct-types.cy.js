@@ -10,6 +10,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { CallNumberBrowseSettings } from '../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -102,6 +103,33 @@ describe('Inventory', () => {
         other: 'RG4-D-5',
         local: 'Diss 553 NU 2001',
         folio: 'Folio45537',
+      },
+    ];
+
+    const callNumberTypesSettings = [
+      { name: 'Call numbers (all)', callNumberTypes: [] },
+      {
+        name: 'Dewey Decimal classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL],
+      },
+      {
+        name: 'Library of Congress classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS, CALL_NUMBER_TYPE_NAMES.LOCAL],
+      },
+      {
+        name: 'National Library of Medicine classification',
+        callNumberTypes: [
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
+          CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
+        ],
+      },
+      {
+        name: 'Other scheme',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME, CALL_NUMBER_TYPE_NAMES.UDC],
+      },
+      {
+        name: 'Superintendent of Documents classification',
+        callNumberTypes: [CALL_NUMBER_TYPE_NAMES.SUDOC],
       },
     ];
 
@@ -230,6 +258,10 @@ describe('Inventory', () => {
           }
         });
 
+      callNumberTypesSettings.forEach((setting) => {
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi(setting);
+      });
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {
@@ -246,6 +278,9 @@ describe('Inventory', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       });
       InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
+      callNumberTypesSettings.forEach((setting) => {
+        CallNumberBrowseSettings.assignCallNumberTypesViaApi({ ...setting, callNumberTypes: [] });
+      });
     });
 
     it(

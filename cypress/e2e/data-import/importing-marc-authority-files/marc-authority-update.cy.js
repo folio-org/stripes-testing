@@ -28,6 +28,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
@@ -224,6 +225,7 @@ describe('Data Import', () => {
         MarcAuthority.contains('$a C374186 Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyRecordStatus('Automated linking update');
