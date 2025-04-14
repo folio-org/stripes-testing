@@ -1114,12 +1114,7 @@ export default {
 
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
-    const escapedValue = optionName.replace(/[-[\]{}()*+?\\^$]/g, '\\$&');
-    cy.do([
-      multiSelect.open(),
-      cy.wait(1000),
-      multiSelect.select(matching(`${escapedValue}\\(\\d+\\)`)),
-    ]);
+    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select([including(optionName)])]);
   },
 
   checkSearchButtonEnabled() {
