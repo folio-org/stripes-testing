@@ -205,7 +205,9 @@ describe('MARC', () => {
             path: TopMenu.marcAuthorities,
             waiter: MarcAuthorities.waitLoading,
           });
-          MarcAuthorities.switchToBrowse();
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+          }, 30_000);
         });
       });
 
@@ -225,6 +227,7 @@ describe('MARC', () => {
         'C367936 Verify that correct number of linked records are displayed in the "Number of titles" column when browsing for linked "MARC Authority" records (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C367936'] },
         () => {
+          MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[2].title);
           MarcAuthorityBrowse.checkResultWithValue(testData.authorized, marcFiles[2].title);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(marcFiles[2].title, 1);

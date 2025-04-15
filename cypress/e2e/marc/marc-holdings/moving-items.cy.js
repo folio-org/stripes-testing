@@ -62,7 +62,7 @@ describe('MARC', () => {
             ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+              query: `personal.lastName=${userProperties.username} and active=true`,
             });
           })
           .then(() => {
@@ -139,7 +139,8 @@ describe('MARC', () => {
       },
     );
 
-    it(
+    // Skipped due to EUREKA-618
+    it.skip(
       'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
       { tags: ['smoke', 'spitfire', 'C345404'] },
       () => {

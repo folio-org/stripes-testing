@@ -18,6 +18,9 @@ describe('MARC', () => {
 
       before('Creating data', () => {
         cy.getAdminToken();
+        ['C380450', 'C380727', 'C624340', 'Cartoons & Comics'].forEach((record) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(record);
+        });
         DataImport.uploadFileViaApi('uniform_title.mrc', fileName, jobProfileToRun).then(
           (response) => {
             response.forEach((record) => {
@@ -50,8 +53,8 @@ describe('MARC', () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.checkSearchOptions();
           MarcAuthorityBrowse.searchBy('Uniform title', 'Cartoons & Comics');
-          MarcAuthorities.checkCellValueIsExists(5, 2, 'Cartoons & Comics');
-          MarcAuthorities.checkHeadingReferenceColumnValueIsBold(5);
+          MarcAuthorities.checkCellValueIsExists(0, 2, 'Cartoons & Comics');
+          MarcAuthorities.checkHeadingReferenceColumnValueIsBold(0);
         },
       );
     });

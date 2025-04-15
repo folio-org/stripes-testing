@@ -52,6 +52,8 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374142');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
@@ -116,6 +118,9 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             });
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+            }, 30_000);
           });
         });
       });
