@@ -12,7 +12,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Filters', () => {
       const testData = {
-        searchQuery: 'C553014 filter using 2 dates test',
+        searchQuery: 'C553027 date filter validation',
         allDates1Sorted: ['1902', '1903', '1904', '1905', '1906'],
         dateRangeAccordionName: 'Date range',
       };
@@ -86,7 +86,7 @@ describe('Inventory', () => {
         { range: ['1935', '1934'], fromError: InventorySearchAndFilter.dateOrderErrorText },
       ];
       const marcFile = {
-        marc: 'marcBibFileC553014.mrc',
+        marc: 'marcBibFileC553027.mrc',
         fileName: `testMarcFileC553027.${randomPostfix()}.mrc`,
         jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         propertyName: 'instance',
@@ -107,23 +107,25 @@ describe('Inventory', () => {
               });
             }
           });
-        }).then(() => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdInstanceIds.push(record[marcFile.propertyName].id);
+        })
+          .then(() => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdInstanceIds.push(record[marcFile.propertyName].id);
+              });
+            });
+          })
+          .then(() => {
+            cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+              testData.userId = userProperties.userId;
+              cy.login(userProperties.username, userProperties.password);
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             });
           });
-
-          cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
-            testData.userId = userProperties.userId;
-            cy.login(userProperties.username, userProperties.password);
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          });
-        });
       });
 
       after('Delete test data', () => {
@@ -138,6 +140,7 @@ describe('Inventory', () => {
         'C553027 Validation of "From" / "To" boxes in "Date range" filter (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C553027'] },
         () => {
+          InventoryInstances.searchByTitle(testData.searchQuery);
           filterData.forEach((filterDatum) => {
             InventorySearchAndFilter.filterByDateRange(
               ...filterDatum.range,
