@@ -14,7 +14,7 @@ describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       const testData = {
-        initialSource: { name: 'folio-aqa' },
+        initialSource: { name: Cypress.env('diku_login') },
         authority: {
           source: INSTANCE_SOURCE_NAMES.MARC,
           searchInput: 'C350697 On the Road',

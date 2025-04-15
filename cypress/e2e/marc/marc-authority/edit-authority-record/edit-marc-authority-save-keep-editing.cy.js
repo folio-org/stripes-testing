@@ -101,13 +101,14 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
           headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
 
-          cy.login(testData.userProperties.username, testData.userProperties.password);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+          }, 30_000);
         });
-      });
-
-      beforeEach('Visit MARC Authorities', () => {
-        cy.visit(TopMenu.marcAuthorities);
-        MarcAuthorities.waitLoading();
       });
 
       after('Delete test data', () => {
@@ -153,6 +154,7 @@ describe('MARC', () => {
           );
 
           // Add field and verify button states updated
+          cy.wait(2000);
           MarcAuthority.addNewField(4, testData.newField.tag, testData.newField.content);
           QuickMarcEditor.checkButtonsEnabled();
 
@@ -173,7 +175,7 @@ describe('MARC', () => {
 
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(2000);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();

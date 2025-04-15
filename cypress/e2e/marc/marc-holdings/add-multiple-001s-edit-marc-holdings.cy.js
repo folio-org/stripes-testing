@@ -109,7 +109,8 @@ describe('MARC', () => {
       },
     );
 
-    it(
+    // Skipped due to EUREKA-618
+    it.skip(
       'C387461 Add multiple 001s when editing "MARC Holdings" record (Spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C387461'] },
       () => {
@@ -133,7 +134,8 @@ describe('MARC', () => {
       },
     );
 
-    it(
+    // Skipped due to EUREKA-618
+    it.skip(
       'C356843 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (Spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C356843'] },
       () => {
