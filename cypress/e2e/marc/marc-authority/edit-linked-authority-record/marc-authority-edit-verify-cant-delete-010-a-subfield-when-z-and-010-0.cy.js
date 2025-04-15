@@ -30,7 +30,7 @@ describe('MARC', () => {
           '\\',
           '$a Erbil, H. Yıldırım',
           '',
-          '$0 http://id.loc.gov/authorities/names/n00000912',
+          '$0 http://id.loc.gov/authorities/names/n00376600',
           '',
         ],
         colloutMessage: 'Cannot remove 010 $a for this record.',

@@ -149,10 +149,7 @@ describe('Data Import', () => {
           );
         });
 
-      cy.loginAsAdmin({
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      }).then(() => {
+      cy.getAdminToken().then(() => {
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

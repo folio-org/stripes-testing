@@ -220,7 +220,7 @@ export default {
 
   verifyNumberOfTitlesForRow(rowIndex, itemCount) {
     cy.expect(
-      MultiColumnListCell({ row: rowIndex, columnIndex: 1 }).has({ content: itemCount.toString() }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 3 }).has({ content: itemCount.toString() }),
     );
   },
 

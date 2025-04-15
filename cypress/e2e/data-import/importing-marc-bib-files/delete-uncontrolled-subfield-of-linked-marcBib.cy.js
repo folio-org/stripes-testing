@@ -286,6 +286,7 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         cy.wait(1000);
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
         InventoryInstance.waitInventoryLoading();
