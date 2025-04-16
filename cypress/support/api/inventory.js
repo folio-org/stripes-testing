@@ -641,3 +641,21 @@ Cypress.Commands.add('getInstancesCountViaApi', (ignoreStaffSuppressed = true) =
     return body.totalRecords;
   });
 });
+
+Cypress.Commands.add('getStatisticalCodes', (searchParams) => {
+  cy.okapiRequest({
+    path: 'statistical-codes',
+    searchParams,
+  }).then(({ body }) => {
+    return body.statisticalCodes;
+  });
+});
+
+Cypress.Commands.add('getStatisticalCodeTypes', (searchParams) => {
+  cy.okapiRequest({
+    path: 'statistical-code-types',
+    searchParams,
+  }).then(({ body }) => {
+    return body.statisticalCodeTypes;
+  });
+});
