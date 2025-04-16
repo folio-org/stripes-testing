@@ -32,8 +32,8 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://kong-bugfest-sunflower.int.aws.folio.org',
-    OKAPI_TENANT: 'fs09000000',
+    OKAPI_HOST: 'https://kong-bugfest-sunflower-aqa.int.aws.folio.org',
+    OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio',
     diku_password: 'folio',
     z3950_login: 'z3950Admin',
@@ -151,7 +151,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://bugfest-sunflower.int.aws.folio.org',
+    baseUrl: 'https://bugfest-sunflower-aqa.int.aws.folio.org',
     testIsolation: false,
   },
 });
