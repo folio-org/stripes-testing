@@ -232,11 +232,13 @@ describe('Inventory', () => {
             });
           })
           .then(() => {
-            cy.resetTenant();
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+              }, 30_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventorySearchAndFilter.switchToBrowseTab();
             });
