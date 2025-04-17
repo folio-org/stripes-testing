@@ -8,7 +8,7 @@ describe('fse-receiving', () => {
 
   it(
     `TC195379 - Get by title for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'receiving'] },
+    { tags: ['sanity', 'fse', 'api', 'receiving', 'loc'] },
     () => {
       cy.getReceivingTitlesByOrderStatus('Pending').then((response) => {
         cy.expect(response.status).to.eq(200);
