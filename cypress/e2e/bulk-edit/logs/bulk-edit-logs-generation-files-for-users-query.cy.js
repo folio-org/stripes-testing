@@ -49,6 +49,8 @@ describe('bulk-edit', () => {
         QueryModal.clickTestQuery();
         QueryModal.clickRunQuery();
         QueryModal.verifyClosed();
+        BulkEditSearchPane.verifyQueryHeadLine(`(users.id == "${user.userId}")`);
+        cy.wait(3000);
         BulkEditSearchPane.getNumberMatchedRecordsFromPaneHeader().then((numberOfRecords) => {
           numberOfRecordsAfterRunQuery = numberOfRecords;
         });
