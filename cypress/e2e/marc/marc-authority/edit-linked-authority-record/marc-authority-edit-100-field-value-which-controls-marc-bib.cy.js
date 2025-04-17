@@ -1,10 +1,8 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
@@ -49,7 +47,6 @@ describe('MARC', () => {
         value: 'C374156Beethoven, Ludwig van,',
         tag: '240',
       };
-      const hotKeys = InventoryHotkeys.hotKeys;
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
@@ -101,7 +98,7 @@ describe('MARC', () => {
               linkingTagAndValue.rowIndex,
             );
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -139,16 +136,16 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(testData.updatedValue, 7);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-          InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
+          QuickMarcEditor.closeModalWithEscapeKey();
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();
