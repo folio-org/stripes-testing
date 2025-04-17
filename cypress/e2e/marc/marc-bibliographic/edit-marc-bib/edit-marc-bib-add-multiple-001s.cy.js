@@ -73,9 +73,10 @@ describe('MARC', () => {
         () => {
           InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
             InventoryInstances.verifyInstanceResultListIsAbsent(false);
+            cy.wait(3000);
           });
           InventoryInstances.selectInstance();
 
