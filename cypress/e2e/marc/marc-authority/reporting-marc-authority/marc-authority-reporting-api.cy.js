@@ -170,7 +170,7 @@ describe('MARC', () => {
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(40);
+          cy.wait(4000);
           QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
           cy.wait(2000);
           QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
