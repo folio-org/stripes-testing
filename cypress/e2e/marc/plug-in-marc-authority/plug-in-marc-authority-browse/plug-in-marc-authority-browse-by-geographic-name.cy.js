@@ -46,6 +46,7 @@ describe('MARC', () => {
           Permissions.moduleDataImportEnabled.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380553');
 
           cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
