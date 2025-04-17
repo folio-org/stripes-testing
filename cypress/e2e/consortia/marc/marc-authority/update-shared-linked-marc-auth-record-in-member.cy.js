@@ -98,7 +98,7 @@ describe('MARC', () => {
         thirdBox: '\\',
         content: '$a C407633 Lentz Shared (Updated in M1)',
         eSubfield: '',
-        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161407633',
+        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2017049777',
         seventhBox: '',
       };
 

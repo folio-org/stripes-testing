@@ -185,15 +185,6 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             userData = createdUserProperties;
 
-            cy.getAdminToken();
-            linkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, true);
-            });
-
-            nonLinkableFields.forEach((tag) => {
-              QuickMarcEditor.setRulesForField(tag, false);
-            });
-
             cy.getUserToken(userData.username, userData.password);
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -230,6 +221,15 @@ describe('MARC', () => {
           'C389489 Pre-defined linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
           { tags: ['criticalPath', 'spitfire', 'C389489'] },
           () => {
+            // moved from before hook to avoid concurrency issues in parallel runs
+            cy.getAdminToken();
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
+            });
+
+            nonLinkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, false);
+            });
             // 1 Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
             InventoryInstance.newMarcBibRecord();
             // 2 Fill "$a" value in "245" field
@@ -272,7 +272,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifyEnabledLinkHeadingsButton();
             // 9 Click "Save & close" button
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {

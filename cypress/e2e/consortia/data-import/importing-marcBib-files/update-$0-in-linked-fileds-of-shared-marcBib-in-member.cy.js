@@ -205,7 +205,7 @@ describe('Data Import', () => {
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields.tag, fields.rowIndex);
           });
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         })
@@ -230,14 +230,17 @@ describe('Data Import', () => {
               });
             },
           );
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+          }, 20_000);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
     });
 

@@ -1,12 +1,12 @@
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -114,10 +114,9 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+      cy.login(testData.userProperties.username, testData.userProperties.password);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+      InventoryInstances.waitContentLoading();
     });
 
     after('Deleting user, records', () => {

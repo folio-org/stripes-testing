@@ -86,6 +86,7 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
           });
 
         cy.createTempUser([

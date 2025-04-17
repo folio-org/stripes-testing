@@ -22,8 +22,8 @@ const testData = {
   authorizedTypes: {
     AUTHORIZED: 'Authorized',
   },
-  searchQueries: ['n83169267', 'n80036674407668', 'n  83169267'],
-  searchQueriesOneResult: ['n20110491614076272', 'n  20110491614076272'],
+  searchQueries: ['n83169267', 'n80036674407668', 'n83169267'],
+  searchQueriesOneResult: ['n20110491614076272', 'n20110491614076272'],
   searchResults: ['Lee, Stan, 1922-2018', 'Kerouac, Jack, 1922-1969', 'Lee, Stan, 1922-2018'],
   searchResultsOneResult: ['Lentz, Mark', 'Lentz, Mark'],
   marcFiles: [

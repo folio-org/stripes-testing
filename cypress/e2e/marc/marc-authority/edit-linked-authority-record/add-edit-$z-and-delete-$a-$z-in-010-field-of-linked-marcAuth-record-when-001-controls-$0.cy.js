@@ -186,6 +186,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
           QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
+          cy.wait(1000);
           QuickMarcEditor.checkContent(tag010.expectedContent.field010_4, tag010.rowIndex);
 
           QuickMarcEditor.pressCancel();
@@ -195,6 +196,8 @@ describe('MARC', () => {
           MarcAuthorities.verifyNumberOfTitles(5, '1');
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
+          InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
+          cy.reload();
           InventoryInstance.verifyInstanceTitle(testData.instanceTitle);
           InventoryInstance.viewSource();
           InventoryViewSource.verifyLinkedToAuthorityIcon(linkingTagAndValues.rowIndex, true);

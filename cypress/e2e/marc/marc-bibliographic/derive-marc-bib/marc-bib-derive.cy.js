@@ -46,6 +46,9 @@ describe('MARC', () => {
                 path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
                 waiter: InventoryInstances.waitContentLoading,
               });
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+              }, 30_000);
             });
           });
         });

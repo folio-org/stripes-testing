@@ -135,6 +135,7 @@ describe('Requests', () => {
       CheckOutActions.checkOutUser(testData.user.barcode);
       CheckOutActions.checkOutItem(itemData.barcodes[0]);
       CheckOutActions.closeItemsAwaitingPickupModal();
+      CheckOutActions.checkOutItem(itemData.barcodes[0]);
       CheckOutActions.checkItemInfo(itemData.barcodes[0], itemData.instanceTitle);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.REQUESTS);
       Requests.findCreatedRequest(testData.user.barcode);

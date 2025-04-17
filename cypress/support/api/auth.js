@@ -65,6 +65,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials, ignoreErrors = false) 
 });
 
 Cypress.Commands.add('getAdminToken', () => {
+  cy.clearCookies({ domain: null });
   if (Cypress.env('ecsEnabled') && Cypress.env('eureka')) cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'), true);
   else cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });
@@ -117,4 +118,10 @@ Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, u
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
   });
+});
+
+Cypress.Commands.add('waitForAuthRefresh', (callback, timeout = 10_000) => {
+  cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+  callback();
+  cy.wait('@/authn/refresh', { timeout });
 });

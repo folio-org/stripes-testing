@@ -154,6 +154,7 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(
           `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
         );
@@ -189,6 +190,7 @@ describe('Eureka', () => {
         );
         UsersCard.verifyUserRolesCounter('0');
 
+        UsersSearchPane.resetAllFilters();
         UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.selectUserFromList(userBodies[2].username);
         UsersCard.verifyUserLastFirstNameInCard(

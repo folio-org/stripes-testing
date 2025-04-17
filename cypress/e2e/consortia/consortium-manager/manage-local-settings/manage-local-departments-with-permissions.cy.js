@@ -69,17 +69,7 @@ describe('Consortium manager', () => {
           });
 
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
-          DepartmentsConsortiumManager.choose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
+          DepartmentsConsortiumManager.chooseWithEmptyList();
           SelectMembers.selectAllMembers();
 
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
@@ -89,15 +79,30 @@ describe('Consortium manager', () => {
           ConfirmCreate.waitLoadingConfirmCreate(testData.newDepartment.name);
           ConfirmCreate.clickConfirm();
 
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.newDepartment.name, tenantNames.central,
             [testData.newDepartment.name, testData.newDepartment.code, tenantNames.central],
             ['edit', 'trash'],
           );
 
-          ConsortiaControlledVocabularyPaneset.performAction(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.newDepartment.name, tenantNames.college,
+            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.college],
+            ['edit', 'trash'],
+          );
+
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.newDepartment.name, tenantNames.university,
+            [testData.newDepartment.name, testData.newDepartment.code, tenantNames.university],
+            ['edit', 'trash'],
+          );
+
+          ConsortiaControlledVocabularyPaneset.performActionFor(
             testData.newDepartment.name,
+            tenantNames.central,
             actionIcons.edit,
           );
+
           ConsortiaControlledVocabularyPaneset.fillInTextField({
             name: testData.editDepartment.name,
             code: testData.editDepartment.code,
@@ -107,13 +112,15 @@ describe('Consortium manager', () => {
           ConfirmShare.waitLoadingConfirmShareToAll(testData.editDepartment.name);
           ConfirmShare.clickConfirm();
 
-          ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.newDepartment.name, tenantNames.central,
             [testData.editDepartment.name, testData.editDepartment.code, tenantNames.central],
             ['edit', 'trash'],
           );
 
-          ConsortiaControlledVocabularyPaneset.performAction(
+          ConsortiaControlledVocabularyPaneset.performActionFor(
             testData.editDepartment.name,
+            tenantNames.central,
             actionIcons.trash,
           );
           DeleteCancelReason.waitLoadingDeleteModal('department', testData.editDepartment.name);
@@ -133,6 +140,7 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.consortiaSettingsDepartmentsPath);
+          cy.wait(4000);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newDepartment.name, testData.newDepartment.code, tenantNames.college],
@@ -141,6 +149,7 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.consortiaSettingsDepartmentsPath);
+          cy.wait(4000);
           DepartmentsConsortiumManager.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newDepartment.name, testData.newDepartment.code, tenantNames.university],

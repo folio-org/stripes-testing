@@ -96,7 +96,8 @@ describe('MARC', () => {
       Users.deleteViaApi(user.userBProperties.userId);
     });
 
-    it(
+    // Skipped due to EUREKA-618
+    it.skip(
       'C358996 Verify that user has access to "quickMARC" when user who imported "MARC holdings" record has been deleted (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C358996'] },
       () => {

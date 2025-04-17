@@ -53,8 +53,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C367972 "Export" button must be disabled when user tries to export "Package" record with more than 10k of "Title" records (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C367972'] },
+      'C704291 "Export" button must be disabled when user tries to export "Package" record with more than 10k of "Title" records (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C704291'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();

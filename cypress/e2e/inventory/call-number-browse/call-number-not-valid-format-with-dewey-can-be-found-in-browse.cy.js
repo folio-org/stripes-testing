@@ -7,6 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue, randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { BROWSE_CALL_NUMBER_OPTIONS, ITEM_STATUS_NAMES } from '../../../support/constants';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -117,6 +118,8 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C451466'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(testData.firstCallNumber);
+        BrowseCallNumber.waitForCallNumberToAppear(testData.secondCallNumber);
         InventorySearchAndFilter.browseSearch(testData.firstCallNumber);
         InventorySearchAndFilter.verifyBrowseInventorySearchResults({
           records: [{ callNumber: testData.firstCallNumber }],

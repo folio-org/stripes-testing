@@ -141,8 +141,8 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.clickCancel();
 
             cy.logout();
-            cy.login(userBData.username, userBData.password);
-            cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.login(userBData.username, userBData.password,
+              { path: SettingsMenu.circulationRequestCancellationReasonsPath, waiter: () => cy.wait(4000) });
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               firstCancelReason.name,
@@ -150,6 +150,7 @@ describe('Consortia', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               firstCancelReason.name,
@@ -157,6 +158,7 @@ describe('Consortia', () => {
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
               firstCancelReason.name,

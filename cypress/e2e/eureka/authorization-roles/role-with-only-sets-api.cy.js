@@ -58,6 +58,11 @@ describe('Eureka', () => {
             action: 'Execute',
           },
           {
+            table: 'Procedural',
+            resource: 'Invoice Item Pay',
+            action: 'Execute',
+          },
+          {
             table: 'Data',
             resource: 'Finance Expense-Classes Item',
             action: 'View',
@@ -75,7 +80,7 @@ describe('Eureka', () => {
           },
           capabilities: {
             Data: 5,
-            Procedural: 1,
+            Procedural: 2,
           },
         },
         absentCapabilitySetTable: 'Settings',

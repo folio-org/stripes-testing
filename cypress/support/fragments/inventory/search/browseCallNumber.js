@@ -133,4 +133,36 @@ export default {
   checkPreviousPaginationButtonActive(isActive = true) {
     cy.expect(previousButton.has({ disabled: !isActive }));
   },
+
+  getCallNumbersViaApi(typeCode, callNumberValue) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `browse/call-numbers/${typeCode}/instances`,
+        searchParams: {
+          query: `(fullCallNumber>="${callNumberValue}")`,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.items);
+  },
+
+  waitForCallNumberToAppear(callNumber, isPresent = true, typeCode = 'all') {
+    return cy.recurse(
+      () => {
+        return this.getCallNumbersViaApi(typeCode, callNumber);
+      },
+      (response) => {
+        const foundCallNumbers = response.filter((item) => {
+          return item.fullCallNumber === callNumber;
+        });
+        return isPresent ? foundCallNumbers.length > 0 : foundCallNumbers.length === 0;
+      },
+      {
+        limit: 15,
+        delay: 5000,
+        timeout: 70000,
+      },
+    );
+  },
 };

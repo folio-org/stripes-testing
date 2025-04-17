@@ -40,6 +40,7 @@ describe('Fees&Fines', () => {
 
     afterEach(() => {
       cy.visit(SettingsMenu.patronBlockTemplates);
+      cy.wait(3000);
       PatronBlockTemplates.findPatronTemplate(templateName);
       PatronBlockTemplates.editPatronTemplate();
       PatronBlockTemplates.deletePatronTemplate();

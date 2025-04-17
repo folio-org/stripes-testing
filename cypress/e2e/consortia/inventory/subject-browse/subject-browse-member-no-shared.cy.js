@@ -152,7 +152,7 @@ describe('Inventory', () => {
       { tags: ['criticalPathECS', 'spitfire', 'C422238'] },
       () => {
         cy.reload();
-        cy.wait('@/authn/refresh', { timeout: 20000 });
+        InventoryInstances.waitContentLoading();
         BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[0].value);
         BrowseSubjects.waitForSubjectToAppear(testData.sharedInstance.subjects[1].value);
         InventorySearchAndFilter.switchToBrowseTab();

@@ -120,8 +120,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466156'] },
+      'C703349 Search Instances using advanced search with "AND" operator (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C703349'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
@@ -169,8 +169,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C400616', 'eurekaPhase1'] },
+      'C704288 Search Instances using advanced search with a combination of operators (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C704288', 'eurekaPhase1'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,

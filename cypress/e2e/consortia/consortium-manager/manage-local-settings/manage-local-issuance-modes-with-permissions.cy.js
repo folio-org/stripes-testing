@@ -88,16 +88,6 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           ModesOfIssuanceConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 

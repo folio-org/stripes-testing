@@ -44,11 +44,13 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.resetTenant();
-              cy.login(testData.user.username, testData.user.password).then(() => {
-                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-                cy.visit(TopMenu.settingsAuthorityFilesPath);
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.user.username, testData.user.password);
+                cy.reload();
+              }, 20_000);
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              cy.visit(TopMenu.settingsAuthorityFilesPath);
             });
         });
 

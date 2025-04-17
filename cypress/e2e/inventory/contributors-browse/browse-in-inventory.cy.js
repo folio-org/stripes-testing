@@ -15,7 +15,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
-      contributorName: 'Lee, Stan, 1922-2018',
+      contributorName: 'C388531 Lee, Stan, 1922-2018',
     };
 
     const marcFiles = [

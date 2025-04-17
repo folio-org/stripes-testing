@@ -90,13 +90,15 @@ describe('MARC', () => {
                 });
               });
             });
-
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           });
       });
 
@@ -133,7 +135,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.deleteFieldByTagAndCheck('010');
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(2000);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.confirmDelete();
           QuickMarcEditor.checkAfterSaveAndClose();
@@ -162,6 +164,11 @@ describe('MARC', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();
+          BrowseContributors.waitForContributorToAppear(
+            linkingTagAndValues.authorityHeading,
+            true,
+            true,
+          );
           InventorySearchAndFilter.browseSearch(linkingTagAndValues.authorityHeading);
           BrowseContributors.checkAuthorityIconAndValueDisplayed(
             linkingTagAndValues.authorityHeading,

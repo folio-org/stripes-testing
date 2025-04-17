@@ -171,7 +171,7 @@ describe('Data Import', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(linkingTagAndValues.tag);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -236,7 +236,8 @@ describe('Data Import', () => {
       { tags: ['criticalPathFlaky', 'spitfire', 'C376967'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+        InventoryInstance.waitInventoryLoading();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -285,8 +286,10 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         cy.wait(1000);
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
+        InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
+        InventoryInstance.waitInventoryLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...testData.updated100Field);
         QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(...testData.updated245Field);

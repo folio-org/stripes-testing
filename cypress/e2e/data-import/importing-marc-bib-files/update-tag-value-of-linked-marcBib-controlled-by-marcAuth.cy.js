@@ -215,10 +215,14 @@ describe('Data Import', () => {
           );
         })
         .then(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
     });
 
@@ -278,6 +282,7 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');

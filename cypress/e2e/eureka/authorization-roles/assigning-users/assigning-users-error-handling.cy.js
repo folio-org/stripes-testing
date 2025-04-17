@@ -1,8 +1,11 @@
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import TopMenu from '../../../../support/fragments/topMenu';
+import AuthorizationRoles, {
+  SETTINGS_SUBSECTION_AUTH_ROLES,
+} from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 
 describe('Eureka', () => {
   describe('Authorization roles', () => {
@@ -45,24 +48,26 @@ describe('Eureka', () => {
                 testData.userC = createdUserCProperties;
                 cy.createTempUser([]).then((createdUserDProperties) => {
                   testData.userD = createdUserDProperties;
-                  cy.createAuthorizationRoleApi(testData.roleAName).then((role) => {
-                    testData.roleAId = role.id;
-                  });
-                  cy.createAuthorizationRoleApi(testData.roleBName).then((role) => {
-                    testData.roleBId = role.id;
-                    if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
-                    if (Cypress.env('runAsAdmin')) {
-                      cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
-                      cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
-                      cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
-                    } else {
-                      cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
-                      cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
-                      cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
-                    }
-                    cy.loginAsAdmin({
-                      path: TopMenu.settingsAuthorizationRoles,
-                      waiter: AuthorizationRoles.waitContentLoading,
+                  cy.createAuthorizationRoleApi(testData.roleAName).then((roleA) => {
+                    testData.roleAId = roleA.id;
+                    cy.createAuthorizationRoleApi(testData.roleBName).then((roleB) => {
+                      testData.roleBId = roleB.id;
+                      if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.userA.userId, []);
+                      if (Cypress.env('runAsAdmin')) {
+                        cy.updateRolesForUserApi(testData.userB.userId, [testData.roleBId]);
+                        cy.updateRolesForUserApi(testData.userC.userId, [testData.roleBId]);
+                        cy.updateRolesForUserApi(testData.userD.userId, [testData.roleBId]);
+                      } else {
+                        cy.addRolesToNewUserApi(testData.userB.userId, [testData.roleBId]);
+                        cy.addRolesToNewUserApi(testData.userC.userId, [testData.roleBId]);
+                        cy.addRolesToNewUserApi(testData.userD.userId, [testData.roleBId]);
+                      }
+                      cy.loginAsAdmin();
+                      TopMenuNavigation.openAppFromDropdown(
+                        APPLICATION_NAMES.SETTINGS,
+                        SETTINGS_SUBSECTION_AUTH_ROLES,
+                      );
+                      AuthorizationRoles.waitContentLoading();
                     });
                   });
                 });

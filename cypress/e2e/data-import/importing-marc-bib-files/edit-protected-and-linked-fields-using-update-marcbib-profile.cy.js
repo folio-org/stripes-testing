@@ -256,7 +256,7 @@ describe('Data Import', () => {
           QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
         });
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -308,7 +308,7 @@ describe('Data Import', () => {
         Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          17,
+          16,
           '100',
           '1',
           '\\',
@@ -318,7 +318,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          18,
+          17,
           '240',
           '1',
           '0',
@@ -328,7 +328,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          41,
+          40,
           '650',
           '\\',
           '0',
@@ -338,7 +338,7 @@ describe('Data Import', () => {
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterLinking(
-          50,
+          49,
           '700',
           '1',
           '\\',
@@ -365,7 +365,7 @@ describe('Data Import', () => {
           '$a C380511 Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 http://id.loc.gov/authorities/names/n91099716',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          53,
+          52,
           '700',
           '1',
           '2',

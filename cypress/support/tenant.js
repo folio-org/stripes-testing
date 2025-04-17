@@ -21,3 +21,10 @@ Cypress.Commands.add('setTenant', (tenant) => {
 Cypress.Commands.add('resetTenant', () => {
   Tenant.resetToDefault();
 });
+
+Cypress.Commands.add('withinTenant', (tenant, callback) => {
+  cy.setTenant(tenant);
+  cy.wrap(callback()).then(() => {
+    cy.resetTenant();
+  });
+});

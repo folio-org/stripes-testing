@@ -61,28 +61,10 @@ describe('Inventory', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         testData.instanceSearchQueries.forEach((query) => {
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${query}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi(query);
         });
         testData.searchQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -108,7 +90,7 @@ describe('Inventory', () => {
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(4000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifyAlternativeTitle(0, 1, including(testData.alternativeTitles[i]));
         InventoryInstances.resetAllFilters();

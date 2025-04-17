@@ -101,13 +101,14 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
           headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
 
-          cy.login(testData.userProperties.username, testData.userProperties.password);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.waitForAuthRefresh(() => {
+            cy.reload();
+          }, 30_000);
         });
-      });
-
-      beforeEach('Visit MARC Authorities', () => {
-        cy.visit(TopMenu.marcAuthorities);
-        MarcAuthorities.waitLoading();
       });
 
       after('Delete test data', () => {
@@ -144,7 +145,7 @@ describe('MARC', () => {
 
           // Save edits and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -153,12 +154,13 @@ describe('MARC', () => {
           );
 
           // Add field and verify button states updated
+          cy.wait(2000);
           MarcAuthority.addNewField(4, testData.newField.tag, testData.newField.content);
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save added field and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
@@ -173,7 +175,7 @@ describe('MARC', () => {
 
           // Save deletion and verify modal
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(3000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkDeleteModal(1);
           QuickMarcEditor.confirmDelete();
@@ -189,7 +191,7 @@ describe('MARC', () => {
           // Restore deleted field and verify states
           QuickMarcEditor.deleteFieldByTagAndCheck(testData.deletedField.tag);
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.clickRestoreDeletedField();
           QuickMarcEditor.checkButtonsDisabled();
@@ -201,7 +203,7 @@ describe('MARC', () => {
 
           // Save field reordering and verify view updated
           QuickMarcEditor.clickSaveAndKeepEditingButton();
-          cy.wait(1500);
+          cy.wait(2000);
           QuickMarcEditor.clickSaveAndKeepEditing();
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(

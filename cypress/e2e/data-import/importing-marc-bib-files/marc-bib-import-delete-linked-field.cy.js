@@ -167,7 +167,7 @@ describe('Data Import', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -235,6 +235,7 @@ describe('Data Import', () => {
         Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkValueAbsenceInDetailView(

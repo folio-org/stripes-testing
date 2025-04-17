@@ -56,20 +56,11 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C374144');
+        InventoryInstances.deleteInstanceByTitleViaApi('C374144');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
-          // make sure there are no duplicate authority records in the system
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: 'keyword="374144" and (authRefType==("Authorized" or "Auth/Ref"))',
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -87,38 +78,41 @@ describe('MARC', () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
-        }).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag650);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.searchResults(marcFiles[0].instanceTitle);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag150,
-            testData.authority150FieldValue,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+        })
+          .then(() => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag650);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.searchResults(marcFiles[0].instanceTitle);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag150,
+              testData.authority150FieldValue,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            ]).then((createdUserProperties) => {
+              testData.userProperties = createdUserProperties;
 
-          cy.createTempUser([
-            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          ]).then((createdUserProperties) => {
-            testData.userProperties = createdUserProperties;
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
             });
           });
-        });
       });
 
       after('Delete test data', () => {

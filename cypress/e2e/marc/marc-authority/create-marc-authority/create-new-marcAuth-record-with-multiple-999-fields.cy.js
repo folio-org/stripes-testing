@@ -14,7 +14,7 @@ describe('MARC', () => {
     describe('Create MARC Authority', () => {
       const randomPostfix = getRandomPostfix();
       const localAuthFile = {
-        name: `C423509 auth source file active ${randomPostfix}`,
+        name: `C663311 auth source file active ${randomPostfix}`,
         prefix: `${getRandomLetters(4)}`,
         startWithNumber: '1',
         isActive: true,
@@ -28,7 +28,7 @@ describe('MARC', () => {
       const newField100 = {
         rowIndex: 4,
         tag: '100',
-        content: '$a C423509 999 multiple test',
+        content: '$a C663311 999 multiple test',
       };
       const newField999 = {
         rowIndex: 6,
@@ -76,8 +76,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423509 Create a new MARC authority record with multiple "999" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C423509'] },
+        'C663311 Create a new MARC authority record with multiple "999" field (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C663311'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

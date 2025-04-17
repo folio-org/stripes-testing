@@ -83,7 +83,8 @@ describe('MARC', () => {
       if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
     });
 
-    it(
+    // Skipped due to EUREKA-618
+    it.skip(
       'C345390 Add a field to a record using quickMARC (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C345390'] },
       () => {
@@ -106,7 +107,8 @@ describe('MARC', () => {
       },
     );
 
-    it(
+    // Skipped due to EUREKA-618
+    it.skip(
       'C345398 Edit MARC 008 (spitfire)',
       { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C345398'] },
       () => {

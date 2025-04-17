@@ -10,7 +10,7 @@ import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/st
 describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Create MARC Authority', () => {
-      const recordTitle = `C423528 Create a new MARC authority record with Local authority file autotest ${getRandomPostfix()}`;
+      const recordTitle = `C663337 Create a new MARC authority record with Local authority file autotest ${getRandomPostfix()}`;
       const randomPostfix = getRandomPostfix();
       const tag001 = '001';
       const headerText = 'Create a new MARC authority record';
@@ -21,7 +21,7 @@ describe('MARC', () => {
         content: `$a ${recordTitle}`,
       };
       const localAuthFile = {
-        name: `C423528 auth source file active ${randomPostfix}`,
+        name: `C663337 auth source file active ${randomPostfix}`,
         prefix: getRandomLetters(8),
         startWithNumber: '1',
         isActive: true,
@@ -30,7 +30,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C423528');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C663337');
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityCreate.gui,
@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423528 Create a new MARC authority record with "Local" authority file selected (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C423528'] },
+        'C663337 Create a new MARC authority record with "Local" authority file selected (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C663337'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

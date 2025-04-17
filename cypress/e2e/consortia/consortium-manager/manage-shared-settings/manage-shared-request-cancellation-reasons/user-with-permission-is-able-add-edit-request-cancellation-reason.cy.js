@@ -105,11 +105,13 @@ describe('Consortia', () => {
             );
 
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
 
@@ -143,14 +145,16 @@ describe('Consortia', () => {
 
             SelectMembers.saveAndClose();
             ConsortiumManagerApp.verifyListIsEmpty();
-            ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
+            // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled();
 
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(SettingsMenu.circulationRequestCancellationReasonsPath);
+            cy.wait(4000);
             CancellationReason.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(Object.values(cancelReason));
           },

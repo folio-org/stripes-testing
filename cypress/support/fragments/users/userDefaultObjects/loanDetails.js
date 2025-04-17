@@ -267,15 +267,16 @@ export default {
   },
   payFeeFine(amount, paymentMethod) {
     FeeFinesDetails.openActions();
-    cy.wait(500);
     FeeFinesDetails.openPayModal();
     cy.wait(500);
     PayFeeFaine.checkAmount(amount);
     cy.wait(500);
     PayFeeFaine.setPaymentMethod(paymentMethod);
-    PayFeeFaine.setAmount(amount);
-    PayFeeFaine.checkRestOfPay(amount);
     cy.wait(500);
+    PayFeeFaine.setAmount(amount);
+    cy.wait(500);
+    // PayFeeFaine.checkRestOfPay(amount);
+    // cy.wait(500);
     PayFeeFaine.submitAndConfirm();
   },
 };

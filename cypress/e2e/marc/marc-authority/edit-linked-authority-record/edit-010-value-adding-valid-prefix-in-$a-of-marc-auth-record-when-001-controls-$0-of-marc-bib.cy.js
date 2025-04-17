@@ -112,11 +112,14 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-
-          cy.login(userData.username, userData.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
       });
 
@@ -148,7 +151,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkCallout(marcAuthRecordData.callOut);
           MarcAuthorities.closeMarcViewPane();

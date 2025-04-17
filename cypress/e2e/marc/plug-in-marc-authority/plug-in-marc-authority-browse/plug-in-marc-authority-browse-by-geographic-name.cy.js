@@ -37,6 +37,8 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380553');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

@@ -77,10 +77,14 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
 
-            cy.login(testData.userData.username, testData.userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userData.username, testData.userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(testData.createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
           });

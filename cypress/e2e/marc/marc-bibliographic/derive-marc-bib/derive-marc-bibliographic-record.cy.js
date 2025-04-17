@@ -30,10 +30,14 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+            cy.reload();
+            DataImport.waitLoading();
+          }, 20_000).then(() => {
             DataImport.uploadFileViaApi(
               testData.marcBibFilePath,
               testData.marcBibFileName,

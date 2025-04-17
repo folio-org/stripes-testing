@@ -16,7 +16,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 const testData = {
   searchQueryBeforeTest:
-    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio in religion--Catholic Church" OR subjects = "Vatican Council 1962-1965" OR subjects = "Comic books, strips, etc.--United States--Catalogs" OR subjects = "Lincoln, Abraham, 1809-1865--Addresses, sermons, etc" OR subjects = "Topographical surveying" OR subjects = "Titanic (Steamship)--Drama"',
+    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio in religion Catholic Church" OR subjects = "Vatican Council 1962-1965" OR subjects = "Comic books, strips, etc. United States Catalogs" OR subjects = "Lincoln, Abraham, 1809-1865 Addresses, sermons, etc" OR subjects = "Topographical surveying" OR subjects = "Titanic (Steamship) Drama"',
   user: {},
   recordIDs: [],
   tags: ['600', '610', '611', '630', '650', '651', '655'],
@@ -43,14 +43,14 @@ const testData = {
   ],
   searchQueries: [
     'subjects = "Black Panther (Fictitious character)"',
-    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio Vaticana. Hrvatski program" OR subjects = "Vatican Council 1962-1965" OR subjects = "Marvel comics ComiCon" OR subjects == "Speaking Oratory--debating"  OR subjects == "Clear Creek (Tex.)--Place in Texas" OR subjects = "Drama--Genre"',
+    'subjects = "Black Panther (Fictitious character)" OR subjects = "Radio Vaticana. Hrvatski program" OR subjects = "Vatican Council 1962-1965" OR subjects = "Marvel comics ComiCon" OR subjects == "Speaking Oratory debating"  OR subjects == "Clear Creek (Tex.) Place in Texas" OR subjects = "Drama Genre"',
   ],
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
     'Radio "Vaticana". Hrvatski program test',
-    'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
+    'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
     'Marvel comics ComiCon',
-    'Speaking Oratory--debating',
+    'Speaking Oratory debating',
     'Clear Creek (Tex.)',
     'Drama Genre',
   ],
@@ -94,7 +94,7 @@ describe('Inventory', () => {
         }).then((authorities) => {
           if (authorities) {
             authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id);
+              MarcAuthority.deleteViaAPI(id, true);
             });
           }
         });

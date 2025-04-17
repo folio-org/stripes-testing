@@ -16,12 +16,12 @@ describe('MARC', () => {
         previousFieldTag: '008',
         tag: '111',
         content:
-          '$a C423559 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it',
+          '$a C692052 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it',
       };
       const recordTitle =
-        'C423559 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it';
+        'C692052 Autotest Create a new MARC authority record with Local authority file which includes default prefix in it';
       const localAuthFile = {
-        name: `C423559 auth source file active ${randomPostfix}`,
+        name: `C692052 auth source file active ${randomPostfix}`,
         prefix: `na${getRandomLetters(6)}`,
         startWithNumber: '1',
         isActive: true,
@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C423559'] },
+        'C692052 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C692052'] },
         () => {
           // 1 Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

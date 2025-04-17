@@ -131,7 +131,7 @@ describe('MARC', () => {
           );
           cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);

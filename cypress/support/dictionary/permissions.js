@@ -537,6 +537,7 @@ export default {
   },
   // Requests
   uiRequestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
+  uiRequestsMediatedAll: { internal: 'ui-requests-mediated.all', gui: 'UI-Requests-Mediated' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
@@ -1022,6 +1023,10 @@ export default {
   uiSettingsHRIDHandlingCreateEditDelete: {
     internal: 'ui-inventory.settings.hrid-handling',
     gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
+  uiSettingsCallNumberBrowseView: {
+    internal: 'ui-inventory.settings.call-number-browse',
+    gui: 'Settings (Inventory): Configure call number browse',
   },
   uiSettingsManageAuthorityFiles: {
     internal: 'ui-marc-authorities.settings.authority-files.all',

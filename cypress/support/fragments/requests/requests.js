@@ -630,6 +630,13 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  createNewEcsRequestViaApi: (requestBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation-bff/requests',
+    body: requestBody,
+    isDefaultSearchParamsRequired: false,
+  }),
+
   /* for miltiselect 'Pickup service point' we have to redefine attribute 'aria-labelledby' to make it unique,
  because there are 4 elements with same 'aria-labelledby' on the page so the function 'createInteractor()'
   in interactors\multi-select.js takes as argument the first one and it's not we needed
@@ -677,7 +684,7 @@ export default {
   },
 
   exportRequestToCsv: () => {
-    cy.wait(1000);
+    cy.wait(3000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
   },
 

@@ -219,6 +219,7 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon(linked600Field[1]);
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorityBrowse.checkSearchOptions();
+          MarcAuthorityBrowse.searchBy('Personal name', testData.sharedMarcAuthValue);
           MarcAuthorities.checkRow(`Shared${testData.sharedMarcAuthValue}`);
           MarcAuthorities.selectTitle(`Shared\n${testData.sharedMarcAuthValue}`);
           InventoryInstance.clickLinkButton();

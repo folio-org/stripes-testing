@@ -312,6 +312,8 @@ describe('Inventory', () => {
                 cy.visit(TopMenu.inventoryPath);
                 InventoryInstances.waitContentLoading();
                 InventorySearchAndFilter.selectBrowseCallNumbers();
+                cy.setTenant(Affiliations.College);
+                BrowseCallNumber.waitForCallNumberToAppear(callNumber);
               },
             );
           });

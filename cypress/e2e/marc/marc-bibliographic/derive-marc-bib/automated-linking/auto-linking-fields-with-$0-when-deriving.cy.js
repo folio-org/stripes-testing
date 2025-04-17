@@ -157,6 +157,7 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
             cy.wait(3000);
 
             cy.login(testData.user.username, testData.user.password, {

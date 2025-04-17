@@ -105,6 +105,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -153,6 +154,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyNumberOfTitles(5, '1');
 
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+          cy.wait(5000);
           InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
 
           InventoryInstance.editMarcBibliographicRecord();

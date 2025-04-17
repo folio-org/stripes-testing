@@ -409,6 +409,10 @@ describe('Inventory', () => {
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
             InventorySearchAndFilter.selectBrowseCallNumbers();
+            cy.setTenant(Affiliations.College);
+            allVisibleCNs.forEach((callNumber) => {
+              BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+            });
           });
           InventorySearchAndFilter.browseSearch(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);

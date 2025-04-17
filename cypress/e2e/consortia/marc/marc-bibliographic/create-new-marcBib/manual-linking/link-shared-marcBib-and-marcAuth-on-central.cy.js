@@ -84,12 +84,6 @@ describe('MARC', () => {
               ]);
             })
             .then(() => {
-              cy.login(users.userAProperties.username, users.userAProperties.password, {
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              });
-              cy.reload();
-              DataImport.waitLoading();
               cy.resetTenant();
               marcFiles.forEach((marcFile) => {
                 DataImport.uploadFileViaApi(
@@ -118,7 +112,10 @@ describe('MARC', () => {
           'C422141 Link Shared MARC bib with Shared MARC auth on Central tenant in Create screen (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C422141'] },
           () => {
-            cy.visit(TopMenu.inventoryPath);
+            cy.login(users.userAProperties.username, users.userAProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
