@@ -2817,4 +2817,9 @@ export default {
       );
     }
   },
+
+  closeModalWithEscapeKey() {
+    cy.get('[class^="modal-"]').type('{esc}');
+    cy.expect(Modal().absent());
+  },
 };

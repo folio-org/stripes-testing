@@ -88,7 +88,7 @@ describe('MARC', () => {
             linkingTagAndValue.rowIndex,
           );
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
@@ -129,6 +129,10 @@ describe('MARC', () => {
         () => {
           MarcAuthorities.waitLoading();
           MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthority.waitLoading();
           MarcAuthority.edit();
           QuickMarcEditor.checkContent(`$a ${linkingTagAndValue.value}`, 20);
