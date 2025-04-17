@@ -1,10 +1,8 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
@@ -48,7 +46,6 @@ describe('MARC', () => {
         value: 'C374158 Vatican Council',
         tag: '611',
       };
-      const hotKeys = InventoryHotkeys.hotKeys;
       const createdRecordIDs = [];
 
       before('Creating user, importing and linking records', () => {
@@ -145,7 +142,7 @@ describe('MARC', () => {
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-          InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
+          QuickMarcEditor.closeModalWithEscapeKey();
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
