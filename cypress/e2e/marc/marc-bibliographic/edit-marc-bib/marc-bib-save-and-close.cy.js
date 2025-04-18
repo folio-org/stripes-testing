@@ -16,12 +16,15 @@ describe('MARC', () => {
         tag245rowIndex: 14,
         tag245value1: '$a Edited $h [Sound Recording] / $c Cypress Automation',
         instanceTitle1: 'Instance • Edited [Sound Recording] / Cypress Automation',
+        ecsInstanceTitle1: 'Local instance • Edited [Sound Recording] / Cypress Automation',
         tag245value2: '$a Edited Twice $h [Sound Recording] / $c Cypress Automation',
         instanceTitle2: 'Instance • Edited Twice [Sound Recording] / Cypress Automation',
+        ecsInstanceTitle2: 'Local instance • Edited Twice [Sound Recording] / Cypress Automation',
         expectedInSourceRow: '245\t1 0\t$a Edited $h [Sound Recording] / $c Cypress Automation',
         successMsg:
           'This record has successfully saved and is in process. Changes may not appear immediately.',
       };
+
       const marcFile = {
         marc: 'marcBibFileC360097.mrc',
         fileName: `testMarcFileC360097.${getRandomPostfix()}.mrc`,
@@ -86,7 +89,13 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.tag245value1, testData.tag245rowIndex);
           QuickMarcEditor.closeUsingCrossButton();
           InventoryInstance.waitLoading();
-          InventoryInstance.verifyInstanceTitle(testData.instanceTitle1);
+
+          cy.ifConsortia(true, () => {
+            InventoryInstance.verifyInstanceTitle(testData.ecsInstanceTitle1);
+          });
+          cy.ifConsortia(false, () => {
+            InventoryInstance.verifyInstanceTitle(testData.instanceTitle1);
+          });
           InventoryInstance.viewSource();
           InventoryViewSource.contains(testData.expectedInSourceRow);
           InventoryViewSource.close();
@@ -102,7 +111,13 @@ describe('MARC', () => {
           QuickMarcEditor.checkContent(testData.tag245value2, testData.tag245rowIndex);
           cy.go('back');
           InventoryInstance.waitLoading();
-          InventoryInstance.verifyInstanceTitle(testData.instanceTitle2);
+
+          cy.ifConsortia(true, () => {
+            InventoryInstance.verifyInstanceTitle(testData.ecsInstanceTitle2);
+          });
+          cy.ifConsortia(false, () => {
+            InventoryInstance.verifyInstanceTitle(testData.instanceTitle2);
+          });
         },
       );
     });
