@@ -2822,12 +2822,4 @@ export default {
     cy.get('[class^="modal-"]').type('{esc}');
     cy.expect(Modal().absent());
   },
-
-  verifyDropdownInvalidValueHighlighted(tag, dropdownLabel, isValid = false) {
-    cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
-        .has({ valid: isValid }),
-    );
-  },
 };
