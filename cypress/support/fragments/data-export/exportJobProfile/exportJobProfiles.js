@@ -78,8 +78,6 @@ export default {
   },
 
   clickProfileNameFromTheList(name) {
-    this.scrollDownIfListOfResultsIsLong();
-
     cy.do(MultiColumnListCell(including(name)).click());
   },
 

@@ -112,12 +112,14 @@ describe('Settings: Tenant', () => {
       Locations.editLocation(testData.locations[0].name, {
         servicePoint: testData.servicePoints[1].name,
       });
+      cy.wait(2000);
       LocationDetails.checkLocationDetails({ servicePoints: testData.servicePoints[1].name });
 
       // Edit second location in the list, Update the "Service point", Click "Save & Close" button
       Locations.editLocation(testData.locations[1].name, {
         servicePoint: testData.servicePoints[1].name,
       });
+      cy.wait(2000);
       LocationDetails.checkLocationDetails({ servicePoints: testData.servicePoints[1].name });
       cy.wait(1000);
 

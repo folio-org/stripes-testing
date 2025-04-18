@@ -168,8 +168,6 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
-    this.scrollDownIfListOfResultsIsLong();
-
     cy.expect(MultiColumnListRow(including(name)).exists());
   },
 
