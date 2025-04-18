@@ -11,7 +11,7 @@ describe('fse-copycat for production tenants', () => {
 
   it(
     `TC195638 - Get all z3950 target profiles for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'copycat'] },
+    { tags: ['sanity', 'fse', 'api', 'copycat', 'loc'] },
     () => {
       Z3950TargetProfiles.getAllTargetProfiles().then((response) => {
         cy.expect(response.status).to.eq(200);

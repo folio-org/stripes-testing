@@ -10,7 +10,7 @@ describe('fse-settings', () => {
     `TC195383 - Verify settings for permission inspector, gobi integration and tenant application for ${Cypress.env(
       'OKAPI_HOST',
     )}`,
-    { tags: ['sanity', 'fse', 'api', 'organizations'] },
+    { tags: ['sanity', 'fse', 'api', 'settings', 'loc'] },
     () => {
       cy.getPermissions().then((response) => {
         cy.expect(response.status).to.eq(200);
