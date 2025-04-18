@@ -13,7 +13,7 @@ describe('Eureka', () => {
         updatedRoleName: `Auto Role C430265 ${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
         originalApplications: ['app-acquisitions', 'app-dcb'],
-        newApplication: 'app-erm-usage',
+        newApplication: 'app-platform-minimal',
         originalCapabilities: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
