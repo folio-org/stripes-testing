@@ -3,6 +3,7 @@ import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
@@ -59,9 +60,10 @@ describe('Users', () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
     UserEdit.editUserDetails(testData.editUser);
+    UserEdit.confirmChangingUserType();
     UserEdit.saveAndClose();
-    UserEdit.openExtendedInformationAccordion();
-    UserEdit.openContactInformationAccordion();
-    UserEdit.verifyUserDetails(testData.editUser);
+    UsersCard.openExtendedInformationAccordion();
+    UsersCard.openContactInformationAccordion();
+    UsersCard.verifyUserDetails(testData.editUser);
   });
 });

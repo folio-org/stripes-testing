@@ -88,10 +88,10 @@ const testParams = [
       reproductionMarc: 'Reproduction test instance note MARC',
     },
     notesUpdatedValue: {
-      adminUpperCase: 'Test',
-      adminLowerCase: 'test',
-      reproductionUpperCase: 'Test instance note',
-      reproductionLowerCase: 'test instance note',
+      adminUpperCase: 'Test ',
+      adminLowerCase: 'test ',
+      reproductionUpperCase: 'Test  instance note',
+      reproductionLowerCase: 'test  instance note',
       reproductionMarc: 'Reproduction test instance note MARC',
     },
   },
@@ -163,6 +163,8 @@ describe('Bulk-edit', () => {
                 });
               });
             });
+
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -401,8 +403,7 @@ describe('Bulk-edit', () => {
               params.notesUpdatedValue.reproductionLowerCase,
               1,
             );
-
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.resetAll();
             InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
             InventoryInstances.selectInstance();
             InventoryInstance.waitLoading();
@@ -414,6 +415,7 @@ describe('Bulk-edit', () => {
               BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.REPRODUCTION_NOTE,
               params.notesInitialValue.reproductionMarc,
             );
+            InventorySearchAndFilter.resetAll();
           });
         },
       );

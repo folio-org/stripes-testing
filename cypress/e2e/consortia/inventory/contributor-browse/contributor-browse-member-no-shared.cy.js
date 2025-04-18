@@ -104,18 +104,25 @@ describe('Inventory', () => {
                     }).location;
                     Locations.createViaApi(collegeLocationData).then((location) => {
                       testData.collegeLocation = location;
-                      InventoryHoldings.createHoldingRecordViaApi({
-                        instanceId: testData.sharedInstanceId,
-                        permanentLocationId: testData.collegeLocation.id,
-                      }).then((holding) => {
-                        testData.collegeHoldings.push(holding);
-
-                        // adding Holdings in College for local Instance
+                      InventoryHoldings.getHoldingSources({
+                        limit: 1,
+                        query: '(name=="FOLIO")',
+                      }).then((holdingSources) => {
                         InventoryHoldings.createHoldingRecordViaApi({
-                          instanceId: testData.localInstanceId,
+                          instanceId: testData.sharedInstanceId,
                           permanentLocationId: testData.collegeLocation.id,
-                        }).then((holding2) => {
-                          testData.collegeHoldings.push(holding2);
+                          sourceId: holdingSources[0].id,
+                        }).then((holding) => {
+                          testData.collegeHoldings.push(holding);
+
+                          // adding Holdings in College for local Instance
+                          InventoryHoldings.createHoldingRecordViaApi({
+                            instanceId: testData.localInstanceId,
+                            permanentLocationId: testData.collegeLocation.id,
+                            sourceId: holdingSources[0].id,
+                          }).then((holding2) => {
+                            testData.collegeHoldings.push(holding2);
+                          });
                         });
                       });
                     });
@@ -128,29 +135,35 @@ describe('Inventory', () => {
                   }).location;
                   Locations.createViaApi(universityLocationData).then((location) => {
                     testData.universityLocation = location;
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: testData.sharedInstanceId,
-                      permanentLocationId: location.id,
-                    }).then((holding) => {
-                      testData.universityHoldings.push(holding);
+                    InventoryHoldings.getHoldingSources({
+                      limit: 1,
+                      query: '(name=="FOLIO")',
+                    }).then((holdingSources) => {
+                      InventoryHoldings.createHoldingRecordViaApi({
+                        instanceId: testData.sharedInstanceId,
+                        permanentLocationId: location.id,
+                        sourceId: holdingSources[0].id,
+                      }).then((holding) => {
+                        testData.universityHoldings.push(holding);
+                      });
                     });
                   });
                 });
               });
             });
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              ConsortiumManager.switchActiveAffiliation(
-                tenantNames.central,
-                tenantNames.university,
-              );
+            cy.waitForAuthRefresh(() => {
+              cy.resetTenant();
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
               InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
-            });
+            }, 20_000);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
       });
 
@@ -192,6 +205,8 @@ describe('Inventory', () => {
             'No',
             false,
           );
+          cy.setTenant(Affiliations.University);
+          BrowseContributors.waitForContributorToAppear(`${contributorPrefix} 1`);
           BrowseContributors.browse(`${contributorPrefix} 1`);
           BrowseContributors.checkSearchResultRecord(`${contributorPrefix} 1`);
           BrowseContributors.checkSearchResultRow(

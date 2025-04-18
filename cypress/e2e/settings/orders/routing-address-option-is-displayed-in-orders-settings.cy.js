@@ -7,46 +7,48 @@ import SettingOrdersNavigationMenu from '../../../support/fragments/settings/ord
 
 Cypress.on('uncaught:exception', () => false);
 
-describe('orders: Settings', () => {
-  let user;
+describe('Orders', () => {
+  describe('Settings (Orders)', () => {
+    let user;
 
-  before(() => {
-    cy.getAdminToken();
+    before(() => {
+      cy.getAdminToken();
 
-    cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.ordersRoutingAddressPath,
-          waiter: RoutingAddress.waitLoading,
-        });
+      cy.createTempUser([permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: SettingsMenu.ordersRoutingAddressPath,
+            waiter: RoutingAddress.waitLoading,
+          });
+        },
+      );
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      Users.deleteViaApi(user.userId);
+    });
+
+    it(
+      'C466206 "Routing address" option is displayed in "Orders" settings (thunderjet)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        RoutingAddress.selectAddressType('Home');
+        RoutingAddress.save();
+        RoutingAddress.checkAddressTypeOption('Home');
+        RoutingAddress.selectAddressType('Order');
+        SettingOrdersNavigationMenu.selectListConfiguration();
+        RoutingAddress.closeWhitoutSaving();
+        ListConfiguration.waitLoading();
+        SettingOrdersNavigationMenu.selectRoutingAddress();
+        RoutingAddress.waitLoading();
+        RoutingAddress.selectAddressType('Order');
+        SettingOrdersNavigationMenu.selectListConfiguration();
+        RoutingAddress.keepEditing();
+        RoutingAddress.save();
+        RoutingAddress.checkAddressTypeOption('Order');
       },
     );
   });
-
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C466206 "Routing address" option is displayed in "Orders" settings (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
-    () => {
-      RoutingAddress.selectAddressType('Home');
-      RoutingAddress.save();
-      RoutingAddress.checkAddressTypeOption('Home');
-      RoutingAddress.selectAddressType('Order');
-      SettingOrdersNavigationMenu.selectListConfiguration();
-      RoutingAddress.closeWhitoutSaving();
-      ListConfiguration.waitLoading();
-      SettingOrdersNavigationMenu.selectRoutingAddress();
-      RoutingAddress.waitLoading();
-      RoutingAddress.selectAddressType('Order');
-      SettingOrdersNavigationMenu.selectListConfiguration();
-      RoutingAddress.keepEditing();
-      RoutingAddress.save();
-      RoutingAddress.checkAddressTypeOption('Order');
-    },
-  );
 });

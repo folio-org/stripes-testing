@@ -23,8 +23,10 @@ describe('Inventory', () => {
       'item.administrativeNotes = "original Item"',
       'item.administrativeNotes == "original Item"',
       'item.administrativeNotes == "this Item"',
+    ];
+    const noResultsQueries = [
       'item.administrativeNotes ==/ string "this Item"',
-      'item.administrativeNotes ==/ string "this Item"',
+      'item.administrativeNotes ==/ string "this item"',
     ];
     let firstItemData;
     let secondItemData;
@@ -93,6 +95,17 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifySearchResult(firstItemData.instanceTitle);
           InventorySearchAndFilter.verifySearchResult(secondItemData.instanceTitle);
         });
+
+        noResultsQueries.forEach((query) => {
+          // Fill in the input field at the " Search & filter " pane with the following search query => Click on the "Search" button.
+          InventorySearchAndFilter.searchByParameter('Query search', query);
+          // Search completed and no results found for excact match query.
+          InventorySearchAndFilter.verifyResultPaneEmpty({
+            noResultsFound: true,
+            searchQuery: query,
+          });
+        });
+
         // Edit the search query to " item.administrativeNotes ==/ string "Original, restore this Item 07-15-2022" " => Click on the "Search" button.
         InventorySearchAndFilter.searchByParameter('Query search', queryForNote1);
         // Search completed and at the result list is being displayed the "Instance" record with "Holdings" with "Item" record to which you created "Administrative notes" №1 from precondition.

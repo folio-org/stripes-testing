@@ -353,7 +353,7 @@ describe('Data Import', () => {
           '2',
           '$a C380511 Beethoven, Ludwig van, $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
           '$i Container of (work):',
-          '$0 http://id.loc.gov/authorities/names/n79107741',
+          '$0 http://id.loc.gov/authorities/names/n83130832',
           '',
         );
         QuickMarcEditor.verifyTagFieldAfterUnlinking(

@@ -1,5 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../support/fragments/users/usersCard';
 
 describe('fse-users - UI', () => {
   beforeEach(() => {
@@ -17,6 +19,13 @@ describe('fse-users - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'users'] },
     () => {
       Users.waitLoading();
+      cy.getUsers({ limit: 1, query: `"username"=="${Cypress.env('diku_login')}"` }).then(
+        (userResp) => {
+          UsersSearchPane.searchByKeywords(userResp[0].id);
+          UsersSearchPane.openUser(userResp[0].id);
+          UsersCard.verifyUserCardOpened();
+        },
+      );
     },
   );
 });

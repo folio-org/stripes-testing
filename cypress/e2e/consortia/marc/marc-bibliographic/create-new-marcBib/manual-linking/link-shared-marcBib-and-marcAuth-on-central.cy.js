@@ -85,10 +85,6 @@ describe('MARC', () => {
               ]);
             })
             .then(() => {
-              cy.login(users.userAProperties.username, users.userAProperties.password, {
-                path: TopMenu.dataImportPath,
-                waiter: DataImport.waitLoading,
-              });
               cy.resetTenant();
               marcFiles.forEach((marcFile) => {
                 DataImport.uploadFileViaApi(
@@ -117,7 +113,15 @@ describe('MARC', () => {
           'C422141 Link Shared MARC bib with Shared MARC auth on Central tenant in Create screen (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C422141'] },
           () => {
-            cy.visit(TopMenu.inventoryPath);
+            cy.resetTenant();
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userAProperties.username, users.userAProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(
               testData.tags.tag245,
@@ -160,7 +164,7 @@ describe('MARC', () => {
               'records[5].subfieldGroups.uncontrolledAlpha',
               '$e writer',
             );
-            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.saveAndCloseWithValidationWarnings();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.getId().then((id) => {
               createdRecordsID.push(id);

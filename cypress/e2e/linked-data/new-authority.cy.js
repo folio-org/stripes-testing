@@ -74,12 +74,7 @@ describe('Citation: MARC Authority integration', () => {
     // delete LDE related data
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.getInstanceIdApi({
-      limit: 1,
-      query: `title="${resourceData.title}"`,
-    }).then((id) => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-    });
+    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
     Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
       const filteredInstances = instances.filter(
         (element) => element.titles[0].value === testData.uniqueTitle,
@@ -116,7 +111,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C633470 [User journey] LDE - Create new MARC authority (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();

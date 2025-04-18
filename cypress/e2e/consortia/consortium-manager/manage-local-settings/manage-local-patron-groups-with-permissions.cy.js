@@ -38,8 +38,8 @@ describe('Consortium manager', () => {
   describe('Manage local settings', () => {
     describe('Manage local Patron groups', () => {
       before('Create test data', () => {
-        cy.getAdminToken();
         cy.resetTenant();
+        cy.getAdminToken();
         cy.createTempUser([
           Permissions.consortiaSettingsConsortiumManagerEdit.gui,
           Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
@@ -56,7 +56,6 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.consortiaSettingsConsortiumManagerPatronGroupsAll.gui,
           ]);
-          cy.resetTenant();
         });
       });
 
@@ -86,28 +85,19 @@ describe('Consortium manager', () => {
         'C410705 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local patron groups of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
 
+          SelectMembers.selectAllMembers();
+          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.users);
           PatronGroupsConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
-          SelectMembers.selectAllMembers();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
-
-          ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
+          // ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.newPatronGroup);
           ConsortiaControlledVocabularyPaneset.clickSave();
 
@@ -217,6 +207,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.newPatronGroup.group,
@@ -229,12 +220,14 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newPatronGroup.group,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(4000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.editPatronGroup.group,

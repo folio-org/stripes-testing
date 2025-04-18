@@ -49,7 +49,6 @@ describe('Consortium manager', () => {
           cy.assignAffiliationToUser(Affiliations.University, testData.user.userId);
           cy.setTenant(Affiliations.University);
           cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.crudFormats.gui]);
-          cy.resetTenant();
         });
       });
 
@@ -79,6 +78,7 @@ describe('Consortium manager', () => {
         'C410725 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local formats of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
@@ -87,16 +87,6 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           FormatsConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 

@@ -53,12 +53,7 @@ describe('Citation: check navigation', () => {
     cy.getAdminToken();
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.getInstanceIdApi({
-      limit: 1,
-      query: `title="${resourceData.title}"`,
-    }).then((id) => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-    });
+    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
     Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
       const filteredInstances = instances.filter(
         (element) => element.titles[0].value === testData.uniqueTitle,
@@ -79,7 +74,7 @@ describe('Citation: check navigation', () => {
 
   it(
     'C491276 Linked Data Editor: Verify user is navigated to Linked data editor home page when Application header icon is clicked (citation)',
-    { tags: ['citation', 'linked-data-editor', 'sanity', 'shiftLeft'] },
+    { tags: ['smoke', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // check search is displayed with lccn option
       LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
@@ -93,9 +88,9 @@ describe('Citation: check navigation', () => {
       // open work
       LinkedDataEditor.selectFromSearchTable(1);
       // navigate back to the main module
-      TopMenuNavigation.openAppFromDropdown('Linked Data Editor - beta');
+      LinkedDataEditor.selectModuleMainHeading();
       LinkedDataEditor.waitLoading();
-      LinkedDataEditor.checkSearchOptionIsDisplayed('lccn');
+      LinkedDataEditor.checkSearchOptionIsDisplayed('title');
     },
   );
 });

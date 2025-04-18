@@ -218,6 +218,9 @@ export default {
       }
     });
   },
+  deleteLocationViaApi(locationId) {
+    return TenantPane.deleteViaApi({ path: `locations/${locationId}` });
+  },
   goToLocationsTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());

@@ -629,3 +629,33 @@ Cypress.Commands.add('toggleLocSingleImportProfileViaAPI', (enable = true) => {
     }
   });
 });
+
+Cypress.Commands.add('getInstancesCountViaApi', (ignoreStaffSuppressed = true) => {
+  const path = ignoreStaffSuppressed
+    ? '/search/instances?query=staffSuppress==false&limit=1'
+    : '/search/instances?query=(title all *)&limit=1';
+  cy.okapiRequest({
+    path,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.totalRecords;
+  });
+});
+
+Cypress.Commands.add('getStatisticalCodes', (searchParams) => {
+  cy.okapiRequest({
+    path: 'statistical-codes',
+    searchParams,
+  }).then(({ body }) => {
+    return body.statisticalCodes;
+  });
+});
+
+Cypress.Commands.add('getStatisticalCodeTypes', (searchParams) => {
+  cy.okapiRequest({
+    path: 'statistical-code-types',
+    searchParams,
+  }).then(({ body }) => {
+    return body.statisticalCodeTypes;
+  });
+});

@@ -3,7 +3,11 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import { APPLICATION_NAMES } from '../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  CAPABILITY_TYPES,
+  CAPABILITY_ACTIONS,
+} from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import UserEdit from '../../../../support/fragments/users/userEdit';
@@ -21,11 +25,20 @@ describe('Eureka', () => {
         collegeRoleNameC: `AT_C514902_UserRole_M1C_${randomPostfix}`,
       };
 
-      const capabSetsToAssign = [{ type: 'Data', resource: 'UI-Users Roles', action: 'Manage' }];
+      const capabSetsToAssign = [
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'UI-Users Roles',
+          action: CAPABILITY_ACTIONS.MANAGE,
+        },
+      ];
 
       const capabsToAssign = [
-        { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
-        { type: 'Data', resource: 'Consortia User-Tenants Collection', action: 'View' },
+        {
+          type: CAPABILITY_TYPES.DATA,
+          resource: 'Consortia User-Tenants Collection',
+          action: CAPABILITY_ACTIONS.VIEW,
+        },
       ];
 
       const testUser = {};
@@ -67,6 +80,7 @@ describe('Eureka', () => {
       });
 
       before('Login', () => {
+        cy.resetTenant();
         cy.waitForAuthRefresh(() => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
@@ -94,8 +108,8 @@ describe('Eureka', () => {
         'C514902 Add/update roles when editing a user in Central tenant (eureka)',
         { tags: ['criticalPathECS', 'eureka', 'C514902'] },
         () => {
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('0');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('0');
@@ -131,8 +145,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('2');
@@ -146,8 +160,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UserEdit.openEdit();
           UserEdit.verifyUserRolesCounter('2');
@@ -176,8 +190,8 @@ describe('Eureka', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           Users.waitLoading();
-          UsersSearchPane.searchByUsername(testUser.username);
-          UsersSearchPane.openUser(testUser.username);
+          UsersSearchPane.searchByUsername(assignUser.username);
+          UsersSearchPane.openUser(assignUser.username);
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.college);

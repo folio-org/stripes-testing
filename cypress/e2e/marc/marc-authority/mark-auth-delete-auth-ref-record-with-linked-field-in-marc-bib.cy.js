@@ -52,7 +52,7 @@ describe('MARC', () => {
         '$a C374148 Feminist poetry $0 http://id.loc.gov/authorities/subjects/sh85047755',
       ],
       deleteModalMessage:
-        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ?',
+        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ? If you proceed with deletion, then 1 linked bibliographic record will retain authorized value and will become uncontrolled.',
     };
 
     const marcFiles = [
@@ -92,7 +92,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });
@@ -111,10 +111,14 @@ describe('MARC', () => {
           });
         })
         .then(() => {
-          cy.loginAsAdmin({
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000).then(() => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -135,23 +139,30 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             cy.wait(1500);
             QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3_000);
+          });
+        })
+        .then(() => {
+          cy.getAdminToken();
+          cy.createTempUser([
+            Permissions.inventoryAll.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+              cy.reload();
+              MarcAuthorities.waitLoading();
+            }, 20_000);
           });
         });
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.inventoryAll.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      ]).then((createdUserProperties) => {
-        testData.userProperties = createdUserProperties;
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-        });
-      });
     });
 
     after('Delete test data', () => {

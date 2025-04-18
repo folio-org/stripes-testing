@@ -1,11 +1,12 @@
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 const testData = {};
 const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -13,7 +14,6 @@ const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 describe('Users', () => {
   before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.createViaApi(servicePoint);
     cy.resetTenant();
     cy.createTempUser(
       [
@@ -28,6 +28,8 @@ describe('Users', () => {
       testData.user1 = userProperties;
       cy.assignAffiliationToUser(Affiliations.College, testData.user1.userId);
       cy.setTenant(Affiliations.College);
+      ServicePoints.createViaApi(servicePoint);
+
       cy.assignPermissionsToExistingUser(testData.user1.userId, [
         Permissions.uiUserCanAssignUnassignPermissions.gui,
         Permissions.uiUsersEdituserservicepoints.gui,
@@ -44,10 +46,12 @@ describe('Users', () => {
   after('Delete test data', () => {
     cy.resetTenant();
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(testData.user2.userId, [servicePoint.id]);
-    ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.user1.userId);
     Users.deleteViaApi(testData.user2.userId);
+    cy.resetTenant();
+    cy.setTenant(Affiliations.College);
+    cy.wait(5000);
+    ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it(
@@ -62,15 +66,16 @@ describe('Users', () => {
       ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
       UsersSearchPane.searchByUsername(testData.user2.username);
       UsersSearchPane.waitLoading();
-      UserEdit.checkAccordionsForShadowUser();
-      UserEdit.checkActionsForShadowUser();
+      UsersCard.checkAccordionsForShadowUser();
+      UsersCard.checkActionsForShadowUser();
       UserEdit.openEdit();
       UserEdit.checkAccordionsForShadowUserInEditMode();
+      UserEdit.openServicePointsAccordion();
       UserEdit.addServicePoints(servicePoint.name);
       UserEdit.selectPreferableServicePoint(servicePoint.name);
       UserEdit.saveAndClose();
-      UserEdit.openServicePointsAccordion();
-      UserEdit.checkServicePoints(servicePoint.name);
+      UsersCard.openServicePointsAccordion();
+      UsersCard.checkServicePoints(servicePoint.name);
     },
   );
 });

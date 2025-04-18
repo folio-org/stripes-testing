@@ -29,11 +29,13 @@ describe('Consortia', () => {
           cy.assignAffiliationToUser(Affiliations.College, userData.userId);
           cy.setTenant(Affiliations.College);
           cy.assignPermissionsToExistingUser(userData.userId);
+          cy.resetTenant();
           cy.login(userData.username, userData.password);
         });
     });
 
     after('Delete users data', () => {
+      cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
     });

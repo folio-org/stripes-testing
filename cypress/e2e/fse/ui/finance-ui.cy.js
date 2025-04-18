@@ -17,6 +17,9 @@ describe('fse-finance - UI', () => {
     { tags: ['sanity', 'fse', 'ui', 'finance'] },
     () => {
       FiscalYears.waitLoading();
+      // run basic search
+      FiscalYears.searchByName('F');
+      FiscalYears.fiscalYearsDisplay();
     },
   );
 });

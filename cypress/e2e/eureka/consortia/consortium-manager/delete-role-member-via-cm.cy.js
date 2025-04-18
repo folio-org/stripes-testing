@@ -108,6 +108,7 @@ describe('Eureka', () => {
       'C543745 ECS | Eureka | Delete authorization role through consortium manager (consortia) (thunderjet)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C543745'] },
       () => {
+        cy.resetTenant();
         cy.login(tempUser.username, tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
         ConsortiumManagerApp.openListInSettings(SETTINGS_SUBSECTION_AUTH_ROLES);
@@ -144,7 +145,7 @@ describe('Eureka', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         Users.waitLoading();
         UsersSearchPane.searchByKeywords(userCollege.userId);
-        UsersCard.varifyUserCardOpened();
+        UsersCard.verifyUserCardOpened();
         UsersCard.verifyUserRolesCounter('0');
       },
     );

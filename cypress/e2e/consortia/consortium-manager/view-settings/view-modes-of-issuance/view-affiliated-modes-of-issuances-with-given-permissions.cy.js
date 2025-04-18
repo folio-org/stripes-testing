@@ -195,10 +195,11 @@ describe('Consortium manager', () => {
         'C410940 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of modes of issuance of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
-          cy.resetTenant();
+          cy.setTenant(Affiliations.College);
           cy.login(testData.user940.username, testData.user940.password);
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
+          cy.wait(4000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.clickSelectMembers();
@@ -260,6 +261,7 @@ describe('Consortium manager', () => {
           cy.login(testData.user942.username, testData.user942.password);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           cy.visit(TopMenu.consortiumManagerPath);
+          cy.wait(4000);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);

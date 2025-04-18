@@ -1,4 +1,4 @@
-import { Select, Button } from '../../../../../../interactors';
+import { Button, Select } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
 const calloutMessages = {
@@ -15,6 +15,32 @@ export default {
       if (!element.attr('disabled')) {
         cy.do(Button('Save').click());
         InteractorsTools.checkCalloutMessage(calloutMessages.SETTING_UPDATE_SUCCESS);
+      }
+    });
+  },
+
+  changeDefaultInstanceStatusViaApi: (statusCode) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'configurations/entries?query=(module==FAST_ADD%20and%20configName==fastAddSettings)',
+      isDefaultSearchParamsRequired: false,
+    }).then((instanceStatusResp) => {
+      const currentValue = JSON.parse(instanceStatusResp.body.configs[0].value);
+      if (currentValue.instanceStatusCode !== statusCode) {
+        const config = instanceStatusResp.body.configs[0];
+
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `configurations/entries/${config.id}`,
+          body: {
+            id: config.id,
+            module: config.module,
+            configName: config.configName,
+            enabled: config.enabled,
+            value: `{"instanceStatusCode":"${statusCode}","defaultDiscoverySuppress":"true"}`,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
       }
     });
   },

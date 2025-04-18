@@ -237,6 +237,7 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -371,6 +372,7 @@ describe('Data Import', () => {
 
         // download .csv file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventorySearchAndFilter.resetAll();
         InventorySearchAndFilter.searchByParameter('Subject', uniqueSubject);
         cy.wait(2000);
         InventorySearchAndFilter.saveUUIDs();

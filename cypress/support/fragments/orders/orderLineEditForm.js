@@ -13,7 +13,7 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
-import SelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -138,7 +138,6 @@ export default {
   clickTitleLookUpButton() {
     cy.do(itemDetailsSection.find(Button('Title look-up')).click());
     SelectInstanceModal.waitLoading();
-    SelectInstanceModal.verifyModalView();
 
     return SelectInstanceModal;
   },

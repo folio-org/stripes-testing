@@ -22,7 +22,6 @@ describe('ui-requests: Filter requests by pickup service point', () => {
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(newServicePoint).then((response) => {
         servicePointId = response.body.id;
@@ -49,7 +48,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
     'C15178 Filter requests by pickup service point (vega) (TaaS)',
     { tags: ['criticalPathFlaky', 'vega', 'C15178'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitLoading });
       Requests.filterRequestsByServicePoints(servicePointName);
       Requests.selectFirstRequest(instanceData.instanceTitle);
       RequestDetail.checkRequesterInformation({

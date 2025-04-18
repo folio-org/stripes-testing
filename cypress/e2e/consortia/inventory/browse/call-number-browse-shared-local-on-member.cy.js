@@ -236,6 +236,9 @@ describe('Inventory', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+              }, 30_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventorySearchAndFilter.switchToBrowseTab();
             });

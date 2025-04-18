@@ -4,6 +4,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import marcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -36,10 +37,12 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Importing data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C415263');
+      marcAuthorities.deleteMarcAuthorityByTitleViaAPI('C415263');
       cy.createTempUser([Permissions.inventoryAll.gui])
         .then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
-          InventoryInstances.deleteInstanceByTitleViaApi('C415263');
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
               marcFile.marc,
@@ -53,10 +56,14 @@ describe('Inventory', () => {
           });
         })
         .then(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
     });
 
@@ -76,27 +83,27 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(2);
         InventorySearchAndFilter.clickAccordionByName(testData.languageAccordionName);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.languageAccordionName);
-        InventorySearchAndFilter.verifyFilterOptionCount(
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
           testData.languageAccordionName,
           testData.languageOptionName,
           2,
         );
         InventorySearchAndFilter.clickAccordionByName(testData.formatAccordionName);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.formatAccordionName);
-        InventorySearchAndFilter.verifyFilterOptionCount(
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
           testData.formatAccordionName,
           testData.formatOptionName,
           1,
         );
-        InventorySearchAndFilter.selectOptionInExpandedFilter(
+        InventorySearchAndFilter.selectMultiSelectFilterOption(
           testData.languageAccordionName,
           testData.languageOptionName,
         );
-        InventorySearchAndFilter.selectOptionInExpandedFilter(
+        InventorySearchAndFilter.selectMultiSelectFilterOption(
           testData.formatAccordionName,
           testData.formatOptionName,
         );
-        InventorySearchAndFilter.verifyFilterOptionCount(
+        InventorySearchAndFilter.verifyMultiSelectFilterOptionCount(
           testData.languageAccordionName,
           testData.languageOptionName,
           1,

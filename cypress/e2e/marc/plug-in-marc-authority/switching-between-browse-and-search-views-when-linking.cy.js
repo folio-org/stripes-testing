@@ -3,6 +3,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcAuthorityBrowse from '../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
@@ -98,9 +99,16 @@ describe('MARC', () => {
             });
           });
         });
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();

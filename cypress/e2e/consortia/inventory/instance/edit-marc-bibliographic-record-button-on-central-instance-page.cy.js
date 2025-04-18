@@ -63,9 +63,9 @@ describe('Inventory', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.addNewField(testData.tag010.tag, testData.tag010.content, 3);
+        cy.wait(2000);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1000);
-        QuickMarcEditor.pressSaveAndClose();
+        cy.wait(5000);
         InventoryInstance.waitLoading();
         InventoryInstance.checkInstanceDetails({
           instanceInformation: [{ key: 'Source', value: testData.source }],

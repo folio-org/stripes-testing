@@ -34,19 +34,19 @@ export default {
     cy.expect(organizationsSettingsSection.exists());
   },
 
-  checkButtonNewInTypesIsDisabled: () => {
+  checkButtonNewInTypesIsAbsent() {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
         .find(Button({ id: 'clickable-add-types' }))
-        .is({ disabled: true }),
+        .absent(),
     );
   },
 
-  checkButtonNewInCategoriesIsDisabled: () => {
+  checkButtonNewInCategoriesIsAbsent() {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
         .find(Button({ id: 'clickable-add-categories' }))
-        .is({ disabled: true }),
+        .absent(),
     );
   },
 

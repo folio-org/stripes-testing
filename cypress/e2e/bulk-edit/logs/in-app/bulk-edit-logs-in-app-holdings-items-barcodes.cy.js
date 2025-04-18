@@ -192,6 +192,7 @@ describe('bulk-edit', () => {
           InventoryInstance.verifyHoldingsTemporaryLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
           InventoryInstance.closeHoldingsView();
 
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Barcode', instance2.barcode);
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.selectSearchResultItem();

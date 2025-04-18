@@ -71,7 +71,7 @@ describe('Permissions -> Circulation', () => {
       InteractorsTools.checkCalloutMessage(
         `The cancel reason ${editCancellationReason.name} was successfully deleted`,
       );
-      CancellationReason.verifyNoReasonInTheList(editCancellationReason.name);
+      CancellationReason.verifyReasonIsNotInTheList(editCancellationReason.name);
     },
   );
 });

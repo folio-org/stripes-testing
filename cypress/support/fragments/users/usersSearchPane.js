@@ -10,7 +10,7 @@ import {
   Pane,
   PaneHeader,
   Select,
-  TextField
+  TextField,
 } from '../../../../interactors';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
@@ -19,7 +19,11 @@ const waitClick = () => {
 };
 
 export default {
-  waitLoading: () => cy.expect(PaneHeader('User search').exists()),
+  waitLoading() {
+    cy.wait(500);
+    cy.expect(PaneHeader('User search results').exists());
+    cy.wait(500);
+  },
 
   searchByStatus(status) {
     waitClick();

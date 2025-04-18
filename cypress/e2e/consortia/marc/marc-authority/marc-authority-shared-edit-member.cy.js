@@ -81,6 +81,9 @@ describe('MARC', () => {
               waiter: MarcAuthorities.waitLoading,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+              }, 30_000);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               MarcAuthorities.waitLoading();
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -126,6 +129,8 @@ describe('MARC', () => {
             QuickMarcEditor.checkContentByTag(testData.tag046, testData.updatedTag046Value);
             QuickMarcEditor.clickArrowDownButton(4);
             QuickMarcEditor.verifyTagValue(5, testData.tag010);
+            MarcAuthority.clickSaveAndCloseButton();
+            cy.wait(4000);
             MarcAuthority.clickSaveAndCloseButton();
             QuickMarcEditor.checkDeleteModal(1);
             MarcAuthority.continueWithSaveAndCheck();

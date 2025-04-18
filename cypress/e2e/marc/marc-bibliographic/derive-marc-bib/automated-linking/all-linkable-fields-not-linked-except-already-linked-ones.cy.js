@@ -60,7 +60,7 @@ describe('MARC', () => {
               'C388642 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
             boxFourth:
-              '$a C388642 Delaware Symposium on Language Studies. $f 1985 $t Delaware symposia on language studies',
+              '$a C388642 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n84745425',
             boxSeventh: '',
@@ -69,7 +69,7 @@ describe('MARC', () => {
             rowIndex: 86,
             value: 'C388642 Gone with the wind (Motion picture : 1939)',
             tag: 730,
-            boxFourth: '$a C388642 Gone with the wind $f 1939) $g (Motion picture :',
+            boxFourth: '$a C388642 Gone with the wind $g (Motion picture : $f 1939)',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095',
             boxSeventh: '',
@@ -196,14 +196,18 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -267,7 +271,7 @@ describe('MARC', () => {
             QuickMarcEditor.updateExistingFieldContent(fields[0].rowIndex, fields[0].newContent);
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.verifyAfterDerivedMarcBibSave();
             cy.wait(3000);

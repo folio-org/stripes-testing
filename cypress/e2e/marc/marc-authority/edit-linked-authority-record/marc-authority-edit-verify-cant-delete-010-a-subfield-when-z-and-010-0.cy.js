@@ -54,6 +54,9 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        InventoryInstances.deleteFullInstancesByTitleViaApi(testData.instanceTitle);
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityTitle);
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -61,44 +64,30 @@ describe('MARC', () => {
           Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
           Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-        ]).then((createdUserProperties) => {
-          userData = createdUserProperties;
-
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${testData.instanceTitle}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${testData.authorityTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+        ])
+          .then((createdUserProperties) => {
+            userData = createdUserProperties;
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
             });
-          });
-
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.inventoryPath).then(() => {
+          })
+          .then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin({
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -113,16 +102,19 @@ describe('MARC', () => {
             QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
             QuickMarcEditor.closeCallout();
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
+            QuickMarcEditor.checkAfterSaveAndClose();
 
-            cy.login(userData.username, userData.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(userData.username, userData.password, {
+                path: TopMenu.marcAuthorities,
+                waiter: MarcAuthorities.waitLoading,
+              });
+              cy.reload();
+              MarcAuthorities.waitLoading();
+            }, 20_000);
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -157,6 +149,8 @@ describe('MARC', () => {
           QuickMarcEditor.checkErrorMessage(4, testData.colloutMessage);
 
           QuickMarcEditor.pressCancel();
+          QuickMarcEditor.closeWithoutSavingInEditConformation();
+
           MarcAuthorities.verifyMarcViewPaneIsOpened();
           cy.get('@viewAuthorityPaneContent').then((viewAuthorityPaneContent) => {
             MarcAuthorities.verifyViewPaneContent(viewAuthorityPaneContent);

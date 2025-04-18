@@ -77,6 +77,8 @@ describe('MARC', () => {
         NO: 'No',
       };
 
+      let authoritiesCount;
+
       before('Create users, data', () => {
         cy.getAdminToken();
         cy.setTenant(Affiliations.College);
@@ -140,6 +142,10 @@ describe('MARC', () => {
             });
           })
           .then(() => {
+            cy.setTenant(Affiliations.College);
+            cy.getAuthoritiesCountViaAPI().then((count) => {
+              authoritiesCount = count;
+            });
             cy.resetTenant();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
@@ -346,16 +352,19 @@ describe('MARC', () => {
                 MarcAuthorities.verifySharedAccordionOpen(true);
                 MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
                 MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
-                MarcAuthorities.checkPreviousAndNextPaginationButtonsShown();
 
-                // 9 Click on any pagination button, ex.: "Next"
-                MarcAuthorities.clickNextPagination();
-                MarcAuthorities.checkRowAbsentByContent(
-                  sharedAuthorityRecord1FromCentralTenant.heading,
-                );
-                MarcAuthorities.verifySharedAccordionOpen(true);
-                MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
-                MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+                if (authoritiesCount > 100) {
+                  MarcAuthorities.checkPreviousAndNextPaginationButtonsShown();
+                  // 9 Click on any pagination button, ex.: "Next"
+                  MarcAuthorities.clickNextPagination();
+                  MarcAuthorities.checkRowAbsentByContent(
+                    sharedAuthorityRecord1FromCentralTenant.heading,
+                  );
+                  MarcAuthorities.verifySharedAccordionOpen(true);
+                  MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, true);
+                  MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, true);
+                }
+
                 cy.wait(3000);
                 cy.then(() => {
                   MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then(

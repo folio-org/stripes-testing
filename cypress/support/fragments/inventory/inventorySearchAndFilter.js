@@ -30,7 +30,7 @@ import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstance from './inventoryInstance';
-import InventoryInstances from './inventoryInstances';
+import InventoryInstances, { searchInstancesOptions } from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -91,6 +91,13 @@ const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
 const nameTypeAccordion = Accordion({ id: 'nameType' });
 const closeIconButton = Button({ icon: 'times' });
+const heldByAccordion = Accordion('Held by');
+const dateRangeAccordion = Accordion('Date range');
+const dateRangeFromField = dateRangeAccordion.find(TextField({ name: 'startDate' }));
+const dateRangeToField = dateRangeAccordion.find(TextField({ name: 'endDate' }));
+const filterApplyButton = Button('Apply');
+const invalidDateErrorText = 'Please enter a valid year';
+const dateOrderErrorText = 'Start date is greater than end date';
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -192,6 +199,11 @@ export default {
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
+  dateRangeFromField,
+  dateRangeToField,
+  invalidDateErrorText,
+  dateOrderErrorText,
+  dateRangeAccordion,
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
@@ -481,16 +493,19 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(keywordInput.fillIn(value));
-    cy.wait(500);
-    cy.do(searchButton.focus());
-    cy.wait(500);
-    cy.do(searchButton.click());
-    cy.wait(1000);
+    cy.do([
+      SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
+      keywordInput.fillIn(value),
+      cy.wait(500),
+      searchButton.focus(),
+      cy.wait(500),
+      searchButton.click(),
+      cy.wait(1000),
+    ]);
   },
 
   switchToItem: () => {
+    cy.wait(500);
     cy.do(itemToggleButton.click());
     cy.wait(500);
   },
@@ -682,7 +697,10 @@ export default {
 
   searchTag(tag) {
     cy.wait(500);
-    cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
+    cy.do([
+      tagsAccordionButton.click(),
+      MultiSelect({ id: 'instancesTags-multiselect' }).fillIn(tag),
+    ]);
   },
 
   filterByTag(tag) {
@@ -697,7 +715,7 @@ export default {
 
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
-    cy.expect(HTML('No matching options').exists());
+    cy.expect(HTML('No matching items found!').exists());
   },
 
   verifyContributorsColumResult(cellContent) {
@@ -991,7 +1009,7 @@ export default {
   verifySearchAndFilterPane() {
     this.validateSearchTabIsDefault();
     this.instanceTabIsDefault();
-    this.searchTypeDropdownDefaultValue('Keyword (title, contributor, identifier, HRID, UUID)');
+    this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
     this.verifySearchFieldIsEmpty();
     cy.expect([
       searchToggleButton.exists(),
@@ -1046,6 +1064,7 @@ export default {
     cy.do(Accordion(accordionName).clickHeader());
   },
 
+  // To be removed after the checkboxes turn into a MultiSelect
   verifyFilterOptionCount(accordionName, optionName, expectedCount) {
     cy.expect(
       Accordion(accordionName)
@@ -1053,6 +1072,17 @@ export default {
           HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
         )
         .exists(),
+    );
+  },
+
+  verifyMultiSelectFilterOptionCount(accordionName, optionName, expectedCount) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.expect(
+      multiSelect
+        .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+        .has({ totalRecords: expectedCount }),
     );
   },
 
@@ -1074,12 +1104,23 @@ export default {
     cy.expect(nameTypeAccordion.find(MultiSelectOption(including(option))).exists());
   },
 
+  // To be removed after the checkboxes turn into a MultiSelect
   selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
     const checkbox = Accordion(accordionName).find(Checkbox(optionName));
     cy.do(checkbox.click());
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  selectMultiSelectFilterOption(accordionName, optionName) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do([
+      multiSelect.open(),
+      cy.wait(1000),
+      multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]),
+    ]);
   },
 
   checkSearchButtonEnabled() {
@@ -1101,12 +1142,11 @@ export default {
   },
 
   checkOptionsWithCountersExistInAccordion(accordionName) {
-    cy.do(paneFilterSection.find(Accordion(accordionName)).find(MultiSelect()).open());
+    cy.do(Accordion(accordionName).find(MultiSelect()).open());
     cy.expect(
-      paneFilterSection
-        .find(Accordion(accordionName))
-        .find(MultiSelectOption())
-        .has({ text: matching(/.{1,}(\d{1,})/) }),
+      Accordion(accordionName)
+        .find(MultiSelectOption({ text: matching(/.{1,}(\d{1,})/) }))
+        .exists(),
     );
   },
 
@@ -1193,6 +1233,7 @@ export default {
   },
 
   selectYesfilterStaffSuppress: () => {
+    cy.wait(1000);
     cy.do([
       stuffSupressAccordion.clickHeader(),
       stuffSupressAccordion.find(Checkbox({ id: 'clickable-filter-staffSuppress-true' })).click(),
@@ -1211,7 +1252,7 @@ export default {
 
   selectHeldByOption(tenantName, isSelected = true) {
     cy.wait(ONE_SECOND);
-    cy.do(Accordion('Held by').find(MultiSelect()).fillIn(tenantName));
+    cy.do(heldByAccordion.find(MultiSelect()).fillIn(tenantName));
     // need to wait until data will be loaded
     cy.wait(ONE_SECOND);
     cy.do(
@@ -1226,14 +1267,14 @@ export default {
   checkHeldByOptionSelected: (tenantName, isSelected = true) => {
     if (isSelected) {
       cy.expect(
-        Accordion('Held by')
+        heldByAccordion
           .find(MultiSelect())
           .find(ValueChipRoot(including(tenantName)))
           .exists(),
       );
     } else {
       cy.expect(
-        Accordion('Held by')
+        heldByAccordion
           .find(MultiSelect())
           .find(ValueChipRoot(including(tenantName)))
           .absent(),
@@ -1245,5 +1286,96 @@ export default {
     cy.wait(1000);
     cy.do(closeIconButton.click());
     cy.wait(1000);
+  },
+
+  verifyHeldByOption(option) {
+    cy.do(heldByAccordion.find(Button({ ariaLabel: 'open menu' })).click());
+    cy.expect(heldByAccordion.find(MultiSelectOption(including(option))).exists());
+  },
+
+  verifyDefaultSearchInstanceOptionSelected() {
+    this.searchTypeDropdownDefaultValue(searchInstancesOptions[0]);
+  },
+
+  verifyResultWithDate1Found(date1Value, isFound = true) {
+    const escapedDate1Value = date1Value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const targetCell = MultiColumnListCell({
+      column: 'Date',
+      content: matching(`^${escapedDate1Value}`),
+    });
+    if (isFound) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
+  },
+
+  toggleAccordionByName(accordionName, isOpen = true) {
+    this.clickAccordionByName(accordionName);
+    this.verifyAccordionByNameExpanded(accordionName, isOpen);
+  },
+
+  verifyDateRangeAccordionValues(fromDate, toDate) {
+    cy.expect([
+      dateRangeFromField.has({ value: fromDate }),
+      dateRangeToField.has({ value: toDate }),
+      dateRangeAccordion.find(filterApplyButton).exists(),
+    ]);
+  },
+
+  filterByDateRange(dateFrom, dateTo, fromError, toError) {
+    cy.intercept('/search/instances**').as('searchCall');
+    this.toggleAccordionByName('Date range');
+    cy.do([dateRangeFromField.fillIn(dateFrom), dateRangeToField.fillIn(dateTo)]);
+    if (fromError !== dateOrderErrorText) this.checkDateRangeFieldsValidation(fromError, toError);
+    else this.checkDateRangeFieldsValidation(false, false);
+    cy.do(dateRangeAccordion.find(filterApplyButton).click());
+    if (fromError !== dateOrderErrorText) this.checkDateRangeFieldsValidation(fromError, toError);
+    else {
+      this.checkDateRangeFieldsValidation(false, false);
+      this.verifyErrorMessageInAccordion(dateRangeAccordion, dateOrderErrorText);
+    }
+    if (!fromError && !toError) cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
+    cy.wait(1000);
+  },
+
+  checkDateRangeFieldsValidation(fromError, toError) {
+    cy.wait(500);
+    if (fromError) this.verifyErrorMessageInTextField(dateRangeFromField, true, fromError);
+    else if (fromError === false) this.verifyErrorMessageInTextField(dateRangeFromField, false);
+    if (toError) this.verifyErrorMessageInTextField(dateRangeToField, true, toError);
+    else if (toError === false) this.verifyErrorMessageInTextField(dateRangeToField, false);
+  },
+
+  verifyErrorMessageInTextField(textFieldInteractor, isError = true, errorText) {
+    if (isError) cy.expect(textFieldInteractor.has({ error: errorText, errorBorder: true, errorIcon: true }));
+    else {
+      cy.expect(
+        textFieldInteractor.has({ error: undefined, errorBorder: false, errorIcon: false }),
+      );
+    }
+  },
+
+  verifyErrorMessageInAccordion(accordionInteractor, errorText) {
+    if (errorText) {
+      cy.expect(accordionInteractor.find(HTML(errorText)).exists());
+    }
+  },
+
+  verifyMultiSelectFilterOptionSelected(accordionName, optionName, isSelected = true) {
+    const multiSelect = Accordion(accordionName).find(
+      MultiSelect({ selected: including(optionName) }),
+    );
+    if (isSelected) cy.expect(multiSelect.exists());
+    else cy.expect(multiSelect.absent());
+  },
+
+  typeValueInMultiSelectFilterFieldAndCheck(accordionName, value, isFound = true, foundCount = 1) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(value));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([
+        multiSelect.find(MultiSelectOption(including(value))).exists(),
+        multiSelect.has({ optionsCount: foundCount }),
+      ]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
   },
 };

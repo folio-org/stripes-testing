@@ -51,17 +51,17 @@ describe('Inventory', () => {
     after('Delete test data', () => {
       cy.resetTenant();
       cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
       cy.setTenant(Affiliations.College);
       InventoryInstance.deleteInstanceViaApi(testData.instance1.instanceId);
       InventoryInstance.deleteInstanceViaApi(testData.instance2.instanceId);
-      cy.resetTenant();
-      Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C407750 (CONSORTIA) Verify that user cant edit shared instance on Member tenant without Central tenant Instance editing permission (folijet)',
       { tags: ['smokeECS', 'folijet', 'C407750'] },
       () => {
+        cy.resetTenant();
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

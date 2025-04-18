@@ -50,7 +50,6 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.uiSettingsModesOfIssuanceCreateEditDelete.gui,
           ]);
-          cy.resetTenant();
         });
       });
 
@@ -80,6 +79,7 @@ describe('Consortium manager', () => {
         'C410946 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local modes of issuance of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
@@ -88,16 +88,6 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           ModesOfIssuanceConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 

@@ -1,10 +1,8 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -15,7 +13,6 @@ describe('Inventory', () => {
     const testData = {
       advSearchOption: 'Advanced search',
       expectedSearchResult: 'The Beatles in mono. Adv search 001',
-      callNumberValue: 'YCN002003400616',
       itemBarcode: 'ITBRCC400616',
       expectedSearchResultsC400616: [
         'Humans and machines Adv Search 003',
@@ -30,6 +27,7 @@ describe('Inventory', () => {
     };
     const querySearches = [' *Adv Search 003', ' *Adv Search 001'];
     const createdRecordIDs = [];
+    let instanceHrid;
 
     const marcFiles = [
       {
@@ -72,40 +70,27 @@ describe('Inventory', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
-        marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.then(() => {
+          cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
+          marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdRecordIDs.push(record[marcFile.propertyName].id);
+              });
             });
           });
-        });
-
-        cy.loginAsAdmin({
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
         }).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[3]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.pressAddHoldingsButton();
-          InventoryNewHoldings.fillRequiredFields();
-          HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
-          InventoryNewHoldings.saveAndClose();
-          InventoryInstance.waitLoading();
-          // wait to make sure holdings created - otherwise added item might not be saved
-          cy.wait(1500);
-          InventoryInstance.addItem();
-          InventoryInstance.fillItemRequiredFields();
-          InventoryInstance.fillItemBarcode(testData.itemBarcode);
-          InventoryInstance.saveItemDataAndVerifyExistence('-');
-        });
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"id"=="${createdRecordIDs[3]}"`,
+          }).then((instance) => {
+            instanceHrid = instance.hrid;
+          });
         });
       });
     });
@@ -113,9 +98,8 @@ describe('Inventory', () => {
     after('Deleting data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-      createdRecordIDs.forEach((id, index) => {
-        if (index !== 3) InventoryInstance.deleteInstanceViaApi(id);
+      createdRecordIDs.forEach((id) => {
+        InventoryInstance.deleteInstanceViaApi(id);
       });
     });
 
@@ -123,10 +107,14 @@ describe('Inventory', () => {
       'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C466156'] },
       () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.checkAdvSearchInstancesModalFields(0);
         InventoryInstances.checkAdvSearchInstancesModalFields(1);
@@ -191,16 +179,16 @@ describe('Inventory', () => {
         );
         InventoryInstances.fillAdvSearchRow(
           1,
-          'YCN00200300487',
+          instanceHrid,
           'Contains all',
-          'Effective call number (item), shelving order',
+          'Instance HRID',
           'NOT',
         );
         InventoryInstances.checkAdvSearchModalValues(
           1,
-          'YCN00200300487',
+          instanceHrid,
           'Contains all',
-          'Effective call number (item), shelving order',
+          'Instance HRID',
           'NOT',
         );
         InventoryInstances.fillAdvSearchRow(
@@ -243,10 +231,14 @@ describe('Inventory', () => {
       'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C414977', 'eurekaPhase1'] },
       () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,

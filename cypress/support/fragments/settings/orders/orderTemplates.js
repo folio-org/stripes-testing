@@ -37,6 +37,11 @@ export default {
     OrderTemplateForm.clickSaveButton();
   },
 
+  goToTemplatesFromOrders() {
+    cy.do([NavListItem('Orders').click(), NavListItem('Order templates').click()]);
+    cy.expect(Pane('Order templates').exists());
+  },
+
   deleteTemplate(templateName) {
     cy.do([
       NavListItem(templateName).click(),

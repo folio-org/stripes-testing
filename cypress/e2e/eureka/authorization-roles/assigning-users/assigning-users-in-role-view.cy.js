@@ -116,7 +116,7 @@ describe('Eureka', () => {
             testData.userB.lastName,
             testData.userB.firstName,
           );
-          UsersCard.varifyUserCardOpened();
+          UsersCard.verifyUserCardOpened();
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.verifyUserRoleNames([testData.roleAName, testData.roleBName]);

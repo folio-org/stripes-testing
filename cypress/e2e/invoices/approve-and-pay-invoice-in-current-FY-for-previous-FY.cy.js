@@ -23,8 +23,8 @@ describe('Invoices', () => {
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodStart: `${DateTools.get3DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.get4DaysAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -48,9 +48,9 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getCurrentDateInPreviusMonthForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.get3DaysAfterTomorrowDateForFiscalYear();
+  const periodStartForSecondFY = DateTools.get4DaysAfterTomorrowDateForFiscalYear();
+  const periodEndForSecondFY = DateTools.get5DaysAfterTomorrowDateForFiscalYear();
   let user;
   let orderNumber;
   let servicePointId;

@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -23,31 +21,18 @@ describe('Inventory', () => {
         {
           title: `Roma council. Adv search title 002 ${getRandomPostfix()}`,
           identifier: randomInstanceIdentifier,
-          holdingsCallNumber: `YCN${getRandomPostfix()}`,
-          itemBarcode: uuid(),
         },
       ],
     };
+
+    let partialInstanceHrid;
+    let fullInstanceHrid;
 
     before('Creating data', () => {
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
-          });
-          cy.getHoldingTypes({ limit: 1 }).then((holdingsType) => {
-            testData.holdingTypeId = holdingsType[0].id;
-          });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-            (locations) => {
-              testData.locationsId = locations.id;
-            },
-          );
-          cy.getLoanTypes({ limit: 1 }).then((res) => {
-            testData.loanTypeId = res[0].id;
-          });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            testData.materialTypeId = res.id;
           });
           InventoryInstances.getIdentifierTypes({ query: 'name="OCLC"' }).then((identifier) => {
             testData.identifierTypeId = identifier.id;
@@ -66,8 +51,6 @@ describe('Inventory', () => {
                 },
               ],
             },
-            holdings: [],
-            items: [],
           }).then((specialInstanceIds) => {
             testData.instances[0].testInstanceIds = specialInstanceIds;
           });
@@ -83,21 +66,6 @@ describe('Inventory', () => {
                 },
               ],
             },
-            holdings: [
-              {
-                holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: testData.locationsId,
-                callNumber: testData.instances[1].holdingsCallNumber,
-              },
-            ],
-            items: [
-              {
-                barcode: testData.instances[1].itemBarcode,
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                permanentLoanType: { id: testData.loanTypeId },
-                materialType: { id: testData.materialTypeId },
-              },
-            ],
           }).then((specialInstanceIds) => {
             testData.instances[1].testInstanceIds = specialInstanceIds;
           });
@@ -105,21 +73,22 @@ describe('Inventory', () => {
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
       });
     });
 
     after('Deleting data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-          testData.instances[1].itemBarcode,
-        );
         InventoryInstance.deleteInstanceViaApi(testData.instances[0].testInstanceIds.instanceId);
+        InventoryInstance.deleteInstanceViaApi(testData.instances[1].testInstanceIds.instanceId);
       });
     });
 
@@ -127,13 +96,22 @@ describe('Inventory', () => {
       'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'C422016', 'eurekaPhase1'] },
       () => {
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"id"=="${testData.instances[0].testInstanceIds.instanceId}"`,
-        }).then((instance) => {
-          const instanceHrid = instance.hrid.replace(/[^\d]/g, '');
-
+        cy.then(() => {
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"id"=="${testData.instances[0].testInstanceIds.instanceId}"`,
+          }).then((instance0) => {
+            partialInstanceHrid = instance0.hrid.replace(/[^\d]/g, '');
+            cy.getInstance({
+              limit: 1,
+              expandAll: true,
+              query: `"id"=="${testData.instances[1].testInstanceIds.instanceId}"`,
+            }).then((instance1) => {
+              fullInstanceHrid = instance1.hrid;
+            });
+          });
+        }).then(() => {
           InventorySearchAndFilter.switchToInstance();
           InventoryInstances.clickAdvSearchButton();
           InventoryInstances.fillAdvSearchRow(
@@ -150,14 +128,14 @@ describe('Inventory', () => {
           );
           InventoryInstances.fillAdvSearchRow(
             1,
-            instanceHrid,
+            partialInstanceHrid,
             'Contains any',
             'Instance HRID',
             'OR',
           );
           InventoryInstances.checkAdvSearchModalValues(
             1,
-            instanceHrid,
+            partialInstanceHrid,
             'Contains any',
             'Instance HRID',
             'OR',
@@ -178,7 +156,7 @@ describe('Inventory', () => {
           );
           InventoryInstances.checkAdvSearchModalValues(
             1,
-            instanceHrid,
+            partialInstanceHrid,
             'Contains any',
             'Instance HRID',
             'OR',
@@ -187,49 +165,49 @@ describe('Inventory', () => {
           InventoryInstances.resetAllFilters();
           InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
           InventorySearchAndFilter.verifySearchFieldIsEmpty();
-        });
 
-        InventoryInstances.clickAdvSearchButton();
-        cy.wrap([1, 2, 3, 4]).each((rowNumber) => {
-          InventoryInstances.checkAdvSearchModalValues(
-            rowNumber,
-            '',
-            'Contains all',
-            'Keyword (title, contributor, identifier, HRID, UUID)',
-            'AND',
+          InventoryInstances.clickAdvSearchButton();
+          cy.wrap([1, 2, 3, 4]).each((rowNumber) => {
+            InventoryInstances.checkAdvSearchModalValues(
+              rowNumber,
+              '',
+              'Contains all',
+              'Keyword (title, contributor, identifier, HRID, UUID)',
+              'AND',
+            );
+          });
+          InventoryInstances.fillAdvSearchRow(
+            0,
+            testData.instances[0].identifier,
+            'Exact phrase',
+            'Identifier (all)',
           );
+          InventoryInstances.checkAdvSearchModalValues(
+            0,
+            testData.instances[0].identifier,
+            'Exact phrase',
+            'Identifier (all)',
+          );
+          InventoryInstances.fillAdvSearchRow(
+            1,
+            fullInstanceHrid,
+            'Contains all',
+            'Instance HRID',
+            'NOT',
+          );
+          InventoryInstances.checkAdvSearchModalValues(
+            1,
+            fullInstanceHrid,
+            'Contains all',
+            'Instance HRID',
+            'NOT',
+          );
+          InventoryInstances.clickSearchBtnInAdvSearchModal();
+          InventoryInstances.checkAdvSearchModalAbsence();
+          InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+          InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
+          InventorySearchAndFilter.checkRowsCount(1);
         });
-        InventoryInstances.fillAdvSearchRow(
-          0,
-          testData.instances[0].identifier,
-          'Exact phrase',
-          'Identifier (all)',
-        );
-        InventoryInstances.checkAdvSearchModalValues(
-          0,
-          testData.instances[0].identifier,
-          'Exact phrase',
-          'Identifier (all)',
-        );
-        InventoryInstances.fillAdvSearchRow(
-          1,
-          testData.instances[1].holdingsCallNumber,
-          'Contains all',
-          'Effective call number (item), shelving order',
-          'NOT',
-        );
-        InventoryInstances.checkAdvSearchModalValues(
-          1,
-          testData.instances[1].holdingsCallNumber,
-          'Contains all',
-          'Effective call number (item), shelving order',
-          'NOT',
-        );
-        InventoryInstances.clickSearchBtnInAdvSearchModal();
-        InventoryInstances.checkAdvSearchModalAbsence();
-        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-        InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
-        InventorySearchAndFilter.checkRowsCount(1);
       },
     );
   });

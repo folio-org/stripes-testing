@@ -55,7 +55,7 @@ describe('MARC', () => {
           testData.tag111,
           '2',
           '\\',
-          '$a C374197 Mediterranean Conference on Medical and Biological Engineering $n (13th : $d 2013 : $0 http://id.loc.gov/authorities/names/n85281584',
+          '$a C374197 Mediterranean Conference on Medical and Biological Engineering $0 http://id.loc.gov/authorities/names/n85281584',
         ];
         const bib111LinkedFieldValues = [
           27,
@@ -63,7 +63,7 @@ describe('MARC', () => {
           '2',
           '\\',
           '$a C374197 Mediterranean Conference on Medical and Biological Engineering',
-          '$n (13th : $d 2013 :',
+          '',
           `$0 http://id.loc.gov/authorities/names/${marcFiles[1].authority111FieldValue}`,
           '',
         ];
@@ -93,10 +93,14 @@ describe('MARC', () => {
               });
             });
 
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 

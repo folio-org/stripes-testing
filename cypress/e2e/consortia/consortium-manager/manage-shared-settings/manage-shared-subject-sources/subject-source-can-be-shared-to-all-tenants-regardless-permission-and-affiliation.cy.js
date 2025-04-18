@@ -118,6 +118,7 @@ describe('Consortia', () => {
             SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.SUBJECT_SOURCES);
             SubjectSources.verifyCreatedSubjectSource({ name: subjectSourceNames[0] });
 
+            cy.resetTenant();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             TopMenuNavigation.navigateToApp(

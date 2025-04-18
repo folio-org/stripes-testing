@@ -54,6 +54,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.resetTenant();
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,

@@ -1,4 +1,4 @@
-import { getTestEntityValue } from '..././../../support/utils/stringTools';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -50,7 +50,6 @@ describe('Consortium manager', () => {
           cy.assignPermissionsToExistingUser(testData.user.userId, [
             Permissions.crudNatureOfContent.gui,
           ]);
-          cy.resetTenant();
         });
       });
 
@@ -80,6 +79,7 @@ describe('Consortium manager', () => {
         'C411294 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local nature of content of selected affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
@@ -88,16 +88,6 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
           NatureOfContentConsortiumManager.choose();
 
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.changeSelectAllCheckbox('check');
-          SelectMembers.saveAndClose();
-          ConsortiumManagerApp.clickSelectMembers();
-          SelectMembers.selectMembers(
-            tenantNames.central,
-            tenantNames.college,
-            tenantNames.university,
-          );
-          SelectMembers.saveAndClose();
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
 
@@ -181,6 +171,7 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
           cy.visit(SettingsMenu.natureOfContent);
+          cy.wait(5000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newNatureOfContent.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
@@ -188,12 +179,14 @@ describe('Consortium manager', () => {
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           cy.visit(SettingsMenu.natureOfContent);
+          cy.wait(5000);
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newNatureOfContent.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
           cy.visit(SettingsMenu.natureOfContent);
+          cy.wait(5000);
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editNatureOfContent.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

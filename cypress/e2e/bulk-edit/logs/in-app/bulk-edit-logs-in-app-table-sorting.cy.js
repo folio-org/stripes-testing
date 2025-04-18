@@ -85,10 +85,8 @@ describe('bulk-edit', () => {
 
           BulkEditLogs.resetAll();
           BulkEditLogs.checkItemsCheckbox();
-          cy.wait(1000);
           BulkEditLogs.verifyDirection('Ended');
           cy.reload();
-          cy.wait(1000);
           BulkEditLogs.verifyDirection('Ended');
           BulkEditLogs.clickLogHeader('# of records');
           BulkEditLogs.verifyDirection('# of records', 'ascending');

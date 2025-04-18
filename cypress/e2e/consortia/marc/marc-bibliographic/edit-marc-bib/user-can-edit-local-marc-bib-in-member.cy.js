@@ -92,6 +92,7 @@ describe('MARC', () => {
         'C405549 User can edit local "MARC Bib" in member tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C405549'] },
         () => {
+          cy.resetTenant();
           cy.login(users.userProperties.username, users.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -107,8 +108,8 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.tag245Content}`);
           QuickMarcEditor.updateExistingField(testData.tag500, `$a ${testData.tag500Content}`);
           QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveAndClose();
           cy.wait(4000);
+          QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InventoryInstance.checkInstanceTitle(testData.tag245Content);
           InventoryInstance.viewSource();

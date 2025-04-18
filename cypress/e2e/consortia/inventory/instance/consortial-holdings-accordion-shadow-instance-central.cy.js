@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
-import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Affiliations from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -23,8 +23,7 @@ describe('Inventory', () => {
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
       });
-      cy.setTenant(Affiliations.College);
-      cy.getCollegeAdminToken()
+      cy.setTenant(Affiliations.College)
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
@@ -68,6 +67,7 @@ describe('Inventory', () => {
           }).then((specialInstanceIds) => {
             testData.testInstanceIds = specialInstanceIds;
 
+            cy.setTenant(Affiliations.College);
             InventoryInstance.shareInstanceViaApi(
               specialInstanceIds.instanceId,
               testData.consortiaId,
@@ -84,6 +84,7 @@ describe('Inventory', () => {
         cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
         cy.assignPermissionsToExistingUser(testData.user.userId, [Permissions.inventoryAll.gui]);
+        cy.resetTenant();
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
@@ -113,7 +114,7 @@ describe('Inventory', () => {
         InstanceRecordView.verifyConsortiaHoldingsAccordion(false);
         InstanceRecordView.expandConsortiaHoldings();
         InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.College);
-        InstanceRecordView.expandMemberSubHoldings(tenantNames.College);
+        InstanceRecordView.expandMemberSubHoldings('College');
         InstanceRecordView.openHoldingsAccordion(testData.collegeLocation.name);
         InstanceRecordView.verifyIsItemCreated(testData.itemBarcode);
       },

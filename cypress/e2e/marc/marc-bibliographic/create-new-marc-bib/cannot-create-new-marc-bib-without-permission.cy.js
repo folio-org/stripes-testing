@@ -1,7 +1,5 @@
 import { Permissions } from '../../../../support/dictionary';
-import InstanceRecordView, {
-  actionsMenuOptions,
-} from '../../../../support/fragments/inventory/instanceRecordView';
+import { actionsMenuOptions } from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -12,13 +10,18 @@ describe('MARC', () => {
       const testData = {};
 
       before('Create test data', () => {
+        cy.getAdminToken();
         cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
           testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
       });
 
@@ -38,7 +41,7 @@ describe('MARC', () => {
           // Click on "Actions" button in second pane
           // Expanded menu does NOT include following option:
           // "+New MARC Bib Record"
-          InstanceRecordView.validateOptionInActionsMenu(
+          InventoryInstances.validateOptionInActionsMenu(
             actionsMenuOptions.newMarcBibRecord,
             false,
           );

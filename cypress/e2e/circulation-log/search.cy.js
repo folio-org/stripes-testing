@@ -48,7 +48,7 @@ describe('Circulation log', () => {
           });
           cy.getUsers({
             limit: 1,
-            query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+            query: `username=${userProperties.username}`,
           });
         })
         .then(() => {
@@ -94,6 +94,10 @@ describe('Circulation log', () => {
     });
   });
 
+  beforeEach(() => {
+    cy.wait(3000);
+  });
+
   after('delete test data', () => {
     cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
@@ -118,6 +122,16 @@ describe('Circulation log', () => {
       Users.deleteViaApi(userId);
     });
   });
+
+  it(
+    'C17010 Filter circulation log by service points (volaris)',
+    { tags: ['criticalPath', 'volaris', 'C17010'] },
+    () => {
+      SearchPane.searchByServicePoint('Circ Desk 2');
+      SearchPane.verifyResultCells();
+      SearchPane.resetResults();
+    },
+  );
 
   it(
     'C16979 Check item details from filtering Circulation log by checked-out (volaris)',
@@ -164,8 +178,7 @@ describe('Circulation log', () => {
     { tags: ['smoke', 'volaris', 'C15853'] },
     () => {
       // login with user that has all permissions
-      cy.loginAsAdmin();
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
 
       // find user
       UsersSearchPane.searchByStatus('Active');
@@ -201,8 +214,7 @@ describe('Circulation log', () => {
     'C16980 Filter circulation log by changed due date (volaris)',
     { tags: ['criticalPath', 'volaris', 'C16980'] },
     () => {
-      cy.loginAsAdmin();
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.USERS);
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
 
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(userId);
@@ -215,15 +227,6 @@ describe('Circulation log', () => {
 
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByChangedDueDate();
-      SearchPane.verifyResultCells();
-    },
-  );
-
-  it(
-    'C17010 Filter circulation log by service points (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17010'] },
-    () => {
-      SearchPane.searchByServicePoint('Circ Desk 2');
       SearchPane.verifyResultCells();
     },
   );

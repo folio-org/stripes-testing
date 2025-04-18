@@ -177,7 +177,7 @@ describe('Data Import', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.loginAsAdmin()
+        cy.getAdminToken()
           .then(() => {
             marcFiles.forEach((marcFile) => {
               DataImport.uploadFileViaApi(
@@ -192,7 +192,13 @@ describe('Data Import', () => {
             });
           })
           .then(() => {
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            cy.waitForAuthRefresh(() => {
+              cy.loginAsAdmin();
+              TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+              InventoryInstances.waitContentLoading();
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -206,7 +212,7 @@ describe('Data Import', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(3000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           })
@@ -263,10 +269,14 @@ describe('Data Import', () => {
           );
         })
         .then(() => {
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
         });
     });
 

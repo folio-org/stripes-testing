@@ -81,6 +81,7 @@ export default {
     // edit edition
     EditResource.waitLoading();
     EditResource.setEdition(title);
+    EditResource.setValueForTheField(this.generateValidLccn(), 'LCCN');
     EditResource.saveAndClose();
     // search for LDE is displayed
     SearchAndFilter.waitLoading();
@@ -94,5 +95,9 @@ export default {
     cy.xpath(actionsButton).click();
     cy.xpath(compareSelectedButton).click();
     ComparisonForm.waitLoading();
+  },
+
+  selectModuleMainHeading() {
+    cy.xpath("//a[@id='ModuleMainHeading']").should('be.visible').click();
   },
 };
