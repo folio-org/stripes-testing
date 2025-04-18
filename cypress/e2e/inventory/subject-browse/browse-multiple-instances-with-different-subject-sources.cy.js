@@ -1,7 +1,8 @@
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-// import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
@@ -13,10 +14,13 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
-      // notProduceSubjectName: 'Test45',
-      // columnName: 'Subject source',
-      // firstConditionForFiltering: 'Canadian Subject Headings',
-      // secondConditionForFiltering: 'Library of Congress Subject Headings',
+      subject: {
+        indexRow: 0,
+        name: 'Short stories',
+        firstSource: 'Library of Congress Subject Headings',
+        secondSource: "Library of Congress Children's and Young Adults' Subject Headings",
+        type: 'Topical term',
+      },
     };
     const marcFile = {
       filePath: 'marcBibFileForC584546.mrc',
@@ -25,6 +29,16 @@ describe('Inventory', () => {
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
+      InventorySearchAndFilter.getInstancesBySubjectViaApi(testData.subject.name).then(
+        (instances) => {
+          if (instances.length > 0) {
+            instances.forEach((instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            });
+          }
+        },
+      );
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         const preconditionUserId = userProperties.userId;
 
@@ -49,27 +63,26 @@ describe('Inventory', () => {
       });
     });
 
-    // after('Delete created instance', () => {
-    //   cy.getAdminToken();
-    //   Users.deleteViaApi(testData.user.userId);
-    //   InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-    // });
+    after('Delete created instance', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId);
+    });
 
     it(
       'C584546 Browsing the multiple instances with different subject sources (folijet)',
       { tags: ['criticalPath', 'folijet', 'C584546'] },
       () => {
-        BrowseSubjects.searchBrowseSubjects('Horror stories');
-        cy.pause();
-        // BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
-        // BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);
-        // BrowseSubjects.expandAccordion('Subject source');
-        // BrowseSubjects.selectSubjectSource(testData.firstConditionForFiltering);
-        // BrowseSubjects.selectSubjectSource(testData.secondConditionForFiltering);
-        // BrowseSubjects.verifySearchResult(
-        //   [testData.firstConditionForFiltering, testData.secondConditionForFiltering],
-        //   testData.columnName,
-        // );
+        BrowseSubjects.searchBrowseSubjects('Short stories');
+        BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);
+        BrowseSubjects.openInstance(testData.subject);
+        InventoryInstances.selectInstance();
+        InstanceRecordView.verifyInstanceSubject({
+          indexRow: testData.subject.indexRow,
+          subjectHeadings: testData.subject.name,
+          subjectSource: testData.subject.secondSource,
+          subjectType: testData.subject.type,
+        });
       },
     );
   });
