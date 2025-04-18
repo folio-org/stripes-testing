@@ -145,6 +145,14 @@ export default {
       currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
   },
+
+  get4DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 5);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate(),
+    )}/${currentDate.getFullYear()}`;
+  },
   get3DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 4);
