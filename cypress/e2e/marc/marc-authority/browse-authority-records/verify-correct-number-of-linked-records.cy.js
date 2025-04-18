@@ -185,7 +185,7 @@ describe('MARC', () => {
                 QuickMarcEditor.closeCallout();
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
             });
             cy.wait(1000);
@@ -220,7 +220,7 @@ describe('MARC', () => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
         authorityIDs.forEach((id) => {
-          MarcAuthority.deleteViaAPI(id);
+          MarcAuthority.deleteViaAPI(id, true);
         });
       });
 

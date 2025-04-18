@@ -246,11 +246,11 @@ describe('Data Import', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
-          linkingTagAndValues.rowIndex + 1,
+          linkingTagAndValues.rowIndex,
           '700',
           '1',
           '\\',
-          '$a C385663 Lee, Stan, $d 1922-2018, $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
+          '$a C385663 Lee, Stan, $d 1922-2018 $e author. $0 http://id.loc.gov/authorities/names/n83169267TEST',
         );
 
         QuickMarcEditor.closeEditorPane();

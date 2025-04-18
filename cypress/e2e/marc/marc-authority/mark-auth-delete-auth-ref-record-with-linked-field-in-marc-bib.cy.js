@@ -52,7 +52,7 @@ describe('MARC', () => {
         '$a C374148 Feminist poetry $0 http://id.loc.gov/authorities/subjects/sh85047755',
       ],
       deleteModalMessage:
-        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ?',
+        'Are you sure you want to permanently delete the authority record:  C374148 Poetry ? If you proceed with deletion, then 1 linked bibliographic record will retain authorized value and will become uncontrolled.',
     };
 
     const marcFiles = [
@@ -92,7 +92,7 @@ describe('MARC', () => {
             }).then((authorities) => {
               if (authorities) {
                 authorities.forEach(({ id }) => {
-                  MarcAuthority.deleteViaAPI(id);
+                  MarcAuthority.deleteViaAPI(id, true);
                 });
               }
             });

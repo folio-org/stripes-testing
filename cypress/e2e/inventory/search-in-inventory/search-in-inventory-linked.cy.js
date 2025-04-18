@@ -67,6 +67,7 @@ describe('Inventory', () => {
     before('Importing data, linking Bib fields', () => {
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375256');
 
         cy.getAdminToken();
         marcFiles.forEach((marcFile) => {
@@ -123,7 +124,7 @@ describe('Inventory', () => {
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
         });
