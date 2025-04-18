@@ -76,18 +76,7 @@ describe('Inventory', () => {
             }
           });
         });
-        testData.searchQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Bible');
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

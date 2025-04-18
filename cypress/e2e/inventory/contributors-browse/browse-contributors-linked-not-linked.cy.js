@@ -41,6 +41,7 @@ describe('Inventory', () => {
 
     before('Creating data', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C359595');
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 

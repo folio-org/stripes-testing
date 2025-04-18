@@ -594,7 +594,11 @@ export default {
     });
     const multiSelect = headingTypeAccordion.find(MultiSelect());
     const matchers = headingTypesArray.map((value) => including(value));
-    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select(matchers)]);
+    cy.wait(1000);
+    cy.do(multiSelect.open());
+    cy.wait(1000);
+    cy.do(multiSelect.select(matchers));
+    cy.wait(2000);
   },
 
   enterTypeOfHeading: (headingType) => {
@@ -927,7 +931,11 @@ export default {
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
       const { totalRecords } = item.response.body;
-      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      cy.expect(
+        Pane({
+          subtitle: `${String(totalRecords).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} records found`,
+        }).exists(),
+      );
       expect(totalRecords).greaterThan(totalRecord);
     });
   },

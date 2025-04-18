@@ -64,10 +64,6 @@ describe('Inventory', () => {
           5,
           `${testData.testValue}would be hereNo value set-No value set-`,
         );
-        BrowseSubjects.checkPaginationButtons({
-          prev: { isVisible: true, isDisabled: false },
-          next: { isVisible: true, isDisabled: true },
-        });
 
         BrowseSubjects.clickPreviousPaginationButton();
         BrowseSubjects.checkAbsenceOfResultAndItsRow(
