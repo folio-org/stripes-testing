@@ -95,12 +95,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Configuration Entries Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Configuration Entries Item',
+            resource: 'Mod-Settings Entries Collection',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -127,7 +122,7 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Data: 10,
+            Data: 9,
             Settings: 3,
             Procedural: 4,
           },

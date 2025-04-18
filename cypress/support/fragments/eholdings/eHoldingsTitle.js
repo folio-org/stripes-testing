@@ -18,6 +18,8 @@ const packagesSection = Section({ id: 'titleShowPackages' });
 const titleSearchField = TextField({ id: 'eholdings-search' });
 const titleSearchButton = Button('Search');
 const titleInformationSection = Section({ id: 'titleShowTitleInformation' });
+const publisherKeyValue = KeyValue('Publisher');
+const subjectKeyValue = KeyValue('Subjects');
 
 export default {
   waitLoading: (specialTitle) => {
@@ -26,10 +28,12 @@ export default {
 
   filterPackages(selectionStatus = FILTER_STATUSES.NOT_SELECTED, packageName) {
     this.openFilterPackagesModal();
+    cy.wait(1000);
 
     if (packageName) {
       FilterPackagesModal.selectPackageName(packageName);
     }
+    cy.wait(1000);
     FilterPackagesModal.selectPackageStatus(selectionStatus);
     FilterPackagesModal.clickSearchButton();
 
@@ -107,5 +111,11 @@ export default {
   },
   closeHoldingsTitleView() {
     cy.do(closeViewButton.click());
+  },
+  verifyPublisherIncludesValue(publisher) {
+    cy.expect(publisherKeyValue.has({ value: including(publisher) }));
+  },
+  verifySubjectIncludesValue(subject) {
+    cy.expect(subjectKeyValue.has({ value: including(subject) }));
   },
 };

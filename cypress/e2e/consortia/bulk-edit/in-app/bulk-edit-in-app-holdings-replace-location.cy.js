@@ -90,64 +90,69 @@ describe('Bulk-edit', () => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
 
-              InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
-                const locations = resp.filter((location) => location.name !== 'DCB');
-                locationsInCollegeData.permanentLocation = locations[0];
-                locationsInCollegeData.temporaryLocation = locations[1];
+              InventoryInstances.getLocations({ limit: 3 })
+                .then((resp) => {
+                  const locations = resp.filter((location) => location.name !== 'DCB');
+                  locationsInCollegeData.permanentLocation = locations[0];
+                  locationsInCollegeData.temporaryLocation = locations[1];
 
-                instances.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: instance.id,
-                    permanentLocationId: locationsInCollegeData.permanentLocation.id,
-                    sourceId,
-                  }).then((holding) => {
-                    instance.holdingIdsInCollege = holding.id;
-                    instance.holdingHridsInCollege = holding.hrid;
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.id,
+                      permanentLocationId: locationsInCollegeData.permanentLocation.id,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingIdsInCollege = holding.id;
+                      instance.holdingHridsInCollege = holding.hrid;
+                    });
+                    cy.wait(1000);
                   });
-                  cy.wait(1000);
+                })
+                .then(() => {
+                  cy.getHoldings({
+                    limit: 1,
+                    query: `"instanceId"="${marcInstance.id}"`,
+                  }).then((holdings) => {
+                    cy.updateHoldingRecord(marcInstance.holdingIdsInCollege, {
+                      ...holdings[0],
+                      temporaryLocationId: locationsInCollegeData.temporaryLocation.id,
+                    });
+                  });
                 });
-              });
-
-              cy.getHoldings({
-                limit: 1,
-                query: `"instanceId"="${marcInstance.id}"`,
-              }).then((holdings) => {
-                cy.updateHoldingRecord(marcInstance.holdingIdsInCollege, {
-                  ...holdings[0],
-                  temporaryLocationId: locationsInCollegeData.temporaryLocation.id,
-                });
-              });
             })
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
 
-              InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
-                const locations = resp.filter((location) => location.name !== 'DCB');
-                locationsInUniversityData.permanentLocation = locations[0];
-                locationsInUniversityData.temporaryLocation = locations[1];
+              InventoryInstances.getLocations({ limit: 3 })
+                .then((resp) => {
+                  const locations = resp.filter((location) => location.name !== 'DCB');
+                  locationsInUniversityData.permanentLocation = locations[0];
+                  locationsInUniversityData.temporaryLocation = locations[1];
 
-                instances.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: instance.id,
-                    permanentLocationId: locationsInUniversityData.permanentLocation.id,
-                    sourceId,
-                  }).then((holding) => {
-                    instance.holdingIdsInUniversity = holding.id;
-                    instance.holdingHridsInUniversity = holding.hrid;
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.id,
+                      permanentLocationId: locationsInUniversityData.permanentLocation.id,
+                      sourceId,
+                    }).then((holding) => {
+                      instance.holdingIdsInUniversity = holding.id;
+                      instance.holdingHridsInUniversity = holding.hrid;
+                    });
+                    cy.wait(1000);
                   });
-                  cy.wait(1000);
+                })
+                .then(() => {
+                  cy.getHoldings({
+                    limit: 1,
+                    query: `"instanceId"="${folioInstance.id}"`,
+                  }).then((holdings) => {
+                    cy.updateHoldingRecord(folioInstance.holdingIdsInUniversity, {
+                      ...holdings[0],
+                      temporaryLocationId: locationsInUniversityData.temporaryLocation.id,
+                    });
+                  });
                 });
-              });
-              cy.getHoldings({
-                limit: 1,
-                query: `"instanceId"="${folioInstance.id}"`,
-              }).then((holdings) => {
-                cy.updateHoldingRecord(folioInstance.holdingIdsInUniversity, {
-                  ...holdings[0],
-                  temporaryLocationId: locationsInUniversityData.temporaryLocation.id,
-                });
-              });
             })
             .then(() => {
               FileManager.createFile(
@@ -156,6 +161,7 @@ describe('Bulk-edit', () => {
               );
             });
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -470,9 +476,10 @@ describe('Bulk-edit', () => {
             locationsInUniversityData.permanentLocation.name,
           );
           HoldingsRecordView.checkTemporaryLocation(
-            `${locationsInUniversityData.temporaryLocation.name} (${tenantNames.university})`,
+            locationsInUniversityData.temporaryLocation.name,
           );
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          HoldingsRecordView.close();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.searchHoldingsByHRID(marcInstance.holdingHridsInUniversity);
           InventorySearchAndFilter.selectViewHoldings();

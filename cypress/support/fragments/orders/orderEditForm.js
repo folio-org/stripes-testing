@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  KeyValue,
   MultiSelect,
   Section,
   Select,
@@ -29,7 +28,7 @@ const addPoLineButton = orderEditFormRoot.find(Button('Add POL'));
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
   poNumberSuffix: orderInfoSection.find(Select({ name: 'poNumberSuffix' })),
-  poNumber: orderInfoSection.find(KeyValue('PO number')),
+  poNumber: orderInfoSection.find(TextField('PO number')),
   vendor: orderInfoSection.find(TextField({ name: 'vendor', disabled: true })),
   orderType: orderInfoSection.find(Select({ name: 'orderType' })),
   acquisitionUnit: orderInfoSection.find(MultiSelect({ id: 'order-acq-units' })),

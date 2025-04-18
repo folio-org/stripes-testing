@@ -13,7 +13,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import UserFeeFines from '../../support/fragments/users/feeFines';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
@@ -101,11 +101,11 @@ describe('Permissions', () => {
         UserFeeFines.openFeeFine();
         FeeFinesDetails.openActions();
         FeeFinesDetails.openPayModal();
-        PayFeeFaine.checkAmount(9);
-        PayFeeFaine.setPaymentMethod(paymentMethod);
-        PayFeeFaine.setAmount(9);
-        PayFeeFaine.checkRestOfPay(0);
-        PayFeeFaine.submitAndConfirm();
+        PayFeeFine.checkAmount(9);
+        PayFeeFine.setAmount(9);
+        PayFeeFine.setPaymentMethod(paymentMethod);
+        PayFeeFine.checkRestOfPay(0);
+        PayFeeFine.submitAndConfirm();
         ManualCharges.deleteViaApi(feeFineType.id);
         PaymentMethods.deleteViaApi(paymentMethod.id);
         NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);

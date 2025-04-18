@@ -3,6 +3,7 @@ import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
@@ -83,6 +84,7 @@ describe('Inventory', () => {
             );
           });
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
@@ -111,8 +113,9 @@ describe('Inventory', () => {
         InventoryInstance.verifyConsortiaHoldingsAccordion();
         InventoryInstance.expandConsortiaHoldings();
         InventoryInstance.verifyMemberSubHoldingsAccordion(Affiliations.University);
-        InventoryInstance.expandMemberSubHoldings(tenantNames.University);
-        InventoryInstance.verifyMemberSubSubHoldingsAccordion(
+        InventoryInstance.expandMemberSubHoldings('University');
+        InstanceRecordView.verifyMemberSubSubHoldingsAccordion(
+          'University',
           Affiliations.University,
           testData.instanceIds.holdings[0].id,
         );
@@ -121,7 +124,7 @@ describe('Inventory', () => {
         HoldingsRecordView.checkTitle(`Holdings • ${testData.locationName}`);
         HoldingsRecordView.close();
         InventoryInstance.expandMemberSubSubHoldings(
-          Affiliations.University,
+          'University',
           testData.instanceIds.holdings[0].id,
         );
         InventoryInstance.openItemByBarcode(testData.itemBarcode);

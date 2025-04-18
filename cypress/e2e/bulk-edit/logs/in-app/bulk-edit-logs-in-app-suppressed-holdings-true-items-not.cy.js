@@ -135,8 +135,9 @@ describe('bulk-edit', () => {
           InventoryInstance.verifyHoldingsPermanentLocation(newLocation);
           InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
           HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+          HoldingsRecordView.close();
+          InventorySearchAndFilter.resetAll();
 
-          TopMenuNavigation.navigateToApp('Inventory');
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
           ItemRecordView.waitLoading();

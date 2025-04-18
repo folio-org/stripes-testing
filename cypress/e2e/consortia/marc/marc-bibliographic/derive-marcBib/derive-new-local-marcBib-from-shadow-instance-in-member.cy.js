@@ -99,6 +99,8 @@ describe('MARC', () => {
 
       const notLinked710Field = [39, '710', '\\', '\\', '$a Gálvez710 $0 n20114107754'];
 
+      let collegeSourceId;
+
       before('Create users, data', () => {
         cy.getAdminToken();
 
@@ -160,25 +162,31 @@ describe('MARC', () => {
             }).location;
             Locations.createViaApi(collegeLocationData).then((location) => {
               testData.collegeLocation = location;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: createdRecordIDs[0],
-                permanentLocationId: testData.collegeLocation.id,
-              }).then((holding) => {
-                testData.collegeHoldings.push(holding);
-              });
-            });
-
-            cy.login(users.userProperties.username, users.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              ConsortiumManager.switchActiveAffiliation(
-                tenantNames.central,
-                tenantNames.university,
+              InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+                (holdingSources) => {
+                  collegeSourceId = holdingSources[0].id;
+                  InventoryHoldings.createHoldingRecordViaApi({
+                    instanceId: createdRecordIDs[0],
+                    permanentLocationId: testData.collegeLocation.id,
+                    sourceId: collegeSourceId,
+                  }).then((holding) => {
+                    testData.collegeHoldings.push(holding);
+                  });
+                },
               );
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             });
+            cy.resetTenant();
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userProperties.username, users.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
+            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.university);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
           });
       });
 
@@ -227,6 +235,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyEnabledLinkHeadingsButton();
           QuickMarcEditor.verifyTagFieldAfterLinking(...linked700Field);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...notLinked710Field);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkPresentedText(testData.instanceEditedTitle);

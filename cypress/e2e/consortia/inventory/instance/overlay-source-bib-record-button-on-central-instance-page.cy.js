@@ -80,7 +80,7 @@ describe('Inventory', () => {
           indexRow: 0,
           subjectHeadings: updatedInstanceData.subject,
           subjectSource: 'No value set-',
-          subjectType: 'No value set-',
+          subjectType: 'Topical term',
         });
         InventoryInstance.openInstanceNotesAccordion();
         InventoryInstance.checkInstanceNotes(

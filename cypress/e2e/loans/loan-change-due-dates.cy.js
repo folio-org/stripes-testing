@@ -1,6 +1,7 @@
 import { Permissions } from '../../support/dictionary';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -37,18 +38,17 @@ describe('Loans', () => {
         Permissions.uiCirculationCreateViewOverdueFinesPolicies.gui,
       ]).then((userProperties) => {
         checkOutUser = userProperties;
-        cy.getAdminToken()
-          .then(() => {
-            cy.getLocations({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
-              servicePointId = res[0].id;
-            });
-            cy.getUsers({
-              limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
-            });
-          })
+        cy.wrap(true).then(() => {
+          cy.getLocations({ limit: 1 });
+          source = InventoryHoldings.getHoldingSources({ limit: 1 });
+          ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
+            servicePointId = res[0].id;
+          });
+          cy.getUsers({
+            limit: 1,
+            query: `username=${userProperties.username}`,
+          });
+        })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
@@ -59,8 +59,10 @@ describe('Loans', () => {
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password);
-            cy.visit(TopMenu.checkOutPath);
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.checkOutPath,
+              waiter: Checkout.waitLoading,
+            });
             CheckOutActions.checkOutItemUser(
               Cypress.env('users')[0].barcode,
               folioInstances[0].barcodes[0],
@@ -73,12 +75,15 @@ describe('Loans', () => {
             });
           })
           .then(() => {
-            cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
+            cy.getUsers({ limit: 1, query: '((barcode=" *") and active=="true")' }).then((users) => {
               checkInUser.barcode = users[0].barcode;
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password);
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.usersPath,
+              waiter: UsersSearchPane.waitLoading,
+            });
           });
       });
     });
@@ -105,7 +110,6 @@ describe('Loans', () => {
       { tags: ['extendedPath', 'vega', 'C581'] },
       () => {
         const itemBarcode = folioInstances[0].barcodes[0];
-        cy.visit(TopMenu.usersPath);
         // show open loans
         UsersSearchPane.searchByKeywords(checkOutUser.username);
         UsersSearchPane.openUser(checkOutUser.userId);

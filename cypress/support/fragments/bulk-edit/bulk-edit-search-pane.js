@@ -20,9 +20,11 @@ import {
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../constants';
 import FileManager from '../../utils/fileManager';
 
+const previewOfRecordsMatchedFormName = 'Preview of records matched';
+const previewOfRecordsChangedFormName = 'Preview of records changed';
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
-const matchedAccordion = Accordion('Preview of record matched');
-const changesAccordion = Accordion('Preview of record changed');
+const matchedAccordion = Accordion(previewOfRecordsMatchedFormName);
+const changesAccordion = Accordion(previewOfRecordsChangedFormName);
 const errorsAccordion = Accordion('Errors & warnings');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
@@ -114,12 +116,12 @@ export default {
   },
 
   scrollInMatchedAccordion(direction) {
-    getScrollableElementInForm('Preview of record matched').scrollTo(direction);
+    getScrollableElementInForm(previewOfRecordsMatchedFormName).scrollTo(direction);
     cy.wait(1000);
   },
 
   verifyPreviewOfRecordMatchedScrollableHorizontally() {
-    getScrollableElementInForm('Preview of record matched').then(($el) => {
+    getScrollableElementInForm(previewOfRecordsMatchedFormName).then(($el) => {
       const scrollWidth = $el[0].scrollWidth;
       const clientWidth = $el[0].clientWidth;
 
@@ -131,7 +133,7 @@ export default {
   },
 
   verifyPreviewOfRecordMatchedScrollableVertically() {
-    getScrollableElementInForm('Preview of record matched').then(($el) => {
+    getScrollableElementInForm(previewOfRecordsMatchedFormName).then(($el) => {
       const scrollHeight = $el[0].scrollHeight;
       const clientHeight = $el[0].clientHeight;
 
@@ -143,12 +145,12 @@ export default {
   },
 
   scrollInChangedAccordion(direction) {
-    getScrollableElementInForm('Preview of record changed').scrollTo(direction);
+    getScrollableElementInForm(previewOfRecordsChangedFormName).scrollTo(direction);
     cy.wait(1000);
   },
 
   verifyPreviewOfRecordChangedScrollableHorizontally() {
-    getScrollableElementInForm('Preview of record changed').then(($el) => {
+    getScrollableElementInForm(previewOfRecordsChangedFormName).then(($el) => {
       const scrollWidth = $el[0].scrollWidth;
       const clientWidth = $el[0].clientWidth;
 
@@ -160,7 +162,7 @@ export default {
   },
 
   verifyPreviewOfRecordChangedScrollableVertically() {
-    getScrollableElementInForm('Preview of record changed').then(($el) => {
+    getScrollableElementInForm(previewOfRecordsChangedFormName).then(($el) => {
       const scrollHeight = $el[0].scrollHeight;
       const clientHeight = $el[0].clientHeight;
 
@@ -1374,9 +1376,7 @@ export default {
       const noteColumnNames = columnNames.slice(
         columnNames.findIndex((item) => item === 'Publication range') + 1,
       );
-      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort((a, b) => {
-        return a.localeCompare(b);
-      });
+      const noteColumnNamesInAlphabeticOrder = [...noteColumnNames].sort();
 
       // verify alphabetical order
       expect(noteColumnNames).to.deep.equal(noteColumnNamesInAlphabeticOrder);

@@ -61,12 +61,7 @@ describe('Citation: duplicate resource', () => {
     cy.getAdminToken();
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.getInstanceIdApi({
-      limit: 1,
-      query: `title="${resourceData.title}"`,
-    }).then((id) => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-    });
+    InventoryInstances.deleteFullInstancesByTitleViaApi(resourceData.title);
     Work.getInstancesByTitle(testData.uniqueTitle).then((instances) => {
       const filteredInstances = instances.filter(
         (element) => element.titles[0].value === testData.uniqueTitle,
@@ -76,12 +71,7 @@ describe('Citation: duplicate resource', () => {
     // delete work created in pre-condition
     Work.getIdByTitle(testData.uniqueTitle).then((id) => Work.deleteById(id));
     // delete duplicate instance data
-    InventoryInstances.getInstanceIdApi({
-      limit: 1,
-      query: `title="${testData.uniqueInstanceTitle}"`,
-    }).then((id) => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-    });
+    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueInstanceTitle);
   });
 
   beforeEach('Apply test data manually', () => {
@@ -95,7 +85,7 @@ describe('Citation: duplicate resource', () => {
 
   it(
     'C624280 [User journey] LDE - Create new instance by duplicating existing Instance plus holdings (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

@@ -53,11 +53,14 @@ describe('MARC', () => {
               testData.createdRecordIDs.push(record[marcFile.propertyName].id);
             });
           });
-
-          cy.login(testData.userProperties.username, testData.userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+            cy.reload();
+            DataImport.waitLoading();
+          }, 20_000);
         });
       });
 
@@ -90,7 +93,7 @@ describe('MARC', () => {
           );
           QuickMarcEditor.updateExistingFieldContent(7);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
 

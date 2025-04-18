@@ -104,6 +104,8 @@ describe('MARC', () => {
       before('Create users, data', () => {
         cy.getAdminToken();
 
+        InventoryInstances.deleteInstanceByTitleViaApi('C405927');
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405927');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -117,6 +119,7 @@ describe('MARC', () => {
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            InventoryInstances.deleteInstanceByTitleViaApi('C405927');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -125,6 +128,7 @@ describe('MARC', () => {
             cy.wait(10_000);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
+            InventoryInstances.deleteInstanceByTitleViaApi('C405927');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -153,12 +157,14 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.waitForAuthRefresh(() => {
-              cy.loginAsAdmin({ path: '/', waiter: () => true });
-              cy.visit(TopMenu.inventoryPath);
-              cy.reload();
+            cy.resetTenant();
+            cy.loginAsAdmin({
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
             });
-            InventoryInstances.waitContentLoading();
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+            }, 30_000);
 
             linkingInTenants.forEach((tenants) => {
               ConsortiumManager.switchActiveAffiliation(tenants.currentTeant, tenants.openingTenat);
@@ -178,9 +184,12 @@ describe('MARC', () => {
                   linkingTagAndValues.tag,
                   linkingTagAndValues.rowIndex,
                 );
+                QuickMarcEditor.deleteField(4);
                 QuickMarcEditor.pressSaveAndClose();
                 cy.wait(4000);
                 QuickMarcEditor.pressSaveAndClose();
+                cy.wait(2000);
+                QuickMarcEditor.confirmDelete();
                 QuickMarcEditor.checkAfterSaveAndClose();
               });
             });
@@ -194,7 +203,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[1]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[2]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[3]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[3], true);
         cy.setTenant(Affiliations.University);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[4]);
         cy.setTenant(Affiliations.College);

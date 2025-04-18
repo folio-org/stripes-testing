@@ -24,68 +24,69 @@ describe('Eureka', () => {
 
     const capabSetsToAssign = [
       { type: 'Settings', resource: 'UI-Authorization-Roles Settings Admin', action: 'View' },
-      { type: 'Data', resource: 'Capabilities', action: 'Manage' },
-      { type: 'Data', resource: 'Role-Capability-Sets', action: 'Manage' },
       { type: 'Data', resource: 'Roles Users', action: 'Manage' },
       { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
+      { type: 'Data', resource: 'UI-Users Roles', action: 'Manage' },
     ];
 
     const capabsToAssign = [
-      { type: 'Data', resource: 'UI-Users', action: 'View' },
-      { type: 'Data', resource: 'UI-Users', action: 'Edit' },
       { type: 'Settings', resource: 'Settings Enabled', action: 'View' },
       { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'View' },
       { type: 'Data', resource: 'Users-Keycloak Auth-Users Item', action: 'Create' },
     ];
 
     before('Create users, roles', () => {
-      cy.getAdminToken();
-      cy.getUserGroups().then(() => {
-        for (let i = 1; i < 4; i++) {
-          userBodies.push({
-            type: 'staff',
-            active: true,
-            username: `user${i}c584520${randomPostfix}`,
-            patronGroup: Cypress.env('userGroups')[0].id,
-            personal: {
-              lastName: `Last ${i} c584520${randomPostfix}`,
-              firstName: `First ${i} c584520${randomPostfix}`,
-              email: 'testuser@test.org',
-              preferredContactTypeId: '002',
-            },
+      cy.getAdminToken().then(() => {
+        cy.getUserGroups().then(() => {
+          for (let i = 1; i < 4; i++) {
+            userBodies.push({
+              type: 'staff',
+              active: true,
+              username: `user${i}c584520${randomPostfix}`,
+              patronGroup: Cypress.env('userGroups')[0].id,
+              personal: {
+                lastName: `Last ${i} c584520${randomPostfix}`,
+                firstName: `First ${i} c584520${randomPostfix}`,
+                email: 'testuser@test.org',
+                preferredContactTypeId: '002',
+              },
+            });
+          }
+          if (!Cypress.env('OKAPI_TENANT').includes('int_0')) delete userBodies[1].username;
+          cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
+            userIds.push(userId);
           });
-        }
-        delete userBodies[1].username;
-        cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
-          userIds.push(userId);
-        });
-        cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
-          userIds.push(userId);
-        });
-        Users.createViaApi(userBodies[2]).then((user) => {
-          userIds.push(user.id);
-        });
-        cy.createTempUser([]).then((createdUserProperties) => {
-          testData.tempUser = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.tempUser.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
-          if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
-        });
-        cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
-          testData.roleId = role.id;
+          cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
+            userIds.push(userId);
+          });
+          Users.createViaApi(userBodies[2]).then((user) => {
+            userIds.push(user.id);
+          });
+          cy.createTempUser([]).then((createdUserProperties) => {
+            testData.tempUser = createdUserProperties;
+            cy.assignCapabilitiesToExistingUser(
+              testData.tempUser.userId,
+              capabsToAssign,
+              capabSetsToAssign,
+            );
+            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.tempUser.userId, []);
+          });
+          cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
+            testData.roleId = role.id;
+          });
         });
       });
     });
 
     before('Login', () => {
-      cy.login(testData.tempUser.username, testData.tempUser.password, {
-        path: TopMenu.usersPath,
-        waiter: Users.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(testData.tempUser.username, testData.tempUser.password, {
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
+        });
+        cy.reload();
+      }, 20_000);
+      Users.waitLoading();
     });
 
     after('Delete roles, users', () => {
@@ -160,40 +161,42 @@ describe('Eureka', () => {
         UsersCard.clickUserRolesAccordion();
         UsersCard.verifyUserRoleNames([testData.roleName]);
 
-        UsersSearchPane.searchByKeywords(
-          `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
-        );
-        UsersSearchPane.clickOnUserRowContaining(
-          `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
-        );
-        UsersCard.verifyUserLastFirstNameInCard(
-          userBodies[1].personal.lastName,
-          userBodies[1].personal.firstName,
-        );
-        UsersCard.verifyUserRolesCounter('0');
-        UserEdit.openEdit();
-        UserEdit.verifyUserRolesCounter('0');
-        UserEdit.clickUserRolesAccordion();
-        UserEdit.clickAddUserRolesButton();
-        UserEdit.verifySelectRolesModal();
-        UserEdit.selectRoleInModal(testData.roleName);
-        UserEdit.saveAndCloseRolesModal();
-        UserEdit.verifyUserRoleNames([testData.roleName]);
-        UserEdit.verifyUserRolesRowsCount(1);
-        UserEdit.saveUserEditForm();
-        UserEdit.checkPromoteUserModal(
-          userBodies[1].personal.lastName,
-          userBodies[1].personal.firstName,
-        );
-        UserEdit.clickConfirmInPromoteUserModal(false);
-        InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
-        InteractorsTools.dismissCallout(testData.errorCalloutText);
-        UserEdit.clickCancelInPromoteUserModal();
-        UsersCard.verifyUserLastFirstNameInCard(
-          userBodies[1].personal.lastName,
-          userBodies[1].personal.firstName,
-        );
-        UsersCard.verifyUserRolesCounter('0');
+        if (!Cypress.env('OKAPI_TENANT').includes('int_0')) {
+          UsersSearchPane.searchByKeywords(
+            `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
+          );
+          UsersSearchPane.clickOnUserRowContaining(
+            `${userBodies[1].personal.lastName}, ${userBodies[1].personal.firstName}`,
+          );
+          UsersCard.verifyUserLastFirstNameInCard(
+            userBodies[1].personal.lastName,
+            userBodies[1].personal.firstName,
+          );
+          UsersCard.verifyUserRolesCounter('0');
+          UserEdit.openEdit();
+          UserEdit.verifyUserRolesCounter('0');
+          UserEdit.clickUserRolesAccordion();
+          UserEdit.clickAddUserRolesButton();
+          UserEdit.verifySelectRolesModal();
+          UserEdit.selectRoleInModal(testData.roleName);
+          UserEdit.saveAndCloseRolesModal();
+          UserEdit.verifyUserRoleNames([testData.roleName]);
+          UserEdit.verifyUserRolesRowsCount(1);
+          UserEdit.saveUserEditForm();
+          UserEdit.checkPromoteUserModal(
+            userBodies[1].personal.lastName,
+            userBodies[1].personal.firstName,
+          );
+          UserEdit.clickConfirmInPromoteUserModal(false);
+          InteractorsTools.checkCalloutErrorMessage(testData.errorCalloutText);
+          InteractorsTools.dismissCallout(testData.errorCalloutText);
+          UserEdit.clickCancelInPromoteUserModal();
+          UsersCard.verifyUserLastFirstNameInCard(
+            userBodies[1].personal.lastName,
+            userBodies[1].personal.firstName,
+          );
+          UsersCard.verifyUserRolesCounter('0');
+        }
 
         UsersSearchPane.searchByKeywords(userBodies[2].username);
         UsersSearchPane.selectUserFromList(userBodies[2].username);

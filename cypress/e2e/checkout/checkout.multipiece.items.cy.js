@@ -84,7 +84,7 @@ describe('Check out', () => {
       .then(() => {
         cy.getUsers({
           limit: 1,
-          query: `"personal.lastName"="${user.username}" and "active"="true"`,
+          query: `username=${user.username}`,
         }).then((users) => {
           userBarcode = users[0].barcode;
         });

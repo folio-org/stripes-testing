@@ -26,6 +26,7 @@ import QueryModal, {
   QUERY_OPERATIONS,
   itemFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
+import { getLongDelay } from '../../../../support/utils/cypressTools';
 
 let user;
 let instanceTypeId;
@@ -162,6 +163,7 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
+              cy.resetTenant();
               cy.login(user.username, user.password, {
                 path: TopMenu.bulkEditPath,
                 waiter: BulkEditSearchPane.waitLoading,
@@ -223,7 +225,7 @@ describe('Bulk-edit', () => {
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();
-          cy.wait('@getPreview').then((interception) => {
+          cy.wait('@getPreview', getLongDelay()).then((interception) => {
             const interceptedUuid = interception.request.url.match(
               /bulk-operations\/([a-f0-9-]+)\/preview/,
             )[1];
@@ -235,7 +237,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.discovery_suppress != "true") AND (instances.title starts with "C496127_${postfix}")`,
+              `(items.discovery_suppress != "True") AND (instances.title starts with "C496127_${postfix}")`,
             );
 
             instances.forEach((instance) => {
@@ -321,13 +323,14 @@ describe('Bulk-edit', () => {
             });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventorySearchAndFilter.switchToItem();
             instances.forEach((instance) => {
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventorySearchAndFilter.switchToItem();
               InventorySearchAndFilter.searchByParameter('Barcode', instance.itemBarcode);
               ItemRecordView.waitLoading();
               ItemRecordView.suppressedAsDiscoveryIsPresent();
+              ItemRecordView.closeDetailView();
+              InventorySearchAndFilter.resetAll();
             });
 
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);

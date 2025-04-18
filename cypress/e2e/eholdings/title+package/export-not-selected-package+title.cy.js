@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -113,7 +114,8 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
         cy.wait(5000);
-        EHoldingsPackages.titlesSearchFilter('Title', testData.title, testData.selectionStatus);
+        EHoldingsPackage.searchTitles(testData.title, 'Title');
+        EHoldingsPackage.filterTitles(testData.selectionStatus);
         EHoldingsPackageView.selectTitleRecordByTitle(testData.title);
         eHoldingsResourceView.openExportModal();
         ExportSettingsModal.clickExportButton();

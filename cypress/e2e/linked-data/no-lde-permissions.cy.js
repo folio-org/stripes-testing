@@ -44,12 +44,7 @@ describe('Citation: LDE permissions', () => {
     cy.getAdminToken();
     // delete inventory instance both from inventory and LDE modules
     // this might change later once corresponding instance will automatically get deleted in linked-data
-    InventoryInstances.getInstanceIdApi({
-      limit: 1,
-      query: `title="${testData.uniqueTitle}"`,
-    }).then((id) => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(id);
-    });
+    InventoryInstances.deleteFullInstancesByTitleViaApi(testData.uniqueTitle);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -66,7 +61,7 @@ describe('Citation: LDE permissions', () => {
 
   it(
     'C651425 [User journey] LDE - no LDE permissions for the User (citation)',
-    { tags: ['draft', 'citation', 'linked-data-editor', 'shiftLeft'] },
+    { tags: ['criticalPath', 'citation', 'linked-data-editor', 'shiftLeft'] },
     () => {
       // search inventory instance
       InventoryInstances.searchByTitle(testData.uniqueTitle);

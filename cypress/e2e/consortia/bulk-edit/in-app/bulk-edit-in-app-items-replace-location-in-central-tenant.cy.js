@@ -86,9 +86,6 @@ describe('Bulk-edit', () => {
               (loanType) => loanType.name === LOAN_TYPE_NAMES.CAN_CIRCULATE,
             )[0].id;
           });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => {
-            materialTypeId = res.id;
-          });
           InventoryHoldings.getHoldingsFolioSource()
             .then((folioSource) => {
               sourceId = folioSource.id;
@@ -113,6 +110,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in College tenant
               cy.setTenant(Affiliations.College);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
                 const locations = resp.filter((location) => location.name !== 'DCB');
                 locationsInCollegeData.permanentLocation = locations[0];
@@ -148,6 +148,9 @@ describe('Bulk-edit', () => {
             .then(() => {
               // create holdings in University tenant
               cy.setTenant(Affiliations.University);
+              cy.getMaterialTypes({ limit: 1 }).then((res) => {
+                materialTypeId = res.id;
+              });
               InventoryInstances.getLocations({ limit: 3 }).then((resp) => {
                 const locations = resp.filter((location) => location.name !== 'DCB');
                 locationsInUniversityData.permanentLocation = locations[0];
@@ -195,6 +198,7 @@ describe('Bulk-edit', () => {
               );
             });
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,

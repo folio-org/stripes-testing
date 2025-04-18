@@ -67,7 +67,7 @@ export const ValueChipRoot = HTML.extend('value chip root')
 const select = async (interactor, values) => {
   await interactor.open();
   let valuesParam = values;
-  if (typeof values === 'string') {
+  if (!Array.isArray(values)) {
     valuesParam = [values];
   }
   for (const value of valuesParam) {
@@ -100,6 +100,7 @@ export default createInteractor('multi select')
         .filter(Boolean);
     },
     selectedCount: (el) => el.querySelectorAll('[class^=valueChipValue-]').length,
+    optionsCount: (el) => el.querySelectorAll('[class^=multiSelectOption-]').length,
     filterValue: (el) => el.querySelector('input').value,
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,

@@ -5,6 +5,7 @@ Cypress.Commands.add('getPermissionsApi', (searchParams) => {
   return cy.okapiRequest({
     path: 'perms/permissions',
     searchParams,
+    isDefaultSearchParamsRequired: false,
   });
 });
 
@@ -48,10 +49,15 @@ Cypress.Commands.add(
   },
 );
 
-Cypress.Commands.add('getCapabilitiesApi', (limit = 3000) => {
+Cypress.Commands.add('getCapabilitiesApi', (limit = 3000, ignoreDummyCapabs = true) => {
+  const query = ignoreDummyCapabs ? 'dummyCapability==false' : '';
   cy.okapiRequest({
     method: 'GET',
-    path: `capabilities?limit=${limit}`,
+    path: 'capabilities',
+    searchParams: {
+      limit,
+      query,
+    },
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     cy.wrap(body.capabilities).as('capabs');
@@ -243,18 +249,24 @@ Cypress.Commands.add('getCapabilitySetsForUserApi', (userId, ignoreErrors = fals
   });
 });
 
-Cypress.Commands.add('getCapabilityIdViaApi', ({ type, resource, action }) => {
-  cy.okapiRequest({
-    path: 'capabilities',
-    searchParams: {
-      query: `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()}`,
-    },
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    cy.wrap(body.capabilities[0].id).as('capabId');
-  });
-  return cy.get('@capabId');
-});
+Cypress.Commands.add(
+  'getCapabilityIdViaApi',
+  ({ type, resource, action }, ignoreDummyCapabs = true) => {
+    const query = ignoreDummyCapabs
+      ? `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()} and dummyCapability==false`
+      : `resource=="${resource}" and action==${action.toUpperCase()} and type==${type.toUpperCase()}`;
+    cy.okapiRequest({
+      path: 'capabilities',
+      searchParams: {
+        query,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      cy.wrap(body.capabilities[0].id).as('capabId');
+    });
+    return cy.get('@capabId');
+  },
+);
 
 Cypress.Commands.add('getCapabilitySetIdViaApi', ({ type, resource, action }) => {
   cy.okapiRequest({
@@ -480,4 +492,24 @@ Cypress.Commands.add('shareRoleWithCapabilitiesApi', ({ id, name, description = 
       );
     });
   });
+});
+
+Cypress.Commands.add('verifyAssignedRolesCountForUserApi', (userId, rolesCount) => {
+  return cy.recurse(
+    () => {
+      return cy.okapiRequest({
+        path: 'roles/users',
+        searchParams: {
+          query: `userId==${userId}`,
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+    },
+    (response) => response.body.userRoles.length === rolesCount,
+    {
+      limit: 12,
+      delay: 5000,
+      timeout: 65000,
+    },
+  );
 });

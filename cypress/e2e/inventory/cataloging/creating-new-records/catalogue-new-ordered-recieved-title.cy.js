@@ -217,6 +217,7 @@ describe('Inventory', () => {
           ConfirmItemInModal.confirmInTransitModal();
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.switchToItem();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter(
             'Keyword (title, contributor, identifier, HRID, UUID)',
             instanceTitle,

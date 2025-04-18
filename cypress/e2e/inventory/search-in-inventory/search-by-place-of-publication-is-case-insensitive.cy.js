@@ -12,7 +12,7 @@ describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       searchOption: ['Place of publication', 'All', 'Query search'],
-      searchValue: ['Milwaukee', 'milwaukee', 'MILWAUKEE'],
+      searchValue: ['Milwaukeeauto', 'milwaukeeauto', 'MILWAUKEEAUTO'],
       searchResults: [
         'C496182 (lower case)Whales / Diane Swanson.',
         'C496182 (Regular case)Whales / Diane Swanson.',

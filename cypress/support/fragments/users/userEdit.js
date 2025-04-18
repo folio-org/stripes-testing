@@ -17,6 +17,7 @@ import {
   not,
   or,
   Pane,
+  ProxyUser,
   RadioButton,
   RadioButtonGroup,
   SearchField,
@@ -34,7 +35,6 @@ import defaultUser from './userDefaultObjects/defaultUser';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
-
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -45,9 +45,9 @@ const extendedInformationAccordion = Accordion('Extended information');
 const contactInformationAccordion = Accordion('Contact information');
 const customFieldsAccordion = Accordion('Custom fields');
 const userPermissionsAccordion = Accordion('User permissions');
-const servicePointsAccordion = Accordion('Service points');
+const servicePointsAccordion = Accordion({ id: 'servicePoints' });
 const patronBlocksAccordion = Accordion('Patron blocks');
-const proxySponsorAccordion = Accordion('Proxy/sponsor');
+const proxySponsorAccordion = Accordion({ id: 'proxy' });
 const feesFinesAccordion = Accordion('Fees/fines');
 const loansAccordion = Accordion('Loans');
 const requestsAccordion = Accordion('Requests');
@@ -58,7 +58,7 @@ const deleteProfilePicturesModal = Modal({ header: 'Delete profile picture' });
 const areYouSureForm = Modal('Are you sure?');
 const updateProfilePictureModal = Modal('Update profile picture');
 const externalSystemIdTextfield = TextField('External system ID');
-const userSearch = TextField('User search');
+const userSearch = TextField({ name: 'query' });
 const externalImageUrlTextField = updateProfilePictureModal.find(
   TextField({ id: 'external-image-url' }),
 );
@@ -120,6 +120,7 @@ const promoteUserModalText = 'This operation will create new record in Keycloak 
 const userRolesEmptyText = 'No user roles found';
 const rolesAffiliationSelect = userRolesAccordion.find(Selection('Affiliation'));
 
+const selectUserModal = Modal('Select User');
 const saveButton = Button({ id: 'clickable-save' });
 
 let totalRows;
@@ -237,7 +238,6 @@ export default {
     this.clearBarcode();
     this.changeMiddleName(user.middleName);
     this.changeLastName(user.lastName);
-    this.changeUserType(user.userType);
     this.changePreferredFirstName(user.preferredFirstName);
     this.changeExpirationDate(user.expirationDate);
     this.changeExternalSystemId(user.externalSystemId);
@@ -246,25 +246,7 @@ export default {
     this.changeMobilePhone(user.mobilePhone);
     this.changePreferredContact(user.preferredContact);
     this.changeStatus(user.status);
-  },
-
-  verifyUserDetails(user) {
-    // Limitation with permissions
-    // this.checkKeyValue('Username', user.username);
-    // this.checkKeyValue('Email', user.email);
-    this.checkKeyValue('First name', user.firstName);
-    this.checkKeyValue('Barcode', user.barcode);
-    this.checkKeyValue('Middle name', user.middleName);
-    this.checkKeyValue('Last name', user.lastName);
-    this.checkKeyValue('User type', user.userType.toLowerCase());
-    this.checkKeyValue('Preferred first name', user.preferredFirstName);
-    this.checkKeyValue('Expiration date', user.expirationDate);
-    this.checkKeyValue('External system ID', user.externalSystemId);
-    this.checkKeyValue('Birth date', user.birthDate);
-    this.checkKeyValue('Phone', user.phone);
-    this.checkKeyValue('Mobile phone', user.mobilePhone);
-    this.checkKeyValue('Preferred contact', user.preferredContact);
-    this.checkKeyValue('Status', user.status);
+    this.changeUserType(user.userType);
   },
 
   checkKeyValue(label, value) {
@@ -337,43 +319,6 @@ export default {
     cy.do(selectPermissionsModal.find(cancelButton).click());
   },
 
-  addServicePoints(...points) {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
-      Button({ id: 'add-service-point-btn' }).click(),
-    ]);
-
-    points.forEach((point) => {
-      cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
-    });
-
-    cy.do(Modal().find(saveAndCloseBtn).click());
-  },
-
-  selectPreferableServicePoint(point) {
-    cy.do(preferableServicePointSelect.choose(point));
-  },
-
-  openServicePointsAccordion() {
-    cy.do(Button({ id: 'accordion-toggle-button-servicePointsSection' }).click());
-    cy.wait(1000);
-  },
-
-  openContactInformationAccordion() {
-    cy.do(Button({ id: 'accordion-toggle-button-contactInfoSection' }).click());
-    cy.wait(1000);
-  },
-
-  openExtendedInformationAccordion() {
-    cy.do(Button({ id: 'accordion-toggle-button-extendedInfoSection' }).click());
-    cy.wait(1000);
-  },
-
-  openReadingRoomAccessAccordion() {
-    cy.do(readingRoomAccessAccordion.clickHeader());
-    cy.expect(readingRoomAccessAccordion.find(MultiColumnList()).exists());
-  },
-
   editAccessToReadingRoom(roomName, optionValue, note) {
     this.openReadingRoomAccessAccordion();
     cy.do(
@@ -399,6 +344,59 @@ export default {
         );
       }),
     );
+  },
+
+  openServicePointsAccordion() {
+    cy.do(servicePointsAccordion.clickHeader());
+    cy.wait(1000);
+  },
+
+  openProxySponsorAccordion() {
+    cy.do(proxySponsorAccordion.clickHeader());
+    cy.wait(1000);
+  },
+
+  clickAddProxy() {
+    cy.do(Button({ id: 'clickable-plugin-find-proxy' }).click());
+    cy.wait(1000);
+  },
+
+  searchAndSelectProxyUser(username) {
+    cy.do(selectUserModal.find(TextField({ name: 'query' })).fillIn(username));
+    cy.do(selectUserModal.find(Button('Search')).click());
+    cy.wait(1000);
+    cy.do(MultiColumnListCell({ row: 0, content: username }).click());
+    cy.wait(2000);
+  },
+
+  verifyUserProxyDetails(username) {
+    const proxyUser = ProxyUser(including(username));
+    cy.expect([
+      proxyUser.exists(),
+      proxyUser.find(Select('Relationship Status')).has({ checkedOptionText: 'Active' }),
+      proxyUser.find(Select('Proxy can request for sponsor')).has({ checkedOptionText: 'Yes' }),
+      proxyUser.find(Select('Notifications sent to')).has({ checkedOptionText: 'Proxy' }),
+      proxyUser.find(TextField('Expiration date')).exists(),
+    ]);
+  },
+
+  openReadingRoomAccessAccordion() {
+    cy.do(readingRoomAccessAccordion.clickHeader());
+    cy.expect(readingRoomAccessAccordion.find(MultiColumnList()).exists());
+  },
+
+  addServicePoints(...points) {
+    cy.do([Button({ id: 'add-service-point-btn' }).click()]);
+
+    points.forEach((point) => {
+      cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
+    });
+
+    cy.do(Modal().find(saveAndCloseBtn).click());
+  },
+
+  selectPreferableServicePoint(point) {
+    cy.do(preferableServicePointSelect.choose(point));
   },
 
   checkServicePoints(...points) {
@@ -478,8 +476,14 @@ export default {
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
-    cy.wait(2000);
+    cy.wait(3000);
     cy.expect(rootPane.absent());
+  },
+
+  confirmChangingUserType() {
+    cy.wait(1000);
+    cy.do(Modal().find(Button('Confirm')).click());
+    cy.wait(500);
   },
 
   saveEditedUser() {
@@ -516,6 +520,7 @@ export default {
       failOnStatusCode: false,
     })
     .then((servicePointsUsers) => {
+      if (servicePointsUsers.body.servicePointsUsers.length === 0) { return; }
       cy.okapiRequest({
         method: 'PUT',
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,

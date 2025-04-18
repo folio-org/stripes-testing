@@ -67,58 +67,69 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
-        cy.getAdminToken();
-        // make sure there are no duplicate records in the system
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376597*');
-
-        cy.loginAsAdmin({
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        }).then(() => {
-          marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                createdRecordIDs.push(record[marcFile.propertyName].id);
+        cy.getAdminToken()
+          .then(() => {
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C376597');
+            marcFiles.forEach((marcFile) => {
+              DataImport.uploadFileViaApi(
+                marcFile.marc,
+                marcFile.fileName,
+                marcFile.jobProfileToRun,
+              ).then((response) => {
+                response.forEach((record) => {
+                  createdRecordIDs.push(record[marcFile.propertyName].id);
+                });
               });
             });
+          })
+          .then(() => {});
+        // make sure there are no duplicate records in the system
+
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           });
-        });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000)
+          .then(() => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag110,
+              testData.authority110FieldValue,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+              Permissions.inventoryAll.gui,
+            ]).then((createdUserProperties) => {
+              testData.userProperties = createdUserProperties;
 
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySearchOptions();
-          InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag110,
-            testData.authority110FieldValue,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
-
-          cy.createTempUser([
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.inventoryAll.gui,
-          ]).then((createdUserProperties) => {
-            testData.userProperties = createdUserProperties;
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
             });
           });
-        });
       });
 
       after('Delete test data', () => {

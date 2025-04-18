@@ -36,11 +36,11 @@ describe('Consortia', () => {
     () => {
       UsersSearchPane.searchByUsername(firstUser.username);
       UsersSearchPane.selectUserFromList(firstUser.username);
-      UsersCard.varifyUserCardOpened();
+      UsersCard.verifyUserCardOpened();
       UsersCard.affiliationsAccordionIsAbsent();
       UsersSearchPane.searchByUsername(secondUser.username);
       UsersSearchPane.selectUserFromList(secondUser.username);
-      UsersCard.varifyUserCardOpened();
+      UsersCard.verifyUserCardOpened();
       UsersCard.affiliationsAccordionIsAbsent();
     },
   );

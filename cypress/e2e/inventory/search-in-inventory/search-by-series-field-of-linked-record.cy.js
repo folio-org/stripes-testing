@@ -39,9 +39,9 @@ const testData = {
     'series == "Robinson eminent scholar lecture series"',
   ],
   seriesStatement: [
-    'Robinson, Peter, Inspector Banks series ; 1950-2022',
+    'Robinson, Peter, 1950-2022 Inspector Banks series',
     'Robinson & Associates, Inc.',
-    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers Robinson College, Cambridge)',
+    '1938-1988 Jubilee Conference of the Institution of Agricultural Engineers (1988 : Robinson College, Cambridge)',
     'Robinson eminent scholar lecture series',
   ],
   searchResults: [
@@ -92,29 +92,10 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
-      cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="Sleeping in the ground"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceByTitleViaApi('Sleeping in the ground');
         testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
-            limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
-              });
-            }
-          });
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(query);
         });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.uploadFileViaApi(
@@ -128,8 +109,17 @@ describe('Inventory', () => {
           });
         });
       });
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -137,11 +127,15 @@ describe('Inventory', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(testData.searchAuthorityQueries[i]);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySeriesStatement(0, including(testData.seriesStatement[i]));
         InventoryInstances.resetAllFilters();
@@ -167,9 +161,16 @@ describe('Inventory', () => {
       'C375258 Query search | Search by "Series" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375258'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
@@ -181,6 +182,9 @@ describe('Inventory', () => {
         });
         InventoryInstances.resetAllFilters();
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[1],
@@ -190,6 +194,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
         InventoryInstances.resetAllFilters();
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[2],

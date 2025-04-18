@@ -1,4 +1,5 @@
 import permissions from '../../support/dictionary/permissions';
+import { APPLICATION_NAMES } from '../../support/constants';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -158,7 +159,7 @@ describe('Export Manager', () => {
           OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
-          TopMenuNavigation.openAppFromDropdown('Export manager');
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.selectOrganizationsSearch();
           ExportManagerSearchPane.searchByFailed();
           ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);

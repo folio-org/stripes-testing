@@ -9,7 +9,14 @@ export default {
   },
 
   selectSoftwareVersions() {
+    // scroll to software version if needed
+    cy.xpath('//a[@href="/settings/about"]').scrollIntoView();
+    cy.xpath('//a[@href="/settings/about"]').should('be.visible');
+    // break the chain to avoid error on jenkins
+    cy.wait(1000);
     cy.xpath('//a[@href="/settings/about"]').click();
+    // added waiter to fix failures on jenkins with 'something went wrong'
+    cy.wait(1000);
   },
 
   checkErrorNotDisplayed() {
@@ -28,9 +35,9 @@ export default {
 
   checkErrorText(missingModuleIds) {
     let errorHeadline = `${missingModuleIds.length} missing interface`;
+    if (missingModuleIds.length > 1) errorHeadline += 's';
     const errorBlock = aboutPane.find(MessageBanner({ headline: errorHeadline }));
     if (missingModuleIds.length) {
-      if (missingModuleIds.length > 1) errorHeadline += 's';
       cy.expect(errorBlock.exists());
       for (const moduleId of missingModuleIds) {
         cy.expect(errorBlock.has({ textContent: including(moduleId) }));

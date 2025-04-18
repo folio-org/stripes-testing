@@ -27,8 +27,6 @@ const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
 
-const searchField = TextField({ id: 'eholdings-search' });
-const chooseParameterField = Select({ dataTestID: 'field-to-search-select' });
 const subjectKeyValue = KeyValue('Subjects');
 const proxySelect = Select('Proxy');
 const customCoverageDate = KeyValue('Custom coverage dates');
@@ -104,7 +102,7 @@ export default {
     return cy.get('@selectedPackages');
   },
   openPackageWithExpectedName(packageName) {
-    cy.do(resultSection.find(Link({ text: including(packageName) })).click());
+    cy.do(resultSection.find(Link({ text: including(`${packageName}\n`) })).click());
   },
   openPackageWithExpectedTitels: (totalTitlesNumber) => {
     cy.do(
@@ -330,17 +328,6 @@ export default {
 
   subjectsAssertion() {
     cy.expect(subjectKeyValue.exists());
-  },
-
-  titlesSearch: (searchParameter, searchValue) => {
-    cy.do([chooseParameterField.choose(searchParameter), searchField.fillIn(searchValue)]);
-    cy.get('input[id="eholdings-search"]').type('{enter}');
-  },
-
-  // eslint-disable-next-line no-unused-vars
-  titlesSearchFilter: (searchParameter, searchValue, selectionStatus = 'All') => {
-    cy.do([chooseParameterField.choose(searchParameter), searchField.fillIn(searchValue)]);
-    cy.get('input[id="eholdings-search"]').type('{enter}');
   },
 
   changePackageRecordProxy: () => {

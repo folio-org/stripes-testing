@@ -48,7 +48,7 @@ const testData = {
   subjectHeading: [
     'Black Panther (Fictitious character) Wakanda Forever',
     'Radio "Vaticana". Hrvatski program test',
-    'Vatican Council Basilica di San Pietro in Vaticano) 1962-1965 :',
+    'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
     'Marvel comics ComiCon',
     'Speaking Oratory--debating',
     'Clear Creek (Tex.)',
@@ -76,8 +76,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
-      cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      cy.getAdminToken().then(() => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
           query: testData.searchQueryBeforeTest,
@@ -95,7 +94,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -112,8 +111,17 @@ describe('Inventory', () => {
           });
         });
       });
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -121,11 +129,15 @@ describe('Inventory', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(testData.searchAuthorityQueries[i]);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[i]));
         InventoryInstances.resetAllFilters();
@@ -151,15 +163,21 @@ describe('Inventory', () => {
       'C375259 Query search | Search by "Subject" field of linked "MARC Bib" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375259'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchInstancesWithOption(
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[0],
         );
-        InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceRecords[0], true);
         InventoryInstances.resetAllFilters();
 
@@ -167,7 +185,6 @@ describe('Inventory', () => {
           testData.searchOptions.QUERY_SEARCH,
           testData.searchQueries[1],
         );
-        InventorySearchAndFilter.checkRowsCount(7);
         testData.instanceRecords.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
         });

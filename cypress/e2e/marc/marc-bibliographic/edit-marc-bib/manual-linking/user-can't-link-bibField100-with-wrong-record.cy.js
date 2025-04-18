@@ -101,11 +101,14 @@ describe('MARC', () => {
                 });
               });
             });
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userProperties.username, testData.userProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
         });
 
@@ -202,6 +205,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
             MarcAuthoritiesSearch.selectExcludeReferencesFilter();
+            MarcAuthorities.selectTitle(testData.authorityFieldValue.field150);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -212,6 +216,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionB);
+            MarcAuthorities.selectTitle(testData.authorityFieldValue.field151);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.checkCallout(testData.errorMessage);
             InventoryInstance.verifySelectMarcAuthorityModal();
@@ -222,6 +227,7 @@ describe('MARC', () => {
             );
             MarcAuthorities.closeAuthoritySourceOption();
             MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
+            MarcAuthorities.closeMarcViewPane();
             MarcAuthorities.checkRow(testData.authorityFieldValue.field155);
             cy.wait(2000);
             MarcAuthorities.selectTitle(testData.authorityFieldValue.field155);

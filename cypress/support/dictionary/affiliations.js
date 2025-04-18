@@ -1,6 +1,13 @@
 const currentEnv = Cypress.env('ecs_env_name');
 
 export default {
+  sunflower: {
+    Consortia: 'cs00000int',
+    University: 'cs00000int_0005',
+    School: 'cs00000int_0003',
+    College: 'cs00000int_0001',
+    Professional: 'cs00000int_0002',
+  },
   sprint: {
     Consortia: 'cs00000int',
     University: 'cs00000int_0005',
@@ -15,9 +22,15 @@ export default {
 }[currentEnv];
 
 export const tenantNames = {
+  sunflower: {
+    central: 'Central Office',
+    college: 'College',
+    university: 'University',
+    professional: 'Professional',
+  },
   sprint: {
     central: 'Central tenant',
-    college: 'Colleague tenant',
+    college: 'College tenant',
     university: 'University tenant',
     professional: 'Professional tenant',
     school: 'School tenant',
@@ -27,11 +40,19 @@ export const tenantNames = {
     central: 'Consortium',
     college: 'College',
     university: 'University',
-    professional: 'University',
+    professional: 'Professional',
   },
 }[currentEnv];
 
 export const tenantCodes = {
+  sunflower: {
+    central: 'CEN',
+    college: 'COL',
+    university: 'UNI',
+    professional: 'PROF',
+    school: 'SCHO',
+    special: 'SPE,',
+  },
   sprint: {
     central: 'CEN',
     college: 'COL',

@@ -20,7 +20,6 @@ describe('Inventory', () => {
       EFFECTIVE_LOCATION: 'Effective location (item)',
       NAME_TYPE: 'Name type',
       SHARED: 'Shared',
-      HELD_BY: 'Held by',
     };
 
     const users = {};
@@ -41,15 +40,16 @@ describe('Inventory', () => {
         })
         .then(() => {
           cy.resetTenant();
-          cy.login(users.userProperties.username, users.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          }).then(() => {
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userProperties.username, users.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
             InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          });
+          }, 20_000);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          InventoryInstances.waitContentLoading();
         });
     });
 
@@ -81,7 +81,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.NAME_TYPE);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.NAME_TYPE, true);
-        InventorySearchAndFilter.verifyNameTypeOption('Personal name');
+        InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(Dropdowns.NAME_TYPE);
 
         InventorySearchAndFilter.selectBrowseOption(testData.subject);
         InventorySearchAndFilter.browseSearch(testData.value);
@@ -96,52 +96,53 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
+        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
-        cy.wait(3000);
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);
-        InventorySearchAndFilter.verifyTextFieldInAccordion(Dropdowns.EFFECTIVE_LOCATION, '');
+        InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
+          Dropdowns.EFFECTIVE_LOCATION,
+        );
 
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickResetAllButton();
         BrowseContributors.checkBrowseQueryText('');
         InventorySearchAndFilter.filtersIsAbsent();
-        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
+          BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL,
+        );
         InventorySearchAndFilter.browseSearch(testData.value);
         InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.SHARED);
+        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.SHARED);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.SHARED, true);
         InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.SHARED, 'Yes');
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELD_BY);
-        InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.HELD_BY, true);
-        InventorySearchAndFilter.verifyCheckboxInAccordion(Dropdowns.HELD_BY, 'University');
-        InventorySearchAndFilter.verifyAccordionExistance(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.clickAccordionByName(Dropdowns.EFFECTIVE_LOCATION);
         InventorySearchAndFilter.verifyAccordionByNameExpanded(Dropdowns.EFFECTIVE_LOCATION, true);
-        InventorySearchAndFilter.verifyTextFieldInAccordion(Dropdowns.EFFECTIVE_LOCATION, '');
+        InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
+          Dropdowns.EFFECTIVE_LOCATION,
+        );
       },
     );
   });

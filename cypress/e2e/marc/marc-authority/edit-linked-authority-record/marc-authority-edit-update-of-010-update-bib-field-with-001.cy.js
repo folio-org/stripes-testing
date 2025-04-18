@@ -65,6 +65,8 @@ describe('MARC', () => {
       const createdRecordIDs = [];
 
       before('Create test data', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Erbil, H. Yıldırım');
         cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
           testData.preconditionUserId = userProperties.userId;
 
@@ -82,43 +84,60 @@ describe('MARC', () => {
           });
         });
 
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstances.searchByTitle(createdRecordIDs[0]);
-          InventoryInstances.selectInstance();
-          InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySearchOptions();
-          InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag100,
-            testData.authority100FieldValue,
-          );
-          InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
-          QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+        cy.waitForAuthRefresh(() => {
+          cy.loginAsAdmin({
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000)
+          .then(() => {
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySearchOptions();
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
+            InventoryInstance.searchResults(marcFiles[1].authorityHeading);
+            MarcAuthorities.checkFieldAndContentExistence(
+              testData.tag100,
+              testData.authority100FieldValue,
+            );
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
+            QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100Field);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.inventoryAll.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+            ]).then((createdUserProperties) => {
+              testData.userProperties = createdUserProperties;
 
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-          ]).then((createdUserProperties) => {
-            testData.userProperties = createdUserProperties;
-
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.marcAuthorities,
-              waiter: MarcAuthorities.waitLoading,
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.marcAuthorities,
+                  waiter: MarcAuthorities.waitLoading,
+                });
+                cy.reload();
+                MarcAuthorities.waitLoading();
+              }, 20_000);
             });
           });
-        });
       });
 
       after('Delete test data', () => {
@@ -133,6 +152,10 @@ describe('MARC', () => {
         'C376595 Verify that update of linked MARC authority "010 $a" (prefix deletion) will update linked bib fields "$0" with MARC authority "001" value (because it contains valid prefix) (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C376595'] },
         () => {
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.searchAndVerify(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthority.edit();
           cy.wait(2000);

@@ -2,7 +2,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../support/constants';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -14,7 +13,7 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -23,6 +22,7 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Modals from '../../support/fragments/modals';
 
 describe('Fees&Fines', () => {
   describe('Manual Fees/Fines', () => {
@@ -147,10 +147,10 @@ describe('Fees&Fines', () => {
 
           NewFeeFine.chargeAndPayNow();
 
-          PayFeeFaine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
-          PayFeeFaine.setPaymentMethod(testData.paymentMethod);
+          PayFeeFine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+          PayFeeFine.setPaymentMethod(testData.paymentMethod);
 
-          PayFeeFaine.submitAndConfirm();
+          PayFeeFine.submitAndConfirm();
         };
         // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
         UsersCard.openFeeFines();
@@ -190,9 +190,7 @@ describe('Fees&Fines', () => {
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(testData.barcode);
         CheckInActions.confirmMultipleItemsCheckinWithoutConfirmation(testData.barcode);
-        InTransit.verifyModalTitle();
-        InTransit.unselectCheckboxPrintSlip();
-        InTransit.closeModal();
+        Modals.closeModalWithPrintSlipCheckboxIfAny();
         CheckInActions.openNewFeeFinesPane();
 
         initialCheckNewFeeFineFragment(testData.owner.name);

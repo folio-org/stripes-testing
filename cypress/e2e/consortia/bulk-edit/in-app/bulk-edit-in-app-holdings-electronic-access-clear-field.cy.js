@@ -182,6 +182,7 @@ describe('Bulk-edit', () => {
               );
             });
 
+          cy.resetTenant();
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
@@ -418,28 +419,32 @@ describe('Bulk-edit', () => {
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.switchToHoldings();
 
           collegeHoldingHrids.forEach((collegeHoldingHrid) => {
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.searchHoldingsByHRID(collegeHoldingHrid);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
 
             HoldingsRecordView.checkElectronicAccess('-', '-');
             HoldingsRecordView.checkElectronicAccess('-', '-', '-', '-', 1);
+            HoldingsRecordView.close();
+            InventorySearchAndFilter.resetAll();
           });
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventorySearchAndFilter.switchToHoldings();
 
           universityHoldingHrids.forEach((universityHoldingHrid) => {
-            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-            InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.searchHoldingsByHRID(universityHoldingHrid);
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
 
             HoldingsRecordView.checkElectronicAccess('-', '-');
+            HoldingsRecordView.close();
+            InventorySearchAndFilter.resetAll();
           });
         },
       );

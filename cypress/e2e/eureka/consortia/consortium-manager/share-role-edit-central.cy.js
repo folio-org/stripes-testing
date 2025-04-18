@@ -187,9 +187,8 @@ describe('Eureka', () => {
         AuthorizationRoles.shareRole(testData.roleName);
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
-        AuthorizationRoles.clickUnassignAllCapabilitiesButton();
         testData.originalCapabilitySets.forEach((set) => {
-          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(set, false);
         });
         cy.wait(3000);
         testData.newCapabilitySets.forEach((set) => {

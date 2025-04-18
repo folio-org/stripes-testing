@@ -55,8 +55,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
-      cy.getAdminToken();
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      cy.getAdminToken().then(() => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
           query: 'title="Black Panther"',
@@ -74,7 +73,7 @@ describe('Inventory', () => {
           }).then((authorities) => {
             if (authorities) {
               authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+                MarcAuthority.deleteViaAPI(id, true);
               });
             }
           });
@@ -91,8 +90,17 @@ describe('Inventory', () => {
           });
         });
       });
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      cy.waitForAuthRefresh(() => {
+        cy.loginAsAdmin();
+        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        cy.reload();
+        InventoryInstances.waitContentLoading();
+      }, 20_000);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -100,12 +108,16 @@ describe('Inventory', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(testData.searchAuthorityQueries[0]);
+        cy.ifConsortia(true, () => {
+          MarcAuthorities.clickAccordionByName('Shared');
+          MarcAuthorities.actionsSelectCheckbox('No');
+        });
         MarcAuthoritiesSearch.selectExcludeReferencesFilter();
         MarcAuthoritiesSearch.selectAuthorityByIndex(i);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
         QuickMarcEditor.pressSaveAndClose();
-        cy.wait(1500);
+        cy.wait(3000);
         QuickMarcEditor.pressSaveAndClose();
 
         InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
@@ -130,12 +142,17 @@ describe('Inventory', () => {
       'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire', 'C375224'] },
       () => {
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          cy.reload();
+          InventoryInstances.waitContentLoading();
+        }, 20_000);
 
         InventorySearchAndFilter.selectBrowseSubjects();
+        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true);
         InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
         BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
           5,

@@ -211,6 +211,7 @@ describe('Inventory', () => {
       const locations = {};
       const loanTypeIds = {};
       const materialTypeIds = {};
+      const sourceIds = {};
 
       function createFolioInstance(instanceTitle, tenantId) {
         const targetTenant = Object.keys(Affiliations)
@@ -235,6 +236,7 @@ describe('Inventory', () => {
         const targetTenant = Object.keys(Affiliations)
           .find((key) => Affiliations[key] === tenantId)
           .toLowerCase();
+        const targetSourceId = sourceIds[targetTenant];
         if (Object.hasOwn(instance.holdings, targetTenant)) {
           cy.setTenant(tenantId);
           InventoryHoldings.createHoldingRecordViaApi({
@@ -243,6 +245,7 @@ describe('Inventory', () => {
             callNumber: instance.holdings[targetTenant].callNumberInHoldings
               ? instance.holdings[targetTenant].callNumber
               : null,
+            sourceId: targetSourceId,
           }).then((holding) => {
             createdHoldingsIds[targetTenant].push(holding.id);
             instance.holdings[targetTenant].id = holding.id;
@@ -300,6 +303,11 @@ describe('Inventory', () => {
             cy.getMaterialTypes({ limit: 1 }).then((matType) => {
               materialTypeIds.college = matType.id;
             });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                sourceIds.college = holdingSources[0].id;
+              },
+            );
 
             cy.setTenant(Affiliations.University);
             const universityLocationData = Locations.getDefaultLocation({
@@ -316,6 +324,11 @@ describe('Inventory', () => {
             cy.getMaterialTypes({ limit: 1 }).then((matType) => {
               materialTypeIds.university = matType.id;
             });
+            InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
+              (holdingSources) => {
+                sourceIds.university = holdingSources[0].id;
+              },
+            );
           })
           .then(() => {
             testData.instances
@@ -397,15 +410,20 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C410759'] },
+        'C410763 Call numbers from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (spitfire)',
+        { tags: ['criticalPathECS', 'spitfire', 'C410763'] },
         () => {
+          cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             cy.visit(TopMenu.inventoryPath);
             InventoryInstances.waitContentLoading();
             InventorySearchAndFilter.selectBrowseCallNumbers();
+          });
+          cy.setTenant(Affiliations.College);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
           });
           InventorySearchAndFilter.browseSearch(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);

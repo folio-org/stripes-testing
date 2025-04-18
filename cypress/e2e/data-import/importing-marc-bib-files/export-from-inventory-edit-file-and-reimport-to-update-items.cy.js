@@ -139,6 +139,7 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
+      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -265,6 +266,7 @@ describe('Data Import', () => {
           const itemHrid = initialItemHrId;
 
           ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.resetAll();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.saveUUIDs();
