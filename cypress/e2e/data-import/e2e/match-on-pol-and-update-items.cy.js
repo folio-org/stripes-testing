@@ -297,7 +297,7 @@ describe('Data Import', () => {
       Orders.selectFromResultsList(number);
       OrderDetails.openPolDetails(title);
       OrderLines.openReceiving();
-      Receiving.checkIsPiecesCreated(title);
+      Receiving.checkIsPiecesCreated(title, ORDER_STATUSES.OPEN);
     };
 
     it(
