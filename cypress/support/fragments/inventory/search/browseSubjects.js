@@ -4,6 +4,7 @@ import {
   Accordion,
   Button,
   Link,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -30,6 +31,7 @@ const mclhSubjectTitle = MultiColumnListHeader({ id: 'list-column-subject' });
 const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitles' });
 const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
+const resultTable = MultiColumnList({ id: 'browse-results-list-browseSubjects' });
 
 function getColumnsResults(columnName) {
   const cells = [];
@@ -59,6 +61,23 @@ function getColumnsResults(columnName) {
         });
     })
     .then(() => cells);
+}
+
+function getRowIndexesBySubjectName(subject) {
+  const rowIndexes = [];
+
+  return cy
+    .get('#browse-results-list-browseSubjects')
+    .find('[data-row-index]')
+    .each(($row) => {
+      const trimmedText = $row.find('[class*="mclCell-"]:nth-child(1)').first().text().trim();
+
+      if (trimmedText.includes(subject)) {
+        const rowIndex = $row.attr('data-row-index');
+        rowIndexes.push(rowIndex);
+      }
+    })
+    .then(() => rowIndexes);
 }
 
 export default {
@@ -263,7 +282,7 @@ export default {
 
   verifyNumberOfTitlesForRow(rowIndex, itemCount) {
     cy.expect(
-      MultiColumnListCell({ row: rowIndex, columnIndex: 1 }).has({ content: itemCount.toString() }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 3 }).has({ content: itemCount.toString() }),
     );
   },
 
@@ -363,6 +382,18 @@ export default {
     cy.wait(2000);
   },
 
+  openInstance: (subject) => {
+    getRowIndexesBySubjectName(subject.name).then((rowIndexes) => {
+      cy.do(
+        resultTable
+          .find(MultiColumnListRow({ indexRow: rowIndexes[0] }))
+          .find(MultiColumnListCell({ columnIndex: 0, content: subject.name }))
+          .find(Link())
+          .click(),
+      );
+    });
+  },
+
   verifySearchResult: (cellContent, columnName) => {
     getColumnsResults(columnName).then((cells) => {
       cells.forEach((cell) => {
@@ -375,6 +406,36 @@ export default {
             cy.expect(cell).to.include(cellContent);
           }
         }
+      });
+    });
+  },
+
+  verifyDuplicateSubjectsWithDifferentSources: (subject) => {
+    getRowIndexesBySubjectName(subject.name).then((rowIndexes) => {
+      rowIndexes.forEach((index) => {
+        cy.expect([
+          resultTable
+            .find(MultiColumnListRow({ indexRow: index }))
+            .find(MultiColumnListCell({ columnIndex: 0, content: subject.name }))
+            .exists(),
+          resultTable
+            .find(MultiColumnListRow({ indexRow: index }))
+            .find(
+              MultiColumnListCell({
+                columnIndex: 1,
+                content: matching(new RegExp(`^(${subject.firstSource}|${subject.secondSource})$`)),
+              }),
+            )
+            .exists(),
+          resultTable
+            .find(MultiColumnListRow({ indexRow: index }))
+            .find(MultiColumnListCell({ columnIndex: 2, content: subject.type }))
+            .exists(),
+          resultTable
+            .find(MultiColumnListRow({ indexRow: index }))
+            .find(MultiColumnListCell({ columnIndex: 3, content: '1' }))
+            .exists(),
+        ]);
       });
     });
   },

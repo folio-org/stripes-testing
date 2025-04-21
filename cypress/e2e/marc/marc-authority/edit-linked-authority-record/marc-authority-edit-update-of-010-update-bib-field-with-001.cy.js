@@ -100,6 +100,10 @@ describe('MARC', () => {
             InventoryInstance.verifySelectMarcAuthorityModal();
             MarcAuthorities.switchToSearch();
             InventoryInstance.verifySearchOptions();
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
             InventoryInstance.searchResults(marcFiles[1].authorityHeading);
             MarcAuthorities.checkFieldAndContentExistence(
               testData.tag100,
@@ -148,6 +152,10 @@ describe('MARC', () => {
         'C376595 Verify that update of linked MARC authority "010 $a" (prefix deletion) will update linked bib fields "$0" with MARC authority "001" value (because it contains valid prefix) (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C376595'] },
         () => {
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.searchAndVerify(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthority.edit();
           cy.wait(2000);
