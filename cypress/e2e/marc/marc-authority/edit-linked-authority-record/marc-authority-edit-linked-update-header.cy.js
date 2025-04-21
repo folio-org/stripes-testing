@@ -83,7 +83,7 @@ describe('MARC', () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();
             // wait for detail view to be fully loaded
-            cy.wait(1500);
+            cy.wait(4000);
             InventoryInstance.editMarcBibliographicRecord();
             InventoryInstance.verifyAndClickLinkIcon(testData.tag655);
             MarcAuthorities.switchToSearch();
@@ -96,7 +96,7 @@ describe('MARC', () => {
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1000);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -139,7 +139,7 @@ describe('MARC', () => {
           );
           cy.wait(2000);
           QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
+          cy.wait(4000);
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
