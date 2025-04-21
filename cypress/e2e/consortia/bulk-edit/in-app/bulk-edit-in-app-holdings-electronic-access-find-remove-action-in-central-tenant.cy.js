@@ -31,6 +31,10 @@ const collegeHoldingIds = [];
 const collegeHoldingHrids = [];
 const universityHoldingIds = [];
 const universityHoldingHrids = [];
+const userPermissions = [
+  permissions.bulkEditEdit.gui,
+  permissions.uiInventoryViewCreateEditHoldings.gui,
+];
 const folioInstance = {
   title: `AT_C554640_FolioInstance_${getRandomPostfix()}`,
 };
@@ -100,20 +104,15 @@ describe('Bulk-edit', () => {
       before('create test data', () => {
         cy.clearLocalStorage();
         cy.getAdminToken();
-        cy.createTempUser([
-          permissions.bulkEditEdit.gui,
-          permissions.uiInventoryViewCreateEditHoldings.gui,
-        ]).then((userProperties) => {
+        cy.createTempUser(userPermissions).then((userProperties) => {
           user = userProperties;
 
           [Affiliations.College, Affiliations.University].forEach((affiliation) => {
-            cy.assignAffiliationToUser(affiliation, user.userId);
-            cy.setTenant(affiliation);
-            cy.assignPermissionsToExistingUser(user.userId, [
-              permissions.bulkEditEdit.gui,
-              permissions.uiInventoryViewCreateEditHoldings.gui,
-            ]);
-            cy.resetTenant();
+            cy.affiliateUserToTenant({
+              tenantId: affiliation,
+              userId: user.userId,
+              permissions: userPermissions,
+            });
           });
 
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypeData) => {
@@ -144,64 +143,67 @@ describe('Bulk-edit', () => {
               });
             })
             .then(() => {
-              cy.setTenant(Affiliations.College);
-              cy.getLocations({ limit: 1 }).then((res) => {
-                collegeLocationId = res.id;
+              cy.withinTenant(Affiliations.College, () => {
+                cy.getLocations({ limit: 1 }).then((res) => {
+                  collegeLocationId = res.id;
 
-                // create local url relationship in College tenant
-                UrlRelationship.createViaApi({
-                  name: localUrlRelationship.name,
-                  source: 'local',
-                }).then((response) => {
-                  localUrlRelationship.id = response.id;
+                  // create local url relationship in College tenant
+                  UrlRelationship.createViaApi({
+                    name: localUrlRelationship.name,
+                    source: 'local',
+                  }).then((response) => {
+                    localUrlRelationship.id = response.id;
 
-                  // create holdings in College tenant
-                  instances.forEach((instance) => {
-                    InventoryHoldings.createHoldingRecordViaApi({
-                      instanceId: instance.id,
-                      permanentLocationId: collegeLocationId,
-                      electronicAccess: [
-                        {
-                          ...electronicAccessFields,
-                          relationshipId: sharedUrlRelationship.settingId,
-                        },
-                        {
-                          ...electronicAccessFields,
-                          relationshipId: localUrlRelationship.id,
-                        },
-                      ],
-                      sourceId,
-                    }).then((holding) => {
-                      collegeHoldingIds.push(holding.id);
-                      collegeHoldingHrids.push(holding.hrid);
+                    // create holdings in College tenant
+                    instances.forEach((instance) => {
+                      InventoryHoldings.createHoldingRecordViaApi({
+                        instanceId: instance.id,
+                        permanentLocationId: collegeLocationId,
+                        electronicAccess: [
+                          {
+                            ...electronicAccessFields,
+                            relationshipId: sharedUrlRelationship.settingId,
+                          },
+                          {
+                            ...electronicAccessFields,
+                            relationshipId: localUrlRelationship.id,
+                          },
+                        ],
+                        sourceId,
+                      }).then((holding) => {
+                        collegeHoldingIds.push(holding.id);
+                        collegeHoldingHrids.push(holding.hrid);
+                      });
+                      cy.wait(1000);
                     });
-                    cy.wait(1000);
                   });
                 });
               });
             })
             .then(() => {
-              // create holdings in University tenant
-              cy.setTenant(Affiliations.University);
-              cy.getLocations({ limit: 1 }).then((res) => {
-                universityLocationId = res.id;
+              cy.withinTenant(Affiliations.University, () => {
+                // create holdings in University tenant
+                cy.setTenant(Affiliations.University);
+                cy.getLocations({ limit: 1 }).then((res) => {
+                  universityLocationId = res.id;
 
-                instances.forEach((instance) => {
-                  InventoryHoldings.createHoldingRecordViaApi({
-                    instanceId: instance.id,
-                    permanentLocationId: universityLocationId,
-                    electronicAccess: [
-                      {
-                        ...electronicAccessFields,
-                        relationshipId: sharedUrlRelationship.settingId,
-                      },
-                    ],
-                    sourceId,
-                  }).then((holding) => {
-                    universityHoldingIds.push(holding.id);
-                    universityHoldingHrids.push(holding.hrid);
+                  instances.forEach((instance) => {
+                    InventoryHoldings.createHoldingRecordViaApi({
+                      instanceId: instance.id,
+                      permanentLocationId: universityLocationId,
+                      electronicAccess: [
+                        {
+                          ...electronicAccessFields,
+                          relationshipId: sharedUrlRelationship.settingId,
+                        },
+                      ],
+                      sourceId,
+                    }).then((holding) => {
+                      universityHoldingIds.push(holding.id);
+                      universityHoldingHrids.push(holding.hrid);
+                    });
+                    cy.wait(1000);
                   });
-                  cy.wait(1000);
                 });
               });
             })
@@ -223,20 +225,19 @@ describe('Bulk-edit', () => {
       after('delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.setTenant(Affiliations.College);
-        UrlRelationship.deleteViaApi(localUrlRelationship.id);
+        cy.withinTenant(Affiliations.College, () => {
+          UrlRelationship.deleteViaApi(localUrlRelationship.id);
 
-        collegeHoldingIds.forEach((collegeHoldingId) => {
-          cy.deleteHoldingRecordViaApi(collegeHoldingId);
+          collegeHoldingIds.forEach((collegeHoldingId) => {
+            cy.deleteHoldingRecordViaApi(collegeHoldingId);
+          });
         });
 
-        cy.setTenant(Affiliations.University);
-
-        universityHoldingIds.forEach((universityHoldingId) => {
-          cy.deleteHoldingRecordViaApi(universityHoldingId);
+        cy.withinTenant(Affiliations.University, () => {
+          universityHoldingIds.forEach((universityHoldingId) => {
+            cy.deleteHoldingRecordViaApi(universityHoldingId);
+          });
         });
-
-        cy.resetTenant();
 
         instances.forEach((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
