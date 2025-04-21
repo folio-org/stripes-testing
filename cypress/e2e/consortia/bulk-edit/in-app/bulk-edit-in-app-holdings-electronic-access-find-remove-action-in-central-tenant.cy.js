@@ -183,7 +183,6 @@ describe('Bulk-edit', () => {
             .then(() => {
               cy.withinTenant(Affiliations.University, () => {
                 // create holdings in University tenant
-                cy.setTenant(Affiliations.University);
                 cy.getLocations({ limit: 1 }).then((res) => {
                   universityLocationId = res.id;
 
@@ -436,6 +435,14 @@ describe('Bulk-edit', () => {
           BulkEditFiles.verifyCSVFileRecordsNumber(errorsFromCommittingFileName, 2);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
 
+          const electronicAccessFieldValuesToValidate = [
+            sharedUrlRelationship.payload.name,
+            '-',
+            '-',
+            '-',
+            '-',
+          ];
+
           collegeHoldingHrids.forEach((collegeHoldingHrid) => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
             InventorySearchAndFilter.switchToHoldings();
@@ -443,16 +450,9 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
 
-            const electronicAccessFieldValuesToValidateInCollege = [
-              sharedUrlRelationship.payload.name,
-              '-',
-              '-',
-              '-',
-              '-',
-            ];
             const removedCollegeElectronicAccesFieldValues = ['-', '-', '-', '-', '-'];
 
-            electronicAccessFieldValuesToValidateInCollege.forEach((field, ind) => {
+            electronicAccessFieldValuesToValidate.forEach((field, ind) => {
               HoldingsRecordView.verifyElectronicAccessByElementIndex(ind, field);
             });
             removedCollegeElectronicAccesFieldValues.forEach((field, ind) => {
@@ -469,15 +469,7 @@ describe('Bulk-edit', () => {
             InventorySearchAndFilter.selectViewHoldings();
             HoldingsRecordView.waitLoading();
 
-            const electronicAccessFieldsToValidateInUniversity = [
-              sharedUrlRelationship.payload.name,
-              '-',
-              '-',
-              '-',
-              '-',
-            ];
-
-            electronicAccessFieldsToValidateInUniversity.forEach((field, ind) => {
+            electronicAccessFieldValuesToValidate.forEach((field, ind) => {
               HoldingsRecordView.verifyElectronicAccessByElementIndex(ind, field);
             });
           });
