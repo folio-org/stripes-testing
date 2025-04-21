@@ -11,7 +11,7 @@ describe('Eureka', () => {
         roleName: `Auto Role C430260 ${getRandomPostfix()}`,
         roleDescription: `Description C430260 ${getRandomPostfix()}`,
         firstApplicationName: 'app-dcb',
-        secondApplicationName: 'app-erm-usage',
+        secondApplicationName: 'app-acquisitions',
         capabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
@@ -20,7 +20,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Erm-Usage Enabled',
+            resource: 'Module Claims Enabled',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -35,7 +35,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Counterreports Download Item Get',
+            resource: 'Invoice Item Pay',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
