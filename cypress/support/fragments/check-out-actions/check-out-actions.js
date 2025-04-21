@@ -259,9 +259,11 @@ export default {
   },
   deleteNote: () => {
     cy.do(Button('Delete note').click());
+    cy.wait(1000);
   },
   closeNote: () => {
     cy.do(Button('Close').click());
+    cy.wait(1000);
   },
   checkNoteModalNotDisplayed: () => {
     cy.expect(noteModal.absent());
