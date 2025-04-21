@@ -334,14 +334,14 @@ export default {
 
   clickTestQuery() {
     cy.do(testQueryButton.click());
-    cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
+    cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
     this.runQueryDisabled();
     this.cancelDisabled(false);
   },
 
   testQuery() {
     cy.do(testQueryButton.click());
-    cy.expect([HTML('Executing test query...').exists(), Spinner().exists()]);
+    cy.expect([HTML('Test query in progress').exists(), Spinner().exists()]);
   },
 
   verifyPreviewOfRecordsMatched() {
@@ -354,10 +354,10 @@ export default {
         .invoke('text')
         .then((text) => {
           const [totalRecords, previewRecords] = text.match(/\d+/g).map(Number);
-          const previewLabel = `Previewing the first ${Math.min(previewRecords, 100)} records.`;
-          expect(text.startsWith(`Query returns ${totalRecords} records.`)).to.equal(true);
+          const previewLabel = `Preview of first ${Math.min(previewRecords, 100)} records.`;
+          expect(text.startsWith(`Query would return ${totalRecords} records.`)).to.equal(true);
           expect(previewLabel).to.equal(
-            `Previewing the first ${Math.min(previewRecords, 100)} records.`,
+            `Preview of first ${Math.min(previewRecords, 100)} records.`,
           );
         });
     });
