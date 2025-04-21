@@ -230,11 +230,11 @@ export default {
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
-  verifyElectronicAccessByElementIndex: (index, content, electronicAccessIndex = 0) => {
+  verifyElectronicAccessByElementIndex: (columnIndex, content, electronicAccessIndex = 0) => {
     cy.expect(
       electronicAccessAccordion
         .find(MultiColumnListRow({ index: electronicAccessIndex }))
-        .find(MultiColumnListCell({ columnIndex: index, content }))
+        .find(MultiColumnListCell({ columnIndex, content }))
         .exists(),
     );
   },
