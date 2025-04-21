@@ -28,7 +28,12 @@ const updatedInstanceData = {
   placeOfPublication: 'Jackson',
   publicationDate: '2010',
   physicalDescription: 'XL, 892 S',
-  subject: 'French language--Dialects--Louisiana--Dictionaries',
+  subject: {
+    indexRow: 0,
+    subjectHeadings: 'French language--Dialects--Louisiana--Dictionaries',
+    subjectSource: 'Library of Congress Subject Headings',
+    subjectType: 'Topical term',
+  },
   notes: {
     noteType: 'Bibliography note',
     noteContent: 'Includes bibliographical references and index',
@@ -106,12 +111,7 @@ describe('Data Import', () => {
             updatedInstanceData.physicalDescription,
           );
           InventoryInstance.openSubjectAccordion();
-          InstanceRecordView.verifyInstanceSubject({
-            indexRow: 0,
-            subjectHeadings: updatedInstanceData.subject,
-            subjectSource: 'No value set-',
-            subjectType: 'No value set-',
-          });
+          InstanceRecordView.verifyInstanceSubject(updatedInstanceData.subject);
           InventoryInstance.checkInstanceNotes(
             updatedInstanceData.notes.noteType,
             updatedInstanceData.notes.noteContent,
