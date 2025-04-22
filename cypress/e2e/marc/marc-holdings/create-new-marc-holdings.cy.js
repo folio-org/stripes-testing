@@ -144,6 +144,7 @@ describe('MARC', () => {
         QuickMarcEditor.deleteFieldAndCheck(4, '008');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkDelete008Callout();
+        QuickMarcEditor.verifyValidationCallout(0, 1);
         QuickMarcEditor.undoDelete();
         QuickMarcEditor.updateExistingTagValue(4, '008');
         QuickMarcEditor.checkSubfieldsPresenceInTag008();
@@ -301,6 +302,7 @@ describe('MARC', () => {
         QuickMarcEditor.afterDeleteNotification('85');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(testData.tag852callout);
+        QuickMarcEditor.verifyValidationCallout(0, 1);
       },
     );
   });
