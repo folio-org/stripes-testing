@@ -139,8 +139,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C345400 Attempt to save a record without a MARC 852 (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C345400'] },
+      'C704310 Attempt to save a record without a MARC 852 (spitfire)',
+      { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C704310'] },
       () => {
         QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
           QuickMarcEditor.deleteTag(5);

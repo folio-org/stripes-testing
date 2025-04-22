@@ -130,8 +130,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C387450'], retries: 1 },
+      'C704300 "008" field existence validation when create new "MARC Holdings" (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C704300'], retries: 1 },
       () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstances.selectInstance();
@@ -256,8 +256,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C359242'] },
+      'C704299 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C704299'] },
       () => {
         InventoryInstances.searchBySource(testData.sourceMARC);
         InventoryInstances.selectInstance();
