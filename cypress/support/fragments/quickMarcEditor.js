@@ -141,6 +141,9 @@ const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confi
 const confirmButtonInDeleteFieldsModal = Button({
   id: 'clickable-quick-marc-confirm-modal-confirm',
 });
+const validationCalloutMainText =
+  'Please scroll to view the entire record. Resolve issues as needed and save to revalidate the record.';
+const validationFailErrorMessage = 'Record cannot be saved with a fail error.';
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -2823,11 +2826,31 @@ export default {
     cy.expect(Modal().absent());
   },
 
-  verifyDropdownInvalidValueHighlighted(tag, dropdownLabel, isValid = false) {
+  verifyValidationCallout(warningCount, failCount = 0) {
+    const matchers = [including(validationCalloutMainText)];
+    if (warningCount) {
+      matchers.push(including(`Warn errors: ${warningCount}`));
+    }
+    if (failCount) {
+      matchers.push(including(`Fail errors: ${failCount}`));
+      matchers.push(including(validationFailErrorMessage));
+    }
+    cy.expect(Callout(and(...matchers)).exists());
+  },
+
+  checkErrorMessageForFieldByTag(tagValue, errorMessage) {
     cy.expect(
-      QuickMarcEditorRow({ tagValue: tag })
-        .find(Select({ label: including(dropdownLabel) }))
-        .has({ valid: isValid }),
+      QuickMarcEditorRow({ tagValue })
+        .find(TextArea({ error: errorMessage }))
+        .exists(),
+    );
+  },
+
+  checkWarningMessageForFieldByTag(tagValue, warningMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue })
+        .find(TextArea({ warning: warningMessage }))
+        .exists(),
     );
   },
 };
