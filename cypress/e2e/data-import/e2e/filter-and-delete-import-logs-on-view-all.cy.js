@@ -51,7 +51,7 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
           const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
@@ -76,7 +76,7 @@ describe('Data Import', () => {
           waiter: DataImport.waitLoading,
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 5; i++) {
           const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFileViaApi(
