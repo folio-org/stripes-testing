@@ -161,6 +161,7 @@ describe('MARC', () => {
             linkValuesWithAuthoritySource.forEach((linkValue) => {
               MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
               MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
+              cy.wait(2000);
               MarcAuthorities.selectTitle(linkValue.value);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.checkCallout(testData.errorMessage);

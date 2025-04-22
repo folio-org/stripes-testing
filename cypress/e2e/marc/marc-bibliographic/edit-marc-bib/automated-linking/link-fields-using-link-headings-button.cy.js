@@ -162,8 +162,19 @@ describe('MARC', () => {
         before('Creating user and data', () => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C366115');
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388536');
+          [...matchingNaturalIds, ...notMatchingNaturalIds].forEach((query) => {
+            MarcAuthorities.getMarcAuthoritiesViaApi({
+              limit: 100,
+              query: `(keyword all "${query}" or identifiers.value=="${query.naturalId}" or naturalId="${query.naturalId}")`,
+            }).then((authorities) => {
+              if (authorities) {
+                authorities.forEach(({ id }) => {
+                  MarcAuthority.deleteViaAPI(id, true);
+                });
+              }
+            });
+          });
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -206,7 +217,7 @@ describe('MARC', () => {
                 QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
               });
               QuickMarcEditor.pressSaveAndClose();
-              cy.wait(1500);
+              cy.wait(4000);
               QuickMarcEditor.pressSaveAndClose();
               QuickMarcEditor.checkAfterSaveAndClose();
             });
@@ -302,7 +313,7 @@ describe('MARC', () => {
               );
             });
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.clickRestoreDeletedField();
             QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -341,7 +352,7 @@ describe('MARC', () => {
             });
             QuickMarcEditor.checkLinkHeadingsButton();
             QuickMarcEditor.clickSaveAndKeepEditingButton();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.clickSaveAndKeepEditingButton();
             QuickMarcEditor.verifyTagFieldAfterLinking(
               78,
