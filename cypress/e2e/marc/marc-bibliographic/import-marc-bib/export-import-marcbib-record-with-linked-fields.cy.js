@@ -30,6 +30,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
+          heading: 'C369080 Chin, Staceyann, 1972-',
         },
         {
           marc: 'C369080MarcAuth_2.mrc',
@@ -37,6 +38,7 @@ describe('MARC', () => {
           jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
           numOfRecords: 1,
           propertyName: 'authority',
+          heading: 'C369080 Feminist poetry',
         },
       ];
 
@@ -75,10 +77,13 @@ describe('MARC', () => {
           InventoryInstance.editMarcBibliographicRecord();
 
           InventoryInstance.verifyAndClickLinkIcon('100');
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.searchResults(marcFiles[1].heading);
           InventoryInstance.clickLinkButton();
           InventoryInstance.verifyAndClickLinkIcon('650');
+          MarcAuthorities.switchToSearch();
+          InventoryInstance.searchResults(marcFiles[2].heading);
           InventoryInstance.clickLinkButton();
-
           cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(3000);
