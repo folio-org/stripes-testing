@@ -22,11 +22,12 @@ import InstanceRecordView from '../../../../support/fragments/inventory/instance
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Create new MARC bib', () => {
-      const instanceTitle = `AT_C553068_MarcBibInstance_${getRandomPostfix()}`;
+      const instanceTitle = `AT_C553066_MarcBibInstance_${getRandomPostfix()}`;
       const paneHeaderCreateRecord = /New .*MARC bib record/;
       const tagLDR = 'LDR';
       const tag245 = '245';
       const tag008 = '008';
+      const dates = ['1781', '1911'];
       const user = {};
 
       before('Create test data', () => {
@@ -52,8 +53,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C553068 Create MARC bib with selected "Date type" and empty "Date 1" and "Date 2" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553068'] },
+        'C553066 Create MARC bib with selected Date type and fields Date 1, Date 2 filled by digits (spitfire)',
+        { tags: ['criticalPath', 'spitfire', 'C553066'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateRecord);
@@ -88,6 +89,14 @@ describe('MARC', () => {
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
             INVENTORY_008_FIELD_LITF_DROPDOWN.I,
           );
+          [
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.CONF,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.FEST,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.INDX,
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.LITF,
+          ].forEach((dropdownName) => {
+            QuickMarcEditor.checkDropdownMarkedAsInvalid(tag008, dropdownName, false);
+          });
           QuickMarcEditor.checkDropdownMarkedAsInvalid(
             tag008,
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
@@ -95,27 +104,46 @@ describe('MARC', () => {
 
           QuickMarcEditor.updateExistingField(tag245, instanceTitle);
           QuickMarcEditor.checkContentByTag(tag245, instanceTitle);
+          Object.values(INVENTORY_008_FIELD_DTST_DROPDOWN).forEach((dateTypeOption) => {
+            QuickMarcEditor.verifyFieldsDropdownOption(
+              tag008,
+              INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
+              dateTypeOption,
+            );
+          });
           QuickMarcEditor.selectFieldsDropdownOption(
             tag008,
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
-            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.P,
           );
           QuickMarcEditor.verifyDropdownOptionChecked(
             tag008,
             INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DTST,
-            INVENTORY_008_FIELD_DTST_DROPDOWN.M,
+            INVENTORY_008_FIELD_DTST_DROPDOWN.P,
           );
-          QuickMarcEditor.update008TextFields(INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1, '');
-          QuickMarcEditor.update008TextFields(INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2, '');
-          QuickMarcEditor.verify008TextFields(INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1, '');
-          QuickMarcEditor.verify008TextFields(INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2, '');
+          QuickMarcEditor.update008TextFields(
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            dates[0],
+          );
+          QuickMarcEditor.update008TextFields(
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            dates[1],
+          );
+          QuickMarcEditor.verify008TextFields(
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE1,
+            dates[0],
+          );
+          QuickMarcEditor.verify008TextFields(
+            INVENTORY_008_FIELD_DROPDOWNS_BOXES_NAMES.DATE2,
+            dates[1],
+          );
 
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(4000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndClose();
           InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
-          InstanceRecordView.verifyDates(undefined, undefined, INSTANCE_DATE_TYPES.MULTIPLE);
+          InstanceRecordView.verifyDates(dates[0], dates[1], INSTANCE_DATE_TYPES.DISTRIBUTION);
         },
       );
     });

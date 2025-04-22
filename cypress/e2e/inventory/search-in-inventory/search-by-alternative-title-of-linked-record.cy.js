@@ -65,16 +65,7 @@ describe('Inventory', () => {
         DataImport.waitLoading();
       }, 20_000).then(() => {
         testData.instanceSearchQueries.forEach((query) => {
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: `title="${query}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteFullInstancesByTitleViaApi(query);
         });
         testData.searchQueries.forEach((query) => {
           MarcAuthorities.getMarcAuthoritiesViaApi({
