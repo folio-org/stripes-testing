@@ -1077,10 +1077,11 @@ export default {
 
   verifyMultiSelectFilterOptionCount(accordionName, optionName, expectedCount) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.open());
     cy.expect(
       multiSelect
-        .find(MultiSelectOption({ innerHTML: including(optionName) }))
+        .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
         .has({ totalRecords: expectedCount }),
     );
   },
@@ -1114,7 +1115,12 @@ export default {
 
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
-    cy.do([multiSelect.open(), cy.wait(1000), multiSelect.select([including(optionName)])]);
+    const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do([
+      multiSelect.open(),
+      cy.wait(1000),
+      multiSelect.select([matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))]),
+    ]);
   },
 
   checkSearchButtonEnabled() {
@@ -1351,5 +1357,25 @@ export default {
     if (errorText) {
       cy.expect(accordionInteractor.find(HTML(errorText)).exists());
     }
+  },
+
+  verifyMultiSelectFilterOptionSelected(accordionName, optionName, isSelected = true) {
+    const multiSelect = Accordion(accordionName).find(
+      MultiSelect({ selected: including(optionName) }),
+    );
+    if (isSelected) cy.expect(multiSelect.exists());
+    else cy.expect(multiSelect.absent());
+  },
+
+  typeValueInMultiSelectFilterFieldAndCheck(accordionName, value, isFound = true, foundCount = 1) {
+    const multiSelect = Accordion(accordionName).find(MultiSelect());
+    cy.do(multiSelect.fillIn(value));
+    cy.wait(1000);
+    if (isFound) {
+      cy.expect([
+        multiSelect.find(MultiSelectOption(including(value))).exists(),
+        multiSelect.has({ optionsCount: foundCount }),
+      ]);
+    } else cy.expect(multiSelect.find(MultiSelectOption(including(value))).absent());
   },
 };

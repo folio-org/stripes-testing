@@ -101,14 +101,14 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
           headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
-
-          cy.login(testData.userProperties.username, testData.userProperties.password);
         });
       });
 
       beforeEach('Visit MARC Authorities', () => {
         cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password);
           cy.visit(TopMenu.marcAuthorities);
+          MarcAuthorities.waitLoading();
           cy.reload();
           MarcAuthorities.waitLoading();
         }, 20_000);
