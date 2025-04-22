@@ -1,4 +1,4 @@
-import { DEFAULT_JOB_PROFILE_NAMES, INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -71,7 +71,7 @@ describe('MARC', () => {
         'C387458 Add multiple 001s when editing "MARC Bibliographic" record (spitfire)(TaaS)',
         { tags: ['extendedPath', 'spitfire', 'C387458'] },
         () => {
-          InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
