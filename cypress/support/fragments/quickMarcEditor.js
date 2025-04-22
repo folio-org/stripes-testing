@@ -2837,4 +2837,20 @@ export default {
     }
     cy.expect(Callout(and(...matchers)).exists());
   },
+
+  checkErrorMessageForFieldByTag(tagValue, errorMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue })
+        .find(TextArea({ error: errorMessage }))
+        .exists(),
+    );
+  },
+
+  checkWarningMessageForFieldByTag(tagValue, warningMessage) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue })
+        .find(TextArea({ warning: warningMessage }))
+        .exists(),
+    );
+  },
 };
