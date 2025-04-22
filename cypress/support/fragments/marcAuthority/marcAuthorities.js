@@ -623,7 +623,9 @@ export default {
     const multiSelect = sourceFileAccordion.find(
       MultiSelect({ label: including('Authority source') }),
     );
-    cy.do([cy.wait(1000), multiSelect.select(including(option))]);
+    cy.wait(1000);
+    cy.do(multiSelect.select(including(option)));
+    cy.wait(1000);
   },
 
   verifyEmptyAuthorityField: () => {
