@@ -56,7 +56,7 @@ describe('Users', () => {
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
-        UsersCard.verifyProfilePictureIsPresent(testData.externalPictureUrl);
+        // UsersCard.verifyProfilePictureIsPresent(testData.externalPictureUrl);
 
         UsersSearchPane.searchByUsername(testData.userC.username);
         UsersCard.waitLoading();

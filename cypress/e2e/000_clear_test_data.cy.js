@@ -20,7 +20,12 @@ describe('Delete test entities', () => {
             path: 'users',
           }).then(({ body }) => {
             cy.log(body.users.length);
+            let index = 0;
             body.users.forEach((user) => {
+              index++;
+              if (index % 100 === 0) {
+                cy.getAdminToken();
+              }
               if (user.username?.includes('cypress')
                 || user.username?.includes('testUser')
                 || user.username?.includes('autotestuser')
@@ -34,6 +39,7 @@ describe('Delete test entities', () => {
           });
         });
       }).then(() => {
+        cy.getAdminToken();
         cy.okapiRequest({
           path: 'groups',
         }).then(({ body }) => {
@@ -52,6 +58,7 @@ describe('Delete test entities', () => {
           });
         });
       }).then(() => {
+        cy.getAdminToken();
         cy.okapiRequest({
           method: 'GET',
           path: 'service-points',
@@ -78,7 +85,12 @@ describe('Delete test entities', () => {
     () => {
       cy.getAdminToken().then(() => {
         Locations.getViaApi().then((locationsResponse) => {
+          let index = 0;
           locationsResponse.locations.forEach((location) => {
+            index++;
+            if (index % 100 === 0) {
+              cy.getAdminToken();
+            }
             if (location.name.includes('autotest_location')) {
               // cy.log(location.name);
               location.servicePointIds.forEach((servicePointId) => {
@@ -89,8 +101,14 @@ describe('Delete test entities', () => {
           });
         });
       }).then(() => {
+        cy.getAdminToken();
         Libraries.getViaApi().then((librariesResponse) => {
+          let index = 0;
           librariesResponse.loclibs.forEach((library) => {
+            index++;
+            if (index % 100 === 0) {
+              cy.getAdminToken();
+            }
             if (library.name.includes('autotest_library')) {
               // cy.log(library.name);
               Libraries.deleteViaApi(library.id);
@@ -98,6 +116,7 @@ describe('Delete test entities', () => {
           });
         });
       }).then(() => {
+        cy.getAdminToken();
         Campuses.getViaApi().then((campusesResponse) => {
           campusesResponse.loccamps.forEach((campus) => {
             if (campus.name.includes('autotest_campuse')) {
@@ -108,6 +127,7 @@ describe('Delete test entities', () => {
         });
       })
         .then(() => {
+          cy.getAdminToken();
           Institutions.getViaApi().then((institutionsResponse) => {
             institutionsResponse.locinsts.forEach((institution) => {
               if (institution.name.includes('autotest_institution')) {

@@ -6,7 +6,7 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Data Import', () => {
