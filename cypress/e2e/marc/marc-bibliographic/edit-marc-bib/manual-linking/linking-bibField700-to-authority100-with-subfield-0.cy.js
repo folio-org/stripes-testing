@@ -21,9 +21,9 @@ describe('MARC', () => {
           createdRecordIDs: [],
           filterStateTag100: [
             'advancedSearch',
-            'keyword exactPhrase C380742 Lee, Stan, 1922-2018, or identifiers.value exactPhrase n83169267',
+            'keyword exactPhrase C380742 Lee, Stan, 1922-2018, or identifiers.value exactPhrase n380742',
           ],
-          authority010FieldValue: 'n  83169267',
+          authority010FieldValue: 'n380742',
           authority100FieldValue: 'C380742 Lee, Stan,',
           tag100: '100',
           linkButtonToolTipText: 'Link "C380742 Lee, Stan, 1922-2018"',
@@ -42,10 +42,10 @@ describe('MARC', () => {
             '700',
             '1',
             '\\',
-            '$a C380742 Lee, Stan, $d 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
+            '$a C380742 Lee, Stan, $d 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n380742',
           ],
           updatedContent:
-            '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
+            '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n380742',
           contentAfterLinking: [
             78,
             '700',
@@ -53,7 +53,7 @@ describe('MARC', () => {
             '\\',
             '$a C380742 Lee, Stan, $d 1922-2018',
             '$e creator.',
-            '$0 http://id.loc.gov/authorities/names/n83169267',
+            '$0 http://id.loc.gov/authorities/names/n380742',
             '',
           ],
           contentAfterUnlinking: [
@@ -61,7 +61,7 @@ describe('MARC', () => {
             '700',
             '1',
             '\\',
-            '$a C380742 Lee, Stan, $d 1922-2018 $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
+            '$a C380742 Lee, Stan, $d 1922-2018 $e creator. $0 http://id.loc.gov/authorities/names/n380742',
           ],
         };
 
