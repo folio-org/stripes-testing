@@ -17,7 +17,7 @@ describe('MARC', () => {
   describe('MARC Holdings', () => {
     let user;
     const testData = {
-      headerTitle: 'Create a new MARC Holdings record',
+      headerTitle: 'New MARC holdings record',
       headerSubtitle: 'New',
     };
     const marcFile = {
@@ -101,10 +101,7 @@ describe('MARC', () => {
         QuickMarcEditor.deleteFieldAndCheck(6, '040');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
-        QuickMarcEditor.waitLoading();
-        QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkErrorMessage(6, calloutTagMessage);
+        QuickMarcEditor.verifyValidationCallout(0, 1);
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
         QuickMarcEditor.updateExistingTagName('0', '041');

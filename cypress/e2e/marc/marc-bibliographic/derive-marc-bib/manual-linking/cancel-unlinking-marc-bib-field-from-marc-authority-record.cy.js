@@ -104,7 +104,7 @@ describe('MARC', () => {
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
             });
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
@@ -119,10 +119,14 @@ describe('MARC', () => {
           ]).then((createdUserProperties) => {
             testData.userData = createdUserProperties;
 
-            cy.login(testData.userData.username, testData.userData.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
+            cy.waitForAuthRefresh(() => {
+              cy.login(testData.userData.username, testData.userData.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();
           });
@@ -168,7 +172,7 @@ describe('MARC', () => {
             QuickMarcEditor.clickKeepLinkingButton();
             QuickMarcEditor.updateExistingField('100', '$a Coates, Ta-Nehisi, $e creator.');
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkCallout('Record created.');
             InstanceRecordView.verifyInstancePaneExists();
