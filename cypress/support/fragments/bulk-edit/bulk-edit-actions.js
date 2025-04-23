@@ -1599,6 +1599,16 @@ export default {
     this.verifyConfirmButtonDisabled(true);
   },
 
+  verifyInitialStateBulkEditsFormForMarcInstance() {
+    cy.expect([
+      bulkEditsAdministrativeDataAccordion.has({ open: true }),
+      bulkEditsMarcInstancesAccordion.has({ open: true }),
+      Button({ icon: 'times', disabled: false }).exists(),
+    ]);
+    this.verifyCancelButtonDisabled(false);
+    this.verifyConfirmButtonDisabled(true);
+  },
+
   verifyInitialStateBulkEditMarcFieldsForm(fileName, recordCountAndType) {
     cy.expect([
       bulkEditPane

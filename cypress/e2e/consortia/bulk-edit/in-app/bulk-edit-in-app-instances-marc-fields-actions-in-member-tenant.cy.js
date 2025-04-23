@@ -1,4 +1,3 @@
-import moment from 'moment';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -325,9 +324,6 @@ describe('Bulk-edit', () => {
             `${BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.BIOGRAPHICAL_HISTORICAL_DATA};${notes.biographicalOrHistoricalReplaced} http://www.braudubon.org/ http://www.braudubon.com/;false`,
           );
           BulkEditActions.commitChanges();
-
-          const updateDate = moment.utc().add(1, 'minutes').format('M/D/YYYY h:mm A');
-
           BulkEditActions.verifySuccessBanner(1);
           BulkEditSearchPane.verifyExactChangesInMultipleColumnsByIdentifierInChangesAccordion(
             marcInstance.hrid,
@@ -366,7 +362,7 @@ describe('Bulk-edit', () => {
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          InstanceRecordView.verifyLastUpdatedDate(updateDate);
+          InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.field570);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.local);
           InstanceRecordView.verifyNoteTextAbsentInInstanceAccordion(notes.fundingInformation);
