@@ -44,8 +44,9 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
-
-            cy.reload();
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+            }, 30_000);
             InventoryActions.import();
             InventoryInstance.getId().then((id) => {
               instanceID = id;

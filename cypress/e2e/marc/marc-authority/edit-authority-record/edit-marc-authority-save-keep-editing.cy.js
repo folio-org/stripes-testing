@@ -228,7 +228,7 @@ describe('MARC', () => {
           QuickMarcEditor.checkAfterSaveAndCloseAuthority();
           MarcAuthority.contains(testData.editedFieldsC360092[0].content);
           MarcAuthority.contains(testData.editedFieldsC360092[1].content);
-          MarcAuthority.checkTagInRow(4, '016');
+          MarcAuthority.checkTagInRow(5, '016');
         },
       );
 
