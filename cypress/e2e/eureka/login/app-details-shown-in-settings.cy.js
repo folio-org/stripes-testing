@@ -41,13 +41,13 @@ describe('Eureka', () => {
         cy.login(tempUser.username, tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, SETTINGS_SUBSECTION_ABOUT);
         SoftwareVersions.waitLoading();
-        appIds.forEach(appId => {
+        appIds.forEach((appId) => {
           SoftwareVersions.verifyTextPresent(appId);
         });
-        moduleIds.forEach(moduleId => {
+        moduleIds.forEach((moduleId) => {
           SoftwareVersions.verifyTextPresent(moduleId);
         });
-        uiModuleIds.forEach(uiModuleId => {
+        uiModuleIds.forEach((uiModuleId) => {
           SoftwareVersions.verifyTextPresent(uiModuleId);
         });
       },
