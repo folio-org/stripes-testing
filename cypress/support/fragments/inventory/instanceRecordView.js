@@ -1,4 +1,4 @@
-import { HTML, including, not } from '@interactors/html';
+import { HTML, including, not, or } from '@interactors/html';
 import {
   Accordion,
   Badge,
@@ -22,6 +22,7 @@ import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import ItemRecordView from './item/itemRecordView';
 import SelectInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -51,6 +52,7 @@ const date2KeyValue = descriptiveDataAccordion.find(KeyValue('Date 2'));
 const addItemButton = Button('Add item');
 const subjectList = subjectAccordion.find(MultiColumnList({ id: 'list-subject' }));
 const consortiaHoldingsAccordion = Accordion({ id: including('consortialHoldings') });
+const versionHistoryButton = Button({ icon: 'clock' });
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -768,10 +770,22 @@ export default {
     ]);
   },
 
-  verifyLastUpdatedDate(updatedDate) {
+  verifyRecentLastUpdatedDateAndTime() {
+    const currentDate = new Date();
+    const datePlusOneMinute = new Date(currentDate.getTime() + 60 * 1000);
+    const updatedDate = DateTools.getFormattedEndDateWithTimUTC(currentDate, true);
+    const nextMinuteDate = DateTools.getFormattedEndDateWithTimUTC(datePlusOneMinute, true);
+
     cy.expect(
       Accordion('Administrative data')
-        .find(HTML(including(`Record last updated: ${updatedDate}`)))
+        .find(
+          HTML(
+            or(
+              including(`Record last updated: ${updatedDate}`),
+              including(`Record last updated: ${nextMinuteDate}`),
+            ),
+          ),
+        )
         .exists(),
     );
   },
@@ -798,5 +812,9 @@ export default {
       consortiaHoldingsAccordion.has({ open: isOpen }),
       Accordion({ id: including(memberId) }).exists(),
     ]);
+  },
+
+  clickVersionHistoryButton() {
+    cy.do(versionHistoryButton.click());
   },
 };
