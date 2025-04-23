@@ -67,7 +67,9 @@ describe('Orders', () => {
             order.vendor = organizationsResponse;
           });
 
-          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+          cy.loginAsAdmin();
+          TopMenuNavigation.openAppFromDropdown('Orders');
+          Orders.selectOrdersPane();
           cy.getAdminToken();
           cy.createOrderApi(order).then((response) => {
             orderNumber = response.body.poNumber;
