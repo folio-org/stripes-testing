@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
@@ -20,6 +19,8 @@ describe('Inventory', () => {
         name: 'AT_C553011_type',
         source: 'local',
       },
+      searchOption: 'All',
+      resourceTypeAccordionName: 'Resource type',
       searchQueries: [
         '1968',
         '0007',
@@ -35,21 +36,22 @@ describe('Inventory', () => {
         '1670',
       ],
     };
-    const expectedRecords = [
-      [7],
-      [29],
-      [4],
-      [16],
-      [24],
-      [9, 16],
-      [11],
-      [5, 11, 17],
-      [6, 12, 18],
-      [4, 10, 16, 21],
-      [5, 6, 11, 12, 17, 18],
+    const expectedDates = [
+      ['1678'],
+      ['0007'],
+      ['167u'],
+      ['167b'],
+      ['dd99'],
+      ['167b', '16  '],
+      [' 677'],
+      [' 677', 'c677', 'u677'],
+      ['1 77', '1d77', '1u77'],
+      ['167 ', '167b', '1678', '167u'],
+      [' 677', '1 77', 'c677', '1d77', 'u677', '1u77'],
       [],
     ];
-    let resourceTypeId;
+    const notExpectedDates = ['167 ', '167b', '1678', '167u'];
+    let resourceType;
 
     const marcFile = {
       marc: 'marcBibFileC553011.mrc',
@@ -63,12 +65,15 @@ describe('Inventory', () => {
       cy.then(() => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C553011');
-        cy.getInstanceTypes().then((types) => {
-          if (!types.filter((type) => type.code === testData.resourceTypeBody.code).length) {
+        cy.getInstanceTypes({ limit: 200 }).then((types) => {
+          const duplicateTypes = types.filter(
+            (type) => type.code === testData.resourceTypeBody.code,
+          );
+          if (!duplicateTypes.length) {
             cy.createInstanceType(testData.resourceTypeBody).then((type) => {
-              resourceTypeId = type.id;
+              resourceType = type;
             });
-          }
+          } else resourceType = duplicateTypes[0];
         });
       })
         .then(() => {
@@ -87,6 +92,16 @@ describe('Inventory', () => {
             testData.userId = userProperties.userId;
             cy.login(userProperties.username, userProperties.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+            InventorySearchAndFilter.toggleAccordionByName(testData.resourceTypeAccordionName);
+            InventorySearchAndFilter.selectMultiSelectFilterOption(
+              testData.resourceTypeAccordionName,
+              testData.resourceTypeBody.name,
+            );
+            InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
+              testData.resourceTypeAccordionName,
+              testData.resourceTypeBody.name,
+            );
           });
         });
     });
@@ -97,13 +112,25 @@ describe('Inventory', () => {
       createdInstanceIds.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
-      cy.deleteInstanceType(resourceTypeId, true);
+      cy.deleteInstanceType(resourceType.id, true);
     });
 
     it(
       'C553011 Search for Instances by "Date" field using "All" search option (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C553011'] },
-      () => {},
+      () => {
+        testData.searchQueries.forEach((query, index) => {
+          InventorySearchAndFilter.searchByParameter(testData.searchOption, query);
+          expectedDates[index].forEach((date) => {
+            InventorySearchAndFilter.verifyResultWithDate1Found(date);
+          });
+        });
+        // wait to be sure that the results are updated
+        cy.wait(1000);
+        notExpectedDates.forEach((date) => {
+          InventorySearchAndFilter.verifyResultWithDate1Found(date, false);
+        });
+      },
     );
   });
 });
