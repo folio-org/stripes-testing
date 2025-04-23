@@ -291,7 +291,11 @@ describe('Bulk-edit', () => {
         InventoryViewSource.verifyFieldContent(4, updateDate);
         InventoryViewSource.clickVersionHistoryButton();
         VersionHistorySection.waitLoading();
-        VersionHistorySection.verifyListOfChanges(['Field 830 (Added)', 'Field 856 (Edited)']);
+        VersionHistorySection.verifyListOfChanges([
+          'Field 830 (Added)',
+          'Field 856 (Edited)',
+          'Field LDR (Edited)',
+        ]);
       },
     );
   });
