@@ -97,7 +97,7 @@ describe('Inventory', () => {
       createdInstanceIds.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });
-      cy.deleteInstanceType(resourceTypeId);
+      cy.deleteInstanceType(resourceTypeId, true);
     });
 
     it(
