@@ -61,9 +61,9 @@ async function resetEholdingsKbs() {
   const existingKbs = await getEholdingsKbs();
   if (
     existingKbs.length !== 1 ||
-    existingKbs[0].attributes.url !== process.env.EHOLDINGS_KB_URL ||
-    existingKbs[0].attributes.customerId !== process.env.EHOLDINGS_KB_ID ||
-    existingKbs[0].attributes.apiKey !== process.env.EHOLDINGS_KB_KEY
+    existingKbs[0].attributes.url !== process.env.KB_URL ||
+    existingKbs[0].attributes.customerId !== process.env.KB_ID ||
+    existingKbs[0].attributes.apiKey !== process.env.KB_KEY
   ) {
     for (const kb of existingKbs) {
       await axios.delete(`/eholdings/kb-credentials/${kb.id}`);
@@ -76,10 +76,10 @@ async function resetEholdingsKbs() {
         data: {
           type: 'kbCredentials',
           attributes: {
-            url: process.env.EHOLDINGS_KB_URL,
-            customerId: process.env.EHOLDINGS_KB_ID,
+            url: process.env.KB_URL,
+            customerId: process.env.KB_ID,
             name: 'Knowledge base Auto',
-            apiKey: process.env.EHOLDINGS_KB_KEY,
+            apiKey: process.env.KB_KEY,
           },
         },
       },
