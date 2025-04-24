@@ -324,8 +324,12 @@ export default {
     );
   },
 
-  checkIsPiecesCreated: (title) => {
-    filterOpenReceiving();
+  checkIsPiecesCreated: (title, orderStatus) => {
+    cy.wait(2000);
+    cy.do([
+      Accordion({ id: 'filter-purchaseOrder.workflowStatus' }).clickHeader(),
+      Select({ id: 'purchaseOrder.workflowStatus-select' }).choose(orderStatus),
+    ]);
     cy.expect(
       Pane('Receiving')
         .find(MultiColumnList({ id: 'receivings-list' }))
