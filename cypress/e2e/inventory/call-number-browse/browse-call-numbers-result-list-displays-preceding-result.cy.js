@@ -97,6 +97,9 @@ describe('Inventory', () => {
         // Fill in the input field at "Search & filter" pane with the "Call number" value which is alphabetically the first one out of all 25 (see Preconditions)
         // (For example, "E 3184 S75 1231")
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        callNumbers.forEach((callNumber) => {
+          BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+        });
         InventorySearchAndFilter.browseSearch(callNumbers[0]);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0]);
         BrowseCallNumber.resultRowsIsInRequiredOder(callNumbers);
