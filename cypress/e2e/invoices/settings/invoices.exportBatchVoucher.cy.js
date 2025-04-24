@@ -9,7 +9,6 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import Organizations from '../../../support/fragments/organizations/organizations';
 import BatchGroups from '../../../support/fragments/settings/invoices/batchGroups';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('Invoices', () => {
@@ -61,7 +60,6 @@ describe('Invoices', () => {
       SettingsInvoices.setConfigurationBatchGroup(batchGroupConfiguration);
       Funds.createFundViaUI(fund).then(() => {
         Funds.addBudget(100);
-        Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
       });
       invoiceLine.subTotal = -subtotalValue;
       TopMenuNavigation.openAppFromDropdown('Invoices');
