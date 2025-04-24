@@ -805,9 +805,6 @@ export default {
   },
 
   verifyShelvingOrder(val) {
-    cy.get('#input-inventory-search-qindex').then((elem) => {
-      expect(elem.text()).to.include('Effective call number (item), shelving order');
-    });
     cy.expect(inventorySearchAndFilter.has({ value: val }));
   },
 

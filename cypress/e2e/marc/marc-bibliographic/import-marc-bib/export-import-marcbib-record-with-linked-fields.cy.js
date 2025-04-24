@@ -54,7 +54,9 @@ describe('MARC', () => {
       before(() => {
         cy.getAdminToken();
         InventoryInstances.deleteInstanceByTitleViaApi('C369080');
-        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C369080');
+        ['Feminist poetry', 'C369080', 'Chin, Staceyann'].forEach((title) => {
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
+        });
         DataImport.uploadFilesViaApi(marcFiles).then((ids) => Object.assign(testData, ids));
         cy.createTempUser([
           permissions.moduleDataImportEnabled.gui,

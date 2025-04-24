@@ -51,7 +51,7 @@ describe('MARC', () => {
             content: '$0 no2021056177 $a Chin S. $d unknown',
             secondBox: '2',
             thirdBox: '\\',
-            fourthBox: '$a C388519Chin, Staceyann, $d 1972- $h Spoken word $t Crossfire.',
+            fourthBox: '$a C388519Chin, Staceyann, $d 1972- $t Crossfire. $h Spoken word',
             fifthBox: '',
             sixthBox: '$0 http://id.loc.gov/authorities/names/no2021056177',
             seventhBox: '',
