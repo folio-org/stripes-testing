@@ -39,3 +39,4 @@ import './z3950';
 import './usage-reports';
 import './reading-room-access';
 import './bulk-edit';
+import './locate';
