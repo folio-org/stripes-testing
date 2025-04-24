@@ -130,11 +130,12 @@ Cypress.Commands.add('createInstanceType', (specialInstanceType) => {
   });
 });
 
-Cypress.Commands.add('deleteInstanceType', (id) => {
+Cypress.Commands.add('deleteInstanceType', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `instance-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
