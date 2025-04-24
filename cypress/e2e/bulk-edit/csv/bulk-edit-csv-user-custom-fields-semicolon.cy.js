@@ -52,8 +52,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      cy.loginAsAdmin();
-      cy.visit(SettingsMenu.customFieldsPath);
+      cy.loginAsAdmin({ path: SettingsMenu.customFieldsPath, waiter: CustomFields.waitLoading });
       CustomFields.deleteCustomField(customFieldData.fieldLabel);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);

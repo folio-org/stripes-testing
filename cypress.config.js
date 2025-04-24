@@ -32,10 +32,12 @@ module.exports = defineConfig({
   pageLoadTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    OKAPI_HOST: 'https://kong-eureka-aqa-testing.int.aws.folio.org',
+    EDGE_HOST: 'https://edge-eureka-bugfest-ramsons-aqa.int.aws.folio.org',
+    EDGE_API_KEY: '',
+    OKAPI_TENANT: 'fs09000011',
+    diku_login: 'EBSCOFseAdmin',
+    diku_password: 'r5OmUljfBv1iVDktEfwyrKvO',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
     // it is necessary to set the ECS environment name when running ECS tests to get correct tenants names on the target env: 'sprint' or 'snapshot'
@@ -151,7 +153,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+    baseUrl: 'https://eureka-aqa-testing.int.aws.folio.org',
     testIsolation: false,
   },
 });

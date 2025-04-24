@@ -9,15 +9,15 @@ require('dotenv').config();
 
 const selectedStatus = [status.Failed, status.Retest, status.Untested];
 const selectedTeams = [
-  // team.Firebird,
-  // team.Folijet,
-  // team.Spitfire,
-  // team.Thunderjet,
-  // team.Vega,
+  team.Firebird,
+  team.Folijet,
+  team.Spitfire,
+  team.Thunderjet,
+  team.Vega,
   team.Volaris,
-  // team.Corsair,
-  // team.Eureka,
-  // team.Citation,
+  team.Corsair,
+  team.Eureka,
+  team.Citation,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
@@ -42,7 +42,7 @@ function parseCommand() {
         if (
           selectedStatus.includes(test.status_id) &&
           selectedTeams.includes(test.custom_dev_team)
-          // && test.custom_test_group === 1     //---> to select smoke tests
+          // && test.custom_test_group === 1     // ---> to select smoke tests (1), critical (2), extended (3)
         ) {
           ids.push('C' + test.case_id + ' ');
         }
