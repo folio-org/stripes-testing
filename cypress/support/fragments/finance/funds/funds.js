@@ -30,6 +30,7 @@ import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
 import InteractorsTools from '../../../utils/interactorsTools';
+import FiscalYears from '../fiscalYears/fiscalYears';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -874,8 +875,9 @@ export default {
     cy.getAdminToken();
     cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
       ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-      cy.getFiscalYearsApi({ limit: 1 }).then((response) => {
-        ledger.fiscalYearOneId = response.body.fiscalYears[0].id;
+      FiscalYears.getViaApi({ limit: 1, query: 'code=="FY2025"' }).then((fiscalYearResponse) => {
+        console.log(fiscalYearResponse);
+        ledger.fiscalYearOneId = fiscalYearResponse.fiscalYears[0].id;
         cy.createLedgerApi({
           ...ledger,
         });
