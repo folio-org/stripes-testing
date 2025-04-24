@@ -8,7 +8,7 @@ describe('fse-inventory', () => {
 
   it(
     `TC195317 - Get instances by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'inventory'] },
+    { tags: ['sanity', 'fse', 'api', 'inventory', 'loc'] },
     () => {
       cy.getInventoryInstanceByStatus('Available').then((response) => {
         cy.expect(response.status).to.eq(200);
