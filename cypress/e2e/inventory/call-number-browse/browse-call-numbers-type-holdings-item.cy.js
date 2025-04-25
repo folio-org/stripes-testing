@@ -173,6 +173,9 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C396366', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
+        callNumbers.forEach((callNumber, index) => {
+          if (index < 4) BrowseCallNumber.waitForCallNumberToAppear(callNumber.value);
+        });
         InventorySearchAndFilter.verifyBrowseOptions();
 
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(

@@ -59,12 +59,14 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.resetTenant();
-            cy.login(users.userAProperties.username, users.userAProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
-            InventoryInstances.waitContentLoading();
+            cy.waitForAuthRefresh(() => {
+              cy.login(users.userAProperties.username, users.userAProperties.password, {
+                path: TopMenu.inventoryPath,
+                waiter: InventoryInstances.waitContentLoading,
+              });
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
           });
       });
 
@@ -100,10 +102,14 @@ describe('MARC', () => {
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkContributor(testData.contributor);
 
-          cy.login(users.userBProperties.username, users.userBProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(users.userBProperties.username, users.userBProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
           InventoryInstances.selectInstance();
