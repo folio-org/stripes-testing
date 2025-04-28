@@ -125,7 +125,7 @@ export default {
     return cy.wrap(true).then(() => {
       cy.wait(1000);
       cy.do([itemBarcodeField.exists(), itemBarcodeField.fillIn(barcode)]);
-      cy.wait(1000);
+      cy.wait(1000);cy.pause();
       cy.do(addItemButton.click());
       cy.wait(500);
     });
@@ -179,7 +179,11 @@ export default {
   },
 
   openLoanDetails(username) {
-    cy.do([availableActionsButton.click(), loanDetailsButton.click()]);
+    cy.wait(1000);
+    cy.do(availableActionsButton.click());
+    cy.wait(500);
+    cy.do(loanDetailsButton.click());
+    cy.wait(1000);
     cy.expect(Pane(including(username)).exists());
     cy.expect(Pane(including('Loan details')).exists());
   },
