@@ -532,10 +532,14 @@ export default {
   saveAndCloseWithValidationWarnings() {
     cy.intercept('POST', '/records-editor/validate').as('validateRequest');
     cy.do(saveAndCloseButton.click());
-    cy.wait('@validateRequest');
+    cy.wait('@validateRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 200);
+
+    this.closeAllCallouts();
     cy.expect(saveAndCloseButton.is({ disabled: false }));
-    cy.wait(2000);
+
+    cy.intercept('PUT', '/records-editor/records/*').as('saveRecordRequest');
     cy.do(saveAndCloseButton.click());
+    cy.wait('@saveRecordRequest', { timeout: 5_000 }).its('response.statusCode').should('eq', 202);
   },
 
   pressSaveAndKeepEditing(calloutMsg) {
