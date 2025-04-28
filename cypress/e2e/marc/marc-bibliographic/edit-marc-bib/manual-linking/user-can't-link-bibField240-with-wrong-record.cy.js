@@ -69,7 +69,7 @@ describe('MARC', () => {
             propertyName: 'instance',
           },
           {
-            marc: 'marcAuthFileForCC380453.mrc',
+            marc: 'marcAuthFileForC380453.mrc',
             fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 10,

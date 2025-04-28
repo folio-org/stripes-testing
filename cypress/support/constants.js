@@ -985,6 +985,7 @@ export const BULK_EDIT_TABLE_COLUMN_HEADERS = {
     TYPE_COMPUTER_FILE_DATA_NOTE: 'Type of computer file or data note',
     TYPE_REPORT_PERIOD_COVERED_NOTE: 'Type of report and period covered note',
     WITH_NOTE: 'With note',
+    ELECTRONIC_ACCESS: 'Electronic access',
   },
   INVENTORY_ITEMS: {
     BARCODE: 'Barcode',

@@ -55,71 +55,81 @@ const testData = {
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.getInstancesViaApi({
-          limit: 100,
-          query: 'title="Black Panther"',
-        }).then((instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-        testData.searchAuthorityQueries.forEach((query) => {
-          MarcAuthorities.getMarcAuthoritiesViaApi({
+      cy.getAdminToken()
+        .then(() => {
+          InventoryInstances.getInstancesViaApi({
             limit: 100,
-            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-          }).then((authorities) => {
-            if (authorities) {
-              authorities.forEach(({ id }) => {
-                MarcAuthority.deleteViaAPI(id);
+            query: 'title="Black Panther"',
+          }).then((instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
               });
             }
-          });
-        });
-        testData.marcFiles.forEach((marcFile) => {
-          DataImport.uploadFileViaApi(
-            marcFile.marc,
-            marcFile.fileName,
-            marcFile.jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              testData.recordIDs.push(record[marcFile.propertyName].id);
+            testData.searchAuthorityQueries.forEach((query) => {
+              MarcAuthorities.getMarcAuthoritiesViaApi({
+                limit: 100,
+                query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+              }).then((authorities) => {
+                if (authorities) {
+                  authorities.forEach(({ id }) => {
+                    MarcAuthority.deleteViaAPI(id, true);
+                  });
+                }
+              });
             });
           });
-        });
-      });
-      cy.waitForAuthRefresh(() => {
-        cy.loginAsAdmin();
-        TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        cy.reload();
-        InventoryInstances.waitContentLoading();
-      }, 20_000);
-      for (let i = 0; i < testData.instanceRecords.length; i++) {
-        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tags[0]);
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(testData.searchAuthorityQueries[0]);
-        MarcAuthoritiesSearch.selectExcludeReferencesFilter();
-        MarcAuthoritiesSearch.selectAuthorityByIndex(i);
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
-        QuickMarcEditor.pressSaveAndClose();
-        cy.wait(3000);
-        QuickMarcEditor.pressSaveAndClose();
+          testData.marcFiles.forEach((marcFile) => {
+            DataImport.uploadFileViaApi(
+              marcFile.marc,
+              marcFile.fileName,
+              marcFile.jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                testData.recordIDs.push(record[marcFile.propertyName].id);
+              });
+            });
+          });
+        })
+        .then(() => {
+          cy.waitForAuthRefresh(() => {
+            cy.loginAsAdmin();
+            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+            cy.reload();
+            InventoryInstances.waitContentLoading();
+          }, 20_000);
+          for (let i = 0; i < testData.instanceRecords.length; i++) {
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.byShared('No');
+            });
+            InventoryInstances.searchByTitle(testData.recordIDs[i]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tags[0]);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.searchResults(testData.searchAuthorityQueries[0]);
+            cy.ifConsortia(true, () => {
+              MarcAuthorities.clickAccordionByName('Shared');
+              MarcAuthorities.actionsSelectCheckbox('No');
+            });
+            MarcAuthoritiesSearch.selectExcludeReferencesFilter();
+            MarcAuthoritiesSearch.selectAuthorityByIndex(i);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
+            QuickMarcEditor.pressSaveAndClose();
+            cy.wait(3000);
+            QuickMarcEditor.pressSaveAndClose();
 
-        InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
-        InventoryInstances.resetAllFilters();
-      }
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-      });
-      cy.logout();
+            InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
+            InventoryInstances.resetAllFilters();
+          }
+          cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+            testData.user = userProperties;
+          });
+          cy.logout();
+        });
     });
 
     after('Delete test data', () => {
@@ -145,6 +155,7 @@ describe('Inventory', () => {
         }, 20_000);
 
         InventorySearchAndFilter.selectBrowseSubjects();
+        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true);
         InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
         BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
           5,
@@ -154,8 +165,8 @@ describe('Inventory', () => {
           6,
           testData.searchAuthorityQueries[0],
         );
-        BrowseSubjects.verifyNumberOfTitlesForRow(5, 3);
-        BrowseSubjects.verifyNumberOfTitlesForRow(6, 3);
+        BrowseSubjects.verifyNumberOfTitlesForRow(5, 1);
+        BrowseSubjects.verifyNumberOfTitlesForRow(6, 1);
       },
     );
   });

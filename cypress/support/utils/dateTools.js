@@ -145,6 +145,14 @@ export default {
       currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
   },
+
+  get4DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 5);
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate(),
+    )}/${currentDate.getFullYear()}`;
+  },
   get3DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 4);
@@ -540,5 +548,17 @@ export default {
 
     const dateObject = new Date(year, month, day, hours, minutes, seconds, milliseconds);
     return dateObject;
+  },
+
+  getCurrentISO8601TimestampUpToMinutesUTC(offsetMinutes = 0) {
+    // Formats date as yyyymmddhhmm
+    const now = new Date(Date.now() + offsetMinutes * 60 * 1000);
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+
+    return `${year}${month}${day}${hours}${minutes}`;
   },
 };

@@ -130,11 +130,12 @@ Cypress.Commands.add('createInstanceType', (specialInstanceType) => {
   });
 });
 
-Cypress.Commands.add('deleteInstanceType', (id) => {
+Cypress.Commands.add('deleteInstanceType', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `instance-types/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: !ignoreErrors,
   });
 });
 
@@ -639,5 +640,23 @@ Cypress.Commands.add('getInstancesCountViaApi', (ignoreStaffSuppressed = true) =
     isDefaultSearchParamsRequired: false,
   }).then(({ body }) => {
     return body.totalRecords;
+  });
+});
+
+Cypress.Commands.add('getStatisticalCodes', (searchParams) => {
+  cy.okapiRequest({
+    path: 'statistical-codes',
+    searchParams,
+  }).then(({ body }) => {
+    return body.statisticalCodes;
+  });
+});
+
+Cypress.Commands.add('getStatisticalCodeTypes', (searchParams) => {
+  cy.okapiRequest({
+    path: 'statistical-code-types',
+    searchParams,
+  }).then(({ body }) => {
+    return body.statisticalCodeTypes;
   });
 });

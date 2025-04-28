@@ -6,7 +6,6 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Organizations from '../../support/fragments/organizations/organizations';
-import DateTools from '../../support/utils/dateTools';
 import { Approvals } from '../../support/fragments/settings/invoices';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
@@ -33,7 +32,6 @@ describe('Invoices', () => {
     });
     Funds.createFundViaUI(fund).then(() => {
       Funds.addBudget(100);
-      Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
     });
     invoiceLine.subTotal = -subtotalValue;
     TopMenuNavigation.openAppFromDropdown('Invoices');
@@ -56,7 +54,7 @@ describe('Invoices', () => {
       Helper.selectFundsNavigation();
       Helper.searchByName(fund.name);
       Funds.selectFund(fund.name);
-      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Pending payment');
       Funds.varifyDetailsInTransaction(
