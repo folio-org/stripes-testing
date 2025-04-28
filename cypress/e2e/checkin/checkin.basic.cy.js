@@ -139,7 +139,7 @@ describe('Check in', () => {
           CheckInActions.checkInItemGui(itemData.barcode);
           CheckInPane.verifyResultCells();
           CheckInPane.checkResultsInTheRow(checkInResultsData);
-          CheckInActions.checkActionsMenuOptions();cy.pause();
+          CheckInActions.checkActionsMenuOptions();
           CheckInActions.openLoanDetails(userData.username);
           CheckInActions.openCheckInPane();
           CheckInActions.openPatronDetails(userData.username);
