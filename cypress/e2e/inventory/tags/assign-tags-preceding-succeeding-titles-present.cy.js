@@ -21,6 +21,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -29,7 +30,7 @@ describe('Inventory', () => {
     let userData;
     const tagC358961 = `tagc358961${uuid()}`;
     const tagC358962 = `tagc358962${uuid()}`;
-    const tagsC367962 = [...Array(5)].map((_, index) => `tag${index + 1}${uuid()}`);
+    const tagsC367962 = [...Array(5)].map(() => `tag${getRandomStringCode(5)}`.toLowerCase());
     const testData = {
       userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
       fileName: `testFile.${getRandomPostfix()}.mrc`,
@@ -117,7 +118,9 @@ describe('Inventory', () => {
         QuickMarcEditor.addValuesToExistingField(5, '780', '$t preceding $x 1234-1234', '0', '0');
         QuickMarcEditor.addEmptyFields(6);
         QuickMarcEditor.addValuesToExistingField(6, '785', '$t succeeding $x 1234-1234', '0', '0');
+        cy.wait(1000);
         QuickMarcEditor.pressSaveAndClose();
+        cy.wait(1000);
         QuickMarcEditor.checkAfterSaveAndClose();
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.openTagsField();
@@ -162,7 +165,7 @@ describe('Inventory', () => {
 
         HoldingsRecordEdit.openTags();
         cy.wrap(tagsC367962).each((tag) => {
-          cy.wait(2000);
+          cy.wait(500);
           HoldingsRecordEdit.addTag(tag);
         });
 

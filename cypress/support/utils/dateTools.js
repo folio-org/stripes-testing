@@ -1,5 +1,5 @@
 import moment from 'moment';
-import getRandomStringCode from './genereteTextCode';
+import getRandomStringCode from './generateTextCode';
 
 const padWithZero = (value) => String(value).padStart(2, '0');
 const currentStartDate = new Date();

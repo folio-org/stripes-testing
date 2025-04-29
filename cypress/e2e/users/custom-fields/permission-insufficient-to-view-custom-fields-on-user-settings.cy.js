@@ -21,9 +21,6 @@ describe('Users', () => {
           .then((userProperties) => {
             userData = userProperties;
             UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-          })
-          .then(() => {
-            cy.login(userData.username, userData.password);
           });
       });
     });
@@ -37,7 +34,8 @@ describe('Users', () => {
       'C388654 permission insufficient to view custom fields on user settings (volaris)',
       { tags: ['extendedPath', 'volaris', 'C388654', 'eurekaPhase1'] },
       () => {
-        cy.visit(TopMenu.customFieldsPath);
+        cy.login(userData.username, userData.password,
+          { path: TopMenu.customFieldsPath, waiter: CustomFields.waitLoading });
         CustomFields.waitLoading();
       },
     );

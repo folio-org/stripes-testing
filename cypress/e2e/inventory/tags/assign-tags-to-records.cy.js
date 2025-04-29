@@ -12,7 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -93,7 +93,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.filterHoldingsByTag(tagName);
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         JobProfileView.removeTag(tagName);
@@ -113,8 +113,8 @@ describe('Inventory', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordEdit.openTags();
         cy.wrap(tags).each((tag) => {
-          cy.wait(200);
-          HoldingsRecordEdit.clearTagsInput();
+          // cy.wait(200);
+          // HoldingsRecordEdit.clearTagsInput();
           cy.wait(500);
           HoldingsRecordEdit.addTag(tag);
         });
@@ -146,7 +146,7 @@ describe('Inventory', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.filterByTag(tagName);
+        InventorySearchAndFilter.filterItemsByTag(tagName);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(testData.folioInstances[0].barcodes[0]);
         JobProfileView.removeTag(tagName);

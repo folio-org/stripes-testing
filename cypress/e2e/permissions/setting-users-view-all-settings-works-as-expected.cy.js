@@ -24,6 +24,7 @@ import PatronBlockTemplates from '../../support/fragments/settings/users/patronB
 describe('Permissions', () => {
   describe('Permissions', () => {
     describe('Users', () => {
+      const waitTimeout = 3 * 1000;
       let userData;
       const patronGroup = {
         name: getTestEntityValue('GroupPermissionSets'),
@@ -79,7 +80,6 @@ describe('Permissions', () => {
           PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
             patronGroup.id = patronGroupResponse;
           });
-          PermissionSets.createPermissionSetViaApi(permissionSetBody);
           cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then(
             (userProperties) => {
               userData = userProperties;
@@ -97,7 +97,9 @@ describe('Permissions', () => {
       after('Deleting created entities', () => {
         cy.getAdminToken();
         PatronBlockTemplates.deleteViaApi(testData.patronBlockTemplateId);
-        PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
+        if (permissionSetBody) {
+          PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
+        }
         UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
           testData.userServicePoint.id,
         ]);
@@ -116,56 +118,71 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C396393'] },
         () => {
           cy.visit(SettingsMenu.permissionSets);
+          cy.wait(waitTimeout);
           PermissionSets.waitLoading();
           PermissionSets.checkNewButtonNotAvailable();
 
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.addressTypes);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.departments);
+          cy.wait(waitTimeout);
           Departments.waitLoading();
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.customFieldsPath);
+          cy.wait(waitTimeout);
           CustomFields.waitLoading();
           CustomFields.verifyEditButtonAbsent();
 
           cy.visit(SettingsMenu.usersOwnersPath);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.manualCharges);
+          cy.wait(waitTimeout);
           ManualCharges.waitLoading();
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.waiveReasons);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.paymentsPath);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.refundReasons);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.commentRequired);
+          cy.wait(waitTimeout);
           CommentRequired.waitLoading();
           CommentRequired.verifyEditNotAvailable();
 
           cy.visit(SettingsMenu.transferAccounts);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.conditionsPath);
+          cy.wait(waitTimeout);
           Conditions.waitLoading();
           Conditions.select(Arrays.getRandomElement(Conditions.conditionTypes));
           Conditions.verifyConditionsCantBeChanged();
 
           cy.visit(SettingsMenu.limitsPath);
+          cy.wait(waitTimeout);
           Limits.selectGroup('undergrad');
           Limits.verifyLimitsCantBeChanged();
 
           cy.visit(SettingsMenu.patronBlockTemplates);
+          cy.wait(waitTimeout);
           PatronBlockTemplates.verifyAddNewNotAvailable();
         },
       );
@@ -175,6 +192,7 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C407702'] },
         () => {
           cy.visit(SettingsMenu.manualCharges);
+          cy.wait(waitTimeout);
           ManualCharges.waitLoading();
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
         },
@@ -184,7 +202,9 @@ describe('Permissions', () => {
         'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
         { tags: ['extendedPath', 'volaris', 'C402342'] },
         () => {
+          PermissionSets.createPermissionSetViaApi(permissionSetBody);
           cy.visit(SettingsMenu.permissionSets);
+          cy.wait(waitTimeout);
           PermissionSets.waitLoading();
           PermissionSets.checkNewButtonNotAvailable();
           PermissionSets.chooseFromList(permissionSetBody.displayName);
@@ -205,6 +225,7 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C402752'] },
         () => {
           cy.visit(SettingsMenu.usersOwnersPath);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEntityInTable({
             name: ownerBody.owner,
             description: ownerBody.desc,
@@ -212,6 +233,7 @@ describe('Permissions', () => {
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.waiveReasons);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEntityInTable({
             name: waiveReason.nameReason,
             description: waiveReason.description,
@@ -219,10 +241,12 @@ describe('Permissions', () => {
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.paymentsPath);
+          cy.wait(waitTimeout);
           PaymentMethods.checkPaymentMethodInTable(ownerBody.owner, testData.paymentMethodName);
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.refundReasons);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEntityInTable({
             name: refundReason.nameReason,
             description: refundReason.description,
@@ -236,6 +260,7 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C402779'] },
         () => {
           cy.visit(SettingsMenu.patronBlockTemplates);
+          cy.wait(waitTimeout);
           PatronBlockTemplates.findPatronTemplate(patronBlockTemplate.name);
           PermissionSets.checkEditButtonNotAvailable();
         },
@@ -246,6 +271,7 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C404380'] },
         () => {
           cy.visit(SettingsMenu.limitsPath);
+          cy.wait(waitTimeout);
           Limits.selectGroup('undergrad');
           Limits.verifyLimitsCantBeChanged();
         },
@@ -256,6 +282,7 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C404383'] },
         () => {
           cy.visit(SettingsMenu.conditionsPath);
+          cy.wait(waitTimeout);
           Conditions.waitLoading();
           Conditions.select(Arrays.getRandomElement(Conditions.conditionTypes));
           Conditions.verifyConditionsCantBeChanged();
@@ -267,6 +294,7 @@ describe('Permissions', () => {
         { tags: ['extendedPath', 'volaris', 'C405545'] },
         () => {
           cy.visit(SettingsMenu.patronGroups);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEntityInTable({
             name: 'undergrad',
             description: 'Undergraduate Student',
@@ -274,10 +302,12 @@ describe('Permissions', () => {
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.addressTypes);
+          cy.wait(waitTimeout);
           UsersSettingsGeneral.checkEntityInTable({ name: 'Work', description: 'Work Address' });
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
           cy.visit(SettingsMenu.departments);
+          cy.wait(waitTimeout);
           Departments.waitLoading();
           UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
         },
