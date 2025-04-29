@@ -94,6 +94,7 @@ describe('Inventory', () => {
                   createdInstanceIds.push(instanceData.instanceId);
                 });
               });
+              cy.wait(10_000);
               cy.assignAffiliationToUser(Affiliations.College, testData.userProperties.userId);
               cy.setTenant(Affiliations.College);
               cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
@@ -109,7 +110,6 @@ describe('Inventory', () => {
         cy.resetTenant();
         cy.getAdminToken();
         cy.setupInventoryDefaultSortViaAPI(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE.toLowerCase());
-        cy.getAdminToken();
         createdInstanceIds.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);
         });
