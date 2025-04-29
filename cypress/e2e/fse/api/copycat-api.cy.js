@@ -1,7 +1,7 @@
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('fse-copycat for production tenants', () => {
+describe('fse-copycat for production tenants', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the allure report
     cy.allure().logCommandSteps(false);
