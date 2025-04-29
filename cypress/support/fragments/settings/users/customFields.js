@@ -61,9 +61,12 @@ export default {
       Accordion({ label: including(name), isWrapper: false })
         .find(Button({ icon: 'trash' }))
         .click(),
-      saveAndCloseButton.click(),
-      saveLoseDataButton.click(),
     ]);
+    cy.wait(500);
+    cy.do(saveAndCloseButton.click());
+    cy.wait(1000);
+    cy.do(saveLoseDataButton.click());
+    cy.wait(3000);
   },
 
   addCustomTextField(data) {

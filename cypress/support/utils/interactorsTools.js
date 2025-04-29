@@ -121,6 +121,9 @@ export default {
   checkTextFieldError: (fieldName, error) => {
     cy.expect(TextField(fieldName).has({ error }));
   },
+  checkTextFieldErrorIncludingName: (fieldName, error) => {
+    cy.expect(TextField(including(fieldName)).has({ error }));
+  },
   setTextFieldValue({ textField, fieldValue, clearField = false }) {
     if (fieldValue) {
       cy.wait(1000);

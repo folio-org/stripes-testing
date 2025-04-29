@@ -713,6 +713,26 @@ export default {
     cy.wait(500);
   },
 
+  filterHoldingsByTag(tag) {
+    cy.wait(500);
+    cy.do(tagsAccordionButton.click());
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'holdingsTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
+  },
+
+  filterItemsByTag(tag) {
+    cy.wait(500);
+    cy.do(tagsAccordionButton.click());
+    cy.wait(500);
+    cy.do(MultiSelect({ id: 'itemsTags-multiselect' }).toggle());
+    cy.wait(500);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(500);
+  },
+
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
     cy.expect(HTML('No matching items found!').exists());
