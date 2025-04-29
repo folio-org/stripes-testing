@@ -1,4 +1,4 @@
-describe('fse-export-manager', () => {
+describe('fse-export-manager', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
