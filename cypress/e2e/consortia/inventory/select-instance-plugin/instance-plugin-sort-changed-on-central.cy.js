@@ -148,8 +148,12 @@ describe('Inventory', () => {
             InventoryInstances.checkResultListSortedByColumn(2);
             InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.CONTRIBUTORS);
 
-            ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            Orders.waitLoading();
+            cy.waitForAuthRefresh(() => {
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              Orders.waitLoading();
+              cy.reload();
+              Orders.waitLoading();
+            }, 20_000);
             Orders.selectOrderByPONumber(testData.orderMember.poNumber);
             OrderDetails.selectAddPOLine();
             OrderLineEditForm.clickTitleLookUpButton();
