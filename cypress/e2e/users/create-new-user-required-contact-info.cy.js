@@ -6,7 +6,7 @@ import getRandomPostfix, { getTestEntityValue } from '../../support/utils/string
 
 describe('Users', () => {
   const createUserData = () => ({
-    username: getTestEntityValue('username'),
+    username: 'u' + getRandomPostfix(),
     barcode: getRandomPostfix(),
     personal: {
       firstName: getTestEntityValue('firstname'),
@@ -57,8 +57,8 @@ describe('Users', () => {
 
       UsersSearchPane.waitLoading();
       Users.createViaUiIncomplete(userWithSameUsername);
-      cy.wait(10000);
-      InteractorsTools.checkTextFieldError('Username*', 'This username already exists');
+      cy.wait(5000);
+      InteractorsTools.checkTextFieldErrorIncludingName('Username', 'This username already exists');
     },
   );
 });

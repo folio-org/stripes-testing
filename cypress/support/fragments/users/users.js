@@ -235,7 +235,7 @@ export default {
         Select({ id: 'type' }).choose(userData.userType ? userData.userType : 'Staff'),
       ])
       .then(() => {
-        cy.wait(1000);
+        cy.wait(10000);
         cy.do(Button({ id: 'clickable-save' }).click());
       })
       .then(() => {
@@ -259,7 +259,7 @@ export default {
       Select({ id: 'type' }).choose(userData.userType ? userData.userType : 'Staff'),
     ])
       .then(() => {
-        cy.wait(1000);
+        cy.wait(10000);
         cy.do(Button({ id: 'clickable-save' }).click());
       });
   },

@@ -37,7 +37,7 @@ const contactInformationAccordion = Accordion('Contact information');
 const customFieldsAccordion = Accordion('Custom fields');
 const userPermissionsAccordion = Accordion('User permissions');
 const createRequestActionsButton = Button('Create request');
-const createFeeFineActionsButton = Button('Create fee/fine');
+const createFeeFineActionsButton = Button('New fee/fine');
 const createPatronBlockActionsButton = Button('Create block');
 const userInformationAccordion = Accordion('User information');
 const rootSection = Section({ id: 'pane-userdetails' });
@@ -497,7 +497,7 @@ export default {
   startFeeFine: () => {
     cy.wait(500);
     cy.do(actionsButton.click());
-    cy.do(Button('Create fee/fine').click());
+    cy.do(Button('New fee/fine').click());
     cy.wait(500);
   },
 
@@ -508,7 +508,7 @@ export default {
 
   startBlock: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('Create block').click());
+    cy.do(Button('New block').click());
   },
 
   openTagsPane: () => {

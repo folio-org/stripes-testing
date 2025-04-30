@@ -1,86 +1,52 @@
-import uuid from 'uuid';
 import { APPLICATION_NAMES } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
+    user: Users.generateUserModel(),
   };
-  let userData = {
-    password: getTestEntityValue('Password'),
-    username: getTestEntityValue('cypresstestuser'),
-  };
-  let newUserProperties;
 
   before('Create test data', () => {
-    cy.getAdminToken();
-
-    ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Locations.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
+    cy.getAdminToken().then(() => {
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+        testData.servicePointId = servicePoints[0].id;
       });
-    });
-
-    PatronGroups.createViaApi().then((patronGroupId) => {
-      newUserProperties = {
-        patronGroup: patronGroupId,
-        barcode: null,
-        active: true,
-        username: userData.username,
-        personal: {
-          preferredContactTypeId: '002',
-          firstName: getTestEntityValue('testPermFirst'),
-          middleName: getTestEntityValue('testMiddleName'),
-          lastName: getTestEntityValue('testLastName'),
-          email: 'test@folio.org',
-        },
-        type: 'staff',
-      };
-      testData.patronGroupId = patronGroupId;
-      testData.userProperties = { barcode: uuid() };
-      const queryField = 'displayName';
-      const permissions = [
-        Permissions.circulationLogAll.gui,
-        Permissions.checkinAll.gui,
-        Permissions.inventoryAll.gui,
-      ];
-      cy.getPermissionsApi({
-        query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
-      }).then((permissionsResponse) => {
-        Users.createViaApi(newUserProperties).then((userProperties) => {
-          userData = { ...userData, ...userProperties };
-          cy.setUserPassword(userData);
-          cy.addPermissionsToNewUserApi({
-            userId: userData.id,
-            permissions: [
-              ...permissionsResponse.body.permissions.map(
-                (permission) => permission.permissionName,
-              ),
-            ],
-          });
-          cy.overrideLocalSettings(userData.id);
+      cy.getLocations({ limit: 1 }).then((res) => {
+        testData.location = res;
+      }).then((location) => {
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location,
+        });
+      });
+    }).then(() => {
+      cy.createTempUserParameterized(testData.user,
+        [Permissions.circulationLogAll.gui, Permissions.checkinAll.gui, Permissions.inventoryAll.gui],
+        { userType: 'patron', barcode: false }).then((userProperties) => {
+        testData.user = userProperties;
+        testData.user = { ...testData.user, ...userProperties };
+      }).then(() => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+          testData.servicePointId = servicePoints[0].id;
+        }).then(() => {
           UserEdit.addServicePointViaApi(
-            testData.servicePoint.id,
-            userData.id,
-            testData.servicePoint.id,
+            testData.servicePointId,
+            testData.user.userId,
+            testData.servicePointId,
           );
+        }).then(() => {
+          // cy.overrideLocalSettings(testData.user.userId);
         });
       });
     });
@@ -88,16 +54,13 @@ describe('Circulation log', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
-    Users.deleteViaApi(userData.id);
+    UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
+    Users.deleteViaApi(testData.user.userId);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
-    Locations.deleteViaApi(testData.defaultLocation);
-    PatronGroups.deleteViaApi(testData.patronGroupId);
   });
 
   it(
@@ -106,7 +69,7 @@ describe('Circulation log', () => {
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)
-      cy.login(userData.username, userData.password,
+      cy.login(testData.user.username, testData.user.password,
         { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
       CheckInActions.checkInItem(itemBarcode);
       // The item is Checked in

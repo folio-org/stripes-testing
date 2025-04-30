@@ -11,7 +11,7 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {

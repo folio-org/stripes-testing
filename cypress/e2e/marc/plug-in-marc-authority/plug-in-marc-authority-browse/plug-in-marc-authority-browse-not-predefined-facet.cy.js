@@ -8,7 +8,7 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomStringCode from '../../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../../support/utils/generateTextCode';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC', () => {
