@@ -39,7 +39,7 @@ import QuickMarcEditor from '../quickMarcEditor';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
-const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
+const inventoriesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-find-records') });
 const resultsPaneContent = PaneContent({ id: 'pane-results-content' });
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
