@@ -229,6 +229,9 @@ describe('Eureka', () => {
         SelectMembers.checkMember(tenantNames.university, false);
         SelectMembers.saveAndClose();
         ConsortiumManagerApp.verifyMembersSelected(2);
+        CompareRoles.selectMember(tenantNames.central, 0);
+        CompareRoles.selectRole(testData.roleNameCentral, 0);
+        CompareRoles.verifyNoCapabilitySetsFound(0);
         CompareRoles.checkAvailableTenants([tenantNames.central, tenantNames.college].sort(), 1);
 
         CompareRoles.selectMember(tenantNames.college, 1);
