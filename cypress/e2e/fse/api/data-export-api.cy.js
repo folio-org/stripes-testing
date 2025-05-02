@@ -1,4 +1,4 @@
-describe('fse-data-export', () => {
+describe('fse-data-export', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-data-export', () => {
 
   it(
     `TC195290 - Get data export job by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'data-export'] },
+    { tags: ['sanity', 'fse', 'api', 'data-export', 'loc'] },
     () => {
       cy.dataExportGetJobByStatus('COMMITTED').then((response) => {
         cy.expect(response.status).to.eq(200);

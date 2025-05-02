@@ -1,7 +1,8 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
@@ -17,9 +18,13 @@ describe('Users', () => {
       cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUserEdit.gui]).then(
         (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password);
         },
       );
+    });
+
+    beforeEach(() => {
+      cy.login(user.username, user.password,
+        { path: TopMenu.customFieldsPath, waiter: CustomFields.waitLoading });
     });
 
     after('delete test data', () => {
@@ -36,14 +41,15 @@ describe('Users', () => {
           helpText: `autotestHelpText_${getRandomPostfix()}`,
         };
 
-        cy.visit(TopMenu.customFieldsPath);
         CustomFields.addCustomTextField(fieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyTextFieldPresented(fieldData);
+        UserEdit.cancelEdit();
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(fieldData.fieldLabel);
       },
     );
@@ -57,14 +63,15 @@ describe('Users', () => {
           helpText: `autotestHelpText_${getRandomPostfix()}`,
         };
 
-        cy.visit(TopMenu.customFieldsPath);
         CustomFields.addCustomTextArea(fieldData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyAreaFieldPresented(fieldData);
+        UserEdit.cancelEdit();
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(fieldData.fieldLabel);
       },
     );
@@ -77,14 +84,16 @@ describe('Users', () => {
           fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
           helpText: `autotestHelpText_${getRandomPostfix()}`,
         };
-        cy.visit(TopMenu.customFieldsPath);
+
         CustomFields.addCustomCheckBox(checkboxData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyCheckboxPresented(checkboxData);
+        UserEdit.cancelEdit();
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(checkboxData.fieldLabel);
       },
     );
@@ -102,14 +111,15 @@ describe('Users', () => {
           },
         };
 
-        cy.visit(TopMenu.customFieldsPath);
         CustomFields.addCustomRadioButton(radioButtonData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifyRadioButtonPresented(radioButtonData);
+        UserEdit.cancelEdit();
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(radioButtonData.data.fieldLabel);
       },
     );
@@ -127,9 +137,8 @@ describe('Users', () => {
           },
         };
 
-        cy.visit(TopMenu.customFieldsPath);
         CustomFields.addCustomSingleSelect(singleSelectData);
-        cy.visit(TopMenu.usersPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
         UsersSearchPane.searchByKeywords(user.username);
         UserEdit.openEdit();
         UserEdit.verifySingleSelectPresented(singleSelectData);
@@ -138,7 +147,8 @@ describe('Users', () => {
         UsersCard.openCustomFieldsSection();
         UsersCard.verifySingleSelectValue(singleSelectData);
 
-        cy.visit(SettingsMenu.customFieldsPath);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+        CustomFields.openTabFromInventorySettingsList();
         CustomFields.deleteCustomField(singleSelectData.data.fieldLabel);
       },
     );

@@ -487,7 +487,7 @@ export default {
   },
 
   saveEditedUser() {
-    cy.intercept('PUT', '/users/*').as('updateUser');
+    cy.intercept('PUT', /\/users\/.+|\/users-keycloak\/users\/.+/).as('updateUser');
     cy.wait(1000);
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
     cy.do(saveAndCloseBtn.click());
@@ -520,7 +520,9 @@ export default {
       failOnStatusCode: false,
     })
     .then((servicePointsUsers) => {
-      if (servicePointsUsers.body.servicePointsUsers.length === 0) { return; }
+      if (servicePointsUsers.body.servicePointsUsers.length === 0) {
+        return;
+      }
       cy.okapiRequest({
         method: 'PUT',
         path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,

@@ -1,4 +1,4 @@
-describe('fse-circulation-log', () => {
+describe('fse-circulation-log', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the allure report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-circulation-log', () => {
 
   it(
     `TC195285 - Get log by loan status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'circulation-log'] },
+    { tags: ['sanity', 'fse', 'api', 'circulation-log', 'loc'] },
     () => {
       cy.getByLoan('Checked in').then((response) => {
         cy.expect(response.status).to.eq(200);

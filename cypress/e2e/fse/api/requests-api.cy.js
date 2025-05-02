@@ -1,4 +1,4 @@
-describe('fse-requests', () => {
+describe('fse-requests', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -8,7 +8,7 @@ describe('fse-requests', () => {
 
   it(
     `TC195388 - Get request by status for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['sanity', 'fse', 'api', 'requests'] },
+    { tags: ['sanity', 'fse', 'api', 'requests', 'loc'] },
     () => {
       cy.getItemRequestsApi({
         query: '(status=="Closed - Filled") sortby requestDate',

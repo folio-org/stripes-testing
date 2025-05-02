@@ -9,7 +9,7 @@ import SettingsDataImport, {
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 
 describe('Data Import', () => {
   describe('Settings', () => {
