@@ -90,29 +90,21 @@ describe('MARC', () => {
       const instancesToCheckInM2 = ['C407633 Instance Local M2'];
 
       const linkingTagAndValues = {
-        rowIndex: 16,
+        rowIndex: 15,
         value: 'C407633 Lentz Shared',
         tag: '100',
         secondBox: '1',
         thirdBox: '\\',
         content: '$a C407633 Lentz Shared (Updated in M1)',
         eSubfield: '',
-        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161407633',
+        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n20407633',
         seventhBox: '',
       };
 
       before('Create users, data', () => {
         cy.getAdminToken();
-        MarcAuthorities.getMarcAuthoritiesViaApi({
-          limit: 100,
-          query: 'keyword="C407633" and (authRefType==("Authorized" or "Auth/Ref"))',
-        }).then((authorities) => {
-          if (authorities) {
-            authorities.forEach(({ id }) => {
-              MarcAuthority.deleteViaAPI(id, true);
-            });
-          }
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C407633');
+        InventoryInstances.deleteInstanceByTitleViaApi('C407633');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -127,6 +119,7 @@ describe('MARC', () => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            InventoryInstances.deleteInstanceByTitleViaApi('C407633');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -137,6 +130,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
+            InventoryInstances.deleteInstanceByTitleViaApi('C407633');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -200,7 +194,7 @@ describe('MARC', () => {
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[1]);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[2]);
-        MarcAuthority.deleteViaAPI(createdRecordIDs[3]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[3], true);
         cy.setTenant(Affiliations.University);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[4]);
         cy.setTenant(Affiliations.College);

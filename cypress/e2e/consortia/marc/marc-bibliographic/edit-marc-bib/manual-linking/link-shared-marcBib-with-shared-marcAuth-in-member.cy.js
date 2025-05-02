@@ -41,7 +41,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = {
           authorityHeading: 'Lentz C410819',
-          rowIndex: 16,
+          rowIndex: 15,
           tag: '100',
           secondBox: '1',
           thirdBox: '\\',
@@ -73,6 +73,7 @@ describe('MARC', () => {
         before('Create users, data', () => {
           cy.getAdminToken();
           cy.resetTenant();
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410819');
           cy.createTempUser([
             Permissions.inventoryAll.gui,
             Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

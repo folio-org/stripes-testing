@@ -77,7 +77,7 @@ describe('MARC', () => {
       const linkableFields = [600, 700, 710];
 
       const linked600Field = [
-        29,
+        28,
         '600',
         '1',
         '0',
@@ -88,7 +88,7 @@ describe('MARC', () => {
       ];
 
       const linked700Field = [
-        38,
+        37,
         '700',
         '\\',
         '\\',
@@ -103,6 +103,7 @@ describe('MARC', () => {
       before('Create users, data', () => {
         cy.getAdminToken();
         cy.resetTenant();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -114,6 +115,7 @@ describe('MARC', () => {
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -124,6 +126,7 @@ describe('MARC', () => {
             cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -232,6 +235,8 @@ describe('MARC', () => {
           QuickMarcEditor.verifyEnabledLinkHeadingsButton();
           QuickMarcEditor.verifyTagFieldAfterLinking(...linked700Field);
           QuickMarcEditor.verifyTagFieldAfterUnlinking(...notLinked710Field);
+          QuickMarcEditor.pressSaveAndClose();
+          cy.wait(3000);
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
           InventoryInstance.checkPresentedText(testData.instanceEditedTitle);

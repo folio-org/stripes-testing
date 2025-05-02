@@ -91,19 +91,22 @@ describe('MARC', () => {
       const instancesToCheckInM2 = ['C405927 Instance Shared 3', 'C405927 Instance Local M2'];
 
       const linkingTagAndValues = {
-        rowIndex: 16,
+        rowIndex: 15,
         value: 'C405927 Lentz Shared',
         tag: '100',
         secondBox: '1',
         thirdBox: '\\',
         content: '$a C405927 Lentz Shared (Updated in C)',
         eSubfield: '',
-        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n2011049161405927',
+        zeroSubfield: '$0 http://id.loc.gov/authorities/names/n20405927',
         seventhBox: '',
       };
 
       before('Create users, data', () => {
+        cy.resetTenant();
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405927');
+        InventoryInstances.deleteInstanceByTitleViaApi('C405927');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -119,6 +122,7 @@ describe('MARC', () => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            InventoryInstances.deleteInstanceByTitleViaApi('C405927');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -126,6 +130,7 @@ describe('MARC', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
+            InventoryInstances.deleteInstanceByTitleViaApi('C405927');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

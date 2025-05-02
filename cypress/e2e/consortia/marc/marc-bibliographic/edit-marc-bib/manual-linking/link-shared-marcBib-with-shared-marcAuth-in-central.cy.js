@@ -40,7 +40,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = {
           authorityHeading: 'Lentz C410814',
-          rowIndex: 16,
+          rowIndex: 15,
           tag: '100',
           secondBox: '1',
           thirdBox: '\\',
