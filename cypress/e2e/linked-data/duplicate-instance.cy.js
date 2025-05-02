@@ -107,6 +107,7 @@ describe('Citation: duplicate resource', () => {
       InventoryInstances.searchByTitle(testData.uniqueInstanceTitle);
       InventoryInstance.verifySourceInAdministrativeData('LINKED_DATA');
       // Add holdings
+      cy.wait(3000);
       const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
       HoldingsRecordEdit.fillHoldingFields({
         permanentLocation: LOCATION_NAMES.ANNEX,
