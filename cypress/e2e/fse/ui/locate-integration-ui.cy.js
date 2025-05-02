@@ -1,4 +1,5 @@
 import LocateSearch from '../../../support/fragments/locate/locate-search';
+import LocateSearchResults from '../../../support/fragments/locate/locate-search-results';
 
 describe('fse-locate-integration - UI', () => {
   beforeEach(() => {
@@ -9,7 +10,18 @@ describe('fse-locate-integration - UI', () => {
   });
 
   it(
-    `TCxxxx - Verify LOCATE search via instance received from related folio tenant for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195869 - Verify LOCATE catalog home page ${Cypress.env('OKAPI_HOST')}`,
+    { tags: ['locate', 'fse', 'UI'] },
+    () => {
+      cy.openLocateUiPage();
+      // click on catalog home link
+      LocateSearch.clickOnHomeButton();
+      LocateSearch.verifyHomePageDisplayed();
+    },
+  );
+
+  it(
+    `TC195870 - Verify LOCATE search via instance received from related folio tenant for ${Cypress.env('OKAPI_HOST')}`,
     { tags: ['locate', 'fse', 'UI'] },
     () => {
       cy.getItems({ limit: 1, expandAll: true, query: 'status.name=Available' }).then((item) => {
@@ -17,7 +29,7 @@ describe('fse-locate-integration - UI', () => {
         cy.openLocateUiPage();
         // search by title got from folio response
         LocateSearch.searchBy('Title', item.title);
-        LocateSearch.verifySearchResults(item.title);
+        LocateSearchResults.verifySearchResults(item.title);
       });
     },
   );
