@@ -51,7 +51,9 @@ describe('eHoldings', () => {
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
             const addedTag2 = EHoldingsPackage.addTag();
+            EHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
             EHoldingsPackage.closePackage();
+            EHoldingSearch.waitLoading();
             EHoldingsPackagesSearch.byName(selectedPackage);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
