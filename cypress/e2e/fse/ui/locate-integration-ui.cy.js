@@ -11,7 +11,7 @@ describe('fse-locate-integration - UI', () => {
 
   it(
     `TC195869 - Verify LOCATE catalog home page ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['locate', 'fse', 'UI'] },
+    { tags: ['locate', 'fse', 'ui'] },
     () => {
       cy.openLocateUiPage();
       // click on catalog home link
@@ -22,7 +22,7 @@ describe('fse-locate-integration - UI', () => {
 
   it(
     `TC195870 - Verify LOCATE search via instance received from related folio tenant for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['locate', 'fse', 'UI'] },
+    { tags: ['locate', 'fse', 'ui'] },
     () => {
       cy.getItems({ limit: 1, expandAll: true, query: 'status.name=Available' }).then((item) => {
         cy.log('Folio item title got from API: ' + item.title);
