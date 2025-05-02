@@ -29,6 +29,7 @@ describe('Data Import', () => {
 
     before('Create users, data', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405119');
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -47,6 +48,10 @@ describe('Data Import', () => {
             path: TopMenu.dataImportPath,
             waiter: DataImport.waitLoading,
           }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              DataImport.waitLoading();
+            }, 20_000);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
           });
         });

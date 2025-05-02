@@ -57,6 +57,10 @@ describe('MARC', () => {
 
     before('Create users, data', () => {
       cy.getAdminToken();
+      [Affiliations.College, Affiliations.Central].forEach((tenant) => {
+        cy.setTenant(tenant);
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404417');
+      });
       cy.createTempUser([
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.inventoryAll.gui,
@@ -99,6 +103,10 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             InventoryInstances.searchByTitle(marcFiles[0].title);
             InventoryInstances.selectInstance();

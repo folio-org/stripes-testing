@@ -150,6 +150,10 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                MarcAuthorities.waitLoading();
+              }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
@@ -214,6 +218,7 @@ describe('MARC', () => {
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+          cy.wait(1_000);
           MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
             sharedRecordsCount = count;
           });

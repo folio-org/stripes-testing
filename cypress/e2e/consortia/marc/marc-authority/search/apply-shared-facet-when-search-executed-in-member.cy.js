@@ -85,6 +85,10 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        [Affiliations.College, Affiliations.Central].forEach((tenant) => {
+          cy.setTenant(tenant);
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C404421');
+        });
         cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui])
           .then((userProperties) => {
             users.userProperties = userProperties;
@@ -125,6 +129,10 @@ describe('MARC', () => {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                MarcAuthorities.waitLoading();
+              }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

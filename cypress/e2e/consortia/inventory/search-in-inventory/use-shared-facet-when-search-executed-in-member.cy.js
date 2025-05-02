@@ -52,6 +52,11 @@ describe('Inventory', () => {
 
     before('Create user, data', () => {
       cy.getAdminToken();
+      cy.setTenant(Affiliations.College);
+      InventoryInstances.deleteInstanceByTitleViaApi('C402334');
+      cy.resetTenant();
+      InventoryInstances.deleteInstanceByTitleViaApi('C402334');
+
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
         .then((userProperties) => {
           testData.userProperties = userProperties;
@@ -105,6 +110,10 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+              InventoryInstances.waitContentLoading();
+            }, 20_000);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);

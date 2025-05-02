@@ -27,7 +27,7 @@ describe('MARC', () => {
 
         const linkingTagAndValues = {
           authorityHeading: 'C405559 Lentz Shared',
-          rowIndex: 16,
+          rowIndex: 15,
           tag: '100',
           secondBox: '1',
           thirdBox: '\\',
@@ -153,6 +153,10 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               }).then(() => {
+                cy.waitForAuthRefresh(() => {
+                  cy.reload();
+                  InventoryInstances.waitContentLoading();
+                }, 20_000);
                 ConsortiumManager.switchActiveAffiliation(
                   tenantNames.central,
                   tenantNames.university,
@@ -202,9 +206,9 @@ describe('MARC', () => {
               linkingTagAndValues.seventhBox,
             );
             QuickMarcEditor.clickSaveAndKeepEditing();
-            cy.wait(1500);
+            cy.wait(3_000);
             QuickMarcEditor.clickSaveAndKeepEditing();
-            QuickMarcEditor.openLinkingAuthorityByIndex(16);
+            QuickMarcEditor.openLinkingAuthorityByIndex(15);
             MarcAuthorities.checkFieldAndContentExistence(
               linkingTagAndValues.tag,
               linkingTagAndValues.authorityHeading,
