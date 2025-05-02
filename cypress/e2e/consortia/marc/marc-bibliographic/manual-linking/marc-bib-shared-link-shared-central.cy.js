@@ -27,7 +27,7 @@ describe('MARC', () => {
 
       const linkingTagAndValues = {
         authorityHeading: 'C397392 Lentz, Mark Auto',
-        rowIndex: 16,
+        rowIndex: 15,
         tag: '100',
         secondBox: '1',
         thirdBox: '\\',
@@ -58,7 +58,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
-
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C397392');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -95,6 +95,10 @@ describe('MARC', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             });
           });
@@ -160,6 +164,11 @@ describe('MARC', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();
+          BrowseContributors.waitForContributorToAppear(
+            linkingTagAndValues.authorityHeading,
+            true,
+            true,
+          );
           InventorySearchAndFilter.browseSearch(linkingTagAndValues.authorityHeading);
           BrowseContributors.checkAuthorityIconAndValueDisplayed(
             linkingTagAndValues.authorityHeading,

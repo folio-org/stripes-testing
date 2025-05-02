@@ -113,6 +113,10 @@ describe('MARC', () => {
             }).then(() => {
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
               InventoryInstances.waitContentLoading();
+              cy.waitForAuthRefresh(() => {
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
             });
           });

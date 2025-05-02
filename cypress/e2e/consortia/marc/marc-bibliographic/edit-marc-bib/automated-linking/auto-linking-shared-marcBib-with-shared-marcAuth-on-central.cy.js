@@ -24,7 +24,7 @@ describe('MARC', () => {
             'Criticism and interpretation',
           ],
           linked100Field: [
-            9,
+            8,
             '100',
             '1',
             '\\',
@@ -34,7 +34,7 @@ describe('MARC', () => {
             '',
           ],
           linked600Field_1: [
-            18,
+            17,
             '600',
             '1',
             '0',
@@ -44,7 +44,7 @@ describe('MARC', () => {
             '',
           ],
           linked600Field_2: [
-            19,
+            18,
             '600',
             '1',
             '7',
@@ -54,7 +54,7 @@ describe('MARC', () => {
             '$2 fast',
           ],
           linked650Field: [
-            20,
+            19,
             '650',
             '\\',
             '7',
@@ -143,6 +143,11 @@ describe('MARC', () => {
                 cy.login(users.userProperties.username, users.userProperties.password, {
                   path: TopMenu.inventoryPath,
                   waiter: InventoryInstances.waitContentLoading,
+                }).then(() => {
+                  cy.waitForAuthRefresh(() => {
+                    cy.reload();
+                    InventoryInstances.waitContentLoading();
+                  }, 20_000);
                 });
               });
             });
