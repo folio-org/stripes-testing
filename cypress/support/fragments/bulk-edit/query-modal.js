@@ -34,9 +34,11 @@ export const holdingsFieldValues = {
 export const instanceFieldValues = {
   instanceHrid: 'Instance — Instance HRID',
   instanceResourceTitle: 'Instance — Resource title',
+  instanceSource: 'Instance — Source',
   staffSuppress: 'Instance — Staff suppress',
   createdDate: 'Instance — Created date',
   catalogedDate: 'Instance — Cataloged date',
+  date1: 'Instance — Date 1',
 };
 export const itemFieldValues = {
   instanceId: 'Instances — Instance UUID',

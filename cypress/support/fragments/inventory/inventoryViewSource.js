@@ -7,6 +7,7 @@ const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'marc-view-pane' });
 const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
+const versionHistoryButton = Button({ icon: 'clock' });
 
 const close = () => cy.do(closeButton.click());
 const editMarcBibRecord = () => {
@@ -130,5 +131,9 @@ export default {
   clickViewMarcAuthorityIcon() {
     cy.get('#marc-view-pane').find('a').invoke('removeAttr', 'target').click();
     cy.wait(2000);
+  },
+
+  clickVersionHistoryButton() {
+    cy.do(versionHistoryButton.click());
   },
 };

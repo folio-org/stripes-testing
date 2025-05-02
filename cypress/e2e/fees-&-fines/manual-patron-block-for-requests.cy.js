@@ -115,8 +115,8 @@ describe('Fees&Fines', () => {
       'C481 Verify that manual patron block for "Requests" blocks requests by patron (vega)',
       { tags: ['extendedPath', 'vega', 'C481'] },
       () => {
-        cy.login(userData.user1.username, userData.user1.password);
-        cy.visit(TopMenu.usersPath);
+        cy.login(userData.user1.username, userData.user1.password,
+          { path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
         UsersSearchPane.searchByKeywords(userData.user1.username);
         UsersCard.expandRequestSection();
         UsersCard.createNewRequest();
@@ -124,8 +124,8 @@ describe('Fees&Fines', () => {
         NewRequest.viewBlockDetails();
         UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description1);
 
-        cy.login(userData.user2.username, userData.user2.password);
-        cy.visit(TopMenu.usersPath);
+        cy.login(userData.user2.username, userData.user2.password,
+          { path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
         UsersSearchPane.searchByKeywords(userData.user2.username);
         UsersCard.expandRequestSection();
         UsersCard.createNewRequest();
@@ -135,8 +135,8 @@ describe('Fees&Fines', () => {
         UsersCard.verifyPatronBlockDescription(1, renewalsBlock.description2);
         UsersCard.verifyPatronBlockDescription(2, renewalsBlock.description1);
 
-        cy.login(userData.user3.username, userData.user3.password);
-        cy.visit(TopMenu.usersPath);
+        cy.login(userData.user3.username, userData.user3.password,
+          { path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
         UsersSearchPane.searchByKeywords(userData.user3.username);
         UsersCard.expandRequestSection();
         UsersCard.createNewRequest();

@@ -25,7 +25,7 @@ const actionsButton = Button({ id: 'available-item-actions-button' });
 const checkOutNotesButton = Button('Check out notes');
 
 function addPatron(userName) {
-  cy.do(Button({ id: 'clickable-find-user' }).click());
+  cy.do(Button({ id: 'patronLookup' }).click());
   SelectUser.searchUser(userName);
   SelectUser.selectUserFromList(userName);
 }

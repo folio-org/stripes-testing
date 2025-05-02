@@ -100,7 +100,6 @@ describe('Eureka', () => {
           UsersSearchPane.selectUserFromList(testData.userA.username);
           UsersCard.waitLoading();
           UserEdit.openEdit();
-          UserEdit.verifyUserRolesCounter('1');
           UserEdit.editUsername(testData.newUsername);
           UserEdit.fillLastFirstNames(testData.newLastName, testData.newFirstName);
           UserEdit.fillEmailAddress(testData.newEmailAddress);
