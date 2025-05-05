@@ -1060,7 +1060,7 @@ export default {
   },
 
   clickEffectiveLocationAccordionInput() {
-    cy.get('#effectiveLocation').find('input').click();
+    cy.do(effectiveLocationInput.find(TextField({ type: 'search' })).focus());
   },
 
   checkEffectiveLocationAccordionInputInFocus() {

@@ -4,6 +4,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -63,6 +64,8 @@ describe('Inventory', () => {
       () => {
         // Click on the "Select a browse option" dropdown and select "Call numbers (all)" browse option.
         InventorySearchAndFilter.selectBrowseCallNumbers();
+        BrowseCallNumber.waitForCallNumberToAppear(firstCallNumber);
+        BrowseCallNumber.waitForCallNumberToAppear(secondCallNumber);
 
         // Fill in the search box with call number #1, Click on the "Search" button
         InventorySearchAndFilter.browseSearch(firstCallNumber);

@@ -108,6 +108,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'spitfire', 'C466323'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
+        BrowseClassifications.waitForClassificationNumberToAppear(testData.searchQuery);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
         verifySearchResult();
         InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
