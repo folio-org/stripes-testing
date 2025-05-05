@@ -45,7 +45,6 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       cy.setTenant(Affiliations.College).then(() => {
-        cy.getCollegeAdminToken();
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);

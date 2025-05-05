@@ -22,8 +22,7 @@ describe('Inventory', () => {
       cy.getConsortiaId().then((consortiaId) => {
         testData.consortiaId = consortiaId;
       });
-      cy.setTenant(Affiliations.College);
-      cy.getCollegeAdminToken()
+      cy.setTenant(Affiliations.College)
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;

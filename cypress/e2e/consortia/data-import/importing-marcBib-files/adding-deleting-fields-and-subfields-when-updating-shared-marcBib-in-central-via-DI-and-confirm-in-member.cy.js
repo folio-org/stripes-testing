@@ -208,8 +208,6 @@ describe('Data Import', () => {
         Logs.openFileDetails(testData.marcFile.modifiedMarcFile);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
         InventoryInstance.checkContributor(testData.contributorName);
         InventoryInstance.verifyContributorAbsent(testData.absentContributorName);

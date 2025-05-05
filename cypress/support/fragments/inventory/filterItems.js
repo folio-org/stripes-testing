@@ -1,13 +1,14 @@
-import { including } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Checkbox,
   MultiColumnList,
   MultiColumnListCell,
-  MultiSelect,
-  MultiSelectOption,
+  TextField,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../constants';
+
+const itemStatusAccordion = Accordion('Item status');
 
 export default {
   itemStatuses: [
@@ -29,14 +30,14 @@ export default {
 
   toggleStatus(statusName) {
     cy.wait(500);
-    cy.do(MultiSelect({ id: 'itemStatus-multiselect' }).toggle());
-    cy.wait(500);
-    cy.do(MultiSelectOption(including(statusName)).click());
+    cy.do(itemStatusAccordion.find(TextField({ type: 'search' })).fillIn(statusName));
+    cy.wait(1000);
+    cy.do(itemStatusAccordion.find(Checkbox(statusName)).click());
     cy.wait(1500);
   },
 
   toggleItemStatusAccordion() {
-    cy.do(Accordion('Item status').clickHeader());
+    cy.do(itemStatusAccordion.clickHeader());
   },
 
   selectInstance(title) {
