@@ -25,7 +25,7 @@ describe('Inventory', () => {
       enumeration: 'e.2',
       chronology: 'ch.3',
       shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
-      effectiveItemCallNumber: 'RR 3718',
+      effectiveItemCallNumber: 'itemFullCallNumbers="RR 718"',
     };
 
     const itemA1 = {

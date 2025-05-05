@@ -43,11 +43,11 @@ describe('Inventory', () => {
 
     const tagInfo = [
       {
-        rowIndex: 12,
+        rowIndex: 11,
         authNaturalId: 'n831692600011181',
       },
       {
-        rowIndex: 13,
+        rowIndex: 12,
         authNaturalId: 'n831692600011182',
       },
     ];
@@ -55,6 +55,7 @@ describe('Inventory', () => {
     const createdRecordIDs = [];
 
     before('Creating data', () => {
+      cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C359596');
       cy.createTempUser([
         Permissions.inventoryAll.gui,
