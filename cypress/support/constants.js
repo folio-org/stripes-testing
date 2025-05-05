@@ -1145,3 +1145,10 @@ export const AUTHORIZATION_ROLE_TYPES = {
   CONSORTIUM: 'Consortium',
   DEFAULT: 'Default',
 };
+
+export const ADVANCED_SEARCH_MODIFIERS = {
+  CONTAINS_ALL: 'Contains all',
+  STARTS_WITH: 'Starts with',
+  EXACT_PHRASE: 'Exact phrase',
+  CONTAINS_ANY: 'Contains any',
+};

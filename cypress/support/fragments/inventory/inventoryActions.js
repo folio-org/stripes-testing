@@ -14,6 +14,7 @@ const singleImportSuccessCalloutText = (number, overlay) => `Record ${number} ${
 const importProfileSelect = Select({ name: 'selectedJobProfileId' });
 const importModal = Modal({ id: 'import-record-modal' });
 const cancelImportButtonInModal = importModal.find(Button('Cancel'));
+const instanceActionsButton = Section({ id: 'pane-instancedetails' }).find(Button('Actions'));
 
 function open() {
   cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
@@ -90,6 +91,7 @@ export default {
   pressImportInModal(
     specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id,
     overlay = false,
+    expandIdentifiers = false,
   ) {
     cy.do(importButtonInModal.click());
     cy.wait(2000);
@@ -97,6 +99,7 @@ export default {
       singleImportSuccessCalloutText(specialOCLCWorldCatidentifier, overlay),
     );
     InteractorsTools.closeCalloutMessage();
+    if (expandIdentifiers) InventoryInstance.openAccordion('Identifiers');
     InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
@@ -184,6 +187,24 @@ export default {
     this.fillImportFields(specialLOCidentifier);
     cy.wait(1000);
     this.pressImportInModal(specialLOCidentifier);
+    InventoryInstance.checkExpectedMARCSource();
+  },
+
+  overlayLoc(specialLOCidentifier = InventoryInstance.validLOC, expandIdentifiers = false) {
+    cy.do([instanceActionsButton.click(), reImportButtonInActions.click()]);
+    cy.expect([
+      importModal.exists(),
+      importTypeSelect.exists(),
+      importProfileSelect.exists(),
+      importButtonInModal.is({ disabled: true }),
+      cancelImportButtonInModal.exists(),
+    ]);
+    cy.do(importTypeSelect.choose('Library of Congress'));
+    cy.expect(locIdInputField.exists());
+    this.fillImportFields(specialLOCidentifier);
+    cy.wait(1000);
+    this.pressImportInModal(specialLOCidentifier, true, expandIdentifiers);
+    cy.expect(importModal.absent());
     InventoryInstance.checkExpectedMARCSource();
   },
 };
