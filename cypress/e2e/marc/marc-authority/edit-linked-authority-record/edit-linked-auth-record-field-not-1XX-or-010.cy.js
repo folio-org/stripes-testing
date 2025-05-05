@@ -110,11 +110,14 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
           });
-
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.marcAuthorities,
-            waiter: MarcAuthorities.waitLoading,
-          });
+          cy.waitForAuthRefresh(() => {
+            cy.login(testData.user.username, testData.user.password, {
+              path: TopMenu.marcAuthorities,
+              waiter: MarcAuthorities.waitLoading,
+            });
+            cy.reload();
+            MarcAuthorities.waitLoading();
+          }, 20_000);
         });
       });
 

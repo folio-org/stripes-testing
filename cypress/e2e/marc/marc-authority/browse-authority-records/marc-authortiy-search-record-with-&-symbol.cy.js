@@ -18,7 +18,7 @@ describe('MARC', () => {
 
       before('Creating data', () => {
         cy.getAdminToken();
-        DataImport.uploadFileViaApi('uniform_title.mrc', fileName, jobProfileToRun).then(
+        DataImport.uploadFileViaApi('marcAuthFileC350767.mrc', fileName, jobProfileToRun).then(
           (response) => {
             response.forEach((record) => {
               createdAuthorityID.push(record.authority.id);
@@ -39,7 +39,9 @@ describe('MARC', () => {
 
       after('Deleting data', () => {
         cy.getAdminToken();
-        MarcAuthority.deleteViaAPI(createdAuthorityID[0]);
+        createdAuthorityID.forEach((id) => {
+          MarcAuthority.deleteViaAPI(id, true);
+        });
         Users.deleteViaApi(user.userId);
       });
 

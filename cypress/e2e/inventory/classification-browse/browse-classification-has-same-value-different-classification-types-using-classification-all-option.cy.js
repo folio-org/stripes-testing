@@ -177,6 +177,7 @@ describe('Inventory', () => {
       'C468158 Browse for classification which has the same value but different classification types using "Classification (all)" browse option (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468158'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear(testData.classificationValue);
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.classificationValue);
         BrowseClassifications.verifySearchResultsTable();

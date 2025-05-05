@@ -44,10 +44,14 @@ describe('Notes', () => {
     'C16985 Settings | Set up a note type (spitfire)',
     { tags: ['extendedPath', 'spitfire', 'C16985'] },
     () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.notesPath,
-        waiter: NoteTypes.waitLoading,
-      });
+      cy.waitForAuthRefresh(() => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.notesPath,
+          waiter: NoteTypes.waitLoading,
+        });
+        cy.reload();
+        NoteTypes.waitLoading();
+      }, 20_000);
       NoteTypes.checkNewNoteButtonEnabled();
       NoteTypes.addNoteType();
       NoteTypes.fillInNoteType(noteType);

@@ -176,6 +176,7 @@ describe('Inventory', () => {
       'C468159 Browse for classification which has the same value but different classification types using "Dewey Decimal classification" browse option when only "Dewey" classification type is selected in Settings (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'C468159'] },
       () => {
+        BrowseClassifications.waitForClassificationNumberToAppear(testData.classificationValue);
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
         );

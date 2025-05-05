@@ -151,6 +151,8 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumbers[0].type);
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0].value);
+        BrowseCallNumber.waitForCallNumberToAppear(callNumbers[1].value);
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
         BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[0].value, '2');

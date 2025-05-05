@@ -48,25 +48,30 @@ describe('MARC', () => {
       });
 
       before('Upload files', () => {
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        }).then(() => {
-          DataImport.uploadFileViaApi(
-            marcFiles[0].marc,
-            marcFiles[0].fileName,
-            jobProfileToRun,
-          ).then((response) => {
-            response.forEach((record) => {
-              createdAuthorityID.push(record.authority.id);
+        cy.getToken(testData.userProperties.username, testData.userProperties.password, false).then(
+          () => {
+            DataImport.uploadFileViaApi(
+              marcFiles[0].marc,
+              marcFiles[0].fileName,
+              jobProfileToRun,
+            ).then((response) => {
+              response.forEach((record) => {
+                createdAuthorityID.push(record.authority.id);
+              });
             });
-          });
-        });
+          },
+        );
       });
 
       beforeEach('Login', () => {
-        cy.visit(TopMenu.marcAuthorities);
-        MarcAuthorities.waitLoading();
+        cy.waitForAuthRefresh(() => {
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+          cy.reload();
+          MarcAuthorities.waitLoading();
+        }, 20_000);
       });
 
       after('Delete test data', () => {
@@ -108,7 +113,7 @@ describe('MARC', () => {
             QuickMarcEditor.verifySaveAndCloseButtonEnabled();
             MarcAuthority.changeField('130', testData.editedFieldValues[index]);
             QuickMarcEditor.pressSaveAndClose();
-            cy.wait(1500);
+            cy.wait(4000);
             MarcAuthority.clickSaveAndCloseButton();
             MarcAuthority.continueWithSaveAndCheck();
           });
