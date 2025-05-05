@@ -134,3 +134,17 @@ Cypress.Commands.add(
     cy.expect([Button('Log in via SSO').exists()]);
   },
 );
+
+Cypress.Commands.add(
+  'openLocateUiPage',
+  (
+    visitPath = {
+      path: Cypress.config().baseUrl.replace('folio', 'locate'),
+      waiter: () => cy.expect(
+        Heading(including('Choose a filter or enter a search query to show results.')).exists(),
+      ),
+    },
+  ) => {
+    cy.visit(visitPath.path);
+  },
+);
