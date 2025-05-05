@@ -80,6 +80,7 @@ describe('bulk-edit', () => {
             BulkEditLogs.verifyNoDirection(headers[i - 1]);
             BulkEditLogs.verifyDirection(headers[i], 'ascending');
             BulkEditLogs.clickLogHeader(headers[i]);
+            cy.wait(3000);
             BulkEditLogs.verifyDirection(headers[i]);
           }
 
@@ -88,10 +89,12 @@ describe('bulk-edit', () => {
           cy.wait(1000);
           BulkEditLogs.verifyDirection('Ended');
           cy.reload();
+          cy.wait(5000);
           BulkEditLogs.verifyDirection('Ended');
           BulkEditLogs.clickLogHeader('# of records');
           BulkEditLogs.verifyDirection('# of records', 'ascending');
           cy.reload();
+          cy.wait(5000);
           BulkEditLogs.verifyDirection('# of records', 'ascending');
         },
       );
