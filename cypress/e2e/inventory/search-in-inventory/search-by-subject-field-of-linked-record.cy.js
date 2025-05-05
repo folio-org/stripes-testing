@@ -50,7 +50,7 @@ const testData = {
     'Radio "Vaticana". Hrvatski program test',
     'Vatican Council (2nd : 1962-1965 : Basilica di San Pietro in Vaticano)',
     'Marvel comics ComiCon',
-    'Speaking Oratory debating',
+    'Speaking Oratory--debating',
     'Clear Creek (Tex.)',
     'Drama Genre',
   ],
