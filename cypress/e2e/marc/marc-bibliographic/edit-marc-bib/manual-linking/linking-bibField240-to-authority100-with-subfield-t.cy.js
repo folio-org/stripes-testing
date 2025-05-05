@@ -78,6 +78,10 @@ describe('MARC', () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
+          }).then(() => {
+            cy.waitForAuthRefresh(() => {
+              cy.reload();
+            });
           });
         });
 
@@ -86,7 +90,7 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
           createdAuthorityIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 

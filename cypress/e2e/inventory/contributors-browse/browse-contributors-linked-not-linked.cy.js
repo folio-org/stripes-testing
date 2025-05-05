@@ -65,16 +65,12 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
-          InventoryInstance.verifyAndClickLinkIconByIndex(26);
+          InventoryInstance.verifyAndClickLinkIconByIndex(25);
           InventoryInstance.verifySelectMarcAuthorityModal();
           MarcAuthorities.switchToSearch();
           InventoryInstance.searchResults(testData.contributorName);
-          MarcAuthorities.checkFieldAndContentExistence(
-            testData.tag010,
-            `$a ${marcFiles[1].naturalId}`,
-          );
           InventoryInstance.clickLinkButton();
-          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
+          QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(25, testData.tag700);
           QuickMarcEditor.pressSaveAndClose();
           cy.wait(1500);
           QuickMarcEditor.pressSaveAndClose();

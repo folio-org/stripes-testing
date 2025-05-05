@@ -72,6 +72,7 @@ describe('MARC', () => {
     };
 
     before(() => {
+      cy.getAdminToken();
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('Type of heading test');
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C365113');
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
