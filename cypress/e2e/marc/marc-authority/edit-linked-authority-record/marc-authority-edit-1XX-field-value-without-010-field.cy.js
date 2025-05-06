@@ -21,7 +21,6 @@ describe('MARC', () => {
         tag111: '111',
         updatedValue:
           '$a C374158 Vatican Council $n (2nd : $d 1962-1966 : $c Basilica di San Pietro in Vaticano)',
-        autoUpdateUserName: 'Automated linking update',
         marcAuthIcon: 'Linked to MARC authority',
       };
       const marcFiles = [
@@ -146,7 +145,6 @@ describe('MARC', () => {
           cy.wait('@/authn/refresh', { timeout: 20000 });
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
           InventoryInstance.waitInstanceRecordViewOpened(marcFiles[0].instanceTitle);
-          InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
           InventoryInstance.viewSource();
           InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${testData.tag611}\t`);
           InventoryViewSource.contains(

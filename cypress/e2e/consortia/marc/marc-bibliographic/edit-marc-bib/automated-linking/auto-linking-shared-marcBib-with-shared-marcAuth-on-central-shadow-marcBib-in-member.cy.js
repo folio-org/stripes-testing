@@ -164,11 +164,14 @@ describe('MARC', () => {
                   });
                 });
               });
-
-              cy.login(users.userProperties.username, users.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+              cy.waitForAuthRefresh(() => {
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+                cy.reload();
+                InventoryInstances.waitContentLoading();
+              }, 20_000);
             });
         });
 
@@ -192,7 +195,6 @@ describe('MARC', () => {
           'C410818 Automated linking of Shared MARC bib (shadow MARC Instance in Member tenant) with Shared MARC authority records on Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C410818'] },
           () => {
-            cy.reload();
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

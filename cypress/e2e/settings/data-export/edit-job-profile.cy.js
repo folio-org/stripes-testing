@@ -59,7 +59,7 @@ describe('Data Export', () => {
       () => {
         ExportJobProfiles.goToJobProfilesTab();
         ExportJobProfiles.waitLoading();
-        ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
+        ExportJobProfiles.clickProfileNameFromTheList(jobProfileName, 'top');
         SingleJobProfile.waitLoading(jobProfileName);
 
         SingleJobProfile.openActions();

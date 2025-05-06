@@ -41,7 +41,7 @@ describe('MARC', () => {
             boxSeventh: '',
             searchOption: 'Uniform title',
             marcValue:
-              'C380727 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
+              'C380727 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
             valueAfterSave:
               'C380727 Edinburgh tracts in mathematics and mathematical physics english',
           },
@@ -76,7 +76,7 @@ describe('MARC', () => {
         before(() => {
           cy.getAdminToken();
           // make sure there are no duplicate records in the system
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380727*');
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380727');
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,

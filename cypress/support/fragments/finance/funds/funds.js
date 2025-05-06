@@ -73,6 +73,7 @@ const editButton = Button('Edit');
 const selectLocationsModal = Modal('Select locations');
 const unreleaseEncumbranceModal = Modal('Unrelease encumbrance');
 const fundsFiltersSection = Section({ id: 'fund-filters-pane' });
+const fundAcqUnitsSelection = MultiSelect({ id: 'fund-acq-units' });
 
 export default {
   defaultUiFund: {
@@ -1066,18 +1067,11 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.open(),
-      SelectionList().select(ledger.name),
     ]);
-    // Need wait, while data is loading
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do([SelectionList().select(ledger.name), fundAcqUnitsSelection.select(AUName)]);
     cy.wait(4000);
-    cy.do([
-      MultiSelect({ id: 'fund-acq-units' })
-        .find(Button({ ariaLabel: 'open menu' }))
-        .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do(saveAndCloseButton.click());
     this.waitForFundDetailsLoading();
   },
 
@@ -1150,17 +1144,13 @@ export default {
 
   addAUToFund: (AUName) => {
     cy.do([actionsButton.click(), editButton.click()]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(4000);
-    cy.do([
-      MultiSelect({ id: 'fund-acq-units' })
-        .find(Button({ ariaLabel: 'open menu' }))
-        .click(),
-      MultiSelectOption(AUName).click(),
-      saveAndCloseButton.click(),
-    ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(4000);
+    FundEditForm.waitLoading();
+    cy.wait(6000);
+    cy.expect(fundAcqUnitsSelection.exists());
+    cy.do(fundAcqUnitsSelection.fillIn(AUName));
+    cy.do(MultiSelectOption(AUName).click());
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
   },
 
   varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {

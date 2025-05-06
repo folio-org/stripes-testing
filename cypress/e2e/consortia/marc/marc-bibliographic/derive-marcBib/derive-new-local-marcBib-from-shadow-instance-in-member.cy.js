@@ -101,8 +101,9 @@ describe('MARC', () => {
       const notLinked710Field = [39, '710', '\\', '\\', '$a Gálvez710 $0 n20114107754'];
 
       before('Create users, data', () => {
-        cy.getAdminToken();
         cy.resetTenant();
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -114,6 +115,7 @@ describe('MARC', () => {
           .then(() => {
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -124,6 +126,7 @@ describe('MARC', () => {
             cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C410775');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.inventoryAll.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

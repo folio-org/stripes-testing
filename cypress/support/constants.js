@@ -17,6 +17,7 @@ export const APPLICATION_NAMES = {
   REQUESTS: 'Requests',
   READING_ROOM_ACCESS: 'Reading room access',
   EHOLDINGS: 'eHoldings',
+  FINANCE: 'Finance',
 };
 
 export const REQUEST_METHOD = {
